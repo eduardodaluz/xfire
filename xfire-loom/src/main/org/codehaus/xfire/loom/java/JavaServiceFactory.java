@@ -43,7 +43,7 @@ public class JavaServiceFactory extends SimpleServiceFactory implements Servicea
     public Service createService( final Object target, final Configuration configuration )
         throws Exception
     {
-        final DefaultJavaService s = new DefaultJavaService();
+        final DefaultJavaService s = new DefaultJavaService( getTypeMappingRegistry() );
 
         configureService( configuration, s, target );
 
@@ -57,9 +57,16 @@ public class JavaServiceFactory extends SimpleServiceFactory implements Servicea
     {
         super.configureService( configuration, service, target );
 
-        service.setTypeMappingRegistry( getTypeMappingRegistry() );
-
-        service.setServiceClass( target.getClass() );
+        try
+        {
+            service.setServiceClass( configuration.getChild( JavaService.SERVICE_CLASS ).getValue() );
+        }
+        catch( ClassNotFoundException e )
+        {
+            final String msg = "Couldn't find service class at "
+                + configuration.getChild( JavaService.SERVICE_CLASS ).getLocation();
+            throw new ConfigurationException( msg, e );
+        }
 
         // TODO use allowed methods attribute
         service.setProperty( JavaService.ALLOWED_METHODS,
