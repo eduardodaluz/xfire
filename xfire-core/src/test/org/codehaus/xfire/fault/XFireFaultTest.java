@@ -31,7 +31,7 @@ public class XFireFaultTest
         fault.setRole("http://someuri");
         fault.setSubCode("m:NotAvailable");
         Node details = fault.getDetail();
-        Element e = details.getOwnerDocument().createElement("bah");
+        Element e = details.getOwnerDocument().createElementNS("urn:test", "bah");
         DOMUtils.setText(e, "bleh");
         details.appendChild(e);
         
@@ -71,7 +71,7 @@ public class XFireFaultTest
         fault.setRole("http://someuri");
         
         Node details = fault.getDetail();
-        Element e = details.getOwnerDocument().createElement("bah");
+        Element e = details.getOwnerDocument().createElementNS("urn:test", "bah");
         DOMUtils.setText(e, "bleh");
         details.appendChild(e);
         
