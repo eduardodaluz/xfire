@@ -1,4 +1,4 @@
-package org.codehaus.xfire.demo.java;
+package org.codehaus.xfire.demo;
 
 //START SNIPPET: echo
 /**
