@@ -5,6 +5,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 /**
  * Common StAX utilities.
  * 
@@ -138,4 +145,132 @@ public class STAXUtils
             }
         }
     }
+
+    /**
+     * Writes an Element to an XMLStreamWriter.  The writer must already
+     * have started the doucment (via writeStartDocument()).
+     * 
+     * @param e
+     * @param writer
+     * @throws XMLStreamException
+     */
+    public static void writeElement( Element e, XMLStreamWriter writer ) 
+        throws XMLStreamException
+    {
+        if ( e.getNamespaceURI() != null )
+        {
+            boolean writeNamespace = false;
+            String prefix = writer.getNamespaceContext().getPrefix(e.getNamespaceURI());
+            if ( prefix == null )
+            {
+                prefix = e.getPrefix();
+                writeNamespace = true;
+            }
+            
+            if ( prefix == null )
+            {
+                writer.setDefaultNamespace(e.getNamespaceURI());
+                writeNamespace = false;
+                writer.writeStartElement( e.getNodeName() );
+                writer.writeDefaultNamespace(e.getNamespaceURI());
+            }
+            else
+            {
+                writer.writeStartElement( prefix + ":" + e.getNodeName() );
+            }
+            
+            if ( writeNamespace )
+            {
+                writer.writeNamespace(prefix, e.getNamespaceURI());
+            }
+        }
+        else
+        {
+            writer.writeStartElement( e.getNodeName() );
+        }
+        
+        NamedNodeMap attrs = e.getAttributes();
+        for ( int i = 0; i < attrs.getLength(); i++ )
+        {
+            Node attr = attrs.item(i);
+            
+            boolean writeAttrNamespace = false;
+            String attrPrefix = writer.getNamespaceContext().getPrefix(attr.getNamespaceURI());
+            if ( attrPrefix == null )
+            {
+                writeAttrNamespace = true;
+                attrPrefix = attr.getPrefix();
+            }
+            
+            writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
+            
+            if ( writeAttrNamespace )
+            {
+                writer.writeNamespace(attrPrefix, e.getNamespaceURI());
+            }
+        }
+    
+        String value = DOMUtils.getContent(e);
+        
+        if ( value != null )
+            writer.writeCharacters( value );
+        
+        NodeList nodes = e.getChildNodes();
+        for ( int i = 0; i < nodes.getLength(); i++ )
+        {
+            Node n = nodes.item(i);
+            if ( n instanceof Element )
+            {
+                writeElement((Element)e, writer);
+            }
+        }
+        writer.writeEndElement();
+    }
+    
+    public static void readElements(Element root, XMLStreamReader reader)
+    	throws XMLStreamException
+    {
+        int read = 0; // number of elements read in
+        int event = reader.getEventType();
+        
+        Document doc = root.getOwnerDocument();
+        Element e = null;
+        
+        while ( true )
+        {
+            switch( event )
+            {
+                case XMLStreamConstants.START_ELEMENT:
+                    read++;
+                    e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
+                    root.appendChild(e);
+                    
+                    for ( int i = 0; i < reader.getAttributeCount(); i++ )
+                    {
+                        Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
+                                                          reader.getAttributeLocalName(i));
+                        attr.setValue(reader.getAttributeValue(i));
+                    }
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    read--;
+                    if ( read <= 0 )
+                        return;
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    DOMUtils.setText(e, reader.getText());  
+                    break;
+                case XMLStreamConstants.CDATA:
+                case XMLStreamConstants.START_DOCUMENT:
+                case XMLStreamConstants.END_DOCUMENT:
+                case XMLStreamConstants.ATTRIBUTE:
+                case XMLStreamConstants.NAMESPACE:
+                    break;
+                default:
+                    break;
+            }
+            event = reader.next();
+        }
+    }
+
 }

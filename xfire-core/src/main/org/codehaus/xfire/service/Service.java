@@ -4,6 +4,7 @@ import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -19,9 +20,15 @@ public interface Service
 
     Handler getServiceHandler();
     
+    HandlerPipeline getRequestPipeline();
+    
+    HandlerPipeline getResponsePipeline();
+    
+    HandlerPipeline getFaultPipeline();
+    
     /**
-     * The fault handler which handles exception which occurr during the
-     * invocation of the Service Handler.
+     * The fault handler which handles exception which occur during 
+     * processing.
      * @return
      */
     FaultHandler getFaultHandler();

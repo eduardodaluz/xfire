@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.util.DOMStreamWriter;
+import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -93,7 +93,7 @@ public class SOAP12FaultHandler
                     Node n = children.item(i);
                     if ( n instanceof Element )
                     {
-                        DOMStreamWriter.writeElement((Element)n, writer);
+                        STAXUtils.writeElement((Element)n, writer);
                     }
                 }
                 

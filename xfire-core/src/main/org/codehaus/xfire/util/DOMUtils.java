@@ -30,6 +30,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -287,5 +288,20 @@ public class DOMUtils
         Transformer t = tf.newTransformer();
         t.setOutputProperty(OutputKeys.INDENT, "yes");
         t.transform(new DOMSource(n), new StreamResult(os));
+    }
+    
+    public static Document createDocument()
+    {
+        try
+        {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder b = factory.newDocumentBuilder();
+            
+            return b.newDocument();
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new XFireRuntimeException("Couldn't find a DOM parser.", e);
+        }
     }
 }

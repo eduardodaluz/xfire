@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.java.message.MessageReader;
 import org.codehaus.xfire.java.message.MessageWriter;
@@ -27,7 +28,7 @@ public class XMLBeansType
         this.schemaType = schemaType;
     }
 
-    public Object readObject(MessageReader reader) 
+    public Object readObject(MessageReader reader, MessageContext context) 
     	throws XFireFault
     {
         try
@@ -40,7 +41,7 @@ public class XMLBeansType
         }
     }
 
-    public void writeObject(Object o, MessageWriter writer)
+    public void writeObject(Object o, MessageWriter writer, MessageContext context)
     	throws XFireFault
     {
         try
@@ -49,8 +50,6 @@ public class XMLBeansType
 
             STAXUtils.copy(obj.newXMLStreamReader(), 
                            writer.getXMLStreamWriter());
-            
-            writer.close();
         } 
         catch (XMLStreamException e)
         {

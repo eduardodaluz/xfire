@@ -7,9 +7,9 @@ import javax.wsdl.WSDLException;
 import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.xfire.wsdl.WSDLBuilder;
 
 /**
  * A simple service implementation.
@@ -33,8 +33,6 @@ public class SimpleService
     private Hashtable properties;
     
     private WSDLWriter wsdl;
-    
-    private WSDLBuilder wsdlBuilder;
     
     private String wsdlUri;
  
@@ -60,27 +58,12 @@ public class SimpleService
             {
                 wsdl = new ResourceWSDL( wsdlUri );
             }
-            else
-            {
-                org.codehaus.xfire.wsdl.WSDLBuilder b = getWSDLBuilder();
-                
-                if ( b != null )
-                    return getWSDLBuilder().createWSDLWriter( this );
-            }
         }
         
         return wsdl;
     }
 
-    public org.codehaus.xfire.wsdl.WSDLBuilder getWSDLBuilder()
-    {
-        return wsdlBuilder;
-    }
     
-    public void setWSDLBuilder( org.codehaus.xfire.wsdl.WSDLBuilder wsdlBuilder )
-    {
-        this.wsdlBuilder = wsdlBuilder;
-    }
     
     /**
      * @return Returns the URL to the WSDL for this service. 
@@ -209,5 +192,23 @@ public class SimpleService
     public void setWSDL( WSDLWriter wsdl )
     {
         this.wsdl = wsdl;
+    }
+
+    public HandlerPipeline getRequestPipeline()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public HandlerPipeline getResponsePipeline()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public HandlerPipeline getFaultPipeline()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

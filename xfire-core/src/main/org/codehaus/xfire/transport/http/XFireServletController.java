@@ -123,7 +123,7 @@ public class XFireServletController
      * @throws IOException
      * @throws ServletException
      */
-    private void generateServices(HttpServletResponse response)
+    protected void generateServices(HttpServletResponse response)
             throws IOException
     {
         response.setContentType("text/html");
@@ -222,7 +222,7 @@ public class XFireServletController
      * @param request
      * @return
      */
-    private String getService(HttpServletRequest request)
+    protected String getService(HttpServletRequest request)
     {
         String pathInfo = request.getPathInfo();
 

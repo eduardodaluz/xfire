@@ -18,8 +18,8 @@ public abstract class AbstractHandler
     extends AbstractXFireComponent
     implements Handler
 {
-    private static final Object STAX_WRITER_KEY = "xfire.stax-writer";
-
+    public static final String STAX_WRITER_KEY = "xfire.stax-writer";
+    
     /**
      * Returns null by default, indicating that no headers
      * were understood.
