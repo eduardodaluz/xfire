@@ -1,7 +1,6 @@
 package org.codehaus.xfire.handler;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
@@ -15,16 +14,17 @@ import org.codehaus.xfire.util.STAXUtils;
  */
 public class EchoHandler
     extends AbstractHandler
+    implements Handler
 {
     /**
-     * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext, javax.xml.stream.XMLStreamReader)
+     * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
      */
-    public void invoke( MessageContext context, XMLStreamReader parser ) 
+    public void invoke( MessageContext context ) 
         throws XFireFault
     {
         try
         {
-            STAXUtils.copy(parser, getXMLStreamWriter(context));
+            STAXUtils.copy(context.getXMLStreamReader(), getXMLStreamWriter(context));
             getXMLStreamWriter(context).flush();
         }
         catch (XMLStreamException e)

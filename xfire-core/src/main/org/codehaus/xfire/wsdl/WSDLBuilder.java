@@ -13,6 +13,6 @@ public interface WSDLBuilder
 {
     public final static String ROLE = WSDLBuilder.class.getName();
    
-    public WSDLWriter createWSDL( Service service )
+    public WSDLWriter createWSDLWriter( Service service )
     	throws WSDLException;
 }

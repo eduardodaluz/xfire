@@ -1,7 +1,6 @@
 package org.codehaus.xfire.handler;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.MessageContext;
 
@@ -26,19 +25,23 @@ public interface Handler
     QName[] getUnderstoodHeaders();
     
     /**
+     * The roles which this service applies to. 
+     * @return <code>null</code> or an empty if this endpoint handles no roles.
+     */
+    String[] getRoles();
+    
+    /**
      * Invoke a handler. If a fault occurs it will be handled
      * via the <code>handleFault</code> method.
-     * 
      * @param message The message context.
      */
-    void invoke( MessageContext context,
-                 XMLStreamReader reader ) throws Exception;
+    void invoke( MessageContext context ) throws Exception;
 
     /**
-     * Handles faults that occur in this handler.
+     * Handles faults that occur in this handler. This is not
+     * responsible for actually writing the fault response message.
      * 
      * @param context
      */
-    void handleFault( Exception e, 
-                      MessageContext context );
+    void handleFault( Exception e, MessageContext context );
 }

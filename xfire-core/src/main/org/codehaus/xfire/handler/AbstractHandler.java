@@ -18,7 +18,7 @@ public abstract class AbstractHandler
     extends AbstractXFireComponent
     implements Handler
 {
-    private static final Object STAX_WRITER_KEY = "stax-writer";
+    private static final Object STAX_WRITER_KEY = "xfire.stax-writer";
 
     /**
      * Returns null by default, indicating that no headers
@@ -31,6 +31,11 @@ public abstract class AbstractHandler
         return null;
     }
 
+    public String[] getRoles()
+    {
+        return null;
+    }
+    
     /**
      * Locates the fault handler on the service to write
      * the fault to the response message.

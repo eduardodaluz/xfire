@@ -15,7 +15,7 @@ public interface Service
 {
     String ROLE = Service.class.getName();
 
-    WSDLWriter getWSDL() throws WSDLException;
+    WSDLWriter getWSDLWriter() throws WSDLException;
 
     Handler getServiceHandler();
     

@@ -1,6 +1,5 @@
 package org.codehaus.xfire.handler;
 
-import javax.xml.stream.XMLStreamReader;
 import org.codehaus.xfire.MessageContext;
 
 /**
@@ -11,11 +10,12 @@ import org.codehaus.xfire.MessageContext;
  */
 public class BadHandler
     extends AbstractHandler
+    implements Handler
 {
     /**
-     * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext, javax.xml.stream.XMLStreamReader)
+     * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
      */
-    public void invoke( MessageContext context, XMLStreamReader parser ) 
+    public void invoke( MessageContext context ) 
         throws Exception
     {
         throw new Exception("Bad handler!");

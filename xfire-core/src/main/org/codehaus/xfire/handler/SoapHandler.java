@@ -32,9 +32,10 @@ public class SoapHandler
     /**
      * Invoke the Header and Body Handlers for the SOAP message.
      */
-    public void invoke(MessageContext context, XMLStreamReader reader)
+    public void invoke(MessageContext context)
             throws Exception
     {
+        XMLStreamReader reader = context.getXMLStreamReader();
         XMLStreamWriter writer = null;
         String encoding = null;
         
@@ -56,13 +57,13 @@ public class SoapHandler
                 if( reader.getLocalName().equals("Header") && headerHandler != null )
                 {
                     writer.writeStartElement("soap", "Header", context.getSoapVersion());
-                    headerHandler.invoke(context, reader);
+                    headerHandler.invoke(context);
                     writer.writeEndElement();
                 }
                 else if ( reader.getLocalName().equals("Body") )
                 {
                     writer.writeStartElement("soap", "Body", context.getSoapVersion());
-                    bodyHandler.invoke(context, reader);
+                    bodyHandler.invoke(context);
                     writer.writeEndElement();
                 }
                 else if ( reader.getLocalName().equals("Envelope") )

@@ -34,7 +34,7 @@ public class ConfigurationTest
         
         assertNotNull( xs );
         assertNotNull( xs.getServiceHandler() );
-        assertNotNull( xs.getWSDL() );
+        assertNotNull( xs.getWSDLWriter() );
     }
     
     public void testInvoke() 

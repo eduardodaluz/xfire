@@ -56,6 +56,7 @@ public class DefaultXFire
         {
             Service service = findService( context.getServiceName() );
             context.setService(service);
+            context.setXMLStreamReader(reader);
             
             if ( service == null )
             {
@@ -64,7 +65,7 @@ public class DefaultXFire
             
             handler = service.getServiceHandler();
             
-            handler.invoke( context, reader );
+            handler.invoke( context );
         }
         catch (Exception e)
         {
@@ -145,7 +146,7 @@ public class DefaultXFire
 	{
 		Service service = findService( serviceName );
 		
-		WSDLWriter wsdl = service.getWSDL();
+		WSDLWriter wsdl = service.getWSDLWriter();
 		return wsdl;
 	}
 

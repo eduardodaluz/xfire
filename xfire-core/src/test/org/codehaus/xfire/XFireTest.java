@@ -46,7 +46,7 @@ public class XFireTest
     {
         Service service = (Service) getServiceRegistry().getService("Echo");
         
-        WSDLWriter wsdl = service.getWSDL();
+        WSDLWriter wsdl = service.getWSDLWriter();
         
         assertNotNull(wsdl);
         

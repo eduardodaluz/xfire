@@ -3,6 +3,8 @@ package org.codehaus.xfire;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 
@@ -35,6 +37,19 @@ public interface XFire
      * @param context The MessageContext.
 	 */
     void invoke( InputStream in,
+                 MessageContext context );
+
+	/**
+	 * Processes a new SOAP Message request.  If a fault
+     * or exception occurs, it is written to the OutputStream
+     * in the <code>MessageContext</code>.  However, 
+     * <code>XFireRuntimeException</code>s may still be thrown if
+     * something fatal goes wrong in the pipeline.
+     * 
+     * @param in An InputStream to the SOAP document.
+     * @param context The MessageContext.
+	 */
+    void invoke( XMLStreamReader reader,
                  MessageContext context );
 
     /**

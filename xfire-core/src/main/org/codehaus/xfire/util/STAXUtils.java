@@ -67,18 +67,6 @@ public class STAXUtils
         {
             prefix = "";
         }
-        
-        // Declare which prefixes we're using.
-        for ( int i = 0; i < reader.getNamespaceCount(); i++ )
-        {
-            String nsPrefix = reader.getNamespacePrefix(i);
-            String nsURI = reader.getNamespaceURI(i);
-            
-            if ( nsPrefix != null && nsPrefix.length() > 0 )
-            {
-                writer.setPrefix(nsPrefix, nsURI);
-            }
-        }
 
         boolean wroteDefault = false;
         String uri = reader.getNamespaceURI();

@@ -216,7 +216,7 @@ public class AbstractXFireTest
         ServiceRegistry reg = getServiceRegistry();
         Service hello = reg.getService(service);
         
-        return hello.getWSDL();
+        return hello.getWSDLWriter();
     }
     
     protected XFire getXFire()

@@ -3,7 +3,7 @@ package org.codehaus.xfire.transport.http;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.xfire.session.Session;
+import org.codehaus.xfire.transport.Session;
 
 /**
  * The default servlet session implementation.
@@ -25,7 +25,7 @@ public class XFireHttpSession
     }
     
 	/**
-	 * @see org.codehaus.xfire.session.Session#get(java.lang.Object)
+	 * @see org.codehaus.xfire.transport.Session#get(java.lang.Object)
 	 */
 	public Object get(Object key)
 	{
@@ -33,7 +33,7 @@ public class XFireHttpSession
 	}
 
 	/**
-	 * @see org.codehaus.xfire.session.Session#put(java.lang.Object, java.lang.Object)
+	 * @see org.codehaus.xfire.transport.Session#put(java.lang.Object, java.lang.Object)
 	 */
 	public void put(Object key, Object value)
 	{

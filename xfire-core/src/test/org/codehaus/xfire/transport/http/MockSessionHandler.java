@@ -1,6 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import javax.xml.stream.XMLStreamReader;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.EchoHandler;
@@ -15,10 +14,10 @@ public class MockSessionHandler
 {
     public static boolean inSession = false;
 
-    public void invoke( MessageContext context, XMLStreamReader reader ) 
+    public void invoke( MessageContext context ) 
         throws XFireFault
     {
-        super.invoke( context, reader );
+        super.invoke( context );
         
         System.out.println("putting in session");
         context.getSession().put("key", "hello world");

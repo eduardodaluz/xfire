@@ -4,8 +4,10 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.session.Session;
+import org.codehaus.xfire.transport.Session;
 
 /**
  * Holds inforrmation about the message request and response.
@@ -25,6 +27,7 @@ public class MessageContext
     private Map properties;
     private String soapVersion;
     private Service service;
+    private XMLStreamReader xmlStreamReader;
     
     /**
      * Create a MessageContext to invoke a service with the
@@ -145,5 +148,21 @@ public class MessageContext
     public void setService( Service service )
     {
         this.service = service;
+    }
+    
+    /**
+     * @return Returns the xmlStreamReader.
+     */
+    public XMLStreamReader getXMLStreamReader()
+    {
+        return xmlStreamReader;
+    }
+    
+    /**
+     * @param xmlStreamReader The xmlStreamReader to set.
+     */
+    public void setXMLStreamReader(XMLStreamReader xmlStreamReader)
+    {
+        this.xmlStreamReader = xmlStreamReader;
     }
 }

@@ -13,7 +13,7 @@ import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.wsdl.WSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
@@ -180,13 +180,13 @@ public class PlexusXFireTest
      * @return
      * @throws Exception
      */
-    protected WSDL getWSDL(String service) 
+    protected WSDLWriter getWSDL(String service) 
         throws Exception
     {
         ServiceRegistry reg = getServiceRegistry();
         Service hello = reg.getService(service);
         
-        return hello.getWSDL();
+        return hello.getWSDLWriter();
     }
     
     protected XFire getXFire() throws Exception

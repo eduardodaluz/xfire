@@ -48,9 +48,9 @@ public class SimpleService
     }
     
     /**
-     * @see org.codehaus.xfire.service.Service#getWSDL()
+     * @see org.codehaus.xfire.service.Service#getWSDLWriter()
      */
-    public WSDLWriter getWSDL() throws WSDLException
+    public WSDLWriter getWSDLWriter() throws WSDLException
     {
         if ( wsdl == null )
         {
@@ -65,7 +65,7 @@ public class SimpleService
                 org.codehaus.xfire.wsdl.WSDLBuilder b = getWSDLBuilder();
                 
                 if ( b != null )
-                    return getWSDLBuilder().createWSDL( this );
+                    return getWSDLBuilder().createWSDLWriter( this );
             }
         }
         

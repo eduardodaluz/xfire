@@ -1,4 +1,4 @@
-package org.codehaus.xfire.session;
+package org.codehaus.xfire.transport;
 
 /**
  * A XFire Session for a series of invocations.

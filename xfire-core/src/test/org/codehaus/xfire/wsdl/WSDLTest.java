@@ -16,7 +16,7 @@ public class WSDLTest
         SimpleService s = new SimpleService();
         s.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString() );
 
-        WSDLWriter wsdl = s.getWSDL();
+        WSDLWriter wsdl = s.getWSDLWriter();
         wsdl.write( System.out );
     }
 }
