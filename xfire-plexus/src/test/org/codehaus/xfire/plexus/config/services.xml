@@ -19,6 +19,22 @@
       <use>document</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
     </service>
+	
+	
+    <service>
+      <!-- 
+		Really this service would never work because the params aren't xmlbeans.
+		But, we aren't testing that here.
+	  -->
+      <type>java</type>
+      <name>Echo3</name>
+      <namespace>urn:Echo3</namespace>
+      <version>1.1</version>
+      <encoding>literal</encoding>
+      <use>document</use>
+      <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
+	  <wsdlUrl>http://bleh</wsdlUrl>
+    </service>
   </services>
   
 </xfire>

@@ -28,5 +28,10 @@ public class ConfigurationTest
         
         assertNotNull( js ); 
         
+        Service xs = getServiceRegistry().getService("Echo3");
+        
+        assertNotNull( xs );
+        assertNotNull( xs.getServiceHandler() );
+        assertNotNull( xs.getWSDL() );
     }
 }
