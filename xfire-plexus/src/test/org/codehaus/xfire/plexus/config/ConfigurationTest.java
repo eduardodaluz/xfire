@@ -1,6 +1,5 @@
 package org.codehaus.xfire.plexus.config;
 
-import org.apache.log4j.BasicConfigurator;
 import org.codehaus.xfire.plexus.PlexusXFireTest;
 import org.codehaus.xfire.service.object.ObjectService;
 import org.dom4j.Document;
@@ -17,7 +16,7 @@ public class ConfigurationTest
     {
         System.setProperty("xfire.config", "/org/codehaus/xfire/plexus/config/services.xml");
         super.setUp();
-        BasicConfigurator.configure();
+
         lookup(ConfigurationService.ROLE);
     }
     
