@@ -79,7 +79,7 @@ public class STAXUtils
         String uri = reader.getNamespaceURI();
         
         // Write out the element name and possible the default namespace
-        if ( uri != null )z
+        if ( uri != null )
         {
             String definedNS = writer.getNamespaceContext().getNamespaceURI(prefix);
             if ( prefix.equals("") )
