@@ -1,0 +1,15 @@
+<configuration>
+
+  <lifecycle-handler-manager implementation="org.codehaus.plexus.lifecycle.DefaultLifecycleHandlerManager">
+    <default-lifecycle-handler-id>plexus-configurable</default-lifecycle-handler-id>
+  </lifecycle-handler-manager>
+
+  <load-on-start>
+    <component>
+      <role>org.codehaus.xfire.plexus.config.ConfigurationService</role>
+    </component>
+  </load-on-start>
+  
+  <components/>
+
+</configuration>

@@ -68,13 +68,29 @@ public class DefaultConfigurationService
     private void createService(PlexusConfiguration c) 
         throws Exception
     {
-        String type = c.getChild("type").getValue();
+        String type = c.getChild("type").getValue("simple");
+        
+        if ( type == null )
+        {
+            getLogger().error("Service " + c.getAttribute("name") 
+                    + " has no type.");
+            return;
+        }
         
         getLogger().info("Creating service " + c.getChild("name").getValue() + " with type " + type);
         Configurator builder = 
             (Configurator) getServiceLocator().lookup( Configurator.ROLE, type );
         
-        Service service = builder.createService(c);
+        if ( builder == null )
+        {
+            getLogger().error("Creating service " + c.getChild("name").getValue() + " with type " + type
+                    + ". Service " + c.getAttribute("name") + " not created.");
+            return;
+        }
+        else
+        {
+            Service service = builder.createService(c);
+        }
     }
 
 	protected Reader findConfigurationReader() throws FileNotFoundException

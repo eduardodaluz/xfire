@@ -5,6 +5,7 @@ import javax.servlet.ServletException;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.transport.http.XFireServlet;
 
 /**
  * Creates an embedded version of XFire within a servlet.  For most
@@ -36,6 +37,7 @@ public class StandaloneXFireServlet
         File config = new File(getWebappBase(), getInitParameter("config"));
         
         System.setProperty("xfire.config", config.getAbsolutePath());
+        System.out.println("Configuration file: " + config.getAbsolutePath());
         
         String plexusConfig = getInitParameter("plexus-config");
         if ( plexusConfig != null )

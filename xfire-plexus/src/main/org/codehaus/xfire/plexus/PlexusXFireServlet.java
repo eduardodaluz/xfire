@@ -24,7 +24,7 @@ import org.codehaus.xfire.transport.http.XFireHttpSession;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004
  */
-public class XFireServlet
+public class PlexusXFireServlet
     extends PlexusServlet
 {
     private static ThreadLocal requests = new ThreadLocal();

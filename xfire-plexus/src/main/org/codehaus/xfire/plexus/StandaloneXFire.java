@@ -80,7 +80,7 @@ public class StandaloneXFire
 
         if ( resource == null )
         {
-            resource = getClass().getResource("/org/codehaus/xfire/StandaloneXFire.xml");
+            resource = getClass().getResource("/org/codehaus/xfire/plexus/StandaloneXFire.xml");
         }
         
 		return resource;
