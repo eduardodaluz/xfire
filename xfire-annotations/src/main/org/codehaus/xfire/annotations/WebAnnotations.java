@@ -99,6 +99,6 @@ public interface WebAnnotations
      * @param aClass the class.
      * @return the annotation; or <code>null</code> if it could not be found.
      */
-    SOAPBindingAnnotation getSoapBindingAnnotation(Class aClass);
+    SOAPBindingAnnotation getSOAPBindingAnnotation(Class aClass);
 
 }

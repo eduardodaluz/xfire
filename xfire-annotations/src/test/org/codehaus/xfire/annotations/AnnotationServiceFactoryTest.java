@@ -8,10 +8,12 @@ package org.codehaus.xfire.annotations;
 import java.lang.reflect.Method;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.service.object.Operation;
 import org.codehaus.xfire.service.object.Parameter;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
@@ -38,6 +40,9 @@ public class AnnotationServiceFactoryTest
     public void testCreate()
             throws Exception
     {
+        webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(false);
+
         WebServiceAnnotation annotation = new WebServiceAnnotation();
         annotation.setServiceName("EchoService");
         annotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
@@ -67,6 +72,9 @@ public class AnnotationServiceFactoryTest
 
     public void testNoWebServiceAnnotation()
     {
+        webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(null);
         webAnnotationsControl.replay();
@@ -85,6 +93,9 @@ public class AnnotationServiceFactoryTest
     public void testEndpointInterface()
             throws SecurityException, NoSuchMethodException
     {
+        webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(false);
+
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("EchoService");
         implAnnotation.setTargetNamespace("not used");
@@ -129,6 +140,9 @@ public class AnnotationServiceFactoryTest
     public void testParameterNameAnnotation()
             throws SecurityException, NoSuchMethodException
     {
+        webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(false);
+
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("EchoService");
         implAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
@@ -168,5 +182,37 @@ public class AnnotationServiceFactoryTest
         assertTrue(operation.isAsync());
 
         webAnnotationsControl.verify();
+    }
+
+    public void testSOAPBindingAnnotation()
+            throws Exception
+    {
+        webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(true);
+
+        SOAPBindingAnnotation soapBinding = new SOAPBindingAnnotation();
+        soapBinding.setUse(SOAPBindingAnnotation.USE_ENCODED);
+
+        webAnnotations.getSOAPBindingAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(soapBinding);
+
+        WebServiceAnnotation webservice = new WebServiceAnnotation();
+        webservice.setServiceName("EchoService");
+        webservice.setTargetNamespace("http://xfire.codehaus.org/EchoService");
+
+        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(webservice);
+
+        Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
+        webAnnotationsControl.replay();
+
+        Service service = service = annotationServiceFactory.create(EchoServiceImpl.class);
+        assertEquals(SoapConstants.USE_ENCODED, service.getUse());
+
+        webAnnotationsControl.verify();
+
     }
 }

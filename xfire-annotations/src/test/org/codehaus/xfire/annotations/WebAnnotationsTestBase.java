@@ -178,7 +178,7 @@ public abstract class WebAnnotationsTestBase
     public void testGetSOAPBindingAnnotation()
             throws Exception
     {
-        SOAPBindingAnnotation soapBinding = webAnnotations.getSoapBindingAnnotation(echoServiceClass);
+        SOAPBindingAnnotation soapBinding = webAnnotations.getSOAPBindingAnnotation(echoServiceClass);
         assertNotNull(soapBinding);
         assertEquals(SOAPBindingAnnotation.STYLE_RPC, soapBinding.getStyle());
         assertEquals(SOAPBindingAnnotation.USE_LITERAL, soapBinding.getUse());

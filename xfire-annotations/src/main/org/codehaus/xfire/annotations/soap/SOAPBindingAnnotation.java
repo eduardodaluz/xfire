@@ -3,6 +3,8 @@
  */
 package org.codehaus.xfire.annotations.soap;
 
+import org.codehaus.xfire.soap.SoapConstants;
+
 /**
  * Represents an common representation of a soap binding annotation. Specifies the mapping of the Web Service onto the
  * SOAP message protocol.
@@ -53,6 +55,29 @@ public class SOAPBindingAnnotation
     }
 
     /**
+     * Returns a <code>String</code> representation of the SOAP binding style. The returned value is one of {@link
+     * SoapConstants#STYLE_DOCUMENT} or {@link SoapConstants#STYLE_RPC}.
+     *
+     * @return the SOAP binding style as a <code>String</code>.
+     * @see SoapConstants
+     */
+    public String getStyleString()
+    {
+        if (style == SOAPBindingAnnotation.STYLE_DOCUMENT)
+        {
+            return SoapConstants.STYLE_DOCUMENT;
+        }
+        else if (style == SOAPBindingAnnotation.STYLE_RPC)
+        {
+            return SoapConstants.STYLE_RPC;
+        }
+        else
+        {
+            throw new IllegalStateException("Invalid style set: " + style);
+        }
+    }
+
+    /**
      * Sets the SOAP binding style, which defines the encoding style for messages send to and from the Web Service. The
      * given parameter must be one of {@link #STYLE_DOCUMENT} or {@link #STYLE_RPC}.
      *
@@ -80,6 +105,30 @@ public class SOAPBindingAnnotation
     public int getUse()
     {
         return use;
+    }
+
+    /**
+     * Returns a <code>String</code> representation of the SOAP binding use. The returned value is one of {@link
+     * SoapConstants#USE_ENCODED} or {@link SoapConstants#USE_LITERAL}.
+     *
+     * @return the SOAP binding use as a <code>String</code>.
+     * @see SoapConstants
+     */
+    public String getUseString()
+    {
+        if (use == SOAPBindingAnnotation.USE_ENCODED)
+        {
+            return SoapConstants.USE_ENCODED;
+        }
+        else if (use == SOAPBindingAnnotation.USE_LITERAL)
+        {
+            return SoapConstants.USE_LITERAL;
+        }
+        else
+        {
+            throw new IllegalStateException("Invalid use set: " + use);
+        }
+
     }
 
     /**

@@ -70,7 +70,7 @@ public class CommonsWebAttributes
         return Attributes.hasAttributeType(aClass, SOAPBinding.class);
     }
 
-    public SOAPBindingAnnotation getSoapBindingAnnotation(Class aClass)
+    public SOAPBindingAnnotation getSOAPBindingAnnotation(Class aClass)
     {
         return (SOAPBindingAnnotation) Attributes.getAttribute(aClass, SOAPBinding.class);
     }

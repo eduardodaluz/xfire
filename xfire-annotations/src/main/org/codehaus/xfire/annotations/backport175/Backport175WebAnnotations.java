@@ -106,7 +106,7 @@ public class Backport175WebAnnotations
         return Annotations.isAnnotationPresent(SOAPBinding.class, aClass);
     }
 
-    public SOAPBindingAnnotation getSoapBindingAnnotation(Class aClass)
+    public SOAPBindingAnnotation getSOAPBindingAnnotation(Class aClass)
     {
         SOAPBinding soapBinding = (SOAPBinding) Annotations.getAnnotation(SOAPBinding.class, aClass);
         if (soapBinding != null)

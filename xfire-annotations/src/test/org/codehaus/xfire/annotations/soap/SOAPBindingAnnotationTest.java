@@ -2,6 +2,7 @@ package org.codehaus.xfire.annotations.soap;
 
 
 import junit.framework.TestCase;
+import org.codehaus.xfire.soap.SoapConstants;
 
 public class SOAPBindingAnnotationTest
         extends TestCase
@@ -54,5 +55,26 @@ public class SOAPBindingAnnotationTest
         {
             // expected behavior
         }
+    }
+
+    public void testGetStyleString()
+            throws Exception
+    {
+        soapBindingAnnotation.setStyle(SOAPBindingAnnotation.STYLE_DOCUMENT);
+        assertEquals(SoapConstants.STYLE_DOCUMENT, soapBindingAnnotation.getStyleString());
+
+        soapBindingAnnotation.setStyle(SOAPBindingAnnotation.STYLE_RPC);
+        assertEquals(SoapConstants.STYLE_RPC, soapBindingAnnotation.getStyleString());
+    }
+
+
+    public void testGetUseString()
+            throws Exception
+    {
+        soapBindingAnnotation.setUse(SOAPBindingAnnotation.USE_ENCODED);
+        assertEquals(SoapConstants.USE_ENCODED, soapBindingAnnotation.getUseString());
+
+        soapBindingAnnotation.setUse(SOAPBindingAnnotation.USE_LITERAL);
+        assertEquals(SoapConstants.USE_LITERAL, soapBindingAnnotation.getUseString());
     }
 }

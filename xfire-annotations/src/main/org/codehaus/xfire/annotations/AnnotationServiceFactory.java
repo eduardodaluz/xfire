@@ -3,10 +3,12 @@ package org.codehaus.xfire.annotations;
 import java.lang.reflect.Method;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.service.object.ObjectServiceFactory;
+import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.type.TypeMappingRegistry;
@@ -29,6 +31,22 @@ public class AnnotationServiceFactory
     {
         super(transportManager, registry);
         this.webAnnotations = webAnnotations;
+    }
+
+    public Service create(Class clazz)
+    {
+        if (webAnnotations.hasSOAPBindingAnnotation(clazz))
+        {
+            SOAPBindingAnnotation soapBindingAnnotation = webAnnotations.getSOAPBindingAnnotation(clazz);
+            return create(clazz,
+                    Soap11.getInstance(),
+                    soapBindingAnnotation.getStyleString(),
+                    soapBindingAnnotation.getUseString());
+        }
+        else
+        {
+            return super.create(clazz);
+        }
     }
 
     public Service create(Class clazz, SoapVersion version, String style, String use)
