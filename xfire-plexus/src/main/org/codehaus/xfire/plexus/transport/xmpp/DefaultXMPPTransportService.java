@@ -1,8 +1,8 @@
 package org.codehaus.xfire.plexus.transport.xmpp;
 
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.xmpp.XMPPTransport;
+import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.xmpp.XFirePacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 
 /**
@@ -17,10 +17,8 @@ public class DefaultXMPPTransportService
     private String resource;
     
     private XMPPConnection conn;
-
-    private TransportManager manager;
-    
-    private XMPPTransport transport;
+    private XFirePacketListener transport;
+    private XFire xfire;
     
     /**
      * @throws Exception
@@ -31,8 +29,7 @@ public class DefaultXMPPTransportService
         conn = new XMPPConnection(server);
         conn.login(username, password, resource);
         
-        transport = new XMPPTransport(conn);
-        manager.register(transport);
+        transport = new XFirePacketListener(xfire, conn);
     }
     
     public XMPPConnection getXMPPConnection()
