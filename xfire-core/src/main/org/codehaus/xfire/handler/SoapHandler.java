@@ -56,7 +56,6 @@ public class SoapHandler
                 if( reader.getLocalName().equals("Header") && headerHandler != null )
                 {
                     writer.writeStartElement("soap", "Header", context.getSoapVersion());
-                    reader.nextTag();
                     headerHandler.invoke(context, reader);
                     writer.writeEndElement();
                 }
