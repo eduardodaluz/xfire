@@ -4,36 +4,26 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+
 import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.XFireFactory;
 
 /**
  * <p>
- * The StandaloneXFire class allows you to embed XFire any which way
- * within your apps.  Grab an instance of the <code>StandaloneXFire</code>
- * instance via <code>getInstance()</code> then access such components
- * as the ServiceRegistry or TransportService.
- * </p>
- * <p>
- * This class assumes one XFire instance per JVM. To create many XFire instances
- * you must use Plexus directly.
- * </p>
- * <p>
- * To use a non-standard plexus configuration for XFire, set the
- * "xfire.plexusConfig" system property to the location of the configuration
- * file.  This can be in the classpath or in the filesystem.
+ * The StandaloneXFire class allows you to embed a Plexus managed version
+ * of XFire within your application. Use the XFireFactory to access it.
  * </p>
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class StandaloneXFire
+public class PlexusXFireFactory
+	extends XFireFactory
 {
-    private static StandaloneXFire standalone;
-    
+    private static PlexusXFireFactory standalone;
+
     protected Embedder embed;
 
-    private StandaloneXFire() 
+    protected PlexusXFireFactory() 
         throws Exception
     {
         URL resource = getPlexusConfiguration();
@@ -47,6 +37,20 @@ public class StandaloneXFire
         embed.setProperties(contextProperties);
         
         embed.start();
+    }
+
+    public static XFireFactory createInstance() 
+    	throws Exception
+    {
+        if ( standalone == null )
+        {
+            synchronized( PlexusXFireFactory.class )
+            {
+                standalone = new PlexusXFireFactory();
+            }
+        }
+        
+        return standalone;
     }
 
     /**
@@ -86,34 +90,11 @@ public class StandaloneXFire
 		return resource;
 	}
 
-	public static StandaloneXFire getInstance() 
-        throws Exception
-    {
-        if (standalone == null)
-		{
-			synchronized (StandaloneXFire.class)
-			{
-				standalone = new StandaloneXFire();
-			}
-		}
-		return standalone;
-    }
-    
-    public ServiceRegistry getServiceRegistry() throws Exception
-    {
-        return (ServiceRegistry) embed.lookup( ServiceRegistry.ROLE );
-    }
-    
     public XFire getXFire() throws Exception
     {
         return (XFire) embed.lookup( XFire.ROLE );
     }
-    
-    public TransportManager getTransportService() throws Exception
-    {
-        return (TransportManager) embed.lookup( TransportManager.ROLE );
-    }
-    
+
 	protected void finalize() throws Throwable
 	{
 		embed.stop();

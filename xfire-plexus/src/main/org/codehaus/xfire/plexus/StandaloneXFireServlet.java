@@ -1,8 +1,11 @@
 package org.codehaus.xfire.plexus;
 
 import java.io.File;
+
 import javax.servlet.ServletException;
+
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.XFireServlet;
@@ -17,15 +20,21 @@ import org.codehaus.xfire.transport.http.XFireServlet;
 public class StandaloneXFireServlet
 	extends XFireServlet
 {
-    StandaloneXFire xfire;
+    XFireFactory factory;
     
     private File webInfPath;
+    
+    static
+    {
+        // register the PlexusXFireFactory
+        XFireFactory.registerFactory(PlexusXFireFactory.class, true);
+    }
     
     public XFire getXFire() throws ServletException
     {
         try
         {
-            return xfire.getXFire();
+            return factory.getXFire();
         }
         catch (Exception e)
         {
@@ -59,7 +68,7 @@ public class StandaloneXFireServlet
         
         try
         {
-            return StandaloneXFire.getInstance().getXFire();
+            return XFireFactory.newInstance().getXFire();
         }       
         catch (Exception e)
         {
@@ -77,7 +86,7 @@ public class StandaloneXFireServlet
     {
         try
         {
-            return xfire.getTransportService();
+            return factory.getXFire().getTransportManager();
         }
         catch (Exception e)
         {
@@ -90,7 +99,7 @@ public class StandaloneXFireServlet
     {
         try
         {
-            return xfire.getServiceRegistry();
+            return factory.getXFire().getServiceRegistry();
         }
         catch (Exception e)
         {
@@ -100,7 +109,7 @@ public class StandaloneXFireServlet
     
     public void destroy()
     {
-        xfire = null;
+        factory = null;
 
         super.destroy();
     }
