@@ -2,6 +2,9 @@ package org.codehaus.xfire.util;
 
 import java.util.StringTokenizer;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.codehaus.yom.Element;
 
 /**
@@ -44,6 +47,45 @@ public class NamespaceHelper
         }
     }
     
+    /**
+     * Create a unique namespace uri/prefix combination.
+     * 
+     * @param nsUri
+     * @return The namespace with the specified URI.  If one doesn't
+     * exist, one is created.
+     * @throws XMLStreamException 
+     */
+    public static String getUniquePrefix(XMLStreamWriter writer, String namespaceURI, boolean declare) 
+        throws XMLStreamException
+    {
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null)
+        {
+            prefix = getUniquePrefix(writer);
+            
+            if (declare)
+                writer.writeNamespace(prefix, namespaceURI);
+        }
+        return prefix;
+    }
+
+    public static String getUniquePrefix( XMLStreamWriter writer )
+    {
+        int n = 1;
+        
+        while(true)
+        {
+            String nsPrefix = "ns" + n;
+            
+            if ( writer.getNamespaceContext().getNamespaceURI(nsPrefix) == null )
+            {
+                return nsPrefix;
+            }
+            
+            n++;
+        }
+    }
+
     public static String makeNamespaceFromClassName(String className, String protocol)
     {
         int index = className.lastIndexOf(".");
