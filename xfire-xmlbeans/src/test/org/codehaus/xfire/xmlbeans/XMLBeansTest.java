@@ -17,16 +17,9 @@
  **/
 package org.codehaus.xfire.xmlbeans;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.AbstractXFireTest;
-import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.handler.SoapHandler;
 
 /**
  * @version $Revision$
@@ -35,90 +28,20 @@ public class XMLBeansTest
     extends AbstractXFireTest
 {
     public void testRequestResponse() throws Exception
-    {}/*
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
-        MessageContext context = 
-            new MessageContext( "Test",
-                                null,
-                                out,
-                                null,
-                                null );
-        
-        XMLBeansSoapHandler handler = getXMLBeansHandler();
-        
-        handler.invoke(context, 
-            createXMLStreamReader(getClass().getResource("sampleRequest.xml" )));
-        
-        XmlObject xmlObject = handler.getObject();
-
-        assertTrue( "should have received an object: " + xmlObject,
-                    xmlObject != null );
-        
-        System.out.println( "Parsed: " + xmlObject );
-        System.out.println( "Response: " + out.toString() );
-        
-        // is there an easy way to test if the 
-        // response is equal to the request, ignoring whitespace et al?
-        assertTrue( out.toString().length() > 0 );
-    }*/
-
-    /**
-     * Test the handler using the XFire service mechanism.
-     * /
-    public void testService() throws Exception
     {
-        SimpleService service = new SimpleService();
+        TestHandler handler = new TestHandler();
+        SoapHandler shandler = new SoapHandler(handler);
+        
+        XMLBeansService service = new XMLBeansService();
         service.setName("Test");
+        service.setServiceHandler(shandler);
         
-        getServiceRegistry().register( service );
-
-        XMLBeansSoapHandler handler = getXMLBeansHandler();
-        service.setServiceHandler( handler );
+        getServiceRegistry().register(service);
         
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = 
-            new MessageContext( "Test",
-                                null,
-                                out,
-                                null,
-                                null );
-        getXFire().invoke( 
-            getClass().getResourceAsStream("sampleRequest.xml" ),
-            context );
+        invokeService( "Test", "test.xml" );
         
-        XmlObject xmlObject = handler.getObject();
-        
-        assertTrue( "should have received an object: " + xmlObject,
-                    xmlObject != null );
-
-        // is there an easy way to test if the 
-        // response is equal to the request, ignoring whitespace et al?
-        assertTrue( out.toString().length() > 0 );
+        XmlObject[] xmlObject = handler.getRequest();
+        assertNotNull(xmlObject);
+        assertEquals(3, xmlObject.length);
     }
-    
-    public XMLBeansSoapHandler getXMLBeansHandler()
-    {
-        XMLBeansSoapHandler handler = new XMLBeansSoapHandler()
-        {
-            protected void handleBody( MessageContext context, XmlObject body ) 
-                throws Exception
-            {
-                reply( context, body );
-            }
-        };
-        
-        return handler;
-    }
-    
-    protected XMLStreamReader createXMLStreamReader( URL resource )
-            throws XMLStreamException, IOException
-    {
-        assertTrue( "Found resource", resource != null );
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        XMLStreamReader in = inputFactory.createXMLStreamReader( resource
-                .openStream() );
-        
-        return in;
-    }*/
 }
