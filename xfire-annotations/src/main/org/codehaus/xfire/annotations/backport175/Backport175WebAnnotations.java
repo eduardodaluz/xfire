@@ -23,12 +23,18 @@ public class Backport175WebAnnotations
     public WebServiceAnnotation getWebServiceAnnotation(Class aClass)
     {
         WebService webService = (WebService) Annotations.getAnnotation(WebService.class, aClass);
-        WebServiceAnnotation annotation = new WebServiceAnnotation();
-        annotation.setEndpointInterface(webService.endpointInterface());
-        annotation.setName(webService.name());
-        annotation.setServiceName(webService.serviceName());
-        annotation.setTargetNamespace(webService.targetNamespace());
-        return annotation;
+        if (webService != null)
+        {
+            WebServiceAnnotation annotation = new WebServiceAnnotation();
+            annotation.setEndpointInterface(webService.endpointInterface());
+            annotation.setName(webService.name());
+            annotation.setServiceName(webService.serviceName());
+            annotation.setTargetNamespace(webService.targetNamespace());
+            return annotation;
+        } else
+        {
+            return null;
+        }
     }
 
     public boolean hasWebMethodAnnotation(Method method)
@@ -39,9 +45,15 @@ public class Backport175WebAnnotations
     public WebMethodAnnotation getWebMethodAnnotation(Method method)
     {
         WebMethod webMethod = (WebMethod) Annotations.getAnnotation(WebMethod.class, method);
-        WebMethodAnnotation annotation = new WebMethodAnnotation();
-        annotation.setAction(webMethod.action());
-        annotation.setOperationName(webMethod.operationName());
-        return annotation;
+        if (webMethod != null)
+        {
+            WebMethodAnnotation annotation = new WebMethodAnnotation();
+            annotation.setAction(webMethod.action());
+            annotation.setOperationName(webMethod.operationName());
+            return annotation;
+        } else
+        {
+            return null;
+        }
     }
 }

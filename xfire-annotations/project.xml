@@ -1,4 +1,5 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:ant="jelly:ant">
     <pomVersion>1</pomVersion>
     <name>Annotations XFire Module</name>
     <groupId>xfire</groupId>
@@ -35,7 +36,17 @@
             <version>2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>backport175</artifactId>
+            <version>1.0.RC1</version>
+        </dependency>
+
     </dependencies>
+
+    <goal name="homo">
+        <ant:echo message="HOMO!"/>
+    </goal>
 
     <build>
         <sourceDirectory>${basedir}/src/main</sourceDirectory>

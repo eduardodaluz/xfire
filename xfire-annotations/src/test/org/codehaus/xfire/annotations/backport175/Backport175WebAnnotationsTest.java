@@ -1,39 +1,19 @@
 package org.codehaus.xfire.annotations.backport175;
 
-import junit.framework.TestCase;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebAnnotationsTestBase;
 
 public class Backport175WebAnnotationsTest
-        extends TestCase
+        extends WebAnnotationsTestBase
 {
-    private Backport175WebAnnotations webAnnotations;
 
-    protected void setUp()
-            throws Exception
+    protected WebAnnotations getWebAnnotations()
     {
-        webAnnotations = new Backport175WebAnnotations();
+        return new Backport175WebAnnotations();
     }
 
-    public void testHasWebServiceAnnotation()
-            throws Exception
+    protected Class getEchoServiceClass()
     {
-        fail("Test is not implemented");
-    }
-
-    public void testHasWebMethodAnnotation()
-            throws Exception
-    {
-        fail("Test is not implemented");
-    }
-
-    public void testGetWebServiceAnnotation()
-            throws Exception
-    {
-        fail("Test is not implemented");
-    }
-
-    public void testGetWebMethodAnnotation()
-            throws Exception
-    {
-        fail("Test is not implemented");
+        return Backport175EchoService.class;
     }
 }

@@ -1,50 +1,20 @@
 package org.codehaus.xfire.annotations.commons;
 
-import java.lang.reflect.Method;
-
-import junit.framework.TestCase;
-import org.codehaus.xfire.annotations.WebMethodAnnotation;
-import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebAnnotationsTestBase;
 
 public class CommonsWebAttributesTest
-        extends TestCase
+        extends WebAnnotationsTestBase
 {
-    private CommonsWebAttributes webAttributes;
-    private Method doItMethod;
 
-    protected void setUp()
-            throws Exception
+
+    protected WebAnnotations getWebAnnotations()
     {
-        webAttributes = new CommonsWebAttributes();
-        doItMethod = TestingService.class.getMethod("doIt", new Class[0]);
+        return new CommonsWebAttributes();
     }
 
-    public void testHasWebServiceAnnotation()
-            throws Exception
+    protected Class getEchoServiceClass()
     {
-        assertTrue("Attribute not set", webAttributes.hasWebServiceAnnotation(TestingService.class));
-    }
-
-
-    public void testHasWebMethodAnnotation()
-            throws Exception
-    {
-        assertTrue("Attribute not set", webAttributes.hasWebMethodAnnotation(doItMethod));
-    }
-
-    public void testGetWebServiceAnnotation()
-            throws Exception
-    {
-        WebServiceAnnotation webService = webAttributes.getWebServiceAnnotation(TestingService.class);
-        assertNotNull(webService);
-        assertEquals("name", webService.getName());
-    }
-
-    public void testGetWebMethodAnnotation()
-            throws Exception
-    {
-        WebMethodAnnotation webMethod = webAttributes.getWebMethodAnnotation(doItMethod);
-        assertNotNull(webMethod);
-        assertEquals("action", webMethod.getAction());
+        return CommonsEchoService.class;
     }
 }
