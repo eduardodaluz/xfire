@@ -29,26 +29,37 @@ public class STAXUtilsTest
     {
         String outS = doCopy("amazon.xml");
         
-        SAXReader sax = new SAXReader();
-        Document doc = sax.read( new StringReader(outS) );
+        Document doc = readDocument(outS);
         
         addNamespace("a", "http://xml.amazon.com/AWSECommerceService/2004-08-01");
         assertValid("/a:ItemLookup", doc);
         assertValid("/a:ItemLookup/a:Request/a:IdType", doc);
     }
 
+    public void testEbayDoc() throws Exception
+    {
+        String outS = doCopy("ebay.xml");
+        
+        Document doc = readDocument(outS);
+        
+        addNamespace("e", "urn:ebay:api:eBayAPI");
+        addNamespace("ebase", "urn:ebay:apis:eBLBaseComponents");
+        assertValid("//ebase:Version", doc);
+        assertValid("//ebase:ErrorLanguage", doc);
+        assertValid("//e:UserID", doc);
+    }
+    
     public void testAmazonDoc2() throws Exception
     {
         String outS = doCopy("amazon2.xml");
         
-        SAXReader sax = new SAXReader();
-        Document doc = sax.read( new StringReader(outS) );
+        Document doc = readDocument(outS);
         
         addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");
         assertValid("//a:ItemLookupResponse", doc);
         assertValid("//a:ItemLookupResponse/a:Items", doc);
     }
-    
+
     /**
      * @return
      * @throws FactoryConfigurationError

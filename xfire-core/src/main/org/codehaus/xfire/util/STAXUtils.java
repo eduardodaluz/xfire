@@ -120,7 +120,7 @@ public class STAXUtils
             
             if ( nsPrefix == null || nsPrefix.length() ==  0 )
             {
-                break;
+                continue;
             }
             
             writer.writeNamespace(nsPrefix, nsURI);
