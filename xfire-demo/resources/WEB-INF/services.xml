@@ -12,7 +12,7 @@
       <namespace>urn:Echo</namespace>
       
       <!-- The SOAP version -->
-      <version>1.1</version>
+      <soapVersion>1.1</soapVersion>
       
       <!-- SOAP encoded or literal? -->
       <style>wrapped</style>
