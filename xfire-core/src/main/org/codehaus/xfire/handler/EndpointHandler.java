@@ -1,6 +1,7 @@
 package org.codehaus.xfire.handler;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * By virtue of XFire being stream based, a service can not write its
@@ -21,5 +22,5 @@ import org.codehaus.xfire.MessageContext;
 public interface EndpointHandler
 	extends Handler
 {
-    public void writeResponse(MessageContext context);
+    public void writeResponse(MessageContext context) throws XFireFault;
 }
