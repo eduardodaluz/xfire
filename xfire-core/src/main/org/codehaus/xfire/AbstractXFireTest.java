@@ -30,7 +30,7 @@ import org.dom4j.io.XMLWriter;
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class AbstractXFireTest
+public abstract class AbstractXFireTest
     extends TestCase
 {
     private XFire xfire;
