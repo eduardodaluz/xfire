@@ -1,0 +1,175 @@
+<project>
+  <pomVersion>1</pomVersion>
+  <name>XFire</name>
+  <groupId>xfire</groupId>
+  <artifactId>xfire</artifactId>
+  <currentVersion>0.1-dev</currentVersion>
+  <organization>
+    <name>Codehaus</name>
+    <url>http://www.codehaus.org/</url>
+    <logo>http://images.codehaus.org/codehaus-small.gif</logo>
+  </organization>
+  <inceptionYear>2004</inceptionYear>
+  <package>org.codehaus.xfire</package>
+  <description>A Java SOAP framework. </description>
+  <shortDescription>A Java SOAP framework.</shortDescription> 
+  
+  <url>http://xfire.codehaus.org</url>
+  <siteAddress>xfire.codehaus.org</siteAddress>
+  <siteDirectory>/home/projects/xfire/public_html/maven/xfire</siteDirectory>
+  <distributionSite>www.codehaus.org</distributionSite>
+  <distributionDirectory>/dist</distributionDirectory>
+
+  <repository>
+    <connection>scm:cvs:pserver:anonymous@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</connection>
+    <url>http://cvs.xfire.codehaus.org</url>
+  </repository>
+  
+  <versions/>
+  
+  <branches/>
+  
+  <mailingLists>
+    <mailingList>
+      <name>XFire Announce List</name>
+      <subscribe>mailto:announce-subscribe@xfire.codehaus.org</subscribe>
+      <unsubscribe>mailto:announce-unsubscribe@xfire.codehaus.org</unsubscribe>
+      <archive>http://archive.plexus.codehaus.org/announce/</archive>
+    </mailingList>
+    <mailingList>
+      <name>XFire User List</name>
+      <subscribe>mailto:user-subscribe@xfire.codehaus.org</subscribe>
+      <unsubscribe>mailto:user-unsubscribe@xfire.codehaus.org</unsubscribe>
+      <archive>http://archive.plexus.codehaus.org/user/</archive>
+    </mailingList>
+    <mailingList>
+      <name>XFire Developer List</name>
+      <subscribe>mailto:dev-subscribe@xfire.codehaus.org</subscribe>
+      <unsubscribe>mailto:dev-unsubscribe@xfire.codehaus.org</unsubscribe>
+      <archive>http://archive.plexus.codehaus.org/dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>XFire Commit List</name>
+      <subscribe>mailto:scm-subscribe@xfire.codehaus.org</subscribe>
+      <unsubscribe>mailto:scm-unsubscribe@xfire.codehaus.org</unsubscribe>
+      <archive>http://archive.plexus.codehaus.org/scm/</archive>
+    </mailingList>
+  </mailingLists>
+  
+  <developers>
+    <developer>
+      <name>Dan Diephouse</name>
+      <id>dandiep</id>
+      <email>dan@envoisolutions.com</email>
+      <organization>Envoi solutions</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.5</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>httpunit</groupId>
+      <artifactId>httpunit</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>servletapi</groupId>
+      <artifactId>servletapi</artifactId>
+      <version>2.3</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xmlbeans-jsr173-api</artifactId>
+      <version>2.0-dev</version>
+    </dependency>
+            
+    <dependency>
+      <groupId>wsdl4j</groupId>
+      <artifactId>wsdl4j</artifactId>
+      <version>1.4</version>
+      <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+    </dependency>
+    
+    <dependency>
+      <groupId>wsdl4j</groupId>
+      <artifactId>wsdl4j-qname</artifactId>
+      <version>1.4</version>
+      <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+    </dependency>
+      
+    <dependency>
+      <id>wstx</id>
+      <version>1.0-RC3</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+    </dependency>
+
+  </dependencies>
+  
+  <build>
+    <sourceDirectory>${basedir}/src/main</sourceDirectory>
+    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+        <include>**/*TestCase.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+      </excludes>
+      <resources>
+        <resource>
+          <directory>${basedir}/src/test</directory>
+          <includes>
+            <include>**/*.xml</include>
+            <include>**/*.vm</include>
+          </includes>
+          <filtering>false</filtering>
+        </resource>
+      </resources>
+    </unitTest>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+  
+  <reports>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-changelog-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-tasklist-plugin</report>
+    <report>maven-jellydoc-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-simian-plugin</report>
+    <report>maven-faq-plugin</report>
+  </reports>
+  
+  <properties/>
+</project>

@@ -1,0 +1,57 @@
+Pull API Problems:
+- We don't know the output stream beforehand necessarily
+- 
+
+Why DOM4J:
+- fast
+- good memory usage
+- XPath
+- validation
+
+TODO List
+
+0.2
+- types in the non-default namespace probably don't work at the moment
+- metadata support
+  - make in/out params look pretty
+  - use of lists
+  - hide methods
+- tests, tests, tests
+- WSDL->Java
+
+0.3
+Configuration
+- plexus.xml: configurations which should not change
+
+Features:
+- Autotyping
+- Simple Embedding
+- Trivial application integration
+- Easy to understand component based architecture
+- WSDL Generation for java services
+
+Missing Features:
+- Attachments
+- i18n support
+- RPC/Encoded
+- Sessions
+- WS-* support
+- WSDL->Java
+- A SOAP Client
+
+Notes...
+o Are we going to have problems with parameter ordering?
+o We should pool/cache Types
+o There is no support for multiple out parameters
+o Interfaces are WSDL 1.1 specific.  What's happening on the 2.0 front?
+o Ability to import XSD into WSDL?
+
+Asynchronous Services
+- xfire can execute a series of callbacks for a request
+- these callbacks are dependent on how the invocation went
+- how do we combine async and sync models?
+- Cases
+  - Normal synchronous req/res
+  - Request with asynchronous or synchronous response depending on
+    how the call proceeded
+  - asychronous request/response  
