@@ -52,8 +52,8 @@ public class AttachmentTest
 	            createDataHandler("./src/test/org/codehaus/xfire/attachments/echo11.xml")));
 	    
 	    sendAtts.addPart(
-	        new SimpleAttachment("duke.ico", 
-	            createDataHandler("./src/test/org/codehaus/xfire/attachments/duke.ico")));
+	        new SimpleAttachment("xfire_logo.jpg", 
+	            createDataHandler("./src/test/org/codehaus/xfire/attachments/xfire_logo.jpg")));
 
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
         sendAtts.write(bos);

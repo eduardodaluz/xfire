@@ -1,6 +1,7 @@
 package org.codehaus.xfire;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -239,5 +240,14 @@ public class AbstractXFireTest
     protected Reader getResourceAsReader( String resource )
     {
         return new InputStreamReader( getResourceAsStream(resource) );
+    }
+    
+    public File getTestFile( String relativePath )
+    {
+        String basedir = System.getProperty("basedir");
+        if ( basedir == null )
+            basedir = "./";
+        
+        return new File(new File(basedir), relativePath);
     }
 }

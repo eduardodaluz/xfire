@@ -32,17 +32,17 @@ public class ResourceWSDL
        copy( url.openStream(), out, 8096 );
     }
     
-    public void copy( final InputStream input,
-                             final OutputStream output, 
-                             final int bufferSize )
-            throws IOException
+    public void copy(final InputStream input,
+                     final OutputStream output,
+                     final int bufferSize)
+        throws IOException
     {
         final byte[] buffer = new byte[bufferSize];
-        
+
         int n = 0;
-        while (-1 != (n = input.read( buffer )))
+        while (-1 != (n = input.read(buffer)))
         {
-            output.write( buffer, 0, n );
+            output.write(buffer, 0, n);
         }
     }
 }
