@@ -1,0 +1,14 @@
+*~
+*.ipr
+*.iws
+*.log
+.classpath
+.project
+target
+plexus.sh
+.uml
+sql
+default.ajsym
+default.lst
+plexus.sh.lnk
+bin

@@ -1,0 +1,36 @@
+<!-- START SNIPPET: snippet -->
+<service targetNamespace="http://xfire.codehaus.org/book"
+         soapVersion="http://www.w3.org/2003/05/soap-envelope">
+         
+  <operation name="FindBook">
+    Finds a book.
+    <request>
+      <string name="isbn" ognl="#this" key="isbn"/>
+    </request>
+    <response>
+      <bean name="Book" key="book">
+        <string name="author" ognl="#author"/>
+        <string name="title" ognl="#title"/>
+        <string name="isbn" ognl="#isbn"/>
+      </bean>
+    </response>
+  </operation>
+  
+  <operation name="Search">
+    Search for books.
+    <request>
+      <string name="keyword" ognl="#this" key="keyword"/>
+    </request>
+    <response>
+      <array name="BookArray" key="book" ognl="#books">
+        <bean name="Book">
+          <string name="author" ognl="#book.get('author')"/>
+          <string name="title" ognl="#book.get('title')"/>
+          <string name="isbn" ognl="#book.get('isbn')"/>
+        </bean>
+      </array>
+    </response>
+  </operation>
+  
+</service>
+<!-- END SNIPPET: snippet -->

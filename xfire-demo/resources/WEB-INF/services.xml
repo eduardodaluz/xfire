@@ -1,0 +1,48 @@
+<services>
+  <service>
+    <type>aegis</type>
+    <name>Book</name>
+    <namespace>urn:Book</namespace>
+    <serviceClass>org.codehaus.xfire.demo.book.BookService</serviceClass>
+  </service>
+  
+  <service>
+    <type>java</type>
+    <name>Echo</name>
+    <namespace>urn:Echo</namespace>
+    <serviceClass>org.codehaus.xfire.demo.java.Echo</serviceClass>
+    <allowedMethods></allowedMethods>
+    <serviceProvider>java</serviceProvider>
+    <soapVersion>1.1</soapVersion>
+    <style>wrapped</style>
+    <use>literal</use>
+    <types/>
+  </service>
+  
+  <service>
+    <type>java</type>
+    <name>Bean</name>
+    <namespace>urn:Bean</namespace>
+    <serviceClass>org.codehaus.xfire.demo.java.ArrayService</serviceClass>
+    <allowedMethods></allowedMethods>
+    <serviceProvider>java</serviceProvider>
+    <soapVersion>1.1</soapVersion>
+    <style>wrapped</style>
+    <use>literal</use>
+    <types>
+      <type class="org.codehaus.xfire.test.SimpleBean" 
+        name="SimpleBean" 
+        namespace="urn:Bean" 
+        type="org.codehaus.xfire.service.java.types.BeanType" />
+      <type class="org.codehaus.xfire.test.SimpleBean[]" 
+        name="ArrayOfBean" 
+        namespace="urn:Bean" 
+        type="org.codehaus.xfire.service.java.types.ArrayType" />
+      <type class="java.lang.String[]" 
+        name="ArrayOfString" 
+        namespace="urn:Bean" 
+        type="org.codehaus.xfire.service.java.types.ArrayType" />
+    </types>
+  </service>
+    
+</services>
