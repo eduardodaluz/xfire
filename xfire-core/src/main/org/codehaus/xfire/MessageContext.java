@@ -7,7 +7,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.session.Session;
 
 /**
- * Holds the request and response messages as well the session.
+ * Holds inforrmation about the message request and response.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004
@@ -28,13 +28,10 @@ public class MessageContext
     /**
      * Create a MessageContext to invoke a service with the
      * specified document as the request.
-     * 
-     * @param serviceName The name of the service being invoked.
-     * @param document The request document.
      */
     public MessageContext( String service,
                            String action,
-                           OutputStream outputStream, 
+                           OutputStream response, 
                            Session session, 
                            String requestUri )
     {
@@ -44,7 +41,7 @@ public class MessageContext
         
         this.serviceName = service;
         this.action = action;
-        this.responseStream = outputStream;
+        this.responseStream = response;
         this.session = session;
         this.requestUri = requestUri;
     }
@@ -89,6 +86,11 @@ public class MessageContext
         this.responseStream = responseStream;
     }
     
+    /**
+     * The session that this request is a part of.
+     * 
+     * @return
+     */
     public Session getSession()
     {
         return session;
@@ -129,6 +131,11 @@ public class MessageContext
         this.soapVersion = soapVersion;
     }
     
+    /**
+     * The service being invoked.
+     * 
+     * @return
+     */
     public Service getService()
     {
         return service;

@@ -18,6 +18,10 @@ public class STAXStreamReaderTest
         Document doc =
             r.readDocument( getResourceAsStream("/org/codehaus/xfire/echo11.xml") );
 
+        // make sure we can handle xmlns="" 
+        doc = r.readDocument( getResourceAsStream("default-ns.xml") );
+
+        
         System.out.println( doc.asXML() );
     }
 }

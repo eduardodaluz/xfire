@@ -6,7 +6,11 @@ import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
- * Central processing point for XFire.
+ * <p>Central processing point for XFire. This can be instantiated
+ * programmatically by using one of the implementations (such as
+ * <code>DefaultXFire</code> or can be managed by a container like
+ * Pico or Plexus.
+ * </p>
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 18, 2004

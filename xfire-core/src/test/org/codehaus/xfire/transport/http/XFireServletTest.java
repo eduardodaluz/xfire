@@ -22,7 +22,7 @@ public class XFireServletTest
         SimpleService service = new SimpleService();
         service.setName("Echo");
         service.setSoapVersion(SOAPConstants.SOAP12_ENVELOPE_NS);
-        service.setWsdlUri(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
         
         service.setServiceHandler(new MockSessionHandler());
         service.setFaultHandler(new SOAP12FaultHandler());

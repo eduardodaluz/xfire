@@ -1,40 +1,17 @@
-Pull API Problems:
-- We don't know the output stream beforehand necessarily
-- 
-
-Why DOM4J:
-- fast
-- good memory usage
-- XPath
-- validation
-
 TODO List
 
-0.2
+alpha-2
 - types in the non-default namespace probably don't work at the moment
 - metadata support
   - make in/out params look pretty
   - use of lists
   - hide methods
-- tests, tests, tests
-- WSDL->Java
-
-0.3
-Configuration
-- plexus.xml: configurations which should not change
-
-Features:
-- Autotyping
-- Simple Embedding
-- Trivial application integration
-- Easy to understand component based architecture
-- WSDL Generation for java services
+- WS-Addressing, WS-Security
 
 Missing Features:
 - Attachments
 - i18n support
 - RPC/Encoded
-- Sessions
 - WS-* support
 - WSDL->Java
 - A SOAP Client

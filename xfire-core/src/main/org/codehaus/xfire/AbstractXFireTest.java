@@ -1,8 +1,10 @@
 package org.codehaus.xfire;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class AbstractXFireTest
         getXFire().invoke( getResourceAsStream( document ), context );
         
         SAXReader reader = new SAXReader();
-        return reader.read( new ByteArrayInputStream(out.toByteArray()) );
+        return reader.read( new StringReader(out.toString()) );
     }
 
     protected Document getWSDLDocument( String service ) 
@@ -72,7 +74,7 @@ public class AbstractXFireTest
         getXFire().generateWSDL( service, out );
         
         SAXReader reader = new SAXReader();
-        return reader.read( new ByteArrayInputStream(out.toByteArray()) );
+        return reader.read( new StringReader(out.toString()) );
     }
     
     /**
@@ -200,5 +202,10 @@ public class AbstractXFireTest
     protected InputStream getResourceAsStream( String resource )
     {
         return getClass().getResourceAsStream(resource);
+    }
+
+    protected Reader getResourceAsReader( String resource )
+    {
+        return new InputStreamReader( getResourceAsStream(resource) );
     }
 }

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.fault;
 
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -65,15 +66,17 @@ public class SOAP11FaultHandler
             if ( fault.getDetail() != null )
             {
                 List detail = fault.getDetail();
-                //for ( Iterator itr = detail.iterator(); itr.hasNext(); )
+                for ( Iterator itr = detail.iterator(); itr.hasNext(); )
+                {
                 //    writer.writeCharacters( fault.getMessage() );
+                }
             }
             writer.writeEndElement();
             
             writer.writeEndElement(); // Fault
             writer.writeEndElement(); // Body
             writer.writeEndElement(); // Envelope
-            writer.writeEndDocument(); // Envelope
+            writer.writeEndDocument(); 
         }
         catch (XMLStreamException xe)
         {

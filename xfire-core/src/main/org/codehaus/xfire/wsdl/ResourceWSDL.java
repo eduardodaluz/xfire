@@ -1,7 +1,9 @@
 package org.codehaus.xfire.wsdl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import javax.wsdl.WSDLException;
 
 /**
@@ -24,6 +26,22 @@ public class ResourceWSDL
     
     public void write(OutputStream out) throws IOException
     {
+       URL url = new URL(uri);
        
+       copy( url.openStream(), out, 8096 );
+    }
+    
+    public void copy( final InputStream input,
+                             final OutputStream output, 
+                             final int bufferSize )
+            throws IOException
+    {
+        final byte[] buffer = new byte[bufferSize];
+        
+        int n = 0;
+        while (-1 != (n = input.read( buffer )))
+        {
+            output.write( buffer, 0, n );
+        }
     }
 }

@@ -23,7 +23,7 @@ public class DOMTest
         SimpleService service = new SimpleService();
         service.setName("Echo");
         service.setSoapVersion(SOAPConstants.SOAP12_ENVELOPE_NS);
-        service.setWsdlUri(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
         
         service.setFaultHandler(new SOAP12FaultHandler());
         

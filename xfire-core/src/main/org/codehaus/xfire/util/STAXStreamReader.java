@@ -12,6 +12,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Entity;
+import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.ProcessingInstruction;
 
@@ -38,8 +39,9 @@ public class STAXStreamReader
     {
         this.factory = DocumentFactory.getInstance();
     }
+    
     /**
-     * Constructs a <code>STAXEventReader</code> instance that uses the
+     * Constructs a <code>STAXStreamReader</code> instance that uses the
      * specified {@link DocumentFactory}to construct DOM4J {@link Node}s.
      * 
      * @param factory
@@ -281,31 +283,46 @@ public class STAXStreamReader
 
     public Element createElement( XMLStreamReader reader )
     {
+        String prefix = reader.getPrefix();
+        if ( prefix == null )
+            prefix = "";
+        
         org.dom4j.QName elemName =
             factory.createQName( reader.getLocalName(), 
-                                 reader.getPrefix(),
+                                 prefix,
                                  reader.getNamespaceURI() );
         
         Element elem = factory.createElement( elemName );
         
-        int count = reader.getAttributeCount();
+        int count = reader.getNamespaceCount();
+        for ( int i = 0; i < count; i++ )
+        {  
+            prefix = reader.getNamespacePrefix(i);
+            if ( prefix == null )
+                prefix = "";
+            
+            Namespace ns = factory.createNamespace( 
+                    prefix,
+                    reader.getNamespaceURI(i) );
+            
+            elem.add( ns );
+        }
+
+        count = reader.getAttributeCount();
         for ( int i = 0; i < count; i++ )
         {
+            prefix = reader.getAttributePrefix(i);
+            if ( prefix == null )
+                prefix = "";
+            
             org.dom4j.QName attrName =
                 factory.createQName( reader.getAttributeLocalName(i), 
-                                     reader.getAttributePrefix(i),
+                                     prefix,
                                      reader.getAttributeNamespace(i) );
             
             elem.addAttribute( attrName, reader.getAttributeValue(i) );
         }
 
-        count = reader.getNamespaceCount();
-        for ( int i = 0; i < count; i++ )
-        {
-            elem.addNamespace( reader.getNamespacePrefix(i),
-                               reader.getNamespaceURI(i) );
-        }
-        
         return elem;
     }
 }

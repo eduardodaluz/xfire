@@ -52,15 +52,18 @@ public class SimpleService
     {
         if ( wsdl == null )
         {
-            if ( getWsdlUri() != null 
+            if ( getWSDLURL() != null 
                  &&
-                 !getWsdlUri().equals("") )
+                 !getWSDLURL().equals("") )
             {
                 wsdl = new ResourceWSDL( wsdlUri );
             }
             else
             {
-               return getWSDLBuilder().createWSDL( this );
+                WSDLBuilder b = getWSDLBuilder();
+                
+                if ( b != null )
+                    return getWSDLBuilder().createWSDL( this );
             }
         }
         
@@ -78,18 +81,19 @@ public class SimpleService
     }
     
     /**
-     * @return Returns the URI to the WSDL for this service. If none exists,
-     * the WSDL is generated automatically.
+     * @return Returns the URL to the WSDL for this service. 
+     * If none exists, the service will attempt to generage
+     * the WSDL automatically via the WSDLBuilder.
      */
-    public String getWsdlUri()
+    public String getWSDLURL()
     {
         return wsdlUri;
     }
     
     /**
-     * @param wsdlUri The WSDL URI.
+     * @param wsdlUri The WSDL URL.
      */
-    public void setWsdlUri(String wsdlUri)
+    public void setWSDLURL(String wsdlUri)
     {
         this.wsdlUri = wsdlUri;
     }
@@ -199,13 +203,8 @@ public class SimpleService
     {
         this.serviceHandler = serviceHandler;
     }
-    
-    public WSDL getWsdl()
-    {
-        return wsdl;
-    }
-    
-    public void setWsdl( WSDL wsdl )
+
+    public void setWSDL( WSDL wsdl )
     {
         this.wsdl = wsdl;
     }

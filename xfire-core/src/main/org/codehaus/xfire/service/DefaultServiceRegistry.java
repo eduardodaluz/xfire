@@ -32,7 +32,7 @@ public class DefaultServiceRegistry
 	 */
 	public void register( Service service )
 	{
-		services.put( service.getName(), service );
+        services.put( service.getName(), service );
 	}
     
 	/**
