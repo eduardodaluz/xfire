@@ -37,10 +37,11 @@ public abstract class AbstractHttpClient
     public void invoke() 
         throws IOException, XFireFault
     {
+        URL url = new URL(urlString);
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        
         try
         {
-            URL url = new URL(urlString);
-            HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
             
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
@@ -62,18 +63,39 @@ public abstract class AbstractHttpClient
             
             OutputStream out = urlConn.getOutputStream();
             writeRequest(out);
+            out.write('\n');
             
             out.flush();
             out.close();
 
-            Reader reader = new InputStreamReader(urlConn.getInputStream());
-            readResponse( reader );
+            Reader reader = null;
+            try
+            {
+                reader = new InputStreamReader(urlConn.getInputStream());
+                readResponse( reader );            
+            }
+            catch ( IOException ioe )
+            {
+                if ( urlConn.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR )
+                {
+                    reader = new InputStreamReader(urlConn.getErrorStream());
+                    readResponse( reader );    
+                }
+            }
+            finally
+            {
+                if ( reader != null )
+                    reader.close();
+            }
 
-            reader.close();
         }
         catch (MalformedURLException me)
         {
             throw new RuntimeException("Bad URL.", me);
+        }
+        finally
+        {
+            urlConn.disconnect();
         }
     }
     
@@ -94,6 +116,7 @@ public abstract class AbstractHttpClient
              XMLStreamWriter writer = factory.createXMLStreamWriter(out);
              
              writeRequest( writer );
+             writer.close();
         }
         catch (XMLStreamException e)
         {

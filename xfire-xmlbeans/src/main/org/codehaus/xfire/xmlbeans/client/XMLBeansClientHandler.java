@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -120,9 +121,12 @@ public class XMLBeansClientHandler
             
             response = (XmlObject[]) responseElements.toArray(new XmlObject[responseElements.size()]);
             
+            XmlCursor cursor = response[0].newCursor();
+            cursor.toFirstChild();
+
             if ( response.length == 1 
                  && 
-                 response[0].getDomNode().getLocalName().equals("Fault") )
+                 cursor.getName().getLocalPart().equals("Fault") )
             {
                 throw new XMLBeansFault(response[0]);
             }
