@@ -9,12 +9,7 @@
             <zeroOrMore>
                 <element name="service">
                     <attribute name="key"/>
-                    <attribute name="type">
-                        <choice>
-                            <value>simple</value>
-                            <value>java</value>
-                        </choice>
-                    </attribute>
+                    <attribute name="type"/>
 
                     <element name="name">
                         <text/>
