@@ -1,12 +1,12 @@
-<services>
-  <service>
-    <type>aegis</type>
-    <name>Book</name>
-    <namespace>urn:Book</namespace>
-    <serviceClass>org.codehaus.xfire.demo.book.BookService</serviceClass>
-  </service>
-  
-  <service>
+<xfire>
+  <services>
+    <service>
+      <type>aegis</type>
+      <name>Book</name>
+      <namespace>urn:Book</namespace>
+      <serviceClass>org.codehaus.xfire.demo.book.BookService</serviceClass>
+    </service>
+
     <service>
       <!-- The binding type -->
       <type>java</type>
@@ -27,34 +27,36 @@
       <use>literal</use>
       
       <!-- The class for the service -->
-      <serviceClass>org.codehaus.xfire.quickstart.Echo</serviceClass>
+      <serviceClass>org.codehaus.xfire.demo.java.Echo</serviceClass>
     </service>
-  </service>
-  
-  <service>
-    <type>java</type>
-    <name>Bean</name>
-    <namespace>urn:Bean</namespace>
-    <serviceClass>org.codehaus.xfire.demo.java.ArrayService</serviceClass>
-    <allowedMethods></allowedMethods>
-    <serviceProvider>java</serviceProvider>
-    <soapVersion>1.1</soapVersion>
-    <style>wrapped</style>
-    <use>literal</use>
-    <types>
-      <type class="org.codehaus.xfire.test.SimpleBean" 
-        name="SimpleBean" 
-        namespace="urn:Bean" 
-        type="org.codehaus.xfire.service.java.types.BeanType" />
-      <type class="org.codehaus.xfire.test.SimpleBean[]" 
-        name="ArrayOfBean" 
-        namespace="urn:Bean" 
-        type="org.codehaus.xfire.service.java.types.ArrayType" />
-      <type class="java.lang.String[]" 
-        name="ArrayOfString" 
-        namespace="urn:Bean" 
-        type="org.codehaus.xfire.service.java.types.ArrayType" />
-    </types>
-  </service>
     
-</services>
+    <service>
+      <type>java</type>
+      <name>Bean</name>
+      <namespace>urn:Bean</namespace>
+      <serviceClass>org.codehaus.xfire.demo.java.ArrayService</serviceClass>
+      <allowedMethods></allowedMethods>
+      <serviceProvider>java</serviceProvider>
+      <soapVersion>1.1</soapVersion>
+      <style>wrapped</style>
+      <use>literal</use>
+      <types>
+        <type class="org.codehaus.xfire.demo.java.SimpleBean" 
+          name="SimpleBean" 
+          namespace="urn:Bean" 
+          type="org.codehaus.xfire.java.type.BeanType" />
+          
+        <type class="org.codehaus.xfire.demo.java.SimpleBean[]" 
+          name="ArrayOfBean" 
+          namespace="urn:Bean" 
+          type="org.codehaus.xfire.java.type.ArrayType" />
+          
+        <type class="java.lang.String[]" 
+          name="ArrayOfString" 
+          namespace="urn:Bean" 
+          type="org.codehaus.xfire.java.type.ArrayType" />
+      </types>
+    </service>
+    
+  </services>
+</xfire>
