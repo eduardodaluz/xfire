@@ -2,6 +2,8 @@ package org.codehaus.xfire.service;
 
 import java.util.Collection;
 
+import org.codehaus.xfire.service.event.RegistrationEventListener;
+
 /**
  * The central place to register, unregister, and get information about 
  * services.
@@ -23,7 +25,7 @@ public interface ServiceRegistry
 
 	Collection getServices();
     
-    //void enable( String name );
+    void addRegistrationEventListener(RegistrationEventListener listener);
     
-    //void disable( String name );
+    void removeRegistrationEventListener(RegistrationEventListener listener);
 }

@@ -3,6 +3,7 @@ package org.codehaus.xfire;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.wsdl.WSDLException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -10,13 +11,13 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.DefaultTransportManager;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
@@ -37,7 +38,7 @@ public class DefaultXFire
     public DefaultXFire()
     {
         registry = new DefaultServiceRegistry();
-        transportManager = new DefaultTransportManager();
+        transportManager = new DefaultTransportManager(registry);
     }
 
     public DefaultXFire( final ServiceRegistry registry,
@@ -50,11 +51,24 @@ public class DefaultXFire
     public void invoke( final XMLStreamReader reader,
                         final MessageContext context )
     {
-        final Service service = findService( context.getServiceName() );
-        
+        final String serviceName =  context.getServiceName();
+        final Service service = findService( serviceName );
+
         Handler handler = null;
         try
         {
+            final Transport transport = context.getTransport();
+            
+            // Verify that the transport can be used for this service.
+            if (transport != null 
+                &&
+                !getTransportManager().isEnabled(context.getServiceName(), transport.getName()))
+            {
+                throw new XFireFault("Service " + serviceName + 
+                                         " is unavailable for current transport.", 
+                                     XFireFault.SENDER);
+            }
+            
             context.setService( service );
             context.setXMLStreamReader( reader );
 
