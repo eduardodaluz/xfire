@@ -1,4 +1,4 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope">
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
  <env:Header/>
  <env:Body>
   <m:echo xmlns:m="urn:Echo">

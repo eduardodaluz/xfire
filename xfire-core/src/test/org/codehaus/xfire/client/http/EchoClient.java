@@ -3,6 +3,7 @@ package org.codehaus.xfire.client.http;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.codehaus.xfire.client.http.SoapHttpClient;
 
@@ -26,7 +27,7 @@ public class EchoClient
         System.out.println("RESPONSE:");
         System.out.println(out.toString());
         
-        readResponse(new ByteArrayInputStream(out.toByteArray()));
+        readResponse(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
     }
     
     

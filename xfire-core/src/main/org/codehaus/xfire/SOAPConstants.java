@@ -11,7 +11,7 @@ public class SOAPConstants
 {
     /** SOAP 1.1 Declarations. */
     
-    public final static String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope";
+    public final static String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
     
     public final static String SOAP11_ENCODED = "http://schemas.xmlsoap.org/soap/encoding/";
 

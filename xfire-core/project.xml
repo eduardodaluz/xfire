@@ -82,12 +82,18 @@
       <version>2.0-dev</version>
     </dependency>
     
-    <dependency>
+    <!--dependency>
       <groupId>xmlbeans</groupId>
       <artifactId>xmlbeans-jsr173-ri</artifactId>
       <version>2.0-dev</version>
+    </dependency -->
+    
+    <dependency>
+      <groupId>wstx</groupId>
+      <artifactId>wstx</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
-                
+                                
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>

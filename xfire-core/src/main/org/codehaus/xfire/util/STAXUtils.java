@@ -57,17 +57,20 @@ public class STAXUtils
             prefix = "";
         }
         
+        boolean wroteDefault = false;
         String uri = reader.getNamespaceURI();
+        
         if ( uri != null )
         {
+            String definedNS = writer.getNamespaceContext().getNamespaceURI(prefix);
             if ( prefix.equals("") )
             {
-                String defNS = writer.getNamespaceContext().getNamespaceURI("");
-                if ( defNS != null && !defNS.equals(uri) )
+                if ( definedNS == null || !definedNS.equals(uri) )
                 {
                     writer.setDefaultNamespace(uri);
                     writer.writeStartElement( uri, reader.getLocalName() );
                     writer.writeDefaultNamespace( uri );
+                    wroteDefault = true;
                 }
                 else
                 {
@@ -76,7 +79,8 @@ public class STAXUtils
             }
             else
             {
-                writer.setPrefix( prefix, uri );
+                if ( definedNS == null || !definedNS.equals(uri) )
+                    writer.setPrefix( prefix, uri );
                 
                 writer.writeStartElement( 
                     prefix,
@@ -96,12 +100,24 @@ public class STAXUtils
                 reader.getAttributeLocalName(i),
                 reader.getAttributeValue(i));
         }
-        
+
         for ( int i = 0; i < reader.getNamespaceCount(); i++ )
         {
-            writer.writeNamespace(
-                reader.getNamespacePrefix(i),
-                reader.getNamespaceURI(i));
+            String nsPrefix = reader.getNamespacePrefix(i);
+            String nsURI = reader.getNamespaceURI(i);
+            
+            if ( (nsPrefix == null || nsPrefix.equals("")) && wroteDefault )
+            {
+                break;
+            }
+
+            String setPrefix = writer.getPrefix(nsURI);
+            if ( setPrefix == null || !setPrefix.equals(nsPrefix) )
+            {
+                writer.setPrefix(nsPrefix, nsURI);
+            }
+            
+            writer.writeNamespace(nsPrefix, nsURI);
         }
     }
 }

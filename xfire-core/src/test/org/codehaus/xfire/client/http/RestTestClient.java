@@ -3,6 +3,7 @@ package org.codehaus.xfire.client.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.codehaus.xfire.client.ClientHandler;
 
@@ -25,6 +26,6 @@ public class RestTestClient
         writeRequest(new ByteArrayOutputStream());
         
         InputStream is = getClass().getResourceAsStream("/org/codehaus/xfire/client/http/echo.xml");
-        readResponse(is);
+        readResponse(new InputStreamReader(is));
     } 
 }

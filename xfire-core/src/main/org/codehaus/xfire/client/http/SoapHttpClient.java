@@ -92,10 +92,12 @@ public class SoapHttpClient
                 case XMLStreamReader.START_ELEMENT:
                     if( reader.getLocalName().equals("Header") && headerHandler != null )
                     {
+                        reader.nextTag();
                         headerHandler.handleResponse(reader);
                     }
                     else if ( reader.getLocalName().equals("Body") )
                     {
+                        reader.nextTag();
                         bodyHandler.handleResponse(reader);
                     }
                     break;

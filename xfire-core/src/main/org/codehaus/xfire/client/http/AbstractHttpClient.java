@@ -1,9 +1,10 @@
 package org.codehaus.xfire.client.http;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -22,13 +23,13 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public abstract class AbstractHttpClient
 {
-    public final static String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope";
+    public final static String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
     
     public final static String SOAP12_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
     
     private String username;
     private String password;
-    private String encoding = "ISO-8859-1";
+    private String encoding = "UTF-8";
     private String urlString;
 
     public void invoke() 
@@ -37,38 +38,36 @@ public abstract class AbstractHttpClient
         try
         {
             URL url = new URL(urlString);
-            URLConnection urlConn = url.openConnection();
+            HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
             
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
             urlConn.setUseCaches(false);
-
+            urlConn.setRequestMethod("POST");
+            
             // Specify the content type.
             urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             
             // Specify content type and encoding
             // If content encoding is not explicitly specified
             // ISO-8859-1 is assumed
-            urlConn.setRequestProperty("Content-type", "text/xml; charset=\"" + encoding + "\"");
+            urlConn.setRequestProperty("Content-type", "text/xml; charset=" + encoding);
             
             urlConn.setRequestProperty("User-Agent", "XFire Client +http://xfire.codehaus.org");
             urlConn.setRequestProperty("Accept", "text/xml; text/html");
             
             writeHeaders( urlConn );
             
-            // Send POST output.
             OutputStream out = urlConn.getOutputStream();
             writeRequest(out);
             
             out.flush();
             out.close();
 
-            // Get response data.
-            DataInputStream input = new DataInputStream(urlConn.getInputStream());
+            Reader reader = new InputStreamReader(urlConn.getInputStream());
+            readResponse( reader );
 
-            readResponse( input );
-
-            input.close();
+            reader.close();
         }
         catch (MalformedURLException me)
         {
@@ -105,7 +104,7 @@ public abstract class AbstractHttpClient
     /**
      * @param reader
      */
-    protected void readResponse(InputStream is)
+    protected void readResponse(Reader is)
     {
         // Read in Envelope and then delegate header and Body
         XMLInputFactory factory = XMLInputFactory.newInstance();
