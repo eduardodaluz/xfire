@@ -2,6 +2,7 @@ package org.codehaus.xfire.demo;
 import org.codehaus.xfire.plexus.PlexusXFireTest;
 import org.codehaus.xfire.plexus.config.ConfigurationService;
 import org.codehaus.xfire.service.Service;
+import org.dom4j.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -26,5 +27,8 @@ public class DemoServiceTest
         
         Service book = getServiceRegistry().getService("BookService");
         assertNotNull(echo);
+        
+        Document response = invokeService("BookService", "/org/codehaus/xfire/demo/dotnetreq.xml");
+        printNode(response);
     }
 }
