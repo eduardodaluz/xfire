@@ -11,7 +11,7 @@
       postProcessing="true"
       includes="xfire-core/project.xml"
       excludes="*"
-      goals="pom:install"
+      goals="pom:install jar:install"
       banner="Installing XFire Core POM"
       ignoreFailures="true"/>
 
@@ -28,7 +28,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-quickstart/*"
+      excludes="xfire-quickstart/*,xfire-core/*"
       goals="jar:install"
       banner="Installing XFire"
       ignoreFailures="true"/>
@@ -44,14 +44,14 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-java/*,xfire-quickstart/*"
+      excludes="xfire-quickstart/*"
       goals="jar:deploy"
       banner="Installing XFire"
       ignoreFailures="true"/>
     
   </goal>
-  
-  <goal name="deploySite"
+    
+  <goal name="dist:deploy"
         description="Generate the site for the entire project">
 
     <!-- Generate the site for each of the components. -->
@@ -60,7 +60,23 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-java/*,xfire-quickstart/*"
+      excludes="xfire-quickstart/*"
+      goals="dist:deploy"
+      banner="Deploying XFire Websites"
+      ignoreFailures="true"/>
+    
+  </goal>
+      
+  <goal name="site:deploy"
+        description="Generate the site for the entire project">
+
+    <!-- Generate the site for each of the components. -->
+
+    <maven:reactor
+      basedir="${basedir}"
+      postProcessing="true"
+      includes="*/project.xml"
+      excludes="xfire-quickstart/*"
       goals="site:deploy"
       banner="Deploying XFire Websites"
       ignoreFailures="true"/>
