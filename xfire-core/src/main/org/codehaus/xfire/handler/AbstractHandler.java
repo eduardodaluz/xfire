@@ -19,7 +19,7 @@ public abstract class AbstractHandler
     implements Handler
 {
     public static final String STAX_WRITER_KEY = "xfire.stax-writer";
-    
+
     /**
      * Returns null by default, indicating that no headers
      * were understood.

@@ -14,6 +14,7 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.yom.Element;
 
 /**
  * Holds inforrmation about the message request and response.
@@ -35,6 +36,9 @@ public class MessageContext
     private Service service;
     private Transport transport;
     private XMLStreamReader xmlStreamReader;
+    
+    private Element requestHeader;
+    private Element responseHeader;
     
     public MessageContext()
     {
@@ -206,5 +210,25 @@ public class MessageContext
     public void setTransport(Transport transport)
     {
         this.transport = transport;
+    }
+
+    public Element getRequestHeader()
+    {
+        return requestHeader;
+    }
+
+    public void setRequestHeader(Element requestHeader)
+    {
+        this.requestHeader = requestHeader;
+    }
+
+    public Element getResponseHeader()
+    {
+        return responseHeader;
+    }
+
+    public void setResponseHeader(Element responseHeader)
+    {
+        this.responseHeader = responseHeader;
     }
 }

@@ -5,6 +5,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.Elements;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -35,7 +37,17 @@ public class EndpointTestHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-        // TODO Auto-generated method stub
-        
+        Element e = context.getRequestHeader();
+        if (e != null)
+        {
+            Elements children = e.getChildElements();
+            for (int i = 0; i < children.size(); i++)
+            {
+                Element child = children.get(i);
+                child.detach();
+
+                context.getResponseHeader().appendChild(child);
+            }
+        }
     }
 }

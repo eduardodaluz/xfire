@@ -125,7 +125,13 @@
             <version>1.4</version>
             <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
         </dependency>
-
+        
+        <dependency>
+            <groupId>yom</groupId>
+            <artifactId>yom</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        
         <!-- Test only dependencies -->
         <dependency>
             <groupId>dom4j</groupId>

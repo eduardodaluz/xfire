@@ -50,6 +50,17 @@ public class SoapHandlerTest
         assertTrue(resHandler.invoked);
     }
     
+    public void testHeaders()
+        throws Exception
+    {
+        Document response = invokeService( "Echo", "/org/codehaus/xfire/handler/headerMsg.xml" );
+        
+        assertTrue(reqHandler.invoked);
+        assertTrue(resHandler.invoked);
+        addNamespace("e", "urn:Echo");
+        assertValid("/s:Envelope/s:Header/e:echo", response);
+    }
+    
     public class CheckpointHandler
         extends AbstractHandler
     {

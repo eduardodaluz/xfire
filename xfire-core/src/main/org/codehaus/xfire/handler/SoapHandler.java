@@ -10,10 +10,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.util.DOMUtils;
-import org.codehaus.xfire.util.STAXUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.yom.stax.StaxSerializer;
 
 /**
  * Processes SOAP invocations. The process is as follows:
@@ -34,13 +33,10 @@ import org.w3c.dom.Element;
 public class SoapHandler 
     extends AbstractHandler
 {
-    public static final String REQUEST_HEADER_KEY = "xfire.request-header";
-    public static final String RESPONSE_HEADER_KEY = "xfire.response-header";
-
-    private EndpointHandler bodyHandler;
-    private Handler headerHandler;
     private static final String HANDLER_STACK = "xfire.handlerStack";
 
+    private EndpointHandler bodyHandler;
+    
     public SoapHandler( EndpointHandler bodyHandler )
     {
         this.bodyHandler = bodyHandler;
@@ -74,19 +70,19 @@ public class SoapHandler
             case XMLStreamReader.END_ELEMENT:
                 break;
             case XMLStreamReader.START_ELEMENT:
-                if( reader.getLocalName().equals("Header") && headerHandler != null )
+                if(reader.getLocalName().equals("Header"))
                 {
                     readHeaders(context);
                     validateHeaders(context);
                 }
-                else if ( reader.getLocalName().equals("Body") )
+                else if (reader.getLocalName().equals("Body"))
                 {
                     invokeRequestPipeline(handlerStack, context);
 
                     handlerStack.push(bodyHandler);
                     bodyHandler.invoke(context);
                 }
-                else if ( reader.getLocalName().equals("Envelope") )
+                else if (reader.getLocalName().equals("Envelope"))
                 {
                     context.setSoapVersion(reader.getNamespaceURI());
                 }
@@ -170,37 +166,6 @@ public class SoapHandler
         }
     }
 
-    protected void readHeaders( MessageContext context ) 
-    	throws XMLStreamException
-    {
-        Document doc = DOMUtils.createDocument();
-        Element e = doc.createElementNS(context.getSoapVersion().getNamespace(), "Header");
-        
-        STAXUtils.readElements(e, context.getXMLStreamReader());
-            
-        context.setProperty(REQUEST_HEADER_KEY, e);
-    }
-    
-    protected void writeHeaders( MessageContext context, XMLStreamWriter writer ) 
-    	throws XMLStreamException
-    {
-        Element e = (Element) context.getProperty(REQUEST_HEADER_KEY);
-        if ( e != null )
-        {
-            writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
-
-            STAXUtils.writeElement(e, writer);
-            
-            writer.writeEndElement();
-        }
-    }
-
-    protected void validateHeaders(MessageContext context)
-    {
-        /* TODO Check MustUnderstand and Role attributes
-         */ 
-    }
-    
     private XMLStreamWriter createResponseWriter(MessageContext context, 
                                                  String encoding)
         throws XMLStreamException, XFireFault
@@ -220,5 +185,45 @@ public class SoapHandler
         writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
 
         return writer;
+    }
+
+    /**
+     * Read in the headers as a YOM Element and create a response Header.
+     * @param context
+     * @throws XMLStreamException
+     */
+    protected void readHeaders( MessageContext context ) 
+        throws XMLStreamException
+    {
+        XMLStreamReader reader = context.getXMLStreamReader();
+        StaxBuilder builder = new StaxBuilder();
+
+        Element header = builder.readElement(null, context.getXMLStreamReader());
+
+        context.setRequestHeader(header);
+        
+        QName headerQ  = context.getSoapVersion().getHeader();
+        Element response = new Element(headerQ.getPrefix() + ":" + headerQ.getLocalPart(), 
+                                       headerQ.getNamespaceURI()) ;
+        
+        context.setResponseHeader(response);
+    }
+    
+    protected void validateHeaders(MessageContext context)
+    {
+        /* TODO Check MustUnderstand and Role attributes
+         */ 
+    }
+
+    protected void writeHeaders( MessageContext context, XMLStreamWriter writer ) 
+        throws XMLStreamException
+    {
+        Element e = context.getResponseHeader();
+        if ( e != null && e.getChildCount() > 0 )
+        {
+            StaxSerializer ser = new StaxSerializer();
+            
+            ser.writeElement(e, writer);
+        }
     }
 }
