@@ -267,6 +267,7 @@ public class DOMUtils
         dbf.setValidating(false);
         dbf.setIgnoringComments(false);
         dbf.setIgnoringElementContentWhitespace(true);
+        dbf.setNamespaceAware(true);
         //dbf.setCoalescing(true);
         //dbf.setExpandEntityReferences(true);
 

@@ -1,7 +1,6 @@
 package org.codehaus.xfire.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,7 +14,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.AbstractXFireTest;
 import org.dom4j.Document;
 import org.dom4j.io.DOMReader;
-import org.dom4j.io.SAXReader;
 import org.w3c.dom.Element;
 
 /**
@@ -84,11 +82,11 @@ public class STAXUtilsTest
         return outS;
     }
     
-    /*
+
     public void testDOMWrite() throws Exception
     {
         org.w3c.dom.Document doc = DOMUtils.readXml(getResourceAsStream("amazon.xml"));
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
@@ -98,10 +96,10 @@ public class STAXUtilsTest
         writer.close();
         
         Document testDoc = readDocument(bos.toString());
-        addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");
-        assertValid("//a:ItemLookupResponse", testDoc);
-        assertValid("//a:ItemLookupResponse/a:Items", testDoc);
-    }*/
+        addNamespace("a", "http://xml.amazon.com/AWSECommerceService/2004-08-01");
+        assertValid("//a:ItemLookup", testDoc);
+        assertValid("//a:ItemLookup/a:Request", testDoc);
+    }
     
     public void testDOMRead() throws Exception
     {

@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -138,7 +139,9 @@ public class STAXUtils
 
     /**
      * Writes an Element to an XMLStreamWriter.  The writer must already
-     * have started the doucment (via writeStartDocument()).
+     * have started the doucment (via writeStartDocument()). Also, this probably
+     * won't work with just a fragment of a document. The Element should be
+     * the root element of the document.
      * 
      * @param e
      * @param writer
@@ -147,11 +150,9 @@ public class STAXUtils
     public static void writeElement( Element e, XMLStreamWriter writer ) 
         throws XMLStreamException
     {
-
         String prefix = e.getPrefix();
         String ns = e.getNamespaceURI();
-        System.out.println("ns:" + ns);
-        String localName = e.getNodeName();
+        String localName = e.getLocalName();
         
         if ( prefix == null )
         {
@@ -184,8 +185,6 @@ public class STAXUtils
             }
         }
 
-        
-        /*
         NamedNodeMap attrs = e.getAttributes();
         for ( int i = 0; i < attrs.getLength(); i++ )
         {
@@ -201,7 +200,7 @@ public class STAXUtils
             {
                 writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
             }
-        }*/
+        }
     
         String value = DOMUtils.getContent(e);
         
@@ -221,6 +220,22 @@ public class STAXUtils
         writer.writeEndElement();
     }
     
+    /**
+     * @param e
+     * @return
+     */
+    private static Element getNamespaceDeclarer(Element e)
+    {
+        while( true )
+        {
+            Node n = e.getParentNode();
+            if ( n.equals(e) )
+                return null;
+            if ( n.getNamespaceURI() != null )
+                return (Element) n;
+        }
+    }
+
     public static void readElements(Element root, XMLStreamReader reader)
     	throws XMLStreamException
     {
