@@ -1,0 +1,124 @@
+<project>
+  <pomVersion>1</pomVersion>
+  <name>XMLBeans XFire Module</name>
+  <groupId>xfire</groupId>
+  <artifactId>xfire-xmlbeans</artifactId>
+  <currentVersion>1.0-alpha-2-SNAPSHOT</currentVersion>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-2-SNAPSHOT.pom</extend>
+  <organization>
+    <name>Codehaus</name>
+    <url>http://www.codehaus.org/</url>
+    <logo>http://images.codehaus.org/codehaus-small.gif</logo>
+  </organization>
+  <inceptionYear>2004</inceptionYear>
+  <package>org.codehaus.xfire</package>
+  <description>An XMLBeans binding module for XFire.</description>
+  <shortDescription>An XMLBeans binding module for XFire.</shortDescription>
+  
+  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-xmlbeans</siteDirectory>
+  
+  <versions/>
+  
+  <branches/>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire</artifactId>
+      <version>1.0-alpha-2-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <id>xmlbeans</id>
+      <version>2.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xmlbeans-xmlpublic</artifactId>
+      <version>2.0-dev-2</version>
+    </dependency>
+
+    <!-- Generator Dependencies -->
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>2.1</version>
+    </dependency>
+    
+    <dependency>
+      <id>log4j</id>
+      <version>1.2.8</version>
+      <url>http://www.log4j.org/</url>
+    </dependency>
+            
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.4</version>
+    </dependency>
+    
+  </dependencies>
+  
+  <build>
+    <sourceDirectory>${basedir}/src/main</sourceDirectory>
+    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+        <include>**/*TestCase.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+      </excludes>
+      <resources>
+        <resource>
+          <directory>${basedir}/src/test</directory>
+          <includes>
+            <include>**/*.xml</include>
+            <include>**/*.xsb</include>
+            <include>**/*.vm</include>
+          </includes>
+          <filtering>false</filtering>
+        </resource>
+      </resources>
+    </unitTest>
+    
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.xsb</include>
+          <include>**/*.vm</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+    
+  </build>
+  <reports>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-changelog-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-tasklist-plugin</report>
+    <report>maven-jellydoc-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-simian-plugin</report>
+    <report>maven-faq-plugin</report>
+  </reports>
+  <properties/>
+</project>
