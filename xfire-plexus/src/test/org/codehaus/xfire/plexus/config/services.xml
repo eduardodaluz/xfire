@@ -11,6 +11,16 @@
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
     </service>
 
+    <service>
+      <name>EchoXMLBeans</name>
+      <namespace>urn:EchoXMLBeans</namespace>
+      <soapVersion>1.1</soapVersion>
+      <encoding>wrapped</encoding>
+      <use>literal</use>
+      <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
+      <serviceBuilder>org.codehaus.xfire.xmlbeans.XMLBeansServiceBuilder</serviceBuilder>
+    </service>
+    
   </services>
   
 </xfire>

@@ -23,9 +23,13 @@ public class ConfigurationTest
     public void testRegister()
         throws Exception
     {
-        ObjectService js = (ObjectService) getServiceRegistry().getService("Echo2");
+        ObjectService service = (ObjectService) getServiceRegistry().getService("Echo2");
         
-        assertNotNull( js ); 
+        assertNotNull(service); 
+        
+        ObjectService xbService = (ObjectService) getServiceRegistry().getService("EchoXMLBeans");
+        
+        assertNotNull( xbService ); 
     }
     
     public void testInvoke() 
