@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
  */
 public class Soap11 implements SoapVersion
 {
-    private static Soap11 instance = new Soap11();
+    private static final Soap11 instance = new Soap11();
 
     private final double version = 1.1;
 
