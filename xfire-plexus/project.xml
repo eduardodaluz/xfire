@@ -53,7 +53,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire</artifactId>
-      <version>0.1-dev</version>
+      <version>1.0-alpha-1</version>
     </dependency>
     
     <dependency>
