@@ -63,7 +63,12 @@ public class SOAPBindingAnnotation
      */
     public String getStyleString()
     {
-        if (style == SOAPBindingAnnotation.STYLE_DOCUMENT)
+        if (style == SOAPBindingAnnotation.STYLE_DOCUMENT 
+                && parameterStyle == SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED)
+        {
+            return SoapConstants.STYLE_WRAPPED;
+        }
+        else if (style == SOAPBindingAnnotation.STYLE_DOCUMENT)
         {
             return SoapConstants.STYLE_DOCUMENT;
         }

@@ -60,7 +60,11 @@ public class SOAPBindingAnnotationTest
     public void testGetStyleString()
             throws Exception
     {
+        soapBindingAnnotation.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED);
         soapBindingAnnotation.setStyle(SOAPBindingAnnotation.STYLE_DOCUMENT);
+        assertEquals(SoapConstants.STYLE_WRAPPED, soapBindingAnnotation.getStyleString());
+
+        soapBindingAnnotation.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_BARE);
         assertEquals(SoapConstants.STYLE_DOCUMENT, soapBindingAnnotation.getStyleString());
 
         soapBindingAnnotation.setStyle(SOAPBindingAnnotation.STYLE_RPC);
