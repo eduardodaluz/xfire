@@ -83,7 +83,15 @@
                    refid="xfire.xmlbeans.generated.test"/>
   </goal>
   
-  <goal name="weather-jar">
+  <goal name="support-jars">
+
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="xmlbeans.path"
+          fork="true">
+      <arg value="-out"/>
+      <arg value="${basedir}/target/wsdl.jar"/>
+      <arg value="${basedir}/src/schemas"/>
+    </java>
 
     <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
           classpathref="xmlbeans.path"
