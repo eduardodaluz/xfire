@@ -134,12 +134,6 @@
         
         <!-- Test only dependencies -->
         <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.5</version>
-        </dependency>
-
-        <dependency>
             <groupId>httpunit</groupId>
             <artifactId>httpunit</artifactId>
             <version>1.5.1</version>
