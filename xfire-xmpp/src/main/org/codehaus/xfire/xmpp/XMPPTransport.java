@@ -1,5 +1,6 @@
 package org.codehaus.xfire.xmpp;
 
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Transport;
@@ -25,6 +26,11 @@ public class XMPPTransport
         // Make sure the SoapIQProvider class has been loaded so
         // our IQ provider is registered.
         SoapIQProvider.class.getName();
+        
+        FaultHandlerPipeline pipeline = new FaultHandlerPipeline();
+        pipeline.addHandler(new XMPPFaultHandler());
+        
+        setFaultPipeline(pipeline);
     }
 
     /**
