@@ -58,7 +58,7 @@ public class StandaloneXFireServlet
         File config = new File(getWebappBase(), getInitParameter("config"));
         
         System.setProperty("xfire.config", config.getAbsolutePath());
-        System.out.println("Configuration file: " + config.getAbsolutePath());
+        log("Configuration set to: " + config.getAbsolutePath());
         
         String plexusConfig = getInitParameter("plexus-config");
         if ( plexusConfig != null )

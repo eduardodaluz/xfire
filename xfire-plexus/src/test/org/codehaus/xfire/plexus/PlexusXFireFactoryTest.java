@@ -2,6 +2,7 @@ package org.codehaus.xfire.plexus;
 
 import junit.framework.TestCase;
 
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 
 /**
@@ -16,5 +17,7 @@ public class PlexusXFireFactoryTest
         XFireFactory factory = XFireFactory.newInstance();
         
         assertTrue( factory instanceof PlexusXFireFactory );
+        
+        XFire xfire = factory.getXFire();
     }
 }

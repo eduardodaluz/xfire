@@ -110,7 +110,7 @@ public class DefaultConfigurationService
         
         if ( configFileName == null )
         {
-            getLogger().info("No configuration file specified.");
+            getLogger().info("No configuration file specified. Looking for xfire.xml in the current directory.");
             configFileName = "xfire.xml";
         }
 
@@ -123,17 +123,24 @@ public class DefaultConfigurationService
         }
         else
         {
-            getLogger().info("Could not find configuration file " + file.getAbsolutePath());
-            getLogger().info("Looking in the classpath.");
+            getLogger().info("Could not find configuration file " + file.getAbsolutePath() +
+                             ". Looking in the classpath.");
         
             InputStream is = getClass().getResourceAsStream(configFileName);
             
             if ( is == null )
             {
+                getLogger().info("Could not find configuration file " + configFileName +
+                                 " on classpath. Looking for META-INF/xfire/xfire.xml " +
+                                 "on the classpath");
+            
                 is = getClass().getResourceAsStream("META-INF/xfire/xfire.xml");
                 
                 if ( is == null )
+                {
+                    getLogger().info("No configuration found.");
                     return null;
+                }
             }
             
             reader = new InputStreamReader( is );
