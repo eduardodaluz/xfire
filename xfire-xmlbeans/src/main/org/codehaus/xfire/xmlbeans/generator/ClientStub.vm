@@ -24,30 +24,33 @@ import $import.FullJavaName;
  *
  * TODO: Use correct SOAP version from WSDL
  */
-#if ( $service.isRest() ) #set( $name = "${service.Name}RestClient" )
-#else #set( $name = "${service.Name}SoapClient" ) #end
-public class $name
+#if (!$name)
+  #set($name = $service.Name)
+#end
+#if ( $service.isRest() ) #set( $clsName = "${name}RestClient" )
+#else #set( $clsName = "${name}SoapClient" ) #end
+public class $clsName
 {
     private static final String URL = "$service.Url";
 	private static final String ENCODING = "UTF-8";
 	
 	private XmlOptions options;
 	
-    public $name()
+    public $clsName()
     {
         options = new XmlOptions();
         options.setCharacterEncoding(ENCODING);
     }	
 
-	public $name(XmlOptions options)
+    public $clsName(XmlOptions options)
     {
         this.options = options;
     }
     
-	public String getServiceUrl()
-	{
-		return URL;
-	}
+    public String getServiceUrl()
+    {
+        return URL;
+    }
 
 #foreach ($method in $service.Methods)
 #if ($method.ResponseParameters.size() > 1)

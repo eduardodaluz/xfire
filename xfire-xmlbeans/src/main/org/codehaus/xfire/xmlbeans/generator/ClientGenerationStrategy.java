@@ -40,6 +40,7 @@ public class ClientGenerationStrategy
             
             VelocityContext context = new VelocityContext();
             context.put("package", task.getPackage());
+            context.put("name", task.getName());
             context.put("service", service);
             
             generateStub(context, writer, new InputStreamReader(getClass().getResourceAsStream("ClientStub.vm")));
