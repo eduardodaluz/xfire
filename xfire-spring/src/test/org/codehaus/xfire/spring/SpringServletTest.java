@@ -10,21 +10,22 @@ import org.springframework.core.io.ClassPathResource;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class SpringTest
+public class SpringServletTest
     extends AbstractXFireTest
 {
     public void testSpring()
         throws Exception
     {
-        ClassPathResource res = new ClassPathResource("/org/codehaus/xfire/spring/testBeans.xml");
+        ClassPathResource res = new ClassPathResource("/org/codehaus/xfire/spring/xfire.xml");
         XmlBeanFactory factory = new XmlBeanFactory(res);
         
-        Object bean = factory.getBean(BeanConstants.XFIRE);
+        Object bean = factory.getBean("xfire");
         assertTrue( bean instanceof XFire );
         
-        ServiceBuilder builder = (ServiceBuilder) factory.getBean(BeanConstants.SERVICE_BUILDER);
+        ServiceBuilder builder = (ServiceBuilder) factory.getBean("xfire.serviceBuilder");
         assertNotNull(builder);
         
         Service s = (Service) factory.getBean("echo.service");
+        
     }
 }

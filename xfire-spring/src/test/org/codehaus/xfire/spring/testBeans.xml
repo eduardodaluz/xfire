@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <import resource="xfire.xml"/>
+
+  <bean id="echo.service">
+    <property name="style"><value>message</value></property>
+    <property name="use"><value>literal</value></property>
+    <property name="name"><value>Echo</value></property>
+    <property name="namespace"><value>urn:Echo</value></property>
+    <property><ref bean="xfire.serviceBuilder"/></property>
+
+  </bean>
+  
+  <bean id="echo" class="org.codehaus.xfire.spring.Echo"/>
+</beans>
