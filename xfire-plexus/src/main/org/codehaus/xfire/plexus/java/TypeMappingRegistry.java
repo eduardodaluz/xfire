@@ -97,4 +97,24 @@ public class TypeMappingRegistry
     {
         this.logger = logger;
     }
+    
+    protected Class loadClass( String className )
+        throws ClassNotFoundException
+    {
+        try
+        {
+            return getClass().getClassLoader().loadClass(className);
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            try
+            {
+                return Class.forName(className);
+            }
+            catch (ClassNotFoundException cnf2)
+            {
+                return Thread.currentThread().getContextClassLoader().loadClass(className);
+            }
+        }
+    } 
 }
