@@ -140,8 +140,11 @@ public class SoapHandler
             handler.handleFault(e, context);
         }
         
-        invokePipeline( context.getTransport().getFaultPipeline(), handlerStack, context );
-        invokePipeline( context.getService().getFaultPipeline(), handlerStack, context );
+        if (context.getTransport() != null)
+            invokePipeline( context.getTransport().getFaultPipeline(), handlerStack, context );
+
+        if (context.getService() != null)
+            invokePipeline( context.getService().getFaultPipeline(), handlerStack, context );
         
         throw e;
     }
