@@ -16,7 +16,7 @@
   </bean>
 
   <bean id="xfire.typeMappingRegistry" 
-        class="org.codehaus.xfire.java.mapping.TypeMappingRegistry"
+        class="org.codehaus.xfire.type.DefaultTypeMappingRegistry"
         init-method="createDefaultMappings"/>
 
 </beans>

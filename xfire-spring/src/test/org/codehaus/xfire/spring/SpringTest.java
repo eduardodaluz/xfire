@@ -1,7 +1,7 @@
 package org.codehaus.xfire.spring;
 
-import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.test.AbstractXFireTest;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
