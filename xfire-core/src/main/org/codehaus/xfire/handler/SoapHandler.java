@@ -154,11 +154,11 @@ public class SoapHandler
     protected void invokeResponsePipeline(Stack handlerStack, MessageContext context) 
         throws Exception
     {
-        if (context.getTransport() != null )
-            invokePipeline( context.getTransport().getResponsePipeline(), handlerStack, context );
-        
-        if (context.getService() != null )
+       if (context.getService() != null )
             invokePipeline( context.getService().getResponsePipeline(), handlerStack, context );
+
+       if (context.getTransport() != null )
+           invokePipeline( context.getTransport().getResponsePipeline(), handlerStack, context );
     }
 
     protected void invokePipeline(HandlerPipeline pipeline, 
