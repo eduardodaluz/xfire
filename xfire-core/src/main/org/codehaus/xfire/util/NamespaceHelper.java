@@ -2,9 +2,7 @@ package org.codehaus.xfire.util;
 
 import java.util.StringTokenizer;
 
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
+import org.codehaus.yom.Element;
 
 /**
  * Namespace utilities.
@@ -14,35 +12,23 @@ import org.dom4j.Namespace;
 public class NamespaceHelper
 {
     /**
-     * @param nsUri
-     * @return The namespace with the specified URI.  If one doesn't
-     * exist, one is created.
-     */
-    public static Namespace createNamespace( String prefix, String nsUri )
-    {
-        return DocumentFactory.getInstance().createNamespace( prefix, nsUri );
-    }
-    
-    /**
      * Create a unique namespace uri/prefix combination.
      * 
      * @param nsUri
      * @return The namespace with the specified URI.  If one doesn't
      * exist, one is created.
      */
-    public static Namespace getNamespace( Element el, String nsUri )
+    public static String getUniquePrefix(Element element, String namespaceURI)
     {
-        Namespace ns = el.getNamespaceForURI( nsUri );
-
-        if ( ns == null || ns.getPrefix().equals("") )
+        String prefix = element.getNamespacePrefix(namespaceURI);
+        if (prefix == null)
         {
-            ns = DocumentFactory.getInstance().createNamespace( getUniquePrefix( el ), nsUri );
-            el.add( ns );
+            prefix = getUniquePrefix(element);
+            element.addNamespaceDeclaration(prefix, namespaceURI);
         }
-        
-        return ns;
+        return prefix;
     }
-    
+
     private static String getUniquePrefix( Element el )
     {
         int n = 1;
@@ -51,7 +37,7 @@ public class NamespaceHelper
         {
             String nsPrefix = "ns" + n;
             
-            if ( el.getNamespaceForPrefix( nsPrefix ) == null )
+            if ( el.getNamespaceURI( nsPrefix ) == null )
                 return nsPrefix;
             
             n++;

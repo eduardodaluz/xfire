@@ -5,7 +5,7 @@ import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutiosn.com">Dan Diephouse</a>

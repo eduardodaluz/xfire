@@ -19,7 +19,7 @@ import org.codehaus.xfire.handler.EchoHandler;
 import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>

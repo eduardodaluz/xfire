@@ -9,6 +9,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
+
 import junit.framework.TestCase;
 
 import org.codehaus.xfire.DefaultXFire;
@@ -19,12 +21,10 @@ import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Node;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
+import org.codehaus.yom.Document;
+import org.codehaus.yom.Node;
+import org.codehaus.yom.Serializer;
+import org.codehaus.yom.stax.StaxBuilder;
 
 /**
  * Contains helpful methods to test SOAP services.
@@ -44,9 +44,16 @@ public abstract class AbstractXFireTest
     protected void printNode( Node node )
         throws Exception
     {
-        XMLWriter writer = new XMLWriter( OutputFormat.createPrettyPrint() );
+        Serializer writer = new Serializer( System.out );
         writer.setOutputStream( System.out );
-        writer.write( node );
+        
+        if (node instanceof Document)
+            writer.write((Document) node);
+        else
+        {
+            writer.flush();
+            writer.writeChild( node );
+        }
     }
 
     /**
@@ -72,14 +79,14 @@ public abstract class AbstractXFireTest
     }
 
     protected Document readDocument( String text )
-        throws DocumentException
+        throws XMLStreamException
     {
         try
         {
-            SAXReader reader = new SAXReader();
-            return reader.read( new StringReader( text ) );
+            StaxBuilder builder = new StaxBuilder();
+            return builder.build( new StringReader( text ) );
         }
-        catch( DocumentException e )
+        catch( XMLStreamException e )
         {
             System.err.println( "Could not read the document!" );
             System.out.println( text );
@@ -92,19 +99,9 @@ public abstract class AbstractXFireTest
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        getXFire().generateWSDL( service, out );
+        getXFire().generateWSDL(service, out);
 
-        try
-        {
-            SAXReader reader = new SAXReader();
-            return reader.read( new StringReader( out.toString() ) );
-        }
-        catch( DocumentException e )
-        {
-            System.err.println( "Could not read the document!" );
-            System.out.println( out.toString() );
-            throw e;
-        }
+        return readDocument(out.toString());
     }
 
     /**

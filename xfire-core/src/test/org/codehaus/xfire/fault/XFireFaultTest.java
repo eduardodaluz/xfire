@@ -1,7 +1,6 @@
 package org.codehaus.xfire.fault;
 
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.BadHandler;
@@ -9,8 +8,7 @@ import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.DOMUtils;
-import org.dom4j.Document;
-import org.dom4j.io.SAXReader;
+import org.codehaus.yom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -50,9 +48,8 @@ public class XFireFaultTest
                                 null );
         
         soap12.handleFault( fault, context);
-        
-        SAXReader reader = new SAXReader();
-        Document doc = reader.read( new StringReader(out.toString()) );
+
+        Document doc = readDocument( out.toString());
         printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
@@ -91,8 +88,8 @@ public class XFireFaultTest
         
         soap11.handleFault( fault, context );
         System.err.println(out.toString());
-        SAXReader reader = new SAXReader();
-        Document doc = reader.read( new StringReader(out.toString()) );
+        
+        Document doc = readDocument( out.toString());
         printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
         addNamespace("t", "urn:test2");

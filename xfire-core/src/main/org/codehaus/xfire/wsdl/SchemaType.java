@@ -4,7 +4,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.dom4j.Element;
+import org.codehaus.yom.Element;
+
 
 /**
  * An XSD type.

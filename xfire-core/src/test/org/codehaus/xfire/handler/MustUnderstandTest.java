@@ -7,7 +7,7 @@ import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 
 public class MustUnderstandTest
     extends AbstractXFireTest

@@ -202,7 +202,7 @@ public class SoapHandler
         XMLStreamReader reader = context.getXMLStreamReader();
         StaxBuilder builder = new StaxBuilder();
 
-        Element header = builder.readElement(null, context.getXMLStreamReader());
+        Element header = builder.buildElement(null, context.getXMLStreamReader());
 
         context.setRequestHeader(header);
     }

@@ -5,7 +5,7 @@ import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.ToContainsFilter;

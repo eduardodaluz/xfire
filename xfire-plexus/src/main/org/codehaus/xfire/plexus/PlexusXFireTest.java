@@ -1,12 +1,13 @@
 package org.codehaus.xfire.plexus;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
@@ -15,13 +16,11 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.XPathAssert;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
-import org.dom4j.XPath;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
+import org.codehaus.yom.Document;
+import org.codehaus.yom.Node;
+import org.codehaus.yom.Serializer;
+import org.codehaus.yom.stax.StaxBuilder;
+
 
 /**
  * Contains helpful methods to test SOAP services.
@@ -33,50 +32,70 @@ public class PlexusXFireTest
 {
     /** Namespaces for the XPath expressions. */
     private Map namespaces = new HashMap();
-    
-    protected void printNode( Node node ) 
+
+    protected void printNode( Node node )
         throws Exception
     {
-        XMLWriter writer = new XMLWriter( OutputFormat.createPrettyPrint() );
+        Serializer writer = new Serializer( System.out );
         writer.setOutputStream( System.out );
-        writer.write( node );
+        
+        if (node instanceof Document)
+            writer.write((Document) node);
+        else
+        {
+            writer.flush();
+            writer.writeChild( node );
+        }
     }
-    
+
     /**
      * Invoke a service with the specified document.
-     * 
-     * @param service The name of the service.
+     *
+     * @param service  The name of the service.
      * @param document The request as an xml document in the classpath.
-     * @return
-     * @throws Exception
      */
-    protected Document invokeService( String service, String document ) 
+    protected Document invokeService( String service, String document )
         throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = 
+        MessageContext context =
             new MessageContext( service,
                                 null,
                                 out,
                                 null,
                                 null );
-        
+
         getXFire().invoke( getResourceAsStream( document ), context );
-        
-        SAXReader reader = new SAXReader();
-        return reader.read( new StringInputStream(out.toString()) );
+
+        return readDocument( out.toString() );
     }
 
-    protected Document getWSDLDocument( String service ) 
+    protected Document readDocument( String text )
+        throws XMLStreamException
+    {
+        try
+        {
+            StaxBuilder builder = new StaxBuilder();
+            return builder.build( new StringReader( text ) );
+        }
+        catch( XMLStreamException e )
+        {
+            System.err.println( "Could not read the document!" );
+            System.out.println( text );
+            throw e;
+        }
+    }
+
+    protected Document getWSDLDocument( String service )
         throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        getXFire().generateWSDL( service, out );
-        
-        SAXReader reader = new SAXReader();
-        return reader.read( new StringInputStream(out.toString()) );
+        getXFire().generateWSDL(service, out);
+
+        return readDocument(out.toString());
     }
+
     
     /**
      * @see junit.framework.TestCase#setUp()

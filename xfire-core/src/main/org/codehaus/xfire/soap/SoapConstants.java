@@ -26,5 +26,6 @@ public class SoapConstants
 
     /** XML Schema Namespace. */
     public static final String XSD = "http://www.w3.org/2001/XMLSchema";
+    public static final String XSD_PREFIX = "xsd";
 
 }

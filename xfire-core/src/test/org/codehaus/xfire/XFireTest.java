@@ -4,12 +4,12 @@ import java.io.ByteArrayOutputStream;
 
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.EchoHandler;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 
 /**
  * XFireTest
@@ -39,7 +39,7 @@ public class XFireTest
         throws Exception
     {
         Document response = invokeService( "Echo", "/org/codehaus/xfire/echo11.xml" );
-        
+        printNode(response);
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", response);
     }

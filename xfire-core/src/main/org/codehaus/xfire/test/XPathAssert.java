@@ -1,6 +1,7 @@
 package org.codehaus.xfire.test;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -8,9 +9,9 @@ import junit.framework.Assert;
 
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
-import org.dom4j.XPath;
+import org.codehaus.yom.Node;
+import org.codehaus.yom.xpath.YOMXPath;
+import org.jaxen.XPath;
 
 /**
  * WebService assertions.
@@ -32,7 +33,7 @@ public class XPathAssert
         if (nodes.size() == 0)
         {
             throw new Exception("Failed to select any nodes for expression:.\n" + xpath + "\n"
-                    + node.asXML());
+                    + node.toXML());
         }
     }
 
@@ -49,7 +50,7 @@ public class XPathAssert
         if (nodes.size() > 0)
         {
             throw new Exception("Found multiple nodes for expression:\n" + xpath + "\n"
-                    + node.asXML());
+                    + node.toXML());
         }
     }
 
@@ -64,9 +65,9 @@ public class XPathAssert
     public static void assertXPathEquals(String xpath, String value, Node node, Map namespaces)
         throws Exception
     {
-        String value2 = createXPath(xpath, namespaces).selectSingleNode(node).getText().trim();
-
-        Assert.assertEquals(value, value2);
+        String value2 = ((Node) createXPath( xpath, namespaces ).selectSingleNode( node )).getValue().trim();
+        
+        Assert.assertEquals( value, value2 );
     }
 
     public static void assertNoFault(Node node)
@@ -83,11 +84,17 @@ public class XPathAssert
      * Create the specified XPath expression with the namespaces added via
      * addNamespace().
      */
-    protected static XPath createXPath(String xpathString, Map namespaces)
+    public static XPath createXPath( String xpathString, Map namespaces ) 
+        throws Exception
     {
-        XPath xpath = DocumentHelper.createXPath(xpathString);
-        xpath.setNamespaceURIs(namespaces);
-
+        XPath xpath = new YOMXPath( xpathString );
+        
+        for ( Iterator itr = namespaces.keySet().iterator(); itr.hasNext(); )
+        {
+            String ns = (String) itr.next();
+            xpath.addNamespace(ns, (String) namespaces.get(ns));
+        }
+    
         return xpath;
     }
 }

@@ -3,7 +3,7 @@ package org.codehaus.xfire.spring;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
