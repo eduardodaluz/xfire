@@ -36,6 +36,12 @@ public class MessageContext
     private Transport transport;
     private XMLStreamReader xmlStreamReader;
     
+    public MessageContext()
+    {
+        properties = new HashMap();
+        messageContexts.set(this);
+    }
+    
     /**
      * Create a MessageContext to invoke a service with the
      * specified document as the request.
