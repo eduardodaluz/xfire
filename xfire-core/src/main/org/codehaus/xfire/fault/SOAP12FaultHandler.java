@@ -1,9 +1,12 @@
 package org.codehaus.xfire.fault;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -33,18 +36,32 @@ public class SOAP12FaultHandler
             writer.writeStartDocument();
             writer.writeStartElement("soap:Envelope");
             writer.writeAttribute("xmlns:soap", SOAPConstants.SOAP12_ENVELOPE_NS);
+
+            Map namespaces = fault.getNamespaces();
+            for ( Iterator itr = namespaces.keySet().iterator(); itr.hasNext(); )
+            {
+                String prefix = (String) itr.next();
+                writer.writeAttribute("xmlns:"+prefix, (String) namespaces.get(prefix));
+            }
             
             writer.writeStartElement("soap:Body");
             writer.writeStartElement("soap:Fault");
 
             writer.writeStartElement("soap:Code");
+            
             writer.writeStartElement("soap:Value");
             writer.writeCharacters( "soap:" + fault.getCode() );
+            writer.writeEndElement(); // Value
+            
             if ( fault.getSubCode() != null )
             {
-                //code.add( fault.getSubCode() );
+                writer.writeStartElement("soap:SubCode");
+                writer.writeStartElement("soap:Value");
+                writer.writeCharacters( fault.getSubCode() );
+                writer.writeEndElement(); // Value
+                writer.writeEndElement(); // SubCode
             }
-            writer.writeEndElement(); // Value
+
             writer.writeEndElement(); // Code
             
             writer.writeStartElement("soap:Reason");
@@ -53,14 +70,13 @@ public class SOAP12FaultHandler
             writer.writeEndElement(); // Text
             writer.writeEndElement(); // Reason
 
-            writer.writeStartElement("soap:Detail");
             if ( fault.getDetail() != null )
             {
-                List detail = fault.getDetail();
-                // TODO: handle fault detail.
+                writer.writeStartElement("soap:Detail");
+                writer.writeCharacters(fault.getDetail());
+                writer.writeEndElement(); // Detail            
             }
-            writer.writeEndElement(); // Detail
-            
+
             writer.writeEndElement(); // Fault
             writer.writeEndElement(); // Body
             writer.writeEndElement(); // Envelope

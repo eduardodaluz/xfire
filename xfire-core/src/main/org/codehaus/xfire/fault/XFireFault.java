@@ -1,7 +1,9 @@
 package org.codehaus.xfire.fault;
 
-import java.util.List;
-import org.w3c.dom.Element;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
 
 /**
  * <p>
@@ -36,20 +38,29 @@ public class XFireFault
     public final static String SENDER = "Sender";
     
     /** 
+     * <p>
+     * A SOAP 1.2 only fault code.
+     * </p>
+     * <p>
      * "The message could not be processed for reasons attributable to the
      * processing of the message rather than to the contents of the message itself."
      *  -- SOAP 1.2 Spec
+     * </p>
      */
     public final static String RECEIVER = "Receiver";
 
 	private String faultCode;
     
-	private Element subCode;
+	private String subCode;
 	
-	private List detail;
+	private String detail;
 	
 	private Exception exception;
 	
+    private DocumentBuilder docBuilder;
+    
+    private Map namespaces;
+    
     /**
      * Create a fault.
      * 
@@ -63,6 +74,7 @@ public class XFireFault
 	{
 		super( message, exception );
 		this.faultCode = code;
+        this.namespaces = new HashMap();
 	}
 
     /**
@@ -74,6 +86,7 @@ public class XFireFault
 	{
 	    super( exception );
 	    this.faultCode = RECEIVER;
+        this.namespaces = new HashMap();
 	}
 	
 	/**
@@ -87,6 +100,7 @@ public class XFireFault
     {
         super( exception.getMessage(), exception );
         this.faultCode = code;
+        this.namespaces = new HashMap();
     }
 
     /**
@@ -100,6 +114,7 @@ public class XFireFault
 	{
 		super( message );
         this.faultCode = code;
+        this.namespaces = new HashMap();
 	}
 
 	public static XFireFault createFault( Exception e )
@@ -134,32 +149,52 @@ public class XFireFault
     /**
      * Returns the SubCode for the Fault Code.
      * 
-     * TODO: The spec seems unclear whether or not there can be multiple
-     * subcodes.  Its an easy enough change to support multiple subcodes.
-     * 
      * @return The SubCode element as detailed by the SOAP 1.2 spec.
      */
-    public Element getSubCode()
+    public String getSubCode()
     {
         return subCode;
     }
-	
-    public void setSubCode(Element subCode)
-    {
-        this.subCode = subCode;
-    }
     
-    /**
-     * A list of Element's that provide the message detail.
-     * @return
-     */
-    public List getDetail()
+    public String getDetail()
     {
         return detail;
     }
-    
-    public void setDetail( List detail )
+
+    public void setDetail(String detail)
     {
         this.detail = detail;
+    }
+    
+    public void setSubCode(String subCode)
+    {
+        this.subCode = subCode;
+    }
+
+    public String getFaultCode()
+    {
+        return faultCode;
+    }
+
+    public void setFaultCode(String faultCode)
+    {
+        this.faultCode = faultCode;
+    }
+    
+    /**
+     * User defined namespaces which will be written out
+     * on the resultant SOAP Fault (for use easy with SubCodes and Detail)
+     * elements.
+     * 
+     * @return
+     */
+    public Map getNamespaces()
+    {
+        return namespaces;
+    }
+    
+    public void addNamespace( String prefix, String ns )
+    {
+        namespaces.put(prefix, ns);
     }
 }

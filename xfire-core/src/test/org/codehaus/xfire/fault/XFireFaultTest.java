@@ -1,11 +1,15 @@
 package org.codehaus.xfire.fault;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
+
 import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.service.SimpleService;
+import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
 
 /**
  * XFireTest
@@ -15,6 +19,31 @@ import org.codehaus.xfire.service.SimpleService;
 public class XFireFaultTest
     extends AbstractXFireTest
 {
+    
+    public void testFaults()
+        throws Exception
+    {
+        SOAP12FaultHandler soap12 = new SOAP12FaultHandler();
+        
+        XFireFault fault = new XFireFault(new Exception());
+        fault.setSubCode("m:NotAvailable");
+        fault.addNamespace("m", "urn:test");
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MessageContext context = 
+            new MessageContext( "Echo",
+                                null,
+                                out,
+                                null,
+                                null );
+        
+        soap12.handleFault( fault, context);
+        
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read( new StringReader(out.toString()) );
+        
+        assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
+    }
     
     public void testSOAP12()
         throws Exception
@@ -31,7 +60,7 @@ public class XFireFaultTest
         
         testHandler( soap11 );
     }
-
+    
     /**
      * @param soap11
      */
