@@ -32,7 +32,7 @@ public class Soap11 implements SoapVersion
 
     private final String namespace = "http://schemas.xmlsoap.org/soap/envelope/";
 
-    private final String prefix = "env";
+    private final String prefix = "soap";
 
     private final String noneRole = namespace + "/role/none";
 

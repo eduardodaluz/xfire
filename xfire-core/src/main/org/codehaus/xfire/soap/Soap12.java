@@ -32,7 +32,7 @@ public class Soap12 implements SoapVersion
 
     private final String namespace = "http://www.w3.org/2003/05/soap-envelope";
 
-    private final String prefix = "env";
+    private final String prefix = "soap";
 
     private final String noneRole = namespace + "/role/none";
 

@@ -2,6 +2,7 @@ package org.codehaus.xfire.handler;
 
 import java.util.Stack;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -87,8 +88,7 @@ public class SoapHandler
                 }
                 else if ( reader.getLocalName().equals("Envelope") )
                 {
-                    // create the response envelope when we have the startElement() info
-                    writer = createResponseWriter(context, reader, encoding);
+                    context.setSoapVersion(reader.getNamespaceURI());
                 }
                 break;
             default:
@@ -96,18 +96,23 @@ public class SoapHandler
             }
         }
 
-        writeHeaders(context, writer);
-
-        invokeResponsePipeline(handlerStack, context);
-        
-        // TODO: Create a MIME output stream if there are attachments.
         Attachments atts = (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
         if (atts != null && atts.size() > 0)
         {
-            
+            createMimeOutputStream(context);
         }
         
-        writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
+        writer = createResponseWriter(context, encoding);
+
+        writeHeaders(context, writer);
+
+        invokeResponsePipeline(handlerStack, context);
+
+        QName body = context.getSoapVersion().getBody();
+        writer.writeStartElement(body.getPrefix(), 
+                                 body.getLocalPart(),
+                                 body.getNamespaceURI());
+        
         bodyHandler.writeResponse(context);
         writer.writeEndElement();
         
@@ -115,6 +120,11 @@ public class SoapHandler
 
         writer.writeEndDocument();
         writer.close();       
+    }
+
+    private void createMimeOutputStream(MessageContext context)
+    {
+        // TODO No outgoing attachment support yet.
     }
 
     public void handleFault(XFireFault fault, MessageContext context) 
@@ -192,27 +202,23 @@ public class SoapHandler
     }
     
     private XMLStreamWriter createResponseWriter(MessageContext context, 
-                                                 XMLStreamReader reader,
                                                  String encoding)
         throws XMLStreamException, XFireFault
     {
         XMLStreamWriter writer = getXMLStreamWriter(context);
+
         if ( encoding == null )
             writer.writeStartDocument("UTF-8", "1.0");
         else
             writer.writeStartDocument(encoding, "1.0");
         
-        String soapVersion = reader.getNamespaceURI();
-        context.setSoapVersion(soapVersion);
+        QName env  = context.getSoapVersion().getEnvelope();
+        writer.setPrefix(env.getPrefix(), env.getNamespaceURI());
+        writer.writeStartElement(env.getPrefix(), 
+                                 env.getLocalPart(),
+                                 env.getNamespaceURI());
+        writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
 
-        if ( context.getSoapVersion() == null )
-            throw new XFireFault("SOAP version not recognized.", XFireFault.SENDER);
-        
-        String soapNS = context.getSoapVersion().getNamespace();
-        writer.setPrefix("soap", soapNS);
-        writer.writeStartElement("soap", "Envelope", soapNS);
-        writer.writeNamespace("soap", soapNS);
-                
         return writer;
     }
 }
