@@ -2,17 +2,20 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
 import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
 public class Jsr181WebAnnotations
         implements WebAnnotations
@@ -34,8 +37,7 @@ public class Jsr181WebAnnotations
             annotation.setTargetNamespace(webService.targetNamespace());
 
             return annotation;
-        }
-        else
+        } else
         {
             return null;
         }
@@ -56,8 +58,7 @@ public class Jsr181WebAnnotations
             annotation.setOperationName(webMethod.operationName());
 
             return annotation;
-        }
-        else
+        } else
         {
             return null;
         }
@@ -79,8 +80,7 @@ public class Jsr181WebAnnotations
             annot.setTargetNameSpace(webResult.targetNamespace());
 
             return annot;
-        }
-        else
+        } else
         {
             return null;
         }
@@ -92,8 +92,7 @@ public class Jsr181WebAnnotations
         if (parameter >= annotations.length)
         {
             return false;
-        }
-        else
+        } else
         {
             for (int i = 0; i < annotations[parameter].length; i++)
             {
@@ -145,8 +144,7 @@ public class Jsr181WebAnnotations
             }
 
             return annot;
-        }
-        else
+        } else
         {
             return null;
         }
@@ -155,6 +153,46 @@ public class Jsr181WebAnnotations
     public boolean hasOnewayAnnotation(Method method)
     {
         return method.isAnnotationPresent(Oneway.class);
+    }
+
+    public boolean hasSOAPBindingAnnotation(Class clazz)
+    {
+        return clazz.isAnnotationPresent(SOAPBinding.class);
+    }
+
+    public SOAPBindingAnnotation getSoapBindingAnnotation(Class clazz)
+    {
+        SOAPBinding binding = (SOAPBinding) clazz.getAnnotation(SOAPBinding.class);
+        
+        SOAPBindingAnnotation annot = new SOAPBindingAnnotation();
+        if (binding.parameterStyle() == SOAPBinding.ParameterStyle.BARE)
+        {
+            annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_BARE);
+        }
+        else if (binding.parameterStyle() == SOAPBinding.ParameterStyle.WRAPPED)
+        {
+            annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED);
+        }
+        
+        if (binding.style() == SOAPBinding.Style.DOCUMENT)
+        {
+            annot.setStyle(SOAPBindingAnnotation.STYLE_DOCUMENT);
+        }
+        else if (binding.style() == SOAPBinding.Style.RPC)
+        {
+            annot.setStyle(SOAPBindingAnnotation.STYLE_RPC);
+        }
+        
+        if (binding.use() == SOAPBinding.Use.ENCODED)
+        {
+            annot.setUse(SOAPBindingAnnotation.USE_ENCODED);
+        }
+        else if (binding.use() == SOAPBinding.Use.LITERAL)
+        {
+            annot.setUse(SOAPBindingAnnotation.USE_LITERAL);
+        }
+        
+        return annot;
     }
 
 }
