@@ -4,7 +4,7 @@
   <groupId>xfire</groupId>
   <artifactId>xfire-xmlbeans</artifactId>
   <id>xfire-xmlbeans</id>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-M3.pom</extend>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
 
   <package>org.codehaus.xfire</package>
   <description>An XMLBeans binding module for XFire.</description>
@@ -21,13 +21,13 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire</artifactId>
-      <version>1.0-M3</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-java</artifactId>
-      <version>1.0-M3</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
 	
     <dependency>
