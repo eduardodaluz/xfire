@@ -2,7 +2,6 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -37,7 +36,8 @@ public class Jsr181WebAnnotations
             annotation.setTargetNamespace(webService.targetNamespace());
 
             return annotation;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -58,7 +58,8 @@ public class Jsr181WebAnnotations
             annotation.setOperationName(webMethod.operationName());
 
             return annotation;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -80,7 +81,8 @@ public class Jsr181WebAnnotations
             annot.setTargetNameSpace(webResult.targetNamespace());
 
             return annot;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -92,7 +94,8 @@ public class Jsr181WebAnnotations
         if (parameter >= annotations.length)
         {
             return false;
-        } else
+        }
+        else
         {
             for (int i = 0; i < annotations[parameter].length; i++)
             {
@@ -144,7 +147,8 @@ public class Jsr181WebAnnotations
             }
 
             return annot;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -160,10 +164,10 @@ public class Jsr181WebAnnotations
         return clazz.isAnnotationPresent(SOAPBinding.class);
     }
 
-    public SOAPBindingAnnotation getSoapBindingAnnotation(Class clazz)
+    public SOAPBindingAnnotation getSOAPBindingAnnotation(Class clazz)
     {
         SOAPBinding binding = (SOAPBinding) clazz.getAnnotation(SOAPBinding.class);
-        
+
         SOAPBindingAnnotation annot = new SOAPBindingAnnotation();
         if (binding.parameterStyle() == SOAPBinding.ParameterStyle.BARE)
         {
@@ -173,7 +177,7 @@ public class Jsr181WebAnnotations
         {
             annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED);
         }
-        
+
         if (binding.style() == SOAPBinding.Style.DOCUMENT)
         {
             annot.setStyle(SOAPBindingAnnotation.STYLE_DOCUMENT);
@@ -182,7 +186,7 @@ public class Jsr181WebAnnotations
         {
             annot.setStyle(SOAPBindingAnnotation.STYLE_RPC);
         }
-        
+
         if (binding.use() == SOAPBinding.Use.ENCODED)
         {
             annot.setUse(SOAPBindingAnnotation.USE_ENCODED);
@@ -191,7 +195,7 @@ public class Jsr181WebAnnotations
         {
             annot.setUse(SOAPBindingAnnotation.USE_LITERAL);
         }
-        
+
         return annot;
     }
 
