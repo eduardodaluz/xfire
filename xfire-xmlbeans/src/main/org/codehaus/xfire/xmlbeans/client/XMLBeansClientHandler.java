@@ -73,9 +73,12 @@ public class XMLBeansClientHandler
     public void writeRequest( XMLStreamWriter writer ) 
     	throws XMLStreamException
     {
-        for ( int i = 0; i < request.length; i++ )
+        if ( request != null )
         {
-            STAXUtils.copy(request[i].newXMLStreamReader(options), writer);
+	        for ( int i = 0; i < request.length; i++ )
+	        {
+	            STAXUtils.copy(request[i].newXMLStreamReader(options), writer);
+	        }
         }
     }
 
