@@ -2,11 +2,11 @@ package org.codehaus.xfire.xmlbeans;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
+
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.java.DefaultJavaService;
 import org.codehaus.xfire.java.Operation;
@@ -36,7 +36,7 @@ public class XMLBeansService
 
     protected void addOperation(Method method)
     {
-        Operation op = new Operation(method, this);
+        Operation op = new Operation(method );
         
         getOperationsMap().put( method.getName(), op );
         
