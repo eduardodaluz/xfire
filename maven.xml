@@ -10,7 +10,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="xfire-core/project.xml"
-      excludes="*"
+      excludes="xfire-plexus/*,xfire-aegis/*,xfire-xmlbeans/*,xfire-demo/*,xfire-java/*"
       goals="pom:install,jar:install"
       banner="Installing XFire Core"
       ignoreFailures="true"/>
