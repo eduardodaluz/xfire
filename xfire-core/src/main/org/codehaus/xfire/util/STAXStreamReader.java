@@ -224,10 +224,7 @@ public class STAXStreamReader
                     readNode( reader, (Branch) doc );
             }
         }
-        
-        reader.next();
-        int event = reader.getEventType();
-        
+
         return doc;
     }
 
