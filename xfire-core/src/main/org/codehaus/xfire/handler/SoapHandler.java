@@ -10,7 +10,10 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.yom.Element;
+import org.codehaus.yom.Elements;
 import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.yom.stax.StaxSerializer;
 
@@ -77,6 +80,7 @@ public class SoapHandler
                 }
                 else if (reader.getLocalName().equals("Body"))
                 {
+                    createResponseHeader(context);
                     invokeRequestPipeline(handlerStack, context);
 
                     handlerStack.push(bodyHandler);
@@ -201,7 +205,10 @@ public class SoapHandler
         Element header = builder.readElement(null, context.getXMLStreamReader());
 
         context.setRequestHeader(header);
-        
+    }
+    
+    protected void createResponseHeader(MessageContext context)
+    {
         QName headerQ  = context.getSoapVersion().getHeader();
         Element response = new Element(headerQ.getPrefix() + ":" + headerQ.getLocalPart(), 
                                        headerQ.getNamespaceURI()) ;
@@ -209,10 +216,81 @@ public class SoapHandler
         context.setResponseHeader(response);
     }
     
-    protected void validateHeaders(MessageContext context)
+    /**
+     * Validates that the mustUnderstand and role headers are processed correctly.
+     * 
+     * @param context
+     * @throws XFireFault
+     */
+    protected void validateHeaders(MessageContext context) 
+        throws XFireFault
     {
-        /* TODO Check MustUnderstand and Role attributes
-         */ 
+        if (context.getRequestHeader() == null)
+            return;
+        
+        SoapVersion version = context.getSoapVersion();
+        Elements elements = context.getRequestHeader().getChildElements();
+        for (int i = 0; i < elements.size(); i++)
+        {
+            Element e = elements.get(i);
+            String mustUnderstand = e.getAttributeValue("mustUnderstand", 
+                                                        version.getNamespace());
+            
+            if (mustUnderstand != null && mustUnderstand.equals("1"))
+            {
+                assertUnderstandsHeader(context, new QName(e.getNamespaceURI(), e.getLocalName()));
+            }
+        }
+    }
+
+    /**
+     * Assert that a service understands a particular header.  If not, a
+     * fault is thrown.
+     * 
+     * @param context
+     * @param name
+     * @throws XFireFault 
+     */
+    protected void assertUnderstandsHeader(MessageContext context, QName name) 
+        throws XFireFault
+    {
+        Service service = context.getService();
+        if (service.getRequestPipeline() != null && 
+                understands(service.getRequestPipeline(), name))
+            return;
+        
+        if (service.getResponsePipeline() != null && 
+                understands(service.getResponsePipeline(), name))
+            return;
+        
+        throw new XFireFault("Header {" + name.getLocalPart() + "}" + name.getNamespaceURI()
+                             + " was not undertsood by the service.", XFireFault.MUST_UNDERSTAND);
+    }
+
+    /**
+     * Determine if a particular pipeline undertands a header.
+     * 
+     * @param pipeline
+     * @param name
+     * @return
+     */
+    private boolean understands(HandlerPipeline pipeline, QName name)
+    {
+        for (int i = 0; i < pipeline.size(); i++)
+        {
+            QName[] understoodQs = pipeline.getHandler(i).getUnderstoodHeaders();
+            
+            if (understoodQs != null)
+            {
+                for (int j = 0; j < understoodQs.length; j++)
+                {
+                    if (understoodQs[j].equals(name))
+                        return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     protected void writeHeaders( MessageContext context, XMLStreamWriter writer ) 
