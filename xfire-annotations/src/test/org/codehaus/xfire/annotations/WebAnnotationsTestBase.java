@@ -2,7 +2,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
-import junit.framework.TestCase;
+import org.codehaus.xfire.test.AbstractXFireTypeTest;
 
 /**
  * Base class for unit tests that determine annotations.
@@ -10,15 +10,17 @@ import junit.framework.TestCase;
  * @author Arjen Poutsma
  */
 public abstract class WebAnnotationsTestBase
-        extends TestCase
+        extends AbstractXFireTypeTest
 {
     protected WebAnnotations webAnnotations;
     protected Class echoServiceClass;
     protected Method echoMethod;
 
-    protected void setUp()
+    public void setUp()
             throws Exception
     {
+        super.setUp();
+        
         webAnnotations = getWebAnnotations();
         echoServiceClass = getEchoServiceClass();
         echoMethod = echoServiceClass.getMethod("echo", new Class[]{String.class});
