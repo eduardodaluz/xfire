@@ -59,19 +59,19 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
         
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-java</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
         
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-xmlbeans</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
 
   </dependencies>

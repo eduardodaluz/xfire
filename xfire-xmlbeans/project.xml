@@ -4,7 +4,7 @@
   <groupId>xfire</groupId>
   <artifactId>xfire-xmlbeans</artifactId>
   <currentVersion>1.0-alpha-2-SNAPSHOT</currentVersion>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-2-SNAPSHOT.pom</extend>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-2.pom</extend>
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
@@ -26,13 +26,13 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
 
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-java</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
+      <version>1.0-alpha-2</version>
     </dependency>
 	
     <!-- A snapshot with XMLBEANS-78 patch -->
