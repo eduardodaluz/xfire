@@ -96,7 +96,7 @@ public class SoapHttpTransport
 	 */
 	protected String getUrl( String serviceName )
 	{
-		HttpServletRequest req = XFireServlet.getRequest();
+		HttpServletRequest req = XFireServletController.getRequest();
         
         return getWebappBase(req) + "/services/" + serviceName;
 	}

@@ -4,12 +4,10 @@ import javax.servlet.ServletException;
 
 import org.codehaus.plexus.servlet.PlexusServletUtils;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.XFireServlet;
 
 /**
- * Loads XFire and processes requests via a servlet.
+ * An XFire servlet which obtains its XFire instance from Plexus.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004
@@ -17,27 +15,9 @@ import org.codehaus.xfire.transport.http.XFireServlet;
 public class PlexusXFireServlet
     extends XFireServlet
 {
-    private XFire xfire;
-
-    protected TransportManager getTransportManager()
+	public XFire createXFire()
     	throws ServletException
     {
-        return getXFire().getTransportManager();
-    }
-
-	public XFire getXFire()
-        throws ServletException
-	{
-        if ( xfire == null )
-        {
-            xfire = (XFire) PlexusServletUtils.lookup(getServletContext(), XFire.ROLE);
-        }
-        return xfire;
-	}
-    
-    public ServiceRegistry getServiceRegistry() 
-        throws ServletException
-    {
-        return getXFire().getServiceRegistry();
+        return (XFire) PlexusServletUtils.lookup(getServletContext(), XFire.ROLE);
     }
 }
