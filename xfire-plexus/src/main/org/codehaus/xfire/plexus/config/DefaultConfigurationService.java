@@ -36,24 +36,32 @@ public class DefaultConfigurationService
     
 	public void initialize() throws Exception
 	{
-        List confs = getServiceLocator().lookupList(Configurator.ROLE);
-        
-        for ( Iterator itr = confs.iterator(); itr.hasNext(); )
-        {
-            Configurator conf = (Configurator) itr.next();
-            
-            register( conf );
-        }
-        
-        Reader reader = findConfigurationReader();
-             
-        if ( reader == null )
-        {
-           return;
-        }             
-       
-        PlexusConfiguration configuration = new XmlPlexusConfiguration( Xpp3DomBuilder.build(reader) );
-        createServices( configuration.getChild("services") );
+	    try
+	    {
+	        List confs = getServiceLocator().lookupList(Configurator.ROLE);
+	        
+	        for ( Iterator itr = confs.iterator(); itr.hasNext(); )
+	        {
+	            Configurator conf = (Configurator) itr.next();
+	            
+	            register( conf );
+	        }
+	        
+	        Reader reader = findConfigurationReader();
+	             
+	        if ( reader == null )
+	        {
+	           return;
+	        }             
+	       
+	        PlexusConfiguration configuration = new XmlPlexusConfiguration( Xpp3DomBuilder.build(reader) );
+	        createServices( configuration.getChild("services") );
+	    }
+	    catch( Exception e )
+	    {
+	        getLogger().error("Could not start the configuration service.", e);
+	        throw e;
+	    }
 	}
     
 	private void createServices(PlexusConfiguration child) 
