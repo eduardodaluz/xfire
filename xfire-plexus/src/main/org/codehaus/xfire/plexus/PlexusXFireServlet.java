@@ -7,7 +7,9 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.transport.http.XFireServlet;
 
 /**
- * An XFire servlet which obtains its XFire instance from Plexus.
+ * An XFire servlet which obtains its XFire instance from Plexus. This
+ * is only if you already using Plexus in your application. For a simple
+ * Plexus managed version of XFire see StandaloneXFireServlet.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004

@@ -120,6 +120,11 @@ public class XFireFactory
         return fac; 
     }   
 	
+    /**
+     * Register an XFireFactory class. 
+     * @param factoryClass
+     * @param def Whether or not this should be the default factory.
+     */
 	public static void registerFactory( Class factoryClass, boolean def )
 	{
 	    if ( def )

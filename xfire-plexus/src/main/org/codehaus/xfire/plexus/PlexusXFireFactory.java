@@ -14,6 +14,13 @@ import org.codehaus.xfire.XFireFactory;
  * The StandaloneXFire class allows you to embed a Plexus managed version
  * of XFire within your application. Use the XFireFactory to access it.
  * </p>
+ * <p>
+ * If you are not using the StandaloneXFireServlet or PlexusXFireServlet,
+ * you must register this factory:
+ * </p>
+ * <pre>
+ * XFireFactory.register(PlexusXFireFactory.class, true);
+ * </pre>
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class PlexusXFireFactory
