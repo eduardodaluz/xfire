@@ -28,7 +28,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-quickstart/*,xfire-core/*"
+      excludes="xfire-demo/*,xfire-core/*"
       goals="jar:install"
       banner="Installing XFire"
       ignoreFailures="true"/>
@@ -44,7 +44,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-quickstart/*"
+      excludes="xfire-demo/*"
       goals="jar:deploy"
       banner="Installing XFire"
       ignoreFailures="true"/>
@@ -60,7 +60,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-quickstart/*"
+      excludes="xfire-demo/*"
       goals="dist:deploy"
       banner="Deploying XFire Websites"
       ignoreFailures="true"/>
@@ -76,7 +76,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-quickstart/*"
+      excludes="xfire-demo/*"
       goals="site:deploy"
       banner="Deploying XFire Websites"
       ignoreFailures="true"/>
