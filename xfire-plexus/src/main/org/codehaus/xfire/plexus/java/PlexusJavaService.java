@@ -15,6 +15,7 @@ import org.codehaus.xfire.fault.SOAP12FaultHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.SoapHandler;
 import org.codehaus.xfire.java.DefaultJavaService;
+import org.codehaus.xfire.java.JavaService;
 import org.codehaus.xfire.java.JavaServiceHandler;
 import org.codehaus.xfire.java.mapping.TypeMapping;
 import org.codehaus.xfire.java.mapping.TypeMappingRegistry;
@@ -119,7 +120,15 @@ public class PlexusJavaService
         }
         else
             throw new PlexusConfigurationException("Invalid soap version.  Must be 1.1 or 1.2.");
-            
+        
+        String scope = config.getChild("scope").getValue("application");
+        if ( scope.equals("application") )
+            setScope(JavaService.SCOPE_APPLICATION);
+        else if ( scope.equals("session") )
+            setScope(JavaService.SCOPE_SESSION);
+        else if ( scope.equals("request") )
+            setScope(JavaService.SCOPE_REQUEST);
+        
         setFaultHandlerHint( soapNS );
         
         setAutoTyped( Boolean.valueOf(config.getChild( "autoTyped" ).getValue("false")).booleanValue() );
