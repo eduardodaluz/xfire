@@ -1,7 +1,7 @@
 package org.codehaus.xfire.annotations;
 
 /**
- * Represents an common representation of a web service attribute. Specifies that the given method is exposed as a Web
+ * Represents an common representation of a web service annotation. Specifies that the given method is exposed as a Web
  * Service operation, making it part of the Web Service’s public contract. A WebMethod annotation is required for each
  * method that is published by the Web Service.
  *
@@ -100,13 +100,13 @@ public class WebServiceAnnotation
     }
 
     /**
-     * Returns a String representation of this <code>WebServiceAttribute</code> attribute.
+     * Returns a String representation of this <code>WebServiceAnnotation</code> attribute.
      *
      * @return a string representation.
      */
     public String toString()
     {
-        return "WebService{" +
+        return "WebServiceAnnotation{" +
                 "endpointInterface='" + endpointInterface + "'" +
                 ", name='" + name + "'" +
                 ", serviceName='" + serviceName + "'" +

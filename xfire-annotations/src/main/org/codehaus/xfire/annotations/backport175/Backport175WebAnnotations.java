@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import org.codehaus.backport175.reader.Annotations;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
 
 /**
@@ -31,7 +32,8 @@ public class Backport175WebAnnotations
             annotation.setServiceName(webService.serviceName());
             annotation.setTargetNamespace(webService.targetNamespace());
             return annotation;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -51,7 +53,29 @@ public class Backport175WebAnnotations
             annotation.setAction(webMethod.action());
             annotation.setOperationName(webMethod.operationName());
             return annotation;
-        } else
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public boolean hasWebResultAnnotation(Method method)
+    {
+        return Annotations.isAnnotationPresent(WebResult.class, method);
+    }
+
+    public WebResultAnnotation getWebResultAnnotation(Method method)
+    {
+        WebResult webResult = (WebResult) Annotations.getAnnotation(WebResult.class, method);
+        if (webResult != null)
+        {
+            WebResultAnnotation annotation = new WebResultAnnotation();
+            annotation.setName(webResult.name());
+            annotation.setTargetNameSpace(webResult.targetNameSpace());
+            return annotation;
+        }
+        else
         {
             return null;
         }

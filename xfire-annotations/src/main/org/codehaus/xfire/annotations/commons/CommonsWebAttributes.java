@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import org.apache.commons.attributes.Attributes;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
 
 /**
@@ -23,7 +24,7 @@ public class CommonsWebAttributes
 
     public WebServiceAnnotation getWebServiceAnnotation(Class aClass)
     {
-        return (WebService) Attributes.getAttribute(aClass, WebService.class);
+        return (WebServiceAnnotation) Attributes.getAttribute(aClass, WebService.class);
     }
 
     public boolean hasWebMethodAnnotation(Method method)
@@ -33,6 +34,16 @@ public class CommonsWebAttributes
 
     public WebMethodAnnotation getWebMethodAnnotation(Method method)
     {
-        return (WebMethod) Attributes.getAttribute(method, WebMethod.class);
+        return (WebMethodAnnotation) Attributes.getAttribute(method, WebMethod.class);
+    }
+
+    public boolean hasWebResultAnnotation(Method method)
+    {
+        return Attributes.hasAttributeType(method, WebResult.class);
+    }
+
+    public WebResultAnnotation getWebResultAnnotation(Method method)
+    {
+        return (WebResultAnnotation) Attributes.getAttribute(method, WebResult.class);
     }
 }

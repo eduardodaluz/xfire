@@ -16,6 +16,7 @@ public class CommonsEchoService
      * @param input the input.
      * @return the input.
      * @@WebMethod(operationName = "echoString", action="urn:EchoString")
+     * @@WebResult(name="echoResult")
      */
     public String echo(String input)
     {

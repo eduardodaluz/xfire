@@ -1,10 +1,7 @@
-/*
- * Copyright (c) 2005 Your Corporation. All Rights Reserved.
- */
 package org.codehaus.xfire.annotations;
 
 /**
- * Represents an common representation of a web method attribute. Specifies that the given method is exposed as a Web
+ * Represents an common representation of a web method annotation. Specifies that the given method is exposed as a Web
  * Service operation, making it part of the Web Service’s public contract. A WebMethod annotation is required for each
  * method that is published by the Web Service.
  *
@@ -64,7 +61,7 @@ public class WebMethodAnnotation
      */
     public String toString()
     {
-        return "WebMethod{" +
+        return "WebMethodAnnotation{" +
                 "action='" + action + "'" +
                 ", operationName='" + operationName + "'" +
                 "}";

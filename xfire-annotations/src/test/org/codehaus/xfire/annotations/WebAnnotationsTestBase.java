@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 
 /**
+ * Base class for unit tests that determine annotations.
+ *
  * @author Arjen Poutsma
  */
 public abstract class WebAnnotationsTestBase
@@ -29,13 +31,19 @@ public abstract class WebAnnotationsTestBase
     public void testHasWebServiceAnnotation()
             throws Exception
     {
-        assertTrue("Attribute not set", webAnnotations.hasWebServiceAnnotation(echoServiceClass));
+        assertTrue("WebServiceAnnotation not set", webAnnotations.hasWebServiceAnnotation(echoServiceClass));
     }
 
     public void testHasWebMethodAnnotation()
             throws Exception
     {
-        assertTrue("Attribute not set", webAnnotations.hasWebMethodAnnotation(echoMethod));
+        assertTrue("WebMethodAnnotation not set", webAnnotations.hasWebMethodAnnotation(echoMethod));
+    }
+
+    public void testHasWebResultAnnotation()
+            throws Exception
+    {
+        assertTrue("WebResultAnnotation not set", webAnnotations.hasWebResultAnnotation(echoMethod));
     }
 
     public void testGetWebServiceAnnotation()
@@ -55,4 +63,13 @@ public abstract class WebAnnotationsTestBase
         assertEquals("echoString", webMethod.getOperationName());
         assertEquals("urn:EchoString", webMethod.getAction());
     }
+
+    public void testGetWebResultAnnotation()
+            throws Exception
+    {
+        WebResultAnnotation webResult = webAnnotations.getWebResultAnnotation(echoMethod);
+        assertNotNull(webResult);
+        assertEquals("echoResult", webResult.getName());
+    }
+
 }
