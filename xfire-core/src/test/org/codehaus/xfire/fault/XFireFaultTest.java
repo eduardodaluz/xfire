@@ -124,7 +124,7 @@ public class XFireFaultTest
         SimpleService service = new SimpleService();
         service.setName("Echo");
         service.setSoapVersion(Soap12.getInstance());
-        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         
         service.setServiceHandler(new BadHandler());
         service.setFaultHandler(soap11);

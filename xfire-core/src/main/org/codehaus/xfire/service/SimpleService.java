@@ -1,6 +1,7 @@
 package org.codehaus.xfire.service;
 
 import java.util.Hashtable;
+import java.net.URL;
 
 import javax.wsdl.WSDLException;
 
@@ -35,8 +36,6 @@ public class SimpleService
     
     private WSDLWriter wsdl;
     
-    private String wsdlUri;
- 
     private FaultHandler faultHandler;
     
     private Handler serviceHandler;
@@ -51,39 +50,36 @@ public class SimpleService
      */
     public WSDLWriter getWSDLWriter() throws WSDLException
     {
-        if ( wsdl == null )
-        {
-            if ( getWSDLURL() != null 
-                 &&
-                 !getWSDLURL().equals("") )
-            {
-                wsdl = new ResourceWSDL( wsdlUri );
-            }
-        }
-        
         return wsdl;
     }
 
-    
-    
-    /**
-     * @return Returns the URL to the WSDL for this service. 
-     * If none exists, the service will attempt to generage
-     * the WSDL automatically via the WSDLBuilder.
-     */
-    public String getWSDLURL()
+    public void setWSDLWriter(WSDLWriter wsdl)
     {
-        return wsdlUri;
+        this.wsdl = wsdl;
     }
-    
+
     /**
      * @param wsdlUri The WSDL URL.
      */
-    public void setWSDLURL(String wsdlUri)
+    public void setWSDLURL(String wsdlUri) throws WSDLException
     {
-        this.wsdlUri = wsdlUri;
+        if ( wsdlUri == null
+             ||
+             wsdlUri.equals("") )
+        {
+            throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "URL to WSDL file is null");
+        }
+        setWSDLWriter( new ResourceWSDL( wsdlUri ) );
     }
-    
+
+    /**
+     * @param wsdlUri The WSDL URL.
+     */
+    public void setWSDLURL(URL wsdlUri)
+    {
+        setWSDLWriter( new ResourceWSDL( wsdlUri ) );
+    }
+
     /**
      * @return Returns the defaultNamespace.
      */
@@ -155,7 +151,7 @@ public class SimpleService
 	}
     
     /**
-     * @see org.codehaus.xfire.service.ServiceDescriptor#setProperty(java.lang.String, java.lang.Object)
+     * @see org.codehaus.xfire.service.Service#setProperty(java.lang.String, java.lang.Object)
      */
     public void setProperty( String name, Object value )
     {
@@ -163,7 +159,7 @@ public class SimpleService
     }
 
     /**
-     * @see org.codehaus.xfire.service.ServiceDescriptor#getProperty(java.lang.String)
+     * @see org.codehaus.xfire.service.Service#getProperty(java.lang.String)
      */
     public Object getProperty( String name )
     {
