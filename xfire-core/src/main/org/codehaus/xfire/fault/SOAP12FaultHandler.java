@@ -57,7 +57,7 @@ public class SOAP12FaultHandler
             if ( fault.getDetail() != null )
             {
                 List detail = fault.getDetail();
-                // TODO
+                // TODO: handle fault detail.
             }
             writer.writeEndElement(); // Detail
             

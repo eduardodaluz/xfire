@@ -8,6 +8,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.STAXUtils;
+import org.w3c.dom.Element;
 
 /**
  * Creates a fault message based on an exception for SOAP 1.2 messages.
@@ -66,10 +68,7 @@ public class SOAP11FaultHandler
             if ( fault.getDetail() != null )
             {
                 List detail = fault.getDetail();
-                for ( Iterator itr = detail.iterator(); itr.hasNext(); )
-                {
-                //    writer.writeCharacters( fault.getMessage() );
-                }
+                
             }
             writer.writeEndElement();
             
