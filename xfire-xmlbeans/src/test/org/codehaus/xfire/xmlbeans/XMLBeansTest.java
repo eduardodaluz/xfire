@@ -20,6 +20,7 @@ package org.codehaus.xfire.xmlbeans;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.handler.SoapHandler;
+import org.codehaus.xfire.service.SimpleService;
 
 /**
  * @version $Revision$
@@ -32,7 +33,7 @@ public class XMLBeansTest
         TestHandler handler = new TestHandler();
         SoapHandler shandler = new SoapHandler(handler);
         
-        XMLBeansService service = new XMLBeansService();
+        SimpleService service = new SimpleService();
         service.setName("Test");
         service.setServiceHandler(shandler);
         
