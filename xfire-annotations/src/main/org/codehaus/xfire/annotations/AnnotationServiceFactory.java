@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.service.object.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
@@ -34,31 +35,103 @@ public class AnnotationServiceFactory
         WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
         if (webServiceAnnotation != null)
         {
-            String name = null;
-            if (webServiceAnnotation.getName() != null)
+            String serviceName = createServiceName(clazz, webServiceAnnotation);
+         
+            /* Attempt to load the endpoint interface if there is one. If there is an endpoint
+             * interface the attribute WebService.serviceName is the only valid one for the 
+             * implementing bean class.
+             */
+            String tns = null;
+            Class endpointInterface = clazz;
+            if (webServiceAnnotation.getEndpointInterface() != null)
             {
-                name = webServiceAnnotation.getName();
+                try
+                {
+                    endpointInterface = loadClass(webServiceAnnotation.getEndpointInterface());
+                    WebServiceAnnotation endpointWSAnnotation = 
+                        webAnnotations.getWebServiceAnnotation(endpointInterface);
+                    
+                    tns = createServiceNamespace(endpointInterface, endpointWSAnnotation);
+                }
+                catch (ClassNotFoundException e)
+                {
+                    throw new XFireRuntimeException("Couldn't find endpoint interface " + endpointInterface, e);
+                }
             }
             else
             {
-                name = makeServiceNameFromClassName(clazz);
+                tns = createServiceNamespace(endpointInterface, webServiceAnnotation);
             }
-
-            String ns = null;
-            if (webServiceAnnotation.getTargetNamespace() != null)
+            
+            Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
+            
+            if (clazz != endpointInterface)
             {
-                ns = webServiceAnnotation.getTargetNamespace();
+                service.setProperty(ObjectService.SERVICE_IMPL_CLASS, clazz);
             }
-            else
-            {
-                ns = NamespaceHelper.makeNamespaceFromClassName(clazz.getName(), "http");
-            }
-            return create(clazz, name, ns, version, style, use, null);
+            
+            return service;
         }
         else
         {
-            throw new XFireRuntimeException("Class " + clazz.getName() + " does not have a WebService annotation");
+            throw new XFireRuntimeException("Class " + clazz.getName() + 
+                                            " does not have a WebService annotation");
         }
+    }
+
+    /**
+     * Attempt to load a class first from this class's ClassLoader, then from the context
+     * classloader.
+     * 
+     * @param endpointInterface
+     * @return
+     * @throws ClassNotFoundException 
+     */
+    protected Class loadClass(String endpointInterface) throws ClassNotFoundException
+    {
+        try
+        {
+            return getClass().getClassLoader().loadClass(endpointInterface);
+        }
+        catch (ClassNotFoundException e)
+        {
+            try
+            {
+                return Thread.currentThread().getContextClassLoader().loadClass(endpointInterface);
+            }
+            catch (ClassNotFoundException e1)
+            {
+                throw e;
+            }
+        }
+    }
+
+    protected String createServiceNamespace(Class clazz, WebServiceAnnotation webServiceAnnotation)
+    {
+        String ns = null;
+        if (webServiceAnnotation.getTargetNamespace() != null)
+        {
+            ns = webServiceAnnotation.getTargetNamespace();
+        }
+        else
+        {
+            ns = NamespaceHelper.makeNamespaceFromClassName(clazz.getName(), "http");
+        }
+        return ns;
+    }
+
+    protected String createServiceName(Class clazz, WebServiceAnnotation webServiceAnnotation)
+    {
+        String name = null;
+        if (webServiceAnnotation.getName() != null)
+        {
+            name = webServiceAnnotation.getName();
+        }
+        else
+        {
+            name = makeServiceNameFromClassName(clazz);
+        }
+        return name;
     }
 
     /**
@@ -69,8 +142,13 @@ public class AnnotationServiceFactory
      */
     protected boolean isValidMethod(Method method)
     {
-        return super.isValidMethod(method) && webAnnotations.hasWebMethodAnnotation(method);
+        if (!super.isValidMethod(method))
+            return false;
+        
+        // All methods on endpoint interfaces are valid WebMethods.
+        if (!method.getDeclaringClass().isInterface())
+            return webAnnotations.hasWebMethodAnnotation(method);
+        
+        return true;
     }
-
-
 }

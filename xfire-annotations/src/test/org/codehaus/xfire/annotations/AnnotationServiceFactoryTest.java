@@ -8,6 +8,7 @@ package org.codehaus.xfire.annotations;
 import java.lang.reflect.Method;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.easymock.MockControl;
 
@@ -66,7 +67,33 @@ public class AnnotationServiceFactoryTest
         {
             // expected behavior
         }
+    }
 
+    public void testEndpointInterface() 
+        throws SecurityException, NoSuchMethodException
+    {
+        WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
+        implAnnotation.setName("EchoService");
+        implAnnotation.setTargetNamespace("not used");
+        implAnnotation.setEndpointInterface(EchoService.class.getName());
 
+        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(implAnnotation);
+
+        WebServiceAnnotation intfAnnotation = new WebServiceAnnotation();
+        intfAnnotation.setServiceName("Echo");
+        intfAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
+        intfAnnotation.setEndpointInterface(EchoService.class.getName());
+
+        webAnnotations.getWebServiceAnnotation(EchoService.class);
+        webAnnotationsControl.setReturnValue(intfAnnotation);
+
+        webAnnotationsControl.replay();
+
+        Service service = annotationServiceFactory.create(EchoServiceImpl.class);
+        assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
+        assertEquals("EchoService", service.getName());
+        
+        webAnnotationsControl.verify();
     }
 }
