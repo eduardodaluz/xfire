@@ -20,12 +20,13 @@ public class ArrayService
     {
         return new String[] { "bleh", "bleh" };
     }
-    /*public SimpleBean getSimpleBean()
+    
+    public SimpleBean getSimpleBean()
     {
         SimpleBean bean = new SimpleBean();
         bean.setBleh("bleh");
         bean.setHowdy("howdy");
         
         return bean;
-    }*/
+    }
 }

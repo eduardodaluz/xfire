@@ -32,7 +32,7 @@ public class NamespaceHelper
     {
         Namespace ns = el.getNamespaceForURI( nsUri );
 
-        if ( ns == null )
+        if ( ns == null || ns.getPrefix().equals("") )
         {
             ns = DocumentFactory.getInstance().createNamespace( getUniquePrefix( el ), nsUri );
             el.add( ns );

@@ -6,6 +6,7 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.java.mapping.TypeMapping;
 import org.codehaus.xfire.java.type.BooleanType;
@@ -22,7 +23,7 @@ import org.codehaus.xfire.java.type.LongType;
  */
 public class TypeMappingRegistry
     extends org.codehaus.xfire.java.mapping.DefaultTypeMappingRegistry
-    implements LogEnabled
+    implements LogEnabled, Configurable
 {
     private Logger logger;
 

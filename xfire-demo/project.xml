@@ -81,14 +81,14 @@
     </dependency>
     
     <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.5.1</version>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
     </dependency>
-
+    
     <dependency>
       <groupId>ognl</groupId>
       <artifactId>ognl</artifactId>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire</artifactId>
-      <version>1.0-alpha-1</version>
+      <version>1.0-alpha-2-SNAPSHOT</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -119,7 +119,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-aegis</artifactId>
-      <version>1.0-alpha-1</version>
+      <version>1.0-alpha-2-SNAPSHOT</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -128,7 +128,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-plexus</artifactId>
-      <version>1.0-alpha-1</version>
+      <version>1.0-alpha-2-SNAPSHOT</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -137,16 +137,25 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-java</artifactId>
-      <version>1.0-alpha-1</version>
+      <version>1.0-alpha-2-SNAPSHOT</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
     </dependency>
             
     <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xmlbeans-jsr173-api</artifactId>
-      <version>2.0-dev</version>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <version>1.0</version>
+       <properties>
+        <war.bundle>true</war.bundle>
+      </properties>
+    </dependency>
+    
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+      <version>1.1.1-dev</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -167,14 +176,6 @@
       <artifactId>wsdl4j-qname</artifactId>
       <version>1.4</version>
       <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
-    </dependency>
-      
-    <dependency>
-      <id>wstx</id>
-      <version>1.0-RC3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -201,10 +202,10 @@
     </dependency>
     
     <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1-beta-4</version>
-      <url>http://www.dom4j.org/</url>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-container-api</artifactId>
+      <version>1.0-alpha-1-SNAPSHOT</version>
+      <url>http://plexus.codehaus.org/</url>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -212,14 +213,14 @@
             
     <dependency>
       <groupId>plexus</groupId>
-      <artifactId>plexus</artifactId>
-      <version>0.17-SNAPSHOT</version>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-1-SNAPSHOT</version>
       <url>http://plexus.codehaus.org/</url>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
     </dependency>
-    
+        
     <dependency>
       <groupId>plexus</groupId>
       <artifactId>plexus-servlet</artifactId>
@@ -228,24 +229,15 @@
         <war.bundle>true</war.bundle>
       </properties>
     </dependency>
-    
+        
     <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3</artifactId>
-      <version>1.1.3.3</version>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.0-alpha-1-SNAPSHOT</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
     </dependency>
-    
-    <dependency>
-      <groupId>xstream</groupId>
-      <artifactId>xstream</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
-    </dependency>    
 
   </dependencies>
  

@@ -40,22 +40,7 @@
       <soapVersion>1.1</soapVersion>
       <style>wrapped</style>
       <use>literal</use>
-      <types>
-        <type class="org.codehaus.xfire.demo.java.SimpleBean" 
-          name="SimpleBean" 
-          namespace="urn:Bean" 
-          type="org.codehaus.xfire.java.type.BeanType" />
-          
-        <type class="org.codehaus.xfire.demo.java.SimpleBean[]" 
-          name="ArrayOfBean" 
-          namespace="urn:Bean" 
-          type="org.codehaus.xfire.java.type.ArrayType" />
-          
-        <type class="java.lang.String[]" 
-          name="ArrayOfString" 
-          namespace="urn:Bean" 
-          type="org.codehaus.xfire.java.type.ArrayType" />
-      </types>
+      <autoTyped>true</autoTyped>
     </service>
     
   </services>

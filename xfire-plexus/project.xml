@@ -31,13 +31,6 @@
     </dependency>
     
     <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1-beta-4</version>
-      <url>http://www.dom4j.org/</url>
-    </dependency>
-            
-    <dependency>
       <groupId>plexus</groupId>
       <artifactId>plexus-container-api</artifactId>
       <version>1.0-alpha-1-SNAPSHOT</version>

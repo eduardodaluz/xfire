@@ -17,6 +17,7 @@ import org.codehaus.xfire.handler.SoapHandler;
 import org.codehaus.xfire.java.DefaultJavaService;
 import org.codehaus.xfire.java.JavaServiceHandler;
 import org.codehaus.xfire.java.mapping.TypeMapping;
+import org.codehaus.xfire.java.mapping.TypeMappingRegistry;
 import org.codehaus.xfire.java.wsdl.JavaWSDLBuilder;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
@@ -135,6 +136,11 @@ public class PlexusJavaService
     
     public void initialize() throws Exception
     {
+        TypeMappingRegistry tmr = getTypeMappingRegistry();
+        TypeMapping tm = tmr.createTypeMapping(SOAPConstants.XSD, isAutoTyped());
+        tmr.register(getDefaultNamespace(), tm);
+        setTypeMapping(tm);
+        
         for ( int i = 0; i < types.length; i++ )
         {
             initializeType( types[i], getTypeMapping() );   
@@ -195,6 +201,23 @@ public class PlexusJavaService
         }
         
         return transMan;
+    }
+    
+    
+    public TypeMappingRegistry getTypeMappingRegistry()
+    {
+        TypeMappingRegistry registry = null;
+        
+        try
+        {
+            registry = (TypeMappingRegistry) getServiceLocator().lookup( TypeMappingRegistry.ROLE );
+        }
+        catch (ComponentLookupException e)
+        {
+            throw new RuntimeException( "Couldn't find the TypeMappingRegistry!", e );
+        }
+        
+        return registry;
     }
     
     public void service( ServiceLocator manager )
