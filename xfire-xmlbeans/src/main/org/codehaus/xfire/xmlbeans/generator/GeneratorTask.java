@@ -24,6 +24,7 @@ public class GeneratorTask
     private String outputDir;
     private String packageName = "";
     private String strategy = ClientGenerationStrategy.class.getName();
+    private String name;
     
     public GeneratorTask()
     {
@@ -110,5 +111,15 @@ public class GeneratorTask
     public void setStrategy(String strategy)
     {
         this.strategy = strategy;
+    }
+    
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        this.name = name;
     }
 }

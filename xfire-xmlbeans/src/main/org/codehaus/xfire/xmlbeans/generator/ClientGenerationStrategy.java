@@ -28,8 +28,11 @@ public class ClientGenerationStrategy
         String type = "Soap";
         if ( service.isRest() )
             type = "Rest";
-                
-        File stub = new File(dir, service.getName() + type + "Client.java" );
+        String name = service.getName();
+        if ( task.getName() != null && !task.getName().equals("") )
+            name = task.getName();
+        
+        File stub = new File(dir, name + type + "Client.java" );
         
         if ( !stub.exists() || task.isOverwrite() )
         {
