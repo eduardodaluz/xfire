@@ -31,7 +31,7 @@ public class XMLBeansConfigurator
      */
     public Service createService( PlexusConfiguration config ) throws Exception
     {
-	    XMLBeansService s = new XMLBeansService();
+	    XMLBeansService s = new XMLBeansService(getTypeMappingRegistry());
 	    
 	    configureService(config, s);
 	

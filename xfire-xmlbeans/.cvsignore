@@ -12,3 +12,4 @@ sql
 default.ajsym
 default.lst
 plexus.sh.lnk
+junit*.properties

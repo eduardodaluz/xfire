@@ -11,6 +11,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.java.DefaultJavaService;
 import org.codehaus.xfire.java.Operation;
 import org.codehaus.xfire.java.Parameter;
+import org.codehaus.xfire.java.mapping.TypeMappingRegistry;
 import org.codehaus.xfire.java.type.Type;
 import org.codehaus.xfire.soap.SoapConstants;
 
@@ -21,6 +22,18 @@ import org.codehaus.xfire.soap.SoapConstants;
 public class XMLBeansService
 	extends DefaultJavaService
 {
+    public XMLBeansService()
+    {
+    }
+    
+    /**
+     * @param typeMappingRegistry
+     */
+    public XMLBeansService(TypeMappingRegistry typeMappingRegistry)
+    {
+        setTypeMappingRegistry(typeMappingRegistry);
+    }
+
     protected void addOperation(Method method)
     {
         Operation op = new Operation(method, this);
