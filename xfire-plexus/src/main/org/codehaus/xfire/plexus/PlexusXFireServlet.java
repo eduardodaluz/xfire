@@ -18,23 +18,26 @@ public class PlexusXFireServlet
     extends XFireServlet
 {
     private XFire xfire;
-    
 
     protected TransportManager getTransportManager()
     	throws ServletException
     {
-        return xfire.getTransportManager();
+        return getXFire().getTransportManager();
     }
 
 	public XFire getXFire()
         throws ServletException
 	{
-		return (XFire) PlexusServletUtils.lookup(getServletContext(), XFire.ROLE);
+        if ( xfire == null )
+        {
+            xfire = (XFire) PlexusServletUtils.lookup(getServletContext(), XFire.ROLE);
+        }
+        return xfire;
 	}
     
     public ServiceRegistry getServiceRegistry() 
         throws ServletException
     {
-        return xfire.getServiceRegistry();
+        return getXFire().getServiceRegistry();
     }
 }
