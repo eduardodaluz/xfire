@@ -11,6 +11,8 @@ import org.codehaus.xfire.MessageContext;
  */
 public interface DOMHandler
 {
+    String ROLE = DOMHandler.class.getName();
+
     /**
      * @return null or an empty array if there are no headers.
      */

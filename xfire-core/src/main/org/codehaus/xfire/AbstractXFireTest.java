@@ -1,5 +1,6 @@
 package org.codehaus.xfire;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.XPath;
 import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
 /**
@@ -58,7 +60,19 @@ public class AbstractXFireTest
         
         getXFire().invoke( getResourceAsStream( document ), context );
         
-        return null;
+        SAXReader reader = new SAXReader();
+        return reader.read( new ByteArrayInputStream(out.toByteArray()) );
+    }
+
+    protected Document getWSDLDocument( String service ) 
+        throws Exception
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        getXFire().generateWSDL( service, out );
+        
+        SAXReader reader = new SAXReader();
+        return reader.read( new ByteArrayInputStream(out.toByteArray()) );
     }
     
     /**
