@@ -29,7 +29,7 @@
       <name>Echo3</name>
       <namespace>urn:Echo3</namespace>
       <soapVersion>1.1</soapVersion>
-      <syle>document</syle>
+      <style>document</style>
       <use>literal</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
 	    <wsdlUrl>http://bleh</wsdlUrl>
