@@ -40,7 +40,7 @@ public class Soap11 implements SoapVersion
 
     private final String nextRole = namespace + "/role/next";
 
-    private final String soapEncodingStyle = "http://www.w3.org/2003/05/soap-encoding";
+    private final String soapEncodingStyle = "http://schemas.xmlsoap.org/soap/encoding/";
 
     private final QName envelope = new QName(namespace, "Envelope", prefix);
 

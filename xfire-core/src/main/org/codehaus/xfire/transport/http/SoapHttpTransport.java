@@ -1,5 +1,8 @@
 package org.codehaus.xfire.transport.http;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -138,7 +141,17 @@ public class SoapHttpTransport
         body.setUse( service.getUse() ); 
 
         if ( service.getStyle().equals( SoapConstants.STYLE_RPC ) )
+        {
             body.setNamespaceURI( service.getDefaultNamespace() );
+        }
+        
+        if ( service.getUse().equals( SoapConstants.USE_ENCODED ) )
+        {
+            List encodingStyles = new ArrayList();
+            encodingStyles.add( service.getSoapVersion().getSoapEncodingStyle() );
+            
+            body.setEncodingStyles(encodingStyles);
+        }
         
         return body;
     }

@@ -22,7 +22,7 @@ public class SoapConstants
     
     public static final String USE_LITERAL = "literal";
 
-    public static final String USE_ECNODED = "encoded";
+    public static final String USE_ENCODED = "encoded";
 
     /** XML Schema Namespace. */
     public static final String XSD = "http://www.w3.org/2001/XMLSchema";
