@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:ant="jelly:ant">
+<project>
     <pomVersion>1</pomVersion>
     <name>Annotations XFire Module</name>
     <groupId>xfire</groupId>
@@ -43,10 +43,6 @@
         </dependency>
 
     </dependencies>
-
-    <goal name="homo">
-        <ant:echo message="HOMO!"/>
-    </goal>
 
     <build>
         <sourceDirectory>${basedir}/src/main</sourceDirectory>
