@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.codehaus.xfire.client.http.SoapHttpClient;
+import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -19,7 +20,7 @@ public class EchoClient
         super(new EchoHandler(), "");
     }
 
-    public void invoke() throws IOException
+    public void invoke() throws IOException, XFireFault
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         writeRequest(out);

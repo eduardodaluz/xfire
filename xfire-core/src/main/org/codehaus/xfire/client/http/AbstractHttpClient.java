@@ -15,6 +15,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.fault.XFireFault;
+
 /**
  * Common functionality for the SOAP and Rest HTTP clients.
  * 
@@ -33,7 +35,7 @@ public abstract class AbstractHttpClient
     private String urlString;
 
     public void invoke() 
-        throws IOException
+        throws IOException, XFireFault
     {
         try
         {
@@ -105,6 +107,7 @@ public abstract class AbstractHttpClient
      * @param reader
      */
     protected void readResponse(Reader is)
+    	throws XFireFault
     {
         // Read in Envelope and then delegate header and Body
         XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -119,7 +122,8 @@ public abstract class AbstractHttpClient
         }
     }
 
-    protected abstract void readResponse(XMLStreamReader reader) throws XMLStreamException;
+    protected abstract void readResponse(XMLStreamReader reader) 
+    	throws XMLStreamException, XFireFault;
     
     /**
      * @return Returns the url.

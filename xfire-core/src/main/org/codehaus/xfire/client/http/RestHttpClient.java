@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.client.ClientHandler;
+import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * A client which invokes REST style services.
@@ -48,7 +49,7 @@ public class RestHttpClient
     }
 
     protected void readResponse(XMLStreamReader reader) 
-        throws XMLStreamException
+        throws XMLStreamException, XFireFault
     {
         handler.handleResponse(reader);
     } 
