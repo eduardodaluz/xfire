@@ -2,6 +2,7 @@ package org.codehaus.xfire.client;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * <p>
@@ -15,7 +16,7 @@ import javax.xml.stream.XMLStreamReader;
  */
 public interface ClientHandler
 {
-    XMLStreamReader createRequest() throws XMLStreamException;
+    void writeRequest( XMLStreamWriter writer ) throws XMLStreamException;
     
     void handleResponse( XMLStreamReader reader ) throws XMLStreamException;
 }

@@ -16,13 +16,11 @@ public class STAXUtils
     public static void copy( XMLStreamReader reader, XMLStreamWriter writer ) 
         throws XMLStreamException
     {
-        boolean started = false;
         int read = 0; // number of elements read in
+        int event = reader.getEventType();
         
-        while ( read > 0 || !started  )
+        while ( true )
         {
-            started = true;
-            int event = reader.next();
             switch( event )
             {
                 case XMLStreamConstants.START_ELEMENT:
@@ -32,19 +30,21 @@ public class STAXUtils
                 case XMLStreamConstants.END_ELEMENT:
                     writer.writeEndElement();
                     read--;
+                    if ( read <= 0 )
+                        return;
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     writer.writeCharacters( reader.getText() );  
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
                 case XMLStreamConstants.END_DOCUMENT:
-                    throw new UnsupportedOperationException("Document should already be in START_DOCUMENT state.");
                 case XMLStreamConstants.ATTRIBUTE:
                 case XMLStreamConstants.NAMESPACE:
                     break;
                 default:
                     break;
             }
+            event = reader.next();
         }
     }
 
@@ -56,30 +56,38 @@ public class STAXUtils
         {
             prefix = "";
         }
-
         
         String uri = reader.getNamespaceURI();
         if ( uri != null )
         {
             if ( prefix.equals("") )
             {
-                writer.setDefaultNamespace(uri);
+                String defNS = writer.getNamespaceContext().getNamespaceURI("");
+                if ( defNS != null && !defNS.equals(uri) )
+                {
+                    writer.setDefaultNamespace(uri);
+                    writer.writeStartElement( uri, reader.getLocalName() );
+                    writer.writeDefaultNamespace( uri );
+                }
+                else
+                {
+                    writer.writeStartElement( uri, reader.getLocalName() );
+                }  
             }
             else
             {
                 writer.setPrefix( prefix, uri );
+                
+                writer.writeStartElement( 
+                    prefix,
+                    reader.getLocalName(),
+                    uri);
             }
-            
-            writer.writeStartElement( 
-                prefix,
-                reader.getLocalName(),
-                reader.getNamespaceURI());
         }
         else
         {
             writer.writeStartElement( reader.getLocalName() );
         }
-
 
         for ( int i = 0; i < reader.getAttributeCount(); i++ )
         {

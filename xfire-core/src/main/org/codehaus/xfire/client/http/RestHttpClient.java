@@ -5,7 +5,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.client.ClientHandler;
-import org.codehaus.xfire.util.STAXUtils;
 
 /**
  * A client which invokes REST style services.
@@ -28,13 +27,9 @@ public class RestHttpClient
     protected void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException
     {
-        XMLStreamReader reader = handler.createRequest();
-        if ( reader != null )
-        {
-            writer.writeStartDocument();
-            STAXUtils.copy(reader, writer);
-            writer.writeEndDocument();
-        }
+        writer.writeStartDocument();
+        handler.writeRequest(writer);
+        writer.writeEndDocument();
 
         writer.close();
     }

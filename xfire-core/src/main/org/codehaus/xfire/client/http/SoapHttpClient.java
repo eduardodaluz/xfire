@@ -7,7 +7,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.client.ClientHandler;
-import org.codehaus.xfire.util.STAXUtils;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -55,7 +54,7 @@ public class SoapHttpClient
     protected void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException
     {
-        writer.writeStartDocument();
+        writer.writeStartDocument(getEncoding(), "1.0");
 
         writer.setPrefix("soap", getSoapVersion());
         writer.writeStartElement("soap", "Envelope", soapVersion);
@@ -64,21 +63,13 @@ public class SoapHttpClient
         if ( headerHandler != null )
         {
             writer.writeStartElement("soap", "Header", soapVersion);
-            XMLStreamReader reader = headerHandler.createRequest();
-            if ( reader != null )
-            {
-                STAXUtils.copy(reader, writer);
-            }
+            headerHandler.writeRequest(writer);
             writer.writeEndElement();
         }
         
         writer.writeStartElement("soap", "Body", soapVersion);
         
-        XMLStreamReader reader = bodyHandler.createRequest();
-        if ( reader != null )
-        {
-            STAXUtils.copy(reader, writer);
-        }
+        bodyHandler.writeRequest(writer);
         
         writer.writeEndElement(); // Body
 

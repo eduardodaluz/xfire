@@ -5,8 +5,10 @@ import java.io.InputStream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.client.ClientHandler;
+import org.codehaus.xfire.util.STAXUtils;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -15,12 +17,12 @@ import org.codehaus.xfire.client.ClientHandler;
 public class EchoHandler 
     implements ClientHandler
 {
-    public XMLStreamReader createRequest() 
+    public void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException
     {
         InputStream is = getClass().getResourceAsStream("/org/codehaus/xfire/client/http/echo.xml");
         
-        return XMLInputFactory.newInstance().createXMLStreamReader( is );
+        STAXUtils.copy( XMLInputFactory.newInstance().createXMLStreamReader( is ), writer );
     }
 
     public void handleResponse(XMLStreamReader reader) 
@@ -28,4 +30,5 @@ public class EchoHandler
     {
         // do nothing
     }
+
 }

@@ -1,7 +1,7 @@
 package org.codehaus.xfire.client;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -10,9 +10,8 @@ import javax.xml.stream.XMLStreamReader;
 public abstract class NullRequestHandler 
     implements ClientHandler
 {
-    public XMLStreamReader createRequest() 
+    public void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException
     {
-        return null;
     }
 }

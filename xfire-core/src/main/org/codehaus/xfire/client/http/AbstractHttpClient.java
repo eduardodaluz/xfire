@@ -1,7 +1,6 @@
 package org.codehaus.xfire.client.http;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,7 +28,7 @@ public abstract class AbstractHttpClient
     
     private String username;
     private String password;
-    private String charset;
+    private String encoding = "ISO-8859-1";
     private String urlString;
 
     public void invoke() 
@@ -50,17 +49,19 @@ public abstract class AbstractHttpClient
             // Specify content type and encoding
             // If content encoding is not explicitly specified
             // ISO-8859-1 is assumed
-            urlConn.setRequestProperty("Content-type", "text/xml; charset=" + charset);
-
+            urlConn.setRequestProperty("Content-type", "text/xml; charset=\"" + encoding + "\"");
+            
+            urlConn.setRequestProperty("User-Agent", "XFire Client +http://xfire.codehaus.org");
+            urlConn.setRequestProperty("Accept", "text/xml; text/html");
+            
             writeHeaders( urlConn );
             
             // Send POST output.
-            DataOutputStream printout = new DataOutputStream(urlConn.getOutputStream());
-
-            writeRequest(printout);
+            OutputStream out = urlConn.getOutputStream();
+            writeRequest(out);
             
-            printout.flush();
-            printout.close();
+            out.flush();
+            out.close();
 
             // Get response data.
             DataInputStream input = new DataInputStream(urlConn.getInputStream());
@@ -140,16 +141,16 @@ public abstract class AbstractHttpClient
     /**
      * @return Returns the charset.
      */
-    public String getCharset()
+    public String getEncoding()
     {
-        return charset;
+        return encoding;
     }
     /**
      * @param charset The charset to set.
      */
-    public void setCharset(String charset)
+    public void setEncoding(String charset)
     {
-        this.charset = charset;
+        this.encoding = charset;
     }
     /**
      * @return Returns the password.
