@@ -3,10 +3,7 @@ package org.codehaus.xfire.annotations.backport175;
 import java.lang.reflect.Method;
 
 import org.codehaus.backport175.reader.Annotations;
-import org.codehaus.xfire.annotations.WebAnnotations;
-import org.codehaus.xfire.annotations.WebMethodAnnotation;
-import org.codehaus.xfire.annotations.WebResultAnnotation;
-import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.*;
 
 /**
  * Implementation of the {@link WebAnnotations} facade for backport175.
@@ -79,5 +76,17 @@ public class Backport175WebAnnotations
         {
             return null;
         }
+    }
+
+    public boolean hasWebParamAnnotation(Method method, int parameter)
+    {
+        // Unfortunately, backport175 does not support method parameter annotations as of yet.
+        return false;
+    }
+
+    public WebParamAnnotation getWebParamAnnotation(Method method, int parameter)
+    {
+        // Unfortunately, backport175 does not support method parameter annotations as of yet.
+        return null;
     }
 }

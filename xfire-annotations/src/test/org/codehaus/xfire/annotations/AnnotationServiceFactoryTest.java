@@ -7,6 +7,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.easymock.MockControl;
 
@@ -21,12 +22,12 @@ public class AnnotationServiceFactoryTest
             throws Exception
     {
         super.setUp();
-        
+
         webAnnotationsControl = MockControl.createControl(WebAnnotations.class);
         webAnnotations = (WebAnnotations) webAnnotationsControl.getMock();
-        annotationServiceFactory = new AnnotationServiceFactory(webAnnotations, 
-                                                                getXFire().getTransportManager(), 
-                                                                getRegistry());
+        annotationServiceFactory = new AnnotationServiceFactory(webAnnotations,
+                getXFire().getTransportManager(),
+                getRegistry());
     }
 
     public void testCreate()
@@ -48,5 +49,24 @@ public class AnnotationServiceFactoryTest
         annotationServiceFactory.create(EchoServiceImpl.class);
 
         webAnnotationsControl.verify();
+    }
+
+    public void testNoWebServiceAnnotation()
+    {
+        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(null);
+        webAnnotationsControl.replay();
+
+        try
+        {
+            annotationServiceFactory.create(EchoServiceImpl.class);
+            fail("Not a XFireRuntimeException thrown");
+        }
+        catch (XFireRuntimeException e)
+        {
+            // expected behavior
+        }
+
+
     }
 }

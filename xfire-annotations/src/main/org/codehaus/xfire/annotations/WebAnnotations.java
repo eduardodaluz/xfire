@@ -51,10 +51,28 @@ public interface WebAnnotations
     boolean hasWebResultAnnotation(Method method);
 
     /**
-     * Gets the {@link org.codehaus.xfire.annotations.WebResultAnnotation} annotation from the given class, if found.
+     * Gets the {@link org.codehaus.xfire.annotations.WebResultAnnotation} annotation from the given method, if found.
      *
      * @param method the method.
      * @return the annotation; or <code>null</code> if it could not be found.
      */
     WebResultAnnotation getWebResultAnnotation(Method method);
+
+    /**
+     * Tests whether the indicated parameter of the given method has the {@link WebResultAnnotation} annotation.
+     *
+     * @param method    the method.
+     * @param parameter the index of the parameter in the method's parameter list.
+     * @return <code>true> if present; <code>false</code> otherwise.
+     */
+    boolean hasWebParamAnnotation(Method method, int parameter);
+
+    /**
+     * Gets the {@link WebParamAnnotation} annotation from the indicated parameter of the given method, if found.
+     *
+     * @param method the method.
+     * @return the annotation; or <code>null</code> if it could not be found.
+     */
+    WebParamAnnotation getWebParamAnnotation(Method method, int parameter);
+
 }
