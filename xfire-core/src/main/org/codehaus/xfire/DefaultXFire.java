@@ -74,7 +74,7 @@ public class DefaultXFire
 
             if( service == null )
             {
-                throw new XFireRuntimeException( "No such service." );
+                throw new XFireRuntimeException( "No such service: " + serviceName );
             }
 
             handler = service.getServiceHandler();
