@@ -2,12 +2,17 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 
-import org.codehaus.xfire.annotations.*;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebParamAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
+import org.codehaus.xfire.annotations.WebServiceAnnotation;
 
 public class Jsr181WebAnnotations
         implements WebAnnotations
@@ -145,6 +150,11 @@ public class Jsr181WebAnnotations
         {
             return null;
         }
+    }
+
+    public boolean hasOnewayAnnotation(Method method)
+    {
+        return method.isAnnotationPresent(Oneway.class);
     }
 
 }

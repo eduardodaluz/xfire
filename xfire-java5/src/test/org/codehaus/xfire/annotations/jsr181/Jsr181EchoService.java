@@ -3,6 +3,7 @@
  */
 package org.codehaus.xfire.annotations.jsr181;
 
+import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -16,6 +17,7 @@ import javax.jws.WebService;
 {
     @WebMethod(operationName = "echoString", action = "urn:EchoString")
             @WebResult(name = "echoResult")
+            @Oneway
             public String echo(@WebParam(name = "echoParam", header = true) String input)
     {
         return input;

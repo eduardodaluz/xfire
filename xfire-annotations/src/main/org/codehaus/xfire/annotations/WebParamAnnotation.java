@@ -14,7 +14,7 @@ public class WebParamAnnotation
     private int mode = MODE_IN;
 
     /**
-     * Constant used to specify that a parameter flows inwards.
+     * Constant used to specify that a parameter flows inwards. This is the default mode.
      */
     public final static int MODE_IN = 0;
     /**
@@ -88,6 +88,7 @@ public class WebParamAnnotation
      * #MODE_OUT}, or {@link #MODE_INOUT}.
      *
      * @param mode the new parameter mode.
+     * @throws IllegalArgumentException if <code>mode</code> is not a valid mode.
      */
     public void setMode(int mode)
     {
@@ -98,7 +99,7 @@ public class WebParamAnnotation
         }
         else
         {
-            throw new IllegalArgumentException("Invalid mode " + mode);
+            throw new IllegalArgumentException("Invalid style: " + mode);
         }
     }
 
