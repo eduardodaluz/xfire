@@ -78,8 +78,8 @@ public class DefaultConfigurationService
     private void createService(PlexusConfiguration c) 
         throws Exception
     {
-        String type = c.getChild("type").getValue("simple");
-        
+        String type = c.getChild("type").getValue();
+
         if ( type == null )
         {
             getLogger().error("Service " + c.getAttribute("name") 
@@ -90,7 +90,7 @@ public class DefaultConfigurationService
         getLogger().info("Creating service " + c.getChild("name").getValue() + " with type " + type);
         Configurator builder = 
             (Configurator) getServiceLocator().lookup( Configurator.ROLE, type );
-        
+
         if ( builder == null )
         {
             getLogger().error("Error creating service " + c.getAttribute("name") + ": No Configurator.");

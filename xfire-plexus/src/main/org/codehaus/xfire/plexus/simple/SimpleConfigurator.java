@@ -34,7 +34,7 @@ public class SimpleConfigurator
         return SERVICE_TYPE;
     }
     
-    public Service createService(Object config) 
+    public Service createService( PlexusConfiguration config ) 
         throws Exception
     {
         SimpleService s = new SimpleService();

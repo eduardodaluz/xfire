@@ -1,5 +1,6 @@
 package org.codehaus.xfire.plexus.config;
 
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.xfire.service.Service;
 
 /**
@@ -15,6 +16,6 @@ public interface Configurator
 
     public String getServiceType();
     
-    public Service createService(Object config) 
+    public Service createService( PlexusConfiguration config ) 
         throws Exception;
 }

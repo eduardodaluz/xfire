@@ -3,7 +3,8 @@ package org.codehaus.xfire.plexus;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.xfire.MessageContext;
@@ -20,7 +21,7 @@ import org.codehaus.xfire.java.JavaInvoker;
 public class ServiceInvoker
 	extends JavaInvoker
 {
-    private static Logger logger = Logger.getLogger(ServiceInvoker.class.getName());
+    private static Log logger = LogFactory.getLog(ServiceInvoker.class.getName());
     
     private ServiceLocator locator;
     
