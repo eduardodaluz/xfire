@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
-
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -189,7 +188,7 @@ public class XFireServletController
         context.setTransport(transport);
         
         String contentType = request.getHeader("Content-Type");
-        if ( contentType.toLowerCase().indexOf("multipart/related") != -1 )
+        if ( null == contentType || contentType.toLowerCase().indexOf("multipart/related") != -1 )
         {
             try
             {
@@ -212,13 +211,23 @@ public class XFireServletController
         Session session = Session.getDefaultInstance(new Properties(), null);
         MimeMessage inMsg = new MimeMessage(session, request.getInputStream());
         inMsg.addHeaderLine("Content-Type: " + request.getContentType());
-        
-        MimeMultipart inMP = (MimeMultipart) inMsg.getContent();
 
-        JavaMailAttachments atts = new JavaMailAttachments(inMP);
-        context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);
-        
-        return atts.getSoapMessage().getDataHandler().getInputStream();
+        final Object content = inMsg.getContent();
+
+        if( content instanceof MimeMultipart )
+        {
+            MimeMultipart inMP = (MimeMultipart) content;
+
+            JavaMailAttachments atts = new JavaMailAttachments(inMP);
+            context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);
+
+            return atts.getSoapMessage().getDataHandler().getInputStream();
+        }
+        else
+        {
+            throw new UnsupportedOperationException( );
+            //TODO set 500 and bail
+        }
     }
 
     /**
