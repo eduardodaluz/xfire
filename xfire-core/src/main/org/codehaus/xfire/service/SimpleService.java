@@ -10,6 +10,7 @@ import org.codehaus.xfire.config.Configurable;
 import org.codehaus.xfire.config.Configuration;
 import org.codehaus.xfire.config.ConfigurationException;
 import org.codehaus.xfire.fault.FaultHandler;
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.Handler;
@@ -49,7 +50,7 @@ public class SimpleService
     
     private HandlerPipeline requestPipeline;
     private HandlerPipeline responsePipeline;
-    private HandlerPipeline faultPipeline;
+    private FaultHandlerPipeline faultPipeline;
     
     public SimpleService()
     {
@@ -206,7 +207,7 @@ public class SimpleService
     /**
      * @return Returns the faultPipeline.
      */
-    public HandlerPipeline getFaultPipeline()
+    public FaultHandlerPipeline getFaultPipeline()
     {
         return faultPipeline;
     }
@@ -214,7 +215,7 @@ public class SimpleService
     /**
      * @param faultPipeline The faultPipeline to set.
      */
-    public void setFaultPipeline(HandlerPipeline faultPipeline)
+    public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
     {
         this.faultPipeline = faultPipeline;
     }

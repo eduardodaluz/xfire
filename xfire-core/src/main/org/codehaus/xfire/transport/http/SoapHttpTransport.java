@@ -3,9 +3,9 @@ package org.codehaus.xfire.transport.http;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.handler.AbstractHandler;
-import org.codehaus.xfire.handler.Handler;
-import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.fault.FaultHandler;
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Transport;
@@ -24,7 +24,7 @@ public class SoapHttpTransport
 
     public SoapHttpTransport()
     {
-        HandlerPipeline faultPipe = new HandlerPipeline();
+        FaultHandlerPipeline faultPipe = new FaultHandlerPipeline();
         faultPipe.addHandler(new FaultResponseCodeHandler());
         setFaultPipeline(faultPipe);
     }
@@ -68,16 +68,14 @@ public class SoapHttpTransport
 	}
     
     public class FaultResponseCodeHandler
-        extends AbstractHandler
-        implements Handler
+         implements FaultHandler
     {
         /**
          * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
          * @param context
          * @throws Exception
          */
-        public void invoke(MessageContext context)
-            throws Exception
+        public void handleFault(XFireFault fault, MessageContext context)
         {
             XFireServletController.getResponse().setStatus(500);
         }    

@@ -21,5 +21,5 @@ public interface FaultHandler
      * @param e
      * @param context
      */
-    public void handleFault( Exception e, MessageContext context );
+    public void handleFault(XFireFault fault, MessageContext context );
 }

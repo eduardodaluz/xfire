@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
@@ -49,10 +50,11 @@ public class DefaultXFire
     public void invoke( final XMLStreamReader reader,
                         final MessageContext context )
     {
+        final Service service = findService( context.getServiceName() );
+        
         Handler handler = null;
         try
         {
-            final Service service = findService( context.getServiceName() );
             context.setService( service );
             context.setXMLStreamReader( reader );
 
@@ -67,19 +69,38 @@ public class DefaultXFire
         }
         catch( Exception e )
         {
-            if( e instanceof XFireRuntimeException )
-            {
-                throw (XFireRuntimeException)e;
-            }
-            else if( handler != null )
-            {
-                logger.error( "Fault occurred.", e );
-                handler.handleFault( e, context );
-            }
-            else
-            {
-                throw new XFireRuntimeException( "Couldn't process message.", e );
-            }
+            handleException(context, service, handler, e);
+        }
+    }
+
+    /**
+     * @param context
+     * @param service
+     * @param handler
+     * @param e
+     */
+    protected void handleException(final MessageContext context, 
+                                   final Service service, 
+                                   final Handler handler, 
+                                   final Exception e)
+    {
+        if(e instanceof XFireRuntimeException)
+        {
+            throw (XFireRuntimeException)e;
+        }
+        else if( handler != null )
+        {
+            XFireFault fault = XFireFault.createFault(e);
+            logger.error("Fault occurred.", fault);
+            
+            handler.handleFault(fault, context);
+            
+            if (service.getFaultHandler() != null)
+                service.getFaultHandler().handleFault(fault, context);
+        }
+        else
+        {
+            throw new XFireRuntimeException("Couldn't process message.", e);
         }
     }
 

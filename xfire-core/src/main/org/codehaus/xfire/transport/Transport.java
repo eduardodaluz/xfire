@@ -1,5 +1,6 @@
 package org.codehaus.xfire.transport;
 
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.HandlerPipeline;
 
 /**
@@ -15,5 +16,5 @@ public interface Transport
     
     HandlerPipeline getResponsePipeline();
     
-    HandlerPipeline getFaultPipeline();
+    FaultHandlerPipeline getFaultPipeline();
 }

@@ -3,6 +3,7 @@ package org.codehaus.xfire.service;
 import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.fault.FaultHandler;
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -25,7 +26,7 @@ public interface Service
     
     HandlerPipeline getResponsePipeline();
     
-    HandlerPipeline getFaultPipeline();
+    FaultHandlerPipeline getFaultPipeline();
     
     /**
      * The fault handler which handles exception which occur during 

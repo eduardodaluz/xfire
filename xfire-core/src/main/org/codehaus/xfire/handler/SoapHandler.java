@@ -37,12 +37,13 @@ public class SoapHandler
 
     private EndpointHandler bodyHandler;
     private Handler headerHandler;
+    private static final String HANDLER_STACK = "xfire.handlerStack";
 
     public SoapHandler( EndpointHandler bodyHandler )
     {
         this.bodyHandler = bodyHandler;
     }
-    
+
     /**
      * Invoke the Header and Body Handlers for the SOAP message.
      */
@@ -52,8 +53,10 @@ public class SoapHandler
         XMLStreamReader reader = context.getXMLStreamReader();
         XMLStreamWriter writer = null;
         String encoding = null;
+
         Stack handlerStack = new Stack();
-        
+        context.setProperty(HANDLER_STACK, handlerStack);
+
         boolean end = false;
         while ( !end && reader.hasNext() )
         {
@@ -77,16 +80,9 @@ public class SoapHandler
                 else if ( reader.getLocalName().equals("Body") )
                 {
                     invokeRequestPipeline(handlerStack, context);
-                    
-                    try
-                    {
-                        bodyHandler.invoke(context);
-                        handlerStack.push(bodyHandler);
-                    }
-                    catch(Exception e)
-                    {
-                        handleInternalFault(e, context, handlerStack);
-                    }
+
+                    handlerStack.push(bodyHandler);
+                    bodyHandler.invoke(context);
                 }
                 else if ( reader.getLocalName().equals("Envelope") )
                 {
@@ -104,49 +100,28 @@ public class SoapHandler
          * Handle faults correctly
          */ 
         writeHeaders(context, writer);
-        
-        try
-        {
-            invokeResponsePipeline(handlerStack, context);
-            
-            writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
-            bodyHandler.writeResponse(context);
-            writer.writeEndElement();
-            
-            writer.writeEndElement();  // Envelope
 
-            writer.writeEndDocument();
-            writer.close();
-        }
-        catch(Exception e)
-        {
-            handleInternalFault(e, context, handlerStack);
-        }        
-    }
-    
-    public void handleFault(Exception e, MessageContext context)
-    {
-        context.getService().getFaultHandler().handleFault(e, context);
+        invokeResponsePipeline(handlerStack, context);
+        
+        writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
+        bodyHandler.writeResponse(context);
+        writer.writeEndElement();
+        
+        writer.writeEndElement();  // Envelope
+
+        writer.writeEndDocument();
+        writer.close();       
     }
 
-    private void handleInternalFault(Exception e, MessageContext context, Stack handlerStack) 
-        throws Exception
+    public void handleFault(XFireFault fault, MessageContext context) 
     {
-        bodyHandler.handleFault(e, context);
-        
-        while(!handlerStack.empty())
+        Stack handlerStack = (Stack) context.getProperty(HANDLER_STACK);
+
+        while (!handlerStack.empty())
         {
             Handler handler = (Handler) handlerStack.pop();
-            handler.handleFault(e, context);
+            handler.handleFault(fault, context);
         }
-        
-        if (context.getTransport() != null)
-            invokePipeline( context.getTransport().getFaultPipeline(), handlerStack, context );
-
-        if (context.getService() != null)
-            invokePipeline( context.getService().getFaultPipeline(), handlerStack, context );
-        
-        throw e;
     }
 
     protected void invokeRequestPipeline(Stack handlerStack, MessageContext context) 
@@ -176,8 +151,8 @@ public class SoapHandler
     {
         if ( pipeline != null )
         {
-            pipeline.invoke(context);
             handlerStack.push(pipeline);    
+            pipeline.invoke(context);
         }
     }
 

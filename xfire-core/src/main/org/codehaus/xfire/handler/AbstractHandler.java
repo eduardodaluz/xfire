@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -40,7 +41,7 @@ public abstract class AbstractHandler
      * @param e
      * @param context
      */
-    public void handleFault( Exception e, MessageContext context )
+    public void handleFault(XFireFault fault, MessageContext context)
     {
     }
     

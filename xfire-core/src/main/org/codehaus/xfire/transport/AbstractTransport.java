@@ -14,6 +14,7 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -38,7 +39,7 @@ public abstract class AbstractTransport
 {
     private HandlerPipeline requestPipeline;
     private HandlerPipeline responsePipeline;
-    private HandlerPipeline faultPipeline;
+    private FaultHandlerPipeline faultPipeline;
 
     public abstract String getServiceURL(Service service);
 
@@ -144,7 +145,7 @@ public abstract class AbstractTransport
     /**
      * @return Returns the faultPipeline.
      */
-    public HandlerPipeline getFaultPipeline()
+    public FaultHandlerPipeline getFaultPipeline()
     {
         return faultPipeline;
     }
@@ -152,7 +153,7 @@ public abstract class AbstractTransport
     /**
      * @param faultPipeline The faultPipeline to set.
      */
-    public void setFaultPipeline(HandlerPipeline faultPipeline)
+    public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
     {
         this.faultPipeline = faultPipeline;
     }

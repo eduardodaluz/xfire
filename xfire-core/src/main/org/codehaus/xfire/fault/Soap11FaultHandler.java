@@ -21,17 +21,17 @@ import org.w3c.dom.NodeList;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class Soap11FaultHandler
-	implements FaultHandler
+	extends AbstractFaultHandler
 {
     public static final String NAME = "1.1";
     
     /**
      * @see org.codehaus.xfire.fault.FaultHandler#handleFault(java.lang.Exception, org.codehaus.xfire.MessageContext)
      */
-    public void handleFault( Exception e, 
-                             MessageContext context )
-    {
-        XFireFault fault = createFault(e);
+    public void handleFault(XFireFault fault, 
+                            MessageContext context)
+    {  
+        super.handleFault(fault, context);
         
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer;
@@ -112,16 +112,4 @@ public class Soap11FaultHandler
             throw new XFireRuntimeException("Couldn't create fault.", xe);
         }
     }
-
-    /**
-	 * @param e
-	 * @return
-	 */
-	private XFireFault createFault(Exception e)
-	{
-		XFireFault fault = XFireFault.createFault(e);
-        
-		return fault;
-	}
-
 }
