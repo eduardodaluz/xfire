@@ -4,8 +4,8 @@
   <groupId>xfire</groupId>
   <artifactId>xfire-xmlbeans</artifactId>
   <id>xfire-xmlbeans</id>
-  <currentVersion>1.0-alpha-2</currentVersion>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-2.pom</extend>
+  <currentVersion>1.0-alpha-3-SNAPSHOT</currentVersion>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-3-SNAPSHOT.pom</extend>
 
   <package>org.codehaus.xfire</package>
   <description>An XMLBeans binding module for XFire.</description>
@@ -22,13 +22,13 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0-alpha-3-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-java</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0-alpha-3-SNAPSHOT</version>
     </dependency>
 	
     <!-- A snapshot with XMLBEANS-78 patch -->
