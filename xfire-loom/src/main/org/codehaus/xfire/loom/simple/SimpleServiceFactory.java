@@ -44,7 +44,7 @@ public class SimpleServiceFactory implements ServiceFactory
                                      final Object target )
         throws ConfigurationException
     {
-        service.setServiceHandler( new SoapHandler( new JavaServiceHandler( new ServiceInvoker( service ) ) ) );
+        service.setServiceHandler( new SoapHandler( new JavaServiceHandler( new ServiceInvoker( target ) ) ) );
 
         service.setName( configuration.getChild( "name" ).getValue() );
         service.setDefaultNamespace( configuration.getChild( "namespace" ).getValue( "" ) );
