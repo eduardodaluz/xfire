@@ -8,7 +8,7 @@ import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
-import org.codehaus.xfire.wsdl.WSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl.WSDLBuilder;
 
 /**
@@ -32,7 +32,7 @@ public class SimpleService
     
     private Hashtable properties;
     
-    private WSDL wsdl;
+    private WSDLWriter wsdl;
     
     private WSDLBuilder wsdlBuilder;
     
@@ -50,7 +50,7 @@ public class SimpleService
     /**
      * @see org.codehaus.xfire.service.Service#getWSDL()
      */
-    public WSDL getWSDL() throws WSDLException
+    public WSDLWriter getWSDL() throws WSDLException
     {
         if ( wsdl == null )
         {
@@ -206,7 +206,7 @@ public class SimpleService
         this.serviceHandler = serviceHandler;
     }
 
-    public void setWSDL( WSDL wsdl )
+    public void setWSDL( WSDLWriter wsdl )
     {
         this.wsdl = wsdl;
     }

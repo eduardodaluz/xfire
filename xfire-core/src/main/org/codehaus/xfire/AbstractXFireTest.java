@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 import org.apache.log4j.BasicConfigurator;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.wsdl.WSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -210,7 +210,7 @@ public class AbstractXFireTest
      * @return
      * @throws Exception
      */
-    protected WSDL getWSDL(String service) 
+    protected WSDLWriter getWSDL(String service) 
         throws Exception
     {
         ServiceRegistry reg = getServiceRegistry();

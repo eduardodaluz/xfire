@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * A WSDL Document for a service.  This is supposed to be version
- * agnostic as well as let you generate/retrieve WSDL in whatever
- * way you want.
+ * Writes a WSDL file for a service. This is WSDL version agnostic.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public interface WSDL
+public interface WSDLWriter
 {
     public static final String WSDL11_NS = "http://schemas.xmlsoap.org/wsdl/";
     

@@ -4,7 +4,7 @@ import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
-import org.codehaus.xfire.wsdl.WSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
  * A service descriptor. This class must be thread safe.
@@ -15,7 +15,7 @@ public interface Service
 {
     String ROLE = Service.class.getName();
 
-    WSDL getWSDL() throws WSDLException;
+    WSDLWriter getWSDL() throws WSDLException;
 
     Handler getServiceHandler();
     

@@ -16,7 +16,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.wsdl.WSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /** 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -120,7 +120,7 @@ public class DefaultXFire
     {
         try
         {
-            WSDL wsdl = getWSDL(serviceName);
+            WSDLWriter wsdl = getWSDL(serviceName);
             
             wsdl.write( out );
         } 
@@ -140,12 +140,12 @@ public class DefaultXFire
 	 * @throws ServiceException
 	 * @throws WSDLException
 	 */
-	private WSDL getWSDL(String serviceName) 
+	private WSDLWriter getWSDL(String serviceName) 
         throws WSDLException
 	{
 		Service service = findService( serviceName );
 		
-		WSDL wsdl = service.getWSDL();
+		WSDLWriter wsdl = service.getWSDL();
 		return wsdl;
 	}
 

@@ -5,7 +5,7 @@ import org.codehaus.xfire.fault.SOAP12FaultHandler;
 import org.codehaus.xfire.handler.EchoHandler;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.SimpleService;
-import org.codehaus.xfire.wsdl.WSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.dom4j.Document;
 
 /**
@@ -46,7 +46,7 @@ public class XFireTest
     {
         Service service = (Service) getServiceRegistry().getService("Echo");
         
-        WSDL wsdl = service.getWSDL();
+        WSDLWriter wsdl = service.getWSDL();
         
         assertNotNull(wsdl);
         

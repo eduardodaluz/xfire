@@ -13,7 +13,7 @@ import javax.wsdl.WSDLException;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class ResourceWSDL
-	implements WSDL
+	implements WSDLWriter
 {
     String wsdlUrl = null;
     
