@@ -10,6 +10,7 @@ import org.codehaus.xfire.client.http.RestHttpClient;
 import org.codehaus.xfire.client.http.SoapHttpClient;
 #end
 import org.codehaus.xfire.xmlbeans.client.XMLBeansClientHandler;
+import org.codehaus.xfire.fault.XFireFault;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -56,7 +57,7 @@ public class $name
 #end
 #set( $first = true )
     public $returnType ${method.Name}( #foreach($p in $method.RequestParameters)#if($first) #set($first=false) #else,#end$p.Type.ShortJavaName $p.Name#end )
-        throws IOException
+        throws IOException, XFireFault
     {
         XMLBeansClientHandler handler = new XMLBeansClientHandler(options);
 #set( $first = true )
