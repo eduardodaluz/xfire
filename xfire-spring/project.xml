@@ -1,0 +1,80 @@
+<project>
+  <pomVersion>1</pomVersion>
+  <name>Spring XFire Module</name>
+  <groupId>xfire</groupId>
+  <artifactId>xfire-spring</artifactId>
+  <currentVersion>1.0-SNAPSHOT</currentVersion>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
+
+  <package>org.codehaus.xfire</package>
+  <description>Spring support for XFire.</description>
+  <shortDescription>Spring support for XFire.</shortDescription>
+  
+  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-spring</siteDirectory>
+  
+  <versions/>
+  
+  <branches/>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-java</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.6.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>${basedir}/src/main</sourceDirectory>
+    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+        <include>**/*TestCase.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+      </excludes>
+      <resources>
+        <resource>
+          <directory>${basedir}/src/test</directory>
+          <includes>
+            <include>**/*.xml</include>
+            <include>**/*.vm</include>
+          </includes>
+          <filtering>false</filtering>
+        </resource>
+      </resources>
+    </unitTest>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <properties/>
+</project>

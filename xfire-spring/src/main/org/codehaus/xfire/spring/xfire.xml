@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  
+  <bean id="xfire.serviceRegistry" class="org.codehaus.xfire.service.DefaultServiceRegistry"/>
+  <bean id="xfire.transportManager" class="org.codehaus.xfire.transport.DefaultTransportManager"/>
+  
+  <bean id="xfire" class="org.codehaus.xfire.DefaultXFire">
+    <constructor-arg>
+      <ref bean="xfire.serviceRegistry"/>
+    </constructor-arg>
+    <constructor-arg>
+      <ref bean="xfire.transportManager"/>
+    </constructor-arg>
+  </bean>
+
+  <bean id="xfire.typeMappingRegistry" 
+        class="org.codehaus.xfire.java.mapping.TypeMappingRegistry"
+        init-method="createDefaultMappings"/>
+
+</beans>
