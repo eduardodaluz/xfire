@@ -1,5 +1,9 @@
 package org.codehaus.xfire.plexus.simple;
 
+import java.net.URL;
+
+import javax.wsdl.WSDLException;
+
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
@@ -55,19 +59,26 @@ public class SimpleConfigurator
         JavaServiceHandler handler = new JavaServiceHandler(invoker);
         SoapHandler sHandler = new SoapHandler(handler);
         s.setServiceHandler(sHandler);
-        
+
         s.setName( config.getChild("name").getValue() );
-        
+
         s.setDefaultNamespace( config.getChild( "namespace" ).getValue("") );
-    
-        s.setWSDLURL( config.getChild("wsdlURL").getValue() );
-        
+
+        try
+        {
+            s.setWSDLURL( config.getChild("wsdlURL").getValue() );
+        }
+        catch (WSDLException e)
+        {
+            throw new PlexusConfigurationException("Could not configure service", e);
+        }
+
         s.setUse( config.getChild("use").getValue("literal") );
-        
+
         s.setStyle( config.getChild("style").getValue("wrapped") );
 
         String soapNS = config.getChild( "soapVersion" ).getValue("1.1");
-        
+
         if ( soapNS.equals("1.1") )
         {
             s.setSoapVersion( Soap11.getInstance() );
