@@ -4,7 +4,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
@@ -12,13 +11,12 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.handler.SoapHandler;
-import org.codehaus.xfire.message.ObjectServiceHandler;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.service.object.Invoker;
 import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.service.object.ObjectServiceBuilder;
 import org.codehaus.xfire.service.object.ServiceBuilder;
@@ -44,7 +42,8 @@ public class ObjectServiceConfigurator
         throws Exception
     {
         String builderClass = config.getChild("serviceBuilder").getValue("");
-        ServiceBuilder builder = getServiceBuilder(builderClass);
+        ServiceInvoker invoker = new ServiceInvoker(getServiceLocator());
+        ServiceBuilder builder = getServiceBuilder(builderClass, invoker );
 
         String name = config.getChild("name").getValue();
         String namespace = config.getChild("namespace" ).getValue("");
@@ -101,7 +100,7 @@ public class ObjectServiceConfigurator
                 version = Soap12.getInstance();
             }
             
-            service = (DefaultObjectService) builder.create(clazz, name, namespace, version, style, use);
+            service = (DefaultObjectService) builder.create(clazz, name, namespace, version, style, use, null );
             
             PlexusConfiguration[] types = config.getChild("types").getChildren("type");
             for ( int i = 0; i < types.length; i++ )
@@ -123,11 +122,8 @@ public class ObjectServiceConfigurator
         else if( scope.equals( "request" ) )
             service.setScope( ObjectService.SCOPE_REQUEST );
         
-        ServiceInvoker invoker = new ServiceInvoker(getServiceLocator());
-        ObjectServiceHandler handler = new ObjectServiceHandler(invoker);
-        SoapHandler sHandler = new SoapHandler(handler);
-        service.setServiceHandler(sHandler);
-        
+        getServiceRegistry().register( service );
+
         return service;
     }
 
@@ -135,21 +131,21 @@ public class ObjectServiceConfigurator
      * @return
      * @throws PlexusConfigurationException 
      */
-    protected ServiceBuilder getServiceBuilder(String builderClass) 
+    protected ServiceBuilder getServiceBuilder( String builderClass, Invoker invoker )
         throws Exception
     {
         if (builderClass.length() == 0)
         {
-            return new ObjectServiceBuilder(getXFire(), getTypeMappingRegistry());
+            return new ObjectServiceBuilder(getXFire().getTransportManager(), getTypeMappingRegistry(), invoker);
         }
         else
         {
             Class clz = getClass().getClassLoader().loadClass(builderClass);
             Constructor con = 
-                clz.getConstructor( new Class[] {XFire.class, TypeMappingRegistry.class} );
+                clz.getConstructor( new Class[] {TransportManager.class, TypeMappingRegistry.class, Invoker.class} );
             
             return (ServiceBuilder) 
-                con.newInstance(new Object[] {getXFire(), getTypeMappingRegistry()});
+                con.newInstance(new Object[] {getXFire().getTransportManager(), getTypeMappingRegistry(), invoker});
         }
     }
     

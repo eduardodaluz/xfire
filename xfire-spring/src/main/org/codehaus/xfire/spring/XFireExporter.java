@@ -33,7 +33,9 @@ public class XFireExporter
         throws Exception
     {
         service = (DefaultObjectService) getServiceBuilder().create(getServiceInterface());
-        
+
+        getXfire().getServiceRegistry().register( service );
+
         Invoker invoker = new BeanInvoker(getProxyForService());
         service.setServiceHandler(new SoapHandler(new ObjectServiceHandler(invoker)));
         

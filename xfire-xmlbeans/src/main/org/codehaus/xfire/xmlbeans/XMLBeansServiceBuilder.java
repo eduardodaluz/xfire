@@ -2,18 +2,19 @@ package org.codehaus.xfire.xmlbeans;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
-import org.codehaus.xfire.XFire;
+
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.service.object.Invoker;
 import org.codehaus.xfire.service.object.ObjectServiceBuilder;
 import org.codehaus.xfire.service.object.Operation;
 import org.codehaus.xfire.service.object.Parameter;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.type.TypeMappingRegistry;
 
 /**
@@ -22,19 +23,9 @@ import org.codehaus.xfire.type.TypeMappingRegistry;
 public class XMLBeansServiceBuilder
     extends ObjectServiceBuilder
 {
-    public XMLBeansServiceBuilder()
+    public XMLBeansServiceBuilder( TransportManager transportManager, TypeMappingRegistry registry, Invoker invoker )
     {
-        super();
-    }
-
-    public XMLBeansServiceBuilder(XFire xfire)
-    {
-        super(xfire);
-    }
-
-    public XMLBeansServiceBuilder(XFire xfire, TypeMappingRegistry typeMappingRegistry)
-    {
-        super(xfire, typeMappingRegistry);
+        super( transportManager, registry, invoker );
     }
 
     protected void addOperation(DefaultObjectService service, Method method)

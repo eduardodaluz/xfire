@@ -31,6 +31,8 @@ public class FaultTest
         {
             echo = (DefaultObjectService) getServiceBuilder().create(BadEcho.class);
 
+            getServiceRegistry().register( echo );
+
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);
             conn.login(username, password, "Echo");

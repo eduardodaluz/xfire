@@ -20,7 +20,7 @@ public class XMLBeansServiceTest
     {
         super.setUp();
         
-        builder = new XMLBeansServiceBuilder(getXFire());
+        builder = new XMLBeansServiceBuilder(getXFire().getTransportManager(), null, null);
         
         service = (DefaultObjectService) 
             builder.create(WeatherService.class,
@@ -28,7 +28,9 @@ public class XMLBeansServiceTest
                            "urn:WeatherService",
                            Soap11.getInstance(),
                            SoapConstants.STYLE_DOCUMENT,
-                           SoapConstants.USE_LITERAL);
+                           SoapConstants.USE_LITERAL, null );
+
+        getServiceRegistry().register( service );
     }
     
     public void testService() 

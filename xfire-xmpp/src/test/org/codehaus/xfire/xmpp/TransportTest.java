@@ -33,6 +33,8 @@ public class TransportTest
         {
             echo = (DefaultObjectService) getServiceBuilder().create(Echo.class);
 
+            getServiceRegistry().register( echo );
+
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);
             conn.login(username, password, "Echo");
