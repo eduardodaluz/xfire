@@ -17,6 +17,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.XMPPError;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -75,6 +76,10 @@ public class XFirePacketListener
         response.setTo(packet.getFrom());
         response.setType(IQ.Type.RESULT);
         response.setPacketID(soapPacket.getPacketID());
+
+        XMPPError error = (XMPPError) context.getProperty(XMPPFaultHandler.XMPP_ERROR);
+        if (error != null)
+            response.setError(error);
 
         conn.sendPacket(response);
     }
