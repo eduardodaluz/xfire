@@ -1,14 +1,14 @@
-package org.codehaus.xfire.demo.java;
+package org.codehaus.xfire.quickstart;
 
+//START SNIPPET: echo
 /**
- * Echo
- * 
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- */
+* An example java service.
+*/
 public class Echo
 {
-    public String echo( String echo )
-    {
-        return echo;
-    }
+    public String echo( String in )
+ {
+        return in;
+ }
 }
+//END SNIPPET: echo
