@@ -8,7 +8,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -69,43 +68,25 @@ public class STAXUtils
     private static void writeStartElement(XMLStreamReader reader, XMLStreamWriter writer) 
         throws XMLStreamException
     {
+        String local = reader.getLocalName();
+        String uri = reader.getNamespaceURI();
         String prefix = reader.getPrefix();
-        if ( prefix == null )
+        if (prefix == null)
         {
             prefix = "";
         }
-
-        boolean wroteDefault = false;
-        String uri = reader.getNamespaceURI();
         
         // Write out the element name and possible the default namespace
-        if ( uri != null )
+        if (uri != null)
         {
-            String definedNS = writer.getNamespaceContext().getNamespaceURI(prefix);
-            if ( prefix.equals("") )
+            if (prefix.length() == 0)
             {
-                if ( definedNS == null || !definedNS.equals(uri) )
-                {
-                    writer.setDefaultNamespace(uri);
-                    writer.writeStartElement( uri, reader.getLocalName() );
-                    writer.writeDefaultNamespace( uri );
-                    wroteDefault = true;
-                }
-                else
-                {
-                    writer.writeStartElement( uri, reader.getLocalName() );
-                }  
+                writer.writeStartElement(uri, local);
             }
             else
             {
-                if ( definedNS == null || !definedNS.equals(uri) )
-                    writer.setPrefix( prefix, uri );
-                
-                writer.writeStartElement( 
-                    prefix,
-                    reader.getLocalName(),
-                    uri);
-            }
+                writer.writeStartElement(prefix, local, uri);
+            } 
         }
         else
         {
@@ -117,7 +98,7 @@ public class STAXUtils
         {
             String nsPrefix = reader.getNamespacePrefix(i);
             String nsURI = reader.getNamespaceURI(i);
-            
+
             if ( nsPrefix == null || nsPrefix.length() ==  0 )
             {
                 continue;
@@ -126,6 +107,15 @@ public class STAXUtils
             writer.writeNamespace(nsPrefix, nsURI);
         }
 
+        String boundPrefix = writer.getPrefix(uri);
+        if ( boundPrefix == null || !prefix.equals(boundPrefix) )
+        {   
+            if ( prefix.length() == 0)
+                writer.writeDefaultNamespace(uri);
+            else
+                writer.writeNamespace(prefix, uri);
+        }
+        
         // Write out attributes
         for ( int i = 0; i < reader.getAttributeCount(); i++ )
         {
