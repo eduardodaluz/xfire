@@ -3,7 +3,13 @@ package org.codehaus.xfire.annotations.backport175;
 import java.lang.reflect.Method;
 
 import org.codehaus.backport175.reader.Annotations;
-import org.codehaus.xfire.annotations.*;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebParamAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
+import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.backport175.soap.SOAPBinding;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
 /**
  * Implementation of the {@link WebAnnotations} facade for backport175.
@@ -93,5 +99,27 @@ public class Backport175WebAnnotations
     public boolean hasOnewayAnnotation(Method method)
     {
         return Annotations.isAnnotationPresent(Oneway.class, method);
+    }
+
+    public boolean hasSOAPBindingAnnotation(Class aClass)
+    {
+        return Annotations.isAnnotationPresent(SOAPBinding.class, aClass);
+    }
+
+    public SOAPBindingAnnotation getSoapBindingAnnotation(Class aClass)
+    {
+        SOAPBinding soapBinding = (SOAPBinding) Annotations.getAnnotation(SOAPBinding.class, aClass);
+        if (soapBinding != null)
+        {
+            SOAPBindingAnnotation annotation = new SOAPBindingAnnotation();
+            annotation.setStyle(soapBinding.style());
+            annotation.setUse(soapBinding.use());
+            annotation.setParameterStyle(soapBinding.parameterStyle());
+            return annotation;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.test.AbstractXFireTypeTest;
 
 /**
@@ -100,6 +101,18 @@ public abstract class WebAnnotationsTestBase
         assertFalse("OnewayAnnotation set", webAnnotations.hasOnewayAnnotation(dummyMethod));
     }
 
+    public void testHasSOAPBindingAnnotation()
+            throws Exception
+    {
+        assertTrue("SOAPBindingAnnotation not set", webAnnotations.hasSOAPBindingAnnotation(echoServiceClass));
+    }
+
+    public void testHasNoSOAPBindingAnnotation()
+            throws Exception
+    {
+        assertFalse("SOAPBindingAnnotation set", webAnnotations.hasSOAPBindingAnnotation(thisClass));
+    }
+
     public void testGetWebServiceAnnotation()
             throws Exception
     {
@@ -160,5 +173,15 @@ public abstract class WebAnnotationsTestBase
     {
         WebParamAnnotation webParam = webAnnotations.getWebParamAnnotation(dummyMethod, 0);
         assertNull(webParam);
+    }
+
+    public void testGetSOAPBindingAnnotation()
+            throws Exception
+    {
+        SOAPBindingAnnotation soapBinding = webAnnotations.getSoapBindingAnnotation(echoServiceClass);
+        assertNotNull(soapBinding);
+        assertEquals(SOAPBindingAnnotation.STYLE_RPC, soapBinding.getStyle());
+        assertEquals(SOAPBindingAnnotation.USE_LITERAL, soapBinding.getUse());
+        assertEquals(SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED, soapBinding.getParameterStyle());
     }
 }

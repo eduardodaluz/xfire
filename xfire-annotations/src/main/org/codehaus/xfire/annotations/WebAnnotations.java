@@ -2,6 +2,8 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
+
 /**
  * Defines the contract for accessing annotations at runtime. This is a facade,  which can accommodate any annotations
  * API such as Commons Attributes,  backport175, Java 5, or any other annotations implementation.
@@ -82,4 +84,21 @@ public interface WebAnnotations
      * @return <code>true</code> if present; <code>false</code> otherwise.
      */
     boolean hasOnewayAnnotation(Method method);
+
+    /**
+     * Tests whether the given class has the {@link SOAPBindingAnnotation} annotation.
+     *
+     * @param aClass
+     * @return
+     */
+    boolean hasSOAPBindingAnnotation(Class aClass);
+
+    /**
+     * Gets the {@link SOAPBindingAnnotation} annotation from the given class, if found.
+     *
+     * @param aClass the class.
+     * @return the annotation; or <code>null</code> if it could not be found.
+     */
+    SOAPBindingAnnotation getSoapBindingAnnotation(Class aClass);
+
 }

@@ -5,6 +5,7 @@ import org.codehaus.xfire.annotations.EchoService;
 /**
  * @author Arjen Poutsma
  * @@WebService(name = "EchoService", targetNamespace = "http://www.openuri.org/2004/04/HelloWorld")
+ * @@org.codehaus.xfire.annotations.commons.soap.SOAPBinding(style = 1)
  */
 public class CommonsEchoService
         implements EchoService

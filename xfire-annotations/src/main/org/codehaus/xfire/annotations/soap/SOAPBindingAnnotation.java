@@ -4,7 +4,8 @@
 package org.codehaus.xfire.annotations.soap;
 
 /**
- * Represents an common representation of a soap binding annotation.
+ * Represents an common representation of a soap binding annotation. Specifies the mapping of the Web Service onto the
+ * SOAP message protocol.
  *
  * @author Arjen Poutsma
  */
@@ -41,7 +42,8 @@ public class SOAPBindingAnnotation
     public final static int PARAMETER_STYLE_WRAPPED = 1;
 
     /**
-     * Returns the SOAP binding style. One of {@link #STYLE_DOCUMENT} or {@link #STYLE_RPC}.
+     * Returns the SOAP binding style, which defines the encoding style for messages send to and from the Web Service.
+     * The returned value is one of {@link #STYLE_DOCUMENT} or {@link #STYLE_RPC}.
      *
      * @return the SOAP binding style.
      */
@@ -51,7 +53,8 @@ public class SOAPBindingAnnotation
     }
 
     /**
-     * Sets the SOAP binding style. The given parameter must be one of {@link #STYLE_DOCUMENT} or {@link #STYLE_RPC}.
+     * Sets the SOAP binding style, which defines the encoding style for messages send to and from the Web Service. The
+     * given parameter must be one of {@link #STYLE_DOCUMENT} or {@link #STYLE_RPC}.
      *
      * @param style the new binding style.
      * @throws IllegalArgumentException if <code>style</code> is not a valid style.
@@ -69,7 +72,8 @@ public class SOAPBindingAnnotation
     }
 
     /**
-     * Returns the SOAP binding use. One of {@link #USE_LITERAL} or {@link #USE_ENCODED}.
+     * Returns the SOAP binding use, which defines the formatting style for messages sent to and from the Web Service.
+     * The returned value is one of {@link #USE_LITERAL} or {@link #USE_ENCODED}.
      *
      * @return the SOAP binding use.
      */
@@ -79,7 +83,8 @@ public class SOAPBindingAnnotation
     }
 
     /**
-     * Sets the SOAP binding use. The given parameter must be one of {@link #USE_LITERAL} or {@link #USE_ENCODED}.
+     * Sets the SOAP binding use, which defines the formatting style for messages sent to and from the Web Service. The
+     * given parameter must be one of {@link #USE_LITERAL} or {@link #USE_ENCODED}.
      *
      * @param use the new binding use.
      * @throws IllegalArgumentException if <code>use</code> is not a valid use.
@@ -97,8 +102,11 @@ public class SOAPBindingAnnotation
     }
 
     /**
-     * Returns the SOAP parameter binding style. One of {@link #PARAMETER_STYLE_BARE} or {@link
-     * #PARAMETER_STYLE_WRAPPED}.
+     * Returns the SOAP parameter binding style. This style determines whether method parameters represent the entire
+     * message body, or whether the parameters are elements wrapped inside a top-level element named after the
+     * operation.
+     * <p/>
+     * The returned value is one of {@link #PARAMETER_STYLE_BARE} or {@link #PARAMETER_STYLE_WRAPPED}.
      *
      * @return the SOAP parameter binding style.
      */
@@ -108,7 +116,11 @@ public class SOAPBindingAnnotation
     }
 
     /**
-     * Sets the SOAP parameter binding style. One of {@link #PARAMETER_STYLE_BARE} or {@link #PARAMETER_STYLE_WRAPPED}.
+     * Sets the SOAP parameter binding style. This style determines whether method parameters represent the entire
+     * message body, or whether the parameters are elements wrapped inside a top-level element named after the
+     * operation
+     * <p/>
+     * The given parameter must be one of {@link #PARAMETER_STYLE_BARE} or {@link #PARAMETER_STYLE_WRAPPED}.
      *
      * @param parameterStyle the new SOAP parameter binding style.
      * @throws IllegalArgumentException if <code>parameterStyle</code> is not a valid parameter style.

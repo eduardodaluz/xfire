@@ -3,7 +3,13 @@ package org.codehaus.xfire.annotations.commons;
 import java.lang.reflect.Method;
 
 import org.apache.commons.attributes.Attributes;
-import org.codehaus.xfire.annotations.*;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebParamAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
+import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.commons.soap.SOAPBinding;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
 /**
  * Implementation of the {@link WebAnnotations} facade for Commons Attributes.
@@ -57,5 +63,15 @@ public class CommonsWebAttributes
     public boolean hasOnewayAnnotation(Method method)
     {
         return Attributes.hasAttributeType(method, Oneway.class);
+    }
+
+    public boolean hasSOAPBindingAnnotation(Class aClass)
+    {
+        return Attributes.hasAttributeType(aClass, SOAPBinding.class);
+    }
+
+    public SOAPBindingAnnotation getSoapBindingAnnotation(Class aClass)
+    {
+        return (SOAPBindingAnnotation) Attributes.getAttribute(aClass, SOAPBinding.class);
     }
 }

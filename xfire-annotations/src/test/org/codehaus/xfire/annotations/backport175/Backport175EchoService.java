@@ -6,6 +6,7 @@ import org.codehaus.xfire.annotations.EchoService;
  * @author Arjen Poutsma
  * @org.codehaus.xfire.annotations.backport175.WebService(name = "EchoService", targetNamespace =
  * "http://www.openuri.org/2004/04/HelloWorld")
+ * @org.codehaus.xfire.annotations.backport175.soap.SOAPBinding(style = 1, use=0, parameterStyle=1)
  */
 public class Backport175EchoService
         implements EchoService
