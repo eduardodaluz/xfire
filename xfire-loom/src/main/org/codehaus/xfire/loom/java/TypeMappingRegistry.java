@@ -8,14 +8,14 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
-import org.codehaus.xfire.java.mapping.TypeMapping;
-import org.codehaus.xfire.java.type.BooleanType;
-import org.codehaus.xfire.java.type.DoubleType;
-import org.codehaus.xfire.java.type.FloatType;
-import org.codehaus.xfire.java.type.IntType;
-import org.codehaus.xfire.java.type.LongType;
-import org.codehaus.xfire.java.type.Type;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.type.Type;
+import org.codehaus.xfire.type.TypeMapping;
+import org.codehaus.xfire.type.basic.BooleanType;
+import org.codehaus.xfire.type.basic.DoubleType;
+import org.codehaus.xfire.type.basic.FloatType;
+import org.codehaus.xfire.type.basic.IntType;
+import org.codehaus.xfire.type.basic.LongType;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -23,7 +23,7 @@ import org.codehaus.xfire.soap.SoapConstants;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 31, 2004
  */
-public class TypeMappingRegistry extends org.codehaus.xfire.java.mapping.DefaultTypeMappingRegistry
+public class TypeMappingRegistry extends org.codehaus.xfire.type.DefaultTypeMappingRegistry
     implements LogEnabled, Configurable
 {
     private Logger logger;

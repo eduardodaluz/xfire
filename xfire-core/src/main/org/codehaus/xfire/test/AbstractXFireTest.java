@@ -1,4 +1,4 @@
-package org.codehaus.xfire;
+package org.codehaus.xfire.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.codehaus.xfire.DefaultXFire;
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;

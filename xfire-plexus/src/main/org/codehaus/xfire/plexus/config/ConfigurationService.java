@@ -10,6 +10,4 @@ package org.codehaus.xfire.plexus.config;
 public interface ConfigurationService
 {
     String ROLE = ConfigurationService.class.getName();
-
-    public void register( Configurator configurator );
 }

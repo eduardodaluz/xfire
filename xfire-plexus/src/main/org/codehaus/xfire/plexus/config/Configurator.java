@@ -14,8 +14,6 @@ public interface Configurator
 {
     String ROLE = Configurator.class.getName();
 
-    public String getServiceType();
-    
     public Service createService( PlexusConfiguration config ) 
         throws Exception;
 }

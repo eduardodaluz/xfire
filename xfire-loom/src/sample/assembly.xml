@@ -22,7 +22,7 @@
 
     <block name="xfire-java-service-factory" class="org.codehaus.xfire.loom.java.JavaServiceFactory">
         <provide name="xfire-transport-manager" role="org.codehaus.xfire.transport.TransportManager"/>
-        <provide name="xfire-java-type-mapping-registry" role="org.codehaus.xfire.java.mapping.TypeMappingRegistry"/>
+        <provide name="xfire-java-type-mapping-registry" role="org.codehaus.xfire.type.TypeMappingRegistry"/>
     </block>
 
     <block name="xfire-java-type-mapping-registry" class="org.codehaus.xfire.loom.java.TypeMappingRegistry"/>

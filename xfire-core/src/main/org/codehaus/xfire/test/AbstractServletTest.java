@@ -1,4 +1,4 @@
-package org.codehaus.xfire.transport.http;
+package org.codehaus.xfire.test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -9,7 +9,6 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
-import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.xml.sax.SAXException;

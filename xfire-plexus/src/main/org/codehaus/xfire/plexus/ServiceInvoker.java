@@ -10,7 +10,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.java.JavaInvoker;
+import org.codehaus.xfire.service.object.ObjectInvoker;
 
 /**
  * Invokes a Plexus service.
@@ -19,7 +19,7 @@ import org.codehaus.xfire.java.JavaInvoker;
  * @since Nov 18, 2004
  */
 public class ServiceInvoker
-	extends JavaInvoker
+	extends ObjectInvoker
 {
     private static Log logger = LogFactory.getLog(ServiceInvoker.class.getName());
     

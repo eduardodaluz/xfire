@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <service name="org.codehaus.xfire.java.mapping.TypeMappingRegistry"/>
+            <service name="org.codehaus.xfire.type.TypeMappingRegistry"/>
         </dependency>
 
         <dependency>

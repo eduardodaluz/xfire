@@ -1,12 +1,9 @@
 package org.codehaus.xfire.xmpp;
 
-import org.codehaus.xfire.java.DefaultJavaService;
-import org.codehaus.xfire.java.ServiceHelper;
-import org.codehaus.xfire.java.test.AbstractXFireJavaTest;
-import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
-import org.dom4j.Document;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.ToContainsFilter;
@@ -15,9 +12,9 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class FaultTest
-    extends AbstractXFireJavaTest
+    extends AbstractXFireTypeTest
 {
-    private DefaultJavaService echo;
+    private DefaultObjectService echo;
     
     XMPPConnection conn;
     
@@ -32,7 +29,7 @@ public class FaultTest
         super.setUp();
         try
         {
-            echo = (DefaultJavaService) ServiceHelper.createService(getXFire(), getRegistry(), BadEcho.class);
+            echo = (DefaultObjectService) getServiceBuilder().create(BadEcho.class);
 
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);
@@ -63,32 +60,16 @@ public class FaultTest
                                                "xfireTestClient",
                                                "password2",
                                                "Echo",
-                                               id + "/Echo",
+                                               id + "/BadEcho",
                                                new EchoHandler());
     
             client.invoke();
+
             client.close();
         }
         catch (XMPPException e)
         {
             e.printStackTrace();
         }
-    }
-    
-    public void testWSDL()
-        throws Exception
-    {
-        Document wsdl = getWSDLDocument("Echo");
-        
-        addNamespace("wsdl", WSDLWriter.WSDL11_NS);
-        addNamespace("swsdl", WSDLWriter.WSDL11_SOAP_NS);
-        
-        assertValid("//wsdl:binding[@name='EchoXMPPBinding'][@type='tns:EchoPortType']", wsdl);
-        assertValid("//wsdl:binding[@name='EchoXMPPBinding']/swsdl:binding[@transport='" +
-                        XMPPTransport.XMPP_TRANSPORT_NS + "']", wsdl);
-        
-        assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']", wsdl);
-        assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +
-                    "/swsdl:address[@location='xfiretestserver@bloodyxml.com/Echo']", wsdl);
     }
 }

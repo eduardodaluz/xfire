@@ -3,8 +3,9 @@ package org.codehaus.xfire.transport.http;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.handler.SoapHandler;
-import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.test.AbstractServletTest;
 import org.codehaus.xfire.transport.Transport;
 
 import com.meterware.httpunit.PostMethodWebRequest;
@@ -23,7 +24,7 @@ public class XFireServletTest
     {
         super.setUp();
         
-        SimpleService service = new SimpleService();
+        MessageService service = new MessageService();
         service.setName("Echo");
         service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
@@ -33,7 +34,7 @@ public class XFireServletTest
         
         getServiceRegistry().register(service);
         
-        SimpleService fault = new SimpleService();
+        MessageService fault = new MessageService();
         fault.setName("Exception");
         fault.setSoapVersion(Soap12.getInstance());
         fault.setServiceHandler(new SoapHandler(new BadHandler()));

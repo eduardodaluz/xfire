@@ -1,8 +1,9 @@
-package org.codehaus.xfire.plexus.java;
+package org.codehaus.xfire.plexus.type;
 
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.xfire.java.mapping.TypeMapping;
+import org.codehaus.xfire.plexus.type.TypeMappingRegistry;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.type.TypeMapping;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

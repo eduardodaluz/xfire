@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.STAXUtils;
@@ -100,6 +101,11 @@ public class SoapHandler
         invokeResponsePipeline(handlerStack, context);
         
         // TODO: Create a MIME output stream if there are attachments.
+        Attachments atts = (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
+        if (atts != null && atts.size() > 0)
+        {
+            
+        }
         
         writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
         bodyHandler.writeResponse(context);

@@ -2,14 +2,14 @@ package org.codehaus.xfire.loom;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.java.JavaInvoker;
+import org.codehaus.xfire.service.object.ObjectInvoker;
 
 /**
  * Invokes a Loom service.
  *
  * @author <a href="mailto:peter.royal@pobox.com">peter royal</a>
  */
-public class ServiceInvoker extends JavaInvoker
+public class ServiceInvoker extends ObjectInvoker
 {
     private final Object m_service;
 

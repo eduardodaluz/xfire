@@ -1,4 +1,4 @@
-package org.codehaus.xfire.wsdl;
+package org.codehaus.xfire.wsdl11;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;

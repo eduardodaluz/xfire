@@ -4,15 +4,14 @@ import javax.wsdl.WSDLException;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-
 import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.SoapHandler;
-import org.codehaus.xfire.java.JavaServiceHandler;
 import org.codehaus.xfire.loom.ServiceFactory;
 import org.codehaus.xfire.loom.ServiceInvoker;
+import org.codehaus.xfire.message.ObjectServiceHandler;
+import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.SimpleService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 
@@ -32,7 +31,7 @@ public class SimpleServiceFactory implements ServiceFactory
     public Service createService( final Object target, final Configuration configuration )
         throws Exception
     {
-        final SimpleService s = new SimpleService();
+        final MessageService s = new MessageService();
 
         configureService( configuration, s, target );
 
@@ -40,11 +39,11 @@ public class SimpleServiceFactory implements ServiceFactory
     }
 
     protected void configureService( final Configuration configuration,
-                                     final SimpleService service,
+                                     final MessageService service,
                                      final Object target )
         throws ConfigurationException
     {
-        service.setServiceHandler( new SoapHandler( new JavaServiceHandler( new ServiceInvoker( target ) ) ) );
+        service.setServiceHandler( new SoapHandler( new ObjectServiceHandler( new ServiceInvoker( target ) ) ) );
 
         service.setName( configuration.getChild( "name" ).getValue() );
         service.setDefaultNamespace( configuration.getChild( "namespace" ).getValue( "" ) );

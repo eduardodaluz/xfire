@@ -11,7 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.codehaus.xfire.AbstractXFireTest;
+import org.codehaus.xfire.test.AbstractXFireTest;
 import org.dom4j.Document;
 import org.dom4j.io.DOMReader;
 import org.w3c.dom.Element;

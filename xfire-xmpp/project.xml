@@ -38,13 +38,13 @@
     </dependency>
 
     <dependency>
-      <groupId>smack</groupId>
+      <groupId>jivesoftware</groupId>
       <artifactId>smack</artifactId>
       <version>1.4.1</version>
     </dependency>
 
     <dependency>
-      <groupId>smack</groupId>
+      <groupId>jivesoftware</groupId>
       <artifactId>smackx</artifactId>
       <version>1.4.1</version>
     </dependency>

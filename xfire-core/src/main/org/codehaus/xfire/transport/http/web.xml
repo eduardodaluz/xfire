@@ -14,7 +14,6 @@
     </servlet-class>
   </servlet>
 
-
   <servlet-mapping>
     <servlet-name>XFireServlet</servlet-name>
     <url-pattern>/servlet/XFireServlet/*</url-pattern>

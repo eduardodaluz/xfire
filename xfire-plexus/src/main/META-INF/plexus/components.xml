@@ -3,12 +3,7 @@
   <lifecycle-handler-manager implementation="org.codehaus.plexus.lifecycle.DefaultLifecycleHandlerManager">
     <default-lifecycle-handler-id>plexus-configurable</default-lifecycle-handler-id>
   </lifecycle-handler-manager>
-
-  <load-on-start>
-    <component>
-      <role>org.codehaus.xfire.configuration.ConfigurationService</role>
-    </component>
-  </load-on-start>
+  
   <components>
         
     <component>
@@ -54,39 +49,29 @@
     </component>
         
     <component>
-      <role>org.codehaus.xfire.plexus.config.Configurator</role>
-      <role-hint>simple</role-hint>
-      <implementation>org.codehaus.xfire.plexus.simple.SimpleConfigurator</implementation>
-      <lifecycle-handler>plexus-configurable</lifecycle-handler>
-      <configuration/>
-    </component>
-        
-    <component>
       <role>org.codehaus.xfire.plexus.config.ConfigurationService</role>
       <implementation>org.codehaus.xfire.plexus.config.DefaultConfigurationService</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.xfire.plexus.config.Configurator</role>
+          <role-hint>org.codehaus.xfire.service.object.ObjectService</role-hint>
+        </requirement>
+      </requirements>
+    </component>
+            
+    <component>
+      <role>org.codehaus.xfire.plexus.config.Configurator</role>
+      <role-hint>org.codehaus.xfire.service.object.ObjectService</role-hint>
+      <implementation>org.codehaus.xfire.plexus.config.ObjectServiceConfigurator</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration/>
     </component>
 
     <component>
-      <role>org.codehaus.xfire.plexus.config.Configurator</role>
-      <role-hint>xmlbeans</role-hint>
-      <implementation>org.codehaus.xfire.plexus.xmlbeans.XMLBeansConfigurator</implementation>
-      <lifecycle-handler>plexus-configurable</lifecycle-handler>
-      <configuration/>
-    </component>
-	
-    <component>
-      <role>org.codehaus.xfire.plexus.config.Configurator</role>
-      <role-hint>java</role-hint>
-      <implementation>org.codehaus.xfire.plexus.java.JavaConfigurator</implementation>
-      <lifecycle-handler>plexus-configurable</lifecycle-handler>
-      <configuration/>
-    </component>
-    
-    <component>
-      <role>org.codehaus.xfire.java.mapping.TypeMappingRegistry</role>
-      <implementation>org.codehaus.xfire.plexus.java.TypeMappingRegistry</implementation>
+      <role>org.codehaus.xfire.type.TypeMappingRegistry</role>
+      <implementation>org.codehaus.xfire.plexus.type.TypeMappingRegistry</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration>
         
@@ -97,68 +82,63 @@
           <type class="java.lang.String"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="string"
-                type="org.codehaus.xfire.java.type.StringType" />
+                type="org.codehaus.xfire.type.basic.StringType" />
         
           <type class="java.lang.Integer"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="int"
-                type="org.codehaus.xfire.java.type.IntType" />
+                type="org.codehaus.xfire.type.basic.IntType" />
         
           <type class="java.lang.Float"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="float"
-                type="org.codehaus.xfire.java.type.FloatType" />
+                type="org.codehaus.xfire.type.basic.FloatType" />
         
           <type class="java.lang.Double"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="double"
-                type="org.codehaus.xfire.java.type.DoubleType" />
+                type="org.codehaus.xfire.type.basic.DoubleType" />
         
           <type class="java.lang.Long"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="long"
-                type="org.codehaus.xfire.java.type.LongType" />
+                type="org.codehaus.xfire.type.basic.LongType" />
                 
           <type class="java.lang.Boolean"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="boolean"
-                type="org.codehaus.xfire.java.type.BooleanType" />
+                type="org.codehaus.xfire.type.basic.BooleanType" />
         
           <type class="java.util.Calendar"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.CalendarType" />
+                type="org.codehaus.xfire.type.basic.CalendarType" />
         
           <type class="java.util.Date"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.DateType" /> 
-
-          <type class="java.math.BigDecimal"
-                namespace="http://www.w3.org/2001/XMLSchema"
-                name="decimal"
-                type="org.codehaus.xfire.java.type.BigDecimalType" />
-
+                type="org.codehaus.xfire.type.basic.DateType" /> 
+ 
           <!-- SOAP Encoded types -->
           <!-- type class="java.lang.String"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="string"
-                type="org.codehaus.xfire.java.type.StringType" />
+                type="org.codehaus.xfire.type.basic.StringType" />
         
           <type class="java.lang.Integer"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="int"
-                type="org.codehaus.xfire.java.type.IntType" />
+                type="org.codehaus.xfire.type.basic.IntType" />
         
           <type class="java.util.Calendar"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.CalendarType" />
+                type="org.codehaus.xfire.type.basic.CalendarType" />
         
           <type class="java.util.Date"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="date"
-                type="org.codehaus.xfire.java.type.DateType" / -->
+                type="org.codehaus.xfire.type.basic.DateType" / -->
                
         </typeMapping>
 		
@@ -170,68 +150,63 @@
           <type class="java.lang.String"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="string"
-                type="org.codehaus.xfire.java.type.StringType" />
+                type="org.codehaus.xfire.type.basic.StringType" />
                         
           <type class="java.lang.Boolean"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="boolean"
-                type="org.codehaus.xfire.java.type.BooleanType" />
+                type="org.codehaus.xfire.type.basic.BooleanType" />
                 
           <type class="java.lang.Integer"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="int"
-                type="org.codehaus.xfire.java.type.IntType" />
+                type="org.codehaus.xfire.type.basic.IntType" />
                 
           <type class="java.lang.Float"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="float"
-                type="org.codehaus.xfire.java.type.FloatType" />
+                type="org.codehaus.xfire.type.basic.FloatType" />
         
           <type class="java.lang.Double"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="double"
-                type="org.codehaus.xfire.java.type.DoubleType" />
+                type="org.codehaus.xfire.type.basic.DoubleType" />
         
           <type class="java.lang.Long"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="long"
-                type="org.codehaus.xfire.java.type.LongType" />
+                type="org.codehaus.xfire.type.basic.LongType" />
                 
           <type class="java.util.Calendar"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.CalendarType" />
+                type="org.codehaus.xfire.type.basic.CalendarType" />
         
           <type class="java.util.Date"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.DateType" />
-
-          <type class="java.math.BigDecimal"
-                namespace="http://www.w3.org/2001/XMLSchema"
-                name="decimal"
-                type="org.codehaus.xfire.java.type.BigDecimalType" />
-
+                type="org.codehaus.xfire.type.basic.DateType" />
+ 
           <!-- SOAP Encoded types -->
           <!-- type class="java.lang.String"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="string"
-                type="org.codehaus.xfire.java.type.StringType" />
+                type="org.codehaus.xfire.type.basic.StringType" />
         
           <type class="java.lang.Integer"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="int"
-                type="org.codehaus.xfire.java.type.IntType" />
+                type="org.codehaus.xfire.type.basic.IntType" />
         
           <type class="java.util.Calendar"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.CalendarType" />
+                type="org.codehaus.xfire.type.basic.CalendarType" />
         
           <type class="java.util.Date"
                 namespace="http://schemas.xmlsoap.org/soap/encoding/"
                 name="date"
-                type="org.codehaus.xfire.java.type.DateType" / -->
+                type="org.codehaus.xfire.type.basic.DateType" / -->
                
         </typeMapping>
 
@@ -241,50 +216,46 @@
           <type class="java.lang.String"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="string"
-                type="org.codehaus.xfire.java.type.StringType" />
+                type="org.codehaus.xfire.type.basic.StringType" />
         
           <type class="java.lang.Boolean"
                 namespace="http://www.w3.org/2001/XMLSchema"
-                name="boolean"
-                type="org.codehaus.xfire.java.type.BooleanType" />
+                name="string"
+                type="org.codehaus.xfire.type.basic.BooleanType" />
                 
           <type class="java.lang.Integer"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="int"
-                type="org.codehaus.xfire.java.type.IntType" />
+                type="org.codehaus.xfire.type.basic.IntType" />
                 
           <type class="java.lang.Float"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="float"
-                type="org.codehaus.xfire.java.type.FloatType" />
+                type="org.codehaus.xfire.type.basic.FloatType" />
         
           <type class="java.lang.Double"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="double"
-                type="org.codehaus.xfire.java.type.DoubleType" />
+                type="org.codehaus.xfire.type.basic.DoubleType" />
         
           <type class="java.lang.Long"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="long"
-                type="org.codehaus.xfire.java.type.LongType" />
+                type="org.codehaus.xfire.type.basic.LongType" />
                 
           <type class="java.util.Calendar"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.CalendarType" />
+                type="org.codehaus.xfire.type.basic.CalendarType" />
         
           <type class="java.util.Date"
                 namespace="http://www.w3.org/2001/XMLSchema"
                 name="dateTime"
-                type="org.codehaus.xfire.java.type.DateType" />
-
-          <type class="java.math.BigDecimal"
-                namespace="http://www.w3.org/2001/XMLSchema"
-                name="decimal"
-                type="org.codehaus.xfire.java.type.BigDecimalType" /> 
+                type="org.codehaus.xfire.type.basic.DateType" />
+                
         </typeMapping>
-
-
+        
+        
       </configuration>
     </component>
   </components>

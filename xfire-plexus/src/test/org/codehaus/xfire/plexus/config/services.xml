@@ -1,17 +1,8 @@
 <xfire>
   
   <services>
-    <service>
-      <type>simple</type>
-      <name>Echo</name>
-      <namespace>urn:Echo</namespace>
-      <soapVersion>1.2</soapVersion>
-      <encoding>document</encoding>
-      <use>literal</use>
-    </service>
 
     <service>
-      <type>java</type>
       <name>Echo2</name>
       <namespace>urn:Echo2</namespace>
       <soapVersion>1.1</soapVersion>
@@ -19,21 +10,7 @@
       <use>literal</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
     </service>
-	
-    <service>
-      <!-- 
-		Really this service would never work because the params aren't xmlbeans.
-		But, we aren't testing that here.
-	  -->
-      <type>xmlbeans</type>
-      <name>Echo3</name>
-      <namespace>urn:Echo3</namespace>
-      <soapVersion>1.1</soapVersion>
-      <style>document</style>
-      <use>literal</use>
-      <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
-	    <wsdlUrl>http://bleh</wsdlUrl>
-    </service>
+
   </services>
   
 </xfire>

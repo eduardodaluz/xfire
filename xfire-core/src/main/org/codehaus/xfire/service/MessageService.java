@@ -19,7 +19,7 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class SimpleService
+public class MessageService
     extends AbstractXFireComponent
     implements Service
 {
@@ -45,7 +45,7 @@ public class SimpleService
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
     
-    public SimpleService()
+    public MessageService()
     {
         properties = new Hashtable();   
     }

@@ -7,16 +7,15 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
-
-import org.codehaus.xfire.java.DefaultJavaService;
-import org.codehaus.xfire.java.JavaService;
-import org.codehaus.xfire.java.mapping.TypeMapping;
-import org.codehaus.xfire.java.mapping.TypeMappingRegistry;
-import org.codehaus.xfire.java.type.Type;
-import org.codehaus.xfire.java.wsdl.JavaWSDLBuilder;
 import org.codehaus.xfire.loom.simple.SimpleServiceFactory;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.type.Type;
+import org.codehaus.xfire.type.TypeMapping;
+import org.codehaus.xfire.type.TypeMappingRegistry;
+import org.codehaus.xfire.wsdl11.builder.JavaWSDLBuilder;
 
 /**
  * Creates and configures java-bound services for Loom.
@@ -43,7 +42,7 @@ public class JavaServiceFactory extends SimpleServiceFactory implements Servicea
     public Service createService( final Object target, final Configuration configuration )
         throws Exception
     {
-        final DefaultJavaService s = new DefaultJavaService( getTypeMappingRegistry() );
+        final DefaultObjectService s = new DefaultObjectService( getTypeMappingRegistry() );
 
         configureService( configuration, s, target );
 
@@ -51,7 +50,7 @@ public class JavaServiceFactory extends SimpleServiceFactory implements Servicea
     }
 
     protected void configureService( final Configuration configuration,
-                                     final DefaultJavaService service,
+                                     final DefaultObjectService service,
                                      final Object target )
         throws ConfigurationException
     {
@@ -59,12 +58,12 @@ public class JavaServiceFactory extends SimpleServiceFactory implements Servicea
 
         try
         {
-            service.setServiceClass( configuration.getChild( JavaService.SERVICE_CLASS ).getValue() );
+            service.setServiceClass( configuration.getChild( ObjectService.SERVICE_CLASS ).getValue() );
         }
         catch( ClassNotFoundException e )
         {
             final String msg = "Couldn't find service class at "
-                + configuration.getChild( JavaService.SERVICE_CLASS ).getLocation();
+                + configuration.getChild( ObjectService.SERVICE_CLASS ).getLocation();
             throw new ConfigurationException( msg, e );
         }
 

@@ -1,8 +1,7 @@
 package org.codehaus.xfire.plexus.config;
 
-import org.codehaus.xfire.java.JavaService;
 import org.codehaus.xfire.plexus.PlexusXFireTest;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.object.ObjectService;
 import org.dom4j.Document;
 
 /**
@@ -17,24 +16,16 @@ public class ConfigurationTest
     {
         System.setProperty("xfire.config", "/org/codehaus/xfire/plexus/config/services.xml");
         super.setUp();
+        
+        lookup(ConfigurationService.ROLE);
     }
     
     public void testRegister()
         throws Exception
     {
-        Service s = getServiceRegistry().getService("Echo");
-        
-        assertNotNull( s ); 
-        
-        JavaService js = (JavaService) getServiceRegistry().getService("Echo2");
+        ObjectService js = (ObjectService) getServiceRegistry().getService("Echo2");
         
         assertNotNull( js ); 
-        
-        Service xs = getServiceRegistry().getService("Echo3");
-        
-        assertNotNull( xs );
-        assertNotNull( xs.getServiceHandler() );
-        assertNotNull( xs.getWSDLWriter() );
     }
     
     public void testInvoke() 

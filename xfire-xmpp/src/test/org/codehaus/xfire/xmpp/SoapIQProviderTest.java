@@ -1,8 +1,8 @@
 package org.codehaus.xfire.xmpp;
 
-import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jivesoftware.smack.provider.ProviderManager;
 
 /**

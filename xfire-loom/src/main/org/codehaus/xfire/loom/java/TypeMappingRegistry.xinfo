@@ -9,6 +9,6 @@
     </block>
 
     <services>
-        <service name="org.codehaus.xfire.java.mapping.TypeMappingRegistry"/>
+        <service name="org.codehaus.xfire.type.TypeMappingRegistry"/>
     </services>
 </blockinfo>

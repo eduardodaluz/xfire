@@ -2,74 +2,72 @@ package org.codehaus.xfire.xmlbeans;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
-
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.java.DefaultJavaService;
-import org.codehaus.xfire.java.Operation;
-import org.codehaus.xfire.java.Parameter;
-import org.codehaus.xfire.java.mapping.TypeMappingRegistry;
-import org.codehaus.xfire.java.type.Type;
+import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.service.object.ObjectServiceBuilder;
+import org.codehaus.xfire.service.object.Operation;
+import org.codehaus.xfire.service.object.Parameter;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.type.TypeMappingRegistry;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- * @since Nov 13, 2004
  */
-public class XMLBeansService
-	extends DefaultJavaService
+public class XMLBeansServiceBuilder
+    extends ObjectServiceBuilder
 {
-    public XMLBeansService()
+    public XMLBeansServiceBuilder()
     {
-    }
-    
-    /**
-     * @param typeMappingRegistry
-     */
-    public XMLBeansService(TypeMappingRegistry typeMappingRegistry)
-    {
-        setTypeMappingRegistry(typeMappingRegistry);
+        super();
     }
 
-    protected void addOperation(Method method)
+    public XMLBeansServiceBuilder(XFire xfire)
     {
-        Operation op = new Operation(method );
+        super(xfire);
+    }
+
+    public XMLBeansServiceBuilder(XFire xfire, TypeMappingRegistry typeMappingRegistry)
+    {
+        super(xfire, typeMappingRegistry);
+    }
+
+    protected void addOperation(DefaultObjectService service, Method method)
+    {
+        final Operation op = new Operation( method );
         
-        getOperationsMap().put( method.getName(), op );
+        service.addOperation(op);
         
         Class[] paramClasses = method.getParameterTypes();
         
-        boolean isDoc = getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        boolean isDoc = service.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        
+        Parameter p = null;
         
         for ( int j = 0; j < paramClasses.length; j++ )
         {
-            Parameter p = null;
-            
             if ( XmlObject.class.isAssignableFrom(paramClasses[j]) )
             {
                 SchemaType st = getSchemaType(paramClasses[j]);
 
-                p = new XMLBeansParameter(st);
+                p = new Parameter(st.getDocumentElementName(), paramClasses[j]);
+                service.getTypeMapping().register(paramClasses[j], st.getDocumentElementName(), new XMLBeansType());
             }
             else
             {
                 String paramName = "";
-                if ( isDoc )
+                if (isDoc)
                     paramName = method.getName();
-                
+
                 paramName = paramName + "in" + j;
-                
-                String ns = getDefaultNamespace();
-                Type t = getTypeMapping().getType(paramClasses[j]);
-                
-                if ( t.isComplex() )
-                    ns = t.getSchemaType().getNamespaceURI();
-                
-                QName q = new QName(ns, paramName);
-                p = new Parameter(q, t);
+
+                final QName q = new QName(service.getDefaultNamespace(), paramName);
+                p = new Parameter(q, paramClasses[j]);
             }
             
             op.addInParameter( p );
@@ -84,7 +82,8 @@ public class XMLBeansService
             {
                 SchemaType st = getSchemaType(outClass);
     
-                outP = new XMLBeansParameter(st);
+                outP = new Parameter(st.getDocumentElementName(), outClass);
+                service.getTypeMapping().register(outClass, st.getDocumentElementName(), new XMLBeansType());
             }
             else
             {
@@ -92,30 +91,24 @@ public class XMLBeansService
                 if ( isDoc )
                     outName = method.getName();
                 
-                String ns = getDefaultNamespace();
-                Type t = getTypeMapping().getType(method.getReturnType());
-                
-                if ( t.isComplex() )
-                    ns = t.getSchemaType().getNamespaceURI();
-                        
-                QName q = new QName(ns, outName + "out");
-                outP = new Parameter(q, t);
+                final QName q = new QName(service.getDefaultNamespace(), outName + "out");
+                outP = new Parameter(q, method.getReturnType());
             }
             
             op.addOutParameter(outP);
         }
     }
-
+    
     /**
      * Introspect to find the SchemaType for a particular XMLBeans class.
      */
-    private SchemaType getSchemaType(Class clazz)
+    protected SchemaType getSchemaType(Class clazz)
     {
         try
         {
-	        Field f = clazz.getDeclaredField("type");
-	
-	        return (SchemaType) f.get(null);
+            Field f = clazz.getDeclaredField("type");
+    
+            return (SchemaType) f.get(null);
         }
         catch (NoSuchFieldException e)
         {

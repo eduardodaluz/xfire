@@ -1,48 +1,34 @@
 package org.codehaus.xfire.xmlbeans;
 
-import org.codehaus.xfire.AbstractXFireTest;
-import org.codehaus.xfire.fault.Soap11FaultHandler;
-import org.codehaus.xfire.handler.SoapHandler;
-import org.codehaus.xfire.java.JavaServiceHandler;
-import org.codehaus.xfire.java.mapping.DefaultTypeMappingRegistry;
-import org.codehaus.xfire.java.wsdl.JavaWSDLBuilder;
+import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.dom4j.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class XMLBeansServiceTest
-	extends AbstractXFireTest
+	extends AbstractXFireTypeTest
 {
-    XMLBeansService service;
+    private DefaultObjectService service;
+    private XMLBeansServiceBuilder builder;
     
     public void setUp() 
     	throws Exception
     {
         super.setUp();
         
-		service = new XMLBeansService();
-		service.setName("WeatherService");
-		service.setDefaultNamespace("urn:WeatherService");
-		service.setServiceClass(WeatherService.class.getName());
-		service.setUse(SoapConstants.USE_LITERAL);
-		service.setStyle(SoapConstants.STYLE_DOCUMENT);
-		
-		JavaServiceHandler handler = new JavaServiceHandler();
-		SoapHandler sHandler = new SoapHandler(handler);
-		service.setServiceHandler(sHandler);
-		
-		service.setFaultHandler(new Soap11FaultHandler());
-		
-		service.setWSDLBuilder(new JavaWSDLBuilder(getXFire().getTransportManager()));
-		DefaultTypeMappingRegistry tr = new DefaultTypeMappingRegistry();
-		service.setTypeMappingRegistry(tr);
-		
-		service.initializeTypeMapping();
-		service.initializeOperations();
-		
-		getServiceRegistry().register(service);
+        builder = new XMLBeansServiceBuilder(getXFire());
+        
+        service = (DefaultObjectService) 
+            builder.create(WeatherService.class,
+                           "WeatherService",
+                           "urn:WeatherService",
+                           Soap11.getInstance(),
+                           SoapConstants.STYLE_DOCUMENT,
+                           SoapConstants.USE_LITERAL);
     }
     
     public void testService() 

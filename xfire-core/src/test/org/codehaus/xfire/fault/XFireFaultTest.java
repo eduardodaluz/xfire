@@ -3,11 +3,11 @@ package org.codehaus.xfire.fault;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
-import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.BadHandler;
-import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.DOMUtils;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -121,7 +121,7 @@ public class XFireFaultTest
      */
     private void testHandler( FaultHandler soap11 )
     {
-        SimpleService service = new SimpleService();
+        MessageService service = new MessageService();
         service.setName("Echo");
         service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));

@@ -82,6 +82,7 @@ public class XMPPClient
             result instanceof SoapEnvelopePacket) 
         {
             SoapEnvelopePacket env = (SoapEnvelopePacket) result;
+            System.out.println(env.getChildElementXML());
 
             try
             {

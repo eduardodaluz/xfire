@@ -1,7 +1,7 @@
 package org.codehaus.xfire.wsdl;
 
 import junit.framework.TestCase;
-import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.service.MessageService;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -13,7 +13,7 @@ public class WSDLTest
     public void testResource()
         throws Exception
     {
-        SimpleService s = new SimpleService();
+        MessageService s = new MessageService();
         s.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString() );
 
         WSDLWriter wsdl = s.getWSDLWriter();

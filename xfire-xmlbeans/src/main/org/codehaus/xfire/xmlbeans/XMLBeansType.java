@@ -4,13 +4,15 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.java.message.MessageReader;
-import org.codehaus.xfire.java.message.MessageWriter;
-import org.codehaus.xfire.java.type.Type;
+import org.codehaus.xfire.message.MessageReader;
+import org.codehaus.xfire.message.MessageWriter;
+import org.codehaus.xfire.type.Type;
 import org.codehaus.xfire.util.STAXUtils;
 import org.dom4j.Element;
 
@@ -23,6 +25,16 @@ public class XMLBeansType
 {
     private SchemaType schemaType;
 
+    final static XmlOptions options = new XmlOptions();
+    static
+    {
+        options.setSaveInner();
+    }
+    
+    public XMLBeansType()
+    {
+    }
+    
     public XMLBeansType(SchemaType schemaType)
     {
         this.schemaType = schemaType;
@@ -48,8 +60,16 @@ public class XMLBeansType
         {
             XmlObject obj = (XmlObject) o; 
 
-            STAXUtils.copy(obj.newXMLStreamReader(), 
-                           writer.getXMLStreamWriter());
+            XmlCursor cursor = obj.newCursor();
+            if (cursor.toFirstChild() && cursor.toFirstChild())
+            {
+                do
+                {
+                    STAXUtils.copy(cursor.newXMLStreamReader(), 
+                                   writer.getXMLStreamWriter());
+                }
+                while(cursor.toNextSibling());
+            }
         } 
         catch (XMLStreamException e)
         {

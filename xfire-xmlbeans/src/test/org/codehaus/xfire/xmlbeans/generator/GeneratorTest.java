@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
-import org.codehaus.xfire.AbstractXFireTest;
+import org.codehaus.xfire.test.AbstractXFireTest;
 
 
 /**

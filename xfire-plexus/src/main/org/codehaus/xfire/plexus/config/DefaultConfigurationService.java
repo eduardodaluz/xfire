@@ -6,18 +6,11 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
-import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
@@ -30,25 +23,18 @@ import org.codehaus.xfire.service.Service;
  */
 public class DefaultConfigurationService
     extends PlexusXFireComponent
-    implements Initializable, Contextualizable, ConfigurationService, Configurable
+    implements Initializable, ConfigurationService, Configurable
 { 
-    private PlexusContainer container;
+    private Configurator configurator;
     
-    private Hashtable configurators = new Hashtable();
+    private PlexusConfiguration services;
     
 	public void initialize() throws Exception
 	{
 	    try
-	    {
-	        List confs = getServiceLocator().lookupList(Configurator.ROLE);
-	        
-	        for ( Iterator itr = confs.iterator(); itr.hasNext(); )
-	        {
-	            Configurator conf = (Configurator) itr.next();
-	            
-	            register( conf );
-	        }
-	        
+	    {	        
+            createServices(services);
+            
 	        Reader reader = findConfigurationReader();
 	             
 	        if ( reader == null )
@@ -57,7 +43,8 @@ public class DefaultConfigurationService
 	        }             
 	       
 	        PlexusConfiguration configuration = new XmlPlexusConfiguration( Xpp3DomBuilder.build(reader) );
-	        createServices( configuration.getChild("services") );
+	        
+            createServices( configuration.getChild("services") );
 	    }
 	    catch( Exception e )
 	    {
@@ -80,28 +67,9 @@ public class DefaultConfigurationService
     private void createService(PlexusConfiguration c) 
         throws Exception
     {
-        String type = c.getChild("type").getValue();
-
-        if ( type == null )
-        {
-            getLogger().error("Service " + c.getAttribute("name") 
-                    + " has no type.");
-            return;
-        }
+        getLogger().info("Creating service " + c.getChild("name").getValue() );
         
-        getLogger().info("Creating service " + c.getChild("name").getValue() + " with type " + type);
-        Configurator builder = 
-            (Configurator) getServiceLocator().lookup( Configurator.ROLE, type );
-
-        if ( builder == null )
-        {
-            getLogger().error("Error creating service " + c.getAttribute("name") + ": No Configurator.");
-            return;
-        }
-        else
-        {
-            Service service = builder.createService(c);
-        }
+        Service service = configurator.createService(c);
     }
 
 	protected Reader findConfigurationReader() throws FileNotFoundException
@@ -151,23 +119,6 @@ public class DefaultConfigurationService
 		return reader;
 	}
 
-	/**
-	 * @see org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable#contextualize(org.codehaus.plexus.context.Context)
-	 */
-	public void contextualize(Context context) throws Exception
-	{
-		container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
-	}
-
-    /**
-     * @see org.codehaus.xfire.plexus.config.ConfigurationService#register(org.codehaus.xfire.plexus.config.ServiceConfigurator)
-     */
-    public void register( Configurator configurator )
-    {
-        configurators.put( configurator.getServiceType(),
-                           configurator );
-    }
-
     /**
      * @param arg0
      * @throws PlexusConfigurationException
@@ -175,16 +126,6 @@ public class DefaultConfigurationService
     public void configure(PlexusConfiguration config)
         throws PlexusConfigurationException
     {
-        try
-        {
-            createServices(config.getChild("services"));
-        }
-        catch (Exception e)
-        {
-            if ( e instanceof PlexusConfigurationException )
-                throw (PlexusConfigurationException) e;
-            
-            throw new PlexusConfigurationException("Couldn't configure service.", e);
-        }
+        services = config.getChild("services");
     }
 }

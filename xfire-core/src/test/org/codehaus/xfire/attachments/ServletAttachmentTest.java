@@ -11,9 +11,9 @@ import javax.mail.MessagingException;
 
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.EchoHandler;
-import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.transport.http.AbstractServletTest;
+import org.codehaus.xfire.test.AbstractServletTest;
 
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
@@ -31,7 +31,7 @@ public class ServletAttachmentTest
     {
         super.setUp();
         
-        SimpleService service = new SimpleService();
+        MessageService service = new MessageService();
         service.setName("Echo");
         service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());

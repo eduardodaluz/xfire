@@ -18,7 +18,7 @@ import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.wsdl.WSDL11Transport;
+import org.codehaus.xfire.wsdl11.WSDL11Transport;
 
 import com.ibm.wsdl.BindingImpl;
 import com.ibm.wsdl.BindingInputImpl;

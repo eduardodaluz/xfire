@@ -4,7 +4,7 @@ import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.wsdl.WSDL11Transport;
+import org.codehaus.xfire.wsdl11.WSDL11Transport;
 import org.jivesoftware.smack.XMPPConnection;
 
 /**

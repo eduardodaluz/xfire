@@ -1,8 +1,7 @@
 package org.codehaus.xfire.xmpp;
 
-import org.codehaus.xfire.java.DefaultJavaService;
-import org.codehaus.xfire.java.ServiceHelper;
-import org.codehaus.xfire.java.test.AbstractXFireJavaTest;
+import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
@@ -15,9 +14,9 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class TransportTest
-    extends AbstractXFireJavaTest
+    extends AbstractXFireTypeTest
 {
-    private DefaultJavaService echo;
+    private DefaultObjectService echo;
     
     XMPPConnection conn;
     
@@ -32,7 +31,7 @@ public class TransportTest
         super.setUp();
         try
         {
-            echo = (DefaultJavaService) ServiceHelper.createService(getXFire(), getRegistry(), Echo.class);
+            echo = (DefaultObjectService) getServiceBuilder().create(Echo.class);
 
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);

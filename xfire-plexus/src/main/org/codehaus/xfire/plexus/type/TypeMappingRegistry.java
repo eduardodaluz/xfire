@@ -1,4 +1,4 @@
-package org.codehaus.xfire.plexus.java;
+package org.codehaus.xfire.plexus.type;
 
 import javax.xml.namespace.QName;
 
@@ -7,14 +7,14 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
-import org.codehaus.xfire.java.mapping.TypeMapping;
-import org.codehaus.xfire.java.type.BooleanType;
-import org.codehaus.xfire.java.type.DoubleType;
-import org.codehaus.xfire.java.type.FloatType;
-import org.codehaus.xfire.java.type.IntType;
-import org.codehaus.xfire.java.type.LongType;
-import org.codehaus.xfire.java.type.Type;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.type.Type;
+import org.codehaus.xfire.type.TypeMapping;
+import org.codehaus.xfire.type.basic.BooleanType;
+import org.codehaus.xfire.type.basic.DoubleType;
+import org.codehaus.xfire.type.basic.FloatType;
+import org.codehaus.xfire.type.basic.IntType;
+import org.codehaus.xfire.type.basic.LongType;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -23,7 +23,7 @@ import org.codehaus.xfire.soap.SoapConstants;
  * @since Oct 31, 2004
  */
 public class TypeMappingRegistry
-    extends org.codehaus.xfire.java.mapping.DefaultTypeMappingRegistry
+    extends org.codehaus.xfire.type.DefaultTypeMappingRegistry
     implements LogEnabled, Configurable
 {
     private Logger logger;
