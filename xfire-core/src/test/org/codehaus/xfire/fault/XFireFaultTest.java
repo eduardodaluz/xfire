@@ -42,6 +42,7 @@ public class XFireFaultTest
         SAXReader reader = new SAXReader();
         Document doc = reader.read( new StringReader(out.toString()) );
         
+        addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
     }
     
