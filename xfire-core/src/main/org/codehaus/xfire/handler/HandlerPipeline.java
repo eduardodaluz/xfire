@@ -58,7 +58,7 @@ public class HandlerPipeline
         if (exceptionPoint != null)
             total = exceptionPoint.intValue();
         
-        for (int i = total; i >= 0; i-- )
+        for (int i = total-1; i >= 0; i-- )
         {
             Handler h = getHandler(i);
             h.handleFault(e, context);

@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -22,9 +21,7 @@ import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
-import org.dom4j.XPath;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -131,14 +128,7 @@ public abstract class AbstractXFireTest
     public void assertValid( String xpath, Node node )
         throws Exception
     {
-        List nodes = createXPath( xpath ).selectNodes( node );
-
-        if( nodes.size() == 0 )
-        {
-            throw new Exception( "Failed to select any nodes for expression:.\n" +
-                                 xpath + "\n" +
-                                 node.asXML() );
-        }
+        XPathAssert.assertValid(xpath, node, namespaces);
     }
 
     /**
@@ -149,14 +139,7 @@ public abstract class AbstractXFireTest
     public void assertInvalid( String xpath, Node node )
         throws Exception
     {
-        List nodes = createXPath( xpath ).selectNodes( node );
-
-        if( nodes.size() > 0 )
-        {
-            throw new Exception( "Found multiple nodes for expression:\n" +
-                                 xpath + "\n" +
-                                 node.asXML() );
-        }
+        XPathAssert.assertInvalid(xpath, node, namespaces);
     }
 
     /**
@@ -169,26 +152,13 @@ public abstract class AbstractXFireTest
     public void assertXPathEquals( String xpath, String value, Node node )
         throws Exception
     {
-        String value2 = createXPath( xpath ).selectSingleNode( node ).getText().trim();
-
-        assertEquals( value, value2 );
+        XPathAssert.assertXPathEquals(xpath, value, node, namespaces);
     }
 
     public void assertNoFault( Node node )
         throws Exception
     {
-        assertInvalid( "/s:Envelope/s:Body/s:Fault", node );
-    }
-
-    /**
-     * Create the specified XPath expression with the namespaces added via addNamespace().
-     */
-    protected XPath createXPath( String xpathString )
-    {
-        XPath xpath = DocumentHelper.createXPath( xpathString );
-        xpath.setNamespaceURIs( namespaces );
-
-        return xpath;
+        XPathAssert.assertNoFault(node);
     }
 
     /**

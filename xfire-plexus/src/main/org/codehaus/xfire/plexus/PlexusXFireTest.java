@@ -13,6 +13,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.test.XPathAssert;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -92,73 +93,42 @@ public class PlexusXFireTest
      * Assert that the following XPath query selects one or more nodes.
      * 
      * @param xpath
-     * @throws Exception
      */
-    public void assertValid( String xpath, Node node )
+    public void assertValid(String xpath, Node node)
         throws Exception
     {
-        List nodes = createXPath( xpath ).selectNodes( node );
-        
-        if ( nodes.size() == 0 )
-        {
-            throw new Exception( "Failed to select any nodes for expression:.\n" +
-                                 xpath + "\n" +
-                                 node.asXML() );
-        }
+        XPathAssert.assertValid(xpath, node, namespaces);
     }
-    
+
     /**
      * Assert that the following XPath query selects no nodes.
      * 
      * @param xpath
-     * @throws Exception
      */
-    public void assertInvalid( String xpath, Node node )
+    public void assertInvalid(String xpath, Node node)
         throws Exception
     {
-        List nodes = createXPath( xpath ).selectNodes( node );
-        
-        if ( nodes.size() > 0 )
-        {
-            throw new Exception( "Found multiple nodes for expression:\n" +
-                                 xpath + "\n" +
-                                 node.asXML() );
-        }
+        XPathAssert.assertInvalid(xpath, node, namespaces);
     }
 
     /**
-     * Asser that the text of the xpath node retrieved is equal to the
-     * value specified.
+     * Asser that the text of the xpath node retrieved is equal to the value
+     * specified.
      * 
      * @param xpath
      * @param value
      * @param node
-     * @throws Exception
      */
-    public void assertXPathEquals( String xpath, String value, Node node )
+    public void assertXPathEquals(String xpath, String value, Node node)
         throws Exception
     {
-        String value2 = createXPath( xpath ).selectSingleNode( node ).getText().trim();
-        
-        assertEquals( value, value2 );
+        XPathAssert.assertXPathEquals(xpath, value, node, namespaces);
     }
-    
-    public void assertNoFault( Node node )
+
+    public void assertNoFault(Node node)
         throws Exception
     {
-        assertInvalid("/s:Envelope/s:Body/s:Fault", node);
-    }
-    
-    /**
-     * Create the specified XPath expression with the namespaces added
-     * via addNamespace().
-     */
-    protected XPath createXPath( String xpathString )
-    {
-        XPath xpath = DocumentHelper.createXPath( xpathString );
-        xpath.setNamespaceURIs(namespaces);
-        
-        return xpath;
+        XPathAssert.assertNoFault(node);
     }
     
     /**

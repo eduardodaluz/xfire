@@ -19,6 +19,15 @@
       <encoding>wrapped</encoding>
       <use>literal</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
+      
+      <requestHandlers>
+        <handler>test</handler>
+        <handler>org.codehaus.xfire.plexus.config.TestHandler</handler>
+      </requestHandlers>
+      
+      <responseHandlers>
+        <handler>test</handler>
+      </responseHandlers>
     </service>
 
     <service>

@@ -7,14 +7,9 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
-import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.xfire.type.Type;
 import org.codehaus.xfire.type.TypeMapping;
-import org.codehaus.xfire.type.basic.BooleanType;
-import org.codehaus.xfire.type.basic.DoubleType;
-import org.codehaus.xfire.type.basic.FloatType;
-import org.codehaus.xfire.type.basic.IntType;
-import org.codehaus.xfire.type.basic.LongType;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -24,7 +19,7 @@ import org.codehaus.xfire.type.basic.LongType;
  */
 public class TypeMappingRegistry
     extends org.codehaus.xfire.type.DefaultTypeMappingRegistry
-    implements LogEnabled, Configurable
+    implements LogEnabled, Configurable, Initializable
 {
     private Logger logger;
 
@@ -50,15 +45,7 @@ public class TypeMappingRegistry
             registerDefault( tm );
         
         PlexusConfiguration[] types = configuration.getChildren( "type" );
-        
-        // register primitive types manually since there is no way
-        // to do Class.forName("boolean") et al.
-        tm.register(boolean.class, new QName(SoapConstants.XSD,"boolean"), new BooleanType());
-        tm.register(int.class, new QName(SoapConstants.XSD,"int"), new IntType());
-        tm.register(double.class, new QName(SoapConstants.XSD,"double"), new DoubleType());
-        tm.register(float.class, new QName(SoapConstants.XSD,"float"), new FloatType());
-        tm.register(long.class, new QName(SoapConstants.XSD,"long"), new LongType());
-        
+
         for ( int i = 0; i < types.length; i++ )
         {
             configureType( types[i], tm );
@@ -116,5 +103,11 @@ public class TypeMappingRegistry
                 return Thread.currentThread().getContextClassLoader().loadClass(className);
             }
         }
+    }
+
+    public void initialize()
+        throws Exception
+    {
+        createDefaultMappings();
     }
 }

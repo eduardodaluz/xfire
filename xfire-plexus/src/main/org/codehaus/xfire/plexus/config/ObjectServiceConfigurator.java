@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
@@ -11,6 +12,10 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.fault.FaultHandler;
+import org.codehaus.xfire.fault.FaultHandlerPipeline;
+import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
@@ -18,6 +23,7 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.object.DefaultObjectService;
 import org.codehaus.xfire.service.object.Invoker;
+import org.codehaus.xfire.service.object.ObjectInvoker;
 import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.service.object.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
@@ -121,14 +127,65 @@ public class ObjectServiceConfigurator
         else if( scope.equals( "request" ) )
             service.setScope( ObjectService.SCOPE_REQUEST );
         
-        ServiceInvoker invoker = new ServiceInvoker(getServiceLocator());
+        Invoker invoker = null;
+        
+        if (getServiceLocator().hasComponent(serviceClass))
+            invoker = new ServiceInvoker(getServiceLocator());
+        else
+            invoker = new ObjectInvoker();
+        
         service.setInvoker(invoker);
 
+        // Setup pipelines
+        service.setRequestPipeline(createHandlerPipeline(config.getChild("requestHandlers")));
+        service.setResponsePipeline(createHandlerPipeline(config.getChild("responseHandlers")));
+        service.setFaultPipeline(createFaultPipeline(config.getChild("faultHandlers")));
+        
         getServiceRegistry().register( service );
 
         return service;
     }
 
+    private HandlerPipeline createHandlerPipeline(PlexusConfiguration child) 
+        throws Exception
+    {
+        if (child == null)
+            return null;
+        
+        PlexusConfiguration[] handlers = child.getChildren("handler");
+        if (handlers.length == 0)
+            return null;
+
+        HandlerPipeline pipe = new HandlerPipeline();
+
+        for (int i = 0; i < handlers.length; i++)
+        {
+            pipe.addHandler(getHandler(handlers[i].getValue()));
+        }
+        
+        return pipe;
+    }
+
+    private FaultHandlerPipeline createFaultPipeline(PlexusConfiguration child)
+        throws Exception
+    {
+        if (child == null)
+            return null;
+        
+        PlexusConfiguration[] handlers = child.getChildren("handler");
+        if (handlers.length == 0)
+            return null;
+
+        FaultHandlerPipeline pipe = new FaultHandlerPipeline();
+
+        for (int i = 0; i < handlers.length; i++)
+        {
+            pipe.addHandler(getFaultHandler(handlers[i].getValue()));
+        }
+
+        return pipe;
+    }
+    
     /**
      * @return
      * @throws PlexusConfigurationException 
@@ -153,7 +210,7 @@ public class ObjectServiceConfigurator
     
     private void initializeType(PlexusConfiguration configuration, 
                                 TypeMapping tm)
-        throws PlexusConfigurationException
+        throws Exception
     {
         try
         {
@@ -173,6 +230,32 @@ public class ObjectServiceConfigurator
             
             throw new PlexusConfigurationException( "Could not configure type.", e );
         }                     
+    }
+    
+    protected Handler getHandler(String name) 
+        throws Exception 
+    {
+        try
+        {
+            return (Handler) getServiceLocator().lookup( Handler.ROLE, name );
+        }
+        catch (ComponentLookupException e)
+        {
+            return (Handler) loadClass(name).newInstance();
+        }
+    }
+    
+    protected FaultHandler getFaultHandler(String name) 
+        throws Exception
+    {
+        try
+        {
+            return (FaultHandler) getServiceLocator().lookup(FaultHandler.ROLE, name);
+        }
+        catch (ComponentLookupException e)
+        {
+            return (FaultHandler) loadClass(name).newInstance();
+        }
     }
     
     public XFire getXFire()

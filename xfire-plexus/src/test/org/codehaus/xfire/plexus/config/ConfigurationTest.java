@@ -24,8 +24,11 @@ public class ConfigurationTest
         throws Exception
     {
         ObjectService service = (ObjectService) getServiceRegistry().getService("Echo");
-        
         assertNotNull(service); 
+        assertNotNull(service.getRequestPipeline());
+        assertEquals(2, service.getRequestPipeline().size());
+        assertNotNull(service.getResponsePipeline());
+        assertEquals(1, service.getResponsePipeline().size());
         
         service = (ObjectService) getServiceRegistry().getService("EchoXMLBeans");
         assertNotNull( service ); 
