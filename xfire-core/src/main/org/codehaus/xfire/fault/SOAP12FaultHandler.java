@@ -10,6 +10,10 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.DOMStreamWriter;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Creates a fault message based on an exception for SOAP 1.2 messages.
@@ -70,11 +74,23 @@ public class SOAP12FaultHandler
             writer.writeEndElement(); // Text
             writer.writeEndElement(); // Reason
 
-            if ( fault.getDetail() != null )
+            if ( fault.hasDetails() )
             {
-                writer.writeStartElement("soap:Detail");
-                writer.writeCharacters(fault.getDetail());
-                writer.writeEndElement(); // Detail            
+                Element details = fault.getDetailElement();
+                
+                writer.writeStartElement("soap:Details");
+                
+                NodeList children = details.getChildNodes();
+                for ( int i = 0; i < children.getLength(); i++ )
+                {
+                    Node n = children.item(i);
+                    if ( n instanceof Element )
+                    {
+                        DOMStreamWriter.writeElement((Element)n, writer);
+                    }
+                }
+                
+                writer.writeEndElement(); // Details
             }
 
             writer.writeEndElement(); // Fault

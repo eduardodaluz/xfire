@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * <p>
@@ -53,7 +58,7 @@ public class XFireFault
     
 	private String subCode;
 	
-	private String detail;
+	private Element detail;
 	
 	private Exception exception;
 	
@@ -156,14 +161,24 @@ public class XFireFault
         return subCode;
     }
     
-    public String getDetail()
+    public Element getDetailElement()
     {
+        if ( detail == null )
+        {
+            try
+            {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = factory.newDocumentBuilder();
+                
+                Document doc = b.newDocument();
+                detail = doc.createElement("detail");
+            }
+            catch (ParserConfigurationException e)
+            {
+                throw new RuntimeException("Couldn't find a DOM parser.", e);
+            }
+        }
         return detail;
-    }
-
-    public void setDetail(String detail)
-    {
-        this.detail = detail;
     }
     
     public void setSubCode(String subCode)
@@ -196,5 +211,16 @@ public class XFireFault
     public void addNamespace( String prefix, String ns )
     {
         namespaces.put(prefix, ns);
+    }
+
+    /**
+     * @return
+     */
+    public boolean hasDetails()
+    {
+        if ( detail == null )
+            return false;
+        
+        return true;
     }
 }

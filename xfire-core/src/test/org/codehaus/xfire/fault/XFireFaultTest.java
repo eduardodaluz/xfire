@@ -10,6 +10,7 @@ import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.service.SimpleService;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.w3c.dom.Element;
 
 /**
  * XFireTest
@@ -27,6 +28,15 @@ public class XFireFaultTest
         
         XFireFault fault = new XFireFault(new Exception());
         fault.setSubCode("m:NotAvailable");
+        Element details = fault.getDetailElement();
+        Element e = details.getOwnerDocument().createElement("bah");
+        e.setTextContent("bleh");
+        details.appendChild(e);
+        
+        e = details.getOwnerDocument().createElementNS("urn:test2", "bah2");
+        e.setTextContent("bleh");
+        details.appendChild(e);
+        
         fault.addNamespace("m", "urn:test");
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -41,7 +51,7 @@ public class XFireFaultTest
         
         SAXReader reader = new SAXReader();
         Document doc = reader.read( new StringReader(out.toString()) );
-        
+        printNode(doc);
         addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
     }

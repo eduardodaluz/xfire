@@ -10,6 +10,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.w3c.dom.Element;
 
 /**
  * Creates a fault message based on an exception for SOAP 1.2 messages.
@@ -71,11 +72,9 @@ public class SOAP11FaultHandler
             writer.writeCharacters( fault.getMessage() );
             writer.writeEndElement();
 
-            if ( fault.getDetail() != null )
+            if ( fault.hasDetails() )
             {
-                writer.writeStartElement("detail");
-                writer.writeCharacters(fault.getDetail());
-                writer.writeEndElement();
+                STAXStreamDOMWriter( fault.getDetailElement(), writer );
             }
             
             writer.writeEndElement(); // Fault
@@ -90,6 +89,16 @@ public class SOAP11FaultHandler
     }
 
 	/**
+     * @param detailElement
+     * @param writer
+     */
+    private void STAXStreamDOMWriter(Element detailElement, XMLStreamWriter writer)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
 	 * @param e
 	 * @return
 	 */
