@@ -8,41 +8,41 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * Common functionality for the SOAP and Rest HTTP clients.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 26, 2004
  */
 public abstract class AbstractHttpClient
 {
     public final static String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
-    
+
     public final static String SOAP12_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
-    
+
     private String username;
     private String password;
     private String encoding = "UTF-8";
     private String urlString;
 
-    public void invoke() 
-        throws IOException, XFireFault
+    public void invoke()
+            throws IOException, XFireFault
     {
         URL url = new URL(urlString);
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        
+
         try
         {
-            
+
             urlConn.setDoInput(true);
             urlConn.setDoOutput(true);
             urlConn.setUseCaches(false);
@@ -55,16 +55,16 @@ public abstract class AbstractHttpClient
             // If content encoding is not explicitly specified
             // ISO-8859-1 is assumed
             urlConn.setRequestProperty("Content-type", "text/xml; charset=" + encoding);
-            
+
             urlConn.setRequestProperty("User-Agent", "XFire Client +http://xfire.codehaus.org");
             urlConn.setRequestProperty("Accept", "text/xml; text/html");
-            
-            writeHeaders( urlConn );
-            
+
+            writeHeaders(urlConn);
+
             OutputStream out = urlConn.getOutputStream();
             writeRequest(out);
             out.write('\n');
-            
+
             out.flush();
             out.close();
 
@@ -72,36 +72,36 @@ public abstract class AbstractHttpClient
             try
             {
                 reader = new InputStreamReader(urlConn.getInputStream());
-                readResponse( reader );            
+                readResponse(reader);
             }
-            catch ( IOException ioe )
+            catch (IOException ioe)
             {
-                if ( urlConn.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR )
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR)
                 {
                     reader = new InputStreamReader(urlConn.getErrorStream());
-                    readResponse( reader );    
+                    readResponse(reader);
                 }
             }
             finally
             {
-                if ( reader != null )
+                if (reader != null)
                     reader.close();
             }
 
         }
         catch (MalformedURLException me)
         {
-            throw new RuntimeException("Bad URL.", me);
+            throw new XFireRuntimeException("Bad URL.", me);
         }
         finally
         {
             urlConn.disconnect();
         }
     }
-    
+
     protected void writeHeaders(URLConnection urlConn)
     {
-        
+
     }
 
     /**
@@ -110,44 +110,45 @@ public abstract class AbstractHttpClient
     protected void writeRequest(OutputStream out)
     {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        
+
         try
         {
-             XMLStreamWriter writer = factory.createXMLStreamWriter(out);
-             
-             writeRequest( writer );
-             writer.close();
+            XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+
+            writeRequest(writer);
+            writer.close();
         }
         catch (XMLStreamException e)
         {
-            throw new RuntimeException("Couldn't parse stream.", e);
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
 
-    protected abstract void writeRequest(XMLStreamWriter writer) throws XMLStreamException;
+    protected abstract void writeRequest(XMLStreamWriter writer)
+            throws XMLStreamException;
 
     /**
      * @param reader
      */
     protected void readResponse(Reader is)
-    	throws XFireFault
+            throws XFireFault
     {
         // Read in Envelope and then delegate header and Body
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        
+
         try
         {
-            readResponse( factory.createXMLStreamReader(is) );
+            readResponse(factory.createXMLStreamReader(is));
         }
         catch (XMLStreamException e)
         {
-            throw new RuntimeException("Couldn't parse stream.", e);
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
 
-    protected abstract void readResponse(XMLStreamReader reader) 
-    	throws XMLStreamException, XFireFault;
-    
+    protected abstract void readResponse(XMLStreamReader reader)
+            throws XMLStreamException, XFireFault;
+
     /**
      * @return Returns the url.
      */
@@ -155,7 +156,7 @@ public abstract class AbstractHttpClient
     {
         return urlString;
     }
-    
+
     /**
      * @param url The url to set.
      */
@@ -163,7 +164,7 @@ public abstract class AbstractHttpClient
     {
         this.urlString = url;
     }
-    
+
     /**
      * @return Returns the charset.
      */
@@ -171,6 +172,7 @@ public abstract class AbstractHttpClient
     {
         return encoding;
     }
+
     /**
      * @param charset The charset to set.
      */
@@ -178,6 +180,7 @@ public abstract class AbstractHttpClient
     {
         this.encoding = charset;
     }
+
     /**
      * @return Returns the password.
      */
@@ -185,6 +188,7 @@ public abstract class AbstractHttpClient
     {
         return password;
     }
+
     /**
      * @param password The password to set.
      */
@@ -192,6 +196,7 @@ public abstract class AbstractHttpClient
     {
         this.password = password;
     }
+
     /**
      * @return Returns the username.
      */
@@ -199,6 +204,7 @@ public abstract class AbstractHttpClient
     {
         return username;
     }
+
     /**
      * @param username The username to set.
      */
