@@ -92,6 +92,11 @@ public class XFireServletController
 
         if (service == null || service.equals("") || !reg.hasService(service))
         {
+            if( !reg.hasService(service) )
+            {
+                response.setStatus( 404 );
+            }
+
             generateServices(response);
             return;
         }

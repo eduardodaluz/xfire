@@ -13,6 +13,7 @@ import org.codehaus.yom.Document;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
+import com.meterware.httpunit.GetMethodWebRequest;
 
 /**
  * XFireServletTest
@@ -85,7 +86,14 @@ public class XFireServletTest
         
         expectErrorCode(req, 500, "Response code 500 required for faults.");
     }
-    
+
+    public void testServiceWsdlNotFound() throws Exception
+    {
+        WebRequest req = new GetMethodWebRequest( "http://localhost/services/NoSuchService?wsdl" );
+
+        expectErrorCode(req, 404, "Response code 404 required for invalid WSDL url.");
+    }
+
     public void testAsync() throws Exception
     {
         WebRequest req = new PostMethodWebRequest( "http://localhost/services/Async",
