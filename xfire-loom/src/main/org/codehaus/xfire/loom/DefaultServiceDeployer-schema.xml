@@ -76,15 +76,23 @@
             <text/>
         </element>
 
+<!--
         <optional>
             <element name="allowedMethods">
                 <text/>
             </element>
         </optional>
+-->
 
         <optional>
             <element name="autoTyped">
                 <data type="boolean"/>
+            </element>
+        </optional>
+
+        <optional>
+            <element name="encodingStyleURI">
+                <text/>
             </element>
         </optional>
 

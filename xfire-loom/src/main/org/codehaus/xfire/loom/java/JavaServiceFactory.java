@@ -69,10 +69,11 @@ public class JavaServiceFactory extends SimpleServiceFactory implements Servicea
         }
 
         // TODO use allowed methods attribute
-        service.setProperty( JavaService.ALLOWED_METHODS,
-                             configuration.getChild( JavaService.ALLOWED_METHODS ).getValue( "" ) );
+//        service.setProperty( JavaService.ALLOWED_METHODS,
+//                             configuration.getChild( JavaService.ALLOWED_METHODS ).getValue( "" ) );
 
         service.setAutoTyped( configuration.getChild( "autoTyped" ).getValueAsBoolean( false ) );
+        service.setEncodingStyleURI( configuration.getChild( "encodingStyleURI" ).getValue( null ) );
         service.initializeTypeMapping();
 
         final Configuration[] types = configuration.getChild( "types" ).getChildren( "type" );
