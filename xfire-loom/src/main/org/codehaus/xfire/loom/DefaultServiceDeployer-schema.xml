@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<grammar
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+    >
+
+    <start>
+        <element name="root">
+            <zeroOrMore>
+                <element name="service">
+                    <attribute name="key"/>
+                    <attribute name="type">
+                        <choice>
+                            <value>simple</value>
+                            <value>java</value>
+                        </choice>
+                    </attribute>
+
+                    <element name="name">
+                        <text/>
+                    </element>
+
+                    <optional>
+                        <element name="namespace">
+                            <text/>
+                        </element>
+                    </optional>
+
+                    <optional>
+                        <element name="wdslURL">
+                            <text/>
+                        </element>
+                    </optional>
+
+                    <optional>
+                        <element name="use">
+                            <choice>
+                                <value>encoded</value>
+                                <value>literal</value>
+                            </choice>
+                        </element>
+                    </optional>
+
+                    <optional>
+                        <element name="style">
+                            <choice>
+                                <value>document</value>
+                                <value>rpc</value>
+                                <value>wrapped</value>
+                                <value>message</value>
+                            </choice>
+                        </element>
+                    </optional>
+
+                    <optional>
+                        <element name="soapVersion">
+                            <choice>
+                                <value>1.1</value>
+                                <value>1.2</value>
+                            </choice>
+                        </element>
+                    </optional>
+
+                    <optional>
+                        <ref name="additional"/>
+                    </optional>
+                </element>
+            </zeroOrMore>
+        </element>
+    </start>
+
+    <define name="additional"> <!-- java -->
+        <optional>
+            <element name="allowedMethods">
+                <text/>
+            </element>
+        </optional>
+
+        <optional>
+            <element name="autoTyped">
+                <data type="boolean"/>
+            </element>
+        </optional>
+
+        <optional>
+            <element name="types">
+                <zeroOrMore>
+                    <element name="type">
+                        <attribute name="namespace"/>
+                        <attribute name="name"/>
+                        <attribute name="class"/>
+                        <attribute name="type"/>
+                    </element>
+                </zeroOrMore>
+            </element>
+        </optional>
+    </define>
+</grammar>

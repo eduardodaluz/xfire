@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <listener name="xfire-block-deployer" class="org.codehaus.xfire.loom.XFireBlockDeployerApplicationListener"/>
+
+    <block name="xfire" class="org.codehaus.xfire.loom.LoomXFire">
+        <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
+        <provide name="xfire-transport-manager" role="org.codehaus.xfire.transport.TransportManager"/>
+    </block>
+
+    <block name="xfire-service-registry" class="org.codehaus.xfire.service.DefaultServiceRegistry"/>
+
+    <block name="xfire-transport-manager" class="org.codehaus.xfire.transport.DefaultTransportManager"/>
+
+    <block name="xfire-service-deployer" class="org.codehaus.xfire.loom.DefaultServiceDeployer">
+        <provide name="xfire-simple-service-factory" role="org.codehaus.xfire.loom.ServiceFactory"/>
+        <provide name="xfire-java-service-factory" role="org.codehaus.xfire.loom.ServiceFactory"/>
+
+        <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
+    </block>
+
+    <block name="xfire-simple-service-factory" class="org.codehaus.xfire.loom.simple.SimpleServiceFactory"/>
+
+    <block name="xfire-java-service-factory" class="org.codehaus.xfire.loom.java.JavaServiceFactory">
+        <provide name="xfire-transport-manager" role="org.codehaus.xfire.transport.TransportManager"/>
+        <provide name="xfire-java-type-mapping-registry" role="org.codehaus.xfire.java.mapping.TypeMappingRegistry"/>
+    </block>
+
+    <block name="xfire-java-type-mapping-registry" class="org.codehaus.xfire.loom.java.TypeMappingRegistry"/>
+</assembly>

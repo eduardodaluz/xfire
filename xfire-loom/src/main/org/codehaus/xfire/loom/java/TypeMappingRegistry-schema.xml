@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<element
+    name="root"
+    xmlns="http://relaxng.org/ns/structure/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+    >
+    <zeroOrMore>
+        <element name="typeMapping">
+            <attribute name="namespace"/>
+            <attribute name="default">
+                <data type="boolean"/>
+            </attribute>
+
+            <oneOrMore>
+                <element name="type">
+                    <attribute name="namespace"/>
+                    <attribute name="name"/>
+                    <attribute name="class"/>
+                    <attribute name="type"/>
+                </element>
+            </oneOrMore>
+        </element>
+    </zeroOrMore>
+</element>
