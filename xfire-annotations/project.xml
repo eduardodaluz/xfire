@@ -1,0 +1,74 @@
+<project>
+    <pomVersion>1</pomVersion>
+    <name>Annotations XFire Module</name>
+    <groupId>xfire</groupId>
+    <artifactId>xfire-annotations</artifactId>
+    <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
+
+    <package>org.codehaus.xfire</package>
+    <description>Annotations (JSR-175) support for XFire.</description>
+    <shortDescription>Annotations support for XFire.</shortDescription>
+
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-annotations</siteDirectory>
+
+    <versions/>
+
+    <branches/>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-java</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-attributes</groupId>
+            <artifactId>commons-attributes-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${basedir}/src/main</sourceDirectory>
+        <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+                <include>**/*TestCase.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/*Abstract*.java</exclude>
+            </excludes>
+            <resources>
+                <resource>
+                    <directory>${basedir}/src/test</directory>
+                    <includes>
+                        <include>**/*.xml</include>
+                        <include>**/*.vm</include>
+                    </includes>
+                    <filtering>false</filtering>
+                </resource>
+            </resources>
+        </unitTest>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <properties/>
+</project>
