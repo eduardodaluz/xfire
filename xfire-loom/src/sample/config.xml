@@ -55,6 +55,11 @@
                 name="dateTime"
                 type="org.codehaus.xfire.java.type.DateType"/>
 
+            <type class="java.math.BigDecimal"
+                  namespace="http://www.w3.org/2001/XMLSchema"
+                  name="decimal"
+                  type="org.codehaus.xfire.java.type.BigDecimalType" />
+
             <!-- SOAP Encoded types -->
             <!-- type class="java.lang.String"
                   namespace="http://schemas.xmlsoap.org/soap/encoding/"
@@ -122,6 +127,11 @@
                 name="dateTime"
                 type="org.codehaus.xfire.java.type.DateType"/>
 
+            <type class="java.math.BigDecimal"
+                  namespace="http://www.w3.org/2001/XMLSchema"
+                  name="decimal"
+                  type="org.codehaus.xfire.java.type.BigDecimalType" />
+
             <!-- SOAP Encoded types -->
             <!-- type class="java.lang.String"
             namespace="http://schemas.xmlsoap.org/soap/encoding/"
@@ -188,6 +198,10 @@
                 name="dateTime"
                 type="org.codehaus.xfire.java.type.DateType"/>
 
+            <type class="java.math.BigDecimal"
+                  namespace="http://www.w3.org/2001/XMLSchema"
+                  name="decimal"
+                  type="org.codehaus.xfire.java.type.BigDecimalType" />
         </typeMapping>
     </xfire-java-type-mapping-registry>
 </config>
