@@ -93,8 +93,7 @@ public class DefaultConfigurationService
         
         if ( builder == null )
         {
-            getLogger().error("Creating service " + c.getChild("name").getValue() + " with type " + type
-                    + ". Service " + c.getAttribute("name") + " not created.");
+            getLogger().error("Error creating service " + c.getAttribute("name") + ": No Configurator.");
             return;
         }
         else

@@ -6,6 +6,7 @@ import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.config.Configurator;
 import org.codehaus.xfire.plexus.java.PlexusJavaService;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.xmlbeans.XMLBeansServiceHandler;
 
 /**
@@ -41,6 +42,9 @@ public class XMLBeansConfigurator
 		SoapHandler sHandler = new SoapHandler(handler);
 		s.setServiceHandler(sHandler);
 		
-        return s;
+		ServiceRegistry reg = (ServiceRegistry) getServiceLocator().lookup(ServiceRegistry.ROLE);
+		reg.register(s);
+
+		return s;
     }
 }

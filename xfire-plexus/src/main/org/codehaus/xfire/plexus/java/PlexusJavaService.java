@@ -88,7 +88,7 @@ public class PlexusJavaService
         
         setDefaultNamespace( config.getChild( "namespace" ).getValue("") );
     
-        setWSDLURL( config.getChild("wsdlURL").getValue("") );
+        setWSDLURL( config.getChild("wsdlUrl").getValue("") );
         
         setUse( config.getChild("use").getValue("literal") );
         
