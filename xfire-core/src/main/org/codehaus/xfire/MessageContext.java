@@ -1,10 +1,13 @@
 package org.codehaus.xfire;
 
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -92,6 +95,20 @@ public class MessageContext
         this.responseStream = responseStream;
     }
     
+    public void setRequestStream( InputStream requestStream )
+    {
+        try
+        {
+            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+            XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(requestStream);
+            setXMLStreamReader(xmlStreamReader);
+        }
+        catch (XMLStreamException e)
+        {
+            throw (IllegalArgumentException)new IllegalArgumentException("Invalid xml request stream").initCause(e);
+        }
+    }
+
     /**
      * The session that this request is a part of.
      * 
