@@ -6,6 +6,7 @@ import org.codehaus.xfire.handler.EchoHandler;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.SimpleService;
 import org.codehaus.xfire.wsdl.WSDL;
+import org.dom4j.Document;
 
 /**
  * XFireTest
@@ -34,18 +35,10 @@ public class XFireTest
     public void testInvoke()
         throws Exception
     {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = 
-            new MessageContext( "Echo",
-                                null,
-                                out,
-                                null,
-                                null );
+        Document response = invokeService( "Echo", "/org/codehaus/xfire/echo11.xml" );
         
-        getXFire().invoke( getClass().getResourceAsStream("/org/codehaus/xfire/echo11.xml"), 
-                           context );
-        
-        System.out.println( out.toString() );
+        addNamespace("m", "urn:Echo");
+        assertValid("//m:echo", response);
     }
     
     public void testWSDL()

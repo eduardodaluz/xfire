@@ -4,6 +4,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.attachments.Attachments;
+import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**
@@ -41,4 +43,11 @@ public interface ClientHandler
      */
     void handleResponse( XMLStreamReader reader )
         throws XMLStreamException, XFireFault;
+    
+    /**
+     * Get the attachments to send with the request.
+     * 
+     * @return Return <code>null</code> if there are no attachments.
+     */
+    Attachments getAttachments();
 }

@@ -25,6 +25,7 @@ public class EchoHandler
         try
         {
             STAXUtils.copy(parser, getXMLStreamWriter(context));
+            getXMLStreamWriter(context).flush();
         }
         catch (XMLStreamException e)
         {

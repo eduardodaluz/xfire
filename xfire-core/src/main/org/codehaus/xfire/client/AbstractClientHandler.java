@@ -1,5 +1,8 @@
 package org.codehaus.xfire.client;
 
+import org.codehaus.xfire.attachments.Attachments;
+import org.codehaus.xfire.attachments.JavaMailAttachments;
+
 /**
  * Base ClientHandler class.
  * 
@@ -12,5 +15,10 @@ public abstract class AbstractClientHandler
     public boolean hasRequest()
     {
         return true;
+    }
+    
+    public Attachments getAttachments()
+    {
+        return null;
     }
 }

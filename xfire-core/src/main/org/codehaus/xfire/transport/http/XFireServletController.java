@@ -2,15 +2,24 @@ package org.codehaus.xfire.transport.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Properties;
+
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
@@ -159,7 +168,37 @@ public class XFireServletController
         MessageContext context = new MessageContext(service, null, response
                 .getOutputStream(), session, request.getRequestURI());
 
-        getXFire().invoke(request.getInputStream(), context);
+        String contentType = request.getHeader("Content-Type");
+        if ( contentType.toLowerCase().indexOf("multipart/related") != -1 )
+        {
+            try
+            {
+                getXFire().invoke(createMIMERequest(request, context), context);
+            }
+            catch (MessagingException e)
+            {
+                throw new XFireRuntimeException("Couldn't parse request message.", e);
+            }
+        }
+        else
+        {
+            getXFire().invoke(request.getInputStream(), context);
+        }
+    }
+
+    protected InputStream createMIMERequest(HttpServletRequest request, MessageContext context) 
+    	throws MessagingException, IOException
+    {
+        Session session = Session.getDefaultInstance(new Properties(), null);
+        MimeMessage inMsg = new MimeMessage(session, request.getInputStream());
+        inMsg.addHeaderLine("Content-Type: " + request.getContentType());
+        
+        MimeMultipart inMP = (MimeMultipart) inMsg.getContent();
+
+        JavaMailAttachments atts = new JavaMailAttachments(inMP);
+        context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);
+        
+        return atts.getSoapMessage().getDataHandler().getInputStream(); 
     }
 
     /**

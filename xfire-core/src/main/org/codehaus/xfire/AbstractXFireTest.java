@@ -65,15 +65,21 @@ public class AbstractXFireTest
         
         getXFire().invoke( getResourceAsStream( document ), context );
         
+        return readDocument(out.toString());
+    }
+
+    protected Document readDocument(String text)
+    	throws DocumentException
+    {
         try
         {
             SAXReader reader = new SAXReader();
-            return reader.read( new StringReader(out.toString()) );
+            return reader.read( new StringReader(text) );
         }
         catch( DocumentException e )
         {
             System.err.println("Could not read the document!");
-            System.out.println(out.toString());
+            System.out.println(text);
             throw e;
         }
     }
