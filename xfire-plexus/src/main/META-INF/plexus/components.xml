@@ -1,0 +1,75 @@
+<plexus>
+
+  <lifecycle-handler-manager implementation="org.codehaus.plexus.lifecycle.DefaultLifecycleHandlerManager">
+    <default-lifecycle-handler-id>plexus-configurable</default-lifecycle-handler-id>
+  </lifecycle-handler-manager>
+
+  <load-on-start>
+    <component>
+      <role>org.codehaus.xfire.configuration.ConfigurationService</role>
+    </component>
+  </load-on-start>
+  <components>
+        
+    <component>
+      <role>org.codehaus.xfire.XFire</role>
+      <implementation>org.codehaus.xfire.plexus.PlexusXFire</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+        
+    <component>
+      <role>org.codehaus.xfire.service.ServiceRegistry</role>
+      <implementation>org.codehaus.xfire.service.DefaultServiceRegistry</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+    
+    <component>
+      <role>org.codehaus.xfire.transport.TransportManager</role>
+      <implementation>org.codehaus.xfire.transport.DefaultTransportManager</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+    
+    <component>
+      <role>org.codehaus.xfire.wsdl.WSDLBuilder</role>
+      <roleHint>org.codehaus.xfire.java.XmlJavaService</roleHint>
+      <implementation>org.codehaus.xfire.java.wsdl.JavaWSDLBuilder</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+    
+    <component>
+      <role>org.codehaus.xfire.wsdl.WSDLBuilder</role>
+      <roleHint>org.codehaus.xfire.java.DefaultJavaService</roleHint>
+      <implementation>org.codehaus.xfire.java.wsdl.JavaWSDLBuilder</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+                    
+    <component>
+      <role>org.codehaus.xfire.fault.FaultHandler</role>
+      <roleHint>1.2</roleHint>
+      <implementation>org.codehaus.xfire.fault.SOAP12FaultHandler</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+    
+    <component>
+      <role>org.codehaus.xfire.fault.FaultHandler</role>
+      <roleHint>1.1</roleHint>
+      <implementation>org.codehaus.xfire.fault.SOAP11FaultHandler</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+    
+    <component>
+      <role>org.codehaus.xfire.configuration.ConfigurationService</role>
+      <implementation>org.codehaus.xfire.configuration.XFireConfigurationService</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
+  </components>
+  
+</plexus>

@@ -1,0 +1,19 @@
+<xfire>
+  
+  <handlers>
+    <handler name="session" class="org.codehaus.xfire.transport.http.MockSessionHandler"/>
+    <handler name="service"/>
+  </handlers>
+  
+  <services>
+    <service>
+      <type>mock</type>
+      <name>Echo</name>
+      <namespace>urn:Echo</namespace>
+      <version>1.2</version>
+      <encoding>literal</encoding>
+      <use>document</use>
+    </service>
+  </services>
+  
+</xfire>
