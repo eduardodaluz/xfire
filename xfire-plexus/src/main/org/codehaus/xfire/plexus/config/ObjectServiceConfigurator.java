@@ -41,8 +41,8 @@ public class ObjectServiceConfigurator
     public Service createService( PlexusConfiguration config ) 
         throws Exception
     {
-        String builderClass = config.getChild("serviceBuilder").getValue("");
-        ServiceFactory builder = getServiceBuilder(builderClass);
+        String factoryClass = config.getChild("serviceFactory").getValue("");
+        ServiceFactory builder = getServiceFactory(factoryClass);
 
         String name = config.getChild("name").getValue();
         String namespace = config.getChild("namespace" ).getValue("");
@@ -133,7 +133,7 @@ public class ObjectServiceConfigurator
      * @return
      * @throws PlexusConfigurationException 
      */
-    protected ServiceFactory getServiceBuilder( String builderClass )
+    protected ServiceFactory getServiceFactory( String builderClass )
         throws Exception
     {
         if (builderClass.length() == 0)
