@@ -1,4 +1,4 @@
-package org.codehaus.xfire;
+package org.codehaus.xfire.soap;
 
 
 /**
@@ -7,21 +7,8 @@ package org.codehaus.xfire;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 18, 2004
  */
-public class SOAPConstants
+public class SoapConstants
 {
-    /** SOAP 1.1 Declarations. */
-    
-    public final static String SOAP11_ENVELOPE_NS = "http://schemas.xmlsoap.org/soap/envelope/";
-    
-    public final static String SOAP11_ENCODED = "http://schemas.xmlsoap.org/soap/encoding/";
-
-   
-    /** SOAP 1.2 Declarations. */
-    public final static String SOAP12_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
-    
-    public final static String SOAP12_ENCODED = "http://www.w3.org/2003/05/soap-encoding";
-
-    
     /** Document styles. */
     
     public static final String STYLE_RPC = "rpc";

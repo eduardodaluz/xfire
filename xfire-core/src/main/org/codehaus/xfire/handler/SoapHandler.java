@@ -5,6 +5,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Document;
@@ -104,7 +105,7 @@ public class SoapHandler
         {
             invokeResponsePipeline(context);
             
-            writer.writeStartElement("soap", "Body", context.getSoapVersion());
+            writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
             bodyHandler.writeResponse(context);
             writer.writeEndElement();
             
@@ -171,7 +172,7 @@ public class SoapHandler
     	throws XMLStreamException
     {
         Document doc = DOMUtils.createDocument();
-        Element e = doc.createElementNS(context.getSoapVersion(), "Header");
+        Element e = doc.createElementNS(context.getSoapVersion().getNamespace(), "Header");
         
         STAXUtils.readElements(e, context.getXMLStreamReader());
             
@@ -184,7 +185,7 @@ public class SoapHandler
         Element e = (Element) context.getProperty(REQUEST_HEADER_KEY);
         if ( e != null )
         {
-            writer.writeStartElement("soap", "Body", context.getSoapVersion());
+            writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
 
             STAXUtils.writeElement(e, writer);
             
@@ -195,7 +196,7 @@ public class SoapHandler
     private XMLStreamWriter createResponseWriter(MessageContext context, 
                                                  XMLStreamReader reader,
                                                  String encoding)
-        throws XMLStreamException
+        throws XMLStreamException, XFireFault
     {
         XMLStreamWriter writer = getXMLStreamWriter(context);
         if ( encoding == null )
@@ -206,9 +207,13 @@ public class SoapHandler
         String soapVersion = reader.getNamespaceURI();
         context.setSoapVersion(soapVersion);
 
-        writer.setPrefix("soap", context.getSoapVersion());
-        writer.writeStartElement("soap", "Envelope", context.getSoapVersion());
-        writer.writeNamespace("soap", context.getSoapVersion());
+        if ( context.getSoapVersion() == null )
+            throw new XFireFault("SOAP version not recognized.", XFireFault.SENDER);
+        
+        String soapNS = context.getSoapVersion().getNamespace();
+        writer.setPrefix("soap", soapNS);
+        writer.writeStartElement("soap", "Envelope", soapNS);
+        writer.writeNamespace("soap", soapNS);
                 
         return writer;
     }

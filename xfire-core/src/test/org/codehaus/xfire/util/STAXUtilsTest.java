@@ -3,6 +3,8 @@ package org.codehaus.xfire.util;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -12,7 +14,9 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.AbstractXFireTest;
 import org.dom4j.Document;
+import org.dom4j.io.DOMReader;
 import org.dom4j.io.SAXReader;
+import org.w3c.dom.Element;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -66,7 +70,47 @@ public class STAXUtilsTest
         writer.close();
         String outS = out.toString();
         
-        System.out.println(outS);
         return outS;
+    }
+    
+    /*
+    public void testDOMWrite() throws Exception
+    {
+        org.w3c.dom.Document doc = DOMUtils.readXml(getResourceAsStream("amazon.xml"));
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
+        XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
+        
+        STAXUtils.writeElement(doc.getDocumentElement(), writer);
+        
+        writer.close();
+        
+        Document testDoc = readDocument(bos.toString());
+        addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");
+        assertValid("//a:ItemLookupResponse", testDoc);
+        assertValid("//a:ItemLookupResponse/a:Items", testDoc);
+    }*/
+    
+    public void testDOMRead() throws Exception
+    {
+        XMLInputFactory ifactory = XMLInputFactory.newInstance();
+        XMLStreamReader reader = ifactory.createXMLStreamReader(getResourceAsStream("amazon2.xml"));
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        org.w3c.dom.Document doc = builder.newDocument();
+        Element root = doc.createElement("root");
+        doc.appendChild(root);
+        
+        STAXUtils.readElements(root, reader);
+        
+        DOMReader domReader = new DOMReader();
+        Document testDoc = domReader.read(doc);
+
+        addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");
+        assertValid("//a:ItemLookupResponse", testDoc);
+        assertValid("//a:ItemLookupResponse/a:Items", testDoc);
+        assertValid("//a:OperationRequest/a:HTTPHeaders/a:Header[@Name='UserAgent']", testDoc);
     }
 }

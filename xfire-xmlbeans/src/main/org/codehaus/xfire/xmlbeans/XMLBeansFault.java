@@ -2,9 +2,8 @@ package org.codehaus.xfire.xmlbeans;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.fault.XFireFault;
-import org.w3c.dom.Element;
+import org.codehaus.xfire.soap.Soap11;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -28,7 +27,7 @@ public class XMLBeansFault
         XmlCursor cursor = fault.newCursor();
         cursor.toFirstChild();
 
-        if (cursor.getName().getNamespaceURI().equals(SOAPConstants.SOAP11_ENVELOPE_NS))
+        if (cursor.getName().getNamespaceURI().equals(Soap11.getInstance().getNamespace()))
             createSoap11Fault(cursor);
         else
             createSoap12Fault(cursor);

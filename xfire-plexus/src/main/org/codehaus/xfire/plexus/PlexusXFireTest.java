@@ -9,10 +9,11 @@ import org.apache.log4j.BasicConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -86,8 +87,8 @@ public class PlexusXFireTest
 
         super.setUp();
         
-        addNamespace("s", SOAPConstants.SOAP11_ENVELOPE_NS );
-        addNamespace("soap12", SOAPConstants.SOAP12_ENVELOPE_NS);
+        addNamespace("s", Soap11.getInstance().getNamespace());
+        addNamespace("soap12", Soap12.getInstance().getNamespace());
     }
     
     /**

@@ -12,8 +12,8 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Transport;
 
 import com.ibm.wsdl.BindingImpl;
@@ -68,8 +68,8 @@ public class SoapHttpTransport
 	    SOAPBinding soapBind = new SOAPBindingImpl();
 		
 		String style = service.getStyle();
-        if ( style.equals( SOAPConstants.STYLE_WRAPPED ) )
-            style = SOAPConstants.STYLE_DOCUMENT;
+        if ( style.equals( SoapConstants.STYLE_WRAPPED ) )
+            style = SoapConstants.STYLE_DOCUMENT;
         
         soapBind.setStyle( style );
         soapBind.setTransportURI( HTTP_TRANSPORT_NS );
@@ -137,7 +137,7 @@ public class SoapHttpTransport
         SOAPBody body = new SOAPBodyImpl();
         body.setUse( service.getUse() ); 
 
-        if ( service.getStyle().equals( SOAPConstants.STYLE_RPC ) )
+        if ( service.getStyle().equals( SoapConstants.STYLE_RPC ) )
             body.setNamespaceURI( service.getDefaultNamespace() );
         
         return body;

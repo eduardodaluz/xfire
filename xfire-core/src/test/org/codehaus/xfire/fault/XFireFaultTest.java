@@ -5,9 +5,9 @@ import java.io.StringReader;
 
 import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.util.DOMUtils;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -25,7 +25,7 @@ public class XFireFaultTest
     public void testFaults()
         throws Exception
     {
-        SOAP12FaultHandler soap12 = new SOAP12FaultHandler();
+        Soap12FaultHandler soap12 = new Soap12FaultHandler();
         
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
@@ -54,7 +54,7 @@ public class XFireFaultTest
         SAXReader reader = new SAXReader();
         Document doc = reader.read( new StringReader(out.toString()) );
         printNode(doc);
-        addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
+        addNamespace("s", Soap12.getInstance().getNamespace());
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
         addNamespace("t", "urn:test2");
         assertValid("//s:Detail/t:bah2[text()='bleh']", doc );
@@ -65,7 +65,7 @@ public class XFireFaultTest
     public void testFaults11()
         throws Exception
     {
-        SOAP11FaultHandler soap11 = new SOAP11FaultHandler();
+        Soap11FaultHandler soap11 = new Soap11FaultHandler();
         
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
@@ -94,7 +94,7 @@ public class XFireFaultTest
         SAXReader reader = new SAXReader();
         Document doc = reader.read( new StringReader(out.toString()) );
         printNode(doc);
-        addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
+        addNamespace("s", Soap12.getInstance().getNamespace());
         addNamespace("t", "urn:test2");
         assertValid("//detail/t:bah2[text()='bleh']", doc );
         assertValid("//faultactor[text()='http://someuri']", doc );
@@ -103,7 +103,7 @@ public class XFireFaultTest
     public void testSOAP12()
         throws Exception
     {
-        SOAP12FaultHandler soap12 = new SOAP12FaultHandler();
+        Soap12FaultHandler soap12 = new Soap12FaultHandler();
         
         testHandler( soap12 );
     }
@@ -111,7 +111,7 @@ public class XFireFaultTest
     public void testSOAP11()
         throws Exception
     {
-        SOAP11FaultHandler soap11 = new SOAP11FaultHandler();
+        Soap11FaultHandler soap11 = new Soap11FaultHandler();
         
         testHandler( soap11 );
     }
@@ -123,7 +123,7 @@ public class XFireFaultTest
     {
         SimpleService service = new SimpleService();
         service.setName("Echo");
-        service.setSoapVersion(SOAPConstants.SOAP12_ENVELOPE_NS);
+        service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
         
         service.setServiceHandler(new BadHandler());

@@ -15,10 +15,10 @@ import javax.mail.internet.MimeMultipart;
 
 import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.SOAPConstants;
-import org.codehaus.xfire.fault.SOAP11FaultHandler;
+import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.handler.EchoHandler;
 import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.soap.Soap12;
 import org.dom4j.Document;
 
 /**
@@ -33,11 +33,11 @@ public class AttachmentTest
         
         SimpleService service = new SimpleService();
         service.setName("Echo");
-        service.setSoapVersion(SOAPConstants.SOAP12_ENVELOPE_NS);
+        service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
         
         service.setServiceHandler(new EchoHandler());
-        service.setFaultHandler(new SOAP11FaultHandler());
+        service.setFaultHandler(new Soap11FaultHandler());
         
         getServiceRegistry().register(service);
     }

@@ -1,8 +1,8 @@
 package org.codehaus.xfire.plexus.java;
 
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.java.mapping.TypeMapping;
+import org.codehaus.xfire.soap.SoapConstants;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -17,7 +17,7 @@ public class TypeMappingRegistryTest
         
         assertNotNull(reg);
         
-        TypeMapping tm = reg.getTypeMapping(SOAPConstants.XSD);
+        TypeMapping tm = reg.getTypeMapping(SoapConstants.XSD);
         
         assertNotNull(tm);
         

@@ -157,38 +157,45 @@ public class STAXUtils
     public static void writeElement( Element e, XMLStreamWriter writer ) 
         throws XMLStreamException
     {
-        if ( e.getNamespaceURI() != null )
+
+        String prefix = e.getPrefix();
+        String ns = e.lookupNamespaceURI(prefix);
+        System.out.println("ns:" + ns);
+        String localName = e.getNodeName();
+        
+        if ( prefix == null )
         {
-            boolean writeNamespace = false;
-            String prefix = writer.getNamespaceContext().getPrefix(e.getNamespaceURI());
-            if ( prefix == null )
+            if ( ns == null )
             {
-                prefix = e.getPrefix();
-                writeNamespace = true;
-            }
-            
-            if ( prefix == null )
-            {
-                writer.setDefaultNamespace(e.getNamespaceURI());
-                writeNamespace = false;
-                writer.writeStartElement( e.getNodeName() );
-                writer.writeDefaultNamespace(e.getNamespaceURI());
+                writer.writeStartElement( localName );
             }
             else
             {
-                writer.writeStartElement( prefix + ":" + e.getNodeName() );
-            }
-            
-            if ( writeNamespace )
-            {
-                writer.writeNamespace(prefix, e.getNamespaceURI());
+                prefix = "";
+                
+                writer.writeStartElement( ns, localName );
+                
+                String curUri = writer.getNamespaceContext().getNamespaceURI(prefix);
+                if ( curUri == null || curUri.length() != ns.length() )
+                {
+                    writer.writeDefaultNamespace(ns);
+                }
             }
         }
         else
         {
-            writer.writeStartElement( e.getNodeName() );
+            writer.writeStartElement(prefix, localName, ns);
+            
+            String curUri = writer.getNamespaceContext().getNamespaceURI(prefix);
+            if ( curUri == null || curUri.length() != ns.length() || !curUri.equals(ns) )
+            {
+                System.out.println("writing namespace: " + ns);
+                writer.writeNamespace(prefix, ns);
+            }
         }
+
         
+        /*
         NamedNodeMap attrs = e.getAttributes();
         for ( int i = 0; i < attrs.getLength(); i++ )
         {
@@ -198,21 +205,17 @@ public class STAXUtils
             String attrPrefix = writer.getNamespaceContext().getPrefix(attr.getNamespaceURI());
             if ( attrPrefix == null )
             {
-                writeAttrNamespace = true;
-                attrPrefix = attr.getPrefix();
+                writer.writeAttribute(attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
             }
-            
-            writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
-            
-            if ( writeAttrNamespace )
+            else
             {
-                writer.writeNamespace(attrPrefix, e.getNamespaceURI());
+                writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
             }
-        }
+        }*/
     
         String value = DOMUtils.getContent(e);
         
-        if ( value != null )
+        if ( value != null && value.length() > 0)
             writer.writeCharacters( value );
         
         NodeList nodes = e.getChildNodes();
@@ -221,9 +224,10 @@ public class STAXUtils
             Node n = nodes.item(i);
             if ( n instanceof Element )
             {
-                writeElement((Element)e, writer);
+                writeElement((Element)n, writer);
             }
         }
+
         writer.writeEndElement();
     }
     
@@ -231,46 +235,47 @@ public class STAXUtils
     	throws XMLStreamException
     {
         int read = 0; // number of elements read in
-        int event = reader.getEventType();
         
         Document doc = root.getOwnerDocument();
         Element e = null;
         
+        StringBuffer text = new StringBuffer();
+        
         while ( true )
         {
+            int event = reader.next();
             switch( event )
             {
                 case XMLStreamConstants.START_ELEMENT:
                     read++;
                     e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
                     root.appendChild(e);
-                    
+
                     for ( int i = 0; i < reader.getAttributeCount(); i++ )
                     {
                         Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
                                                           reader.getAttributeLocalName(i));
                         attr.setValue(reader.getAttributeValue(i));
+                        e.setAttributeNode(attr);
                     }
+                    
+                    readElements(e, reader);
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    read--;
-                    if ( read <= 0 )
-                        return;
-                    break;
+                    DOMUtils.setText(root, text.toString());  
+                    return;
                 case XMLStreamConstants.CHARACTERS:
-                    DOMUtils.setText(e, reader.getText());  
+                    text.append(reader.getText());
                     break;
+                case XMLStreamConstants.END_DOCUMENT:
+                    return;
                 case XMLStreamConstants.CDATA:
                 case XMLStreamConstants.START_DOCUMENT:
-                case XMLStreamConstants.END_DOCUMENT:
                 case XMLStreamConstants.ATTRIBUTE:
                 case XMLStreamConstants.NAMESPACE:
-                    break;
                 default:
                     break;
             }
-            event = reader.next();
         }
     }
-
 }

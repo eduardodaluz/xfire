@@ -7,12 +7,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.java.DefaultJavaService;
 import org.codehaus.xfire.java.Operation;
 import org.codehaus.xfire.java.Parameter;
 import org.codehaus.xfire.java.type.Type;
+import org.codehaus.xfire.soap.SoapConstants;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -29,7 +29,7 @@ public class XMLBeansService
         
         Class[] paramClasses = method.getParameterTypes();
         
-        boolean isDoc = getStyle().equals(SOAPConstants.STYLE_DOCUMENT);
+        boolean isDoc = getStyle().equals(SoapConstants.STYLE_DOCUMENT);
         
         for ( int j = 0; j < paramClasses.length; j++ )
         {

@@ -3,9 +3,8 @@ package org.codehaus.xfire.plexus.simple;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
-import org.codehaus.xfire.SOAPConstants;
-import org.codehaus.xfire.fault.SOAP11FaultHandler;
-import org.codehaus.xfire.fault.SOAP12FaultHandler;
+import org.codehaus.xfire.fault.Soap11FaultHandler;
+import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.SoapHandler;
 import org.codehaus.xfire.java.JavaServiceHandler;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
@@ -14,6 +13,8 @@ import org.codehaus.xfire.plexus.config.Configurator;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
 
 /**
  * Creates and configures SimpleServices.
@@ -69,13 +70,13 @@ public class SimpleConfigurator
         
         if ( soapNS.equals("1.1") )
         {
-            s.setSoapVersion( SOAPConstants.SOAP11_ENVELOPE_NS );
-            s.setFaultHandler( new SOAP11FaultHandler() );
+            s.setSoapVersion( Soap11.getInstance() );
+            s.setFaultHandler( new Soap11FaultHandler() );
         }
         else if ( soapNS.equals("1.2") )
         {
-            s.setSoapVersion( SOAPConstants.SOAP12_ENVELOPE_NS );
-            s.setFaultHandler( new SOAP12FaultHandler() );
+            s.setSoapVersion( Soap12.getInstance() );
+            s.setFaultHandler( new Soap12FaultHandler() );
         }
         else
             throw new PlexusConfigurationException("Invalid soap version.  Must be 1.1 or 1.2.");

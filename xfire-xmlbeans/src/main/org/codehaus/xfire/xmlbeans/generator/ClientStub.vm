@@ -56,20 +56,32 @@ public class $name
   #set( $returnType = "$method.ResponseParameters.get(0).Type.ShortJavaName" )
 #end
 #set( $first = true )
-    public $returnType ${method.Name}( #foreach($p in $method.RequestParameters)#if($first) #set($first=false) #else,#end$p.Type.ShortJavaName $p.Name#end )
+#set( $firstHeader = true )
+    public $returnType ${method.Name}( #foreach($p in $method.RequestParameters)#if($first) #set($first=false) #else,#end$p.Type.ShortJavaName $p.Name#end
+#foreach($p in $method.RequestHeaders)#if($first) #set($first=false) #else,#end $p.Type.ShortJavaName $p.Name#end )
         throws IOException, XFireFault
     {
         XMLBeansClientHandler handler = new XMLBeansClientHandler(options);
+        XMLBeansClientHandler headerHandler = getHeaderHandler();
+        
 #set( $first = true )
         XmlObject[] request = new XmlObject[] 
         {
 #foreach($p in $method.RequestParameters) 			$p.Name#if($first) #set($first=false) #else,#end #end        
 
 		};
-		
-        handler.setRequest( request );
+
+        handler.setRequest(request);
+        
+        XmlObject[] headers = new XmlObject[] 
+        {
+#foreach($p in $method.RequestHeaders) 			$p.Name#if($first) #set($first=false) #else,#end #end        
+
+		};
+				
+        headerHandler.setRequest(headers);
 #if ( !$service.isRest() )        
-        SoapHttpClient client = new SoapHttpClient(handler, getHeaderHandler(), getServiceUrl());
+        SoapHttpClient client = new SoapHttpClient(handler, headerHandler, getServiceUrl());
 #else
         RestHttpClient client = new RestHttpClient(handler, getServiceUrl());
 #end
@@ -92,9 +104,9 @@ public class $name
      * to provide your own HeaderHandler.
      * @return null by default.
      */
-    public ClientHandler getHeaderHandler()
+    public XMLBeansClientHandler getHeaderHandler()
     {
-    	return null;
+    	return new XMLBeansClientHandler(options);
     }#end
 
 }

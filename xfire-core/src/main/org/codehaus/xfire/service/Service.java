@@ -5,6 +5,7 @@ import javax.wsdl.WSDLException;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -61,5 +62,5 @@ public interface Service
 
     Object getProperty(String name);
     
-    String getSoapVersion();
+    SoapVersion getSoapVersion();
 }

@@ -8,6 +8,7 @@ import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
@@ -26,7 +27,7 @@ public class SimpleService
     
     private String use;
     
-    private String soapVersion;
+    private SoapVersion soapVersion;
     
     private String defaultNamespace;
     
@@ -133,12 +134,12 @@ public class SimpleService
     /**
      * @see org.codehaus.xfire.service.Service#getSoapVersion()
      */
-    public String getSoapVersion()
+    public SoapVersion getSoapVersion()
     {
         return soapVersion;
     }
 
-	public void setSoapVersion(String soapVersion)
+	public void setSoapVersion(SoapVersion soapVersion)
 	{
 		this.soapVersion = soapVersion;
 	}

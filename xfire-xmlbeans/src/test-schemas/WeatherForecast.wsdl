@@ -137,6 +137,7 @@
     <wsdl:operation name="GetWeatherByZipCode">
       <soap:operation soapAction="http://www.webservicex.net/GetWeatherByZipCode" style="document" />
       <wsdl:input>
+        <soap:header message="tns:GetWeatherByZipCodeSoapIn" part="parameters"/>
         <soap:body use="literal" />
       </wsdl:input>
       <wsdl:output>

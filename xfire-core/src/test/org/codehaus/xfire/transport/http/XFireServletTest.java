@@ -1,8 +1,10 @@
 package org.codehaus.xfire.transport.http;
 
-import org.codehaus.xfire.SOAPConstants;
-import org.codehaus.xfire.fault.SOAP12FaultHandler;
+import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.Soap12;
+
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
@@ -21,11 +23,11 @@ public class XFireServletTest
         
         SimpleService service = new SimpleService();
         service.setName("Echo");
-        service.setSoapVersion(SOAPConstants.SOAP12_ENVELOPE_NS);
+        service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
         
         service.setServiceHandler(new MockSessionHandler());
-        service.setFaultHandler(new SOAP12FaultHandler());
+        service.setFaultHandler(new Soap12FaultHandler());
         
         getServiceRegistry().register(service);
     }

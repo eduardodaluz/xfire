@@ -122,7 +122,7 @@ public class WSDLInspector
         TOperation abstractOp = getAbstractOperation( m.getName(), portType );
         TParam input = abstractOp.getInput();
         TMessage message = getMessage( input.getMessage().getLocalPart(), defs );
-        
+
         TPart[] xParts = message.getPartArray();
         for ( int i = 0; i < xParts.length; i++ )
         {
@@ -137,6 +137,35 @@ public class WSDLInspector
             p.setType( type );
             
             m.addRequestParameter(p);
+        }
+        
+        XmlObject[] xHeaders = xOperation.getInput().selectPath(wsdlSoapNS + " $this//soap:header");
+        if ( xHeaders != null )
+        {
+            QName partQ = new QName("part");
+            QName messageQ = new QName("message");
+            
+            for ( int i = 0; i < xHeaders.length; i++ )
+            {
+                String msgName = xHeaders[i].newCursor().getAttributeText(messageQ);
+                msgName = msgName.substring(msgName.indexOf(":")+1);
+                
+                String partName = xHeaders[i].newCursor().getAttributeText(partQ);
+                TMessage hMessage = getMessage( msgName, defs );
+                TPart part = getPart(hMessage, partName);
+                
+                Parameter p = new Parameter();
+                p.setName(part.getName() + "Header");
+                SchemaType type = loader.findDocumentType(part.getElement());
+                if ( type == null )
+                {
+                    System.out.println("Couldn't find type " + xParts[i].getElement().toString());
+                    type = XmlAnySimpleType.type;
+                }
+                p.setType( type );
+                
+                m.addRequestHeader(p);
+            }
         }
         
         TParam output = abstractOp.getOutput();
@@ -154,6 +183,17 @@ public class WSDLInspector
         
         // todo get soap action
         return m;
+    }
+
+    private TPart getPart(TMessage message, String partName)
+    {
+        TPart[] parts = message.getPartArray();
+        for ( int i = 0; i < parts.length; i ++ )
+        {
+            if ( parts[i].getName().equals(partName) )
+                return parts[i];
+        }
+        return null;
     }
 
     private TMessage getMessage(String name, TDefinitions defs)
@@ -237,6 +277,15 @@ public class WSDLInspector
                     if ( m.getResponseParameters() != null )
                     {
                         for ( Iterator pitr = m.getResponseParameters().iterator(); pitr.hasNext(); )
+                        {
+                            Parameter p = (Parameter) pitr.next();
+                            imports.add( p.getType() );
+                        }
+                    }
+                    
+                    if ( m.getRequestHeaders() != null )
+                    {
+                        for ( Iterator pitr = m.getRequestHeaders().iterator(); pitr.hasNext(); )
                         {
                             Parameter p = (Parameter) pitr.next();
                             imports.add( p.getType() );
@@ -335,6 +384,8 @@ public class WSDLInspector
         private String name;
         private List requestParameters;
         private List responseParameters;
+        private List requestHeaders;
+        private List responseHeaders;
         private XmlObject xmlObject;
 
         public void addRequestParameter( Parameter parameter )
@@ -351,6 +402,23 @@ public class WSDLInspector
             
             responseParameters.add(parameter);
         }
+        
+        public void addRequestHeader( Parameter parameter )
+        {
+            if ( requestHeaders == null )
+                requestHeaders = new ArrayList();
+            
+            requestHeaders.add(parameter);
+        }
+        
+        public void addResponseHeader( Parameter parameter )
+        {
+            if ( responseHeaders == null )
+                responseHeaders = new ArrayList();
+            
+            responseHeaders.add(parameter);
+        }
+        
         public List getRequestParameters()
         {
             return requestParameters;
@@ -366,6 +434,22 @@ public class WSDLInspector
         public void setResponseParameters(List responseParameters)
         {
             this.responseParameters = responseParameters;
+        }
+        public List getRequestHeaders()
+        {
+            return requestHeaders;
+        }
+        public void setRequestHeaders(List requestHeaders)
+        {
+            this.requestHeaders = requestHeaders;
+        }
+        public List getResponseHeaders()
+        {
+            return responseHeaders;
+        }
+        public void setResponseHeaders(List responseHeaders)
+        {
+            this.responseHeaders = responseHeaders;
         }
         public String getSoapAction()
         {

@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.transport.Session;
 
 /**
@@ -25,7 +27,7 @@ public class MessageContext
     private String serviceName;
     private String action;
     private Map properties;
-    private String soapVersion;
+    private SoapVersion soapVersion;
     private Service service;
     private XMLStreamReader xmlStreamReader;
     
@@ -125,14 +127,14 @@ public class MessageContext
         this.serviceName = service;
     }
 
-    public String getSoapVersion()
+    public SoapVersion getSoapVersion()
     {
         return soapVersion;
     }
     
     public void setSoapVersion( String soapVersion )
     {
-        this.soapVersion = soapVersion;
+        this.soapVersion = SoapVersionFactory.getInstance().getSoapVersion(soapVersion);
     }
     
     /**

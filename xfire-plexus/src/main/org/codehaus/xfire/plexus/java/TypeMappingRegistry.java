@@ -7,7 +7,6 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
-import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.java.mapping.TypeMapping;
 import org.codehaus.xfire.java.type.BooleanType;
 import org.codehaus.xfire.java.type.DoubleType;
@@ -15,6 +14,7 @@ import org.codehaus.xfire.java.type.FloatType;
 import org.codehaus.xfire.java.type.IntType;
 import org.codehaus.xfire.java.type.LongType;
 import org.codehaus.xfire.java.type.Type;
+import org.codehaus.xfire.soap.SoapConstants;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -53,11 +53,11 @@ public class TypeMappingRegistry
         
         // register primitive types manually since there is no way
         // to do Class.forName("boolean") et al.
-        tm.register(boolean.class, new QName(SOAPConstants.XSD,"boolean"), new BooleanType());
-        tm.register(int.class, new QName(SOAPConstants.XSD,"int"), new IntType());
-        tm.register(double.class, new QName(SOAPConstants.XSD,"double"), new DoubleType());
-        tm.register(float.class, new QName(SOAPConstants.XSD,"float"), new FloatType());
-        tm.register(long.class, new QName(SOAPConstants.XSD,"long"), new LongType());
+        tm.register(boolean.class, new QName(SoapConstants.XSD,"boolean"), new BooleanType());
+        tm.register(int.class, new QName(SoapConstants.XSD,"int"), new IntType());
+        tm.register(double.class, new QName(SoapConstants.XSD,"double"), new DoubleType());
+        tm.register(float.class, new QName(SoapConstants.XSD,"float"), new FloatType());
+        tm.register(long.class, new QName(SoapConstants.XSD,"long"), new LongType());
         
         for ( int i = 0; i < types.length; i++ )
         {

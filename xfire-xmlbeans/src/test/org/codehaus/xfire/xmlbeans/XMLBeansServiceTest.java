@@ -1,12 +1,12 @@
 package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.AbstractXFireTest;
-import org.codehaus.xfire.SOAPConstants;
-import org.codehaus.xfire.fault.SOAP11FaultHandler;
+import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.handler.SoapHandler;
 import org.codehaus.xfire.java.JavaServiceHandler;
 import org.codehaus.xfire.java.mapping.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.java.wsdl.JavaWSDLBuilder;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.dom4j.Document;
 
 /**
@@ -26,14 +26,14 @@ public class XMLBeansServiceTest
 		service.setName("WeatherService");
 		service.setDefaultNamespace("urn:WeatherService");
 		service.setServiceClass(WeatherService.class.getName());
-		service.setUse(SOAPConstants.USE_LITERAL);
-		service.setStyle(SOAPConstants.STYLE_DOCUMENT);
+		service.setUse(SoapConstants.USE_LITERAL);
+		service.setStyle(SoapConstants.STYLE_DOCUMENT);
 		
 		JavaServiceHandler handler = new JavaServiceHandler();
 		SoapHandler sHandler = new SoapHandler(handler);
 		service.setServiceHandler(sHandler);
 		
-		service.setFaultHandler(new SOAP11FaultHandler());
+		service.setFaultHandler(new Soap11FaultHandler());
 		
 		service.setWSDLBuilder(new JavaWSDLBuilder(getXFire().getTransportManager()));
 		DefaultTypeMappingRegistry tr = new DefaultTypeMappingRegistry();
@@ -50,8 +50,7 @@ public class XMLBeansServiceTest
     {
         assertEquals(1, service.getOperations().size());
 		assertNotNull( service.getTypeMapping() );
-		
-        
+
         Document response = invokeService("WeatherService", "GetWeatherByZip.xml");
         
         addNamespace("w", "http://www.webservicex.net");
