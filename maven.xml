@@ -16,7 +16,23 @@
       ignoreFailures="true"/>
     
   </goal>
+  
+  <goal name="jar:deploy"
+        description="Deploy jars">
 
+    <!-- Generate the site for each of the components. -->
+
+    <maven:reactor
+      basedir="${basedir}"
+      postProcessing="true"
+      includes="*/project.xml"
+      excludes="xfire-demo/*,xfire-quickstart/*"
+      goals="jar:deploy"
+      banner="Installing XFire"
+      ignoreFailures="true"/>
+    
+  </goal>
+  
   <goal name="deploySite"
         description="Generate the site for the entire project">
 
