@@ -12,6 +12,7 @@ import org.codehaus.xfire.util.DOMUtils;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * XFireTest
@@ -27,8 +28,9 @@ public class XFireFaultTest
         SOAP12FaultHandler soap12 = new SOAP12FaultHandler();
         
         XFireFault fault = new XFireFault(new Exception());
+        fault.setRole("http://someuri");
         fault.setSubCode("m:NotAvailable");
-        Element details = fault.getDetailElement();
+        Node details = fault.getDetail();
         Element e = details.getOwnerDocument().createElement("bah");
         DOMUtils.setText(e, "bleh");
         details.appendChild(e);
@@ -56,6 +58,7 @@ public class XFireFaultTest
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
         addNamespace("t", "urn:test2");
         assertValid("//s:Detail/t:bah2[text()='bleh']", doc );
+        assertValid("//s:Role[text()='http://someuri']", doc );
     }
  
     
@@ -65,7 +68,9 @@ public class XFireFaultTest
         SOAP11FaultHandler soap11 = new SOAP11FaultHandler();
         
         XFireFault fault = new XFireFault(new Exception());
-        Element details = fault.getDetailElement();
+        fault.setRole("http://someuri");
+        
+        Node details = fault.getDetail();
         Element e = details.getOwnerDocument().createElement("bah");
         DOMUtils.setText(e, "bleh");
         details.appendChild(e);
@@ -92,6 +97,7 @@ public class XFireFaultTest
         addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
         addNamespace("t", "urn:test2");
         assertValid("//detail/t:bah2[text()='bleh']", doc );
+        assertValid("//faultactor[text()='http://someuri']", doc );
     }
 
     public void testSOAP12()

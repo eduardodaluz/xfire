@@ -2,6 +2,7 @@ package org.codehaus.xfire.xmlbeans;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.fault.XFireFault;
 import org.w3c.dom.Element;
 
@@ -25,12 +26,52 @@ public class XMLBeansFault
         this.fault = fault;
         
         XmlCursor cursor = fault.newCursor();
-        
+        cursor.toFirstChild();
+
+        if (cursor.getName().getNamespaceURI().equals(SOAPConstants.SOAP11_ENVELOPE_NS))
+            createSoap11Fault(cursor);
+        else
+            createSoap12Fault(cursor);
     }
     
-    public Element getDetailElement()
+    /**
+     * Fill in the fault information from the XmlCursor.
+     * @param cursor
+     */
+    protected void createSoap11Fault(XmlCursor cursor)
     {
-        return null;
+        cursor.toFirstChild();
+        
+        do
+        {
+            if ( cursor.getName().getLocalPart().equals("faultcode") )
+            {
+                setFaultCode( cursor.getTextValue() );
+            }
+            if ( cursor.getName().getLocalPart().equals("faultstring") )
+            {
+                setMessage( cursor.getTextValue() );
+            }
+            if ( cursor.getName().getLocalPart().equals("faultactor") )
+            {
+                setRole( cursor.getTextValue() );
+            }
+            if ( cursor.getName().getLocalPart().equals("faultcode") )
+            {
+                setDetail( cursor.getDomNode() );
+            }
+        }
+        while( cursor.toNextSibling() );
+    }
+
+    
+    /**
+     * Fill in the fault information from the XmlCursor.
+     * @param cursor
+     */
+    protected void createSoap12Fault(XmlCursor cursor)
+    {
+        // TODO
     }
     
     /**

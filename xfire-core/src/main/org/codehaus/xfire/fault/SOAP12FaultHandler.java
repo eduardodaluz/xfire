@@ -74,9 +74,16 @@ public class SOAP12FaultHandler
             writer.writeEndElement(); // Text
             writer.writeEndElement(); // Reason
 
+            if ( fault.getRole() != null )
+            {
+                writer.writeStartElement("soap:Role");
+                writer.writeCharacters( fault.getRole() );
+                writer.writeEndElement();
+            }
+            
             if ( fault.hasDetails() )
             {
-                Element details = fault.getDetailElement();
+                Node details = fault.getDetail();
                 
                 writer.writeStartElement("soap:Detail");
                 

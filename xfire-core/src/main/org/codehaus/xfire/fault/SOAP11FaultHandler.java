@@ -77,7 +77,7 @@ public class SOAP11FaultHandler
 
             if ( fault.hasDetails() )
             {
-                Element details = fault.getDetailElement();
+                Node details = fault.getDetail();
                 
                 writer.writeStartElement("detail");
                 
@@ -92,6 +92,13 @@ public class SOAP11FaultHandler
                 }
                 
                 writer.writeEndElement(); // Details
+            }
+            
+            if ( fault.getRole() != null )
+            {
+                writer.writeStartElement("faultactor");
+                writer.writeCharacters( fault.getRole() );
+                writer.writeEndElement();
             }
             
             writer.writeEndElement(); // Fault

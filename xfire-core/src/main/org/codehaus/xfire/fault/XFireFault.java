@@ -8,7 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * <p>
@@ -51,6 +51,10 @@ public class XFireFault
      * processing of the message rather than to the contents of the message itself."
      *  -- SOAP 1.2 Spec
      * </p>
+     * <p>
+     * If this message is used in a SOAP 1.1 Fault it will most likely
+     * (depending on the FaultHandler) be mapped to "Sender" instead.
+     * </p>
      */
     public final static String RECEIVER = "Receiver";
 
@@ -58,7 +62,11 @@ public class XFireFault
     
 	private String subCode;
 	
-	private Element detail;
+	private String message;
+	
+	private String role;
+	
+	private Node detail;
 	
 	private Exception exception;
 	
@@ -77,7 +85,13 @@ public class XFireFault
 	                   Exception exception,
 	                   String code )
 	{
-		super( message, exception );
+		super( exception );
+		
+		if ( message != null )
+		    this.message = message;
+		else
+		    this.message = "Fault";
+		
 		this.faultCode = code;
         this.namespaces = new HashMap();
 	}
@@ -89,9 +103,7 @@ public class XFireFault
      */
 	public XFireFault( Exception exception )
 	{
-	    super( exception );
-	    this.faultCode = RECEIVER;
-        this.namespaces = new HashMap();
+	    this( exception, RECEIVER );
 	}
 	
 	/**
@@ -103,9 +115,7 @@ public class XFireFault
      */
     public XFireFault(Exception exception, String code)
     {
-        super( exception.getMessage(), exception );
-        this.faultCode = code;
-        this.namespaces = new HashMap();
+        this( exception.getMessage(), exception, code );
     }
 
     /**
@@ -117,7 +127,8 @@ public class XFireFault
      */
 	public XFireFault(String message, String code)
 	{
-		super( message );
+		super();
+		this.message = message;
         this.faultCode = code;
         this.namespaces = new HashMap();
 	}
@@ -165,7 +176,7 @@ public class XFireFault
         return subCode;
     }
     
-    public Element getDetailElement()
+    public Node getDetail()
     {
         if ( detail == null )
         {
@@ -183,6 +194,11 @@ public class XFireFault
             }
         }
         return detail;
+    }
+    
+    public void setDetail(Node details)
+    {
+        detail = details;
     }
     
     public void setSubCode(String subCode)
@@ -226,5 +242,38 @@ public class XFireFault
             return false;
         
         return true;
+    }
+        
+    /**
+     * @return Returns the message.
+     */
+    public String getMessage()
+    {
+        return message;
+    }
+    
+    /**
+     * @param message The message to set.
+     */
+    public void setMessage(String message)
+    {
+        this.message = message;
+    }
+
+    /**
+     * @return Returns the fault actor.
+     */
+    public String getRole()
+    {
+        return role;
+    }
+    
+    /**
+     * Sets the fault actor.
+     * @param actor
+     */
+    public void setRole(String actor)
+    {
+        this.role = actor;
     }
 }
