@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="xfire.xmlbeansServiceBuilder" 
+        class="org.codehaus.xfire.xmlbeans.XMLBeansServiceBuilder"
+        singleton="true">
+     <constructor-arg>
+       <ref bean="xfire"/>
+     </constructor-arg>
+     <constructor-arg>
+       <ref bean="xfire.typeMappingRegistry"/>
+     </constructor-arg>
+  </bean>
+</beans>

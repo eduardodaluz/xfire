@@ -13,10 +13,12 @@ public class BeanInvoker
     extends ObjectInvoker
 {
     private BeanFactory factory;
+    private String name;
     
-    public BeanInvoker(BeanFactory factory)
+    public BeanInvoker(BeanFactory factory, String name)
     {
        this.factory = factory;
+       this.name = name;
     }
     
     /**
@@ -28,6 +30,6 @@ public class BeanInvoker
     public Object getServiceObject(MessageContext context)
         throws XFireFault
     {
-        return factory.getBean("todo");
+        return factory.getBean(name);
     }
 }

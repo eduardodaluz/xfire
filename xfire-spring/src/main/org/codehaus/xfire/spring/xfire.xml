@@ -4,12 +4,16 @@
 <beans>
   
   <bean id="xfire.serviceRegistry" 
-        class="org.codehaus.xfire.service.DefaultServiceRegistry"/>
+        class="org.codehaus.xfire.service.DefaultServiceRegistry"
+        singleton="true"/>
 
   <bean id="xfire.transportManager" 
-        class="org.codehaus.xfire.transport.DefaultTransportManager"/>
+        class="org.codehaus.xfire.transport.DefaultTransportManager"
+        singleton="true"/>
   
-  <bean id="xfire" class="org.codehaus.xfire.DefaultXFire">
+  <bean id="xfire" 
+    class="org.codehaus.xfire.DefaultXFire"
+        singleton="true">
     <constructor-arg>
       <ref bean="xfire.serviceRegistry"/>
     </constructor-arg>
@@ -20,21 +24,13 @@
 
   <bean id="xfire.typeMappingRegistry" 
         class="org.codehaus.xfire.type.DefaultTypeMappingRegistry"
-        init-method="createDefaultMappings">
+        init-method="createDefaultMappings"
+        singleton="true">
   </bean>
 
   <bean id="xfire.serviceBuilder" 
-        class="org.codehaus.xfire.service.object.ObjectServiceBuilder">
-     <constructor-arg>
-       <ref bean="xfire"/>
-     </constructor-arg>
-     <constructor-arg>
-       <ref bean="xfire.typeMappingRegistry"/>
-     </constructor-arg>
-  </bean>
-
-  <bean id="xfire.xmlbeansServiceBuilder" 
-        class="org.codehaus.xfire.xmlbeans.XMLBeansServiceBuilder">
+        class="org.codehaus.xfire.service.object.ObjectServiceBuilder"
+        singleton="true">
      <constructor-arg>
        <ref bean="xfire"/>
      </constructor-arg>
