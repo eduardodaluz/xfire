@@ -172,13 +172,13 @@ public class AnnotationServiceFactory
             return false;
         
         // All methods on endpoint interfaces are valid WebMethods.
-        if (!method.getDeclaringClass().isInterface())
-            return webAnnotations.hasWebMethodAnnotation(method);
+        if (method.getDeclaringClass().isInterface())
+            return true;
         
-        return true;
+        return webAnnotations.hasWebMethodAnnotation(method);
     }
 
-    protected String getParameterName( Method method, int paramNumber, boolean doc )
+    protected String getInParameterName( Method method, int paramNumber, boolean doc )
     {
         if( webAnnotations.hasWebParamAnnotation( method, paramNumber ) )
         {
@@ -188,7 +188,21 @@ public class AnnotationServiceFactory
         }
         else
         {
-            return super.getParameterName( method, paramNumber, doc );
+            return super.getInParameterName( method, paramNumber, doc );
         }
     }
+    
+    protected String getOutParameterName( Method method, boolean doc )
+    {
+        if( webAnnotations.hasWebResultAnnotation(method) )
+        {
+            final WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation( method );
+
+            return webResultAnnotation.getName();
+        }
+        else
+        {
+            return super.getOutParameterName( method, doc );
+        }
+    }    
 }
