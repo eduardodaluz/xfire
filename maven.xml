@@ -34,7 +34,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-demo/project.xml,xfire-loom/project.xml,xfire-core/project.xml,xfire-xmpp/project.xml"
+      excludes="xfire-demo/project.xml,xfire-core/project.xml,xfire-xmpp/project.xml"
       goals="jar:install"
       banner="Installing XFire"
       ignoreFailures="false"/>
@@ -48,7 +48,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-demo/project.xml,xfire-loom/project.xml"
+      excludes="xfire-demo/project.xml"
       goals="jar:deploy-snapshot"
       banner="Deploying XFire Snapshots"
       ignoreFailures="false"/>
