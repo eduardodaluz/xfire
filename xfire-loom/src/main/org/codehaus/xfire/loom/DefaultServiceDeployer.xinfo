@@ -9,7 +9,7 @@
     </block>
 
     <services>
-        <service name="org.codehaus.xfire.loom.DefaultServiceDeployer"/>
+        <service name="org.codehaus.xfire.loom.ServiceDeployer"/>
     </services>
 
     <dependencies>

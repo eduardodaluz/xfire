@@ -12,8 +12,8 @@
     <block name="xfire-transport-manager" class="org.codehaus.xfire.transport.DefaultTransportManager"/>
 
     <block name="xfire-service-deployer" class="org.codehaus.xfire.loom.DefaultServiceDeployer">
-        <provide name="xfire-simple-service-factory" role="org.codehaus.xfire.loom.ServiceFactory"/>
-        <provide name="xfire-java-service-factory" role="org.codehaus.xfire.loom.ServiceFactory"/>
+        <provide name="xfire-simple-service-factory" role="org.codehaus.xfire.loom.ServiceFactory[]"/>
+        <provide name="xfire-java-service-factory" role="org.codehaus.xfire.loom.ServiceFactory[]"/>
 
         <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
     </block>

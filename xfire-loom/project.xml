@@ -90,6 +90,7 @@
                 <directory>${basedir}/src/main</directory>
                 <includes>
                     <include>**/*.xml</include>
+                    <include>**/*.xinfo</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

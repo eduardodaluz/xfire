@@ -7,9 +7,11 @@
     <zeroOrMore>
         <element name="typeMapping">
             <attribute name="namespace"/>
-            <attribute name="default">
-                <data type="boolean"/>
-            </attribute>
+            <optional>
+                <attribute name="default">
+                    <data type="boolean"/>
+                </attribute>
+            </optional>
 
             <oneOrMore>
                 <element name="type">
