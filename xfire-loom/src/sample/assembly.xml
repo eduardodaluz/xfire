@@ -9,12 +9,18 @@
 
     <block name="xfire-service-registry" class="org.codehaus.xfire.service.DefaultServiceRegistry"/>
 
-    <block name="xfire-transport-manager" class="org.codehaus.xfire.transport.DefaultTransportManager"/>
+    <block name="xfire-transport-manager" class="org.codehaus.xfire.loom.transport.LoomTransportManager">
+        <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
+    </block>
 
     <block name="xfire-service-deployer" class="org.codehaus.xfire.loom.DefaultServiceDeployer">
+        <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
+        <provide name="xfire-service-factory" role="org.codehaus.xfire.service.ServiceFactory{}"/>
+    </block>
+
+    <block name="xfire-service-factory" class="org.codehaus.xfire.loom.DefaultServiceFactory">
         <provide name="xfire-transport-manager" role="org.codehaus.xfire.transport.TransportManager"/>
         <provide name="xfire-type-mapping-registry" role="org.codehaus.xfire.type.TypeMappingRegistry"/>
-        <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
     </block>
 
     <block name="xfire-type-mapping-registry" class="org.codehaus.xfire.loom.type.TypeMappingRegistry"/>

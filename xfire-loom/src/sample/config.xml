@@ -5,6 +5,7 @@
     </xfire-block-deployer>
 
     <xfire-service-deployer>
+        <defaultFactory>xfire-service-factory</defaultFactory>
         <!--        <service key="your-service">-->
         <!--            <name>blah blah</name>-->
         <!--        </service>-->

@@ -1,6 +1,5 @@
 package org.codehaus.xfire.loom;
 
-import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,17 +11,14 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
+
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.object.Invoker;
 import org.codehaus.xfire.service.object.ObjectService;
-import org.codehaus.xfire.service.object.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.type.TypeMappingRegistry;
 
 /**
  * Default implementation of ServiceDeployer
@@ -34,8 +30,9 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
     private final Map m_services = Collections.synchronizedMap( new HashMap() );
 
     private ServiceRegistry m_serviceRegistry;
-    private TypeMappingRegistry m_typeMappingRegistry;
-    private TransportManager m_transportManager;
+    private Map m_serviceFactories;
+
+    private ServiceFactory m_defaultServiceFactory;
 
     private Map m_configurations;
 
@@ -49,13 +46,22 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
         {
             m_configurations.put( kids[i].getAttribute( "key" ), kids[i] );
         }
+
+        final Configuration child = configuration.getChild( "defaultFactory" );
+
+        m_defaultServiceFactory = (ServiceFactory)m_serviceFactories.get( child.getValue() );
+
+        if( null == m_defaultServiceFactory )
+        {
+            final String msg = "Missing default factory '" + child.getValue() + "' at " + child.getLocation();
+            throw new ConfigurationException( msg );
+        }
     }
 
     public void service( final ServiceManager manager ) throws ServiceException
     {
         m_serviceRegistry = (ServiceRegistry)manager.lookup( ServiceRegistry.ROLE );
-        m_typeMappingRegistry = (TypeMappingRegistry)manager.lookup( TypeMappingRegistry.ROLE );
-        m_transportManager = (TransportManager)manager.lookup( TransportManager.ROLE );
+        m_serviceFactories = (Map)manager.lookup( ServiceFactory.class.getName() + "{}" );
     }
 
     public void deploy( final String key, final Object object ) throws Exception
@@ -66,33 +72,34 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
         }
 
         final Configuration configuration = (Configuration)m_configurations.get( key );
-        final Service service;
+        final ObjectService service;
 
         if( null == configuration )
         {
             if( getLogger().isInfoEnabled() )
                 getLogger().info( "No configuration found for '" + key + "', using defaults" );
 
-            service = createDefaultBuilder( object ).create( object.getClass() );
+            service = (ObjectService)m_defaultServiceFactory.create( object.getClass() );
         }
         else
         {
-            service = createServiceFromConfiguration( configuration, object );
+            service = createServiceFromConfiguration( configuration );
 
             if( getLogger().isDebugEnabled() )
                 getLogger().debug( "Created '" + service.getName() + "' from key '" + key + "'" );
         }
 
+        service.setInvoker( new ServiceInvoker( object ) );
+
         registerService( key, service );
     }
 
-    private Service createServiceFromConfiguration( final Configuration configuration,
-                                                    final Object object ) throws ConfigurationException
+    private ObjectService createServiceFromConfiguration( final Configuration configuration )
+        throws ConfigurationException
     {
-        //TODO support building given a WSDL url
-        final ServiceFactory builder = createBuilder( configuration.getChild( "builder" ), object );
+        final ServiceFactory factory = getServiceFactory( configuration.getChild( "factory" ).getValue( null ) );
         final ObjectService service = (ObjectService)
-            builder.create( loadClass( configuration.getChild( "serviceClass" ) ),
+            factory.create( loadClass( configuration.getChild( "serviceClass" ) ),
                             configuration.getChild( "name" ).getValue(),
                             configuration.getChild( "namespace" ).getValue( "" ),
                             getSoapVersion( configuration.getChild( "soapVersion" ) ),
@@ -107,49 +114,18 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
             service.setProperty( properties[i].getAttribute( "name" ), properties[i].getAttribute( "value" ) );
         }
 
-        service.setInvoker(new ServiceInvoker( object ));
-
         return service;
     }
 
-    private ServiceFactory createBuilder( final Configuration configuration, final Object object )
-        throws ConfigurationException
+    private ServiceFactory getServiceFactory( final String key )
     {
-        final String builderClassName = configuration.getValue( null );
-
-        if( null == builderClassName )
+        if( m_serviceFactories.containsKey( key ) )
         {
-            return createDefaultBuilder( object );
+            return (ServiceFactory)m_serviceFactories.get( key );
         }
         else
         {
-            final Class clazz = loadClass( configuration );
-
-            if( ServiceFactory.class.isAssignableFrom( clazz ) )
-            {
-                try
-                {
-                    final Constructor cxtor = clazz.getConstructor( new Class[]{TransportManager.class,
-                                                                                TypeMappingRegistry.class,
-                                                                                Invoker.class} );
-
-                    return (ServiceFactory)cxtor.newInstance( new Object[]{m_transportManager,
-                                                                           m_typeMappingRegistry,
-                                                                           new ServiceInvoker( object )} );
-                }
-                catch( Exception e )
-                {
-                    final String msg = "Unable to instantiate instance of " + builderClassName
-                        + " at " + configuration.getLocation();
-                    throw new ConfigurationException( msg, e );
-                }
-            }
-            else
-            {
-                final String msg = configuration.getValue()
-                    + " is not a ServiceFactory at " + configuration.getLocation();
-                throw new ConfigurationException( msg );
-            }
+            return m_defaultServiceFactory;
         }
     }
 
@@ -184,12 +160,6 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
             final String msg = "Unable to load " + configuration.getValue() + " at " + configuration.getLocation();
             throw new ConfigurationException( msg, e );
         }
-    }
-
-    private ServiceFactory createDefaultBuilder( final Object object )
-    {
-        return new ObjectServiceFactory( m_transportManager,
-                                         m_typeMappingRegistry );
     }
 
     private void registerService( final String key, final Service service )

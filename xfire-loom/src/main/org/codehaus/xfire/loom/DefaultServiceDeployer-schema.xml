@@ -6,6 +6,10 @@
 
     <start>
         <element name="root">
+            <element name="defaultFactory">
+                <text/>
+            </element>
+
             <zeroOrMore>
                 <element name="service">
                     <attribute name="key"/>
@@ -19,7 +23,7 @@
                     </element>
 
                     <optional>
-                        <element name="builder">
+                        <element name="factory">
                             <text/>
                         </element>
                     </optional>
