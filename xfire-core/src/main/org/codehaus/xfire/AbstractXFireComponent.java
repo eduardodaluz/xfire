@@ -1,7 +1,7 @@
 package org.codehaus.xfire;
 
 /**
- * AbstractXFireComponent
+ * This will some day house common XFireComponent functionality.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */

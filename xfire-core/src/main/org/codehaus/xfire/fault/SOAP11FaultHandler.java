@@ -10,7 +10,10 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.DOMStreamWriter;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Creates a fault message based on an exception for SOAP 1.2 messages.
@@ -74,13 +77,28 @@ public class SOAP11FaultHandler
 
             if ( fault.hasDetails() )
             {
-                STAXStreamDOMWriter( fault.getDetailElement(), writer );
+                Element details = fault.getDetailElement();
+                
+                writer.writeStartElement("detail");
+                
+                NodeList children = details.getChildNodes();
+                for ( int i = 0; i < children.getLength(); i++ )
+                {
+                    Node n = children.item(i);
+                    if ( n instanceof Element )
+                    {
+                        DOMStreamWriter.writeElement((Element)n, writer);
+                    }
+                }
+                
+                writer.writeEndElement(); // Details
             }
             
             writer.writeEndElement(); // Fault
             writer.writeEndElement(); // Body
             writer.writeEndElement(); // Envelope
             writer.writeEndDocument(); 
+            writer.close();
         }
         catch (XMLStreamException xe)
         {

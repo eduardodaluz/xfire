@@ -8,6 +8,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.service.SimpleService;
+import org.codehaus.xfire.util.DOMUtils;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.w3c.dom.Element;
@@ -20,7 +21,6 @@ import org.w3c.dom.Element;
 public class XFireFaultTest
     extends AbstractXFireTest
 {
-    
     public void testFaults()
         throws Exception
     {
@@ -30,11 +30,11 @@ public class XFireFaultTest
         fault.setSubCode("m:NotAvailable");
         Element details = fault.getDetailElement();
         Element e = details.getOwnerDocument().createElement("bah");
-        e.setNodeValue("bleh");
+        DOMUtils.setText(e, "bleh");
         details.appendChild(e);
         
         e = details.getOwnerDocument().createElementNS("urn:test2", "bah2");
-        e.setNodeValue("bleh");
+        DOMUtils.setText(e, "bleh");
         details.appendChild(e);
         
         fault.addNamespace("m", "urn:test");
@@ -54,8 +54,46 @@ public class XFireFaultTest
         printNode(doc);
         addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc );
+        addNamespace("t", "urn:test2");
+        assertValid("//s:Detail/t:bah2[text()='bleh']", doc );
     }
+ 
     
+    public void testFaults11()
+        throws Exception
+    {
+        SOAP11FaultHandler soap11 = new SOAP11FaultHandler();
+        
+        XFireFault fault = new XFireFault(new Exception());
+        Element details = fault.getDetailElement();
+        Element e = details.getOwnerDocument().createElement("bah");
+        DOMUtils.setText(e, "bleh");
+        details.appendChild(e);
+        
+        e = details.getOwnerDocument().createElementNS("urn:test2", "bah2");
+        DOMUtils.setText(e, "bleh");
+        details.appendChild(e);
+
+        fault.addNamespace("m", "urn:test");
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MessageContext context = 
+            new MessageContext( "Echo",
+                                null,
+                                out,
+                                null,
+                                null );
+        
+        soap11.handleFault( fault, context );
+        System.err.println(out.toString());
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read( new StringReader(out.toString()) );
+        printNode(doc);
+        addNamespace("s", SOAPConstants.SOAP12_ENVELOPE_NS);
+        addNamespace("t", "urn:test2");
+        assertValid("//detail/t:bah2[text()='bleh']", doc );
+    }
+
     public void testSOAP12()
         throws Exception
     {

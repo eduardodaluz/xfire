@@ -11,7 +11,11 @@ import org.codehaus.xfire.transport.TransportManager;
  * <code>DefaultXFire</code> or can be managed by a container like
  * Pico or Plexus.
  * </p>
- * 
+ * <p>
+ * Central, however, does not mean that there can be only one. 
+ * Implementations can be very lightweight, creating fast generic 
+ * SOAP processors.
+ * </p>
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 18, 2004
  */
@@ -20,8 +24,14 @@ public interface XFire
 	final public static String ROLE = XFire.class.getName();
 
 	/**
-	 * Processes a new SOAP Message request.  If the request is not a SOAP
-     * Message an appropriate Fault is thrown.
+	 * Processes a new SOAP Message request.  If a fault
+     * or exception occurs, it is written to the OutputStream
+     * in the <code>MessageContext</code>.  However, 
+     * <code>XFireRuntimeException</code>s may still be thrown if
+     * something fatal goes wrong in the pipeline.
+     * 
+     * @param in An InputStream to the SOAP document.
+     * @param context The MessageContext.
 	 */
     void invoke( InputStream in,
                  MessageContext context );
@@ -29,11 +39,18 @@ public interface XFire
     /**
      * Generate WSDL for a service.
      * 
-     * @param service
+     * @param service The name of the service.
+     * @param out The OutputStream to write the WSDL to.
      */
     void generateWSDL(String service, OutputStream out);
 
+    /**
+     * Get the <code>ServiceRegistry</code>.
+     */
     ServiceRegistry getServiceRegistry();
     
+    /**
+     * Get the <code>TransportManager</code>.
+     */
     TransportManager getTransportManager();
 }

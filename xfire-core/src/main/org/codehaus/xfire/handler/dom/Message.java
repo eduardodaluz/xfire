@@ -7,9 +7,8 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 
 /**
- * Holds a SOAP message as a DOM4J
- * document. There are also helper methods to grab 
- * the SOAP Body and/or Header.
+ * Holds a SOAP message as a DOM4J document. There are also 
+ * helper methods to grab the SOAP Body and/or Header.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004
@@ -61,7 +60,7 @@ public class Message
 	}
     
 	/**
-	 * @return Returns the header.
+	 * @return Returns the header. If it doesn't exist, it is created.
 	 */
 	public Element getHeader()
 	{

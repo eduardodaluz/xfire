@@ -13,6 +13,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.wsdl.WSDL;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.XPath;
@@ -62,8 +63,17 @@ public class AbstractXFireTest
         
         getXFire().invoke( getResourceAsStream( document ), context );
         
-        SAXReader reader = new SAXReader();
-        return reader.read( new StringReader(out.toString()) );
+        try
+        {
+            SAXReader reader = new SAXReader();
+            return reader.read( new StringReader(out.toString()) );
+        }
+        catch( DocumentException e )
+        {
+            System.err.println("Could not read the document!");
+            System.out.println(out.toString());
+            throw e;
+        }
     }
 
     protected Document getWSDLDocument( String service ) 
@@ -73,8 +83,17 @@ public class AbstractXFireTest
 
         getXFire().generateWSDL( service, out );
         
-        SAXReader reader = new SAXReader();
-        return reader.read( new StringReader(out.toString()) );
+        try
+        {
+            SAXReader reader = new SAXReader();
+            return reader.read( new StringReader(out.toString()) );
+        }
+        catch( DocumentException e )
+        {
+            System.err.println("Could not read the document!");
+            System.out.println(out.toString());
+            throw e;
+        }
     }
     
     /**

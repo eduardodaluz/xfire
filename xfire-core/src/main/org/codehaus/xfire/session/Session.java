@@ -1,7 +1,7 @@
 package org.codehaus.xfire.session;
 
 /**
- * Session
+ * A XFire Session for a series of invocations.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */

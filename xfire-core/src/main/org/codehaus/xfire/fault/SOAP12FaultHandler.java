@@ -78,7 +78,7 @@ public class SOAP12FaultHandler
             {
                 Element details = fault.getDetailElement();
                 
-                writer.writeStartElement("soap:Details");
+                writer.writeStartElement("soap:Detail");
                 
                 NodeList children = details.getChildNodes();
                 for ( int i = 0; i < children.getLength(); i++ )
