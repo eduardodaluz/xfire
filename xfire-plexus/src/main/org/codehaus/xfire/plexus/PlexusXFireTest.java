@@ -3,6 +3,7 @@ package org.codehaus.xfire.plexus;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -112,22 +113,24 @@ public class PlexusXFireTest
      * Assert that the following XPath query selects one or more nodes.
      * 
      * @param xpath
+     * @return 
      */
-    public void assertValid(String xpath, Node node)
+    public List assertValid(String xpath, Node node)
         throws Exception
     {
-        XPathAssert.assertValid(xpath, node, namespaces);
+        return XPathAssert.assertValid(xpath, node, namespaces);
     }
 
     /**
      * Assert that the following XPath query selects no nodes.
      * 
      * @param xpath
+     * @return 
      */
-    public void assertInvalid(String xpath, Node node)
+    public List assertInvalid(String xpath, Node node)
         throws Exception
     {
-        XPathAssert.assertInvalid(xpath, node, namespaces);
+        return XPathAssert.assertInvalid(xpath, node, namespaces);
     }
 
     /**
