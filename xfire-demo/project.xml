@@ -18,7 +18,7 @@
   <url>http://xfire.codehaus.org</url>
   <siteAddress>xfire.codehaus.org</siteAddress>
   <siteDirectory>/home/projects/xfire/public_html/maven/xfire-demo</siteDirectory>
-  <distributionSite>www.codehaus.org</distributionSite>
+  <distributionSite>xfire.codehaus.org</distributionSite>
   <distributionDirectory>/dist</distributionDirectory>
 
   <repository>
