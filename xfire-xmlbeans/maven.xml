@@ -80,6 +80,17 @@
                    refid="xfire.xmlbeans.generated.test"/>
   </goal>
   
+  <goal name="weather-jar">
+
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="xmlbeans.path"
+          fork="true">
+      <arg value="-out"/>
+      <arg value="${basedir}/target/weather.jar"/>
+      <arg value="${basedir}/src/test-schemas"/>
+    </java>
+  </goal>
+  
   <preGoal name="java:compile">
     <attainGoal name="generate-main"/>
   </preGoal>

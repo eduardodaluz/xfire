@@ -47,7 +47,9 @@ public abstract class AbstractXMLBeansHandler
             default:
                 break;
             }
-            event = reader.next();
+            
+            if ( !end )
+                event = reader.next();
         }
         
         XmlObject[] response =
