@@ -12,6 +12,8 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.message.MessageReader;
 import org.codehaus.xfire.message.MessageWriter;
+import org.codehaus.xfire.message.stax.ElementReader;
+import org.codehaus.xfire.message.stax.ElementWriter;
 import org.codehaus.xfire.type.Type;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Element;
@@ -45,7 +47,7 @@ public class XMLBeansType
     {
         try
         {
-            return XmlObject.Factory.parse(reader.getXMLStreamReader());
+            return XmlObject.Factory.parse(((ElementReader) reader).getXMLStreamReader());
         }
         catch( XmlException e )
         {
@@ -66,7 +68,7 @@ public class XMLBeansType
                 do
                 {
                     STAXUtils.copy(cursor.newXMLStreamReader(), 
-                                   writer.getXMLStreamWriter());
+                                   ((ElementWriter) writer).getXMLStreamWriter());
                 }
                 while(cursor.toNextSibling());
             }
