@@ -30,11 +30,11 @@ public class XFireFaultTest
         fault.setSubCode("m:NotAvailable");
         Element details = fault.getDetailElement();
         Element e = details.getOwnerDocument().createElement("bah");
-        e.setTextContent("bleh");
+        e.setNodeValue("bleh");
         details.appendChild(e);
         
         e = details.getOwnerDocument().createElementNS("urn:test2", "bah2");
-        e.setTextContent("bleh");
+        e.setNodeValue("bleh");
         details.appendChild(e);
         
         fault.addNamespace("m", "urn:test");

@@ -80,7 +80,9 @@ public class DOMStreamWriter
             }
         }
 
-        writer.writeCharacters( e.getTextContent() );
+        String value = e.getNodeValue();
+        if ( value != null )
+            writer.writeCharacters( value );
         
         NodeList nodes = e.getChildNodes();
         for ( int i = 0; i < nodes.getLength(); i++ )
