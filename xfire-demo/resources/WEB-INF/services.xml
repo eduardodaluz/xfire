@@ -2,9 +2,6 @@
   <services>
 
     <service>
-      <!-- The binding type -->
-      <type>java</type>
-      
       <!-- The service name -->
       <name>Echo</name>
       
@@ -25,7 +22,6 @@
     </service>
     
     <service>
-      <type>java</type>
       <name>BookService</name>
       <namespace>http://xfire.codehaus.org/BookService</namespace>
       <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>

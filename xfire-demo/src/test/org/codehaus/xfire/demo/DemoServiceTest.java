@@ -1,5 +1,6 @@
 package org.codehaus.xfire.demo;
 import org.codehaus.xfire.plexus.PlexusXFireTest;
+import org.codehaus.xfire.plexus.config.ConfigurationService;
 import org.codehaus.xfire.service.Service;
 
 /**
@@ -18,6 +19,8 @@ public class DemoServiceTest
     
     public void testServices() throws Exception
     {
+        lookup(ConfigurationService.ROLE);
+        
         Service echo = getServiceRegistry().getService("Echo");
         assertNotNull(echo);
         
