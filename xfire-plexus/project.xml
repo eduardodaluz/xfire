@@ -68,7 +68,18 @@
       <artifactId>xfire</artifactId>
       <version>1.0-alpha-2-SNAPSHOT</version>
     </dependency>
-
+        
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-java</artifactId>
+      <version>1.0-alpha-2-SNAPSHOT</version>
+    </dependency>
+        
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-aegis</artifactId>
+      <version>1.0-alpha-2-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   
   <build>

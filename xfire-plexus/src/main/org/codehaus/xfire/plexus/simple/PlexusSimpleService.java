@@ -1,4 +1,4 @@
-package org.codehaus.xfire.plexus;
+package org.codehaus.xfire.plexus.simple;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -19,7 +19,7 @@ import org.codehaus.xfire.service.SimpleService;
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class PlexusService
+public class PlexusSimpleService
 	extends SimpleService
 	implements Configurable, Initializable, Serviceable
 {

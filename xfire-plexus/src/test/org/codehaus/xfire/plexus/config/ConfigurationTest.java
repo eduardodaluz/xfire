@@ -23,5 +23,10 @@ public class ConfigurationTest
         Service s = getServiceRegistry().getService("Echo");
         
         assertNotNull( s ); 
+        
+        Service js = getServiceRegistry().getService("Echo2");
+        
+        assertNotNull( js ); 
+        
     }
 }

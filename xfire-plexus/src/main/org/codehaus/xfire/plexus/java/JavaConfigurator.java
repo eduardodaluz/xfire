@@ -1,21 +1,21 @@
-package org.codehaus.xfire.plexus.config;
+package org.codehaus.xfire.plexus.java;
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.xfire.plexus.PlexusService;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
+import org.codehaus.xfire.plexus.config.Configurator;
 import org.codehaus.xfire.service.Service;
 
 /**
- * TODO document SimpleConfigurator
+ * Configures java services for plexus.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Sep 20, 2004
  */
-public class SimpleConfigurator 
+public class JavaConfigurator
     extends PlexusXFireComponent
     implements Configurator
 {
-    final public static String SERVICE_TYPE = "simple";
+    final public static String SERVICE_TYPE = "java";
     
     /**
      * @see org.codehaus.xfire.plexus.config.Configurator#getServiceType()
@@ -24,17 +24,15 @@ public class SimpleConfigurator
     {
         return SERVICE_TYPE;
     }
-    
+
     /**
-     * @throws Exception
      * @see org.codehaus.xfire.plexus.config.Configurator#createService(org.codehaus.plexus.configuration.PlexusConfiguration)
      */
-    public Service createService( PlexusConfiguration config ) 
-        throws Exception
+    public Service createService( PlexusConfiguration config ) throws Exception
     {
-        PlexusService s = new PlexusService();
-        s.service( getServiceLocator() );
-        s.configure( config );
+        PlexusJavaService s = new PlexusJavaService();
+        s.service(getServiceLocator());
+        s.configure(config);
         s.initialize();
         
         return s;

@@ -19,6 +19,8 @@ public class StandaloneXFireServlet
 {
     StandaloneXFire xfire;
     
+    private File webInfPath;
+    
     public XFire getXFire() throws ServletException
     {
         try
@@ -31,8 +33,18 @@ public class StandaloneXFireServlet
             throw new ServletException("Couldn't find XFire service.  Check configuration.", e);
         }
     }
+
+    public File getWebappBase()
+    {
+        if (webInfPath == null)
+        {
+            webInfPath = new File(getServletContext().getRealPath("/WEB-INF"));
+        }
+
+        return webInfPath;
+    }
     
-    public void init() throws ServletException
+    public XFire createXFire() throws ServletException
     {
         File config = new File(getWebappBase(), getInitParameter("config"));
         
@@ -47,15 +59,13 @@ public class StandaloneXFireServlet
         
         try
         {
-            xfire = StandaloneXFire.getInstance();
+            return StandaloneXFire.getInstance().getXFire();
         }       
         catch (Exception e)
         {
             e.printStackTrace();
             throw new ServletException("Couldn't start XFire service.  Check configuration.", e);
         }
-        
-        super.init();
     }
     
     /**
