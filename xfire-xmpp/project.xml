@@ -4,7 +4,6 @@
   <groupId>xfire</groupId>
   <artifactId>xfire-xmpp</artifactId>
   <id>xfire-xmpp</id>
-  <currentVersion>1.0-SNAPSHOT</currentVersion>
   <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
 
   <package>org.codehaus.xfire.xmpp</package>
