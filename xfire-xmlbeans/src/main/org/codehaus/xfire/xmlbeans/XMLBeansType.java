@@ -14,7 +14,7 @@ import org.codehaus.xfire.message.MessageReader;
 import org.codehaus.xfire.message.MessageWriter;
 import org.codehaus.xfire.type.Type;
 import org.codehaus.xfire.util.STAXUtils;
-import org.dom4j.Element;
+import org.codehaus.yom.Element;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

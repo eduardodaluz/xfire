@@ -4,7 +4,7 @@ import org.codehaus.xfire.service.object.DefaultObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTypeTest;
-import org.dom4j.Document;
+import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
