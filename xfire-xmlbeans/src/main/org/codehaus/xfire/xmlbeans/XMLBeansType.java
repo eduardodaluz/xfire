@@ -1,6 +1,5 @@
 package org.codehaus.xfire.xmlbeans;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.SchemaType;
@@ -25,8 +24,6 @@ import org.codehaus.yom.Element;
 public class XMLBeansType
 	extends Type
 {
-    private SchemaType schemaType;
-
     final static XmlOptions options = new XmlOptions();
     static
     {
@@ -39,7 +36,7 @@ public class XMLBeansType
     
     public XMLBeansType(SchemaType schemaType)
     {
-        this.schemaType = schemaType;
+        setSchemaType(schemaType.getDocumentElementName());
     }
 
     public Object readObject(MessageReader reader, MessageContext context) 
@@ -88,12 +85,5 @@ public class XMLBeansType
     {
         return true;
     }
-    
-    /**
-     * @return Returns the schemaType.
-     */
-    public QName getSchemaType()
-    {
-        return schemaType.getDocumentElementName();
-    }
+
 }
