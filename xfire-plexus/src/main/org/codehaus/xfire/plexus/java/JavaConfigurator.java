@@ -6,12 +6,12 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.xfire.java.DefaultJavaService;
+import org.codehaus.xfire.java.JavaService;
 import org.codehaus.xfire.java.mapping.TypeMapping;
 import org.codehaus.xfire.java.mapping.TypeMappingRegistry;
 import org.codehaus.xfire.java.type.Type;
 import org.codehaus.xfire.java.wsdl.JavaWSDLBuilder;
 import org.codehaus.xfire.plexus.config.Configurator;
-import org.codehaus.xfire.plexus.config.PlexusConfigurationAdapter;
 import org.codehaus.xfire.plexus.simple.SimpleConfigurator;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.TransportManager;
@@ -56,6 +56,31 @@ public class JavaConfigurator
     {
         super.configureService(config, s);
         
+        try
+        {
+            s.setServiceClass( config.getChild( JavaService.SERVICE_CLASS ).getValue() );
+        }
+        catch( ClassNotFoundException e )
+        {
+            throw new PlexusConfigurationException( "Couldn't find service class.", e );
+        }
+        
+        // TODO use allowed methods attribute
+        //setProperty( JavaService.ALLOWED_METHODS,
+        //             config.getChild( JavaService.ALLOWED_METHODS ).getValue( "" ) );
+
+        final String scope = config.getChild( "scope" ).getValue( "application" );
+        if( scope.equals( "application" ) )
+            s.setScope( JavaService.SCOPE_APPLICATION );
+        else if( scope.equals( "session" ) )
+            s.setScope( JavaService.SCOPE_SESSION );
+        else if( scope.equals( "request" ) )
+            s.setScope( JavaService.SCOPE_REQUEST );
+
+        s.setAutoTyped( Boolean.getBoolean(config.getChild( "autoTyped" ).getValue()) );
+
+        s.setEncodingStyleURI( config.getChild("encodingStyleURI").getValue( null ) );
+        
         s.initializeTypeMapping();
 	    
 	    PlexusConfiguration[] types = config.getChild("types").getChildren("type");
@@ -79,8 +104,7 @@ public class JavaConfigurator
             String name = configuration.getAttribute("name");
             
             Type type = (Type) loadClass( configuration.getAttribute("type") ).newInstance();
-            type.configure(new PlexusConfigurationAdapter(configuration));
-            
+
             tm.register( loadClass( configuration.getAttribute("class") ),
                          new QName( ns, name ),
                          type );

@@ -14,7 +14,6 @@ import org.codehaus.xfire.java.type.FloatType;
 import org.codehaus.xfire.java.type.IntType;
 import org.codehaus.xfire.java.type.LongType;
 import org.codehaus.xfire.java.type.Type;
-import org.codehaus.xfire.plexus.config.PlexusConfigurationAdapter;
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
@@ -79,8 +78,7 @@ public class TypeMappingRegistry
             Class typeClass = loadClass( configuration.getAttribute("type") );
             
             Type type = (Type) typeClass.newInstance();
-            type.configure(new PlexusConfigurationAdapter(configuration));
-            
+
             tm.register(clazz, qname, type);
             
             logger.debug( "Registered " + typeClass.getName() + 

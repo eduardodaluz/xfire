@@ -95,13 +95,11 @@ public class SoapHandler
             }
         }
 
-        /* TODO
-         * Invoke global and service Response Pipelines
-         * Handle faults correctly
-         */ 
         writeHeaders(context, writer);
 
         invokeResponsePipeline(handlerStack, context);
+        
+        // TODO: Create a MIME output stream if there are attachments.
         
         writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
         bodyHandler.writeResponse(context);

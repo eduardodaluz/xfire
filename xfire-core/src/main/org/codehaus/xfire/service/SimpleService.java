@@ -6,17 +6,10 @@ import java.util.Hashtable;
 import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.AbstractXFireComponent;
-import org.codehaus.xfire.config.Configurable;
-import org.codehaus.xfire.config.Configuration;
-import org.codehaus.xfire.config.ConfigurationException;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.fault.Soap11FaultHandler;
-import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -28,7 +21,7 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
  */
 public class SimpleService
     extends AbstractXFireComponent
-    implements Service, Configurable
+    implements Service
 {
     private String name;
         
@@ -203,7 +196,6 @@ public class SimpleService
         this.wsdl = wsdl;
     }
 
-    
     /**
      * @return Returns the faultPipeline.
      */
@@ -250,41 +242,5 @@ public class SimpleService
     public void setResponsePipeline(HandlerPipeline responsePipeline)
     {
         this.responsePipeline = responsePipeline;
-    }
-
-    public void configure(Configuration config)
-        throws ConfigurationException
-    {
-        setName(config.getChild("name").getValue());
-        setDefaultNamespace(config.getChild("namespace" ).getValue(""));
-        setUse(config.getChild("use").getValue("literal"));
-        setStyle(config.getChild("style").getValue("wrapped"));
-    
-        try
-        {
-            String wsdlUrl = config.getChild("wsdlURL").getValue("");
-            if (!wsdlUrl.equals("")) {
-                setWSDLURL( wsdlUrl );
-            }
-        }
-        catch (WSDLException e)
-        {
-            throw new ConfigurationException("Could not load the WSDL file.", e);
-        }
-    
-        String soapNS = config.getChild("soapVersion").getValue("1.1");
-    
-        if (soapNS.equals("1.1"))
-        {
-            setSoapVersion( Soap11.getInstance() );
-            setFaultHandler( new Soap11FaultHandler() );
-        }
-        else if (soapNS.equals("1.2"))
-        {
-            setSoapVersion(Soap12.getInstance());
-            setFaultHandler(new Soap12FaultHandler());
-        }
-        else
-            throw new ConfigurationException("Invalid soap version.  Must be 1.1 or 1.2.");
     }
 }

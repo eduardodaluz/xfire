@@ -13,8 +13,10 @@ import java.util.List;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -28,7 +30,7 @@ import org.codehaus.xfire.service.Service;
  */
 public class DefaultConfigurationService
     extends PlexusXFireComponent
-    implements Initializable, Contextualizable, ConfigurationService
+    implements Initializable, Contextualizable, ConfigurationService, Configurable
 { 
     private PlexusContainer container;
     
@@ -164,5 +166,25 @@ public class DefaultConfigurationService
     {
         configurators.put( configurator.getServiceType(),
                            configurator );
+    }
+
+    /**
+     * @param arg0
+     * @throws PlexusConfigurationException
+     */
+    public void configure(PlexusConfiguration config)
+        throws PlexusConfigurationException
+    {
+        try
+        {
+            createServices(config.getChild("services"));
+        }
+        catch (Exception e)
+        {
+            if ( e instanceof PlexusConfigurationException )
+                throw (PlexusConfigurationException) e;
+            
+            throw new PlexusConfigurationException("Couldn't configure service.", e);
+        }
     }
 }
