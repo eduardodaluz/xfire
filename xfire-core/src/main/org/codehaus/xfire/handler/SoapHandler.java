@@ -85,7 +85,7 @@ public class SoapHandler
                     }
                     catch(Exception e)
                     {
-                        handleFault(e, context, handlerStack);
+                        handleInternalFault(e, context, handlerStack);
                     }
                 }
                 else if ( reader.getLocalName().equals("Envelope") )
@@ -120,11 +120,16 @@ public class SoapHandler
         }
         catch(Exception e)
         {
-            handleFault(e, context, handlerStack);
+            handleInternalFault(e, context, handlerStack);
         }        
     }
+    
+    public void handleFault(Exception e, MessageContext context)
+    {
+        context.getService().getFaultHandler().handleFault(e, context);
+    }
 
-    private void handleFault(Exception e, MessageContext context, Stack handlerStack) 
+    private void handleInternalFault(Exception e, MessageContext context, Stack handlerStack) 
         throws Exception
     {
         bodyHandler.handleFault(e, context);
