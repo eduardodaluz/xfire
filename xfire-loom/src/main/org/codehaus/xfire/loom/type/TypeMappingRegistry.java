@@ -42,7 +42,9 @@ public class TypeMappingRegistry extends org.codehaus.xfire.type.DefaultTypeMapp
     private void configureTypeMapping( final Configuration configuration )
         throws ConfigurationException
     {
-        final TypeMapping tm = createTypeMapping( false );
+        final String parentNamespace =
+            configuration.getAttribute( "parentNamespace", getDefaultTypeMapping().getEncodingStyleURI() );
+        final TypeMapping tm = createTypeMapping( parentNamespace, false );
 
         register( configuration.getAttribute( "namespace" ), tm );
 
@@ -52,7 +54,7 @@ public class TypeMappingRegistry extends org.codehaus.xfire.type.DefaultTypeMapp
         }
 
         final Configuration[] types = configuration.getChildren( "type" );
-        
+
         // register primitive types manually since there is no way
         // to do Class.forName("boolean") et al.
         tm.register( boolean.class, new QName( SoapConstants.XSD, "boolean" ), new BooleanType() );
@@ -72,12 +74,12 @@ public class TypeMappingRegistry extends org.codehaus.xfire.type.DefaultTypeMapp
     {
         try
         {
-            String ns = configuration.getAttribute( "namespace" );
-            String name = configuration.getAttribute( "name" );
-            QName qname = new QName( ns, name );
+            final String ns = configuration.getAttribute( "namespace" );
+            final String name = configuration.getAttribute( "name" );
+            final QName qname = new QName( ns, name );
 
-            Class clazz = loadClass( configuration.getAttribute( "class" ) );
-            Class typeClass = loadClass( configuration.getAttribute( "type" ) );
+            final Class clazz = loadClass( configuration.getAttribute( "class" ) );
+            final Class typeClass = loadClass( configuration.getAttribute( "type" ) );
 
             tm.register( clazz,
                          qname,
