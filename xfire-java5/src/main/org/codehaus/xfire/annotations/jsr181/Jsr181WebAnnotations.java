@@ -29,7 +29,8 @@ public class Jsr181WebAnnotations
             annotation.setTargetNamespace(webService.targetNamespace());
 
             return annotation;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -50,7 +51,8 @@ public class Jsr181WebAnnotations
             annotation.setOperationName(webMethod.operationName());
 
             return annotation;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -72,7 +74,8 @@ public class Jsr181WebAnnotations
             annot.setTargetNameSpace(webResult.targetNamespace());
 
             return annot;
-        } else
+        }
+        else
         {
             return null;
         }
@@ -84,7 +87,8 @@ public class Jsr181WebAnnotations
         if (parameter >= annotations.length)
         {
             return false;
-        } else
+        }
+        else
         {
             for (int i = 0; i < annotations[parameter].length; i++)
             {
@@ -125,16 +129,19 @@ public class Jsr181WebAnnotations
             if (webParam.mode() == WebParam.Mode.IN)
             {
                 annot.setMode(WebParamAnnotation.MODE_IN);
-            } else if (webParam.mode() == WebParam.Mode.INOUT)
+            }
+            else if (webParam.mode() == WebParam.Mode.INOUT)
             {
                 annot.setMode(WebParamAnnotation.MODE_INOUT);
-            } else if (webParam.mode() == WebParam.Mode.OUT)
+            }
+            else if (webParam.mode() == WebParam.Mode.OUT)
             {
                 annot.setMode(WebParamAnnotation.MODE_OUT);
             }
 
             return annot;
-        } else
+        }
+        else
         {
             return null;
         }
