@@ -36,7 +36,7 @@
         class="org.codehaus.xfire.service.object.ObjectServiceBuilder"
         singleton="true">
      <constructor-arg>
-       <ref bean="xfire"/>
+       <ref bean="xfire.transportManager"/>
      </constructor-arg>
      <constructor-arg>
        <ref bean="xfire.typeMappingRegistry"/>
