@@ -2,13 +2,16 @@ package org.codehaus.xfire.xmpp.client;
 
 import java.io.ByteArrayOutputStream;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.client.ClientHandler;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.xmpp.SoapBodyPacket;
+import org.codehaus.xfire.xmpp.SoapEnvelopePacket;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -28,13 +31,14 @@ public class XMPPClient
     public XMPPClient(String host, 
                       String username, 
                       String password,
+                      String resource,
                       String service,
                       ClientHandler clientHandler) 
         throws XMPPException
     {
         conn = new XMPPConnection(host);
-        conn.login(username, password, "Echo");
-        from = username + "@" + host;
+        conn.login(username, password, resource);
+        from = username + "@" + host + "/" + resource;
         
         this.service = service;
         this.clientHandler = clientHandler;
@@ -58,7 +62,7 @@ public class XMPPClient
             throw new XFireFault("Couldn't write request.", XFireFault.SENDER);
         }
         
-        SoapBodyPacket packet = new SoapBodyPacket(out.toString());
+        SoapEnvelopePacket packet = new SoapEnvelopePacket(out.toString());
         packet.setType(IQ.Type.GET);
         packet.setFrom(from);
         packet.setTo(service);
@@ -70,10 +74,27 @@ public class XMPPClient
         conn.sendPacket(packet);
 
         // Wait up to 5 seconds for a result.
-        IQ result = (IQ) collector.nextResult(10000);
-        if (result != null && result.getType() == IQ.Type.RESULT) 
+        IQ result = (IQ) collector.nextResult(5000);
+        if (result != null 
+            && 
+            result.getType() == IQ.Type.RESULT
+            &&
+            result instanceof SoapEnvelopePacket) 
         {
-            System.out.println(result.toXML());
+            SoapEnvelopePacket env = (SoapEnvelopePacket) result;
+
+            try
+            {
+                XMLInputFactory iFactory = XMLInputFactory.newInstance();
+                XMLStreamReader reader = 
+                    iFactory.createXMLStreamReader(env.getDocumentInputStream());
+                
+                clientHandler.handleResponse( reader );
+            }
+            catch (XMLStreamException e)
+            {
+                throw new XFireRuntimeException("Couldn't parse stream.", e);
+            }
         }
     }
     

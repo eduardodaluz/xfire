@@ -1,15 +1,18 @@
 package org.codehaus.xfire.xmpp;
 
+import org.codehaus.xfire.java.DefaultJavaService;
 import org.codehaus.xfire.java.ServiceHelper;
 import org.codehaus.xfire.java.test.AbstractXFireJavaTest;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.wsdl.WSDL11Transport;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
+import org.dom4j.Document;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.ToContainsFilter;
-import org.jivesoftware.smack.packet.Presence;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -17,13 +20,13 @@ import org.jivesoftware.smack.packet.Presence;
 public class TransportTest
     extends AbstractXFireJavaTest
 {
-    private Service echo;
+    private DefaultJavaService echo;
     
     XMPPConnection conn;
     
     String username = "xfireTestServer";
     String password = "password1";
-    String server = "jabber.org";
+    String server = "bloodyxml.com";
     String id = username + "@" + server;
     
     public void setUp() 
@@ -32,13 +35,12 @@ public class TransportTest
         super.setUp();
         try
         {
-            echo = ServiceHelper.createService(getXFire(), getRegistry(), Echo.class);
-    
-            XMPPConnection.DEBUG_ENABLED = true;
+            echo = (DefaultJavaService) ServiceHelper.createService(getXFire(), getRegistry(), Echo.class);
+
+            //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);
-
             conn.login(username, password, "Echo");
-
+            
             XFirePacketListener listener = new XFirePacketListener(getXFire(), conn);
             conn.addPacketListener(listener, new ToContainsFilter("xfireTestServer"));
         }
@@ -60,9 +62,10 @@ public class TransportTest
     {
         try
         {
-            XMPPClient client = new XMPPClient("jabber.org", 
-                                               "xfireTestClient", 
+            XMPPClient client = new XMPPClient("bloodyxml.com", 
+                                               "xfireTestClient",
                                                "password2",
+                                               "Echo",
                                                id + "/Echo",
                                                new EchoHandler());
     
@@ -75,10 +78,20 @@ public class TransportTest
         }
     }
     
-    /*public void testWSDL()
+    public void testWSDL()
         throws Exception
     {
         Document wsdl = getWSDLDocument("Echo");
-        printNode(wsdl);
-    }*/
+        
+        addNamespace("wsdl", WSDLWriter.WSDL11_NS);
+        addNamespace("swsdl", WSDLWriter.WSDL11_SOAP_NS);
+        
+        assertValid("//wsdl:binding[@name='EchoXMPPBinding'][@type='tns:EchoPortType']", wsdl);
+        assertValid("//wsdl:binding[@name='EchoXMPPBinding']/swsdl:binding[@transport='" +
+                        XMPPTransport.XMPP_TRANSPORT_NS + "']", wsdl);
+        
+        assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']", wsdl);
+        assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +
+                    "/swsdl:address[@location='xfiretestserver@bloodyxml.com/Echo']", wsdl);
+    }
 }

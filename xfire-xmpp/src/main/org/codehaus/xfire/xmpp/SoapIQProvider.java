@@ -47,7 +47,7 @@ public class SoapIQProvider
     {
         try
         {
-            return new SoapBodyPacket(parseDocument(parser));
+            return new SoapEnvelopePacket(parseDocument(parser));
         }
         catch(Exception e)
         {
@@ -171,10 +171,11 @@ public class SoapIQProvider
                     parent = parent.getParent();
                 }
 
-                if (pp.getDepth() < depth 
+                if (pp.getDepth() <= depth 
                     && parent == null)
+                {
                     return document;
-
+                }
                 break;
             }
 

@@ -28,7 +28,17 @@ public class EchoHandler
     public void handleResponse(XMLStreamReader reader)
         throws XMLStreamException
     {
-        // do nothing
+        while(reader.hasNext())
+        {
+            if(reader.getEventType() == XMLStreamReader.START_ELEMENT
+               &&
+               reader.getLocalName().equals("out"))
+            {
+                System.out.println("Echo...");
+            }
+                
+            reader.next();
+        }
     }
 
 }

@@ -9,18 +9,18 @@ import org.jivesoftware.smack.packet.IQ;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class SoapBodyPacket
+public class SoapEnvelopePacket
     extends IQ
 {
     private Document document;
     private String body;
     
-    public SoapBodyPacket(String body)
+    public SoapEnvelopePacket(String body)
     {
         this.body = body;
     }
     
-    public SoapBodyPacket(Document document)
+    public SoapEnvelopePacket(Document document)
     {
         this.document = document;
     }
@@ -28,7 +28,7 @@ public class SoapBodyPacket
     public String getChildElementXML()
     {
         if (document != null)
-            return document.asXML();
+            return document.getRootElement().asXML();
         else
             return body;
     }
@@ -40,6 +40,6 @@ public class SoapBodyPacket
     
     public InputStream getDocumentInputStream()
     {
-        return new ByteArrayInputStream( document.asXML().getBytes() );
+        return new ByteArrayInputStream( document.getRootElement().asXML().getBytes() );
     }
 }

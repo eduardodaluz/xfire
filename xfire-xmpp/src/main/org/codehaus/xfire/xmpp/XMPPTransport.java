@@ -20,7 +20,7 @@ public class XMPPTransport
     
     public XMPPTransport(XMPPConnection conn)
     {
-        this.id = conn.getUser() + "@" + conn.getHost();
+        this.id = conn.getUser();
         
         // Make sure the SoapIQProvider class has been loaded so
         // our IQ provider is registered.
