@@ -33,7 +33,7 @@
   </bean>
 
   <bean id="xfire.serviceBuilder" 
-        class="org.codehaus.xfire.service.object.ObjectServiceBuilder"
+        class="org.codehaus.xfire.service.object.ObjectServiceFactory"
         singleton="true">
      <constructor-arg>
        <ref bean="xfire.transportManager"/>

@@ -20,7 +20,7 @@ public class XMLBeansServiceTest
     {
         super.setUp();
         
-        builder = new XMLBeansServiceBuilder(getXFire().getTransportManager(), null, null);
+        builder = new XMLBeansServiceBuilder(getXFire().getTransportManager(), null);
         
         service = (DefaultObjectService) 
             builder.create(WeatherService.class,

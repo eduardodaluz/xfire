@@ -4,11 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.handler.SoapHandler;
-import org.codehaus.xfire.message.ObjectServiceHandler;
+import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.object.DefaultObjectService;
-import org.codehaus.xfire.service.object.Invoker;
-import org.codehaus.xfire.service.object.ServiceBuilder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.support.RemoteExporter;
@@ -25,7 +22,7 @@ public class XFireExporter
 {
     private BeanFactory factory;
     private DefaultObjectService service;
-    private ServiceBuilder serviceBuilder;
+    private ServiceFactory serviceBuilder;
     private SpringXFireController controller;
     private XFire xFire;
     
@@ -36,8 +33,7 @@ public class XFireExporter
 
         getXfire().getServiceRegistry().register( service );
 
-        Invoker invoker = new BeanInvoker(getProxyForService());
-        service.setServiceHandler(new SoapHandler(new ObjectServiceHandler(invoker)));
+        service.setInvoker(new BeanInvoker(getProxyForService()));
         
         controller = new SpringXFireController(getXfire(), service.getName());
     }
@@ -50,12 +46,12 @@ public class XFireExporter
         return null;
     }
 
-    public ServiceBuilder getServiceBuilder()
+    public ServiceFactory getServiceBuilder()
     {
         return serviceBuilder;
     }
     
-    public void setServiceBuilder(ServiceBuilder serviceBuilder)
+    public void setServiceBuilder(ServiceFactory serviceBuilder)
     {
         this.serviceBuilder = serviceBuilder;
     }

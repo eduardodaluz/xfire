@@ -14,12 +14,12 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.object.DefaultObjectService;
 import org.codehaus.xfire.service.object.Invoker;
 import org.codehaus.xfire.service.object.ObjectService;
-import org.codehaus.xfire.service.object.ObjectServiceBuilder;
-import org.codehaus.xfire.service.object.ServiceBuilder;
+import org.codehaus.xfire.service.object.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -42,8 +42,7 @@ public class ObjectServiceConfigurator
         throws Exception
     {
         String builderClass = config.getChild("serviceBuilder").getValue("");
-        ServiceInvoker invoker = new ServiceInvoker(getServiceLocator());
-        ServiceBuilder builder = getServiceBuilder(builderClass, invoker );
+        ServiceFactory builder = getServiceBuilder(builderClass);
 
         String name = config.getChild("name").getValue();
         String namespace = config.getChild("namespace" ).getValue("");
@@ -122,6 +121,9 @@ public class ObjectServiceConfigurator
         else if( scope.equals( "request" ) )
             service.setScope( ObjectService.SCOPE_REQUEST );
         
+        ServiceInvoker invoker = new ServiceInvoker(getServiceLocator());
+        service.setInvoker(invoker);
+
         getServiceRegistry().register( service );
 
         return service;
@@ -131,21 +133,21 @@ public class ObjectServiceConfigurator
      * @return
      * @throws PlexusConfigurationException 
      */
-    protected ServiceBuilder getServiceBuilder( String builderClass, Invoker invoker )
+    protected ServiceFactory getServiceBuilder( String builderClass )
         throws Exception
     {
         if (builderClass.length() == 0)
         {
-            return new ObjectServiceBuilder(getXFire().getTransportManager(), getTypeMappingRegistry(), invoker);
+            return new ObjectServiceFactory(getXFire().getTransportManager(), getTypeMappingRegistry());
         }
         else
         {
             Class clz = getClass().getClassLoader().loadClass(builderClass);
             Constructor con = 
-                clz.getConstructor( new Class[] {TransportManager.class, TypeMappingRegistry.class, Invoker.class} );
+                clz.getConstructor( new Class[] {TransportManager.class, TypeMappingRegistry.class} );
             
-            return (ServiceBuilder) 
-                con.newInstance(new Object[] {getXFire().getTransportManager(), getTypeMappingRegistry(), invoker});
+            return (ServiceFactory) 
+                con.newInstance(new Object[] {getXFire().getTransportManager(), getTypeMappingRegistry()});
         }
     }
     
