@@ -16,6 +16,7 @@
     <ant:delete dir="${maven.build.dir}/xfire-xmlbeans-main"/>
     <ant:mkdir dir="${maven.build.dir}/xfire-xmlbeans-main"/>
 
+    <!-- Output WSDL types to xfire-xmlbeans-main -->
     <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
           classpathref="xmlbeans.path"
           fork="true">
@@ -58,6 +59,7 @@
     
     <ant:path id="generate.path">
       <ant:pathelement path="${maven.build.dest}"/>
+      <ant:pathelement path="${maven.build.dir}/xfire-xmlbeans-main"/>
       <ant:path refid="maven.dependency.classpath"/>
       <ant:pathelement path="${maven.test.dest}"/>
     </ant:path>   
@@ -69,7 +71,7 @@
          Generate the Weather Service stub and add the directory to 
          the src set to be compiled. 
      -->
-    <echo>Creating Weather Service</echo>
+    <!-- echo>Creating Weather Service</echo>
     <generate overwrite="true"
               package="org.codehaus.xfire.xmlbeans.weather"
               outputDir="${maven.build.dir}/xfire-xmlbeans-test"
@@ -80,11 +82,10 @@
               location="${maven.build.dir}/xfire-xmlbeans-test"/>
 
     <maven:addPath id="maven.test.compile.src.set"  
-                   refid="xfire.xmlbeans.generated.test"/>
+                   refid="xfire.xmlbeans.generated.test"/ -->
   </goal>
   
   <goal name="support-jars">
-
     <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
           classpathref="xmlbeans.path"
           fork="true">

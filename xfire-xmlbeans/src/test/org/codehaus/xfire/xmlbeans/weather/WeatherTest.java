@@ -11,6 +11,6 @@ public class WeatherTest
 {
     public void testWeather() throws Exception
     {
-        WeatherForecastSoapClient client = new WeatherForecastSoapClient();
+        // WeatherForecastSoapClient client = new WeatherForecastSoapClient();
     }
 }

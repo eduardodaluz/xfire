@@ -29,17 +29,11 @@
       <artifactId>xfire-java</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-	
+
     <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xmlbeans</artifactId>
-      <version>2.0-20041214</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xmlbeans-xmlpublic</artifactId>
-      <version>2.0-20041214</version>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xbean</artifactId>
+      <version>2.0.0-beta1</version>
     </dependency>
 
     <!-- Generator Dependencies -->
@@ -65,12 +59,6 @@
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
       <version>1.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xbean</artifactId>
-      <version>1.0.4</version>
     </dependency>
 
   </dependencies>
