@@ -1,0 +1,80 @@
+<project>
+  <pomVersion>1</pomVersion>
+  <name>Java 5 XFire Module</name>
+  <groupId>xfire</groupId>
+  <artifactId>xfire-java5</artifactId>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
+
+  <package>org.codehaus.xfire</package>
+  <description>Java 5 classes for XFire.</description>
+  <shortDescription>Java 5 classes for XFire.</shortDescription>
+  
+  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-java5</siteDirectory>
+  
+  <versions/>
+  
+  <branches/>
+
+  <dependencies>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-java</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-annotations</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>beehive</groupId>
+      <artifactId>wsm</artifactId>
+      <version>1.0-alpha</version>
+    </dependency>
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>1.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>${basedir}/src/main</sourceDirectory>
+    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+        <include>**/*TestCase.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+      </excludes>
+      <resources>
+        <resource>
+          <directory>${basedir}/src/test</directory>
+          <includes>
+            <include>**/*.xml</include>
+            <include>**/*.vm</include>
+          </includes>
+          <filtering>false</filtering>
+        </resource>
+      </resources>
+    </unitTest>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <properties/>
+</project>
