@@ -13,7 +13,7 @@
       excludes="xfire-plexus/*,xfire-aegis/*,xfire-xmlbeans/*,xfire-demo/*,xfire-java/*"
       goals="pom:install,jar:install"
       banner="Installing XFire Core"
-      ignoreFailures="true"/>
+      ignoreFailures="false"/>
             
     <maven:reactor
       basedir="${basedir}"
@@ -22,7 +22,7 @@
       excludes="*"
       goals="jar:install"
       banner="Installing XFire"
-      ignoreFailures="true"/>
+      ignoreFailures="false"/>
 	  
     <maven:reactor
       basedir="${basedir}"
@@ -31,16 +31,16 @@
       excludes="*"
       goals="pom:install"
       banner="Installing XFire Plexus POM"
-      ignoreFailures="true"/>
+      ignoreFailures="false"/>
             
     <maven:reactor
       basedir="${basedir}"
       postProcessing="true"
-      includes="xfire-plexus/project.xml,xfire-aegis/project.xml"
+      includes="xfire-plexus/project.xml"
       excludes="*"
       goals="jar:install"
       banner="Installing XFire"
-      ignoreFailures="true"/>
+      ignoreFailures="false"/>
     
   </goal>
   
@@ -53,10 +53,10 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-demo/*"
+      excludes="xfire-demo/*,xfire-aegis"
       goals="jar:deploy"
       banner="Installing XFire"
-      ignoreFailures="true"/>
+      ignoreFailures="false"/>
     
   </goal>
     
@@ -91,5 +91,20 @@
       ignoreFailures="true"/>
     
   </goal>
+      
+  <goal name="clean"
+        description="Clean everything.">
 
+    <!-- Generate the site for each of the components. -->
+
+    <maven:reactor
+      basedir="${basedir}"
+      postProcessing="true"
+      includes="*/project.xml"
+      excludes=""
+      goals="clean"
+      banner="Cleaning!"
+      ignoreFailures="true"/>
+    
+  </goal>
 </project>
