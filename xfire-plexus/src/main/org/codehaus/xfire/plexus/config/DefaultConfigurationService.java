@@ -67,8 +67,6 @@ public class DefaultConfigurationService
     private void createService(PlexusConfiguration c) 
         throws Exception
     {
-        getLogger().info("Creating service " + c.getChild("name").getValue() );
-        
         Service service = configurator.createService(c);
     }
 

@@ -31,6 +31,22 @@
       <serviceBuilder>org.codehaus.xfire.xmlbeans.XMLBeansServiceBuilder</serviceBuilder>
     </service>
     
+    <service>
+      <serviceClass>org.codehaus.xfire.plexus.config.EchoIntf</serviceClass>
+      <implementationClass>org.codehaus.xfire.plexus.config.Echo</implementationClass>
+      <wsdl>./src/test/org/codehaus/xfire/plexus/config/Echo.wsdl</wsdl>
+      <types>
+        <type type="org.codehaus.xfire.type.basic.StringType"
+              namespace="urn:Echo"
+              name="echoRequest"
+              class="java.lang.String"/>
+        <type type="org.codehaus.xfire.type.basic.StringType"
+              namespace="urn:Echo"
+              name="echoResponse"
+              class="java.lang.String"/>
+      </types>
+    </service>
+    
   </services>
   
 </xfire>

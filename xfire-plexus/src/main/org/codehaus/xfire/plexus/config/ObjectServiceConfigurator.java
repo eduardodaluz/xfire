@@ -1,6 +1,8 @@
 package org.codehaus.xfire.plexus.config;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.wsdl.WSDLException;
@@ -41,7 +43,6 @@ public class ObjectServiceConfigurator
     public Service createService( PlexusConfiguration config ) 
         throws Exception
     {
-        System.out.println("Creating service");
         String builderClass = config.getChild("serviceBuilder").getValue("");
         ServiceBuilder builder = getServiceBuilder(builderClass);
 
@@ -52,16 +53,32 @@ public class ObjectServiceConfigurator
         String serviceClass = config.getChild("serviceClass").getValue();
         String implClass = config.getChild("implementationClass").getValue("");
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
-        String wsdlUrl = config.getChild("wsdlURL").getValue("");
+        String wsdlUrl = config.getChild("wsdl").getValue("");
 
         DefaultObjectService service = null;
         if (wsdlUrl.length() > 0)
         {
             try
             {
-                URL url = new URL(wsdlUrl);
+                TypeMapping tm = getTypeMappingRegistry().createTypeMapping(true);
+                PlexusConfiguration[] types = config.getChild("types").getChildren("type");
+                for ( int i = 0; i < types.length; i++ )
+                {
+                    initializeType( types[i], tm );   
+                }
+                
+                URL url = null;
+                try
+                {
+                    url = new URL(wsdlUrl);
+                }
+                catch (MalformedURLException e)
+                {
+                    url = new File(wsdlUrl).toURL();
+                }
                     
-                builder.create(url);
+                getLogger().info("Creating service with " + url.toString() );
+                service = (DefaultObjectService) builder.create(loadClass(serviceClass), tm, url);
             }
             catch (WSDLException e)
             {
@@ -70,6 +87,8 @@ public class ObjectServiceConfigurator
         }
         else
         {
+            getLogger().info("Creating service " + name );
+            
             Class clazz = getClass().getClassLoader().loadClass(serviceClass);
             
             SoapVersion version = null;
@@ -83,6 +102,12 @@ public class ObjectServiceConfigurator
             }
             
             service = (DefaultObjectService) builder.create(clazz, name, namespace, version, style, use);
+            
+            PlexusConfiguration[] types = config.getChild("types").getChildren("type");
+            for ( int i = 0; i < types.length; i++ )
+            {
+                initializeType( types[i], service.getTypeMapping() );   
+            }
         }
         
         if (implClass.length() > 0)
@@ -97,12 +122,6 @@ public class ObjectServiceConfigurator
             service.setScope( ObjectService.SCOPE_SESSION );
         else if( scope.equals( "request" ) )
             service.setScope( ObjectService.SCOPE_REQUEST );
-        
-        PlexusConfiguration[] types = config.getChild("types").getChildren("type");
-        for ( int i = 0; i < types.length; i++ )
-        {
-            initializeType( types[i], service.getTypeMapping() );   
-        }
         
         ServiceInvoker invoker = new ServiceInvoker(getServiceLocator());
         ObjectServiceHandler handler = new ObjectServiceHandler(invoker);
