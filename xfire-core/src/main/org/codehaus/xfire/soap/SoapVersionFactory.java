@@ -1,6 +1,7 @@
 package org.codehaus.xfire.soap;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -31,5 +32,10 @@ public class SoapVersionFactory
     public void register(SoapVersion version)
     {
         versions.put(version.getNamespace(), version);
+    }
+
+    public Iterator getVersions()
+    {
+        return versions.values().iterator();
     }
 }

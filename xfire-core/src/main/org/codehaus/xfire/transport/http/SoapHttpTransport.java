@@ -23,6 +23,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.wsdl.WSDL11Transport;
 
 import com.ibm.wsdl.BindingImpl;
 import com.ibm.wsdl.BindingInputImpl;
@@ -39,7 +40,7 @@ import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
  */
 public class SoapHttpTransport
     extends AbstractTransport
-	implements Transport
+	implements Transport, WSDL11Transport
 {
     public final static String ID = "http";
 

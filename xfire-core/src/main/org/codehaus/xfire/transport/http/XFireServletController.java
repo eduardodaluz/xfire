@@ -185,6 +185,7 @@ public class XFireServletController
                                response.getOutputStream(), 
                                session, 
                                request.getRequestURI());
+
         context.setTransport(transport);
         
         String contentType = request.getHeader("Content-Type");
