@@ -37,7 +37,7 @@ public class Soap11FaultHandler
         XMLStreamWriter writer;
         try
         {
-            writer = factory.createXMLStreamWriter( context.getResponseStream() );
+            writer = factory.createXMLStreamWriter(context.getFaultDestination().getOutputStream());
             writer.writeStartDocument();
             writer.writeStartElement("soap:Envelope");
             writer.writeAttribute("xmlns:soap", Soap11.getInstance().getNamespace());

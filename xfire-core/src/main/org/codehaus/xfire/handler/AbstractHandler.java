@@ -45,7 +45,7 @@ public abstract class AbstractHandler
     {
     }
     
-    public XMLStreamWriter getXMLStreamWriter( MessageContext context )
+    public XMLStreamWriter getXMLStreamWriter(MessageContext context)
     {
         XMLStreamWriter writer = (XMLStreamWriter) context.getProperty(STAX_WRITER_KEY);
         
@@ -54,7 +54,7 @@ public abstract class AbstractHandler
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
             try
             {
-                writer = factory.createXMLStreamWriter(context.getResponseStream());
+                writer = factory.createXMLStreamWriter(context.getReplyDestination().getOutputStream());
             }
             catch (XMLStreamException e)
             {

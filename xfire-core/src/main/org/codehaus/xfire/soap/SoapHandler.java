@@ -1,4 +1,4 @@
-package org.codehaus.xfire.handler;
+package org.codehaus.xfire.soap;
 
 import java.util.Stack;
 
@@ -10,8 +10,11 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.EndpointHandler;
+import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 import org.codehaus.yom.stax.StaxBuilder;
@@ -52,7 +55,6 @@ public class SoapHandler
     	throws Exception
     {
         XMLStreamReader reader = context.getXMLStreamReader();
-        XMLStreamWriter writer = null;
         String encoding = null;
 
         Stack handlerStack = new Stack();
@@ -96,30 +98,45 @@ public class SoapHandler
             }
         }
 
+        if (bodyHandler.hasResponse(context) && context.getReplyDestination() != null)
+        {
+            writeResponse(context, encoding, handlerStack);
+        }
+    }
+
+    /**
+     * Create a response envelope and write the response message.
+     * @param context
+     * @param encoding
+     * @param handlerStack
+     * @throws Exception
+     */
+    protected void writeResponse(MessageContext context, String encoding, Stack handlerStack)
+        throws Exception
+    {
         Attachments atts = (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
         if (atts != null && atts.size() > 0)
         {
             createMimeOutputStream(context);
         }
         
-        writer = createResponseWriter(context, encoding);
-
+        XMLStreamWriter writer = createResponseWriter(context, encoding);
+        
         writeHeaders(context, writer);
-
         invokeResponsePipeline(handlerStack, context);
-
+        
         QName body = context.getSoapVersion().getBody();
         writer.writeStartElement(body.getPrefix(), 
                                  body.getLocalPart(),
                                  body.getNamespaceURI());
         
         bodyHandler.writeResponse(context);
-        writer.writeEndElement();
         
+        writer.writeEndElement();
         writer.writeEndElement();  // Envelope
-
         writer.writeEndDocument();
-        writer.close();       
+        
+        writer.close();
     }
 
     private void createMimeOutputStream(MessageContext context)

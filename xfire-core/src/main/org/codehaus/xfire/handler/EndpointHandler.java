@@ -22,5 +22,7 @@ import org.codehaus.xfire.fault.XFireFault;
 public interface EndpointHandler
 	extends Handler
 {
+    public boolean hasResponse(MessageContext context);
+    
     public void writeResponse(MessageContext context) throws XFireFault;
 }

@@ -31,4 +31,9 @@ public class BadHandler
         throws XFireFault
     {
     }
+
+    public boolean hasResponse(MessageContext context)
+    {
+        return true;
+    }
 }

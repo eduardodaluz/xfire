@@ -76,7 +76,11 @@ public abstract class AbstractXFireTest
 
         getXFire().invoke( getResourceAsStream( document ), context );
 
-        return readDocument( out.toString() );
+        String response = out.toString();
+        if (response == null || response.length() == 0)
+            return null;
+        
+        return readDocument(response);
     }
 
     protected Document readDocument( String text )

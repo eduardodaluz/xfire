@@ -4,6 +4,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.MessageService;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 

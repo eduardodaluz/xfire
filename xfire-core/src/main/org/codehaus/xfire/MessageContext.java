@@ -32,13 +32,17 @@ public class MessageContext
     private String serviceName;
     private String action;
     private Map properties;
+
     private SoapVersion soapVersion;
     private Service service;
     private Transport transport;
     private XMLStreamReader xmlStreamReader;
-    
+
     private Element requestHeader;
     private Element responseHeader;
+
+    private MessageDestination replyDestination;
+    private MessageDestination faultDestination;
     
     public MessageContext()
     {
@@ -62,9 +66,31 @@ public class MessageContext
         
         this.serviceName = service;
         this.action = action;
-        this.responseStream = response;
         this.session = session;
         this.requestUri = requestUri;
+        
+        this.replyDestination = new MessageDestination(response, requestUri);
+        this.faultDestination = replyDestination;
+    }
+
+    public MessageDestination getFaultDestination()
+    {
+        return faultDestination;
+    }
+
+    public void setFaultDestination(MessageDestination faultDestination)
+    {
+        this.faultDestination = faultDestination;
+    }
+
+    public MessageDestination getReplyDestination()
+    {
+        return replyDestination;
+    }
+
+    public void setReplyDestination(MessageDestination replyDestination)
+    {
+        this.replyDestination = replyDestination;
     }
 
     /**
@@ -95,16 +121,6 @@ public class MessageContext
     public void setRequestUri( String requestUri )
     {
         this.requestUri = requestUri;
-    }
-    
-    public OutputStream getResponseStream()
-    {
-        return responseStream;
-    }
-    
-    public void setResponseStream( OutputStream responseStream )
-    {
-        this.responseStream = responseStream;
     }
     
     public void setRequestStream( InputStream requestStream )
