@@ -67,9 +67,7 @@ public class XFireFault
 	private String role;
 	
 	private Node detail;
-	
-	private Exception exception;
-	
+
     private DocumentBuilder docBuilder;
     
     private Map namespaces;
@@ -77,15 +75,14 @@ public class XFireFault
     /**
      * Create a fault.
      * 
-	 * @param string The fault message.
-	 * @param exception The exception which caused this fault.
+	 * @param throwable The exception which caused this fault.
      * @param code The fault code. See XFireFault's static fields.
-	 */
+     */
 	public XFireFault( String message, 
-	                   Exception exception,
+	                   Throwable throwable,
 	                   String code )
 	{
-		super( exception );
+		super( throwable );
 		
 		if ( message != null )
 		    this.message = message;
@@ -99,23 +96,23 @@ public class XFireFault
     /**
      * Create a fault for the specified exception. The faultCode is
      * set to RECEIVER.
-     * @param exception
+     * @param throwable
      */
-	public XFireFault( Exception exception )
+	public XFireFault( Throwable throwable )
 	{
-	    this( exception, RECEIVER );
+	    this( throwable, RECEIVER );
 	}
 	
 	/**
      * Create a fault with the specified faultCode. The exception
      * message is used for the fault message.
      * 
-     * @param exception The exception that caused this fault.
+     * @param throwable The exception that caused this fault.
      * @param code The fault code. See XFireFault's static fields.
      */
-    public XFireFault(Exception exception, String code)
+    public XFireFault(Throwable throwable, String code)
     {
-        this( exception.getMessage(), exception, code );
+        this( throwable.getMessage(), throwable, code );
     }
 
     /**
@@ -137,17 +134,17 @@ public class XFireFault
     {
     }
 
-    public static XFireFault createFault( Exception e )
+    public static XFireFault createFault( Throwable throwable )
 	{
 	    XFireFault fault = null;
         
-        if ( e instanceof XFireFault )
+        if ( throwable instanceof XFireFault )
         {
-            fault = (XFireFault) e;
+            fault = (XFireFault) throwable;
         }
         else
         {
-            fault = new XFireFault( e );
+            fault = new XFireFault( throwable );
         }
         
         return fault;
