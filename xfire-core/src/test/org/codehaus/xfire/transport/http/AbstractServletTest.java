@@ -2,14 +2,16 @@ package org.codehaus.xfire.transport.http;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+
 import org.codehaus.xfire.AbstractXFireTest;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.xml.sax.SAXException;
+
 import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.HttpUnitOptions;
-import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 
@@ -45,7 +47,7 @@ public class AbstractServletTest
         return xfire;
     }
     
-    protected ServletUnitClient newClient() throws Exception
+    protected ServletUnitClient newClient()
     {
         ServletUnitClient client = sr.newClient();
 
@@ -70,13 +72,12 @@ public class AbstractServletTest
         String errorText)
         throws MalformedURLException, IOException, SAXException
     {
-        WebConversation session = new WebConversation();
         String failureText =
             "Expected error " + errorCode + " from " + request.getURL();
     
         try
         {
-            session.getResponse(request);
+            WebResponse response = newClient().getResponse(request);
             fail(errorText + " -got success instead");
         }
         catch (HttpException e)

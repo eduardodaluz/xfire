@@ -1,6 +1,7 @@
 package org.codehaus.xfire.transport;
 
-import java.util.Set;
+import java.util.Collection;
+
 
 /**
  * Registers transports for the SOAP services.
@@ -13,7 +14,14 @@ public interface TransportManager
 
     void register( Transport transport );
     
-    Set getTransports( String service );
+    Transport getTransport( String id );
+    
+    /**
+     * Get the transports applicable to a particular service.
+     * @param service
+     * @return
+     */
+    Collection getTransports(String service);
     
     void enable( String transport, String service );
 

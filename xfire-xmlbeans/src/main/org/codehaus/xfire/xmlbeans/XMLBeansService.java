@@ -59,35 +59,38 @@ public class XMLBeansService
                 p = new Parameter(q, t);
             }
             
-            op.addParameter( p );
+            op.addInParameter( p );
         }
 
         Parameter outP = null;
         
         Class outClass = op.getMethod().getReturnType();
-        if ( XmlObject.class.isAssignableFrom(op.getMethod().getReturnType()) )
+        if (!outClass.isAssignableFrom(void.class))
         {
-            SchemaType st = getSchemaType(outClass);
-
-            outP = new XMLBeansParameter(st);
-        }
-        else
-        {
-            String outName = "";
-            if ( isDoc )
-                outName = method.getName();
+            if ( XmlObject.class.isAssignableFrom(op.getMethod().getReturnType()) )
+            {
+                SchemaType st = getSchemaType(outClass);
+    
+                outP = new XMLBeansParameter(st);
+            }
+            else
+            {
+                String outName = "";
+                if ( isDoc )
+                    outName = method.getName();
+                
+                String ns = getDefaultNamespace();
+                Type t = getTypeMapping().getType(method.getReturnType());
+                
+                if ( t.isComplex() )
+                    ns = t.getSchemaType().getNamespaceURI();
+                        
+                QName q = new QName(ns, outName + "out");
+                outP = new Parameter(q, t);
+            }
             
-            String ns = getDefaultNamespace();
-            Type t = getTypeMapping().getType(method.getReturnType());
-            
-            if ( t.isComplex() )
-                ns = t.getSchemaType().getNamespaceURI();
-                    
-            QName q = new QName(ns, outName + "out");
-            outP = new Parameter(q, t);
+            op.addOutParameter(outP);
         }
-        
-        op.setOutParameter(outP);
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.codehaus.xfire.handler;
 
+import java.util.Stack;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -50,6 +52,7 @@ public class SoapHandler
         XMLStreamReader reader = context.getXMLStreamReader();
         XMLStreamWriter writer = null;
         String encoding = null;
+        Stack handlerStack = new Stack();
         
         boolean end = false;
         while ( !end && reader.hasNext() )
@@ -73,15 +76,16 @@ public class SoapHandler
                 }
                 else if ( reader.getLocalName().equals("Body") )
                 {
-                    invokeRequestPipeline(context);
+                    invokeRequestPipeline(handlerStack, context);
                     
                     try
                     {
                         bodyHandler.invoke(context);
+                        handlerStack.push(bodyHandler);
                     }
                     catch(Exception e)
                     {
-                        handleFault(e, context, false);
+                        handleFault(e, context, handlerStack);
                     }
                 }
                 else if ( reader.getLocalName().equals("Envelope") )
@@ -103,7 +107,7 @@ public class SoapHandler
         
         try
         {
-            invokeResponsePipeline(context);
+            invokeResponsePipeline(handlerStack, context);
             
             writer.writeStartElement("soap", "Body", context.getSoapVersion().getNamespace());
             bodyHandler.writeResponse(context);
@@ -116,56 +120,57 @@ public class SoapHandler
         }
         catch(Exception e)
         {
-            handleFault(e, context, true);
+            handleFault(e, context, handlerStack);
         }        
     }
 
-    private void handleFault(Exception e, MessageContext context, boolean revokeRes) 
+    private void handleFault(Exception e, MessageContext context, Stack handlerStack) 
         throws Exception
     {
         bodyHandler.handleFault(e, context);
         
-        HandlerPipeline pipeline = context.getService().getRequestPipeline();
-        if ( pipeline != null )
-            pipeline.handleFault(e, context);
-        
-        if ( revokeRes )
+        while(!handlerStack.empty())
         {
-            pipeline = context.getService().getResponsePipeline();
-            if ( pipeline != null )
-                pipeline.handleFault(e, context);
+            Handler handler = (Handler) handlerStack.pop();
+            handler.handleFault(e, context);
         }
         
-        pipeline = context.getService().getFaultPipeline();
-        if ( pipeline != null )
-            pipeline.invoke(context);
+        invokePipeline( context.getTransport().getFaultPipeline(), handlerStack, context );
+        invokePipeline( context.getService().getFaultPipeline(), handlerStack, context );
         
         throw e;
     }
 
-    private void validateHeaders(MessageContext context)
-    {
-        /* TODO
-         * Create response header object
-         * Check MustUnderstand and Role attributes
-         * Invoke global and service RequestPipelines
-         */ 
-    }
-
-    private void invokeRequestPipeline(MessageContext context) 
+    protected void invokeRequestPipeline(Stack handlerStack, MessageContext context) 
     	throws Exception
     {
-        HandlerPipeline pipeline = context.getService().getRequestPipeline();
-        if ( pipeline != null )
-        	pipeline.invoke(context);
+        if (context.getTransport() != null )
+            invokePipeline( context.getTransport().getRequestPipeline(), handlerStack, context );
+
+        if (context.getService() != null )
+            invokePipeline( context.getService().getRequestPipeline(), handlerStack, context );
     }
 
-    private void invokeResponsePipeline(MessageContext context) 
-    	throws Exception
+    protected void invokeResponsePipeline(Stack handlerStack, MessageContext context) 
+        throws Exception
     {
-        HandlerPipeline pipeline = context.getService().getResponsePipeline();
+        if (context.getTransport() != null )
+            invokePipeline( context.getTransport().getResponsePipeline(), handlerStack, context );
+        
+        if (context.getService() != null )
+            invokePipeline( context.getService().getResponsePipeline(), handlerStack, context );
+    }
+
+    protected void invokePipeline(HandlerPipeline pipeline, 
+                                  Stack handlerStack, 
+                                  MessageContext context)
+        throws Exception
+    {
         if ( pipeline != null )
-        	pipeline.invoke(context);
+        {
+            pipeline.invoke(context);
+            handlerStack.push(pipeline);    
+        }
     }
 
     protected void readHeaders( MessageContext context ) 
@@ -191,6 +196,12 @@ public class SoapHandler
             
             writer.writeEndElement();
         }
+    }
+
+    protected void validateHeaders(MessageContext context)
+    {
+        /* TODO Check MustUnderstand and Role attributes
+         */ 
     }
     
     private XMLStreamWriter createResponseWriter(MessageContext context, 

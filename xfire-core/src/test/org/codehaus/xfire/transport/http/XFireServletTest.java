@@ -1,9 +1,11 @@
 package org.codehaus.xfire.transport.http;
 
 import org.codehaus.xfire.fault.Soap12FaultHandler;
+import org.codehaus.xfire.handler.BadHandler;
+import org.codehaus.xfire.handler.SoapHandler;
 import org.codehaus.xfire.service.SimpleService;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.transport.Transport;
 
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
@@ -30,6 +32,14 @@ public class XFireServletTest
         service.setFaultHandler(new Soap12FaultHandler());
         
         getServiceRegistry().register(service);
+        
+        SimpleService fault = new SimpleService();
+        fault.setName("Exception");
+        fault.setSoapVersion(Soap12.getInstance());
+        fault.setServiceHandler(new SoapHandler(new BadHandler()));
+        fault.setFaultHandler(new Soap12FaultHandler());
+        
+        getServiceRegistry().register(fault);
     }
     
     public void testServlet() throws Exception
@@ -45,5 +55,17 @@ public class XFireServletTest
         response = newClient().getResponse(req);
         
         assertTrue( MockSessionHandler.inSession );
+    }
+    
+    public void testFaultCode() throws Exception
+    {        
+        WebRequest req = new PostMethodWebRequest( "http://localhost/services/Exception",
+                getClass().getResourceAsStream("/org/codehaus/xfire/echo11.xml"),
+                "text/xml" );
+
+        Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.ID);
+        assertNotNull(transport.getFaultPipeline());
+        
+        expectErrorCode(req, 500, "Response code 500 required for faults.");
     }
 }

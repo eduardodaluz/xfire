@@ -15,8 +15,13 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Transport;
 
 import com.ibm.wsdl.BindingImpl;
@@ -33,6 +38,7 @@ import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class SoapHttpTransport
+    extends AbstractTransport
 	implements Transport
 {
     public final static String ID = "http";
@@ -41,6 +47,9 @@ public class SoapHttpTransport
 
     public SoapHttpTransport()
     {
+        HandlerPipeline faultPipe = new HandlerPipeline();
+        faultPipe.addHandler(new FaultResponseCodeHandler());
+        setFaultPipeline(faultPipe);
     }
     
     /**
@@ -111,6 +120,8 @@ public class SoapHttpTransport
      */
     public BindingOperation createBindingOperation(PortType portType, Operation wsdlOp, Service service)
     {
+        BindingOperation bindOp = new BindingOperationImpl();
+        
         // Create bindings
         SOAPBody body = createSoapBody( service );
 
@@ -124,12 +135,11 @@ public class SoapHttpTransport
         BindingOutput bindOut = new BindingOutputImpl();
         bindOut.setName( wsdlOp.getOutput().getName() );
         bindOut.addExtensibilityElement( body );
-        
-        BindingOperation bindOp = new BindingOperationImpl();
+        bindOp.setBindingOutput( bindOut );
+
         bindOp.setName( wsdlOp.getName() );
         bindOp.setOperation( wsdlOp );
         bindOp.setBindingInput( bindIn );
-        bindOp.setBindingOutput( bindOut );
         bindOp.addExtensibilityElement( soapOp );
         
         return bindOp;
@@ -170,4 +180,20 @@ public class SoapHttpTransport
 		baseURL.append(request.getContextPath());
 		return baseURL.toString();
 	}
+    
+    public class FaultResponseCodeHandler
+        extends AbstractHandler
+        implements Handler
+    {
+        /**
+         * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
+         * @param context
+         * @throws Exception
+         */
+        public void invoke(MessageContext context)
+            throws Exception
+        {
+            XFireServletController.getResponse().setStatus(500);
+        }    
+    }
 }

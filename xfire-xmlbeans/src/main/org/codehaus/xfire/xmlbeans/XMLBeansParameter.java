@@ -22,11 +22,6 @@ public class XMLBeansParameter
     {
         super(type.getDocumentElementName(), new XMLBeansType(type));
     }
-    
-    
-    /**
-     *
-     */
 
     public Object read(XMLStreamReader reader)
         throws XFireFault
@@ -40,10 +35,7 @@ public class XMLBeansParameter
             throw new XFireFault("Couldn't parse the response.", e, XFireFault.SENDER);
         }
     }
-    /**
-     *
-     */
-
+    
     public void write(Object value, XMLStreamWriter xmlWriter)
         throws XFireFault
     {

@@ -31,7 +31,7 @@ public class Soap12FaultHandler
     public void handleFault(Exception e, MessageContext context)
     {
         XFireFault fault = createFault(e);
-
+        
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer;
         try
@@ -122,5 +122,4 @@ public class Soap12FaultHandler
         
 		return fault;
 	}
-
 }

@@ -40,6 +40,10 @@ public class SimpleService
     
     private Handler serviceHandler;
     
+    private HandlerPipeline requestPipeline;
+    private HandlerPipeline responsePipeline;
+    private HandlerPipeline faultPipeline;
+    
     public SimpleService()
     {
         properties = new Hashtable();   
@@ -191,21 +195,52 @@ public class SimpleService
         this.wsdl = wsdl;
     }
 
-    public HandlerPipeline getRequestPipeline()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public HandlerPipeline getResponsePipeline()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
+    /**
+     * @return Returns the faultPipeline.
+     */
     public HandlerPipeline getFaultPipeline()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return faultPipeline;
+    }
+    
+    /**
+     * @param faultPipeline The faultPipeline to set.
+     */
+    public void setFaultPipeline(HandlerPipeline faultPipeline)
+    {
+        this.faultPipeline = faultPipeline;
+    }
+    
+    /**
+     * @return Returns the requestPipeline.
+     */
+    public HandlerPipeline getRequestPipeline()
+    {
+        return requestPipeline;
+    }
+    
+    /**
+     * @param requestPipeline The requestPipeline to set.
+     */
+    public void setRequestPipeline(HandlerPipeline requestPipeline)
+    {
+        this.requestPipeline = requestPipeline;
+    }
+
+    /**
+     * @return Returns the responsePipeline.
+     */
+    public HandlerPipeline getResponsePipeline()
+    {
+        return responsePipeline;
+    }
+
+    /**
+     * @param responsePipeline The responsePipeline to set.
+     */
+    public void setResponsePipeline(HandlerPipeline responsePipeline)
+    {
+        this.responsePipeline = responsePipeline;
     }
 }

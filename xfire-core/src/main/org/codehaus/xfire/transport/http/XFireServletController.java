@@ -34,6 +34,7 @@ import org.codehaus.xfire.transport.TransportManager;
 public class XFireServletController
 {
     private static ThreadLocal requests = new ThreadLocal();
+    private static ThreadLocal responses = new ThreadLocal();
 
     private File webInfPath;
 
@@ -41,18 +42,21 @@ public class XFireServletController
 
     protected ServletContext context;
 
+    protected SoapHttpTransport transport;
+    
     public XFireServletController(XFire xfire, ServletContext context)
     {
         this.xfire = xfire;
         this.context = context;
-
+        this.transport = new SoapHttpTransport();
+        
         registerTransport();
     }
 
     protected void registerTransport()
     {
         TransportManager service = getTransportManager();
-        service.register(new SoapHttpTransport());
+        service.register(transport);
     }
 
     public static HttpServletRequest getRequest()
@@ -60,6 +64,11 @@ public class XFireServletController
         return (HttpServletRequest) requests.get();
     }
 
+    public static HttpServletResponse getResponse()
+    {
+        return (HttpServletResponse) responses.get();
+    }
+    
     public File getWebappBase()
     {
         if (webInfPath == null)
@@ -93,6 +102,7 @@ public class XFireServletController
         response.setHeader("Content-Type", "UTF-8");
 
         requests.set(request);
+        responses.set(response);
 
         if (service == null || service.equals("") || !reg.hasService(service))
         {
@@ -161,14 +171,23 @@ public class XFireServletController
                           String service)
         throws ServletException, IOException, UnsupportedEncodingException
     {
+        // TODO: Return 500 on a fault
+        // TODO: Determine if the request is a soap request
+        // and if not responsed appropriately
+        
         response.setStatus(200);
         // response.setBufferSize(1024 * 8);
         response.setContentType("text/xml; charset=UTF-8");
 
         XFireHttpSession session = new XFireHttpSession(request);
-        MessageContext context = new MessageContext(service, null, response
-                .getOutputStream(), session, request.getRequestURI());
-
+        MessageContext context = 
+            new MessageContext(service, 
+                               null, 
+                               response.getOutputStream(), 
+                               session, 
+                               request.getRequestURI());
+        context.setTransport(transport);
+        
         String contentType = request.getHeader("Content-Type");
         if ( contentType.toLowerCase().indexOf("multipart/related") != -1 )
         {
@@ -199,7 +218,7 @@ public class XFireServletController
         JavaMailAttachments atts = new JavaMailAttachments(inMP);
         context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);
         
-        return atts.getSoapMessage().getDataHandler().getInputStream(); 
+        return atts.getSoapMessage().getDataHandler().getInputStream();
     }
 
     /**
@@ -255,5 +274,4 @@ public class XFireServletController
     {
         return xfire.getServiceRegistry();
     }
-
 }

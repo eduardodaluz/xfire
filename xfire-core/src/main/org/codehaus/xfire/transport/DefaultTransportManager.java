@@ -1,7 +1,8 @@
 package org.codehaus.xfire.transport;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.xfire.AbstractXFireComponent;
 
@@ -16,11 +17,11 @@ public class DefaultTransportManager
 	extends AbstractXFireComponent
     implements TransportManager
 {
-    Set transports;
+    Map transports;
     
     public DefaultTransportManager()
     {
-        transports = new HashSet();
+        transports = new HashMap();
     }
     
     /**
@@ -28,15 +29,15 @@ public class DefaultTransportManager
      */
     public void register(Transport transport)
     {
-        transports.add(transport);
+        transports.put(transport.getName(), transport);
     }
 
     /**
      * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
      */
-    public Set getTransports(String service)
+    public Transport getTransport(String name)
     {
-        return transports;
+        return (Transport) transports.get(name);
     }
 
     /**
@@ -55,4 +56,13 @@ public class DefaultTransportManager
         // TODO Auto-generated method stub
     }
 
+    /**
+     * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
+     * @param service
+     * @return
+     */
+    public Collection getTransports(String service)
+    {
+        return transports.values();
+    }
 }

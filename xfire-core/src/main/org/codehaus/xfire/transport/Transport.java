@@ -6,6 +6,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
 
 /**
@@ -36,4 +37,10 @@ public interface Transport
      * @return
      */
     BindingOperation createBindingOperation(PortType portType, Operation wsdlOp, Service service);
+    
+    HandlerPipeline getRequestPipeline();
+    
+    HandlerPipeline getResponsePipeline();
+    
+    HandlerPipeline getFaultPipeline();
 }

@@ -1,18 +1,19 @@
 package org.codehaus.xfire;
 
-import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.transport.Session;
+import org.codehaus.xfire.transport.Transport;
 
 /**
  * Holds inforrmation about the message request and response.
@@ -32,6 +33,7 @@ public class MessageContext
     private Map properties;
     private SoapVersion soapVersion;
     private Service service;
+    private Transport transport;
     private XMLStreamReader xmlStreamReader;
     
     /**
@@ -183,5 +185,20 @@ public class MessageContext
     public void setXMLStreamReader(XMLStreamReader xmlStreamReader)
     {
         this.xmlStreamReader = xmlStreamReader;
+    }
+    
+    /**
+     * @return Returns the transport.
+     */
+    public Transport getTransport()
+    {
+        return transport;
+    }
+    /**
+     * @param transport The transport to set.
+     */
+    public void setTransport(Transport transport)
+    {
+        this.transport = transport;
     }
 }

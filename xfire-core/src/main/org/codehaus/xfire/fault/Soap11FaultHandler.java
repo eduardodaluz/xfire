@@ -32,7 +32,7 @@ public class Soap11FaultHandler
                              MessageContext context )
     {
         XFireFault fault = createFault(e);
-
+        
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer;
         try
