@@ -25,7 +25,7 @@ public class XPathAssert
      * 
      * @param xpath
      */
-    public static void assertValid(String xpath, Node node, Map namespaces)
+    public static List assertValid(String xpath, Node node, Map namespaces)
         throws Exception
     {
         List nodes = createXPath(xpath, namespaces).selectNodes(node);
@@ -35,6 +35,8 @@ public class XPathAssert
             throw new Exception("Failed to select any nodes for expression:.\n" + xpath + "\n"
                     + node.toXML());
         }
+
+        return nodes;
     }
 
     /**
@@ -42,7 +44,7 @@ public class XPathAssert
      * 
      * @param xpath
      */
-    public static void assertInvalid(String xpath, Node node, Map namespaces)
+    public static List assertInvalid(String xpath, Node node, Map namespaces)
         throws Exception
     {
         List nodes = createXPath(xpath, namespaces).selectNodes(node);
@@ -52,6 +54,8 @@ public class XPathAssert
             throw new Exception("Found multiple nodes for expression:\n" + xpath + "\n"
                     + node.toXML());
         }
+        
+        return nodes;
     }
 
     /**

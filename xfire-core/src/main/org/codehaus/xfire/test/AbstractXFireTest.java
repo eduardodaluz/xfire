@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -122,10 +123,10 @@ public abstract class AbstractXFireTest
      *
      * @param xpath
      */
-    public void assertValid( String xpath, Node node )
+    public List assertValid( String xpath, Node node )
         throws Exception
     {
-        XPathAssert.assertValid(xpath, node, namespaces);
+        return XPathAssert.assertValid(xpath, node, namespaces);
     }
 
     /**
@@ -133,10 +134,10 @@ public abstract class AbstractXFireTest
      *
      * @param xpath
      */
-    public void assertInvalid( String xpath, Node node )
+    public List assertInvalid( String xpath, Node node )
         throws Exception
     {
-        XPathAssert.assertInvalid(xpath, node, namespaces);
+        return XPathAssert.assertInvalid(xpath, node, namespaces);
     }
 
     /**
