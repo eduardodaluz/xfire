@@ -31,7 +31,6 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
 	
-    <!-- A snapshot with XMLBEANS-78 patch -->
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xmlbeans</artifactId>
