@@ -9,6 +9,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.client.ClientHandler;
 
 /**
+ * A SOAP client for the HTTP transport.
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 26, 2004
  */
@@ -20,6 +22,14 @@ public class SoapHttpClient
     private String soapVersion;
     private String action = "";
     
+    /**
+     * Create the SoapHttpClient. It will default to generating a
+     * SOAP 1.1 Envelope.
+     * 
+     * @param bodyHandler A handler which will generate and process
+     * the SOAP Body.
+     * @param url The URL to invoke.
+     */
     public SoapHttpClient(ClientHandler bodyHandler, String url)
     {
         super();
@@ -28,6 +38,16 @@ public class SoapHttpClient
         setSoapVersion( SOAP11_ENVELOPE_NS );
     }    
     
+    /**
+     * Create the SoapHttpClient. It will default to generating a
+     * SOAP 1.1 Envelope.
+     * 
+     * @param bodyHandler A handler which will generate and process
+     * the SOAP Body.
+     * @param headerHandler A handler which will generate and process
+     * the SOAP Header.
+     * @param url The URL to invoke.
+     */
     public SoapHttpClient( ClientHandler bodyHandler, 
                            ClientHandler headerHandler, 
                            String url )
@@ -38,7 +58,16 @@ public class SoapHttpClient
         setUrl( url );
         setSoapVersion( SOAP11_ENVELOPE_NS );
     }
-
+    /**
+     * Create the SoapHttpClient.
+     * 
+     * @param bodyHandler A handler which will generate and process
+     * the SOAP Body.
+     * @param headerHandler A handler which will generate and process
+     * the SOAP Header.
+     * @param url The URL to invoke.
+     * @param soapVersion The soap version.  See SOAPConstants.
+     */
     public SoapHttpClient( ClientHandler bodyHandler, 
                            ClientHandler headerHandler, 
                            String url,

@@ -16,9 +16,25 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public interface ClientHandler
 {
+    /**
+     * @return Whether or not there is a request to write.
+     */
     boolean hasRequest();
     
-    void writeRequest( XMLStreamWriter writer ) throws XMLStreamException;
+    /**
+     * Write the request to the XMLStreamWriter.
+     * 
+     * @param writer
+     * @throws XMLStreamException
+     */
+    void writeRequest( XMLStreamWriter writer ) 
+        throws XMLStreamException;
     
-    void handleResponse( XMLStreamReader reader ) throws XMLStreamException;
+    /**
+     * Handle the response.
+     * @param reader
+     * @throws XMLStreamException
+     */
+    void handleResponse( XMLStreamReader reader )
+        throws XMLStreamException;
 }

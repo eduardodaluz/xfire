@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Creates a fault message based on an exception for SOAP 1.2 messages.
+ * Creates a fault message based on an exception for SOAP 1.1 messages.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */

@@ -6,7 +6,7 @@ import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.wsdl.WSDL;
 
 /**
- * A service descriptor.  This class must be thread safe.
+ * A service descriptor. This class must be thread safe.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
@@ -18,6 +18,11 @@ public interface Service
 
     Handler getServiceHandler();
     
+    /**
+     * The fault handler which handles exception which occurr during the
+     * invocation of the Service Handler.
+     * @return
+     */
     FaultHandler getFaultHandler();
     
     /**

@@ -19,6 +19,11 @@ public class RestHttpClient
 {
     private ClientHandler handler;
     
+    /**
+     * Create a REST client.
+     * @param bodyHandler The handler for the XML messages.
+     * @param url The url to invoke.
+     */
     public RestHttpClient(ClientHandler bodyHandler, String url)
     {
         super();
