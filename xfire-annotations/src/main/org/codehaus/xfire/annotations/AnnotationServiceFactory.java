@@ -177,4 +177,18 @@ public class AnnotationServiceFactory
         
         return true;
     }
+
+    protected String getParameterName( Method method, int paramNumber, boolean doc )
+    {
+        if( webAnnotations.hasWebParamAnnotation( method, paramNumber ) )
+        {
+            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation( method, paramNumber );
+
+            return webParamAnnotation.getName();
+        }
+        else
+        {
+            return super.getParameterName( method, paramNumber, doc );
+        }
+    }
 }
