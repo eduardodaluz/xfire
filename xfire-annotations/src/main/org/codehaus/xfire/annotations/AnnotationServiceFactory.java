@@ -11,6 +11,7 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.type.TypeMappingRegistry;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 
 /**
  * Annotations-bases implementation of the {@link ServiceFactory} interface.
@@ -42,6 +43,7 @@ public class AnnotationServiceFactory
              * implementing bean class.
              */
             String tns = null;
+            String portType = null;
             Class endpointInterface = clazz;
             if (webServiceAnnotation.getEndpointInterface() != null)
             {
@@ -52,6 +54,7 @@ public class AnnotationServiceFactory
                         webAnnotations.getWebServiceAnnotation(endpointInterface);
                     
                     tns = createServiceNamespace(endpointInterface, endpointWSAnnotation);
+                    portType = createPortType(serviceName, endpointWSAnnotation);
                 }
                 catch (ClassNotFoundException e)
                 {
@@ -61,10 +64,18 @@ public class AnnotationServiceFactory
             else
             {
                 tns = createServiceNamespace(endpointInterface, webServiceAnnotation);
+                portType = createPortType(serviceName, webServiceAnnotation);
             }
             
             Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
             
+            // Fill in WSDL Builder metadata from annotations.
+            WSDLBuilderInfo info = new WSDLBuilderInfo(service);
+            info.setTargetNamespace(tns);
+            info.setServiceName(serviceName);
+            info.setPortType(portType);
+            service.setProperty(WSDLBuilderInfo.KEY, info);
+
             if (clazz != endpointInterface)
             {
                 service.setProperty(ObjectService.SERVICE_IMPL_CLASS, clazz);
@@ -123,15 +134,30 @@ public class AnnotationServiceFactory
     protected String createServiceName(Class clazz, WebServiceAnnotation webServiceAnnotation)
     {
         String name = null;
-        if (webServiceAnnotation.getName() != null)
+        if (webServiceAnnotation.getServiceName() != null)
         {
-            name = webServiceAnnotation.getName();
+            name = webServiceAnnotation.getServiceName();
         }
         else
         {
             name = makeServiceNameFromClassName(clazz);
         }
         return name;
+    }
+
+    protected String createPortType(String serviceName, WebServiceAnnotation webServiceAnnotation)
+    {
+        String portType = null;
+        if (webServiceAnnotation.getName() != null)
+        {
+            portType = webServiceAnnotation.getName();
+        }
+        else
+        {
+            portType = serviceName + "PortType";
+        }
+        
+        return portType;
     }
 
     /**

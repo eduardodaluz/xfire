@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTypeTest;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
 
 public class AnnotationServiceFactoryTest
@@ -35,7 +36,7 @@ public class AnnotationServiceFactoryTest
             throws Exception
     {
         WebServiceAnnotation annotation = new WebServiceAnnotation();
-        annotation.setName("EchoService");
+        annotation.setServiceName("EchoService");
         annotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
@@ -73,7 +74,7 @@ public class AnnotationServiceFactoryTest
         throws SecurityException, NoSuchMethodException
     {
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
-        implAnnotation.setName("EchoService");
+        implAnnotation.setServiceName("EchoService");
         implAnnotation.setTargetNamespace("not used");
         implAnnotation.setEndpointInterface(EchoService.class.getName());
 
@@ -81,7 +82,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(implAnnotation);
 
         WebServiceAnnotation intfAnnotation = new WebServiceAnnotation();
-        intfAnnotation.setServiceName("Echo");
+        intfAnnotation.setName("Echo");
         intfAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
         intfAnnotation.setEndpointInterface(EchoService.class.getName());
 
@@ -93,6 +94,11 @@ public class AnnotationServiceFactoryTest
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
         assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
         assertEquals("EchoService", service.getName());
+        
+        WSDLBuilderInfo info = (WSDLBuilderInfo) service.getProperty(WSDLBuilderInfo.KEY);
+        assertEquals("Echo", info.getPortType());
+        assertEquals("EchoService", info.getServiceName());
+        assertEquals("http://xfire.codehaus.org/EchoService", info.getTargetNamespace());
         
         webAnnotationsControl.verify();
     }
