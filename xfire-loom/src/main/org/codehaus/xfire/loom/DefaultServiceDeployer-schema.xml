@@ -56,6 +56,13 @@
                                 </choice>
                             </element>
                         </optional>
+
+                        <zeroOrMore>
+                            <element name="property">
+                                <attribute name="name"/>
+                                <attribute name="value"/>
+                            </element>
+                        </zeroOrMore>
                     </interleave>
 
                     <optional>

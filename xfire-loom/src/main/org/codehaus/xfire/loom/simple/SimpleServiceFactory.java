@@ -86,5 +86,12 @@ public class SimpleServiceFactory implements ServiceFactory
                 + ". Must be 1.1 or 1.2.";
             throw new ConfigurationException( msg );
         }
+
+        final Configuration[] properties = configuration.getChildren( "property" );
+
+        for( int i = 0; i < properties.length; i++ )
+        {
+            service.setProperty( properties[i].getAttribute( "name" ), properties[i].getAttribute( "value" ) );
+        }
     }
 }
