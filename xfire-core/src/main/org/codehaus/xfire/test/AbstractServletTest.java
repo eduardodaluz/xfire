@@ -37,7 +37,15 @@ public abstract class AbstractServletTest
         
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
     
-        sr = new ServletRunner( getResourceAsStream("/org/codehaus/xfire/transport/http/web.xml") );
+        sr = new ServletRunner( getResourceAsStream(getConfiguration()) );
+    }
+
+    /**
+     * @return The web.xml to use for testing.
+     */
+    protected String getConfiguration()
+    {
+        return "/org/codehaus/xfire/transport/http/web.xml";
     }
 
     protected XFire getXFire()

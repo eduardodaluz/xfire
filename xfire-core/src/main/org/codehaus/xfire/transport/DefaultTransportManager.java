@@ -121,7 +121,12 @@ public class DefaultTransportManager
      */
     public Collection getTransports(String service)
     {
-        return ((Map) services.get(service)).values();
+        Map transports = ((Map) services.get(service));
+
+        if (transports != null)
+            return transports.values();
+        else
+            return null;
     }
 
     /**

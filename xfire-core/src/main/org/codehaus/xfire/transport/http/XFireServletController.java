@@ -7,11 +7,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
+
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,14 +39,11 @@ public class XFireServletController
 
     protected XFire xfire;
 
-    protected ServletContext context;
-
     protected SoapHttpTransport transport;
     
-    public XFireServletController(XFire xfire, ServletContext context)
+    public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
-        this.context = context;
         this.transport = new SoapHttpTransport();
         
         registerTransport();
@@ -66,16 +63,6 @@ public class XFireServletController
     public static HttpServletResponse getResponse()
     {
         return (HttpServletResponse) responses.get();
-    }
-    
-    public File getWebappBase()
-    {
-        if (webInfPath == null)
-        {
-            webInfPath = new File(context.getRealPath("/WEB-INF"));
-        }
-
-        return webInfPath;
     }
 
     /**
@@ -238,7 +225,7 @@ public class XFireServletController
      * @throws IOException
      */
     protected void generateWSDL(HttpServletResponse response, String service)
-            throws ServletException, IOException
+        throws ServletException, IOException
     {
         response.setStatus(200);
         response.setContentType("text/xml");

@@ -44,7 +44,23 @@ public class SoapHttpTransport
 	{
 		HttpServletRequest req = XFireServletController.getRequest();
         
-        return getWebappBase(req) + "/services/" + service.getName();
+        StringBuffer output = new StringBuffer( 128 );
+
+        output.append( req.getScheme() );
+        output.append( "://" );
+        output.append( req.getServerName() );
+
+        if ( req.getServerPort() != 80 &&
+             req.getServerPort() != 443 &&
+             req.getServerPort() != 0 )
+        {
+            output.append( ':' );
+            output.append( req.getServerPort() );
+        }
+
+        output.append( req.getRequestURI() );
+
+        return output.toString();
 	}
 
     public String getTransportURI( Service service )

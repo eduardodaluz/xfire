@@ -49,7 +49,7 @@ public class XFireServlet
     public XFireServletController createController() 
         throws ServletException
     {
-        return new XFireServletController(xfire, getServletContext());
+        return new XFireServletController(xfire);
     }
 
     /**
