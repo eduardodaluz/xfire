@@ -7,16 +7,28 @@
   </service>
   
   <service>
-    <type>java</type>
-    <name>Echo</name>
-    <namespace>urn:Echo</namespace>
-    <serviceClass>org.codehaus.xfire.demo.java.Echo</serviceClass>
-    <allowedMethods></allowedMethods>
-    <serviceProvider>java</serviceProvider>
-    <soapVersion>1.1</soapVersion>
-    <style>wrapped</style>
-    <use>literal</use>
-    <types/>
+    <service>
+      <!-- The binding type -->
+      <type>java</type>
+      
+      <!-- The service name -->
+      <name>Echo</name>
+      
+      <!-- The default namespace for the service -->
+      <namespace>urn:Echo</namespace>
+      
+      <!-- The SOAP version -->
+      <version>1.1</version>
+      
+      <!-- SOAP encoded or literal? -->
+      <style>wrapped</style>
+      
+      <!-- Document or RPC? -->
+      <use>literal</use>
+      
+      <!-- The class for the service -->
+      <serviceClass>org.codehaus.xfire.quickstart.Echo</serviceClass>
+    </service>
   </service>
   
   <service>
