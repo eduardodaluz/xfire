@@ -2,7 +2,16 @@
 
   <goal name="jar:install"
         description="Generate jars">
-
+    
+      <maven:reactor
+      basedir="${basedir}"
+      postProcessing="true"
+      includes="xfire-core/project.xml,xfire-java/project.xml"
+      excludes="*"
+      goals="pom:install"
+      banner="Installing XFire POMs"
+      ignoreFailures="false"/>
+      
     <maven:reactor
       basedir="${basedir}"
       postProcessing="true"
