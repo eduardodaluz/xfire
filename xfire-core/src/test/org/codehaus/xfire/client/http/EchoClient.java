@@ -16,7 +16,7 @@ public class EchoClient
 {
     public EchoClient()
     {
-        super(new EchoHandler(), null);
+        super(new EchoHandler(), "");
     }
 
     public void invoke() throws IOException

@@ -6,7 +6,8 @@ package org.codehaus.xfire.client;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Nov 1, 2004
  */
-public class AbstractClientHandler
+public abstract class AbstractClientHandler
+    implements ClientHandler
 {
     public boolean hasRequest()
     {

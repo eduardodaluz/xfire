@@ -7,7 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.codehaus.xfire.client.ClientHandler;
+import org.codehaus.xfire.client.AbstractClientHandler;
 import org.codehaus.xfire.util.STAXUtils;
 
 /**
@@ -15,7 +15,7 @@ import org.codehaus.xfire.util.STAXUtils;
  * @since Oct 26, 2004
  */
 public class EchoHandler 
-    implements ClientHandler
+    extends AbstractClientHandler
 {
     public void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException
