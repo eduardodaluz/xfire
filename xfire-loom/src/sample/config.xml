@@ -5,7 +5,7 @@
     </xfire-block-deployer>
 
     <xfire-service-deployer>
-        <!--        <service key="your-service" type="java">-->
+        <!--        <service key="your-service">-->
         <!--            <name>blah blah</name>-->
         <!--        </service>-->
     </xfire-service-deployer>
