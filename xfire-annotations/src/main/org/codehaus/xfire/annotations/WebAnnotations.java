@@ -75,4 +75,11 @@ public interface WebAnnotations
      */
     WebParamAnnotation getWebParamAnnotation(Method method, int parameter);
 
+    /**
+     * Tests whether the given method has the {@link OnewayAnnotation} annotation.
+     *
+     * @param method the method.
+     * @return <code>true</code> if present; <code>false</code> otherwise.
+     */
+    boolean hasOnewayAnnotation(Method method);
 }

@@ -52,6 +52,12 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(false);
 
+        webAnnotations.hasWebResultAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotationsControl.replay();
 
         annotationServiceFactory.create(EchoServiceImpl.class);
@@ -76,8 +82,8 @@ public class AnnotationServiceFactoryTest
         }
     }
 
-    public void testEndpointInterface() 
-        throws SecurityException, NoSuchMethodException
+    public void testEndpointInterface()
+            throws SecurityException, NoSuchMethodException
     {
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("EchoService");
@@ -99,23 +105,29 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(false);
-        
+
+        webAnnotations.hasWebResultAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
         assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
         assertEquals("EchoService", service.getName());
-        
+
         WSDLBuilderInfo info = (WSDLBuilderInfo) service.getProperty(WSDLBuilderInfo.KEY);
         assertEquals("Echo", info.getPortType());
         assertEquals("EchoService", info.getServiceName());
         assertEquals("http://xfire.codehaus.org/EchoService", info.getTargetNamespace());
-        
+
         webAnnotationsControl.verify();
     }
 
     public void testParameterNameAnnotation()
-        throws SecurityException, NoSuchMethodException
+            throws SecurityException, NoSuchMethodException
     {
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("EchoService");
@@ -129,23 +141,31 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(true);
 
         WebParamAnnotation paramAnnotation = new WebParamAnnotation();
-        paramAnnotation.setName( "input" );
-        webAnnotations.getWebParamAnnotation( echoMethod, 0);
+        paramAnnotation.setName("input");
+        webAnnotations.getWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(paramAnnotation);
 
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(true);
 
+        webAnnotations.hasWebResultAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
+
         webAnnotationsControl.replay();
 
-        ObjectService service = (ObjectService)annotationServiceFactory.create(EchoServiceImpl.class);
+        ObjectService service = (ObjectService) annotationServiceFactory.create(EchoServiceImpl.class);
         assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
         assertEquals("EchoService", service.getName());
 
-        final Operation operation = service.getOperation( "echo");
-        assertNotNull( operation );
-        assertEquals( 1, operation.getInParameters().size() );
-        assertEquals("input", ((Parameter)operation.getInParameters().iterator().next()).getName().getLocalPart());
+        final Operation operation = service.getOperation("echo");
+        assertNotNull(operation);
+        assertEquals(1, operation.getInParameters().size());
+        assertEquals("input", ((Parameter) operation.getInParameters().iterator().next()).getName().getLocalPart());
+
+        assertTrue(operation.isAsync());
 
         webAnnotationsControl.verify();
     }

@@ -88,6 +88,18 @@ public abstract class WebAnnotationsTestBase
         assertFalse("WebParamAnnotation set", webAnnotations.hasWebParamAnnotation(dummyMethod, 0));
     }
 
+    public void testHasOnewayAnnotation()
+            throws Exception
+    {
+        assertTrue("OnewayAnnotation not set", webAnnotations.hasOnewayAnnotation(echoMethod));
+    }
+
+    public void testHasNoOnewayAnnotation()
+            throws Exception
+    {
+        assertFalse("OnewayAnnotation set", webAnnotations.hasOnewayAnnotation(dummyMethod));
+    }
+
     public void testGetWebServiceAnnotation()
             throws Exception
     {

@@ -89,4 +89,9 @@ public class Backport175WebAnnotations
         // Unfortunately, backport175 does not support method parameter annotations as of yet.
         return null;
     }
+
+    public boolean hasOnewayAnnotation(Method method)
+    {
+        return Annotations.isAnnotationPresent(Oneway.class, method);
+    }
 }

@@ -50,9 +50,9 @@ public class AnnotationServiceFactory
                 try
                 {
                     endpointInterface = loadClass(webServiceAnnotation.getEndpointInterface());
-                    WebServiceAnnotation endpointWSAnnotation = 
-                        webAnnotations.getWebServiceAnnotation(endpointInterface);
-                    
+                    WebServiceAnnotation endpointWSAnnotation =
+                            webAnnotations.getWebServiceAnnotation(endpointInterface);
+
                     tns = createServiceNamespace(endpointInterface, endpointWSAnnotation);
                     portType = createPortType(serviceName, endpointWSAnnotation);
                 }
@@ -66,7 +66,7 @@ public class AnnotationServiceFactory
                 tns = createServiceNamespace(endpointInterface, webServiceAnnotation);
                 portType = createPortType(serviceName, webServiceAnnotation);
             }
-            
+
             Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
             
             // Fill in WSDL Builder metadata from annotations.
@@ -80,25 +80,25 @@ public class AnnotationServiceFactory
             {
                 service.setProperty(ObjectService.SERVICE_IMPL_CLASS, clazz);
             }
-            
+
             return service;
         }
         else
         {
-            throw new XFireRuntimeException("Class " + clazz.getName() + 
-                                            " does not have a WebService annotation");
+            throw new XFireRuntimeException("Class " + clazz.getName() +
+                    " does not have a WebService annotation");
         }
     }
 
     /**
-     * Attempt to load a class first from this class's ClassLoader, then from the context
-     * classloader.
-     * 
+     * Attempt to load a class first from this class's ClassLoader, then from the context classloader.
+     *
      * @param endpointInterface
      * @return
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
-    protected Class loadClass(String endpointInterface) throws ClassNotFoundException
+    protected Class loadClass(String endpointInterface)
+            throws ClassNotFoundException
     {
         try
         {
@@ -156,7 +156,7 @@ public class AnnotationServiceFactory
         {
             portType = serviceName + "PortType";
         }
-        
+
         return portType;
     }
 
@@ -174,35 +174,40 @@ public class AnnotationServiceFactory
         // All methods on endpoint interfaces are valid WebMethods.
         if (method.getDeclaringClass().isInterface())
             return true;
-        
+
         return webAnnotations.hasWebMethodAnnotation(method);
     }
 
-    protected String getInParameterName( Method method, int paramNumber, boolean doc )
+    protected String getInParameterName(Method method, int paramNumber, boolean doc)
     {
-        if( webAnnotations.hasWebParamAnnotation( method, paramNumber ) )
+        if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
         {
-            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation( method, paramNumber );
+            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, paramNumber);
 
             return webParamAnnotation.getName();
         }
         else
         {
-            return super.getInParameterName( method, paramNumber, doc );
+            return super.getInParameterName(method, paramNumber, doc);
         }
     }
-    
-    protected String getOutParameterName( Method method, boolean doc )
+
+    protected String getOutParameterName(Method method, boolean doc)
     {
-        if( webAnnotations.hasWebResultAnnotation(method) )
+        if (webAnnotations.hasWebResultAnnotation(method))
         {
-            final WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation( method );
+            final WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
 
             return webResultAnnotation.getName();
         }
         else
         {
-            return super.getOutParameterName( method, doc );
+            return super.getOutParameterName(method, doc);
         }
-    }    
+    }
+
+    protected boolean isAsync(Method method)
+    {
+        return webAnnotations.hasOnewayAnnotation(method);
+    }
 }

@@ -53,4 +53,9 @@ public class CommonsWebAttributes
     {
         return (WebParamAnnotation) Attributes.getParameterAttribute(method, parameter, WebParam.class);
     }
+
+    public boolean hasOnewayAnnotation(Method method)
+    {
+        return Attributes.hasAttributeType(method, Oneway.class);
+    }
 }
