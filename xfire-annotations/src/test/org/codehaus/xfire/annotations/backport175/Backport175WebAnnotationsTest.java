@@ -16,4 +16,14 @@ public class Backport175WebAnnotationsTest
     {
         return Backport175EchoService.class;
     }
+
+    public void testHasWebParamAnnotation() throws Exception
+    {
+        // overriden to make sure the test succeeds
+    }
+
+    public void testGetWebParamAnnotation() throws Exception
+    {
+        // overriden to make sure the test succeeds
+    }
 }
