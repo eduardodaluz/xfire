@@ -5,6 +5,7 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+
 import org.codehaus.xfire.service.Service;
 
 /**

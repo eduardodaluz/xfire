@@ -2,6 +2,7 @@ package org.codehaus.xfire.service;
 
 import java.util.Collection;
 import java.util.Hashtable;
+
 import org.codehaus.xfire.AbstractXFireComponent;
 
 /**

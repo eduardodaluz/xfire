@@ -5,7 +5,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.attachments.Attachments;
-import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**

@@ -1,6 +1,7 @@
 package org.codehaus.xfire.service;
 
 import javax.wsdl.WSDLException;
+
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.wsdl.WSDL;

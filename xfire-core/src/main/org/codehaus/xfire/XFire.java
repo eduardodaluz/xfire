@@ -2,6 +2,7 @@ package org.codehaus.xfire;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 

@@ -1,6 +1,7 @@
 package org.codehaus.xfire.handler.dom;
 
 import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.MessageContext;
 
 /**

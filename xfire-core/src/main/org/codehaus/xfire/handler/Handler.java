@@ -2,6 +2,7 @@ package org.codehaus.xfire.handler;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.MessageContext;
 
 /**

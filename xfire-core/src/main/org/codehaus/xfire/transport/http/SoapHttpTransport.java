@@ -11,9 +11,11 @@ import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.SOAPConstants;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
+
 import com.ibm.wsdl.BindingImpl;
 import com.ibm.wsdl.BindingInputImpl;
 import com.ibm.wsdl.BindingOperationImpl;

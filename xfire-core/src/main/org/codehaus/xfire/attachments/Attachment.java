@@ -1,7 +1,5 @@
 package org.codehaus.xfire.attachments;
 
-import java.io.IOException;
-
 import javax.activation.DataHandler;
 
 /**

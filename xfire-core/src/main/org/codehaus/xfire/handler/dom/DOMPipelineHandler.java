@@ -3,8 +3,10 @@ package org.codehaus.xfire.handler.dom;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.util.STAXStreamReader;

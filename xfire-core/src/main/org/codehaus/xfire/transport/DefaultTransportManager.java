@@ -2,6 +2,7 @@ package org.codehaus.xfire.transport;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.codehaus.xfire.AbstractXFireComponent;
 
 /**

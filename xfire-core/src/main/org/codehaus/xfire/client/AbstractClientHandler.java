@@ -1,7 +1,6 @@
 package org.codehaus.xfire.client;
 
 import org.codehaus.xfire.attachments.Attachments;
-import org.codehaus.xfire.attachments.JavaMailAttachments;
 
 /**
  * Base ClientHandler class.

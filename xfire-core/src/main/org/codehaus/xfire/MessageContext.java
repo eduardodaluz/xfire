@@ -3,6 +3,7 @@ package org.codehaus.xfire;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.session.Session;
 
