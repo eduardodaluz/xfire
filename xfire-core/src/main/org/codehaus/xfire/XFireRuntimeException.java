@@ -1,5 +1,8 @@
 package org.codehaus.xfire;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
 /**
  * Used for internal XFire exceptions when a fault shouldn't be returned to the service invoker.
  *
@@ -9,12 +12,7 @@ package org.codehaus.xfire;
 public class XFireRuntimeException
         extends RuntimeException
 {
-    /**
-     * Constructs a new xfire runtime exception with <code>null</code> as its detail message.
-     */
-    public XFireRuntimeException()
-    {
-    }
+    private Throwable cause;
 
     /**
      * Constructs a new xfire runtime exception with the specified detail message.
@@ -34,11 +32,72 @@ public class XFireRuntimeException
      */
     public XFireRuntimeException(String message, Throwable cause)
     {
-        super(message + ": " + cause.toString());
+        super(message);
+        this.cause = cause;
     }
 
-    public XFireRuntimeException(Throwable cause)
+
+    /**
+     * Returns the cause of this throwable or <code>null</code> if the  cause is nonexistent or unknown.
+     *
+     * @return the nested cause.
+     */
+    public Throwable getCause()
     {
-        super(cause == null ? null : cause.toString());
+        return (this.cause == this ? null : this.cause);
+    }
+
+    /**
+     * Return the detail message, including the message from the {@link #getCause() nested exception} if there is one.
+     *
+     * @return the detail message.
+     */
+    public String getMessage()
+    {
+        if (this.cause == null || this.cause == this)
+        {
+            return super.getMessage();
+        }
+        else
+        {
+            return super.getMessage() + "; nested exception is " + this.cause.getClass().getName() +
+                    ": " + this.cause.getMessage();
+        }
+    }
+
+    /**
+     * Prints this throwable and its backtrace to the specified print stream.
+     *
+     * @param s <code>PrintStream</code> to use for output
+     */
+    public void printStackTrace(PrintStream s)
+    {
+        if (this.cause == null || this.cause == this)
+        {
+            super.printStackTrace(s);
+        }
+        else
+        {
+            s.println(this);
+            this.cause.printStackTrace(s);
+        }
+    }
+
+    /**
+     * Prints this throwable and its backtrace to the specified print writer.
+     *
+     * @param w <code>PrintWriter</code> to use for output
+     */
+    public void printStackTrace(PrintWriter w)
+    {
+        if (this.cause == null || this.cause == this)
+        {
+            super.printStackTrace(w);
+        }
+        else
+        {
+            w.println(this);
+            this.cause.printStackTrace(w);
+        }
     }
 }
