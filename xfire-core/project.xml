@@ -81,7 +81,13 @@
       <artifactId>xmlbeans-jsr173-api</artifactId>
       <version>2.0-dev</version>
     </dependency>
-            
+    
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xmlbeans-jsr173-ri</artifactId>
+      <version>2.0-dev</version>
+    </dependency>
+                
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
@@ -94,11 +100,6 @@
       <artifactId>wsdl4j-qname</artifactId>
       <version>1.4</version>
       <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
-    </dependency>
-      
-    <dependency>
-      <id>wstx</id>
-      <version>1.0-RC3</version>
     </dependency>
 
     <!-- Test only dependencies -->
