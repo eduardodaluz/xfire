@@ -10,7 +10,6 @@ import javax.xml.stream.XMLStreamReader;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceBuilder;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.TransportManager;
@@ -147,11 +146,6 @@ public class DefaultXFire
     public ServiceRegistry getServiceRegistry()
     {
         return registry;
-    }
-    
-    public ServiceBuilder getServiceBuilder(String type)
-    {
-        return null;
     }
     
     public TransportManager getTransportManager()

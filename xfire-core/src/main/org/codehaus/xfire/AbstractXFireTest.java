@@ -1,10 +1,20 @@
 package org.codehaus.xfire;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import junit.framework.TestCase;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.wsdl.WSDL;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Node;
+import org.dom4j.XPath;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 
 /**
  * Contains helpful methods to test SOAP services.
@@ -16,9 +26,15 @@ public class AbstractXFireTest
 {
     private XFire xfire;
     
-    public void setUp() throws Exception
+    /** Namespaces for the XPath expressions. */
+    private Map namespaces = new HashMap();
+    
+    protected void printNode( Node node ) 
+        throws Exception
     {
-        xfire = new DefaultXFire();
+        XMLWriter writer = new XMLWriter( OutputFormat.createPrettyPrint() );
+        writer.setOutputStream( System.out );
+        writer.write( node );
     }
     
     /**
@@ -29,11 +45,116 @@ public class AbstractXFireTest
      * @return
      * @throws Exception
      */
-    protected void invokeService( String service, String document ) 
+    protected Document invokeService( String service, String document ) 
         throws Exception
     {
-         
-       // return xfire.invoke( service, getResourceAsStream( document ), null );
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MessageContext context = 
+            new MessageContext( service,
+                                null,
+                                out,
+                                null,
+                                null );
+        
+        getXFire().invoke( getResourceAsStream( document ), context );
+        
+        return null;
+    }
+    
+    /**
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        
+        xfire = new DefaultXFire();
+        
+        addNamespace("s", SOAPConstants.SOAP11_ENVELOPE_NS );
+        addNamespace("soap12", SOAPConstants.SOAP12_ENVELOPE_NS);
+    }
+    
+    /**
+     * Assert that the following XPath query selects one or more nodes.
+     * 
+     * @param xpath
+     * @throws Exception
+     */
+    public void assertValid( String xpath, Node node )
+        throws Exception
+    {
+        List nodes = createXPath( xpath ).selectNodes( node );
+        
+        if ( nodes.size() == 0 )
+        {
+            throw new Exception( "Failed to select any nodes for expression:.\n" +
+                                 xpath + "\n" +
+                                 node.asXML() );
+        }
+    }
+    
+    /**
+     * Assert that the following XPath query selects no nodes.
+     * 
+     * @param xpath
+     * @throws Exception
+     */
+    public void assertInvalid( String xpath, Node node )
+        throws Exception
+    {
+        List nodes = createXPath( xpath ).selectNodes( node );
+        
+        if ( nodes.size() > 0 )
+        {
+            throw new Exception( "Found multiple nodes for expression:\n" +
+                                 xpath + "\n" +
+                                 node.asXML() );
+        }
+    }
+
+    /**
+     * Asser that the text of the xpath node retrieved is equal to the
+     * value specified.
+     * 
+     * @param xpath
+     * @param value
+     * @param node
+     * @throws Exception
+     */
+    public void assertXPathEquals( String xpath, String value, Node node )
+        throws Exception
+    {
+        String value2 = createXPath( xpath ).selectSingleNode( node ).getText().trim();
+        
+        assertEquals( value, value2 );
+    }
+    
+    public void assertNoFault( Node node )
+        throws Exception
+    {
+        assertInvalid("/s:Envelope/s:Body/s:Fault", node);
+    }
+    
+    /**
+     * Create the specified XPath expression with the namespaces added
+     * via addNamespace().
+     */
+    protected XPath createXPath( String xpathString )
+    {
+        XPath xpath = DocumentHelper.createXPath( xpathString );
+        xpath.setNamespaceURIs(namespaces);
+        
+        return xpath;
+    }
+    
+    /**
+     * Add a namespace that will be used for XPath expressions.
+     * @param ns Namespace name.
+     * @param uri The namespace uri.
+     */
+    public void addNamespace( String ns, String uri )
+    {
+        namespaces.put(ns, uri);
     }
 
     /**
