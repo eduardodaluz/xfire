@@ -10,7 +10,9 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.client.AbstractClientHandler;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.xmlbeans.XMLBeansFault;
 
 
 /**
@@ -68,7 +70,8 @@ public class XMLBeansClientHandler
         this.response = response;
     }
 
-    public void writeRequest( XMLStreamWriter writer ) throws XMLStreamException
+    public void writeRequest( XMLStreamWriter writer ) 
+    	throws XMLStreamException
     {
         for ( int i = 0; i < request.length; i++ )
         {
@@ -77,7 +80,8 @@ public class XMLBeansClientHandler
     }
 
     
-    public void handleResponse(XMLStreamReader reader) throws XMLStreamException
+    public void handleResponse(XMLStreamReader reader) 
+    	throws XMLStreamException, XFireFault
     {
         try
         {
@@ -112,6 +116,13 @@ public class XMLBeansClientHandler
             }
             
             response = (XmlObject[]) responseElements.toArray(new XmlObject[responseElements.size()]);
+            
+            if ( response.length == 1 
+                 && 
+                 response[0].getDomNode().getLocalName().equals("Fault") )
+            {
+                throw new XMLBeansFault(response[0]);
+            }
         }
         catch (XmlException e)
         {

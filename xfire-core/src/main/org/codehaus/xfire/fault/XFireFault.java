@@ -122,7 +122,11 @@ public class XFireFault
         this.namespaces = new HashMap();
 	}
 
-	public static XFireFault createFault( Exception e )
+	protected XFireFault()
+    {
+    }
+
+    public static XFireFault createFault( Exception e )
 	{
 	    XFireFault fault = null;
         

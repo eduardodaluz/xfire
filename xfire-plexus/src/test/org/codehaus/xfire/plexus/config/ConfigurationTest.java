@@ -1,7 +1,9 @@
 package org.codehaus.xfire.plexus.config;
 
+import org.codehaus.xfire.java.JavaService;
 import org.codehaus.xfire.plexus.PlexusXFireTest;
 import org.codehaus.xfire.service.Service;
+import org.dom4j.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -24,7 +26,7 @@ public class ConfigurationTest
         
         assertNotNull( s ); 
         
-        Service js = getServiceRegistry().getService("Echo2");
+        JavaService js = (JavaService) getServiceRegistry().getService("Echo2");
         
         assertNotNull( js ); 
         
@@ -33,5 +35,14 @@ public class ConfigurationTest
         assertNotNull( xs );
         assertNotNull( xs.getServiceHandler() );
         assertNotNull( xs.getWSDL() );
+    }
+    
+    public void testInvoke() 
+    	throws Exception
+    {
+        Document response = invokeService("Echo2", "/org/codehaus/xfire/plexus/config/echo11.xml");
+        
+        addNamespace("e", "urn:Echo2");
+        assertValid("//e:out[text()='Yo Yo']", response);
     }
 }

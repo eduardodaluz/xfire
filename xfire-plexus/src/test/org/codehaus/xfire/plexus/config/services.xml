@@ -6,20 +6,19 @@
       <name>Echo</name>
       <namespace>urn:Echo</namespace>
       <version>1.2</version>
-      <encoding>literal</encoding>
-      <use>document</use>
+      <encoding>document</encoding>
+      <use>literal</use>
     </service>
 
     <service>
       <type>java</type>
       <name>Echo2</name>
       <namespace>urn:Echo2</namespace>
-      <version>1.2</version>
-      <encoding>literal</encoding>
-      <use>document</use>
+      <version>1.1</version>
+      <encoding>wrapped</encoding>
+      <use>literal</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
     </service>
-	
 	
     <service>
       <!-- 
@@ -30,8 +29,8 @@
       <name>Echo3</name>
       <namespace>urn:Echo3</namespace>
       <version>1.1</version>
-      <encoding>literal</encoding>
-      <use>document</use>
+      <syle>document</syle>
+      <use>literal</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
 	  <wsdlUrl>http://bleh</wsdlUrl>
     </service>

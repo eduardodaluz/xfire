@@ -14,6 +14,7 @@ import org.codehaus.xfire.java.type.DoubleType;
 import org.codehaus.xfire.java.type.FloatType;
 import org.codehaus.xfire.java.type.IntType;
 import org.codehaus.xfire.java.type.LongType;
+import org.codehaus.xfire.java.type.Type;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -52,11 +53,11 @@ public class TypeMappingRegistry
         
         // register primitive types manually since there is no way
         // to do Class.forName("boolean") et al.
-        tm.register(boolean.class, new QName(SOAPConstants.XSD,"boolean"), BooleanType.class);
-        tm.register(int.class, new QName(SOAPConstants.XSD,"int"), IntType.class);
-        tm.register(double.class, new QName(SOAPConstants.XSD,"double"), DoubleType.class);
-        tm.register(float.class, new QName(SOAPConstants.XSD,"float"), FloatType.class);
-        tm.register(long.class, new QName(SOAPConstants.XSD,"long"), LongType.class);
+        tm.register(boolean.class, new QName(SOAPConstants.XSD,"boolean"), new BooleanType());
+        tm.register(int.class, new QName(SOAPConstants.XSD,"int"), new IntType());
+        tm.register(double.class, new QName(SOAPConstants.XSD,"double"), new DoubleType());
+        tm.register(float.class, new QName(SOAPConstants.XSD,"float"), new FloatType());
+        tm.register(long.class, new QName(SOAPConstants.XSD,"long"), new LongType());
         
         for ( int i = 0; i < types.length; i++ )
         {
@@ -78,7 +79,7 @@ public class TypeMappingRegistry
 
             tm.register( clazz,
                          qname,
-                         typeClass );
+                         (Type) typeClass.newInstance() );
             
             logger.debug( "Registered " + typeClass.getName() + 
                               " for " + qname + " with class " + clazz.getName() );

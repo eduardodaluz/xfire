@@ -29,4 +29,21 @@ public class GeneratorTest
         
         task.execute();
     }
+    
+    public void testServerGeneration() throws Exception
+    {
+        File weather = new File("src/test-schemas/WeatherForecast.wsdl");
+        
+        GeneratorTask task = new GeneratorTask();
+        
+        task.setWsdl(weather.toURL().toString());
+        task.setOverwrite(true);
+        task.setStrategy(ServerGenerationStrategy.class.getName());
+        File output = new File("target/generated-test");
+        output.mkdir();
+        
+        task.setOutputDir( output.getAbsolutePath() );
+        
+        task.execute();
+    }
 }

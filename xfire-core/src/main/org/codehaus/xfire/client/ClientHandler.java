@@ -4,6 +4,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.fault.XFireFault;
+
 /**
  * <p>
  * A ClientHandler creates the necessary requestion and response objects
@@ -34,7 +36,9 @@ public interface ClientHandler
      * Handle the response.
      * @param reader
      * @throws XMLStreamException
+     * @throws XFireFault The ClientHandler must create an XFireFault
+     * and throw it if a fault occurs.
      */
     void handleResponse( XMLStreamReader reader )
-        throws XMLStreamException;
+        throws XMLStreamException, XFireFault;
 }

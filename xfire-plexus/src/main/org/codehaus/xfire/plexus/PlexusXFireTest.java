@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.BasicConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.StringInputStream;
 import org.codehaus.xfire.MessageContext;
@@ -80,6 +82,8 @@ public class PlexusXFireTest
      */
     protected void setUp() throws Exception
     {
+        BasicConfigurator.configure();
+
         super.setUp();
         
         addNamespace("s", SOAPConstants.SOAP11_ENVELOPE_NS );

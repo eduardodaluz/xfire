@@ -1,13 +1,10 @@
 package org.codehaus.xfire.plexus.xmlbeans;
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.xfire.handler.SoapHandler;
-import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.config.Configurator;
-import org.codehaus.xfire.plexus.java.PlexusJavaService;
+import org.codehaus.xfire.plexus.java.JavaConfigurator;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.xmlbeans.XMLBeansServiceHandler;
+import org.codehaus.xfire.xmlbeans.XMLBeansService;
 
 /**
  * Configures java services for plexus.
@@ -16,7 +13,7 @@ import org.codehaus.xfire.xmlbeans.XMLBeansServiceHandler;
  * @since Sep 20, 2004
  */
 public class XMLBeansConfigurator
-    extends PlexusXFireComponent
+    extends JavaConfigurator
     implements Configurator
 {
     final public static String SERVICE_TYPE = "xmlbeans";
@@ -34,17 +31,12 @@ public class XMLBeansConfigurator
      */
     public Service createService( PlexusConfiguration config ) throws Exception
     {
-        PlexusJavaService s = new PlexusJavaService();
-        s.service(getServiceLocator());
-        s.configure(config);
-        
-        XMLBeansServiceHandler handler = new XMLBeansServiceHandler();
-		SoapHandler sHandler = new SoapHandler(handler);
-		s.setServiceHandler(sHandler);
+	    XMLBeansService s = new XMLBeansService();
+	    
+	    configureService(config, s);
+	
+	    getServiceRegistry().register(s);
 		
-		ServiceRegistry reg = (ServiceRegistry) getServiceLocator().lookup(ServiceRegistry.ROLE);
-		reg.register(s);
-
-		return s;
+	    return s;
     }
 }
