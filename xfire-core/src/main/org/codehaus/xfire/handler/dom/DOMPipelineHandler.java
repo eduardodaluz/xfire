@@ -13,6 +13,8 @@ import org.dom4j.io.XMLWriter;
 
 /**
  * Creates a DOM structure from the stream (lazily instantiated).
+ * It then passes off the DOM messages to a series of 
+ * <code>DOMHandler</code>s.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Sep 18, 2004

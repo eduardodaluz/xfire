@@ -8,7 +8,8 @@ import org.dom4j.QName;
 
 /**
  * Holds a SOAP message as a DOM4J
- * document. Helper methods to grab the SOAP Body and/or Header.
+ * document. There are also helper methods to grab 
+ * the SOAP Body and/or Header.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004

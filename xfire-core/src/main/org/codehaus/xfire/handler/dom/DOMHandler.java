@@ -4,7 +4,8 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 
 /**
- * A handler in a DOM processed pipeline.
+ * A handler in a DOM processed pipeline. This does not
+ * inherit from the <code>Handler</code> class.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Sep 18, 2004
