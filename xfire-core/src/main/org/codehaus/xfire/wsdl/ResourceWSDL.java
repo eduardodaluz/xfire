@@ -4,45 +4,66 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.wsdl.WSDLException;
 
 /**
  * Create a WSDL instance from a URI.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class ResourceWSDL
 	implements WSDLWriter
 {
-    String wsdlUrl = null;
-    
+    private final URL wsdlUrl;
+
     /**
-     * @param wsdlUri
+     * @param wsdlUrl
      */
     public ResourceWSDL(String wsdlUrl) throws WSDLException
     {
+        try
+        {
+            this.wsdlUrl = new URL( wsdlUrl );
+        }
+        catch (MalformedURLException e)
+        {
+            throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "Invalid URL to WSDL file", e);
+        }
+    }
+
+    /**
+     * @param wsdlUrl
+     */
+    public ResourceWSDL(URL wsdlUrl)
+    {
         this.wsdlUrl = wsdlUrl;
     }
-    
+
     public void write(OutputStream out) throws IOException
     {
-       URL url = new URL(wsdlUrl);
-       
-       copy( url.openStream(), out, 8096 );
+       copy( wsdlUrl.openStream(), out, 8096 );
     }
-    
-    public void copy(final InputStream input,
+
+    private void copy(final InputStream input,
                      final OutputStream output,
                      final int bufferSize)
         throws IOException
     {
-        final byte[] buffer = new byte[bufferSize];
-
-        int n = 0;
-        while (-1 != (n = input.read(buffer)))
+        try
         {
-            output.write(buffer, 0, n);
+            final byte[] buffer = new byte[bufferSize];
+
+            int n = 0;
+            while (-1 != (n = input.read(buffer)))
+            {
+                output.write(buffer, 0, n);
+            }
+        }
+        finally
+        {
+            input.close();
         }
     }
 }
