@@ -63,7 +63,6 @@ public class SoapHandler
                 else if ( reader.getLocalName().equals("Body") )
                 {
                     writer.writeStartElement("soap", "Body", context.getSoapVersion());
-                    reader.nextTag();
                     bodyHandler.invoke(context, reader);
                     writer.writeEndElement();
                 }
