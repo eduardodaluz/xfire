@@ -34,25 +34,25 @@
             <name>XFire Announce List</name>
             <subscribe>mailto:announce-subscribe@xfire.codehaus.org</subscribe>
             <unsubscribe>mailto:announce-unsubscribe@xfire.codehaus.org</unsubscribe>
-            <archive>http://archive.plexus.codehaus.org/announce/</archive>
+            <archive>http://archive.xfire.codehaus.org/announce/</archive>
         </mailingList>
         <mailingList>
             <name>XFire User List</name>
             <subscribe>mailto:user-subscribe@xfire.codehaus.org</subscribe>
             <unsubscribe>mailto:user-unsubscribe@xfire.codehaus.org</unsubscribe>
-            <archive>http://archive.plexus.codehaus.org/user/</archive>
+            <archive>http://archive.xfire.codehaus.org/user/</archive>
         </mailingList>
         <mailingList>
             <name>XFire Developer List</name>
             <subscribe>mailto:dev-subscribe@xfire.codehaus.org</subscribe>
             <unsubscribe>mailto:dev-unsubscribe@xfire.codehaus.org</unsubscribe>
-            <archive>http://archive.plexus.codehaus.org/dev/</archive>
+            <archive>http://archive.xfire.codehaus.org/dev/</archive>
         </mailingList>
         <mailingList>
             <name>XFire Commit List</name>
             <subscribe>mailto:scm-subscribe@xfire.codehaus.org</subscribe>
             <unsubscribe>mailto:scm-unsubscribe@xfire.codehaus.org</unsubscribe>
-            <archive>http://archive.plexus.codehaus.org/scm/</archive>
+            <archive>http://archive.xfire.codehaus.org/scm/</archive>
         </mailingList>
     </mailingLists>
 
