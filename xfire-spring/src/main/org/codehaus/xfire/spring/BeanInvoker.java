@@ -3,7 +3,6 @@ package org.codehaus.xfire.spring;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.object.ObjectInvoker;
-import org.springframework.beans.factory.BeanFactory;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -12,13 +11,11 @@ import org.springframework.beans.factory.BeanFactory;
 public class BeanInvoker
     extends ObjectInvoker
 {
-    private BeanFactory factory;
-    private String name;
+    private Object proxy;
     
-    public BeanInvoker(BeanFactory factory, String name)
+    public BeanInvoker(Object proxy)
     {
-       this.factory = factory;
-       this.name = name;
+        this.proxy = proxy;
     }
     
     /**
@@ -30,6 +27,6 @@ public class BeanInvoker
     public Object getServiceObject(MessageContext context)
         throws XFireFault
     {
-        return factory.getBean(name);
+        return proxy;
     }
 }

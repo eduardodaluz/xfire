@@ -1,31 +1,53 @@
 package org.codehaus.xfire.spring;
 
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.object.ServiceBuilder;
-import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.test.AbstractServletTest;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
+
+import com.meterware.httpunit.PostMethodWebRequest;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class SpringServletTest
-    extends AbstractXFireTest
+    extends AbstractServletTest
 {
-    public void testSpring()
+    BeanFactory factory;
+    
+    public void setUp()
         throws Exception
     {
-        ClassPathResource res = new ClassPathResource("/org/codehaus/xfire/spring/xfire.xml");
-        XmlBeanFactory factory = new XmlBeanFactory(res);
+        ClassPathResource res = new ClassPathResource("/org/codehaus/xfire/spring/echoBeans.xml");
+        factory = new XmlBeanFactory(res);
         
-        Object bean = factory.getBean("xfire");
-        assertTrue( bean instanceof XFire );
-        
-        ServiceBuilder builder = (ServiceBuilder) factory.getBean("xfire.serviceBuilder");
-        assertNotNull(builder);
-        
-        Service s = (Service) factory.getBean("echo.service");
-        
+        super.setUp();
     }
+
+    public void testServlet() throws Exception
+    {
+        WebResponse response = newClient().getResponse( "http://localhost/Echo?wsdl" );
+        
+        System.out.println(response.getText());
+        
+        WebRequest req = new PostMethodWebRequest( "http://localhost/Echo",
+                getClass().getResourceAsStream("/org/codehaus/xfire/spring/echoRequest.xml"),
+                "text/xml" );
+
+        response = newClient().getResponse(req);
+    }
+    
+    protected String getConfiguration()
+    {
+        return "/org/codehaus/xfire/spring/web.xml";
+    }
+    
+    protected XFire getXFire()
+    {
+        return (XFire) factory.getBean(BeanConstants.XFIRE);
+    }
+
 }

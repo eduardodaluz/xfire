@@ -9,7 +9,11 @@
 
   <bean id="xfire.transportManager" 
         class="org.codehaus.xfire.transport.DefaultTransportManager"
-        singleton="true"/>
+        singleton="true">
+    <constructor-arg>
+      <ref bean="xfire.serviceRegistry"/>
+    </constructor-arg>
+  </bean>
   
   <bean id="xfire" 
     class="org.codehaus.xfire.DefaultXFire"
@@ -38,4 +42,5 @@
        <ref bean="xfire.typeMappingRegistry"/>
      </constructor-arg>
   </bean>
+
 </beans>
