@@ -20,46 +20,48 @@
                         <text/>
                     </element>
 
-                    <optional>
-                        <element name="namespace">
-                            <text/>
-                        </element>
-                    </optional>
+                    <interleave>
+                        <optional>
+                            <element name="namespace">
+                                <text/>
+                            </element>
+                        </optional>
 
-                    <optional>
-                        <element name="wdslURL">
-                            <text/>
-                        </element>
-                    </optional>
+                        <optional>
+                            <element name="wdslURL">
+                                <text/>
+                            </element>
+                        </optional>
 
-                    <optional>
-                        <element name="use">
-                            <choice>
-                                <value>encoded</value>
-                                <value>literal</value>
-                            </choice>
-                        </element>
-                    </optional>
+                        <optional>
+                            <element name="use">
+                                <choice>
+                                    <value>encoded</value>
+                                    <value>literal</value>
+                                </choice>
+                            </element>
+                        </optional>
 
-                    <optional>
-                        <element name="style">
-                            <choice>
-                                <value>document</value>
-                                <value>rpc</value>
-                                <value>wrapped</value>
-                                <value>message</value>
-                            </choice>
-                        </element>
-                    </optional>
+                        <optional>
+                            <element name="style">
+                                <choice>
+                                    <value>document</value>
+                                    <value>rpc</value>
+                                    <value>wrapped</value>
+                                    <value>message</value>
+                                </choice>
+                            </element>
+                        </optional>
 
-                    <optional>
-                        <element name="soapVersion">
-                            <choice>
-                                <value>1.1</value>
-                                <value>1.2</value>
-                            </choice>
-                        </element>
-                    </optional>
+                        <optional>
+                            <element name="soapVersion">
+                                <choice>
+                                    <value>1.1</value>
+                                    <value>1.2</value>
+                                </choice>
+                            </element>
+                        </optional>
+                    </interleave>
 
                     <optional>
                         <ref name="additional"/>
@@ -70,6 +72,10 @@
     </start>
 
     <define name="additional"> <!-- java -->
+        <element name="serviceClass">
+            <text/>
+        </element>
+
         <optional>
             <element name="allowedMethods">
                 <text/>
