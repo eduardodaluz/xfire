@@ -22,4 +22,24 @@ public class RestTest
         assertNotNull(res);
         assertTrue( res.indexOf("echo") != -1 );
     }
+    
+    public void testAmazon()
+        throws Exception
+    {
+        SinkHandler handler = new SinkHandler();
+        String url = "http://webservices.amazon.com/onca/xml?Service=AWSECommerceService"
+            + "&SubscriptionId=1E5AY4ZG53H4AMC8QH82"
+            + "&Operation=ItemSearch"
+            + "&SearchIndex=Books"
+            + "&Keywords=SOAP";
+        
+        RestHttpClient client = new RestHttpClient( handler, url );
+
+        client.invoke();
+        
+        String res = handler.getResponse();
+        System.out.println(res);
+        assertNotNull(res);
+        assertTrue( res.indexOf("ItemSearchResponse") != -1 );
+    }
 }

@@ -71,12 +71,7 @@ public abstract class AbstractHttpClient
         }
         catch (MalformedURLException me)
         {
-            System.err.println("MalformedURLException: " + me);
-        }
-        catch (IOException ioe)
-        {
-            System.err.println("IOException: " + ioe.getMessage());
-            ioe.printStackTrace();
+            throw new RuntimeException("Bad URL.", me);
         }
     }
     
