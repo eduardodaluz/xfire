@@ -68,6 +68,14 @@
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration/>
     </component>
+            
+    <component>
+      <role>org.codehaus.xfire.plexus.config.Configurator</role>
+      <role-hint>annotation</role-hint>
+      <implementation>org.codehaus.xfire.plexus.config.AnnotationServiceConfigurator</implementation>
+      <lifecycle-handler>plexus-configurable</lifecycle-handler>
+      <configuration/>
+    </component>
 
     <component>
       <role>org.codehaus.xfire.type.TypeMappingRegistry</role>

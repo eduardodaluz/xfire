@@ -47,9 +47,8 @@ public class ObjectServiceConfigurator
     public Service createService( PlexusConfiguration config ) 
         throws Exception
     {
-        String factoryClass = config.getChild("serviceFactory").getValue("");
-        ServiceFactory builder = getServiceFactory(factoryClass);
-
+        ServiceFactory builder = getServiceFactory(config);
+        
         String name = config.getChild("name").getValue();
         String namespace = config.getChild("namespace" ).getValue("");
         String use = config.getChild("use").getValue("literal");
@@ -186,6 +185,13 @@ public class ObjectServiceConfigurator
         return pipe;
     }
     
+    public ServiceFactory getServiceFactory(PlexusConfiguration config) 
+        throws Exception
+    {
+        String factoryClass = config.getChild("serviceFactory").getValue("");
+        return getServiceFactory(factoryClass);
+    }
+    
     /**
      * @return
      * @throws PlexusConfigurationException 
@@ -199,7 +205,7 @@ public class ObjectServiceConfigurator
         }
         else
         {
-            Class clz = getClass().getClassLoader().loadClass(builderClass);
+            Class clz = loadClass(builderClass);
             Constructor con = 
                 clz.getConstructor( new Class[] {TransportManager.class, TypeMappingRegistry.class} );
             
