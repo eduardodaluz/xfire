@@ -11,8 +11,8 @@
       postProcessing="true"
       includes="xfire-core/project.xml"
       excludes="*"
-      goals="pom:install jar:install"
-      banner="Installing XFire Core POM"
+      goals="pom:install,jar:install"
+      banner="Installing XFire Core"
       ignoreFailures="true"/>
 
     <maven:reactor
