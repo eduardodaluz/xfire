@@ -66,7 +66,10 @@ public class SimpleConfigurator
 
         try
         {
-            s.setWSDLURL( config.getChild("wsdlURL").getValue() );
+            String wsdlUrl = config.getChild("wsdlURL").getValue();
+            if (wsdlUrl != null && !wsdlUrl.equals("") ) {
+                s.setWSDLURL( wsdlUrl );
+            }
         }
         catch (WSDLException e)
         {
