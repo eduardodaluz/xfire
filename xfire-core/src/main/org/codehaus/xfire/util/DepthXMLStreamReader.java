@@ -111,7 +111,6 @@ public class DepthXMLStreamReader
 
     public NamespaceContext getNamespaceContext()
     {
-
         return reader.getNamespaceContext();
     }
 
@@ -258,15 +257,20 @@ public class DepthXMLStreamReader
         int next = reader.next();
         
         if ( next == START_ELEMENT )
+        {
             depth++;
+        }
         else if ( next == END_ELEMENT )
+        {
             depth--;
+        }
         
         return next;
     }
 
     public int nextTag() throws XMLStreamException
     {
+        System.out.println("next tag.");
         return reader.nextTag();
     }
 

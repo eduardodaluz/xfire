@@ -41,8 +41,6 @@ public abstract class AbstractHandler
         Service service = context.getService();
         
         service.getFaultHandler().handleFault( e, context );
-        
-        e.printStackTrace();
     }
     
     public XMLStreamWriter getXMLStreamWriter( MessageContext context )

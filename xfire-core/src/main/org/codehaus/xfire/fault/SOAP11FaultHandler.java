@@ -106,16 +106,6 @@ public class SOAP11FaultHandler
         }
     }
 
-	/**
-     * @param detailElement
-     * @param writer
-     */
-    private void STAXStreamDOMWriter(Element detailElement, XMLStreamWriter writer)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
     /**
 	 * @param e
 	 * @return

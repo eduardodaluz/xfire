@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
+
+import org.apache.log4j.BasicConfigurator;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.wsdl.WSDL;
@@ -102,6 +104,8 @@ public class AbstractXFireTest
     protected void setUp() throws Exception
     {
         super.setUp();
+        
+        BasicConfigurator.configure();
         
         xfire = new DefaultXFire();
         

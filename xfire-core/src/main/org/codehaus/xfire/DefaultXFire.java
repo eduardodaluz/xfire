@@ -7,6 +7,8 @@ import javax.wsdl.WSDLException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import org.apache.log4j.Logger;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
@@ -26,6 +28,8 @@ public class DefaultXFire
     private ServiceRegistry registry;
 
     private TransportManager transportManager;
+    
+    private static Logger logger = Logger.getLogger(DefaultXFire.class);
     
     public DefaultXFire()
     {
@@ -69,6 +73,7 @@ public class DefaultXFire
             }
             else if ( handler != null )
             {
+                logger.error("Fault occurred.", e);
                 handler.handleFault( e, context );
             }
             else
