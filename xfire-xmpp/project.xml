@@ -1,0 +1,93 @@
+<project>
+  <pomVersion>1</pomVersion>
+  <name>XMPP (Jabber) XFire Module</name>
+  <groupId>xfire</groupId>
+  <artifactId>xfire-xmpp</artifactId>
+  <id>xfire-xmpp</id>
+  <currentVersion>1.0-SNAPSHOT</currentVersion>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
+
+  <package>org.codehaus.xfire.xmpp</package>
+  <description>An xmpp transport for XFire.</description>
+  <shortDescription>An xmpp transport for XFire.</shortDescription>
+  
+  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-xmpp</siteDirectory>
+  
+  <versions/>
+  
+  <branches/>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-java</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>smack</groupId>
+      <artifactId>smack</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>smack</groupId>
+      <artifactId>smackx</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+    
+  </dependencies>
+  
+  <build>
+    <sourceDirectory>${basedir}/src/main</sourceDirectory>
+    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+        <include>**/*TestCase.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/*Abstract*.java</exclude>
+      </excludes>
+      <resources>
+        <resource>
+          <directory>${basedir}/src/test</directory>
+          <includes>
+            <include>**/*.xml</include>
+            <include>**/*.xsb</include>
+            <include>**/*.vm</include>
+          </includes>
+          <filtering>false</filtering>
+        </resource>
+      </resources>
+    </unitTest>
+    
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.xsb</include>
+          <include>**/*.vm</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+    
+  </build>
+
+  <properties/>
+</project>
