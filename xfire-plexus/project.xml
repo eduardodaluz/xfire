@@ -3,8 +3,8 @@
   <name>Plexus XFire Module</name>
   <groupId>xfire</groupId>
   <artifactId>xfire-plexus</artifactId>
-  <currentVersion>1.0-alpha-2-SNAPSHOT</currentVersion>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-2-SNAPSHOT.pom</extend>
+  <currentVersion>1.0-alpha-2</currentVersion>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-alpha-2.pom</extend>
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
