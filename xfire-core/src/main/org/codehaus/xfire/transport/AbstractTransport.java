@@ -108,11 +108,14 @@ public abstract class AbstractTransport
         bindIn.setName( wsdlOp.getInput().getName() );
         bindIn.addExtensibilityElement( body );
         
-        BindingOutput bindOut = new BindingOutputImpl();
-        bindOut.setName( wsdlOp.getOutput().getName() );
-        bindOut.addExtensibilityElement( body );
-        bindOp.setBindingOutput( bindOut );
-
+        if (wsdlOp.getOutput() != null)
+        {
+            BindingOutput bindOut = new BindingOutputImpl();
+            bindOut.setName( wsdlOp.getOutput().getName() );
+            bindOut.addExtensibilityElement( body );
+            bindOp.setBindingOutput( bindOut );
+        }
+        
         bindOp.setName( wsdlOp.getName() );
         bindOp.setOperation( wsdlOp );
         bindOp.setBindingInput( bindIn );
