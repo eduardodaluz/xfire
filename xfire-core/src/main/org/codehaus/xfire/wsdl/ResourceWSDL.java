@@ -14,19 +14,19 @@ import javax.wsdl.WSDLException;
 public class ResourceWSDL
 	implements WSDL
 {
-    String uri = null;
+    String wsdlUrl = null;
     
     /**
      * @param wsdlUri
      */
-    public ResourceWSDL(String wsdlUri) throws WSDLException
+    public ResourceWSDL(String wsdlUrl) throws WSDLException
     {
-        this.uri = wsdlUri;
+        this.wsdlUrl = wsdlUrl;
     }
     
     public void write(OutputStream out) throws IOException
     {
-       URL url = new URL(uri);
+       URL url = new URL(wsdlUrl);
        
        copy( url.openStream(), out, 8096 );
     }
