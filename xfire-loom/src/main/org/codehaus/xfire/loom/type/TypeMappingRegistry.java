@@ -1,4 +1,4 @@
-package org.codehaus.xfire.loom.java;
+package org.codehaus.xfire.loom.type;
 
 import javax.xml.namespace.QName;
 

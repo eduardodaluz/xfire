@@ -10,7 +10,7 @@
         <!--        </service>-->
     </xfire-service-deployer>
 
-    <xfire-java-type-mapping-registry>
+    <xfire-type-mapping-registry>
         <!-- SOAP 1.1 encoding. -->
         <typeMapping namespace="http://schemas.xmlsoap.org/soap/encoding/">
 
@@ -203,5 +203,5 @@
                   name="decimal"
                   type="org.codehaus.xfire.type.basic.BigDecimalType" />
         </typeMapping>
-    </xfire-java-type-mapping-registry>
+    </xfire-type-mapping-registry>
 </config>

@@ -9,11 +9,20 @@
             <zeroOrMore>
                 <element name="service">
                     <attribute name="key"/>
-                    <attribute name="type"/>
 
                     <element name="name">
                         <text/>
                     </element>
+
+                    <element name="serviceClass">
+                        <text/>
+                    </element>
+
+                    <optional>
+                        <element name="builder">
+                            <text/>
+                        </element>
+                    </optional>
 
                     <interleave>
                         <optional>
@@ -23,7 +32,7 @@
                         </optional>
 
                         <optional>
-                            <element name="wdslURL">
+                            <element name="encodingStyleURI">
                                 <text/>
                             </element>
                         </optional>
@@ -64,51 +73,8 @@
                             </element>
                         </zeroOrMore>
                     </interleave>
-
-                    <optional>
-                        <ref name="additional"/>
-                    </optional>
                 </element>
             </zeroOrMore>
         </element>
     </start>
-
-    <define name="additional"> <!-- java -->
-        <element name="serviceClass">
-            <text/>
-        </element>
-
-<!--
-        <optional>
-            <element name="allowedMethods">
-                <text/>
-            </element>
-        </optional>
--->
-
-        <optional>
-            <element name="autoTyped">
-                <data type="boolean"/>
-            </element>
-        </optional>
-
-        <optional>
-            <element name="encodingStyleURI">
-                <text/>
-            </element>
-        </optional>
-
-        <optional>
-            <element name="types">
-                <zeroOrMore>
-                    <element name="type">
-                        <attribute name="namespace"/>
-                        <attribute name="name"/>
-                        <attribute name="class"/>
-                        <attribute name="type"/>
-                    </element>
-                </zeroOrMore>
-            </element>
-        </optional>
-    </define>
 </grammar>

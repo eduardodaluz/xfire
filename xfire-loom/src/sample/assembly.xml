@@ -12,18 +12,10 @@
     <block name="xfire-transport-manager" class="org.codehaus.xfire.transport.DefaultTransportManager"/>
 
     <block name="xfire-service-deployer" class="org.codehaus.xfire.loom.DefaultServiceDeployer">
-        <provide name="xfire-simple-service-factory" role="org.codehaus.xfire.loom.ServiceFactory[]"/>
-        <provide name="xfire-java-service-factory" role="org.codehaus.xfire.loom.ServiceFactory[]"/>
-
+        <provide name="xfire-transport-manager" role="org.codehaus.xfire.transport.TransportManager"/>
+        <provide name="xfire-type-mapping-registry" role="org.codehaus.xfire.type.TypeMappingRegistry"/>
         <provide name="xfire-service-registry" role="org.codehaus.xfire.service.ServiceRegistry"/>
     </block>
 
-    <block name="xfire-simple-service-factory" class="org.codehaus.xfire.loom.simple.SimpleServiceFactory"/>
-
-    <block name="xfire-java-service-factory" class="org.codehaus.xfire.loom.java.JavaServiceFactory">
-        <provide name="xfire-transport-manager" role="org.codehaus.xfire.transport.TransportManager"/>
-        <provide name="xfire-java-type-mapping-registry" role="org.codehaus.xfire.type.TypeMappingRegistry"/>
-    </block>
-
-    <block name="xfire-java-type-mapping-registry" class="org.codehaus.xfire.loom.java.TypeMappingRegistry"/>
+    <block name="xfire-type-mapping-registry" class="org.codehaus.xfire.loom.type.TypeMappingRegistry"/>
 </assembly>

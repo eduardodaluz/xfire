@@ -18,7 +18,11 @@
         </dependency>
 
         <dependency>
-            <service name="org.codehaus.xfire.loom.ServiceFactory[]"/>
+            <service name="org.codehaus.xfire.type.TypeMappingRegistry"/>
+        </dependency>
+
+        <dependency>
+            <service name="org.codehaus.xfire.transport.TransportManager"/>
         </dependency>
     </dependencies>
 </blockinfo>

@@ -12,7 +12,7 @@ import org.codehaus.xfire.service.Service;
 public interface ServiceFactory
 {
     /**
-     * Get the type of services that this factory can create (eg, simple, java, xmlbean, etc)
+     * Get the type of services that this factory can create (eg, message, java, xmlbean, etc)
      *
      * @return Type of services that this factory can create. Required.
      */
