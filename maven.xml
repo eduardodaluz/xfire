@@ -26,9 +26,9 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="*"
+      excludes="xfire-demo/*"
       goals="site:deploy"
-      banner="Deploy XFire Websites"
+      banner="Deploying XFire Websites"
       ignoreFailures="true"/>
     
   </goal>
