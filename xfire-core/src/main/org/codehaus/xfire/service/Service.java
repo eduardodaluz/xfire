@@ -38,7 +38,7 @@ public interface Service
     String getUse();
 
     /**
-     * The name of the service.
+     * The name of the service. This must be URI encodable.
      */
     String getName();
 
