@@ -137,6 +137,7 @@
           <directory>${basedir}/src/test</directory>
           <includes>
             <include>**/*.xml</include>
+            <include>**/*.wsdl</include>
             <include>**/*.vm</include>
           </includes>
           <filtering>false</filtering>
