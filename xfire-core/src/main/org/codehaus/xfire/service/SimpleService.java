@@ -1,7 +1,9 @@
 package org.codehaus.xfire.service;
 
 import java.util.Hashtable;
+
 import javax.wsdl.WSDLException;
+
 import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.handler.Handler;
@@ -60,7 +62,7 @@ public class SimpleService
             }
             else
             {
-                WSDLBuilder b = getWSDLBuilder();
+                org.codehaus.xfire.wsdl.WSDLBuilder b = getWSDLBuilder();
                 
                 if ( b != null )
                     return getWSDLBuilder().createWSDL( this );
@@ -70,12 +72,12 @@ public class SimpleService
         return wsdl;
     }
 
-    public WSDLBuilder getWSDLBuilder()
+    public org.codehaus.xfire.wsdl.WSDLBuilder getWSDLBuilder()
     {
         return wsdlBuilder;
     }
     
-    public void setWSDLBuilder( WSDLBuilder wsdlBuilder )
+    public void setWSDLBuilder( org.codehaus.xfire.wsdl.WSDLBuilder wsdlBuilder )
     {
         this.wsdlBuilder = wsdlBuilder;
     }
