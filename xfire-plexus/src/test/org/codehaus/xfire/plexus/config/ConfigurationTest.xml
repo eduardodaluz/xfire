@@ -6,9 +6,10 @@
 
   <load-on-start>
     <component>
-      <role>org.codehaus.xfire.configuration.ConfigurationService</role>
+      <role>org.codehaus.xfire.plexus.config.ConfigurationService</role>
     </component>
   </load-on-start>
+  
   <components>
         
     <component>

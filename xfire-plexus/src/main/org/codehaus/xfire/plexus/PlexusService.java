@@ -23,8 +23,6 @@ public class PlexusService
 	extends SimpleService
 	implements Configurable, Initializable, Serviceable
 {
-    private String serviceHandlerHint;
-    
     private String faultHandlerHint;
     
     private ServiceLocator manager;
@@ -39,21 +37,6 @@ public class PlexusService
     public void initialize() throws Exception
     {
         getServiceRegistry().register( this );
-    }
-    
-	/**
-	 * @see org.codehaus.xfire.service.Service#getServiceProvider()
-	 */
-	public Handler getServiceHandler()
-    {
-        try
-        {
-            return (Handler) getServiceLocator().lookup( Handler.ROLE, serviceHandlerHint );
-        }
-        catch (ComponentLookupException e)
-        {
-            throw new XFireRuntimeException( "Couldn't find service provider!", e );
-        }
     }
 
     public FaultHandler getFaultHandler()
@@ -78,16 +61,6 @@ public class PlexusService
         this.faultHandlerHint = faultHandlerHint;
     }
     
-    public String getProviderHint()
-    {
-        return serviceHandlerHint;
-    }
-    
-    public void setProviderHint(String serviceHandlerHint)
-    {
-        this.serviceHandlerHint = serviceHandlerHint;
-    }
-    
     public void configure(PlexusConfiguration config) 
         throws PlexusConfigurationException
     {
@@ -110,9 +83,7 @@ public class PlexusService
         else
             throw new PlexusConfigurationException("Invalid soap version.  Must be 1.1 or 1.2.");
         
-        setFaultHandlerHint( config.getChild( "faultHandler" ).getValue() );
-        
-        setProviderHint( config.getChild( "serviceHandler" ).getValue() );
+        setFaultHandlerHint( config.getChild( "faultHandler" ).getValue(soapNS) );
     }
     
     protected ServiceRegistry getServiceRegistry()
