@@ -34,7 +34,7 @@
                     
     <component>
       <role>org.codehaus.xfire.fault.FaultHandler</role>
-      <roleHint>1.2</roleHint>
+      <role-hint>1.2</role-hint>
       <implementation>org.codehaus.xfire.fault.SOAP12FaultHandler</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration/>
@@ -42,7 +42,7 @@
     
     <component>
       <role>org.codehaus.xfire.fault.FaultHandler</role>
-      <roleHint>1.1</roleHint>
+      <role-hint>1.1</role-hint>
       <implementation>org.codehaus.xfire.fault.SOAP11FaultHandler</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration/>

@@ -9,13 +9,16 @@ import java.io.Reader;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.plexus.configuration.xml.xstream.PlexusTools;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.service.Service;
 
@@ -50,7 +53,7 @@ public class DefaultConfigurationService
            return;
         }             
        
-        PlexusConfiguration configuration = PlexusTools.buildConfiguration( reader );
+        PlexusConfiguration configuration = new XmlPlexusConfiguration( Xpp3DomBuilder.build(reader) );
         createServices( configuration.getChild("services") );
 	}
     

@@ -1,10 +1,13 @@
 package org.codehaus.xfire.plexus;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.plexus.config.ConfigurationService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 
@@ -16,7 +19,7 @@ import org.codehaus.xfire.transport.TransportManager;
  */
 public class PlexusXFire 
     extends DefaultXFire
-    implements Serviceable
+    implements Serviceable, Initializable
 {
     private ServiceLocator locator;
     
@@ -51,4 +54,10 @@ public class PlexusXFire
     {
         this.locator = locator;
     }
+
+    public void initialize() throws Exception
+    {
+        locator.lookupList(Service.ROLE);
+        locator.lookupList(ConfigurationService.ROLE);
+   }
 }
