@@ -10,6 +10,11 @@ import javax.xml.stream.XMLStreamWriter;
 public abstract class NullRequestHandler 
     implements ClientHandler
 {
+    public boolean hasRequest()
+    {
+        return false;
+    }
+
     public void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException
     {

@@ -1,5 +1,7 @@
 package org.codehaus.xfire.client.http;
 
+import java.io.OutputStream;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -23,6 +25,12 @@ public class RestHttpClient
         this.handler = bodyHandler;
         setUrl( url );
     }    
+    
+    protected void writeRequest(OutputStream out)
+    {
+        if ( handler.hasRequest() )
+            super.writeRequest(out);
+    }
     
     protected void writeRequest(XMLStreamWriter writer) 
         throws XMLStreamException

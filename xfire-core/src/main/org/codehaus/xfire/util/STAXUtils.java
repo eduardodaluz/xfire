@@ -13,6 +13,17 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class STAXUtils
 {
+    /**
+     * Copies the reader to the writer.  The start and end document
+     * methods must be handled on the writer manually.
+     * 
+     * TODO: if the namespace on the reader has been declared previously
+     * to where we are in the stream, this probably won't work.
+     * 
+     * @param reader
+     * @param writer
+     * @throws XMLStreamException
+     */
     public static void copy( XMLStreamReader reader, XMLStreamWriter writer ) 
         throws XMLStreamException
     {
@@ -57,9 +68,22 @@ public class STAXUtils
             prefix = "";
         }
         
+        // Declare which prefixes we're using.
+        for ( int i = 0; i < reader.getNamespaceCount(); i++ )
+        {
+            String nsPrefix = reader.getNamespacePrefix(i);
+            String nsURI = reader.getNamespaceURI(i);
+            
+            if ( nsPrefix != null && nsPrefix.length() > 0 )
+            {
+                writer.setPrefix(nsPrefix, nsURI);
+            }
+        }
+
         boolean wroteDefault = false;
         String uri = reader.getNamespaceURI();
         
+        // Write out the element name and possible the default namespace
         if ( uri != null )
         {
             String definedNS = writer.getNamespaceContext().getNamespaceURI(prefix);
@@ -93,31 +117,37 @@ public class STAXUtils
             writer.writeStartElement( reader.getLocalName() );
         }
 
-        for ( int i = 0; i < reader.getAttributeCount(); i++ )
-        {
-            writer.writeAttribute(
-                reader.getAttributeNamespace(i),
-                reader.getAttributeLocalName(i),
-                reader.getAttributeValue(i));
-        }
-
+        // Write out the namespaces
         for ( int i = 0; i < reader.getNamespaceCount(); i++ )
         {
             String nsPrefix = reader.getNamespacePrefix(i);
             String nsURI = reader.getNamespaceURI(i);
             
-            if ( (nsPrefix == null || nsPrefix.equals("")) && wroteDefault )
+            if ( nsPrefix == null || nsPrefix.length() ==  0 )
             {
                 break;
             }
-
-            String setPrefix = writer.getPrefix(nsURI);
-            if ( setPrefix == null || !setPrefix.equals(nsPrefix) )
-            {
-                writer.setPrefix(nsPrefix, nsURI);
-            }
             
             writer.writeNamespace(nsPrefix, nsURI);
+        }
+
+        // Write out attributes
+        for ( int i = 0; i < reader.getAttributeCount(); i++ )
+        {
+            String ns = reader.getAttributeNamespace(i);
+            if ( ns == null || ns.length() == 0 )
+            {
+                writer.writeAttribute(
+                        reader.getAttributeLocalName(i),
+                        reader.getAttributeValue(i));
+            }
+            else
+            {
+                writer.writeAttribute(
+                    reader.getAttributeNamespace(i),
+                    reader.getAttributeLocalName(i),
+                    reader.getAttributeValue(i));
+            }
         }
     }
 }
