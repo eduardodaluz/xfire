@@ -42,7 +42,7 @@
 
             <type class="java.lang.Boolean"
                 namespace="http://www.w3.org/2001/XMLSchema"
-                name="string"
+                name="boolean"
                 type="org.codehaus.xfire.java.type.BooleanType"/>
 
             <type class="java.util.Calendar"
@@ -89,7 +89,7 @@
 
             <type class="java.lang.Boolean"
                 namespace="http://www.w3.org/2001/XMLSchema"
-                name="string"
+                name="boolean"
                 type="org.codehaus.xfire.java.type.BooleanType"/>
 
             <type class="java.lang.Integer"
@@ -155,7 +155,7 @@
 
             <type class="java.lang.Boolean"
                 namespace="http://www.w3.org/2001/XMLSchema"
-                name="string"
+                name="boolean"
                 type="org.codehaus.xfire.java.type.BooleanType"/>
 
             <type class="java.lang.Integer"
