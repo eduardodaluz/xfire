@@ -3,7 +3,7 @@
   <name>Plexus XFire Module</name>
   <groupId>xfire</groupId>
   <artifactId>xfire-plexus</artifactId>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
+  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-M3.pom</extend>
 
   <package>org.codehaus.xfire.plexus</package>
   <description>Plexus binding for XFire.</description>
@@ -52,13 +52,13 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-java</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-M3</version>
     </dependency>
         
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-xmlbeans</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-M3</version>
     </dependency>
          
     <dependency>

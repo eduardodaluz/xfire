@@ -62,9 +62,9 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-demo/*,xfire-aegis"
+      excludes="xfire-demo/*,xfire-aegis,xfire-loom,xfire-spring,xfire-xmpp"
       goals="jar:deploy"
-      banner="Installing XFire"
+      banner="Deploying XFire"
       ignoreFailures="false"/>
     
   </goal>
@@ -76,7 +76,7 @@
       basedir="${basedir}"
       postProcessing="true"
       includes="*/project.xml"
-      excludes="xfire-demo/*"
+      excludes="xfire-demo/*,xfire-aegis,xfire-loom,xfire-spring,xfire-xmpp"
       goals="dist:deploy"
       banner="Deploying XFire Websites"
       ignoreFailures="true"/>
