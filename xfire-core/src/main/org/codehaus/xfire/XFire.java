@@ -27,36 +27,36 @@ public interface XFire
 	final public static String ROLE = XFire.class.getName();
 
 	/**
-	 * Processes a new SOAP Message request.  If a fault
-     * or exception occurs, it is written to the OutputStream
-     * in the <code>MessageContext</code>.  However, 
-     * <code>XFireRuntimeException</code>s may still be thrown if
+	 * Processes a new SOAP Message request. Faults are handled
+     * according to the message contract of the particular service.
+     * A <code>XFireRuntimeException</code>s may still be thrown if
      * something fatal goes wrong in the pipeline.
      * 
      * @param in An InputStream to the SOAP document.
      * @param context The MessageContext.
 	 */
-    void invoke( InputStream in,
-                 MessageContext context );
+    void invoke(InputStream in, MessageContext context)
+        throws XFireRuntimeException;
 
 	/**
-	 * Processes a new SOAP Message request.  If a fault
-     * or exception occurs, it is written to the OutputStream
-     * in the <code>MessageContext</code>.  However, 
-     * <code>XFireRuntimeException</code>s may still be thrown if
+     * Processes a new SOAP Message request. Faults are handled
+     * according to the message contract of the particular service.
+     * A <code>XFireRuntimeException</code>s may still be thrown if
      * something fatal goes wrong in the pipeline.
      * 
      * @param in An InputStream to the SOAP document.
      * @param context The MessageContext.
 	 */
-    void invoke( XMLStreamReader reader,
-                 MessageContext context );
+    void invoke(XMLStreamReader reader, MessageContext context)
+        throws XFireRuntimeException;
 
     /**
      * Generate WSDL for a service.
      * 
-     * @param service The name of the service.
-     * @param out The OutputStream to write the WSDL to.
+     * @param service
+     *            The name of the service.
+     * @param out
+     *            The OutputStream to write the WSDL to.
      */
     void generateWSDL(String service, OutputStream out);
 
