@@ -23,7 +23,7 @@ public class ConfigurationTest
     public void testRegister()
         throws Exception
     {
-        ObjectService service = (ObjectService) getServiceRegistry().getService("Echo2");
+        ObjectService service = (ObjectService) getServiceRegistry().getService("Echo");
         
         assertNotNull(service); 
         
@@ -35,9 +35,14 @@ public class ConfigurationTest
     public void testInvoke() 
     	throws Exception
     {
-        Document response = invokeService("Echo2", "/org/codehaus/xfire/plexus/config/echo11.xml");
+        Document response = invokeService("Echo", "/org/codehaus/xfire/plexus/config/echo11.xml");
         
-        addNamespace("e", "urn:Echo2");
+        addNamespace("e", "urn:Echo");
+        assertValid("//e:out[text()='Yo Yo']", response);
+        
+        response = invokeService("EchoIntf", "/org/codehaus/xfire/plexus/config/echo11.xml");
+        
+        addNamespace("e", "urn:Echo");
         assertValid("//e:out[text()='Yo Yo']", response);
     }
 }

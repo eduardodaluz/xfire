@@ -1,10 +1,20 @@
 <xfire>
   
   <services>
+    <service>
+      <name>EchoIntf</name>
+      <namespace>urn:Echo</namespace>
+      <soapVersion>1.1</soapVersion>
+      <encoding>wrapped</encoding>
+      <use>literal</use>
+      <serviceClass>org.codehaus.xfire.plexus.config.EchoIntf</serviceClass>
+      <implementationClass>org.codehaus.xfire.plexus.config.Echo</implementationClass>
+    </service>
+
 
     <service>
-      <name>Echo2</name>
-      <namespace>urn:Echo2</namespace>
+      <name>Echo</name>
+      <namespace>urn:Echo</namespace>
       <soapVersion>1.1</soapVersion>
       <encoding>wrapped</encoding>
       <use>literal</use>

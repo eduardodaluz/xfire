@@ -50,6 +50,7 @@ public class ObjectServiceConfigurator
         String use = config.getChild("use").getValue("literal");
         String style = config.getChild("style").getValue("wrapped");
         String serviceClass = config.getChild("serviceClass").getValue();
+        String implClass = config.getChild("implementationClass").getValue("");
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdlURL").getValue("");
 
@@ -84,6 +85,11 @@ public class ObjectServiceConfigurator
             service = (DefaultObjectService) builder.create(clazz, name, namespace, version, style, use);
         }
         
+        if (implClass.length() > 0)
+        {
+            service.setProperty(ObjectService.SERVICE_IMPL_CLASS, loadClass(implClass));
+        }
+
         final String scope = config.getChild( "scope" ).getValue( "application" );
         if( scope.equals( "application" ) )
             service.setScope( ObjectService.SCOPE_APPLICATION );
