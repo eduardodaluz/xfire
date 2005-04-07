@@ -2,45 +2,45 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-  
-  <bean id="xfire.serviceRegistry" 
+
+    <bean id="xfire.serviceRegistry"
         class="org.codehaus.xfire.service.DefaultServiceRegistry"
         singleton="true"/>
 
-  <bean id="xfire.transportManager" 
+    <bean id="xfire.transportManager"
         class="org.codehaus.xfire.transport.DefaultTransportManager"
         singleton="true">
-    <constructor-arg>
-      <ref bean="xfire.serviceRegistry"/>
-    </constructor-arg>
-  </bean>
-  
-  <bean id="xfire" 
-    class="org.codehaus.xfire.DefaultXFire"
-        singleton="true">
-    <constructor-arg>
-      <ref bean="xfire.serviceRegistry"/>
-    </constructor-arg>
-    <constructor-arg>
-      <ref bean="xfire.transportManager"/>
-    </constructor-arg>
-  </bean>
+        <constructor-arg index="0">
+            <ref bean="xfire.serviceRegistry"/>
+        </constructor-arg>
+    </bean>
 
-  <bean id="xfire.typeMappingRegistry" 
+    <bean id="xfire"
+        class="org.codehaus.xfire.DefaultXFire"
+        singleton="true">
+        <constructor-arg index="0">
+            <ref bean="xfire.serviceRegistry"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="xfire.transportManager"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="xfire.typeMappingRegistry"
         class="org.codehaus.xfire.type.DefaultTypeMappingRegistry"
         init-method="createDefaultMappings"
         singleton="true">
-  </bean>
+    </bean>
 
-  <bean id="xfire.serviceBuilder" 
+    <bean id="xfire.serviceBuilder"
         class="org.codehaus.xfire.service.object.ObjectServiceFactory"
         singleton="true">
-     <constructor-arg>
-       <ref bean="xfire.transportManager"/>
-     </constructor-arg>
-     <constructor-arg>
-       <ref bean="xfire.typeMappingRegistry"/>
-     </constructor-arg>
-  </bean>
+        <constructor-arg index="0">
+            <ref bean="xfire.transportManager"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="xfire.typeMappingRegistry"/>
+        </constructor-arg>
+    </bean>
 
 </beans>
