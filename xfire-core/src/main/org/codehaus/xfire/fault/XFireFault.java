@@ -75,7 +75,7 @@ public class XFireFault
                       Throwable throwable,
                       String code)
     {
-        super(throwable.getMessage());
+        super(throwable);
 
         if (message != null)
             this.message = message;
