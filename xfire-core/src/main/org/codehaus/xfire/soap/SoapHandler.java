@@ -1,7 +1,6 @@
 package org.codehaus.xfire.soap;
 
 import java.util.Stack;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -21,29 +20,24 @@ import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.yom.stax.StaxSerializer;
 
 /**
- * Processes SOAP invocations. The process is as follows:
- * <ul>
- * <li>Read in Headers to a DOM tree</li>
- * <li>Check "role" and MustUnderstand attributes for validity</li>
- * <li>Invoke the request HandlerPipeline</li>
- * <li>Invoke the service EndpointHandler</li>
- * <li>Invoke the response HandlerPipeline</li>
- * <li>Invoke <code>writeResponse</code> on the EndpointHandler</li>
- * </ul>
- * 
+ * Processes SOAP invocations. The process is as follows: <ul> <li>Read in Headers to a DOM tree</li> <li>Check "role"
+ * and MustUnderstand attributes for validity</li> <li>Invoke the request HandlerPipeline</li> <li>Invoke the service
+ * EndpointHandler</li> <li>Invoke the response HandlerPipeline</li> <li>Invoke <code>writeResponse</code> on the
+ * EndpointHandler</li> </ul>
+ * <p/>
  * TODO: outline what happens when a fault occurrs.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 28, 2004
  */
-public class SoapHandler 
-    extends AbstractHandler
+public class SoapHandler
+        extends AbstractHandler
 {
     private static final String HANDLER_STACK = "xfire.handlerStack";
 
     private EndpointHandler bodyHandler;
-    
-    public SoapHandler( EndpointHandler bodyHandler )
+
+    public SoapHandler(EndpointHandler bodyHandler)
     {
         this.bodyHandler = bodyHandler;
     }
@@ -52,7 +46,7 @@ public class SoapHandler
      * Invoke the Header and Body Handlers for the SOAP message.
      */
     public void invoke(MessageContext context)
-    	throws Exception
+            throws Exception
     {
         XMLStreamReader reader = context.getXMLStreamReader();
         String encoding = null;
@@ -61,40 +55,40 @@ public class SoapHandler
         context.setProperty(HANDLER_STACK, handlerStack);
 
         boolean end = false;
-        while ( !end && reader.hasNext() )
+        while (!end && reader.hasNext())
         {
             int event = reader.next();
-            switch( event )
+            switch (event)
             {
-            case XMLStreamReader.START_DOCUMENT:
-                encoding = reader.getCharacterEncodingScheme();
-                break;
-            case XMLStreamReader.END_DOCUMENT:
-                end = true;
-                break;
-            case XMLStreamReader.END_ELEMENT:
-                break;
-            case XMLStreamReader.START_ELEMENT:
-                if(reader.getLocalName().equals("Header"))
-                {
-                    readHeaders(context);
-                    validateHeaders(context);
-                }
-                else if (reader.getLocalName().equals("Body"))
-                {
-                    createResponseHeader(context);
-                    invokeRequestPipeline(handlerStack, context);
+                case XMLStreamReader.START_DOCUMENT:
+                    encoding = reader.getCharacterEncodingScheme();
+                    break;
+                case XMLStreamReader.END_DOCUMENT:
+                    end = true;
+                    break;
+                case XMLStreamReader.END_ELEMENT:
+                    break;
+                case XMLStreamReader.START_ELEMENT:
+                    if (reader.getLocalName().equals("Header"))
+                    {
+                        readHeaders(context);
+                        validateHeaders(context);
+                    }
+                    else if (reader.getLocalName().equals("Body"))
+                    {
+                        createResponseHeader(context);
+                        invokeRequestPipeline(handlerStack, context);
 
-                    handlerStack.push(bodyHandler);
-                    bodyHandler.invoke(context);
-                }
-                else if (reader.getLocalName().equals("Envelope"))
-                {
-                    context.setSoapVersion(reader.getNamespaceURI());
-                }
-                break;
-            default:
-                break;
+                        handlerStack.push(bodyHandler);
+                        bodyHandler.invoke(context);
+                    }
+                    else if (reader.getLocalName().equals("Envelope"))
+                    {
+                        context.setSoapVersion(reader.getNamespaceURI());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -106,36 +100,35 @@ public class SoapHandler
 
     /**
      * Create a response envelope and write the response message.
+     *
      * @param context
      * @param encoding
      * @param handlerStack
      * @throws Exception
      */
     protected void writeResponse(MessageContext context, String encoding, Stack handlerStack)
-        throws Exception
+            throws Exception
     {
         Attachments atts = (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
         if (atts != null && atts.size() > 0)
         {
             createMimeOutputStream(context);
         }
-        
+
         XMLStreamWriter writer = createResponseWriter(context, encoding);
-        
+
         writeHeaders(context, writer);
         invokeResponsePipeline(handlerStack, context);
-        
+
         QName body = context.getSoapVersion().getBody();
-        writer.writeStartElement(body.getPrefix(), 
-                                 body.getLocalPart(),
-                                 body.getNamespaceURI());
-        
+        writer.writeStartElement(body.getPrefix(),
+                body.getLocalPart(),
+                body.getNamespaceURI());
+
         bodyHandler.writeResponse(context);
-        
-        writer.writeEndElement();
-        writer.writeEndElement();  // Envelope
+
         writer.writeEndDocument();
-        
+
         writer.close();
     }
 
@@ -144,7 +137,7 @@ public class SoapHandler
         // TODO No outgoing attachment support yet.
     }
 
-    public void handleFault(XFireFault fault, MessageContext context) 
+    public void handleFault(XFireFault fault, MessageContext context)
     {
         Stack handlerStack = (Stack) context.getProperty(HANDLER_STACK);
 
@@ -155,54 +148,54 @@ public class SoapHandler
         }
     }
 
-    protected void invokeRequestPipeline(Stack handlerStack, MessageContext context) 
-    	throws Exception
+    protected void invokeRequestPipeline(Stack handlerStack, MessageContext context)
+            throws Exception
     {
-        if (context.getTransport() != null )
-            invokePipeline( context.getTransport().getRequestPipeline(), handlerStack, context );
+        if (context.getTransport() != null)
+            invokePipeline(context.getTransport().getRequestPipeline(), handlerStack, context);
 
-        if (context.getService() != null )
-            invokePipeline( context.getService().getRequestPipeline(), handlerStack, context );
+        if (context.getService() != null)
+            invokePipeline(context.getService().getRequestPipeline(), handlerStack, context);
     }
 
-    protected void invokeResponsePipeline(Stack handlerStack, MessageContext context) 
-        throws Exception
+    protected void invokeResponsePipeline(Stack handlerStack, MessageContext context)
+            throws Exception
     {
-       if (context.getService() != null )
-            invokePipeline( context.getService().getResponsePipeline(), handlerStack, context );
+        if (context.getService() != null)
+            invokePipeline(context.getService().getResponsePipeline(), handlerStack, context);
 
-       if (context.getTransport() != null )
-           invokePipeline( context.getTransport().getResponsePipeline(), handlerStack, context );
+        if (context.getTransport() != null)
+            invokePipeline(context.getTransport().getResponsePipeline(), handlerStack, context);
     }
 
-    protected void invokePipeline(HandlerPipeline pipeline, 
-                                  Stack handlerStack, 
+    protected void invokePipeline(HandlerPipeline pipeline,
+                                  Stack handlerStack,
                                   MessageContext context)
-        throws Exception
+            throws Exception
     {
-        if ( pipeline != null )
+        if (pipeline != null)
         {
-            handlerStack.push(pipeline);    
+            handlerStack.push(pipeline);
             pipeline.invoke(context);
         }
     }
 
-    private XMLStreamWriter createResponseWriter(MessageContext context, 
+    private XMLStreamWriter createResponseWriter(MessageContext context,
                                                  String encoding)
-        throws XMLStreamException, XFireFault
+            throws XMLStreamException
     {
         XMLStreamWriter writer = getXMLStreamWriter(context);
 
-        if ( encoding == null )
+        if (encoding == null)
             writer.writeStartDocument("UTF-8", "1.0");
         else
             writer.writeStartDocument(encoding, "1.0");
-        
-        QName env  = context.getSoapVersion().getEnvelope();
+
+        QName env = context.getSoapVersion().getEnvelope();
         writer.setPrefix(env.getPrefix(), env.getNamespaceURI());
-        writer.writeStartElement(env.getPrefix(), 
-                                 env.getLocalPart(),
-                                 env.getNamespaceURI());
+        writer.writeStartElement(env.getPrefix(),
+                env.getLocalPart(),
+                env.getNamespaceURI());
         writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
 
         return writer;
@@ -210,49 +203,49 @@ public class SoapHandler
 
     /**
      * Read in the headers as a YOM Element and create a response Header.
+     *
      * @param context
      * @throws XMLStreamException
      */
-    protected void readHeaders( MessageContext context ) 
-        throws XMLStreamException
+    protected void readHeaders(MessageContext context)
+            throws XMLStreamException
     {
-        XMLStreamReader reader = context.getXMLStreamReader();
         StaxBuilder builder = new StaxBuilder();
 
         Element header = builder.buildElement(null, context.getXMLStreamReader());
 
         context.setRequestHeader(header);
     }
-    
+
     protected void createResponseHeader(MessageContext context)
     {
-        QName headerQ  = context.getSoapVersion().getHeader();
-        Element response = new Element(headerQ.getPrefix() + ":" + headerQ.getLocalPart(), 
-                                       headerQ.getNamespaceURI()) ;
-        
+        QName headerQ = context.getSoapVersion().getHeader();
+        Element response = new Element(headerQ.getPrefix() + ":" + headerQ.getLocalPart(),
+                headerQ.getNamespaceURI());
+
         context.setResponseHeader(response);
     }
-    
+
     /**
      * Validates that the mustUnderstand and role headers are processed correctly.
-     * 
+     *
      * @param context
      * @throws XFireFault
      */
-    protected void validateHeaders(MessageContext context) 
-        throws XFireFault
+    protected void validateHeaders(MessageContext context)
+            throws XFireFault
     {
         if (context.getRequestHeader() == null)
             return;
-        
+
         SoapVersion version = context.getSoapVersion();
         Elements elements = context.getRequestHeader().getChildElements();
         for (int i = 0; i < elements.size(); i++)
         {
             Element e = elements.get(i);
-            String mustUnderstand = e.getAttributeValue("mustUnderstand", 
-                                                        version.getNamespace());
-            
+            String mustUnderstand = e.getAttributeValue("mustUnderstand",
+                    version.getNamespace());
+
             if (mustUnderstand != null && mustUnderstand.equals("1"))
             {
                 assertUnderstandsHeader(context, new QName(e.getNamespaceURI(), e.getLocalName()));
@@ -261,32 +254,31 @@ public class SoapHandler
     }
 
     /**
-     * Assert that a service understands a particular header.  If not, a
-     * fault is thrown.
-     * 
+     * Assert that a service understands a particular header.  If not, a fault is thrown.
+     *
      * @param context
      * @param name
-     * @throws XFireFault 
+     * @throws XFireFault
      */
-    protected void assertUnderstandsHeader(MessageContext context, QName name) 
-        throws XFireFault
+    protected void assertUnderstandsHeader(MessageContext context, QName name)
+            throws XFireFault
     {
         Service service = context.getService();
-        if (service.getRequestPipeline() != null && 
+        if (service.getRequestPipeline() != null &&
                 understands(service.getRequestPipeline(), name))
             return;
-        
-        if (service.getResponsePipeline() != null && 
+
+        if (service.getResponsePipeline() != null &&
                 understands(service.getResponsePipeline(), name))
             return;
-        
+
         throw new XFireFault("Header {" + name.getLocalPart() + "}" + name.getNamespaceURI()
-                             + " was not undertsood by the service.", XFireFault.MUST_UNDERSTAND);
+                + " was not undertsood by the service.", XFireFault.MUST_UNDERSTAND);
     }
 
     /**
      * Determine if a particular pipeline undertands a header.
-     * 
+     *
      * @param pipeline
      * @param name
      * @return
@@ -296,7 +288,7 @@ public class SoapHandler
         for (int i = 0; i < pipeline.size(); i++)
         {
             QName[] understoodQs = pipeline.getHandler(i).getUnderstoodHeaders();
-            
+
             if (understoodQs != null)
             {
                 for (int j = 0; j < understoodQs.length; j++)
@@ -306,18 +298,18 @@ public class SoapHandler
                 }
             }
         }
-        
+
         return false;
     }
 
-    protected void writeHeaders( MessageContext context, XMLStreamWriter writer ) 
-        throws XMLStreamException
+    protected void writeHeaders(MessageContext context, XMLStreamWriter writer)
+            throws XMLStreamException
     {
         Element e = context.getResponseHeader();
-        if ( e != null && e.getChildCount() > 0 )
+        if (e != null && e.getChildCount() > 0)
         {
             StaxSerializer ser = new StaxSerializer();
-            
+
             ser.writeElement(e, writer);
         }
     }
