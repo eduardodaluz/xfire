@@ -26,8 +26,8 @@ public class PicoObjectInvoker implements Invoker {
 
     public Object invoke(final Method method, final Object[] params, final MessageContext context) throws XFireFault {
         try {
-            PicoContainer pico = (PicoContainer) this.picoReference.get();
-            final Object serviceObject = pico.getComponentInstance(this.componentKey);
+            PicoContainer pico = (PicoContainer) picoReference.get();
+            final Object serviceObject = pico.getComponentInstance(componentKey);
 
             return method.invoke(serviceObject, params);
         } catch (IllegalArgumentException e) {

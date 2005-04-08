@@ -1,6 +1,7 @@
 package org.codehaus.xfire.picocontainer;
 
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.picocontainer.util.AbstractServiceRegistryDelegator;
 import org.codehaus.xfire.service.ServiceRegistry;
 
 /**
@@ -15,11 +16,11 @@ public final class DefaultServiceRegistryDelegator extends AbstractServiceRegist
     private final ServiceRegistry serviceRegistry;
 
     public DefaultServiceRegistryDelegator(final XFire xfire) {
-        this.serviceRegistry = xfire.getServiceRegistry();
+        serviceRegistry = xfire.getServiceRegistry();
     }
 
     public ServiceRegistry getServiceRegistry() {
-        return this.serviceRegistry;
+        return serviceRegistry;
     }
 
 }

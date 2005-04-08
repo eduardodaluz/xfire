@@ -7,7 +7,7 @@
 		</layout>
 	</appender>
 	<category name="org.codehaus.xfire.picocontainer">
-		<priority value="INFO"/>
+		<priority value="DEBUG"/>
 	</category>
 	<root>
 		<priority value="ERROR"/>

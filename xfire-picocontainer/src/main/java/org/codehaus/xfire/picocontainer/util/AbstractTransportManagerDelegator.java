@@ -1,4 +1,4 @@
-package org.codehaus.xfire.picocontainer;
+package org.codehaus.xfire.picocontainer.util;
 
 import java.util.Collection;
 
@@ -17,39 +17,39 @@ public abstract class AbstractTransportManagerDelegator implements TransportMana
     public abstract TransportManager getTransportManager();
 
     public void register(Transport transport) {
-        this.getTransportManager().register(transport);
+        getTransportManager().register(transport);
     }
 
     public void unregister(Transport transport) {
-        this.getTransportManager().unregister(transport);
+        getTransportManager().unregister(transport);
     }
 
     public Transport getTransport(String id) {
-        return this.getTransportManager().getTransport(id);
+        return getTransportManager().getTransport(id);
     }
 
     public Collection getTransports(String service) {
-        return this.getTransportManager().getTransports(service);
+        return getTransportManager().getTransports(service);
     }
 
     public void enableAll(String service) {
-        this.getTransportManager().enableAll(service);
+        getTransportManager().enableAll(service);
     }
 
     public void disableAll(String service) {
-        this.getTransportManager().disableAll(service);
+        getTransportManager().disableAll(service);
     }
 
     public void enable(String transport, String service) {
-        this.getTransportManager().enable(transport, service);
+        getTransportManager().enable(transport, service);
     }
 
     public void disable(String transport, String service) {
-        this.getTransportManager().disable(transport, service);
+        getTransportManager().disable(transport, service);
     }
 
     public boolean isEnabled(String serviceName, String name) {
-        return this.getTransportManager().isEnabled(serviceName, name);
+        return getTransportManager().isEnabled(serviceName, name);
     }
 
 }

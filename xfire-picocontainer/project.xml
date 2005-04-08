@@ -1,10 +1,9 @@
 <project>
-  <pomVersion>1</pomVersion>
-  <extend>../project.xml</extend>
+  <groupId>xfire</groupId>
   <artifactId>xfire-picocontainer</artifactId>
+  <currentVersion>1.0-SNAPSHOT</currentVersion>
   <name>Picocontainer XFire Module</name>
   <package>org.codehaus.xfire.picocontainer</package>
-  
     <dependencies>
         <dependency>
             <groupId>xfire</groupId>

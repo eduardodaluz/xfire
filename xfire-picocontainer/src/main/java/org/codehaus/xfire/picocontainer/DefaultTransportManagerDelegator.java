@@ -1,6 +1,7 @@
 package org.codehaus.xfire.picocontainer;
 
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.picocontainer.util.AbstractTransportManagerDelegator;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
@@ -15,11 +16,11 @@ public final class DefaultTransportManagerDelegator extends AbstractTransportMan
     private final TransportManager transportManager;
 
     public DefaultTransportManagerDelegator(final XFire xfire) {
-        this.transportManager = xfire.getTransportManager();
+        transportManager = xfire.getTransportManager();
     }
 
     public TransportManager getTransportManager() {
-        return this.transportManager;
+        return transportManager;
     }
 
 }

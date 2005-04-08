@@ -1,4 +1,4 @@
-package org.codehaus.xfire.picocontainer;
+package org.codehaus.xfire.picocontainer.util;
 
 import java.util.Collection;
 
