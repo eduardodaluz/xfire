@@ -8,7 +8,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.object.ObjectService;
 import org.codehaus.xfire.service.object.ObjectServiceFactory;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.type.TypeMappingRegistry;
@@ -39,9 +38,9 @@ public class AnnotationServiceFactory
         {
             SOAPBindingAnnotation soapBindingAnnotation = webAnnotations.getSOAPBindingAnnotation(clazz);
             return create(clazz,
-                    Soap11.getInstance(),
-                    soapBindingAnnotation.getStyleString(),
-                    soapBindingAnnotation.getUseString());
+                          null,
+                          soapBindingAnnotation.getStyleString(),
+                          soapBindingAnnotation.getUseString());
         }
         else
         {
@@ -104,7 +103,7 @@ public class AnnotationServiceFactory
         else
         {
             throw new XFireRuntimeException("Class " + clazz.getName() +
-                    " does not have a WebService annotation");
+                                            " does not have a WebService annotation");
         }
     }
 
