@@ -31,12 +31,6 @@
         </dependency>
 
         <dependency>
-          <groupId>commons-beanutils</groupId>
-          <artifactId>commons-beanutils</artifactId>
-          <version>1.7.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>commons-attributes</groupId>
             <artifactId>commons-attributes-api</artifactId>
             <version>2.1</version>
@@ -44,7 +38,7 @@
 
         <dependency>
             <groupId>commons-attributes</groupId>
-            <artifactId>commons-attributes-api</artifactId>
+            <artifactId>commons-attributes-plugin</artifactId>
             <version>2.1</version>
             <type>plugin</type>
         </dependency>
