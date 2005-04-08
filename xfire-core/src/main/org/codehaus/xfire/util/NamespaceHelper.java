@@ -1,7 +1,6 @@
 package org.codehaus.xfire.util;
 
 import java.util.StringTokenizer;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -9,17 +8,17 @@ import org.codehaus.yom.Element;
 
 /**
  * Namespace utilities.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class NamespaceHelper
 {
     /**
      * Create a unique namespace uri/prefix combination.
-     * 
+     *
      * @param nsUri
-     * @return The namespace with the specified URI.  If one doesn't
-     * exist, one is created.
+     * @return The namespace with the specified URI.  If one doesn't exist, one is created.
      */
     public static String getUniquePrefix(Element element, String namespaceURI)
     {
@@ -32,60 +31,71 @@ public class NamespaceHelper
         return prefix;
     }
 
-    private static String getUniquePrefix( Element el )
+    private static String getUniquePrefix(Element el)
     {
         int n = 1;
-        
-        while(true)
+
+        while (true)
         {
             String nsPrefix = "ns" + n;
-            
-            if ( el.getNamespaceURI( nsPrefix ) == null )
+
+            if (el.getNamespaceURI(nsPrefix) == null)
                 return nsPrefix;
-            
+
             n++;
         }
     }
-    
+
     /**
      * Create a unique namespace uri/prefix combination.
-     * 
+     *
      * @param nsUri
-     * @return The namespace with the specified URI.  If one doesn't
-     * exist, one is created.
-     * @throws XMLStreamException 
+     * @return The namespace with the specified URI.  If one doesn't exist, one is created.
+     * @throws XMLStreamException
      */
-    public static String getUniquePrefix(XMLStreamWriter writer, String namespaceURI, boolean declare) 
-        throws XMLStreamException
+    public static String getUniquePrefix(XMLStreamWriter writer, String namespaceURI, boolean declare)
+            throws XMLStreamException
     {
         String prefix = writer.getPrefix(namespaceURI);
         if (prefix == null)
         {
             prefix = getUniquePrefix(writer);
-            
+
             if (declare)
                 writer.writeNamespace(prefix, namespaceURI);
         }
         return prefix;
     }
 
-    public static String getUniquePrefix( XMLStreamWriter writer )
+    public static String getUniquePrefix(XMLStreamWriter writer)
     {
         int n = 1;
-        
-        while(true)
+
+        while (true)
         {
             String nsPrefix = "ns" + n;
-            
-            if ( writer.getNamespaceContext().getNamespaceURI(nsPrefix) == null )
+
+            if (writer.getNamespaceContext().getNamespaceURI(nsPrefix) == null)
             {
                 return nsPrefix;
             }
-            
+
             n++;
         }
     }
 
+    /**
+     * Generates the name of a XML namespace from a given class name and protocol. The returned namespace will take the
+     * form <code>protocol://domain</code>, where <code>protocol</code> is the given protocol, and <code>domain</code>
+     * the inversed package name of the given class name.
+     * <p/>
+     * For instance, if the given class name is <code>org.codehaus.xfire.services.Echo</code>, and the protocol is
+     * <code>http</code>, the resulting namespace would be <code>http://services.xfire.codehaus.org</code>.
+     *
+     * @param className the class name
+     * @param protocol  the protocol (eg. <code>http</code>)
+     * @return the namespace
+     */
     public static String makeNamespaceFromClassName(String className, String protocol)
     {
         int index = className.lastIndexOf(".");
@@ -96,7 +106,7 @@ public class NamespaceHelper
         }
 
         String packageName = className.substring(0, index);
-        
+
         StringTokenizer st = new StringTokenizer(packageName, ".");
         String[] words = new String[st.countTokens()];
 
