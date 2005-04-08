@@ -9,6 +9,7 @@ import org.codehaus.xfire.service.object.DefaultObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.support.RemoteExporter;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,30 +24,44 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class XFireExporter
         extends RemoteExporter
-        implements Controller, InitializingBean
+        implements Controller, InitializingBean, BeanNameAware
 {
     private DefaultObjectService service;
     private ServiceFactory serviceBuilder;
     private SpringXFireController controller;
     private XFire xFire;
-    private String style = SoapConstants.STYLE_WRAPPED;
-    private String use = SoapConstants.USE_LITERAL;
-    private SoapVersion soapVersion = Soap11.getInstance();
+    private String name;
+    private String namespace;
+    private String style;
+    private String use;
+    private SoapVersion soapVersion;
+    private String beanName;
 
 
     public void afterPropertiesSet()
             throws Exception
     {
-        service = (DefaultObjectService) getServiceBuilder().create(getServiceInterface(),
-                                                                    getSoapVersion(),
-                                                                    getStyle(),
-                                                                    getUse());
+        // Use specific name if given, else fall back to bean name.
+        String theName = (this.name != null ? this.name : this.beanName);
 
-        getXfire().getServiceRegistry().register(service);
+        service = (DefaultObjectService) serviceBuilder.create(getServiceInterface(),
+                                                               theName,
+                                                               namespace,
+                                                               soapVersion,
+                                                               style,
+                                                               use,
+                                                               null);
+        if (logger.isInfoEnabled())
+        {
+            logger.info("Exposing SOAP v." + service.getSoapVersion().getVersion() + " service " + service.getName() +
+                        " as " + service.getStyle() + "/" + service.getUse());
+        }
+
+        xFire.getServiceRegistry().register(service);
 
         service.setInvoker(new BeanInvoker(getProxyForService()));
 
-        controller = new SpringXFireController(getXfire(), service.getName());
+        controller = new SpringXFireController(xFire, service.getName());
     }
 
     /**
@@ -65,19 +80,9 @@ public class XFireExporter
         return null;
     }
 
-    public ServiceFactory getServiceBuilder()
-    {
-        return serviceBuilder;
-    }
-
     public void setServiceBuilder(ServiceFactory serviceBuilder)
     {
         this.serviceBuilder = serviceBuilder;
-    }
-
-    public XFire getXfire()
-    {
-        return xFire;
     }
 
     public void setXfire(XFire xFire)
@@ -86,47 +91,33 @@ public class XFireExporter
     }
 
     /**
-     * Returns the style to use for service creation. This style is used by the exporter to {@link
-     * ServiceFactory#create(Class, org.codehaus.xfire.soap.SoapVersion, String, String) create the service}. The
-     * initial default style is {@link SoapConstants#STYLE_WRAPPED}.
-     *
-     * @return the style.
+     * Sets the service name. Default is the bean name of this exporter.
      */
-    public String getStyle()
+    public void setName(String name)
     {
-        return style;
+        this.name = name;
     }
 
     /**
-     * Sets the style to use for service creation. This style is used by the exporter to {@link
-     * ServiceFactory#create(Class, org.codehaus.xfire.soap.SoapVersion, String, String) create the service}. The
-     * initial default style is {@link SoapConstants#STYLE_WRAPPED}.
-     *
-     * @param style the new style.
+     * Sets the service default namespace. Default is a namespace based on the package of the {@link
+     * #getServiceInterface() service interface}.
+     */
+    public void setNamespace(String namespace)
+    {
+        this.namespace = namespace;
+    }
+
+    /**
+     * Sets the style to use for service creation. Default is {@link SoapConstants#STYLE_WRAPPED wrapped}.
      */
     public void setStyle(String style)
     {
         this.style = style;
     }
 
-    /**
-     * Returns the use for service creation. This style is used by the exporter to {@link ServiceFactory#create(Class,
-            * org.codehaus.xfire.soap.SoapVersion, String, String) create the service}. The initial default style is {@link
-     * SoapConstants#USE_LITERAL}.
-     *
-     * @return the style.
-     */
-    public String getUse()
-    {
-        return use;
-    }
 
     /**
-     * Sets the use for service creation. This style is used by the exporter to {@link ServiceFactory#create(Class,
-            * org.codehaus.xfire.soap.SoapVersion, String, String) create the service}. The initial default style is {@link
-     * SoapConstants#USE_LITERAL}.
-     *
-     * @param use the new use
+     * Sets the use for service creation. Default is {@link SoapConstants#USE_LITERAL literal}.
      */
     public void setUse(String use)
     {
@@ -134,27 +125,15 @@ public class XFireExporter
     }
 
     /**
-     * Returns the soap version to use for service creation. This style is used by the exporter to {@link
-     * ServiceFactory#create(Class, org.codehaus.xfire.soap.SoapVersion, String, String) create the service}. The
-     * initial default style is {@link Soap11}.
-     *
-     * @return the style.
-     */
-    public SoapVersion getSoapVersion()
-    {
-        return soapVersion;
-    }
-
-    /**
-     * Sets the soap version to use for service creation. This style is used by the exporter to {@link
-     * ServiceFactory#create(Class, org.codehaus.xfire.soap.SoapVersion, String, String) create the service}. The
-     * initial default style is {@link Soap11}.
-     *
-     * @param soapVersion the new soap version
+     * Sets the soap version to use for service creation. Default is {@link Soap11 Soap v.1.1}.
      */
     public void setSoapVersion(SoapVersion soapVersion)
     {
         this.soapVersion = soapVersion;
     }
 
+    public void setBeanName(String beanName)
+    {
+        this.beanName = beanName;
+    }
 }
