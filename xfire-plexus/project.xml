@@ -1,129 +1,99 @@
 <project>
-  <pomVersion>1</pomVersion>
-  <name>Plexus XFire Module</name>
-  <groupId>xfire</groupId>
-  <artifactId>xfire-plexus</artifactId>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
-
-  <package>org.codehaus.xfire.plexus</package>
-  <description>Plexus binding for XFire.</description>
-  <shortDescription>Plexus binding for XFire.</shortDescription>
-  
-  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-plexus</siteDirectory>
-  
-  <versions/>
-  
-  <branches/>
-  
-  <dependencies>
-    
-    <dependency>
-      <groupId>classworlds</groupId>
-      <artifactId>classworlds</artifactId>
-      <version>1.1-alpha-1</version>
-      <url>http://classworlds.codehaus.org</url>
-    </dependency>
-            
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-1</version>
-      <url>http://plexus.codehaus.org/</url>
-    </dependency>
-        
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-servlet</artifactId>
-      <version>1.0-beta-2-SNAPSHOT</version>
-    </dependency>
-        
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.0-alpha-1</version>
-    </dependency>
-        
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire-annotations</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-            
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire-java</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-        
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire-xmlbeans</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-         
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire-xmpp</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-       
-    <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xbean</artifactId>
-      <version>2.0.0-beta1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>jivesoftware</groupId>
-      <artifactId>smack</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>jivesoftware</groupId>
-      <artifactId>smackx</artifactId>
-      <version>1.4.1</version>
-    </dependency>    
-  </dependencies>
-  
-  <build>
-    <sourceDirectory>${basedir}/src/main</sourceDirectory>
-    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-        <include>**/*TestCase.java</include>
-      </includes>
-      <excludes>
-        <exclude>**/*Abstract*.java</exclude>
-      </excludes>
-      <resources>
-        <resource>
-          <directory>${basedir}/src/test</directory>
-          <includes>
-            <include>**/*.xml</include>
-            <include>**/*.vm</include>
-          </includes>
-          <filtering>false</filtering>
-        </resource>
-      </resources>
-    </unitTest>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
-  </build>
-
-  <properties/>
+    <extend>${basedir}/../project.xml</extend>
+    <artifactId>xfire-plexus</artifactId>
+    <name>Plexus XFire Module</name>
+    <package>org.codehaus.xfire.plexus</package>
+    <shortDescription>Plexus binding for XFire.</shortDescription>
+    <description>Plexus binding for XFire.</description>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <dependencies>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-annotations</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-java</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-xmlbeans</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-xmpp</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>2.0.0-beta1</version>
+            <url>http://xmlbeans.apache.org</url>
+        </dependency>
+        <dependency>
+            <groupId>jivesoftware</groupId>
+            <artifactId>smack</artifactId>
+            <version>1.4.1</version>
+            <url>http://www.jivesoftware.org/smack/</url>
+        </dependency>
+        <dependency>
+            <groupId>jivesoftware</groupId>
+            <artifactId>smackx</artifactId>
+            <version>1.4.1</version>
+            <url>http://www.jivesoftware.org/smack/</url>
+        </dependency>
+        <!-- plexus stuff -->
+        <dependency>
+            <groupId>classworlds</groupId>
+            <artifactId>classworlds</artifactId>
+            <version>1.1-alpha-1</version>
+            <url>http://classworlds.codehaus.org</url>
+        </dependency>
+        <dependency>
+            <groupId>plexus</groupId>
+            <artifactId>plexus-container-default</artifactId>
+            <version>1.0-alpha-1</version>
+            <url>http://plexus.codehaus.org/</url>
+        </dependency>
+        <dependency>
+            <groupId>plexus</groupId>
+            <artifactId>plexus-servlet</artifactId>
+            <version>1.0-beta-2-SNAPSHOT</version>
+            <url>http://plexus.codehaus.org/</url>
+        </dependency>
+        <dependency>
+            <groupId>plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>1.0-alpha-1</version>
+            <url>http://plexus.codehaus.org/</url>
+        </dependency>
+    </dependencies>
 </project>

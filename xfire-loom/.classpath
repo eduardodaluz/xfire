@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <classpath>
-	<classpathentry kind="src" path="src/main"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="MAVEN_REPO/avalon-framework/jars/avalon-framework-4.1.5.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/avalon-phoenix/jars/avalon-phoenix-client-4.0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jaf/jars/activation-1.0.2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-api-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-1.1.1-dev.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-1.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-qname-1.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/dom4j/jars/dom4j-1.5.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.5.1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jaxen/jars/jaxen-1.1-beta-4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
-	<classpathentry kind="src" path="/xfire-core"/>
-	<classpathentry kind="src" path="/xfire-java"/>
-	<classpathentry kind="output" path="target/classes"/>
+  <classpathentry excluding="" kind="src" path="src/main">
+  </classpathentry>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/avalon-framework/jars/avalon-framework-4.1.5.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/avalon-phoenix/jars/avalon-phoenix-client-4.0.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/xfire/jars/xfire-1.0-SNAPSHOT.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/xfire/jars/xfire-java-1.0-SNAPSHOT.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jaf/jars/activation-1.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-api-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-1.1.1-dev.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-1.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-qname-1.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/yom/jars/yom-1.0-SNAPSHOT.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/dom4j/jars/dom4j-1.5.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.5.1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jaxen/jars/jaxen-1.1-beta-4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar">
+  </classpathentry>
+  <classpathentry kind="output" path="target/classes">
+  </classpathentry>
 </classpath>

@@ -1,92 +1,58 @@
 <project>
-  <pomVersion>1</pomVersion>
-  <name>Spring XFire Module</name>
-  <groupId>xfire</groupId>
-  <artifactId>xfire-spring</artifactId>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
-
-  <package>org.codehaus.xfire</package>
-  <description>Spring support for XFire.</description>
-  <shortDescription>Spring support for XFire.</shortDescription>
-  
-  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-spring</siteDirectory>
-  
-  <versions/>
-  
-  <branches/>
-  
-  <dependencies>
-
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire-java</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.7.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>1.1.5</version>
-    </dependency>
-
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-      <version>1.0</version>
-    </dependency>
-    
-  </dependencies>
-
-  <build>
-    <sourceDirectory>${basedir}/src/main</sourceDirectory>
-    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-        <include>**/*TestCase.java</include>
-      </includes>
-      <excludes>
-        <exclude>**/*Abstract*.java</exclude>
-      </excludes>
-      <resources>
-        <resource>
-          <directory>${basedir}/src/test</directory>
-          <includes>
-            <include>**/*.xml</include>
-            <include>**/*.vm</include>
-          </includes>
-          <filtering>false</filtering>
-        </resource>
-      </resources>
-    </unitTest>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
-  </build>
-
-  <properties/>
+    <extend>${basedir}/../project.xml</extend>
+    <artifactId>xfire-spring</artifactId>
+    <name>Spring XFire Module</name>
+    <package>org.codehaus.xfire.spring</package>
+    <shortDescription>Spring support for XFire.</shortDescription>
+    <description>Spring support for XFire.</description>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <dependencies>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-java</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <url>http://jakarta.apache.org/commons/beanutils</url>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>1.1.5</version>
+            <url>http://www.springframework.org</url>
+        </dependency>
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+            <url>http://aopalliance.sf.net</url>
+        </dependency>
+        <!-- 
+        
+        Testing time
+        
+        -->
+        <dependency>
+            <groupId>httpunit</groupId>
+            <artifactId>httpunit</artifactId>
+            <version>1.5.1</version>
+            <url>http://httpunit.sf.net</url>
+        </dependency>
+    </dependencies>
 </project>

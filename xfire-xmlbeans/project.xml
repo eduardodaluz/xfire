@@ -1,111 +1,70 @@
 <project>
-  <pomVersion>1</pomVersion>
-  <name>XMLBeans XFire Module</name>
-  <groupId>xfire</groupId>
-  <artifactId>xfire-xmlbeans</artifactId>
-  <id>xfire-xmlbeans</id>
-  <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
-
-  <package>org.codehaus.xfire</package>
-  <description>An XMLBeans binding module for XFire.</description>
-  <shortDescription>An XMLBeans binding module for XFire.</shortDescription>
-  
-  <siteDirectory>/home/projects/xfire/public_html/maven/xfire-xmlbeans</siteDirectory>
-  
-  <versions/>
-  
-  <branches/>
-  
-  <dependencies>
-
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.7.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>xfire-java</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xbean</artifactId>
-      <version>2.0.0-beta1</version>
-    </dependency>
-
-    <!-- Generator Dependencies -->
-    <dependency>
-      <groupId>ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.6.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.8</version>
-    </dependency>
+    <extend>${basedir}/../project.xml</extend>
+    <artifactId>xfire-xmlbeans</artifactId>
+    <name>XMLBeans XFire Module</name>
+    <package>org.codehaus.xfire.xmlbeans</package>
+    <shortDescription>An XMLBeans binding module for XFire.</shortDescription>
+    <description>An XMLBeans binding module for XFire.</description>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <dependencies>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-java</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <url>http://jakarta.apache.org/commons/beanutils</url>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>2.0.0-beta1</version>
+            <url>http://xmlbeans.apache.org</url>
+        </dependency>
+        <!-- 
         
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>2.1</version>
-    </dependency>
-            
-    <dependency>
-      <groupId>velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.4</version>
-    </dependency>
-
-  </dependencies>
-  
-  <build>
-    <sourceDirectory>${basedir}/src/main</sourceDirectory>
-    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-        <include>**/*TestCase.java</include>
-      </includes>
-      <excludes>
-        <exclude>**/*Abstract*.java</exclude>
-      </excludes>
-      <resources>
-        <resource>
-          <directory>${basedir}/src/test</directory>
-          <includes>
-            <include>**/*.xml</include>
-            <include>**/*.xsb</include>
-            <include>**/*.vm</include>
-          </includes>
-          <filtering>false</filtering>
-        </resource>
-      </resources>
-    </unitTest>
-    
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main</directory>
-        <includes>
-          <include>**/*.xml</include>
-          <include>**/*.xsb</include>
-          <include>**/*.vm</include>
-        </includes>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
-    
-  </build>
-
-  <properties/>
+        Generator Dependencies 
+        
+        -->
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.6.2</version>
+            <url>http://ant.apache.org</url>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.8</version>
+            <url>http://logging.apache.org/log4j</url>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>2.1</version>
+            <url>http://jakarta.apache.org/commons/collections/</url>
+        </dependency>
+        <dependency>
+            <groupId>velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.4</version>
+            <url>http://jakarta.apache.org/velocity</url>
+        </dependency>
+    </dependencies>
 </project>

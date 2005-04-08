@@ -1,94 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-    <pomVersion>1</pomVersion>
-    <name>Annotations XFire Module</name>
-    <groupId>xfire</groupId>
+    <extend>${basedir}/../project.xml</extend>
     <artifactId>xfire-annotations</artifactId>
-    <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
-
-    <package>org.codehaus.xfire</package>
-    <description>Annotations (JSR-175) support for XFire.</description>
+    <name>Annotations XFire Module</name>
+    <package>org.codehaus.xfire.annotations</package>
     <shortDescription>Annotations support for XFire.</shortDescription>
-
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-annotations</siteDirectory>
-
-    <versions/>
-
-    <branches/>
-
+    <description>Annotations (JSR-175) support for XFire.</description>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
     <dependencies>
-
         <dependency>
             <groupId>xfire</groupId>
             <artifactId>xfire</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${pom.currentVersion}</version>
+            <properties>
+                <eclipse.dependency>true</eclipse.dependency>
+            </properties>
+            <url>${pom.url}</url>
         </dependency>
-
         <dependency>
             <groupId>xfire</groupId>
             <artifactId>xfire-java</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${pom.currentVersion}</version>
+            <properties>
+                <eclipse.dependency>true</eclipse.dependency>
+            </properties>
+            <url>${pom.url}</url>
         </dependency>
-
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <url>http://jakarta.apache.org/commons/beanutils/</url>
+        </dependency>
         <dependency>
             <groupId>commons-attributes</groupId>
             <artifactId>commons-attributes-api</artifactId>
             <version>2.1</version>
+            <url>http://jakarta.apache.org/commons/attributes/</url>
         </dependency>
-
+        <dependency>
+            <groupId>backport175</groupId>
+            <artifactId>backport175</artifactId>
+            <version>1.0.RC1</version>
+            <url>http://backport175.codehaus.org</url>
+        </dependency>
+        <!--
+        
+        Test only dependencies
+        
+        -->
+        <dependency>
+            <groupId>easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>1.1</version>
+            <url>http://www.easymock.org/</url>
+        </dependency>
+        <!--
+        
+        Maven Plugins
+        
+        -->
         <dependency>
             <groupId>commons-attributes</groupId>
             <artifactId>commons-attributes-plugin</artifactId>
             <version>2.1</version>
             <type>plugin</type>
+            <url>http://jakarta.apache.org/commons/attributes/</url>
         </dependency>
-        
-        <dependency>
-            <groupId>backport175</groupId>
-            <artifactId>backport175</artifactId>
-            <version>1.0.RC1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>1.1</version>
-        </dependency>
-
     </dependencies>
-
-    <build>
-        <sourceDirectory>${basedir}/src/main</sourceDirectory>
-        <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
-        <unitTest>
-            <includes>
-                <include>**/*Test.java</include>
-                <include>**/*TestCase.java</include>
-            </includes>
-            <excludes>
-                <exclude>**/*Abstract*.java</exclude>
-            </excludes>
-            <resources>
-                <resource>
-                    <directory>${basedir}/src/test</directory>
-                    <includes>
-                        <include>**/*.xml</include>
-                        <include>**/*.vm</include>
-                    </includes>
-                    <filtering>false</filtering>
-                </resource>
-            </resources>
-        </unitTest>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-    </build>
-
-    <properties/>
 </project>

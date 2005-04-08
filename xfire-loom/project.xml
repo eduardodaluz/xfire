@@ -1,50 +1,48 @@
 <project>
-    <pomVersion>1</pomVersion>
-    <name>Loom XFire Module</name>
-    <groupId>xfire</groupId>
+    <extend>${basedir}/../project.xml</extend>
     <artifactId>xfire-loom</artifactId>
-    <extend>${maven.repo.local}/xfire/poms/xfire-1.0-SNAPSHOT.pom</extend>
-
+    <name>Loom XFire Module</name>
     <package>org.codehaus.xfire.loom</package>
     <description>Loom binding for XFire.</description>
     <shortDescription>Loom binding for XFire.</shortDescription>
-
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-loom</siteDirectory>
-
-    <versions/>
-
-    <branches/>
-
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
     <dependencies>
         <dependency>
-            <id>avalon-framework</id>
-            <version>4.1.5</version>
+            <groupId>xfire</groupId>
+            <artifactId>xfire</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
         </dependency>
-
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-java</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>avalon-framework</groupId>
+            <artifactId>avalon-framework</artifactId>
+            <version>4.1.5</version>
+            <url>http://avalon.apache.org</url>
+        </dependency>
         <dependency>
             <groupId>avalon-phoenix</groupId>
             <artifactId>avalon-phoenix-client</artifactId>
             <version>4.0.4</version>
+            <url>http://avalon.apache.org</url>
         </dependency>
-
-        <dependency>
-            <groupId>xfire</groupId>
-            <artifactId>xfire</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>xfire</groupId>
-            <artifactId>xfire-java</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.7.0</version>
+            <url>http://jakarta.apache.org/commons/beanutils</url>
         </dependency>
-
         <!--
             <dependency>
               <groupId>xfire</groupId>
@@ -67,40 +65,4 @@
             </dependency>
         -->
     </dependencies>
-
-    <build>
-        <sourceDirectory>${basedir}/src/main</sourceDirectory>
-        <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
-        <unitTest>
-            <includes>
-                <include>**/*Test.java</include>
-                <include>**/*TestCase.java</include>
-            </includes>
-            <excludes>
-                <exclude>**/*Abstract*.java</exclude>
-            </excludes>
-            <resources>
-                <resource>
-                    <directory>${basedir}/src/test</directory>
-                    <includes>
-                        <include>**/*.xml</include>
-                        <include>**/*.vm</include>
-                    </includes>
-                    <filtering>false</filtering>
-                </resource>
-            </resources>
-        </unitTest>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.xinfo</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-    </build>
-
-    <properties/>
 </project>

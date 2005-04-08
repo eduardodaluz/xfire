@@ -8,4 +8,10 @@ junit*.properties
 .classpath
 .project
 bin
+build.properties
 .settings
+*.lnk
+*.sh
+*.ajsym
+*.lst
+*.jar
