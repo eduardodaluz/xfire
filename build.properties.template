@@ -7,3 +7,8 @@
 maven.repo.codehaus.username=YOUR_BEAVER_LOGIN
 maven.repo.codehaus.privatekey=${user.home}/YOUR_BEAVER_OPENSSH_PRIVATE_KEY
 maven.repo.codehaus.passphrase=YOUR_BEAVER_OPENSSH_PRIVATE_KEY_PASSWORD (If you have).
+
+### Maven Generated Site Deploy ###
+maven.username=YOUR_BEAVER_LOGIN
+#maven.scp.executable=pscp
+#maven.ssh.executable=plink

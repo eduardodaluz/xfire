@@ -1,6 +1,7 @@
 <project>
     <pomVersion>4</pomVersion>
     <groupId>xfire</groupId>
+	<artifactId>xfire-all</artifactId>
     <name>XFire</name>
     <currentVersion>1.0-SNAPSHOT</currentVersion>
     <organization>
@@ -251,11 +252,12 @@
         <report>maven-file-activity-plugin</report>
         <report>maven-developer-activity-plugin</report>
         <report>maven-javadoc-plugin</report>
-		<report>maven-jira-plugin</report>
         <report>maven-jxr-plugin</report>
         <report>maven-junit-report-plugin</report>
+        <report>maven-javadoc-plugin</report>
         <report>maven-faq-plugin</report>
 		<report>maven-statcvs-plugin</report>
 		<report>maven-dashboard-plugin</report>
+		<report>maven-multiproject-plugin</report>		
     </reports>
 </project>

@@ -1,5 +1,5 @@
 <project
-  default="java:jar"
+  default="war:install"
   xmlns:j="jelly:core"
   xmlns:plexus="plexus"
   xmlns:plexus-appserver="plexus-appserver"

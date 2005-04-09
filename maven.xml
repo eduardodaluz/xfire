@@ -1,3 +1,8 @@
-<project default="jar:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven">
+<project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
+
+	<!-- Makes site:deploy not to run site goal. -->
+	<goal name="site:deploy">
+		<attainGoal name="site:${maven.site.deploy.method}deploy"/>
+	</goal>
 
 </project>
