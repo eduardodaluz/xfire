@@ -167,7 +167,7 @@
         <dependency>
             <groupId>yom</groupId>
             <artifactId>yom</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0-alpha-1</version>
             <url>http://yom.codehaus.org</url>
         </dependency>
         <!--
