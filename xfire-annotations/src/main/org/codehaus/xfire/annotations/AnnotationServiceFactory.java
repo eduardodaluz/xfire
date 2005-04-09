@@ -25,14 +25,30 @@ public class AnnotationServiceFactory
 {
     private WebAnnotations webAnnotations;
 
-    public AnnotationServiceFactory(WebAnnotations webAnnotations, TransportManager transportManager,
-                                    TypeMappingRegistry registry)
+    /**
+     * Initializes a new instance of the <code>AnnotationServiceFactory</code> with the given annotations facade,
+     * transport manager and type mapping registry.
+     *
+     * @param webAnnotations   the annotations facade
+     * @param transportManager the transport manager
+     * @param registry         the registry
+     */
+    public AnnotationServiceFactory(WebAnnotations webAnnotations, final TransportManager transportManager,
+                                    final TypeMappingRegistry registry)
     {
         super(transportManager, registry);
         this.webAnnotations = webAnnotations;
     }
 
-    public Service create(Class clazz)
+    /**
+     * Creates a service from the specified class. If the class has a {@link SOAPBindingAnnotation}, it will be used to
+     * define the style and use of the service. Otherwise, the {@link ObjectServiceFactory#create(Class) default
+     * behaviour} will be used.
+     *
+     * @param clazz The service class used to populate the operations and parameters.
+     * @return The service.
+     */
+    public Service create(final Class clazz)
     {
         if (webAnnotations.hasSOAPBindingAnnotation(clazz))
         {
@@ -48,13 +64,27 @@ public class AnnotationServiceFactory
         }
     }
 
+    /**
+     * Creates a service from the specified class, soap version, style and use. If the class has a {@link
+     * WebServiceAnnotation}, it will be used to define the name, service name, target namespace. If the annotation
+     * defines an endpoint interface, all methods of that interface are exposed as operations. If no endpoint interface
+     * is defined, all methods that have the {@link WebMethodAnnotation} are exposed.
+     *
+     * @param clazz   The service class used to populate the operations and parameters.
+     * @param version The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be used.
+     * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
+     *                will be used.
+     * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
+     *                will be used.
+     */
     public Service create(Class clazz, SoapVersion version, String style, String use)
     {
-        WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
-        if (webServiceAnnotation != null)
+        if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
+            WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
+
             String serviceName = createServiceName(clazz, webServiceAnnotation);
-         
+            
             /* Attempt to load the endpoint interface if there is one. If there is an endpoint
              * interface the attribute WebService.serviceName is the only valid one for the 
              * implementing bean class.
@@ -102,8 +132,7 @@ public class AnnotationServiceFactory
         }
         else
         {
-            throw new XFireRuntimeException("Class " + clazz.getName() +
-                                            " does not have a WebService annotation");
+            throw new XFireRuntimeException("Class " + clazz.getName() + " does not have a WebService annotation");
         }
     }
 
