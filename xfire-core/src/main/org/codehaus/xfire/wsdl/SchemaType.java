@@ -20,10 +20,17 @@ public interface SchemaType
      * 
      * @return
      */
-	boolean isComplex();
+    boolean isComplex();
+
+    /**
+     * Whether or not this a complexType or a concrete element.
+     * 
+     * @return
+     */
+    boolean isAbstract();
     
     /**
-     * The types that this type references.
+     * The <code>SchemaType</code>s that this type references.
      * 
      * @return
      */
