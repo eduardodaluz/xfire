@@ -1,5 +1,11 @@
 <project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
 
+	<preGoal name="multiproject:projects-init">
+		<c:if test="${xfire.java5}">
+			<c:set var="maven.multiproject.excludes" value="project.xml"/>
+		</c:if>
+	</preGoal>
+
 	<!-- Makes site:deploy not to run site goal. -->
 	<goal name="site:deploy">
 		<attainGoal name="site:${maven.site.deploy.method}deploy"/>
