@@ -9,7 +9,7 @@
     <dependencies>
         <dependency>
             <groupId>xfire</groupId>
-            <artifactId>xfire</artifactId>
+            <artifactId>xfire-core</artifactId>
             <version>${pom.currentVersion}</version>
             <url>${pom.url}</url>
             <properties>

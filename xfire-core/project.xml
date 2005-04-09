@@ -1,6 +1,6 @@
 <project>
     <extend>${basedir}/../project.xml</extend>
-    <artifactId>xfire</artifactId>
+    <artifactId>xfire-core</artifactId>
     <name>XFire</name>
     <package>org.codehaus.xfire</package>
     <shortDescription/>
