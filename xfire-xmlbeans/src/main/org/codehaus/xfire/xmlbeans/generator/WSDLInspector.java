@@ -15,6 +15,7 @@ import org.apache.xmlbeans.XmlAnySimpleType;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.w3c.dom.Node;
 import org.xml.sax.EntityResolver;
 import org.xmlsoap.schemas.wsdl.DefinitionsDocument;
 import org.xmlsoap.schemas.wsdl.TBinding;
@@ -168,6 +169,17 @@ public class WSDLInspector
             }
         }
         
+        XmlObject[] soapOp = xOperation.selectPath(wsdlSoapNS + " $this//soap:operation");
+        if (soapOp != null && soapOp.length > 0)
+        {
+            Node actionNode = soapOp[0].getDomNode().getAttributes().getNamedItem("soapAction");
+            
+            if (actionNode != null)
+            {
+                m.setSoapAction(actionNode.getNodeValue());
+            }
+        }
+
         TParam output = abstractOp.getOutput();
         message = getMessage( output.getMessage().getLocalPart(), defs );
         

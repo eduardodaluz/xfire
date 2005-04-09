@@ -31,7 +31,7 @@ import $import.FullJavaName;
 #else #set( $clsName = "${name}SoapClient" ) #end
 public class $clsName
 {
-    private static final String URL = "$service.Url";
+    private String url = "$service.Url";
 	private static final String ENCODING = "UTF-8";
 	
 	private XmlOptions options;
@@ -49,7 +49,12 @@ public class $clsName
     
     public String getServiceUrl()
     {
-        return URL;
+        return url;
+    }
+
+    public void setServiceUrl(String url)
+    {
+        this.url = url;
     }
 
 #foreach ($method in $service.Methods)
@@ -88,9 +93,10 @@ public class $clsName
 #else
         RestHttpClient client = new RestHttpClient(handler, getServiceUrl());
 #end
-#if ($method.Action)        client.setAction("$method.Action");#end
+#if ($method.SoapAction)        client.setAction("$method.SoapAction");
+#end
         client.setEncoding(ENCODING);
-        
+    
         client.invoke();
 #if ($method.ResponseParameters.size() > 1)
         return handler.getResponse();

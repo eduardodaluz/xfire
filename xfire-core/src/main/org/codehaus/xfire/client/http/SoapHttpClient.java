@@ -140,7 +140,11 @@ public class SoapHttpClient
     protected void writeHeaders(URLConnection urlConn)
     {
         // Set the SOAPAction header
-        urlConn.setRequestProperty( "SOAPAction", getAction() );
+        String action = getAction();
+        if (action == null)
+            action = "";
+        
+        urlConn.setRequestProperty( "SOAPAction", "\"" + action + "\"");
     }
     
     /**
