@@ -33,8 +33,8 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl = MockControl.createControl(WebAnnotations.class);
         webAnnotations = (WebAnnotations) webAnnotationsControl.getMock();
         annotationServiceFactory = new AnnotationServiceFactory(webAnnotations,
-                getXFire().getTransportManager(),
-                getRegistry());
+                                                                getXFire().getTransportManager(),
+                                                                getRegistry());
     }
 
     public void testCreate()
@@ -42,6 +42,9 @@ public class AnnotationServiceFactoryTest
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(false);
+
+        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation annotation = new WebServiceAnnotation();
         annotation.setServiceName("EchoService");
@@ -75,8 +78,8 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(false);
 
-        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(null);
+        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(false);
         webAnnotationsControl.replay();
 
         try
@@ -95,6 +98,9 @@ public class AnnotationServiceFactoryTest
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(false);
+
+        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("EchoService");
@@ -142,6 +148,9 @@ public class AnnotationServiceFactoryTest
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(false);
+
+        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("EchoService");
@@ -195,6 +204,9 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.getSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(soapBinding);
+
+        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation webservice = new WebServiceAnnotation();
         webservice.setServiceName("EchoService");
