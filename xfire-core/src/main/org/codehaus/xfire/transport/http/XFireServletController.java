@@ -1,13 +1,9 @@
 package org.codehaus.xfire.transport.http;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
-
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -15,6 +11,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
@@ -26,7 +23,7 @@ import org.codehaus.xfire.transport.TransportManager;
 
 /**
  * Loads XFire and processes requests.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004
  */
@@ -35,17 +32,15 @@ public class XFireServletController
     private static ThreadLocal requests = new ThreadLocal();
     private static ThreadLocal responses = new ThreadLocal();
 
-    private File webInfPath;
-
     protected XFire xfire;
 
     protected SoapHttpTransport transport;
-    
+
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
         this.transport = new SoapHttpTransport();
-        
+
         registerTransport();
     }
 
@@ -75,26 +70,25 @@ public class XFireServletController
 
     /**
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
+            *      javax.servlet.http.HttpServletResponse)
      */
     public void doService(HttpServletRequest request,
                           HttpServletResponse response)
-        throws ServletException, IOException
+            throws ServletException, IOException
     {
-        String service = getService(request);
+        String serviceName = getService(request);
         ServiceRegistry reg = getServiceRegistry();
 
-        String wsdl = request.getParameter("wsdl");
         response.setHeader("Content-Type", "UTF-8");
 
         requests.set(request);
         responses.set(response);
 
-        if (service == null || service.equals("") || !reg.hasService(service))
+        if (serviceName == null || serviceName.length() == 0 || !reg.hasService(serviceName))
         {
-            if( !reg.hasService(service) )
+            if (!reg.hasService(serviceName))
             {
-                response.setStatus( 404 );
+                response.setStatus(404);
             }
 
             generateServices(response);
@@ -103,50 +97,65 @@ public class XFireServletController
 
         try
         {
+            String wsdl = request.getParameter("wsdl");
+
             if (wsdl != null)
             {
-                generateWSDL(response, service);
+                generateWSDL(response, serviceName);
             }
             else
             {
-                invoke(request, response, service);
+                invoke(request, response, serviceName);
             }
         }
         catch (Exception e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            if (e instanceof ServletException)
+            {
+                throw (ServletException) e;
+            }
+            else
+            {
+                throw new ServletException(e);
+            }
         }
     }
 
-    /**
-     * @param response
-     * @throws IOException
-     * @throws ServletException
-     */
-    protected void generateServices(HttpServletResponse response)
-            throws IOException
+    protected void generateService(HttpServletResponse response, String serviceName)
+            throws ServletException, IOException
+
     {
         response.setContentType("text/html");
-        StringBuffer sb = new StringBuffer();
-        sb.append("<html><head><title>XFire Services</title></head>").append(
-                "<body>No such service.").append("<p>Services:<ul>.");
-
-        ServiceRegistry registry = getServiceRegistry();
-        Collection services = registry.getServices();
-
-        for (Iterator itr = services.iterator(); itr.hasNext();)
+        Service service = getServiceRegistry().getService(serviceName);
+        HtmlServiceWriter writer = new HtmlServiceWriter();
+        try
         {
-            Service service = (Service) itr.next();
-            sb.append("<li>").append(service.getName()).append("</li>");
+            writer.write(response.getOutputStream(), service);
         }
-        sb.append("</ul></p></body></html>");
+        catch (XMLStreamException e)
+        {
+            throw new ServletException("Error writing HTML services list", e);
+        }
+    }
 
-        response.getWriter().write(sb.toString());
-        response.getWriter().flush();
-        // response.getWriter().close();
 
-        return;
+    /**
+     * @param response
+     */
+    protected void generateServices(HttpServletResponse response)
+            throws ServletException, IOException
+    {
+        response.setContentType("text/html");
+
+        HtmlServiceWriter writer = new HtmlServiceWriter();
+        try
+        {
+            writer.write(response.getOutputStream(), getServiceRegistry().getServices());
+        }
+        catch (XMLStreamException e)
+        {
+            throw new ServletException("Error writing HTML services list", e);
+        }
     }
 
     /**
@@ -158,9 +167,9 @@ public class XFireServletController
      * @throws UnsupportedEncodingException
      */
     protected void invoke(HttpServletRequest request,
-                          HttpServletResponse response, 
+                          HttpServletResponse response,
                           String service)
-        throws ServletException, IOException, UnsupportedEncodingException
+            throws ServletException, IOException, UnsupportedEncodingException
     {
         // TODO: Return 500 on a fault
         // TODO: Determine if the request is a soap request
@@ -171,17 +180,17 @@ public class XFireServletController
         response.setContentType("text/xml; charset=UTF-8");
 
         XFireHttpSession session = new XFireHttpSession(request);
-        MessageContext context = 
-            new MessageContext(service, 
-                               null, 
-                               response.getOutputStream(), 
-                               session, 
-                               request.getRequestURI());
+        MessageContext context =
+                new MessageContext(service,
+                                   null,
+                                   response.getOutputStream(),
+                                   session,
+                                   request.getRequestURI());
 
         context.setTransport(transport);
-        
+
         String contentType = request.getHeader("Content-Type");
-        if ( null == contentType || contentType.toLowerCase().indexOf("multipart/related") != -1 )
+        if (null == contentType || contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
             try
             {
@@ -198,8 +207,8 @@ public class XFireServletController
         }
     }
 
-    protected InputStream createMIMERequest(HttpServletRequest request, MessageContext context) 
-    	throws MessagingException, IOException
+    protected InputStream createMIMERequest(HttpServletRequest request, MessageContext context)
+            throws MessagingException, IOException
     {
         Session session = Session.getDefaultInstance(new Properties(), null);
         MimeMessage inMsg = new MimeMessage(session, request.getInputStream());
@@ -207,7 +216,7 @@ public class XFireServletController
 
         final Object content = inMsg.getContent();
 
-        if( content instanceof MimeMultipart )
+        if (content instanceof MimeMultipart)
         {
             MimeMultipart inMP = (MimeMultipart) content;
 
@@ -218,7 +227,7 @@ public class XFireServletController
         }
         else
         {
-            throw new UnsupportedOperationException( );
+            throw new UnsupportedOperationException();
             //TODO set 500 and bail
         }
     }
@@ -230,11 +239,10 @@ public class XFireServletController
      * @throws IOException
      */
     protected void generateWSDL(HttpServletResponse response, String service)
-        throws ServletException, IOException
+            throws ServletException, IOException
     {
         response.setStatus(200);
         response.setContentType("text/xml");
-        // response.setBufferSize(1024 * 8);
 
         getXFire().generateWSDL(service, response.getOutputStream());
     }
