@@ -5,10 +5,46 @@
 			<c:set var="maven.multiproject.excludes" value="project.xml"/>
 		</c:if>
 	</preGoal>
+	
+	<preGoal name="multiproject:site">
+		<attainGoal name="multiproject:javadoc"/>
+	</preGoal>
 
 	<!-- Makes site:deploy not to run site goal. -->
 	<goal name="site:deploy">
 		<attainGoal name="site:${maven.site.deploy.method}deploy"/>
+	</goal>	
+	
+	<!-- Generates all javadocs in one -->
+	<goal name="multiproject:javadoc">
+		<maven:reactor basedir="${basedir}" collectOnly="true" collectionVar="reatorPoms" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}"/>
+		<ant:javadoc destDir="${basedir}/target/docs/apidocs">
+			<c:if test="${context.getVariable('maven.compile.encoding') != null}">
+				<ant:setProperty name="encoding" value="${maven.compile.encoding}" />
+			</c:if>
+			<classpath>
+				<ant:path refid="maven.dependency.classpath"/>
+				<c:forEach var="reatorPom" items="${reatorPoms}">
+					<ant:pathelement path="${reatorPom.dependencyClasspath}"/>   		
+				</c:forEach>
+			</classpath>
+			<packageset dir="${basedir}/target/all-source" defaultexcludes="yes">
+				<include name="org/codehaus/xfire/**"/>
+			</packageset>
+		</ant:javadoc>
+	</goal>
+	
+	<!-- 
+		Private goals. 
+	-->
+	<goal name="__mergesource_project_goal">
+		<copy toDir="${basedir}/../target/all-source">
+			<fileset dir="${pom.build.sourceDirectory}"/>
+		</copy>
+	</goal>
+	
+	<goal name="__mergesource">
+		<maven:reactor basedir="${basedir}" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}" goals="__mergesource_project_goal"/>
 	</goal>
 
 </project>
