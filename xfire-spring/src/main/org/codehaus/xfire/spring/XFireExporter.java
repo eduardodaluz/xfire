@@ -27,7 +27,7 @@ public class XFireExporter
         implements Controller, InitializingBean, BeanNameAware
 {
     private DefaultObjectService service;
-    private ServiceFactory serviceBuilder;
+    private ServiceFactory serviceFactory;
     private SpringXFireController controller;
     private XFire xFire;
     private String name;
@@ -44,7 +44,7 @@ public class XFireExporter
         // Use specific name if given, else fall back to bean name.
         String theName = (this.name != null ? this.name : this.beanName);
 
-        service = (DefaultObjectService) serviceBuilder.create(getServiceInterface(),
+        service = (DefaultObjectService) serviceFactory.create(getServiceInterface(),
                                                                theName,
                                                                namespace,
                                                                soapVersion,
@@ -80,9 +80,9 @@ public class XFireExporter
         return null;
     }
 
-    public void setServiceBuilder(ServiceFactory serviceBuilder)
+    public void setServiceFactory(ServiceFactory serviceBuilder)
     {
-        this.serviceBuilder = serviceBuilder;
+        this.serviceFactory = serviceBuilder;
     }
 
     public void setXfire(XFire xFire)

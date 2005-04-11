@@ -9,6 +9,6 @@ public interface BeanConstants
     String XFIRE = "xfire";
     String TRANSPORT_MANAGER = "xfire.transportManager";
     String SERVICE_REGISTRY = "xfire.serviceRegistry";
-    String SERVICE_BUILDER = "xfire.serviceBuilder";
+    String SERVICE_FACTORY = "xfire.serviceFactory";
     String TYPE_MAPPING_REGISTRY = "xfire.typeMappingRegistry";
 }

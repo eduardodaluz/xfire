@@ -32,7 +32,7 @@
         singleton="true">
     </bean>
 
-    <bean id="xfire.serviceBuilder"
+    <bean id="xfire.serviceFactory"
         class="org.codehaus.xfire.service.object.ObjectServiceFactory"
         singleton="true">
         <constructor-arg index="0">

@@ -32,7 +32,7 @@ public class SpringTest
     public void testSpring()
         throws Exception
     {
-        ServiceFactory builder = (ServiceFactory) factory.getBean(BeanConstants.SERVICE_BUILDER);
+        ServiceFactory builder = (ServiceFactory) factory.getBean(BeanConstants.SERVICE_FACTORY);
         assertNotNull(builder);
         
         XFireExporter exporter = (XFireExporter) factory.getBean("/Echo");

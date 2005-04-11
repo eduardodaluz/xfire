@@ -2,14 +2,14 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-  <bean id="xfire.xmlbeansServiceBuilder" 
-        class="org.codehaus.xfire.xmlbeans.XMLBeansServiceBuilder"
+  <bean id="xfire.xmlbeansServiceFactory" 
+        class="org.codehaus.xfire.xmlbeans.XMLBeansServiceFactory"
         singleton="true">
-     <constructor-arg>
-       <ref bean="xfire"/>
-     </constructor-arg>
-     <constructor-arg>
-       <ref bean="xfire.typeMappingRegistry"/>
-     </constructor-arg>
+        <constructor-arg index="0">
+            <ref bean="xfire.transportManager"/>
+        </constructor-arg>
+        <constructor-arg index="1">
+            <ref bean="xfire.typeMappingRegistry"/>
+        </constructor-arg>
   </bean>
 </beans>
