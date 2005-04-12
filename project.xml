@@ -1,9 +1,9 @@
 <project>
     <pomVersion>4</pomVersion>
     <groupId>xfire</groupId>
-	<artifactId>xfire-all</artifactId>
+	  <artifactId>xfire-all</artifactId>
     <name>XFire</name>
-    <currentVersion>1.0-SNAPSHOT</currentVersion>
+    <currentVersion>1.0-M4</currentVersion>
     <organization>
         <name>Codehaus</name>
         <url>http://www.codehaus.org/</url>
