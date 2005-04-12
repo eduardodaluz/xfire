@@ -16,7 +16,7 @@
 	</goal>	
 	
 	<!-- Generates all javadocs in one -->
-	<goal name="multiproject:javadoc">
+	<goal name="multiproject:javadoc" prereqs="__mergesource">
 		<maven:reactor basedir="${basedir}" collectOnly="true" collectionVar="reatorPoms" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}"/>
 		<ant:javadoc destDir="${basedir}/target/docs/apidocs">
 			<c:if test="${context.getVariable('maven.compile.encoding') != null}">
@@ -44,6 +44,7 @@
 	</goal>
 	
 	<goal name="__mergesource">
+		<mkdir dir="${basedir}/target/all-source"/>
 		<maven:reactor basedir="${basedir}" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}" goals="__mergesource_project_goal"/>
 	</goal>
 
