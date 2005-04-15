@@ -78,11 +78,11 @@ public class XFireFactory
         }
         catch (NoSuchMethodException e)
         {
-            throw new XFireRuntimeException("Factory doesn't implement newInstance(): " + clazz.getName(), e);
+            throw new XFireRuntimeException("Factory doesn't implement createInstance(): " + clazz.getName(), e);
         }
         catch (IllegalArgumentException e)
         {
-            throw new XFireRuntimeException("Factory doesn't implement newInstance(): " + clazz.getName(), e);
+            throw new XFireRuntimeException("Factory doesn't implement createInstance(): " + clazz.getName(), e);
         }
         catch (IllegalAccessException e)
         {
