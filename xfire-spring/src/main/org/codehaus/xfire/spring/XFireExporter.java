@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.object.BeanInvoker;
 import org.codehaus.xfire.service.object.DefaultObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -28,7 +29,7 @@ public class XFireExporter
 {
     private DefaultObjectService service;
     private ServiceFactory serviceFactory;
-    private SpringXFireController controller;
+    private XFireServletControllerAdapter delegate;
     private XFire xFire;
     private String name;
     private String namespace;
@@ -61,7 +62,7 @@ public class XFireExporter
 
         service.setInvoker(new BeanInvoker(getProxyForService()));
 
-        controller = new SpringXFireController(xFire, service.getName());
+        delegate = new XFireServletControllerAdapter(xFire, service.getName());
     }
 
     /**
@@ -75,14 +76,12 @@ public class XFireExporter
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws Exception
     {
-        controller.doService(request, response);
-
-        return null;
+        return delegate.handleRequest(request, response);
     }
 
-    public void setServiceFactory(ServiceFactory serviceBuilder)
+    public void setServiceFactory(ServiceFactory serviceFactory)
     {
-        this.serviceFactory = serviceBuilder;
+        this.serviceFactory = serviceFactory;
     }
 
     public void setXfire(XFire xFire)
