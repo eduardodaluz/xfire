@@ -5,21 +5,25 @@ import org.codehaus.xfire.picocontainer.util.AbstractServiceRegistryDelegator;
 import org.codehaus.xfire.service.ServiceRegistry;
 
 /**
- * Default ServiceRegistryDelegator's implementation which just use ServiceRegistry instance
- * obtained from XFire instance.
+ * Default ServiceRegistryDelegator's implementation which just use
+ * ServiceRegistry instance obtained from XFire instance.
  * 
  * @author Jose Peleteiro <juzepeleteiro@intelli.biz>
  * @version $Revision$
  */
-public final class DefaultServiceRegistryDelegator extends AbstractServiceRegistryDelegator {
+public final class DefaultServiceRegistryDelegator
+    extends AbstractServiceRegistryDelegator
+{
 
     private final ServiceRegistry serviceRegistry;
 
-    public DefaultServiceRegistryDelegator(final XFire xfire) {
+    public DefaultServiceRegistryDelegator(final XFire xfire)
+    {
         serviceRegistry = xfire.getServiceRegistry();
     }
 
-    public ServiceRegistry getServiceRegistry() {
+    public ServiceRegistry getServiceRegistry()
+    {
         return serviceRegistry;
     }
 

@@ -21,15 +21,21 @@ import org.picocontainer.defaults.ConstantParameter;
 import org.picocontainer.defaults.ConstructorInjectionComponentAdapter;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
-public class XFireServiceRegisterVisitorTest extends TestCase {
+public class XFireServiceRegisterVisitorTest
+    extends TestCase
+{
 
     public int instanceCount = 0;
+
     public int callCount = 0;
 
     private MutablePicoContainer pico;
+
     private XFireServiceRegisterVisitor xfireVisitor;
 
-    protected void setUp() throws Exception {
+    protected void setUp()
+        throws Exception
+    {
         super.setUp();
         instanceCount = 0;
         callCount = 0;
@@ -45,15 +51,20 @@ public class XFireServiceRegisterVisitorTest extends TestCase {
         pico.registerComponentInstance(ms);
 
         // Register container's services
-        xfireVisitor = (XFireServiceRegisterVisitor) pico.getComponentInstance(XFireServiceRegisterVisitor.class);
+        xfireVisitor = (XFireServiceRegisterVisitor) pico
+                .getComponentInstance(XFireServiceRegisterVisitor.class);
         pico.accept(xfireVisitor);
     }
 
-    public void testServiceRegistrationByComponentAdaptor() throws Exception {
+    public void testServiceRegistrationByComponentAdaptor()
+        throws Exception
+    {
 
     }
 
-    public void testCachedServiceObject() throws Exception {
+    public void testCachedServiceObject()
+        throws Exception
+    {
         // Create a child container
         MutablePicoContainer picoChild = new DefaultPicoContainer(pico);
         picoChild.registerComponentInstance(this);
@@ -85,11 +96,14 @@ public class XFireServiceRegisterVisitorTest extends TestCase {
         assertEquals(3, callCount);
     }
 
-    public void testNotCachedServiceObject() throws Exception {
+    public void testNotCachedServiceObject()
+        throws Exception
+    {
         // Create a child container
         MutablePicoContainer picoChild = new DefaultPicoContainer(pico);
         picoChild.registerComponentInstance(this);
-        picoChild.registerComponent(new ConstructorInjectionComponentAdapter(DummyServiceThatCounts.class, DummyServiceThatCounts.class));
+        picoChild.registerComponent(new ConstructorInjectionComponentAdapter(
+                DummyServiceThatCounts.class, DummyServiceThatCounts.class));
 
         // Update pico reference
         xfireVisitor.setPicocontainer(picoChild);
@@ -117,26 +131,37 @@ public class XFireServiceRegisterVisitorTest extends TestCase {
         assertEquals(3, callCount);
     }
 
-    private void populateXFireComponents(MutablePicoContainer pico) throws Exception {
+    private void populateXFireComponents(MutablePicoContainer pico)
+        throws Exception
+    {
         XFire xfire = XFireFactory.newInstance().getXFire();
         pico.registerComponentInstance(XFire.class, xfire);
-        pico.registerComponentImplementation(TransportManager.class, DefaultTransportManagerDelegator.class);
-        pico.registerComponentImplementation(ServiceRegistry.class, DefaultServiceRegistryDelegator.class);
+        pico.registerComponentImplementation(TransportManager.class,
+                                             DefaultTransportManagerDelegator.class);
+        pico.registerComponentImplementation(ServiceRegistry.class,
+                                             DefaultServiceRegistryDelegator.class);
         pico.registerComponentImplementation(ServiceFactory.class, ObjectServiceFactory.class);
-        pico.registerComponentImplementation(XFireServiceRegisterVisitor.class, XFireServiceRegisterVisitor.class);
-        pico.registerComponentImplementation(TypeMappingRegistry.class, DefaultTypeMappingRegistry.class, new Parameter[] { new ConstantParameter(new Boolean(true)) });
+        pico.registerComponentImplementation(XFireServiceRegisterVisitor.class,
+                                             XFireServiceRegisterVisitor.class);
+        pico.registerComponentImplementation(TypeMappingRegistry.class,
+                                             DefaultTypeMappingRegistry.class,
+                                             new Parameter[] { new ConstantParameter(new Boolean(
+                                                     true)) });
     }
 
-    public class DummyServiceThatCounts {
+    public class DummyServiceThatCounts
+    {
 
         private final XFireServiceRegisterVisitorTest test;
 
-        public DummyServiceThatCounts(XFireServiceRegisterVisitorTest test) {
+        public DummyServiceThatCounts(XFireServiceRegisterVisitorTest test)
+        {
             this.test = test;
             this.test.instanceCount++;
         }
 
-        public void theMethod() {
+        public void theMethod()
+        {
             test.callCount++;
             return;
         }

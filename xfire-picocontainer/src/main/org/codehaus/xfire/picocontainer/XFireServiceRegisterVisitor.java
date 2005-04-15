@@ -17,85 +17,109 @@ import org.picocontainer.defaults.AbstractPicoVisitor;
 import org.picocontainer.defaults.ObjectReference;
 
 /**
- * Pico's visitor that registers XFire services. If it's an ObjectService instance it will change
- * Invoker to PicoObjectInvoker which will use an pico container to obtain the object instance.
+ * Pico's visitor that registers XFire services. If it's an ObjectService
+ * instance it will change Invoker to PicoObjectInvoker which will use an pico
+ * container to obtain the object instance.
  * 
  * @author Jose Peleteiro <juzepeleteiro@intelli.biz>
  * @version $Revision$
  */
-public class XFireServiceRegisterVisitor extends AbstractPicoVisitor {
+public class XFireServiceRegisterVisitor
+    extends AbstractPicoVisitor
+{
 
     protected final Log log = LogFactory.getLog(XFireServiceRegisterVisitor.class);
 
     private final ObjectReference picoReference;
+
     private final ServiceRegistry serviceRegistry;
+
     private final ServiceFactory serviceFactory;
 
-    public XFireServiceRegisterVisitor(ServiceRegistry serviceRegistry, ServiceFactory serviceFactory) {
+    public XFireServiceRegisterVisitor(ServiceRegistry serviceRegistry,
+            ServiceFactory serviceFactory)
+    {
         picoReference = new ThreadLocalObjectReference();
         this.serviceRegistry = serviceRegistry;
         this.serviceFactory = serviceFactory;
     }
 
-    public XFireServiceRegisterVisitor(ObjectReference picoReference, ServiceRegistry serviceRegistry, ServiceFactory serviceFactory) {
+    public XFireServiceRegisterVisitor(ObjectReference picoReference,
+            ServiceRegistry serviceRegistry, ServiceFactory serviceFactory)
+    {
         this.picoReference = picoReference;
         this.serviceRegistry = serviceRegistry;
         this.serviceFactory = serviceFactory;
     }
 
     /**
-     * Set the picocontainer instance which will be used for the registred services to obtain
-     * instances.
+     * Set the picocontainer instance which will be used for the registred
+     * services to obtain instances.
      */
-    public void setPicocontainer(PicoContainer pico) {
+    public void setPicocontainer(PicoContainer pico)
+    {
         picoReference.set(pico);
     }
 
-    public void visitContainer(final PicoContainer pico) {
+    public void visitContainer(final PicoContainer pico)
+    {
         // Set the actual container reference, necessary for PicoInvoker.
         setPicocontainer(pico);
 
         // Iterate over the container looking for services and register them.
         Iterator i = pico.getComponentInstancesOfType(Service.class).iterator();
-        while (i.hasNext()) {
+        while (i.hasNext())
+        {
             Service service = (ObjectService) i.next();
-            if (service instanceof ObjectService) {
+            if (service instanceof ObjectService)
+            {
                 prepareObjectService((ObjectService) service);
             }
             serviceRegistry.register(service);
 
-            if (log.isInfoEnabled()) {
+            if (log.isInfoEnabled())
+            {
                 log.info("Service \"" + service.getName() + "\" registred.");
             }
         }
     }
 
-    public void visitComponentAdapter(ComponentAdapter ca) {
-        if (ca instanceof ObjectServiceComponentAdapter) {
+    public void visitComponentAdapter(ComponentAdapter ca)
+    {
+        if (ca instanceof ObjectServiceComponentAdapter)
+        {
             ObjectService objectService;
-            if (ca.getComponentKey() instanceof Class) {
+            if (ca.getComponentKey() instanceof Class)
+            {
                 objectService = (ObjectService) serviceFactory.create((Class) ca.getComponentKey());
-            } else {
-                objectService = (ObjectService) serviceFactory.create(ca.getComponentImplementation());
+            }
+            else
+            {
+                objectService = (ObjectService) serviceFactory.create(ca
+                        .getComponentImplementation());
             }
 
             prepareObjectService(objectService);
             serviceRegistry.register(objectService);
 
-            if (log.isInfoEnabled()) {
+            if (log.isInfoEnabled())
+            {
                 log.info("Service \"" + objectService.getName() + "\" registred.");
             }
         }
     }
 
-    public void visitParameter(Parameter p) {
-    // Do nothing
+    public void visitParameter(Parameter p)
+    {
+        // Do nothing
     }
 
     /**
      * Prepare an ObjectService to use pico.
      */
-    protected void prepareObjectService(ObjectService objectService) {
-        objectService.setInvoker(new PicoObjectInvoker(picoReference, objectService.getServiceClass()));
+    protected void prepareObjectService(ObjectService objectService)
+    {
+        objectService.setInvoker(new PicoObjectInvoker(picoReference, objectService
+                .getServiceClass()));
     }
 }

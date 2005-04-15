@@ -7,17 +7,25 @@ import org.picocontainer.defaults.AssignabilityRegistrationException;
 import org.picocontainer.defaults.ComponentAdapterFactory;
 import org.picocontainer.defaults.NotConcreteRegistrationException;
 
-public class ObjectServiceComponentAdapterFactory implements ComponentAdapterFactory {
+public class ObjectServiceComponentAdapterFactory
+    implements ComponentAdapterFactory
+{
 
     private ComponentAdapterFactory caf;
 
-    public ObjectServiceComponentAdapterFactory(ComponentAdapterFactory caf) {
+    public ObjectServiceComponentAdapterFactory(ComponentAdapterFactory caf)
+    {
         this.caf = caf;
     }
 
-    public ComponentAdapter createComponentAdapter(Object componentKey, Class componentImplementation, Parameter[] parameters) throws PicoIntrospectionException, AssignabilityRegistrationException,
-            NotConcreteRegistrationException {
-        return new ObjectServiceComponentAdapter(caf.createComponentAdapter(componentKey, componentImplementation, parameters));
+    public ComponentAdapter createComponentAdapter(Object componentKey,
+                                                   Class componentImplementation,
+                                                   Parameter[] parameters)
+        throws PicoIntrospectionException, AssignabilityRegistrationException,
+        NotConcreteRegistrationException
+    {
+        return new ObjectServiceComponentAdapter(caf
+                .createComponentAdapter(componentKey, componentImplementation, parameters));
     }
 
 }
