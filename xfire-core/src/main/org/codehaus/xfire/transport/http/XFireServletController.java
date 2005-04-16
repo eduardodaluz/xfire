@@ -189,7 +189,7 @@ public class XFireServletController
 
         context.setTransport(transport);
 
-        String contentType = request.getHeader("Content-Type");
+        String contentType = request.getContentType();
         if (null == contentType || contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
             try
