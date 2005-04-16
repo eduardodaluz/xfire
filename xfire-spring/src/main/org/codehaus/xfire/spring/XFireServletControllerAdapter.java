@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * An adaptor for the {@link XFireServletController} so that it conforms to Springs MVC {@link Controller} interface.
+ * An adapter for the {@link XFireServletController} so that it conforms to Springs MVC {@link Controller} interface.
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
