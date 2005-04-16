@@ -84,15 +84,16 @@ public class AnnotationServiceFactory
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
 
             String serviceName = createServiceName(clazz, webServiceAnnotation);
-            
+
             /* Attempt to load the endpoint interface if there is one. If there is an endpoint
-             * interface the attribute WebService.serviceName is the only valid one for the 
+             * interface the attribute WebService.serviceName is the only valid one for the
              * implementing bean class.
              */
             String tns = null;
             String portType = null;
             Class endpointInterface = clazz;
-            if (webServiceAnnotation.getEndpointInterface() != null)
+            if (webServiceAnnotation.getEndpointInterface() != null &&
+                    webServiceAnnotation.getEndpointInterface().length() != 0)
             {
                 try
                 {
@@ -105,7 +106,8 @@ public class AnnotationServiceFactory
                 }
                 catch (ClassNotFoundException e)
                 {
-                    throw new XFireRuntimeException("Couldn't find endpoint interface " + endpointInterface, e);
+                    throw new XFireRuntimeException("Couldn't find endpoint interface " +
+                                                    webServiceAnnotation.getEndpointInterface(), e);
                 }
             }
             else
@@ -115,7 +117,7 @@ public class AnnotationServiceFactory
             }
 
             Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
-            
+
             // Fill in WSDL Builder metadata from annotations.
             WSDLBuilderInfo info = new WSDLBuilderInfo(service);
             info.setTargetNamespace(tns);
