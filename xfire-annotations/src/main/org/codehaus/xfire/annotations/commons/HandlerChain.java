@@ -6,18 +6,12 @@ import org.codehaus.xfire.annotations.HandlerChainAnnotation;
  * Commons Attributes version of the HandlerChain Annotation.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
+ * @@org.apache.commons.attributes.Target(org.apache.commons.attributes.Target.CLASS)
  * @see HandlerChainAnnotation
  */
 public class HandlerChain
         extends HandlerChainAnnotation
 {
-    /**
-     * Initializes a new instance of the <code>HandlerChain</code> attribute.
-     */
-    public HandlerChain()
-    {
-    }
-
     /**
      * Initializes a new instance of the <code>HandlerChain</code> attribute with the given file and chain name.
      *
@@ -26,9 +20,7 @@ public class HandlerChain
      */
     public HandlerChain(String file, String name)
     {
-        setFile(file);
-        setName(name);
+        super(file, name);
     }
-
 
 }

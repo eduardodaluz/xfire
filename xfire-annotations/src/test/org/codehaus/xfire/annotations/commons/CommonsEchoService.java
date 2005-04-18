@@ -17,12 +17,21 @@ public class CommonsEchoService
      * @param input the input.
      * @return the input.
      * @@WebMethod(operationName = "echoString", action="urn:EchoString")
-     * @@Oneway()
      * @@.input WebParam("echoParam")
      * @@.return WebResult("echoResult")
      */
     public String echo(String input)
     {
         return input;
+    }
+
+    /**
+     * Performs an asynchronous operation.
+     *
+     * @@WebMethod()
+     * @@Oneway()
+     */
+    public void async()
+    {
     }
 }

@@ -123,9 +123,7 @@ public class Backport175WebAnnotations
         HandlerChainAnnotation annotation = null;
         if (handlerChain != null)
         {
-            annotation = new HandlerChainAnnotation();
-            annotation.setFile(handlerChain.file());
-            annotation.setName(handlerChain.name());
+            annotation = new HandlerChainAnnotation(handlerChain.file(), handlerChain.name());
         }
         return annotation;
     }

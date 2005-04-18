@@ -7,4 +7,8 @@ public class EchoServiceImpl
     {
         return input;
     }
+
+    public void async()
+    {
+    }
 }

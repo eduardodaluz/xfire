@@ -17,6 +17,7 @@ public abstract class WebAnnotationsTestBase
     protected Class echoServiceClass;
     protected Class thisClass;
     protected Method echoMethod;
+    protected Method asyncMethod;
     protected Method dummyMethod;
 
 
@@ -29,6 +30,7 @@ public abstract class WebAnnotationsTestBase
         echoServiceClass = getEchoServiceClass();
         thisClass = getClass();
         echoMethod = echoServiceClass.getMethod("echo", new Class[]{String.class});
+        asyncMethod = echoServiceClass.getMethod("async", new Class[0]);
         dummyMethod = thisClass.getMethod("dummy", new Class[]{String.class});
     }
 
@@ -92,7 +94,7 @@ public abstract class WebAnnotationsTestBase
     public void testHasOnewayAnnotation()
             throws Exception
     {
-        assertTrue("OnewayAnnotation not set", webAnnotations.hasOnewayAnnotation(echoMethod));
+        assertTrue("OnewayAnnotation not set", webAnnotations.hasOnewayAnnotation(asyncMethod));
     }
 
     public void testHasNoOnewayAnnotation()

@@ -6,4 +6,6 @@ package org.codehaus.xfire.annotations;
 public interface EchoService
 {
     public String echo(String input);
+
+    public void async();
 }

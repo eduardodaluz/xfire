@@ -17,11 +17,21 @@ public class Backport175EchoService
      * @param input the input.
      * @return the input.
      * @org.codehaus.xfire.annotations.backport175.WebMethod(operationName = "echoString", action="urn:EchoString")
-     * @org.codehaus.xfire.annotations.backport175.Oneway
      * @org.codehaus.xfire.annotations.backport175.WebResult(name="echoResult")
      */
     public String echo(String input)
     {
         return input;
+    }
+
+    /**
+     * Performs an asynchronous operation.
+     *
+     * @org.codehaus.xfire.annotations.backport175.WebMethod()
+     * @org.codehaus.xfire.annotations.backport175.Oneway
+     */
+    public void async()
+    {
+
     }
 }

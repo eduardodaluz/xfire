@@ -7,7 +7,6 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.object.ObjectService;
@@ -63,6 +62,10 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
+        Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
+        webAnnotations.hasWebMethodAnnotation(asyncMethod);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotationsControl.replay();
 
         annotationServiceFactory.create(EchoServiceImpl.class);
@@ -82,9 +85,9 @@ public class AnnotationServiceFactoryTest
         try
         {
             annotationServiceFactory.create(EchoServiceImpl.class);
-            fail("Not a XFireRuntimeException thrown");
+            fail("Not a AnnotationException thrown");
         }
-        catch (XFireRuntimeException e)
+        catch (AnnotationException e)
         {
             // expected behavior
         }
@@ -124,6 +127,11 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(false);
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
+        Method asyncMethod = EchoService.class.getMethod("async", new Class[0]);
+        assertNotNull(asyncMethod);
+        webAnnotations.hasOnewayAnnotation(asyncMethod);
         webAnnotationsControl.setReturnValue(false);
 
         webAnnotationsControl.replay();
@@ -171,6 +179,10 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
+        Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
+        webAnnotations.hasWebMethodAnnotation(asyncMethod);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotationsControl.replay();
 
         ObjectService service = (ObjectService) annotationServiceFactory.create(EchoServiceImpl.class);
@@ -192,7 +204,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(true);
 
         SOAPBindingAnnotation soapBinding = new SOAPBindingAnnotation();
-        soapBinding.setUse(SOAPBindingAnnotation.USE_ENCODED);
+        soapBinding.setUse(SOAPBindingAnnotation.USE_LITERAL);
 
         webAnnotations.getSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(soapBinding);
@@ -211,10 +223,14 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
+        Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
+        webAnnotations.hasWebMethodAnnotation(asyncMethod);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotationsControl.replay();
 
         Service service = service = annotationServiceFactory.create(EchoServiceImpl.class);
-        assertEquals(SoapConstants.USE_ENCODED, service.getUse());
+        assertEquals(SoapConstants.USE_LITERAL, service.getUse());
 
         webAnnotationsControl.verify();
 
