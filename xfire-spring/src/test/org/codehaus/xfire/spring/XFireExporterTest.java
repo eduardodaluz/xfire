@@ -105,8 +105,5 @@ public class XFireExporterTest
         request.setContent(bytes);
         MockHttpServletResponse response = new MockHttpServletResponse();
         exporter.handleRequest(request, response);
-        System.out.println(response.getContentAsString());
-
-
     }
 }
