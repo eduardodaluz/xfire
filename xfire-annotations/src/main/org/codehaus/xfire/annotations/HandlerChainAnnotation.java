@@ -8,7 +8,7 @@ package org.codehaus.xfire.annotations;
  * <p/>
  * It is an error to combine this annotation with the {@link org.codehaus.xfire.annotations.soap.SOAPMessageHandlerAnnotation}.
  *
- * @author <a href="poutsma@mac.com">Arjen Poutsma</a>
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class HandlerChainAnnotation
 {

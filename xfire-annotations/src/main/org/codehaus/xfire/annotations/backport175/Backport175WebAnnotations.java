@@ -3,7 +3,12 @@ package org.codehaus.xfire.annotations.backport175;
 import java.lang.reflect.Method;
 
 import org.codehaus.backport175.reader.Annotations;
-import org.codehaus.xfire.annotations.*;
+import org.codehaus.xfire.annotations.HandlerChainAnnotation;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebParamAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
+import org.codehaus.xfire.annotations.WebServiceAnnotation;
 import org.codehaus.xfire.annotations.backport175.soap.SOAPBinding;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
@@ -23,19 +28,16 @@ public class Backport175WebAnnotations
     public WebServiceAnnotation getWebServiceAnnotation(Class aClass)
     {
         WebService webService = (WebService) Annotations.getAnnotation(WebService.class, aClass);
+        WebServiceAnnotation annotation = null;
         if (webService != null)
         {
-            WebServiceAnnotation annotation = new WebServiceAnnotation();
+            annotation = new WebServiceAnnotation();
             annotation.setEndpointInterface(webService.endpointInterface());
             annotation.setName(webService.name());
             annotation.setServiceName(webService.serviceName());
             annotation.setTargetNamespace(webService.targetNamespace());
-            return annotation;
         }
-        else
-        {
-            return null;
-        }
+        return annotation;
     }
 
     public boolean hasWebMethodAnnotation(Method method)
@@ -46,17 +48,14 @@ public class Backport175WebAnnotations
     public WebMethodAnnotation getWebMethodAnnotation(Method method)
     {
         WebMethod webMethod = (WebMethod) Annotations.getAnnotation(WebMethod.class, method);
+        WebMethodAnnotation annotation = null;
         if (webMethod != null)
         {
-            WebMethodAnnotation annotation = new WebMethodAnnotation();
+            annotation = new WebMethodAnnotation();
             annotation.setAction(webMethod.action());
             annotation.setOperationName(webMethod.operationName());
-            return annotation;
         }
-        else
-        {
-            return null;
-        }
+        return annotation;
     }
 
     public boolean hasWebResultAnnotation(Method method)
@@ -67,17 +66,14 @@ public class Backport175WebAnnotations
     public WebResultAnnotation getWebResultAnnotation(Method method)
     {
         WebResult webResult = (WebResult) Annotations.getAnnotation(WebResult.class, method);
+        WebResultAnnotation annotation = null;
         if (webResult != null)
         {
-            WebResultAnnotation annotation = new WebResultAnnotation();
+            annotation = new WebResultAnnotation();
             annotation.setName(webResult.name());
             annotation.setTargetNameSpace(webResult.targetNameSpace());
-            return annotation;
         }
-        else
-        {
-            return null;
-        }
+        return annotation;
     }
 
     public boolean hasWebParamAnnotation(Method method, int parameter)
@@ -105,27 +101,32 @@ public class Backport175WebAnnotations
     public SOAPBindingAnnotation getSOAPBindingAnnotation(Class aClass)
     {
         SOAPBinding soapBinding = (SOAPBinding) Annotations.getAnnotation(SOAPBinding.class, aClass);
+        SOAPBindingAnnotation annotation = null;
         if (soapBinding != null)
         {
-            SOAPBindingAnnotation annotation = new SOAPBindingAnnotation();
+            annotation = new SOAPBindingAnnotation();
             annotation.setStyle(soapBinding.style());
             annotation.setUse(soapBinding.use());
             annotation.setParameterStyle(soapBinding.parameterStyle());
-            return annotation;
         }
-        else
-        {
-            return null;
-        }
+        return annotation;
     }
 
     public boolean hasHandlerChainAnnotation(Class aClass)
     {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return Annotations.isAnnotationPresent(HandlerChain.class, aClass);
     }
 
     public HandlerChainAnnotation getHandlerChainAnnotation(Class aClass)
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        HandlerChain handlerChain = (HandlerChain) Annotations.getAnnotation(HandlerChain.class, aClass);
+        HandlerChainAnnotation annotation = null;
+        if (handlerChain != null)
+        {
+            annotation = new HandlerChainAnnotation();
+            annotation.setFile(handlerChain.file());
+            annotation.setName(handlerChain.name());
+        }
+        return annotation;
     }
 }

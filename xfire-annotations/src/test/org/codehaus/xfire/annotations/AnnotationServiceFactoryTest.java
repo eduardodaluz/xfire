@@ -63,9 +63,6 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
-
         webAnnotationsControl.replay();
 
         annotationServiceFactory.create(EchoServiceImpl.class);
@@ -129,9 +126,6 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
-
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -177,9 +171,6 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
-
         webAnnotationsControl.replay();
 
         ObjectService service = (ObjectService) annotationServiceFactory.create(EchoServiceImpl.class);
@@ -190,8 +181,6 @@ public class AnnotationServiceFactoryTest
         assertNotNull(operation);
         assertEquals(1, operation.getInParameters().size());
         assertEquals("input", ((Parameter) operation.getInParameters().iterator().next()).getName().getLocalPart());
-
-        assertTrue(operation.isAsync());
 
         webAnnotationsControl.verify();
     }

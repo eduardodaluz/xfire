@@ -3,6 +3,7 @@ package org.codehaus.xfire.annotations.commons;
 import java.lang.reflect.Method;
 
 import org.apache.commons.attributes.Attributes;
+import org.codehaus.xfire.annotations.HandlerChainAnnotation;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
@@ -14,7 +15,7 @@ import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 /**
  * Implementation of the {@link WebAnnotations} facade for Commons Attributes.
  *
- * @author Arjen Poutsma
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class CommonsWebAttributes
         implements WebAnnotations
@@ -73,5 +74,15 @@ public class CommonsWebAttributes
     public SOAPBindingAnnotation getSOAPBindingAnnotation(Class aClass)
     {
         return (SOAPBindingAnnotation) Attributes.getAttribute(aClass, SOAPBinding.class);
+    }
+
+    public boolean hasHandlerChainAnnotation(Class aClass)
+    {
+        return Attributes.hasAttributeType(aClass, HandlerChain.class);
+    }
+
+    public HandlerChainAnnotation getHandlerChainAnnotation(Class aClass)
+    {
+        return (HandlerChainAnnotation) Attributes.getAttribute(aClass, HandlerChain.class);
     }
 }
