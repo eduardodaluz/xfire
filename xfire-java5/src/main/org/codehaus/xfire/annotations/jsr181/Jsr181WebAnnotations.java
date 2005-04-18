@@ -10,6 +10,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import org.codehaus.xfire.annotations.HandlerChainAnnotation;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
@@ -206,7 +207,7 @@ public class Jsr181WebAnnotations
 
     public boolean hasHandlerChainAnnotation(Class clazz)
     {
-        return clazz.isAnnotationPresent(HandlerChain.class, clazz);
+        return clazz.isAnnotationPresent(HandlerChain.class);
     }
 
     public HandlerChainAnnotation getHandlerChainAnnotation(Class clazz)
