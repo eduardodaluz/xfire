@@ -2,6 +2,7 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import javax.jws.HandlerChain;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -168,35 +169,58 @@ public class Jsr181WebAnnotations
     {
         SOAPBinding binding = (SOAPBinding) clazz.getAnnotation(SOAPBinding.class);
 
-        SOAPBindingAnnotation annot = new SOAPBindingAnnotation();
-        if (binding.parameterStyle() == SOAPBinding.ParameterStyle.BARE)
+        SOAPBindingAnnotation annot = null;
+        if (binding != null)
         {
-            annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_BARE);
-        }
-        else if (binding.parameterStyle() == SOAPBinding.ParameterStyle.WRAPPED)
-        {
-            annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED);
-        }
+            annot = new SOAPBindingAnnotation();
+            if (binding.parameterStyle() == SOAPBinding.ParameterStyle.BARE)
+            {
+                annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_BARE);
+            }
+            else if (binding.parameterStyle() == SOAPBinding.ParameterStyle.WRAPPED)
+            {
+                annot.setParameterStyle(SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED);
+            }
 
-        if (binding.style() == SOAPBinding.Style.DOCUMENT)
-        {
-            annot.setStyle(SOAPBindingAnnotation.STYLE_DOCUMENT);
-        }
-        else if (binding.style() == SOAPBinding.Style.RPC)
-        {
-            annot.setStyle(SOAPBindingAnnotation.STYLE_RPC);
-        }
+            if (binding.style() == SOAPBinding.Style.DOCUMENT)
+            {
+                annot.setStyle(SOAPBindingAnnotation.STYLE_DOCUMENT);
+            }
+            else if (binding.style() == SOAPBinding.Style.RPC)
+            {
+                annot.setStyle(SOAPBindingAnnotation.STYLE_RPC);
+            }
 
-        if (binding.use() == SOAPBinding.Use.ENCODED)
-        {
-            annot.setUse(SOAPBindingAnnotation.USE_ENCODED);
-        }
-        else if (binding.use() == SOAPBinding.Use.LITERAL)
-        {
-            annot.setUse(SOAPBindingAnnotation.USE_LITERAL);
+            if (binding.use() == SOAPBinding.Use.ENCODED)
+            {
+                annot.setUse(SOAPBindingAnnotation.USE_ENCODED);
+            }
+            else if (binding.use() == SOAPBinding.Use.LITERAL)
+            {
+                annot.setUse(SOAPBindingAnnotation.USE_LITERAL);
+            }
         }
 
         return annot;
     }
+
+    public boolean hasHandlerChainAnnotation(Class clazz)
+    {
+        return clazz.isAnnotationPresent(HandlerChain.class, clazz);
+    }
+
+    public HandlerChainAnnotation getHandlerChainAnnotation(Class clazz)
+    {
+        HandlerChain handlerChain = (HandlerChain) clazz.getAnnotation(HandlerChain.class);
+        HandlerChainAnnotation annotation = null;
+        if (handlerChain != null)
+        {
+            annotation = new HandlerChainAnnotation();
+            annotation.setFile(handlerChain.file());
+            annotation.setName(handlerChain.name());
+        }
+        return annotation;
+    }
+
 
 }
