@@ -3,11 +3,7 @@ package org.codehaus.xfire.annotations.backport175;
 import java.lang.reflect.Method;
 
 import org.codehaus.backport175.reader.Annotations;
-import org.codehaus.xfire.annotations.WebAnnotations;
-import org.codehaus.xfire.annotations.WebMethodAnnotation;
-import org.codehaus.xfire.annotations.WebParamAnnotation;
-import org.codehaus.xfire.annotations.WebResultAnnotation;
-import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.*;
 import org.codehaus.xfire.annotations.backport175.soap.SOAPBinding;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
@@ -121,5 +117,15 @@ public class Backport175WebAnnotations
         {
             return null;
         }
+    }
+
+    public boolean hasHandlerChainAnnotation(Class aClass)
+    {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public HandlerChainAnnotation getHandlerChainAnnotation(Class aClass)
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

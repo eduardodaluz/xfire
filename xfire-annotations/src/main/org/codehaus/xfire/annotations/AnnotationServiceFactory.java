@@ -2,7 +2,6 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -98,6 +97,11 @@ public class AnnotationServiceFactory
                 try
                 {
                     endpointInterface = loadClass(webServiceAnnotation.getEndpointInterface());
+                    if (!webAnnotations.hasWebServiceAnnotation(endpointInterface))
+                    {
+                        throw new AnnotationException("Endpoint interface " + endpointInterface.getName() +
+                                                      " does not have a WebService annotation");
+                    }
                     WebServiceAnnotation endpointWSAnnotation =
                             webAnnotations.getWebServiceAnnotation(endpointInterface);
 
@@ -106,8 +110,8 @@ public class AnnotationServiceFactory
                 }
                 catch (ClassNotFoundException e)
                 {
-                    throw new XFireRuntimeException("Couldn't find endpoint interface " +
-                                                    webServiceAnnotation.getEndpointInterface(), e);
+                    throw new AnnotationException("Couldn't find endpoint interface " +
+                                                  webServiceAnnotation.getEndpointInterface(), e);
                 }
             }
             else
@@ -134,7 +138,7 @@ public class AnnotationServiceFactory
         }
         else
         {
-            throw new XFireRuntimeException("Class " + clazz.getName() + " does not have a WebService annotation");
+            throw new AnnotationException("Class " + clazz.getName() + " does not have a WebService annotation");
         }
     }
 

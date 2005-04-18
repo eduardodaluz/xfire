@@ -110,6 +110,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(implAnnotation);
 
+        webAnnotations.hasWebServiceAnnotation(EchoService.class);
+        webAnnotationsControl.setReturnValue(true);
+
         WebServiceAnnotation intfAnnotation = new WebServiceAnnotation();
         intfAnnotation.setName("Echo");
         intfAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");

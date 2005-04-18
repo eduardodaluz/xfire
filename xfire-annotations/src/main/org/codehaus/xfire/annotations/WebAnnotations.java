@@ -78,7 +78,7 @@ public interface WebAnnotations
     WebParamAnnotation getWebParamAnnotation(Method method, int parameter);
 
     /**
-     * Tests whether the given method has the {@link OnewayAnnotation} annotation.
+     * Tests whether the given method has the one way annotation.
      *
      * @param method the method.
      * @return <code>true</code> if present; <code>false</code> otherwise.
@@ -88,8 +88,8 @@ public interface WebAnnotations
     /**
      * Tests whether the given class has the {@link SOAPBindingAnnotation} annotation.
      *
-     * @param aClass
-     * @return
+     * @param aClass the class.
+     * @return <code>true> if present; <code>false</code> otherwise.
      */
     boolean hasSOAPBindingAnnotation(Class aClass);
 
@@ -100,5 +100,21 @@ public interface WebAnnotations
      * @return the annotation; or <code>null</code> if it could not be found.
      */
     SOAPBindingAnnotation getSOAPBindingAnnotation(Class aClass);
+
+    /**
+     * Tests whether the given class has the {@link HandlerChainAnnotation} annotation.
+     *
+     * @param aClass the class.
+     * @return <code>true> if present; <code>false</code> otherwise.
+     */
+    boolean hasHandlerChainAnnotation(Class aClass);
+
+    /**
+     * Gets the {@link HandlerChainAnnotation} annotation from the given class, if found.
+     *
+     * @param aClass the class.
+     * @return the annotation; or <code>null</code> if it could not be found.
+     */
+    HandlerChainAnnotation getHandlerChainAnnotation(Class aClass);
 
 }

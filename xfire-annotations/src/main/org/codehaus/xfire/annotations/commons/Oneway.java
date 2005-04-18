@@ -5,7 +5,7 @@ package org.codehaus.xfire.annotations.commons;
  *
  * @author Arjen Poutsma
  * @@org.apache.commons.attributes.Target(org.apache.commons.attributes.Target.METHOD)
- * @see org.codehaus.xfire.annotations.OnewayAnnotation
+ * @see org.codehaus.xfire.annotations.WebAnnotations#hasOnewayAnnotation(java.lang.reflect.Method)
  */
 public class Oneway
 {
