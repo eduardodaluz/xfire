@@ -6,9 +6,9 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.commons.CommonsWebAttributes;
+import org.codehaus.xfire.plexus.type.TypeMappingRegistry;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.type.TypeMappingRegistry;
 
 public class AnnotationServiceConfigurator
     extends ObjectServiceConfigurator

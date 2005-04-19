@@ -5,6 +5,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,6 +21,59 @@ import org.w3c.dom.NodeList;
  */
 public class STAXUtils
 {
+    /**
+     * Returns true if currently at the start of an element, otherwise move forwards to the next
+     * element start and return true, otherwise false is returned if the end of the stream is reached.
+     */
+    public static boolean skipToStartOfElement(XMLStreamReader in)
+        throws XMLStreamException
+    {
+        for (int code = in.getEventType(); code != XMLStreamReader.END_DOCUMENT; code = in.next())
+        {
+            if (code == XMLStreamReader.START_ELEMENT)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean toNextElement(DepthXMLStreamReader dr)
+    {
+        try
+        {
+            int depth = dr.getDepth();
+            
+            for (int event = dr.getEventType(); dr.getDepth() >= depth; event = dr.next())
+            {
+                if (event == XMLStreamReader.START_ELEMENT && dr.getDepth() == depth +1)
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
+        }
+    }
+   
+    public static boolean skipToStartOfElement(DepthXMLStreamReader in)
+        throws XMLStreamException
+    {
+        int depth = in.getDepth();
+        for (int code = in.getEventType(); code != XMLStreamReader.END_DOCUMENT; code = in.next())
+        {
+            if (code == XMLStreamReader.START_ELEMENT)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Copies the reader to the writer.  The start and end document
      * methods must be handled on the writer manually.

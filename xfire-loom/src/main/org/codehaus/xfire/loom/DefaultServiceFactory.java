@@ -7,14 +7,13 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
-
+import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.object.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.type.TypeMapping;
-import org.codehaus.xfire.type.TypeMappingRegistry;
 
 /**
  * Default implementation of a ServiceFactory
@@ -51,7 +50,8 @@ public class DefaultServiceFactory extends AbstractLogEnabled implements Service
 
     public void initialize() throws Exception
     {
-        setFactory( new ObjectServiceFactory( m_transportManager, m_typeMappingRegistry ) );
+        setFactory( new ObjectServiceFactory( m_transportManager, 
+                                              new AegisBindingProvider(m_typeMappingRegistry) ) );
     }
 
     public Service create( final Class clazz )
@@ -70,9 +70,9 @@ public class DefaultServiceFactory extends AbstractLogEnabled implements Service
         return m_factory.create( clazz, name, namespace, version, style, use, encodingStyleURI );
     }
 
-    public Service create( final Class clazz, final TypeMapping tm, final URL wsdlUrl ) throws Exception
+    public Service create( final Class clazz, final URL wsdlUrl ) throws Exception
     {
-        return m_factory.create( clazz, tm, wsdlUrl );
+        return m_factory.create( clazz, wsdlUrl );
     }
 
     public Service create( final Class clazz, final SoapVersion version, final String style, final String use )

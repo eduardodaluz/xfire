@@ -5,11 +5,11 @@ import java.lang.reflect.Method;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.object.ObjectService;
-import org.codehaus.xfire.service.object.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.type.TypeMappingRegistry;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 
@@ -30,12 +30,13 @@ public class AnnotationServiceFactory
      *
      * @param webAnnotations   the annotations facade
      * @param transportManager the transport manager
-     * @param registry         the registry
+     * @param provider         the registry
      */
-    public AnnotationServiceFactory(WebAnnotations webAnnotations, final TransportManager transportManager,
-                                    final TypeMappingRegistry registry)
+    public AnnotationServiceFactory(WebAnnotations webAnnotations, 
+                                    final TransportManager transportManager,
+                                    final BindingProvider provider)
     {
-        super(transportManager, registry);
+        super(transportManager, provider);
         this.webAnnotations = webAnnotations;
     }
 

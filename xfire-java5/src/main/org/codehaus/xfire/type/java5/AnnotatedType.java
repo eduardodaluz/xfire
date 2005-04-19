@@ -2,7 +2,7 @@ package org.codehaus.xfire.type.java5;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.type.basic.BeanType;
+import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.util.NamespaceHelper;
 
 public class AnnotatedType

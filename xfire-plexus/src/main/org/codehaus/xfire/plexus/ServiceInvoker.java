@@ -5,8 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.object.ObjectInvoker;
-import org.codehaus.xfire.service.object.ObjectService;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.binding.ObjectService;
 
 /**
  * Invokes a Plexus service.

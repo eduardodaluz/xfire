@@ -12,6 +12,10 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
@@ -21,18 +25,15 @@ import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.object.DefaultObjectService;
-import org.codehaus.xfire.service.object.Invoker;
-import org.codehaus.xfire.service.object.ObjectInvoker;
-import org.codehaus.xfire.service.object.ObjectService;
-import org.codehaus.xfire.service.object.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.type.Type;
-import org.codehaus.xfire.type.TypeMapping;
-import org.codehaus.xfire.type.TypeMappingRegistry;
 
 /**
  * Creates and configures services.
@@ -57,7 +58,7 @@ public class ObjectServiceConfigurator
         String implClass = config.getChild("implementationClass").getValue("");
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
-
+        
         DefaultObjectService service = null;
         if (wsdlUrl.length() > 0)
         {
@@ -81,7 +82,7 @@ public class ObjectServiceConfigurator
                 }
                     
                 getLogger().info("Creating service with " + url.toString() );
-                service = (DefaultObjectService) builder.create(loadClass(serviceClass), tm, url);
+                service = (DefaultObjectService) builder.create(loadClass(serviceClass), url);
             }
             catch (WSDLException e)
             {
@@ -109,7 +110,8 @@ public class ObjectServiceConfigurator
             PlexusConfiguration[] types = config.getChild("types").getChildren("type");
             for ( int i = 0; i < types.length; i++ )
             {
-                initializeType( types[i], service.getTypeMapping() );   
+                initializeType(types[i], 
+                               AegisBindingProvider.getTypeMapping(service));
             }
         }
         
@@ -189,28 +191,34 @@ public class ObjectServiceConfigurator
         throws Exception
     {
         String factoryClass = config.getChild("serviceFactory").getValue("");
-        return getServiceFactory(factoryClass);
+        String binding = config.getChild("bindingProvider").getValue("");
+
+        Class bindingCls = null;
+        if (binding.length() > 0)
+            bindingCls = loadClass(binding);
+        
+        return getServiceFactory(factoryClass, bindingCls);
     }
     
     /**
      * @return
      * @throws PlexusConfigurationException 
      */
-    protected ServiceFactory getServiceFactory( String builderClass )
+    protected ServiceFactory getServiceFactory( String builderClass, Class bindingProvider )
         throws Exception
     {
         if (builderClass.length() == 0)
         {
-            return new ObjectServiceFactory(getXFire().getTransportManager(), getTypeMappingRegistry());
+            return new ObjectServiceFactory(getXFire().getTransportManager(), null);
         }
         else
         {
             Class clz = loadClass(builderClass);
             Constructor con = 
-                clz.getConstructor( new Class[] {TransportManager.class, TypeMappingRegistry.class} );
+                clz.getConstructor( new Class[] {TransportManager.class, Class.class} );
             
             return (ServiceFactory) 
-                con.newInstance(new Object[] {getXFire().getTransportManager(), getTypeMappingRegistry()});
+                con.newInstance(new Object[] {getXFire().getTransportManager(), bindingProvider});
         }
     }
     

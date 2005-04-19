@@ -8,15 +8,15 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
+import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
+import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.basic.BooleanType;
+import org.codehaus.xfire.aegis.type.basic.DoubleType;
+import org.codehaus.xfire.aegis.type.basic.FloatType;
+import org.codehaus.xfire.aegis.type.basic.IntType;
+import org.codehaus.xfire.aegis.type.basic.LongType;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.type.DefaultTypeMappingRegistry;
-import org.codehaus.xfire.type.Type;
-import org.codehaus.xfire.type.TypeMapping;
-import org.codehaus.xfire.type.basic.BooleanType;
-import org.codehaus.xfire.type.basic.DoubleType;
-import org.codehaus.xfire.type.basic.FloatType;
-import org.codehaus.xfire.type.basic.IntType;
-import org.codehaus.xfire.type.basic.LongType;
 
 /**
  * Extends and configures the TypeMappingRegistry.

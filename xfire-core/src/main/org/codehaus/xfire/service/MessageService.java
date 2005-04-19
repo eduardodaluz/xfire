@@ -10,6 +10,7 @@ import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -44,6 +45,8 @@ public class MessageService
     private HandlerPipeline requestPipeline;
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
+    
+    private BindingProvider bindingProvider;
     
     public MessageService()
     {
@@ -242,5 +245,15 @@ public class MessageService
     public void setResponsePipeline(HandlerPipeline responsePipeline)
     {
         this.responsePipeline = responsePipeline;
+    }
+
+    public BindingProvider getBindingProvider()
+    {
+        return bindingProvider;
+    }
+
+    public void setBindingProvider(BindingProvider bindingProvider)
+    {
+        this.bindingProvider = bindingProvider;
     }
 }

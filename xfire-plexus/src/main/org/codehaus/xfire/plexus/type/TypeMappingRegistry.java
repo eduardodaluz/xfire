@@ -8,8 +8,8 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.xfire.type.Type;
-import org.codehaus.xfire.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeMapping;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -18,7 +18,7 @@ import org.codehaus.xfire.type.TypeMapping;
  * @since Oct 31, 2004
  */
 public class TypeMappingRegistry
-    extends org.codehaus.xfire.type.DefaultTypeMappingRegistry
+    extends org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry
     implements LogEnabled, Configurable, Initializable
 {
     private Logger logger;

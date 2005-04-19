@@ -78,7 +78,7 @@
     </component>
 
     <component>
-      <role>org.codehaus.xfire.type.TypeMappingRegistry</role>
+      <role>org.codehaus.xfire.aegis.type.TypeMappingRegistry</role>
       <implementation>org.codehaus.xfire.plexus.type.TypeMappingRegistry</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration>

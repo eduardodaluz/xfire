@@ -9,7 +9,7 @@ import org.codehaus.xfire.picocontainer.util.ThreadLocalObjectReference;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.object.ObjectService;
+import org.codehaus.xfire.service.binding.ObjectService;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;

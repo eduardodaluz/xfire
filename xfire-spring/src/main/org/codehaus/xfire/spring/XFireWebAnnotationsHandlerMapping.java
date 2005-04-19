@@ -1,11 +1,12 @@
 package org.codehaus.xfire.spring;
 
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
-import org.codehaus.xfire.service.object.BeanInvoker;
-import org.codehaus.xfire.service.object.DefaultObjectService;
-import org.codehaus.xfire.type.TypeMappingRegistry;
+import org.codehaus.xfire.service.binding.BeanInvoker;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContextException;
@@ -47,9 +48,10 @@ public class XFireWebAnnotationsHandlerMapping
 
         String[] beanNames = getApplicationContext().getBeanDefinitionNames();
 
-        AnnotationServiceFactory serviceFactory = new AnnotationServiceFactory(webAnnotations,
-                                                                               xFire.getTransportManager(),
-                                                                               typeMappingRegistry);
+        AnnotationServiceFactory serviceFactory = 
+            new AnnotationServiceFactory(webAnnotations,
+                                         xFire.getTransportManager(),
+                                         new AegisBindingProvider(typeMappingRegistry));
 
         // Take any bean name or alias that has a web service annotation
         for (int i = 0; i < beanNames.length; i++)

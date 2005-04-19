@@ -18,9 +18,13 @@ import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.service.binding.MessageBindingProvider;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Node;
@@ -36,6 +40,8 @@ public abstract class AbstractXFireTest
     extends TestCase
 {
     private XFire xfire;
+
+    private ServiceFactory factory;
 
     /**
      * Namespaces for the XPath expressions.
@@ -116,10 +122,16 @@ public abstract class AbstractXFireTest
     {
         super.setUp();
 
-        xfire = new DefaultXFire();
+        if (xfire == null)
+            xfire = new DefaultXFire();
 
         addNamespace( "s", Soap11.getInstance().getNamespace() );
         addNamespace( "soap12", Soap12.getInstance().getNamespace() );
+        
+        TransportManager trans = getXFire().getTransportManager();
+        trans.register(new TestHttpTransport());
+        
+        factory = new ObjectServiceFactory(trans, new MessageBindingProvider());
     }
 
     /**
@@ -196,6 +208,16 @@ public abstract class AbstractXFireTest
     protected ServiceRegistry getServiceRegistry()
     {
         return getXFire().getServiceRegistry();
+    }
+
+    public ServiceFactory getServiceFactory()
+    {
+        return factory;
+    }
+
+    public void setServiceFactory(ServiceFactory factory)
+    {
+        this.factory = factory;
     }
 
     protected InputStream getResourceAsStream( String resource )

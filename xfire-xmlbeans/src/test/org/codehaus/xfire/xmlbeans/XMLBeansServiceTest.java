@@ -1,26 +1,26 @@
 package org.codehaus.xfire.xmlbeans;
 
-import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
+import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class XMLBeansServiceTest
-	extends AbstractXFireTypeTest
+	extends AbstractXFireTest
 {
     private DefaultObjectService service;
-    private XMLBeansServiceBuilder builder;
+    private XMLBeansServiceFactory builder;
     
     public void setUp() 
     	throws Exception
     {
         super.setUp();
         
-        builder = new XMLBeansServiceBuilder(getXFire().getTransportManager(), null);
+        builder = new XMLBeansServiceFactory(getXFire().getTransportManager());
         
         service = (DefaultObjectService) 
             builder.create(WeatherService.class,
@@ -37,7 +37,6 @@ public class XMLBeansServiceTest
     	throws Exception
     {
         assertEquals(1, service.getOperations().size());
-		assertNotNull( service.getTypeMapping() );
 
         Document response = invokeService("WeatherService", "GetWeatherByZip.xml");
         

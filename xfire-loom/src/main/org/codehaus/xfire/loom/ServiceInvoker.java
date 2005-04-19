@@ -2,7 +2,7 @@ package org.codehaus.xfire.loom;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.object.ObjectInvoker;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
 
 /**
  * Invokes a Loom service.

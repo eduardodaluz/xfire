@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.object.BeanInvoker;
-import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.service.binding.BeanInvoker;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;

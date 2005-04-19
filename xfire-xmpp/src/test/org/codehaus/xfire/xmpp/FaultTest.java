@@ -1,7 +1,7 @@
 package org.codehaus.xfire.xmpp;
 
-import org.codehaus.xfire.service.object.DefaultObjectService;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
 import org.jivesoftware.smack.XMPPConnection;
@@ -12,7 +12,7 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class FaultTest
-    extends AbstractXFireTypeTest
+    extends AbstractXFireAegisTest
 {
     private DefaultObjectService echo;
     
@@ -29,7 +29,7 @@ public class FaultTest
         super.setUp();
         try
         {
-            echo = (DefaultObjectService) getServiceBuilder().create(BadEcho.class);
+            echo = (DefaultObjectService) getServiceFactory().create(BadEcho.class);
 
             getServiceRegistry().register( echo );
 

@@ -4,21 +4,20 @@ package org.codehaus.xfire.annotations;
  * @author Arjen Poutsma
  */
 
-
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.object.ObjectService;
-import org.codehaus.xfire.service.object.Operation;
-import org.codehaus.xfire.service.object.Parameter;
+import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.binding.Operation;
+import org.codehaus.xfire.service.binding.Parameter;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
 
 public class AnnotationServiceFactoryTest
-        extends AbstractXFireTypeTest
+        extends AbstractXFireAegisTest
 {
     private AnnotationServiceFactory annotationServiceFactory;
     private MockControl webAnnotationsControl;
@@ -33,7 +32,7 @@ public class AnnotationServiceFactoryTest
         webAnnotations = (WebAnnotations) webAnnotationsControl.getMock();
         annotationServiceFactory = new AnnotationServiceFactory(webAnnotations,
                                                                 getXFire().getTransportManager(),
-                                                                getRegistry());
+                                                                null);
     }
 
     public void testCreate()
@@ -54,6 +53,9 @@ public class AnnotationServiceFactoryTest
 
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
+
+        webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
 
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
@@ -126,6 +128,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(false);
 
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
@@ -167,6 +172,9 @@ public class AnnotationServiceFactoryTest
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
+
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
 
         WebParamAnnotation paramAnnotation = new WebParamAnnotation();
         paramAnnotation.setName("input");

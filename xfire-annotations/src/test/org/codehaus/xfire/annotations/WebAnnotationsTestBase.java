@@ -2,8 +2,8 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
 
 /**
  * Base class for unit tests that determine annotations.
@@ -11,7 +11,7 @@ import org.codehaus.xfire.test.AbstractXFireTypeTest;
  * @author Arjen Poutsma
  */
 public abstract class WebAnnotationsTestBase
-        extends AbstractXFireTypeTest
+        extends AbstractXFireAegisTest
 {
     protected WebAnnotations webAnnotations;
     protected Class echoServiceClass;

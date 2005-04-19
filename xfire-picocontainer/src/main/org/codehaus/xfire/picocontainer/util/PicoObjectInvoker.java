@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.object.Invoker;
+import org.codehaus.xfire.service.binding.Invoker;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.ObjectReference;
 

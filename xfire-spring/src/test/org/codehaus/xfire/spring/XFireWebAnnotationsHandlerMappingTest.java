@@ -6,16 +6,17 @@ package org.codehaus.xfire.spring;
 
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.easymock.MockControl;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 
 public class XFireWebAnnotationsHandlerMappingTest
-        extends AbstractXFireTypeTest
+        extends AbstractXFireAegisTest
 {
     private XFireWebAnnotationsHandlerMapping handlerMapping;
     private MockControl control;
@@ -31,7 +32,7 @@ public class XFireWebAnnotationsHandlerMappingTest
         webAnnotations = (WebAnnotations) control.getMock();
         handlerMapping.setWebAnnotations(webAnnotations);
         handlerMapping.setXfire(getXFire());
-        handlerMapping.setTypeMappingRegistry(getRegistry());
+        handlerMapping.setTypeMappingRegistry(new DefaultTypeMappingRegistry(true));
     }
 
     public void testHandler()

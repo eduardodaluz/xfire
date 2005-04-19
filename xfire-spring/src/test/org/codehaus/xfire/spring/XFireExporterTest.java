@@ -5,6 +5,7 @@ package org.codehaus.xfire.spring;
  */
 
 import java.io.ByteArrayInputStream;
+
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Service;
@@ -13,20 +14,20 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.object.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.util.FileCopyUtils;
 import org.xml.sax.InputSource;
 
 public class XFireExporterTest
-        extends AbstractXFireTypeTest
+        extends AbstractXFireAegisTest
 {
     private XFireExporter exporter;
 
@@ -40,7 +41,7 @@ public class XFireExporterTest
         exporter.setServiceInterface(Echo.class);
         exporter.setService(echoBean);
         ServiceFactory serviceFactory = new ObjectServiceFactory(getXFire().getTransportManager(),
-                                                                 getRegistry());
+                                                                 null);
 
         exporter.setServiceFactory(serviceFactory);
     }

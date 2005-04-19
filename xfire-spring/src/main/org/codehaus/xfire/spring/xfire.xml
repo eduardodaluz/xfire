@@ -27,13 +27,13 @@
     </bean>
 
     <bean id="xfire.typeMappingRegistry"
-        class="org.codehaus.xfire.type.DefaultTypeMappingRegistry"
+        class="org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry"
         init-method="createDefaultMappings"
         singleton="true">
     </bean>
 
     <bean id="xfire.serviceFactory"
-        class="org.codehaus.xfire.service.object.ObjectServiceFactory"
+        class="org.codehaus.xfire.service.binding.ObjectServiceFactory"
         singleton="true">
         <constructor-arg index="0">
             <ref bean="xfire.transportManager"/>

@@ -30,11 +30,11 @@ public abstract class AbstractServletTest
     
     public void setUp() throws Exception
     {
-        super.setUp();
-        
         factory = XFireFactory.newInstance();
         xfire = factory.getXFire();
         
+        super.setUp();
+
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
     
         sr = new ServletRunner( getResourceAsStream(getConfiguration()) );

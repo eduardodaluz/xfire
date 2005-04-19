@@ -4,28 +4,31 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.object.DefaultObjectService;
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
 import org.codehaus.yom.Document;
 
 public class AnnotatedTypeTest
-    extends AbstractXFireTypeTest
+    extends AbstractXFireAegisTest
 {
     public void setUp() throws Exception
     {
         super.setUp();
         
         DefaultObjectService service = (DefaultObjectService)
-            getServiceBuilder().create(AnnotatedService.class);
-        service.setAutoTyped(false);
+            getServiceFactory().create(AnnotatedService.class);
+
+        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
         getServiceRegistry().register(service);
         
         AnnotatedType type = new AnnotatedType(AnnotatedBean1.class);
-        service.getTypeMapping().register(type);
+        tm.register(type);
 
         type = new AnnotatedType(AnnotatedBean2.class);
-        service.getTypeMapping().register(type);
+        tm.register(type);
     }
 
     public void testType()

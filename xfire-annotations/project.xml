@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>xfire</groupId>
-            <artifactId>xfire-java</artifactId>
+            <artifactId>xfire-aegis</artifactId>
             <version>${pom.currentVersion}</version>
             <properties>
                 <eclipse.dependency>true</eclipse.dependency>

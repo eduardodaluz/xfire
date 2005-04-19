@@ -4,7 +4,7 @@ import java.beans.PropertyDescriptor;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.type.basic.TypeInfo;
+import org.codehaus.xfire.aegis.type.basic.TypeInfo;
 import org.codehaus.xfire.util.NamespaceHelper;
 
 public class AnnotatedTypeInfo

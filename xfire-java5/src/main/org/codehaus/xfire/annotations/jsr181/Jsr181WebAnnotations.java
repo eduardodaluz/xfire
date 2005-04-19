@@ -2,6 +2,7 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+
 import javax.jws.HandlerChain;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -216,12 +217,9 @@ public class Jsr181WebAnnotations
         HandlerChainAnnotation annotation = null;
         if (handlerChain != null)
         {
-            annotation = new HandlerChainAnnotation();
-            annotation.setFile(handlerChain.file());
-            annotation.setName(handlerChain.name());
+            annotation = new HandlerChainAnnotation(handlerChain.file(), 
+                                                    handlerChain.name());
         }
         return annotation;
     }
-
-
 }

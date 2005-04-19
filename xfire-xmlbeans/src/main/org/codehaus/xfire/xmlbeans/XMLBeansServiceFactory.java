@@ -8,23 +8,22 @@ import javax.xml.namespace.QName;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.object.DefaultObjectService;
-import org.codehaus.xfire.service.object.ObjectServiceFactory;
-import org.codehaus.xfire.service.object.Operation;
-import org.codehaus.xfire.service.object.Parameter;
+import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.Operation;
+import org.codehaus.xfire.service.binding.Parameter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.type.TypeMappingRegistry;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class XMLBeansServiceBuilder
+public class XMLBeansServiceFactory
     extends ObjectServiceFactory
 {
-    public XMLBeansServiceBuilder( TransportManager transportManager, TypeMappingRegistry registry )
+    public XMLBeansServiceFactory( TransportManager transportManager )
     {
-        super( transportManager, registry );
+        super( transportManager, new XMLBeansBindingProvider() );
     }
 
     protected void addOperation(DefaultObjectService service, Method method)
@@ -46,7 +45,6 @@ public class XMLBeansServiceBuilder
                 SchemaType st = getSchemaType(paramClasses[j]);
 
                 p = new Parameter(st.getDocumentElementName(), paramClasses[j]);
-                service.getTypeMapping().register(paramClasses[j], st.getDocumentElementName(), new XMLBeansType());
             }
             else
             {
@@ -73,7 +71,6 @@ public class XMLBeansServiceBuilder
                 SchemaType st = getSchemaType(outClass);
     
                 outP = new Parameter(st.getDocumentElementName(), outClass);
-                service.getTypeMapping().register(outClass, st.getDocumentElementName(), new XMLBeansType());
             }
             else
             {

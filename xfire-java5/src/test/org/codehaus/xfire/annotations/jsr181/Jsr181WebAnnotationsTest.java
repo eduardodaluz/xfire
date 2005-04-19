@@ -5,11 +5,15 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.reflect.Method;
 
-import org.codehaus.xfire.annotations.*;
-import org.codehaus.xfire.test.AbstractXFireTypeTest;
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebMethodAnnotation;
+import org.codehaus.xfire.annotations.WebParamAnnotation;
+import org.codehaus.xfire.annotations.WebResultAnnotation;
+import org.codehaus.xfire.annotations.WebServiceAnnotation;
 
 public class Jsr181WebAnnotationsTest
-        extends AbstractXFireTypeTest
+        extends AbstractXFireAegisTest
 {
     protected WebAnnotations webAnnotations;
     protected Class echoServiceClass;
