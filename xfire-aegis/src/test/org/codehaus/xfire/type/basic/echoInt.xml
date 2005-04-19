@@ -1,0 +1,8 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <e:echoInt xmlns:e="urn:PrimitiveService">
+    <e:in0>1</e:in0>
+  </e:echoInt>
+ </env:Body>
+</env:Envelope>

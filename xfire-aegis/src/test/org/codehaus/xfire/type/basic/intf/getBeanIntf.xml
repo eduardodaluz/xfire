@@ -1,0 +1,6 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <getBeanIntf xmlns="http://intf.basic.type.xfire.codehaus.org"/>
+ </env:Body>
+</env:Envelope>

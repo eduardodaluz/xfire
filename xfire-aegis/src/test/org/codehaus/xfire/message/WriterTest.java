@@ -1,0 +1,111 @@
+package org.codehaus.xfire.message;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import org.codehaus.xfire.aegis.MessageWriter;
+import org.codehaus.xfire.aegis.stax.ElementWriter;
+import org.codehaus.xfire.aegis.yom.YOMWriter;
+import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.yom.Document;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.stax.StaxBuilder;
+
+/**
+ * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @since Nov 4, 2004
+ */
+public class WriterTest
+    extends AbstractXFireTest
+{
+    File output;
+    
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        
+        output = File.createTempFile("writetest", ".xml");
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
+        if (output.exists())
+            output.delete();
+        
+        super.tearDown();
+    }
+
+    public void testLiteral()
+        throws Exception
+    {
+        FileOutputStream out = new FileOutputStream(output);
+        ElementWriter writer = new ElementWriter(out, "root", "urn:test");
+
+        write(writer);
+
+        writer.flush();
+        out.close();
+        
+        StaxBuilder builder = new StaxBuilder();
+        Document doc = builder.build(new FileInputStream(output));
+        
+        testWrite(doc);
+    }
+    
+    public void testYOM()
+        throws Exception
+    {
+        Document doc = new Document(new Element("root", "urn:test"));
+        
+        write(new YOMWriter(doc.getRootElement()));
+        
+        testWrite(readDocument(doc.toXML()));
+    }
+    
+    public void write(MessageWriter writer)
+    {
+        MessageWriter nons = writer.getElementWriter("nons");
+        nons.writeValue("nons");
+        nons.close();
+        
+        MessageWriter intval = writer.getElementWriter("int");
+        intval.writeValueAsInt(new Integer(10000));
+        intval.close();
+
+        MessageWriter child1 = writer.getElementWriter("child1", "urn:child1");
+        MessageWriter att1 = child1.getAttributeWriter("att1");
+        att1.writeValue("att1");
+        att1.close();
+        MessageWriter att2 = child1.getAttributeWriter("att2", "");
+        att2.writeValue("att2");
+        att2.close();
+        MessageWriter att3 = child1.getAttributeWriter("att3", "urn:att3");
+        att3.writeValue("att3");
+        att3.close();
+        MessageWriter att4 = child1.getAttributeWriter("att4", null);
+        att4.writeValue("att4");
+        att4.close();
+        
+        child1.close();
+        
+        writer.close();
+    }
+    
+    public void testWrite(Document doc) throws Exception
+    {
+        addNamespace("t", "urn:test");
+        addNamespace("c", "urn:child1");
+        addNamespace("a", "urn:att3");
+        
+        assertValid("/t:root/t:nons[text()='nons']", doc);
+        assertValid("/t:root/t:int[text()='10000']", doc);
+        assertValid("/t:root/c:child1", doc);
+        assertValid("/t:root/c:child1[@c:att1]", doc);
+        assertValid("/t:root/c:child1[@att2]", doc);
+        assertValid("/t:root/c:child1[@a:att3]", doc);
+        assertValid("/t:root/c:child1[@att4]", doc);
+    }
+}

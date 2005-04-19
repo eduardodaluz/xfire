@@ -1,0 +1,10 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <SubmitStringArray xmlns="urn:Array">
+    <in0>
+      <string>bleh</string>
+    </in0>
+  </SubmitStringArray>
+ </env:Body>
+</env:Envelope>

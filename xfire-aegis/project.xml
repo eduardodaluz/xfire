@@ -1,0 +1,20 @@
+<project>
+    <extend>${basedir}/../project.xml</extend>
+    <artifactId>xfire-aegis</artifactId>
+    <name>Aegis XFire Module</name>
+    <package>org.codehaus.xfire</package>
+    <shortDescription/>
+    <description/>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <dependencies>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-core</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.depedency>true</eclipse.depedency>
+            </properties>
+        </dependency>	
+    </dependencies>
+</project>

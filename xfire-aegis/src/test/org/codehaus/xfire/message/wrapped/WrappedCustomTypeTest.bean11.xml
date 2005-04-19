@@ -1,0 +1,12 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+    <env:Header/>
+    <env:Body>
+        <getSubmitBean xmlns="http://services.xfire.codehaus.org">
+            <in0>
+                <bleh xmlns="urn:ReallyNotSoSimpleBean">blah</bleh>
+                <howdy xmlns="urn:ReallyNotSoSimpleBean">ho</howdy>
+            </in0>
+            <in1>blarg</in1>
+        </getSubmitBean>
+    </env:Body>
+</env:Envelope>
