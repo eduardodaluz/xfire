@@ -46,14 +46,14 @@ public class AttachmentTest
 		throws Exception
 	{
 	    JavaMailAttachments sendAtts = new JavaMailAttachments();
-	    
+
 	    sendAtts.setSoapMessage(
 	        new SimpleAttachment("echo.xml", 
-	            createDataHandler("./src/test/org/codehaus/xfire/attachments/echo11.xml")));
+	            createDataHandler(getTestFile("src/test/org/codehaus/xfire/attachments/echo11.xml").getAbsolutePath())));
 	    
 	    sendAtts.addPart(
 	        new SimpleAttachment("xfire_logo.jpg", 
-	            createDataHandler("./src/test/org/codehaus/xfire/attachments/xfire_logo.jpg")));
+	            createDataHandler(getTestFile("src/test/org/codehaus/xfire/attachments/xfire_logo.jpg").getAbsolutePath())));
 
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
         sendAtts.write(bos);

@@ -43,6 +43,8 @@ public abstract class AbstractXFireTest
 
     private ServiceFactory factory;
 
+    private static String basedirPath;
+    
     /**
      * Namespaces for the XPath expressions.
      */
@@ -232,10 +234,23 @@ public abstract class AbstractXFireTest
 
     public File getTestFile( String relativePath )
     {
-        String basedir = System.getProperty( "basedir" );
-        if( basedir == null )
-            basedir = "./";
+        return new File( getBasedir(), relativePath );
+    }
+    
+    public static String getBasedir()
+    {
+        if ( basedirPath != null )
+        {
+            return basedirPath;
+        }
 
-        return new File( new File( basedir ), relativePath );
+        basedirPath = System.getProperty( "basedir" );
+
+        if ( basedirPath == null )
+        {
+            basedirPath = new File( "" ).getAbsolutePath();
+        }
+
+        return basedirPath;
     }
 }
