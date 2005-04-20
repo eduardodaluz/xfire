@@ -1,4 +1,4 @@
-package org.codehaus.xfire.type.basic;
+package org.codehaus.xfire.aegis.type.basic;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.services.PrimitiveService;

@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.MessageReader;
@@ -27,6 +30,8 @@ import org.codehaus.yom.Element;
 public class BeanType
     extends Type
 {
+    private static final Log logger = LogFactory.getLog(BeanType.class);
+    
     private static Map objectProperties = null;
     
     private TypeInfo info;
@@ -351,8 +356,23 @@ public class BeanType
 
     public TypeInfo createTypeInfo()
     {
-        TypeInfo info = new TypeInfo(getTypeClass(), getSchemaType());
+        String path = "/" + getTypeClass().getName().replace('.', '/') + ".aegis.xml";
+        InputStream is = getTypeClass().getResourceAsStream(path);
         
+        TypeInfo info = null;
+        if (is == null)
+        {
+            logger.debug("Couldn't find type descriptor " + path);
+            
+            info = new TypeInfo(getTypeClass(), getSchemaType());
+        }
+        else
+        {
+            info = new XMLTypeInfo(getTypeMapping().getEncodingStyleURI(),
+                                   getTypeClass(),
+                                   is);
+        }
+
         info.initialize();
         
         return info;

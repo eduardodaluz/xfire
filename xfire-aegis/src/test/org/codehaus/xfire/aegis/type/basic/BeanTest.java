@@ -1,4 +1,4 @@
-package org.codehaus.xfire.type.basic;
+package org.codehaus.xfire.aegis.type.basic;
 
 import javax.xml.namespace.QName;
 

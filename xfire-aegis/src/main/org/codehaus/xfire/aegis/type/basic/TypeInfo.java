@@ -44,6 +44,17 @@ public class TypeInfo
         return descriptors;
     }
 
+    protected PropertyDescriptor getPropertyDescriptor(String name)
+    {
+        for (int i = 0; i < descriptors.length; i++)
+        {
+            if (descriptors[i].getName().equals(name));
+                return descriptors[i];
+        }
+        
+        return null;
+    }
+    
     public void initialize()
     {
         try
