@@ -9,10 +9,10 @@ package org.codehaus.xfire.annotations;
  */
 public class WebServiceAnnotation
 {
-    private String endpointInterface;
-    private String name;
-    private String serviceName;
-    private String targetNamespace;
+    private String endpointInterface = "";
+    private String name = "";
+    private String serviceName = "";
+    private String targetNamespace = "";
 
     /**
      * Returns the name of the Web Service. Used as the name of the wsdl:portType when mapped to WSDL 1.1.  Defaults to

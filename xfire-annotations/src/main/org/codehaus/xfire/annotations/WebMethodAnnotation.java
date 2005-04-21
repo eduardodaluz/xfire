@@ -9,8 +9,8 @@ package org.codehaus.xfire.annotations;
  */
 public class WebMethodAnnotation
 {
-    private String action;
-    private String operationName;
+    private String action = "";
+    private String operationName = "";
 
     /**
      * Returns the action for this operation. For SOAP bindings, this determines the value of the SOAPAction header.

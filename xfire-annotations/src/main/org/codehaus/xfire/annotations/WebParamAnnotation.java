@@ -8,9 +8,9 @@ package org.codehaus.xfire.annotations;
  */
 public class WebParamAnnotation
 {
-    private String name;
-    private String targetNamespace;
-    private boolean header;
+    private String name = "";
+    private String targetNamespace = "";
+    private boolean header = false;
     private int mode = MODE_IN;
 
     /**

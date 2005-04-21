@@ -8,8 +8,8 @@ package org.codehaus.xfire.annotations;
  */
 public class WebResultAnnotation
 {
-    private String name;
-    private String targetNameSpace;
+    private String name = "return";
+    private String targetNameSpace = "";
 
     /**
      * Returns the name of the return value as it appears in the WSDL and messages on the wire. For RPC bindings, this
