@@ -25,6 +25,7 @@ import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
@@ -191,20 +192,32 @@ public class ObjectServiceConfigurator
         throws Exception
     {
         String factoryClass = config.getChild("serviceFactory").getValue("");
-        String binding = config.getChild("bindingProvider").getValue("");
-
-        Class bindingCls = null;
-        if (binding.length() > 0)
-            bindingCls = loadClass(binding);
+        BindingProvider binding = getBindingProvider(config);
         
-        return getServiceFactory(factoryClass, bindingCls);
+        return getServiceFactory(factoryClass, binding);
+    }
+
+    protected BindingProvider getBindingProvider(PlexusConfiguration config)
+        throws InstantiationException, IllegalAccessException, Exception
+    {
+        String bindingClass = config.getChild("bindingProvider").getValue("");
+        BindingProvider binding = null;
+        if (bindingClass.length() > 0)
+        {
+            binding = (BindingProvider) loadClass(bindingClass).newInstance();
+        }
+        else
+        {
+            binding = new AegisBindingProvider(getTypeMappingRegistry());
+        }
+        return binding;
     }
     
     /**
      * @return
      * @throws PlexusConfigurationException 
      */
-    protected ServiceFactory getServiceFactory( String builderClass, Class bindingProvider )
+    protected ServiceFactory getServiceFactory(String builderClass, BindingProvider bindingProvider)
         throws Exception
     {
         if (builderClass.length() == 0)

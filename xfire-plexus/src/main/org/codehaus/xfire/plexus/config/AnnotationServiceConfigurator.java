@@ -6,8 +6,8 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.commons.CommonsWebAttributes;
-import org.codehaus.xfire.plexus.type.TypeMappingRegistry;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.transport.TransportManager;
 
 public class AnnotationServiceConfigurator
@@ -40,9 +40,11 @@ public class AnnotationServiceConfigurator
         }
         
         Constructor con = 
-            clz.getConstructor( new Class[] {WebAnnotations.class, TransportManager.class, TypeMappingRegistry.class} );
+            clz.getConstructor( new Class[] {WebAnnotations.class, TransportManager.class, BindingProvider.class} );
         
         return (ServiceFactory) 
-            con.newInstance(new Object[] {annotsClz.newInstance(), getXFire().getTransportManager(), getTypeMappingRegistry()});
+            con.newInstance(new Object[] {annotsClz.newInstance(), 
+                    getXFire().getTransportManager(),
+                    getBindingProvider(config) });
     }
 }
