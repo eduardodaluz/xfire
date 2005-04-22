@@ -133,12 +133,6 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
-
-        Method asyncMethod = EchoService.class.getMethod("async", new Class[0]);
-        assertNotNull(asyncMethod);
-        webAnnotations.hasOnewayAnnotation(asyncMethod);
-        webAnnotationsControl.setReturnValue(false);
-
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);

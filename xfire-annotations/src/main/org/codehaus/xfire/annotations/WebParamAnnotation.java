@@ -99,7 +99,7 @@ public class WebParamAnnotation
         }
         else
         {
-            throw new IllegalArgumentException("Invalid style: " + mode);
+            throw new IllegalArgumentException("Invalid mode: " + mode);
         }
     }
 
