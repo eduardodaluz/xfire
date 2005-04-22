@@ -42,7 +42,7 @@ public class BeanTest
         type.setSchemaType(new QName("urn:Bean", "bean"));
 
         // Test reading
-        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/type/basic/bean1.xml"));
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean1.xml"));
         
         SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
         assertEquals("bleh", bean.getBleh());
@@ -51,7 +51,7 @@ public class BeanTest
         reader.getXMLStreamReader().close();
         
         // Test reading with extra elements
-        reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/type/basic/bean2.xml"));        
+        reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean2.xml"));        
         bean = (SimpleBean) type.readObject(reader, new MessageContext());
         assertEquals("bleh", bean.getBleh());
         assertEquals("howdy", bean.getHowdy());
@@ -77,7 +77,7 @@ public class BeanTest
         type.setTypeMapping(mapping);
         type.setSchemaType(new QName("urn:Bean", "bean"));
     
-        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/type/basic/bean3.xml"));
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean3.xml"));
         
         SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
         assertEquals("howdy", bean.getHowdy());
@@ -106,7 +106,7 @@ public class BeanTest
         type.setTypeMapping(mapping);
         type.setSchemaType(new QName("urn:Bean", "bean"));
     
-        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/type/basic/bean4.xml"));
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean4.xml"));
         
         SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
         assertEquals("bleh", bean.getBleh());
@@ -181,7 +181,7 @@ public class BeanTest
         type.setSchemaType(new QName("urn:Bean", "bean"));
         
         // Test Reading
-        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/type/basic/bean6.xml"));
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean6.xml"));
         
         SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
         assertEquals("bleh", bean.getBleh());

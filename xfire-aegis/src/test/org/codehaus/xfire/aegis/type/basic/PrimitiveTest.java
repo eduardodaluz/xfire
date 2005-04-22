@@ -29,7 +29,7 @@ public class PrimitiveTest
     public void testWrappedPrimitive() throws Exception
     {
         Document response = 
-            invokeService("PrimitiveService", "/org/codehaus/xfire/type/basic/echoInteger.xml");
+            invokeService("PrimitiveService", "/org/codehaus/xfire/aegis/type/basic/echoInteger.xml");
 
         addNamespace("p", "urn:PrimitiveService");
         assertValid("//p:out[text()='1']", response);
@@ -40,7 +40,7 @@ public class PrimitiveTest
     public void testPrimitive() throws Exception
     {
         Document response = 
-            invokeService("PrimitiveService", "/org/codehaus/xfire/type/basic/echoInt.xml");
+            invokeService("PrimitiveService", "/org/codehaus/xfire/aegis/type/basic/echoInt.xml");
 
         addNamespace("p", "urn:PrimitiveService");
         assertValid("//p:out[text()='1']", response);
