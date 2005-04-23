@@ -3,6 +3,7 @@ package org.codehaus.xfire.service;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class ServiceInfo
+        implements Visitable
 {
     private String name;
     private String namespace;
@@ -86,5 +88,20 @@ public class ServiceInfo
     public Collection getOperationInfos()
     {
         return Collections.unmodifiableCollection(operationInfos.values());
+    }
+
+    /**
+     * Acceps the given visitor. Iterates over all operation infos.
+     *
+     * @param visitor the visitor.
+     */
+    public void accept(Visitor visitor)
+    {
+        visitor.visit(this);
+        for (Iterator iterator = operationInfos.values().iterator(); iterator.hasNext();)
+        {
+            OperationInfo operationInfo = (OperationInfo) iterator.next();
+            operationInfo.accept(visitor);
+        }
     }
 }

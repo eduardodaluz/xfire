@@ -5,28 +5,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.assembler.AbstractReflectiveServiceInfoAssembler;
-import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.xfire.util.ServiceUtils;
+import org.codehaus.xfire.service.assembler.ReflectiveServiceInfoAssembler;
 
 /**
  * @author Arjen Poutsma
  */
 public class AnnotationBasedServiceInfoAssembler
-        extends AbstractReflectiveServiceInfoAssembler
+        extends ReflectiveServiceInfoAssembler
 {
     private WebAnnotations webAnnotations;
 
     /**
-     * Initializes a new instance of the <code>AnnotationBasedServiceInfoAssembler</code> with the given web
-     * annotations.
+     * Initializes a new instance of the <code>AnnotationBasedServiceInfoAssembler</code> that uses the given web
+     * annotations to reflect on the given service class.
      *
+     * @param serviceClass   the service class.
      * @param webAnnotations the web annotations.
      */
-    public AnnotationBasedServiceInfoAssembler(WebAnnotations webAnnotations)
+    public AnnotationBasedServiceInfoAssembler(Class serviceClass, WebAnnotations webAnnotations)
     {
+        super(serviceClass);
         this.webAnnotations = webAnnotations;
     }
 
@@ -103,29 +104,14 @@ public class AnnotationBasedServiceInfoAssembler
      * @param serviceClass the service class.
      * @throws AnnotationException when <code>serviceClass</code> does not bear a {@link WebServiceAnnotation}.
      */
-    protected void populate(ServiceInfo service, final Class serviceClass)
+    protected void populateServiceInfo(ServiceInfo service, final Class serviceClass)
     {
         if (!webAnnotations.hasWebServiceAnnotation(serviceClass))
         {
             throw new AnnotationException("Class " + serviceClass.getName() + " does not have a WebService annotation");
         }
         WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(serviceClass);
-        if (webServiceAnnotation.getName().length() != 0)
-        {
-            service.setName(webServiceAnnotation.getName());
-        }
-        else
-        {
-            service.setName(ServiceUtils.makeServiceNameFromClassName(serviceClass));
-        }
-        if (webServiceAnnotation.getTargetNamespace().length() != 0)
-        {
-            service.setNamespace(webServiceAnnotation.getTargetNamespace());
-        }
-        else
-        {
-            service.setNamespace(NamespaceHelper.makeNamespaceFromClassName(serviceClass.getName(), "http"));
-        }
+        webServiceAnnotation.populate(service);
     }
 
     /**
@@ -136,15 +122,12 @@ public class AnnotationBasedServiceInfoAssembler
      * @param operationInfo the operation info.
      * @param method        the method.
      */
-    protected void populate(OperationInfo operationInfo, final Method method)
+    protected void populateOperationInfo(OperationInfo operationInfo, final Method method)
     {
         if (webAnnotations.hasWebMethodAnnotation(method))
         {
             WebMethodAnnotation webMethodAnnotation = webAnnotations.getWebMethodAnnotation(method);
-            if (webMethodAnnotation.getOperationName().length() > 0)
-            {
-                operationInfo.setName(webMethodAnnotation.getOperationName());
-            }
+            webMethodAnnotation.populate(operationInfo);
             if (webAnnotations.hasOnewayAnnotation(method))
             {
                 if ((!method.getReturnType().isAssignableFrom(Void.TYPE)) ||
@@ -159,4 +142,30 @@ public class AnnotationBasedServiceInfoAssembler
         }
     }
 
+    /**
+     * Populates the given {@link MessagePartInfo} with the {@link WebResultAnnotation}, if found.
+     *
+     * @param partInfo the part info.
+     * @param method   the method.
+     */
+    protected void populateOutputMessagePartInfo(MessagePartInfo partInfo, Method method)
+    {
+        if (webAnnotations.hasWebResultAnnotation(method))
+        {
+            WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
+            webResultAnnotation.populate(partInfo);
+        }
+    }
+
+    /**
+     * Allows subclasses to customize the given input message part with the information from the method.
+     *
+     * @param partInfo  the part info.
+     * @param method    the method.
+     * @param parameter the index of the parameter to base the part on.
+     */
+    protected void populateInputMessagePartInfo(MessagePartInfo partInfo, Method method, int parameter)
+    {
+        super.populateInputMessagePartInfo(partInfo, method, parameter);    //To change body of overridden methods use File | Settings | File Templates.
+    }
 }

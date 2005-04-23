@@ -18,7 +18,7 @@ public abstract class AbstractServiceInfoAssembler
      * @return the populated service info.
      * @see #populate(org.codehaus.xfire.service.ServiceInfo)
      */
-    public ServiceInfo getServiceInfo()
+    public final ServiceInfo getServiceInfo()
     {
         ServiceInfo serviceInfo = new ServiceInfo();
         populate(serviceInfo);

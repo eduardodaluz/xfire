@@ -20,7 +20,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
     {
         webAnnotationsControl = MockControl.createControl(WebAnnotations.class);
         webAnnotations = (WebAnnotations) webAnnotationsControl.getMock();
-        assembler = new AnnotationBasedServiceInfoAssembler(webAnnotations);
+
+        assembler = new AnnotationBasedServiceInfoAssembler(EchoServiceImpl.class, webAnnotations);
     }
 
     public void testGetOperationMethodsEndpointInterface()
@@ -71,29 +72,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
         webAnnotationsControl.verify();
     }
 
-    public void testPopulateServiceInfoDefaults()
-            throws Exception
-    {
-        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(true);
-
-        WebServiceAnnotation webServiceAnnotation = new WebServiceAnnotation();
-
-        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(webServiceAnnotation);
-
-        webAnnotationsControl.replay();
-
-        ServiceInfo serviceInfo = new ServiceInfo();
-
-        assembler.populate(serviceInfo, EchoServiceImpl.class);
-        assertEquals("EchoServiceImpl", serviceInfo.getName());
-        assertEquals("http://annotations.xfire.codehaus.org", serviceInfo.getNamespace());
-
-        webAnnotationsControl.verify();
-    }
-
-    public void testPopulateServiceInfoNonDefault()
+    public void testPopulateServiceInfo()
             throws Exception
     {
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
@@ -110,7 +89,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
 
         ServiceInfo serviceInfo = new ServiceInfo();
 
-        assembler.populate(serviceInfo, EchoServiceImpl.class);
+        assembler.populateServiceInfo(serviceInfo, EchoServiceImpl.class);
         assertEquals("Echo", serviceInfo.getName());
         assertEquals("http://xfire.codehaus.org", serviceInfo.getNamespace());
 
@@ -146,7 +125,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
         webAnnotationsControl.replay();
 
         OperationInfo operationInfo = new OperationInfo("method");
-        assembler.populate(operationInfo, method);
+        assembler.populateOperationInfo(operationInfo, method);
         assertEquals(webMethodAnnotation.getOperationName(), operationInfo.getName());
         assertTrue(operationInfo.isOneWay());
         webAnnotationsControl.verify();
@@ -172,7 +151,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
 
         try
         {
-            assembler.populate(operationInfo, method);
+            assembler.populateOperationInfo(operationInfo, method);
             fail("AnnotationException not thrown");
         }
         catch (AnnotationException e)

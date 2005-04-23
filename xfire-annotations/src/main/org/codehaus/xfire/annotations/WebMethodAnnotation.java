@@ -1,5 +1,7 @@
 package org.codehaus.xfire.annotations;
 
+import org.codehaus.xfire.service.OperationInfo;
+
 /**
  * Represents an common representation of a web method annotation. Specifies that the given method is exposed as a Web
  * Service operation, making it part of the Web Service’s public contract. A WebMethod annotation is required for each
@@ -52,6 +54,19 @@ public class WebMethodAnnotation
     public void setOperationName(String operationName)
     {
         this.operationName = operationName;
+    }
+
+    /**
+     * Populates the given operation info with the information contained in this annotation.
+     *
+     * @param operationInfo the operation info.
+     */
+    public void populate(OperationInfo operationInfo)
+    {
+        if (operationName.length() != 0)
+        {
+            operationInfo.setName(operationName);
+        }
     }
 
     /**

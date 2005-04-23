@@ -5,7 +5,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 /**
  * Thrown when an exception occurs related to XFire's annotation support.
  *
- * @author Arjen Poutsma
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class AnnotationException
         extends XFireRuntimeException

@@ -1,5 +1,7 @@
 package org.codehaus.xfire.annotations;
 
+import org.codehaus.xfire.service.MessagePartInfo;
+
 /**
  * Represents an common representation of a web result annotation. Customizes the mapping of the return value to a WSDL
  * part and XML element.
@@ -56,6 +58,24 @@ public class WebResultAnnotation
     {
         this.targetNameSpace = targetNameSpace;
     }
+
+    /**
+     * Populates the given message part info with the information contained in this annotation.
+     *
+     * @param messagePartInfo the operation info.
+     */
+    public void populate(MessagePartInfo messagePartInfo)
+    {
+        if (name.length() != 0)
+        {
+            messagePartInfo.setName(name);
+        }
+        if (targetNameSpace.length() != 0)
+        {
+            messagePartInfo.setNamespace(targetNameSpace);
+        }
+    }
+
 
     /**
      * Returns a String representation of this <code>WebResultAnnotation</code> attribute.

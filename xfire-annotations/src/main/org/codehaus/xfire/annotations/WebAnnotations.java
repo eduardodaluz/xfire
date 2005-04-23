@@ -72,7 +72,8 @@ public interface WebAnnotations
     /**
      * Gets the {@link WebParamAnnotation} annotation from the indicated parameter of the given method, if found.
      *
-     * @param method the method.
+     * @param method    the method.
+     * @param parameter the parameter index.
      * @return the annotation; or <code>null</code> if it could not be found.
      */
     WebParamAnnotation getWebParamAnnotation(Method method, int parameter);
