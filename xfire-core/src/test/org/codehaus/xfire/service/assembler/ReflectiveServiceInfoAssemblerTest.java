@@ -7,6 +7,7 @@ package org.codehaus.xfire.service.assembler;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceInfo;
 
@@ -30,14 +31,15 @@ public class ReflectiveServiceInfoAssemblerTest
         assembler.populate(new ServiceInfo());
     }
 
-    public void methodWithArgs(String s)
+    public String methodWithArgs(String s)
     {
-        // this method is here for the testPopulateServiceInfoOperationInfo() test
+        // this method is here for the tests
+        return s;
     }
 
     public void methodWithNoArgs()
     {
-        // this method is here for the testPopulateOperationInfoOneWay() test
+        // this method is here for the tests
     }
 
     public void testPopulateServiceInfoOperationInfo()
@@ -111,5 +113,29 @@ public class ReflectiveServiceInfoAssemblerTest
         assertNotNull(methods);
         assertEquals(1, methods.length);
         assertEquals("publicMethod", methods[0].getName());
+    }
+
+    public void testGetNoOutputMessagePart()
+            throws Exception
+    {
+        Method noArgsMethod = ReflectiveServiceInfoAssemblerTest.class.getMethod("methodWithNoArgs",
+                                                                                 new Class[0]);
+        ReflectiveServiceInfoAssembler assembler = new ReflectiveServiceInfoAssembler(getClass());
+        assertNull(assembler.getOutputMessageInfo(noArgsMethod, ""));
+    }
+
+    public void testGetOutputMessagePart()
+            throws Exception
+    {
+        Method argsMethod = ReflectiveServiceInfoAssemblerTest.class.getMethod("methodWithArgs",
+                                                                               new Class[]{String.class});
+        ReflectiveServiceInfoAssembler assembler = new ReflectiveServiceInfoAssembler(getClass());
+        MessageInfo outputMessage = assembler.getOutputMessageInfo(argsMethod, "namespace");
+        assertNotNull(outputMessage);
+        assertEquals("methodWithArgsResponse", outputMessage.getName());
+        assertEquals("namespace", outputMessage.getNamespace());
+        assertNotNull(outputMessage.getMessagePart("methodWithArgsResponseout"));
+
+
     }
 }

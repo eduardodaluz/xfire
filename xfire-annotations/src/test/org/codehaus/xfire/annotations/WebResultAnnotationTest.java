@@ -20,11 +20,11 @@ public class WebResultAnnotationTest
             throws Exception
     {
         webResultAnnotation.setName("name");
-        webResultAnnotation.setTargetNameSpace("namespace");
+        webResultAnnotation.setTargetNamespace("namespace");
         MessagePartInfo partInfo = new MessagePartInfo("other1");
         partInfo.setNamespace("other2");
         webResultAnnotation.populate(partInfo);
         assertEquals(webResultAnnotation.getName(), partInfo.getName());
-        assertEquals(webResultAnnotation.getTargetNameSpace(), partInfo.getNamespace());
+        assertEquals(webResultAnnotation.getTargetNamespace(), partInfo.getNamespace());
     }
 }

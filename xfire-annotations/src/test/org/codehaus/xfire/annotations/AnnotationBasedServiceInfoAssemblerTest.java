@@ -4,6 +4,8 @@ package org.codehaus.xfire.annotations;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.easymock.MockControl;
@@ -12,16 +14,33 @@ public class AnnotationBasedServiceInfoAssemblerTest
         extends TestCase
 {
     private AnnotationBasedServiceInfoAssembler assembler;
-    private MockControl webAnnotationsControl;
+    private MockControl mockControl;
     private WebAnnotations webAnnotations;
+    private Method methodArgs;
+    private Method methodNoArgs;
 
     protected void setUp()
             throws Exception
     {
-        webAnnotationsControl = MockControl.createControl(WebAnnotations.class);
-        webAnnotations = (WebAnnotations) webAnnotationsControl.getMock();
+        mockControl = MockControl.createControl(WebAnnotations.class);
+        webAnnotations = (WebAnnotations) mockControl.getMock();
 
         assembler = new AnnotationBasedServiceInfoAssembler(EchoServiceImpl.class, webAnnotations);
+
+        methodArgs = getClass().getMethod("methodArgs", new Class[]{String.class});
+        methodNoArgs = getClass().getMethod("methodNoArgs", new Class[0]);
+
+    }
+
+    public void methodNoArgs()
+    {
+        // this method is here for the tests
+    }
+
+    public String methodArgs(String arg)
+    {
+        // this method is here for the tests
+        return arg;
     }
 
     public void testGetOperationMethodsEndpointInterface()
@@ -31,18 +50,18 @@ public class AnnotationBasedServiceInfoAssemblerTest
         webServiceAnnotation.setEndpointInterface(EchoService.class.getName());
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(webServiceAnnotation);
+        mockControl.setReturnValue(webServiceAnnotation);
 
-        webAnnotationsControl.replay();
+        mockControl.replay();
 
         Method[] methods = assembler.getOperationMethods(EchoServiceImpl.class);
         assertNotNull(methods);
         assertEquals(1, methods.length);
-        assertEquals("getOperationInfos does not honor endpoint interface",
+        assertEquals("getOperations does not honor endpoint interface",
                      EchoService.class,
                      methods[0].getDeclaringClass());
 
-        webAnnotationsControl.verify();
+        mockControl.verify();
 
     }
 
@@ -50,42 +69,42 @@ public class AnnotationBasedServiceInfoAssemblerTest
             throws Exception
     {
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(new WebServiceAnnotation());
+        mockControl.setReturnValue(new WebServiceAnnotation());
 
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
 
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
+        mockControl.setReturnValue(true);
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
-        webAnnotationsControl.setReturnValue(false);
+        mockControl.setReturnValue(false);
 
-        webAnnotationsControl.replay();
+        mockControl.replay();
 
         Method[] methods = assembler.getOperationMethods(EchoServiceImpl.class);
         assertNotNull(methods);
         assertEquals(1, methods.length);
-        assertEquals("getOperationInfos does not honor web method annotation",
+        assertEquals("getOperations does not honor web method annotation",
                      EchoServiceImpl.class,
                      methods[0].getDeclaringClass());
 
-        webAnnotationsControl.verify();
+        mockControl.verify();
     }
 
     public void testPopulateServiceInfo()
             throws Exception
     {
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(true);
+        mockControl.setReturnValue(true);
 
         WebServiceAnnotation webServiceAnnotation = new WebServiceAnnotation();
         webServiceAnnotation.setName("Echo");
         webServiceAnnotation.setTargetNamespace("http://xfire.codehaus.org");
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(webServiceAnnotation);
+        mockControl.setReturnValue(webServiceAnnotation);
 
-        webAnnotationsControl.replay();
+        mockControl.replay();
 
         ServiceInfo serviceInfo = new ServiceInfo();
 
@@ -93,70 +112,242 @@ public class AnnotationBasedServiceInfoAssemblerTest
         assertEquals("Echo", serviceInfo.getName());
         assertEquals("http://xfire.codehaus.org", serviceInfo.getNamespace());
 
-        webAnnotationsControl.verify();
+        mockControl.verify();
     }
 
-    public void methodNoArgs()
-    {
-        // this method is here for the testPopulateMethodInfoOneWay() tests
-    }
-
-    public void methodArgs(String arg)
-    {
-        // this method is here for the testPopulateMethodInfoUnsuitableOneway() tests
-    }
-
-
-    public void testPopulateMethodInfoOneWay()
+    public void testPopulateServiceInfoNoAnnotation()
             throws Exception
     {
-        Method method = getClass().getMethod("methodNoArgs", new Class[0]);
-        webAnnotations.hasWebMethodAnnotation(method);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
+        mockControl.setReturnValue(false);
+
+        mockControl.replay();
+        ServiceInfo serviceInfo = new ServiceInfo();
+        try
+        {
+            assembler.populateServiceInfo(serviceInfo, EchoServiceImpl.class);
+            fail("AnnotationsException not thrown");
+        }
+        catch (AnnotationException e)
+        {
+            // Expected behavior
+        }
+    }
+
+
+    public void testPopulateOperationInfo()
+            throws Exception
+    {
+        webAnnotations.hasWebMethodAnnotation(methodNoArgs);
+        mockControl.setReturnValue(true);
 
         WebMethodAnnotation webMethodAnnotation = new WebMethodAnnotation();
         webMethodAnnotation.setOperationName("operation");
-        webAnnotations.getWebMethodAnnotation(method);
-        webAnnotationsControl.setReturnValue(webMethodAnnotation);
+        webAnnotations.getWebMethodAnnotation(methodNoArgs);
+        mockControl.setReturnValue(webMethodAnnotation);
 
-        webAnnotations.hasOnewayAnnotation(method);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotations.hasOnewayAnnotation(methodNoArgs);
+        mockControl.setReturnValue(false);
 
-        webAnnotationsControl.replay();
+        mockControl.replay();
 
         OperationInfo operationInfo = new OperationInfo("method");
-        assembler.populateOperationInfo(operationInfo, method);
+        assembler.populateOperationInfo(operationInfo, methodNoArgs);
         assertEquals(webMethodAnnotation.getOperationName(), operationInfo.getName());
-        assertTrue(operationInfo.isOneWay());
-        webAnnotationsControl.verify();
+        assertFalse(operationInfo.isOneWay());
+        mockControl.verify();
     }
 
-    public void testPopulateMethodInfoUnsuitableOneway()
+    public void testPopulateOperationInfoNoAnnotation()
             throws Exception
     {
-        Method method = getClass().getMethod("methodArgs", new Class[]{String.class});
-        webAnnotations.hasWebMethodAnnotation(method);
-        webAnnotationsControl.setReturnValue(true);
+
+        webAnnotations.hasWebMethodAnnotation(methodArgs);
+        mockControl.setReturnValue(false);
+
+        mockControl.replay();
+
+        OperationInfo operationInfo = new OperationInfo("method");
+        assembler.populateOperationInfo(operationInfo, methodArgs);
+        assertEquals("method", operationInfo.getName());
+        assertFalse(operationInfo.isOneWay());
+        mockControl.verify();
+    }
+
+    public void testPopulateOperationInfoOneWay()
+            throws Exception
+    {
+        webAnnotations.hasWebMethodAnnotation(methodNoArgs);
+        mockControl.setReturnValue(true);
 
         WebMethodAnnotation webMethodAnnotation = new WebMethodAnnotation();
-        webAnnotations.getWebMethodAnnotation(method);
-        webAnnotationsControl.setReturnValue(webMethodAnnotation);
+        webMethodAnnotation.setOperationName("operation");
+        webAnnotations.getWebMethodAnnotation(methodNoArgs);
+        mockControl.setReturnValue(webMethodAnnotation);
 
-        webAnnotations.hasOnewayAnnotation(method);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotations.hasOnewayAnnotation(methodNoArgs);
+        mockControl.setReturnValue(true);
 
-        webAnnotationsControl.replay();
+        mockControl.replay();
+
+        OperationInfo operationInfo = new OperationInfo("method");
+        assembler.populateOperationInfo(operationInfo, methodNoArgs);
+        assertEquals(webMethodAnnotation.getOperationName(), operationInfo.getName());
+        assertTrue(operationInfo.isOneWay());
+        mockControl.verify();
+    }
+
+    public void testPopulateOperationInfoUnsuitableOneway()
+            throws Exception
+    {
+        webAnnotations.hasWebMethodAnnotation(methodArgs);
+        mockControl.setReturnValue(true);
+
+        WebMethodAnnotation webMethodAnnotation = new WebMethodAnnotation();
+        webAnnotations.getWebMethodAnnotation(methodArgs);
+        mockControl.setReturnValue(webMethodAnnotation);
+
+        webAnnotations.hasOnewayAnnotation(methodArgs);
+        mockControl.setReturnValue(true);
+
+        mockControl.replay();
 
         OperationInfo operationInfo = new OperationInfo("method");
 
         try
         {
-            assembler.populateOperationInfo(operationInfo, method);
+            assembler.populateOperationInfo(operationInfo, methodArgs);
             fail("AnnotationException not thrown");
         }
         catch (AnnotationException e)
         {
-            //Expected behavior
+            // Expected behavior
         }
+        mockControl.verify();
+    }
+
+    public void testGetInputMessageInfoNoWebParam()
+            throws Exception
+    {
+        webAnnotations.hasWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(false);
+        mockControl.replay();
+        MessageInfo messageInfo = assembler.getInputMessageInfo(methodArgs, "namespace");
+        assertNotNull(messageInfo);
+        assertEquals("methodArgsRequest", messageInfo.getName());
+        assertEquals("namespace", messageInfo.getNamespace());
+        assertEquals(1, messageInfo.getMessageParts().size());
+        MessagePartInfo part = messageInfo.getMessagePart("methodArgsRequestin0");
+        assertNotNull(part);
+        mockControl.verify();
+    }
+
+    public void testGetInputMessageInfoWebParam()
+            throws Exception
+    {
+        webAnnotations.hasWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(true);
+        WebParamAnnotation annotation = new WebParamAnnotation();
+        annotation.setName("name");
+        webAnnotations.getWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(annotation);
+        mockControl.replay();
+
+        MessageInfo messageInfo = assembler.getInputMessageInfo(methodArgs, "namespace");
+        assertNotNull(messageInfo);
+        assertEquals("methodArgsRequest", messageInfo.getName());
+        assertEquals("namespace", messageInfo.getNamespace());
+        assertEquals(1, messageInfo.getMessageParts().size());
+        assertNotNull(messageInfo.getMessagePart("name"));
+        mockControl.verify();
+    }
+
+    public void testGetInputMessageNoParts()
+            throws Exception
+    {
+        webAnnotations.hasWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(true);
+        WebParamAnnotation annotation = new WebParamAnnotation();
+        annotation.setHeader(true);
+        webAnnotations.getWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(annotation);
+        mockControl.replay();
+
+        assertNull(assembler.getInputMessageInfo(methodArgs, "namespace"));
+        mockControl.verify();
+    }
+
+
+    public void testGetOutputMessageInfoNoAnnotations()
+            throws Exception
+    {
+        webAnnotations.hasWebResultAnnotation(methodArgs);
+        mockControl.setReturnValue(false);
+        webAnnotations.hasWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(false);
+        mockControl.replay();
+
+
+        MessageInfo messageInfo = assembler.getOutputMessageInfo(methodArgs, "namespace");
+        assertNotNull(messageInfo);
+        assertEquals("methodArgsResponse", messageInfo.getName());
+        assertEquals("namespace", messageInfo.getNamespace());
+        assertEquals(1, messageInfo.getMessageParts().size());
+        assertNotNull(messageInfo.getMessagePart("methodArgsResponseout0"));
+        mockControl.verify();
+    }
+
+    public void testGetOutputMessageInfoWebResultWebParam()
+            throws Exception
+    {
+        webAnnotations.hasWebResultAnnotation(methodArgs);
+        mockControl.setReturnValue(true);
+        WebResultAnnotation resultAnnotation = new WebResultAnnotation();
+        resultAnnotation.setName("name1");
+        webAnnotations.getWebResultAnnotation(methodArgs);
+        mockControl.setReturnValue(resultAnnotation);
+        webAnnotations.hasWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(true);
+        WebParamAnnotation paramAnnotation = new WebParamAnnotation();
+        paramAnnotation.setMode(WebParamAnnotation.MODE_OUT);
+        paramAnnotation.setName("name2");
+        webAnnotations.getWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(paramAnnotation);
+        mockControl.replay();
+
+        MessageInfo messageInfo = assembler.getOutputMessageInfo(methodArgs, "namespace");
+        assertNotNull(messageInfo);
+        assertEquals("methodArgsResponse", messageInfo.getName());
+        assertEquals(2, messageInfo.getMessageParts().size());
+        assertNotNull(messageInfo.getMessagePart("name1"));
+        assertNotNull(messageInfo.getMessagePart("name2"));
+        mockControl.verify();
+    }
+
+    public void testGetOutputMessageInfoWebResult()
+            throws Exception
+    {
+        webAnnotations.hasWebResultAnnotation(methodArgs);
+        mockControl.setReturnValue(true);
+        WebResultAnnotation webResultAnnotation = new WebResultAnnotation();
+        webResultAnnotation.setName("name");
+        webAnnotations.getWebResultAnnotation(methodArgs);
+        mockControl.setReturnValue(webResultAnnotation);
+        webAnnotations.hasWebParamAnnotation(methodArgs, 0);
+        mockControl.setReturnValue(false);
+        mockControl.replay();
+
+        MessageInfo messageInfo = assembler.getOutputMessageInfo(methodArgs, "namespace");
+        assertNotNull(messageInfo);
+        assertEquals("methodArgsResponse", messageInfo.getName());
+        assertEquals(1, messageInfo.getMessageParts().size());
+        assertNotNull(messageInfo.getMessagePart("name"));
+        mockControl.verify();
+    }
+
+    public void testGetOutputMessageNoParts()
+            throws Exception
+    {
+        assertNull(assembler.getOutputMessageInfo(methodNoArgs, "namespace"));
     }
 }

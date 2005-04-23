@@ -1,6 +1,7 @@
 package org.codehaus.xfire.annotations;
 
 import junit.framework.TestCase;
+import org.codehaus.xfire.service.MessagePartInfo;
 
 public class WebParamAnnotationTest
         extends TestCase
@@ -25,5 +26,19 @@ public class WebParamAnnotationTest
         {
             // expected behavior
         }
+    }
+
+    public void testPopulate()
+            throws Exception
+    {
+        webParamAnnotation.setName("name");
+        webParamAnnotation.setTargetNamespace("namespace");
+
+        MessagePartInfo partInfo = new MessagePartInfo("other1");
+        partInfo.setNamespace("other2");
+        webParamAnnotation.populate(partInfo);
+
+        assertEquals(webParamAnnotation.getName(), partInfo.getName());
+        assertEquals(webParamAnnotation.getTargetNamespace(), partInfo.getNamespace());
     }
 }

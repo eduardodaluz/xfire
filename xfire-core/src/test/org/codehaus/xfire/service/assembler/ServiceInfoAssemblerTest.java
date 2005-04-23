@@ -4,7 +4,7 @@ package org.codehaus.xfire.service.assembler;
 import junit.framework.TestCase;
 import org.codehaus.xfire.service.ServiceInfo;
 
-public class AbstractServiceInfoAssemblerTest
+public class ServiceInfoAssemblerTest
         extends TestCase
 {
 
@@ -13,11 +13,11 @@ public class AbstractServiceInfoAssemblerTest
     {
         AbstractServiceInfoAssembler assembler = new AbstractServiceInfoAssembler()
         {
+
             protected void populate(ServiceInfo serviceInfo)
             {
-                assertNotNull(serviceInfo);
             }
         };
-        assembler.getServiceInfo();
+        assertNotNull(assembler.getServiceInfo());
     }
 }

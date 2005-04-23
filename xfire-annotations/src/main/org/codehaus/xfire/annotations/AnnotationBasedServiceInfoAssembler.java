@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceInfo;
@@ -124,6 +125,7 @@ public class AnnotationBasedServiceInfoAssembler
      */
     protected void populateOperationInfo(OperationInfo operationInfo, final Method method)
     {
+        // we don't throw an exception here, since the given method might be part of an endpoint interface
         if (webAnnotations.hasWebMethodAnnotation(method))
         {
             WebMethodAnnotation webMethodAnnotation = webAnnotations.getWebMethodAnnotation(method);
@@ -143,29 +145,101 @@ public class AnnotationBasedServiceInfoAssembler
     }
 
     /**
-     * Populates the given {@link MessagePartInfo} with the {@link WebResultAnnotation}, if found.
+     * Returns the input message info for the given method. The returned message contains parts for all parameters that
+     * have not been annotated with the {@link WebParamAnnotation#MODE_OUT} mode. If this results in no parts, this
+     * method returns <code>null</code>.
      *
-     * @param partInfo the part info.
-     * @param method   the method.
+     * @param method    the method.
+     * @param namespace the default namespace.
+     * @return the output message info for the method; or <code>null</code> if the method has no parameters.
      */
-    protected void populateOutputMessagePartInfo(MessagePartInfo partInfo, Method method)
+    protected MessageInfo getInputMessageInfo(Method method, String namespace)
     {
-        if (webAnnotations.hasWebResultAnnotation(method))
+        MessageInfo inputMessage = new MessageInfo(method.getName() + INPUT_MESSAGE_SUFFIX);
+        inputMessage.setNamespace(namespace);
+        final Class[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++)
         {
-            WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
-            webResultAnnotation.populate(partInfo);
+            MessagePartInfo partInfo = new MessagePartInfo(
+                    inputMessage.getName() + INPUT_MESSAGE_PART_INFIX + inputMessage.getMessageParts().size());
+            partInfo.setNamespace(namespace);
+
+            if (webAnnotations.hasWebParamAnnotation(method, i))
+            {
+                WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, i);
+                if ((webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT) ||
+                        (webParamAnnotation.isHeader()))
+                {
+                    continue;
+                }
+                else
+                {
+                    webParamAnnotation.populate(partInfo);
+                }
+            }
+            inputMessage.addMethodPart(partInfo);
+        }
+        if (!inputMessage.getMessageParts().isEmpty())
+        {
+            return inputMessage;
+        }
+        else
+        {
+            return null;
         }
     }
 
     /**
-     * Allows subclasses to customize the given input message part with the information from the method.
+     * Returns the output message info for the given method. The returned message contains parts for all parameters that
+     * have been annotated with a {@link WebParamAnnotation#MODE_INOUT} or {@link WebParamAnnotation#MODE_OUT} mode. The
+     * message contains an additional part info if the method returns a value. If the method has no outwards parameters
+     * and returns <code>void</code>; this methods returns <code>null</code>.
      *
-     * @param partInfo  the part info.
      * @param method    the method.
-     * @param parameter the index of the parameter to base the part on.
+     * @param namespace the default namespace.
+     * @return the output message info for the method; or <code>null</code> if the method returns <code>void</code>.
      */
-    protected void populateInputMessagePartInfo(MessagePartInfo partInfo, Method method, int parameter)
+    protected MessageInfo getOutputMessageInfo(Method method, String namespace)
     {
-        super.populateInputMessagePartInfo(partInfo, method, parameter);    //To change body of overridden methods use File | Settings | File Templates.
+        MessageInfo outputMessage = new MessageInfo(method.getName() + OUTPUT_MESSAGE_SUFFIX);
+        outputMessage.setNamespace(namespace);
+        if (!method.getReturnType().isAssignableFrom(Void.TYPE))
+        {
+            MessagePartInfo partInfo = new MessagePartInfo(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX +
+                                                           outputMessage.getMessageParts().size());
+            partInfo.setNamespace(namespace);
+            if (webAnnotations.hasWebResultAnnotation(method))
+            {
+                WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
+                webResultAnnotation.populate(partInfo);
+            }
+            outputMessage.addMethodPart(partInfo);
+        }
+        final Class[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++)
+        {
+            if (webAnnotations.hasWebParamAnnotation(method, i))
+            {
+                WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, i);
+                if ((webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT) ||
+                        (webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT))
+                {
+                    MessagePartInfo partInfo = new MessagePartInfo(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX +
+                                                                   outputMessage.getMessageParts().size());
+                    partInfo.setNamespace(namespace);
+                    webParamAnnotation.populate(partInfo);
+                    outputMessage.addMethodPart(partInfo);
+                }
+
+            }
+        }
+        if (!outputMessage.getMessageParts().isEmpty())
+        {
+            return outputMessage;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

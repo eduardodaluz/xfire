@@ -13,25 +13,32 @@ package org.codehaus.xfire.service;
 public interface Visitor
 {
     /**
-     * Visits the given service info.
+     * Visits the given service.
      *
-     * @param serviceInfo the service info.
+     * @param serviceInfo the service.
      */
     void visit(ServiceInfo serviceInfo);
 
     /**
-     * Visits the given operation info.
+     * Visits the given operation.
      *
-     * @param operationInfo the operation info.
+     * @param operationInfo the operation.
      */
     void visit(OperationInfo operationInfo);
 
     /**
-     * Visits the given message info.
+     * Visits the given message.
      *
-     * @param messageInfo the message info.
+     * @param messageInfo the message.
      */
     void visit(MessageInfo messageInfo);
+
+    /**
+     * Visits the given fault.
+     *
+     * @param faultInfo the fault.
+     */
+    void visit(FaultInfo faultInfo);
 
     /**
      * Visits the given message part info.

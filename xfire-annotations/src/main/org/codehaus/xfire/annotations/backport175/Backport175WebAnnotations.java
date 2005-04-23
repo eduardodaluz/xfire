@@ -71,7 +71,7 @@ public class Backport175WebAnnotations
         {
             annotation = new WebResultAnnotation();
             annotation.setName(webResult.name());
-            annotation.setTargetNameSpace(webResult.targetNameSpace());
+            annotation.setTargetNamespace(webResult.targetNameSpace());
         }
         return annotation;
     }

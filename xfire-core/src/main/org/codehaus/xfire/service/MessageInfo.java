@@ -16,7 +16,7 @@ public class MessageInfo
 {
     private String name;
     private String namespace;
-    private Map messagePartInfos = new HashMap();
+    private Map messageParts = new HashMap();
 
     /**
      * Initializes a new instance of the <code>MessageInfo</code> class with the given name.
@@ -69,34 +69,34 @@ public class MessageInfo
     }
 
     /**
-     * Adds an message part info to this message info.
+     * Adds an message part to this message info.
      *
-     * @param messagePartInfo the message part info.
+     * @param messagePartInfo the message part.
      */
-    public void addMethodPartInfo(MessagePartInfo messagePartInfo)
+    public void addMethodPart(MessagePartInfo messagePartInfo)
     {
-        messagePartInfos.put(messagePartInfo.getName(), messagePartInfo);
+        messageParts.put(messagePartInfo.getName(), messagePartInfo);
     }
 
     /**
-     * Returns the message part info with the given name, if found.
+     * Returns the message part with the given name, if found.
      *
      * @param name the name.
-     * @return the message part info; or <code>null</code> if not found.
+     * @return the message part; or <code>null</code> if not found.
      */
-    public MessagePartInfo getMessagePartInfo(String name)
+    public MessagePartInfo getMessagePart(String name)
     {
-        return (MessagePartInfo) messagePartInfos.get(name);
+        return (MessagePartInfo) messageParts.get(name);
     }
 
     /**
-     * Returns all message part infos for this message.
+     * Returns all message parts for this message.
      *
-     * @return all message part infos.
+     * @return all message parts.
      */
-    public Collection getMessagePartInfos()
+    public Collection getMessageParts()
     {
-        return Collections.unmodifiableCollection(messagePartInfos.values());
+        return Collections.unmodifiableCollection(messageParts.values());
     }
 
     /**
@@ -107,7 +107,7 @@ public class MessageInfo
     public void accept(Visitor visitor)
     {
         visitor.visit(this);
-        for (Iterator iterator = messagePartInfos.values().iterator(); iterator.hasNext();)
+        for (Iterator iterator = messageParts.values().iterator(); iterator.hasNext();)
         {
             MessagePartInfo messagePartInfo = (MessagePartInfo) iterator.next();
             messagePartInfo.accept(visitor);

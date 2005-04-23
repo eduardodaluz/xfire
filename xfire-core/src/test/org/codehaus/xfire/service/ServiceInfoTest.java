@@ -22,10 +22,10 @@ public class ServiceInfoTest
     {
         OperationInfo operationInfo = new OperationInfo("name");
 
-        assertTrue(serviceInfo.getOperationInfos().isEmpty());
-        serviceInfo.addOperationInfo(operationInfo);
-        assertEquals(1, serviceInfo.getOperationInfos().size());
-        OperationInfo result = serviceInfo.getOperationInfo(operationInfo.getName());
+        assertTrue(serviceInfo.getOperations().isEmpty());
+        serviceInfo.addOperation(operationInfo);
+        assertEquals(1, serviceInfo.getOperations().size());
+        OperationInfo result = serviceInfo.getOperation(operationInfo.getName());
         assertNotNull(result);
         assertEquals(operationInfo, result);
     }

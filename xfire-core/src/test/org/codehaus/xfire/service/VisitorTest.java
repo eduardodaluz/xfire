@@ -13,17 +13,17 @@ public class VisitorTest
     {
         ServiceInfo serviceInfo = new ServiceInfo();
         OperationInfo operationInfo = new OperationInfo("operation");
-        serviceInfo.addOperationInfo(operationInfo);
+        serviceInfo.addOperation(operationInfo);
         MessageInfo inputMessageInfo = new MessageInfo("input");
-        operationInfo.setInputMessageInfo(inputMessageInfo);
+        operationInfo.setInputMessage(inputMessageInfo);
         MessageInfo outputMessageInfo = new MessageInfo("output");
-        operationInfo.setOutputMessageInfo(outputMessageInfo);
+        operationInfo.setOutputMessage(outputMessageInfo);
         FaultInfo faultInfo = new FaultInfo("fault");
-        operationInfo.addFaultInfo(faultInfo);
+        operationInfo.addFault(faultInfo);
         MessagePartInfo partInfo1 = new MessagePartInfo("part1");
-        inputMessageInfo.addMethodPartInfo(partInfo1);
+        inputMessageInfo.addMethodPart(partInfo1);
         MessagePartInfo partInfo2 = new MessagePartInfo("part2");
-        inputMessageInfo.addMethodPartInfo(partInfo2);
+        inputMessageInfo.addMethodPart(partInfo2);
 
         MockVisitor visitor = new MockVisitor();
         serviceInfo.accept(visitor);
@@ -57,7 +57,14 @@ public class VisitorTest
         public void visit(MessageInfo messageInfo)
         {
             assertNotNull(messageInfo);
+            assertFalse(messageInfo.getClass().equals(FaultInfo.class));
             visited.add(messageInfo);
+        }
+
+        public void visit(FaultInfo faultInfo)
+        {
+            assertNotNull(faultInfo);
+            visited.add(faultInfo);
         }
 
         public void visit(MessagePartInfo messagePartInfo)

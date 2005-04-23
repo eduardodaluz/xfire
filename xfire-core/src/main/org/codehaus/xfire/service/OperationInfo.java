@@ -17,9 +17,9 @@ public class OperationInfo
 {
     private String name;
     private boolean oneWay;
-    private MessageInfo inputMessageInfo;
-    private MessageInfo outputMessageInfo;
-    private Map faultInfos = new HashMap();
+    private MessageInfo inputMessage;
+    private MessageInfo outputMessage;
+    private Map faults = new HashMap();
 
     /**
      * Initializes a new instance of the <code>OperationInfo</code> class with the given name.
@@ -76,19 +76,19 @@ public class OperationInfo
      *
      * @return the input message info.
      */
-    public MessageInfo getInputMessageInfo()
+    public MessageInfo getInputMessage()
     {
-        return inputMessageInfo;
+        return inputMessage;
     }
 
     /**
      * Sets the input message info.
      *
-     * @param inputMessageInfo the input message info.
+     * @param inputMessage the input message info.
      */
-    public void setInputMessageInfo(MessageInfo inputMessageInfo)
+    public void setInputMessage(MessageInfo inputMessage)
     {
-        this.inputMessageInfo = inputMessageInfo;
+        this.inputMessage = inputMessage;
     }
 
     /**
@@ -96,50 +96,50 @@ public class OperationInfo
      *
      * @return the output message info.
      */
-    public MessageInfo getOutputMessageInfo()
+    public MessageInfo getOutputMessage()
     {
-        return outputMessageInfo;
+        return outputMessage;
     }
 
     /**
      * Sets the output message info.
      *
-     * @param outputMessageInfo the output message info.
+     * @param outputMessage the output message info.
      */
-    public void setOutputMessageInfo(MessageInfo outputMessageInfo)
+    public void setOutputMessage(MessageInfo outputMessage)
     {
-        this.outputMessageInfo = outputMessageInfo;
+        this.outputMessage = outputMessage;
     }
 
     /**
-     * Adds an fault info to this operation info.
+     * Adds an fault to this operation.
      *
-     * @param faultInfo the fault info.
+     * @param faultInfo the fault.
      */
-    public void addFaultInfo(FaultInfo faultInfo)
+    public void addFault(FaultInfo faultInfo)
     {
-        faultInfos.put(faultInfo.getName(), faultInfo);
+        faults.put(faultInfo.getName(), faultInfo);
     }
 
     /**
-     * Returns the fault info with the given name, if found.
+     * Returns the fault with the given name, if found.
      *
      * @param name the name.
-     * @return the fault info; or <code>null</code> if not found.
+     * @return the fault; or <code>null</code> if not found.
      */
-    public FaultInfo getFaultInfo(String name)
+    public FaultInfo getFault(String name)
     {
-        return (FaultInfo) faultInfos.get(name);
+        return (FaultInfo) faults.get(name);
     }
 
     /**
-     * Returns all fault infos for this operation.
+     * Returns all faults for this operation.
      *
-     * @return all fault infos.
+     * @return all faults.
      */
-    public Collection getFaultInfos()
+    public Collection getFaults()
     {
-        return Collections.unmodifiableCollection(faultInfos.values());
+        return Collections.unmodifiableCollection(faults.values());
     }
 
     /**
@@ -150,15 +150,15 @@ public class OperationInfo
     public void accept(Visitor visitor)
     {
         visitor.visit(this);
-        if (inputMessageInfo != null)
+        if (inputMessage != null)
         {
-            inputMessageInfo.accept(visitor);
+            inputMessage.accept(visitor);
         }
-        if (outputMessageInfo != null)
+        if (outputMessage != null)
         {
-            outputMessageInfo.accept(visitor);
+            outputMessage.accept(visitor);
         }
-        for (Iterator iterator = faultInfos.values().iterator(); iterator.hasNext();)
+        for (Iterator iterator = faults.values().iterator(); iterator.hasNext();)
         {
             FaultInfo faultInfo = (FaultInfo) iterator.next();
             faultInfo.accept(visitor);

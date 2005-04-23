@@ -11,7 +11,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 public class WebResultAnnotation
 {
     private String name = "return";
-    private String targetNameSpace = "";
+    private String targetNamespace = "";
 
     /**
      * Returns the name of the return value as it appears in the WSDL and messages on the wire. For RPC bindings, this
@@ -43,20 +43,20 @@ public class WebResultAnnotation
      *
      * @return the XML namespace for the return value.
      */
-    public String getTargetNameSpace()
+    public String getTargetNamespace()
     {
-        return targetNameSpace;
+        return targetNamespace;
     }
 
     /**
      * Sets the XML namespace for the return value. Only used with document bindings, where the return value maps to an
      * XML element. Defaults to the targetNamespace of the Web Service.
      *
-     * @param targetNameSpace the new XML namespace for the return value.
+     * @param targetNamespace the new XML namespace for the return value.
      */
-    public void setTargetNameSpace(String targetNameSpace)
+    public void setTargetNamespace(String targetNamespace)
     {
-        this.targetNameSpace = targetNameSpace;
+        this.targetNamespace = targetNamespace;
     }
 
     /**
@@ -70,9 +70,9 @@ public class WebResultAnnotation
         {
             messagePartInfo.setName(name);
         }
-        if (targetNameSpace.length() != 0)
+        if (targetNamespace.length() != 0)
         {
-            messagePartInfo.setNamespace(targetNameSpace);
+            messagePartInfo.setNamespace(targetNamespace);
         }
     }
 
@@ -86,7 +86,7 @@ public class WebResultAnnotation
     {
         return "WebResultAnnotation{" +
                 "name='" + name + "'" +
-                ", targetNameSpace='" + targetNameSpace + "'" +
+                ", targetNamespace='" + targetNamespace + "'" +
                 "}";
     }
 }

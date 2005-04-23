@@ -17,7 +17,7 @@ public class ServiceInfo
 {
     private String name;
     private String namespace;
-    private Map operationInfos = new HashMap();
+    private Map operations = new HashMap();
 
     /**
      * Returns the name of the service.
@@ -60,34 +60,34 @@ public class ServiceInfo
     }
 
     /**
-     * Adds an operation info to this service info.
+     * Adds an operation to this service.
      *
      * @param operationInfo the operation info.
      */
-    public void addOperationInfo(OperationInfo operationInfo)
+    public void addOperation(OperationInfo operationInfo)
     {
-        operationInfos.put(operationInfo.getName(), operationInfo);
+        operations.put(operationInfo.getName(), operationInfo);
     }
 
     /**
      * Returns the operation info with the given name, if found.
      *
      * @param name the name.
-     * @return the operation info; or <code>null</code> if not found.
+     * @return the operation; or <code>null</code> if not found.
      */
-    public OperationInfo getOperationInfo(String name)
+    public OperationInfo getOperation(String name)
     {
-        return (OperationInfo) operationInfos.get(name);
+        return (OperationInfo) operations.get(name);
     }
 
     /**
-     * Returns all operation infos for this service.
+     * Returns all operations for this service.
      *
-     * @return all operation infos.
+     * @return all operations.
      */
-    public Collection getOperationInfos()
+    public Collection getOperations()
     {
-        return Collections.unmodifiableCollection(operationInfos.values());
+        return Collections.unmodifiableCollection(operations.values());
     }
 
     /**
@@ -98,7 +98,7 @@ public class ServiceInfo
     public void accept(Visitor visitor)
     {
         visitor.visit(this);
-        for (Iterator iterator = operationInfos.values().iterator(); iterator.hasNext();)
+        for (Iterator iterator = operations.values().iterator(); iterator.hasNext();)
         {
             OperationInfo operationInfo = (OperationInfo) iterator.next();
             operationInfo.accept(visitor);
