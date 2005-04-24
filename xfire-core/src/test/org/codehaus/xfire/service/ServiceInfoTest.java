@@ -20,10 +20,8 @@ public class ServiceInfoTest
     public void testOperations()
             throws Exception
     {
-        OperationInfo operationInfo = new OperationInfo("name");
+        OperationInfo operationInfo = serviceInfo.addOperation("name");
 
-        assertTrue(serviceInfo.getOperations().isEmpty());
-        serviceInfo.addOperation(operationInfo);
         assertEquals(1, serviceInfo.getOperations().size());
         OperationInfo result = serviceInfo.getOperation(operationInfo.getName());
         assertNotNull(result);

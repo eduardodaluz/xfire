@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -63,8 +62,8 @@ public class ReflectiveServiceInfoAssembler
 
     /**
      * Calls the {@link #populateServiceInfo(org.codehaus.xfire.service.ServiceInfo, Class)} method and then iterates
-     * through all methods of the service class, calling {@link #populateOperationInfo(org.codehaus.xfire.service.OperationInfo,
-            * java.lang.reflect.Method)} for each of them.
+     * through all methods of the service class, calling {@link #populateOperationInfo(OperationInfo, Method)} for each
+     * of them.
      *
      * @param serviceInfo the service info.
      */
@@ -77,7 +76,7 @@ public class ReflectiveServiceInfoAssembler
         final Method[] methods = getOperationMethods(serviceClass);
         for (int i = 0; i < methods.length; i++)
         {
-            OperationInfo operationInfo = getOperationInfo(methods[i], serviceInfo.getNamespace());
+            OperationInfo operationInfo = getOperation(methods[i], serviceInfo);
             populateOperationInfo(operationInfo, methods[i]);
         }
     }
@@ -85,31 +84,29 @@ public class ReflectiveServiceInfoAssembler
     /**
      * Creates a basic operation info from the given method.
      *
-     * @param method    the method.
-     * @param namespace the namespace.
+     * @param method  the method.
+     * @param service the service.
      * @return the created operation info.
      */
-    private OperationInfo getOperationInfo(Method method, String namespace)
+    private OperationInfo getOperation(Method method, ServiceInfo service)
     {
-        OperationInfo operationInfo = new OperationInfo(method.getName());
-        operationInfo.setInputMessage(getInputMessageInfo(method, namespace));
-        operationInfo.setOutputMessage(getOutputMessageInfo(method, namespace));
+        OperationInfo operation = service.addOperation(method.getName());
+        operation.setInputMessage(getInputMessage(method, operation));
+        operation.setOutputMessage(getOutputMessage(method, operation));
         Class[] faultTypes = method.getExceptionTypes();
-        operationInfo.setOneWay((operationInfo.getInputMessage() == null) &&
-                                (operationInfo.getOutputMessage() == null) &&
-                                (faultTypes.length == 0));
+        operation.setOneWay((operation.getInputMessage() == null) &&
+                            (operation.getOutputMessage() == null) &&
+                            (faultTypes.length == 0));
         if (faultTypes.length != 0)
         {
             Class[] exceptionTypes = method.getExceptionTypes();
             for (int i = 0; i < exceptionTypes.length; i++)
             {
-                FaultInfo faultInfo = new FaultInfo(exceptionTypes[i].getName());
-                faultInfo.setNamespace(namespace);
-                operationInfo.addFault(faultInfo);
+                operation.addFault(exceptionTypes[i].getName());
             }
         }
 
-        return operationInfo;
+        return operation;
     }
 
     /**
@@ -137,21 +134,18 @@ public class ReflectiveServiceInfoAssembler
      * each of the method parameters it it has parameters; and <code>null</code> if it has no parameters..
      *
      * @param method    the method.
-     * @param namespace the default namespace.
+     * @param operation the operation.
      * @return the output message info for the method; or <code>null</code> if the method has no parameters.
      */
-    protected MessageInfo getInputMessageInfo(Method method, String namespace)
+    protected MessageInfo getInputMessage(Method method, OperationInfo operation)
     {
         final Class[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 0)
         {
-            MessageInfo inputMessage = new MessageInfo(method.getName() + INPUT_MESSAGE_SUFFIX);
-            inputMessage.setNamespace(namespace);
+            MessageInfo inputMessage = operation.createMessage(method.getName() + INPUT_MESSAGE_SUFFIX);
             for (int i = 0; i < parameterTypes.length; i++)
             {
-                MessagePartInfo partInfo = new MessagePartInfo(inputMessage.getName() + INPUT_MESSAGE_PART_INFIX + i);
-                partInfo.setNamespace(namespace);
-                inputMessage.addMethodPart(partInfo);
+                inputMessage.addMessagePart(inputMessage.getName() + INPUT_MESSAGE_PART_INFIX + i);
             }
             return inputMessage;
         }
@@ -166,17 +160,15 @@ public class ReflectiveServiceInfoAssembler
      * info if the method returns a value; and <code>null</code> if it return <code>void</code>.
      *
      * @param method    the method.
-     * @param namespace the default namespace.
+     * @param operation the operation.
      * @return the output message info for the method; or <code>null</code> if the method returns <code>void</code>.
      */
-    protected MessageInfo getOutputMessageInfo(Method method, String namespace)
+    protected MessageInfo getOutputMessage(Method method, OperationInfo operation)
     {
         if (!method.getReturnType().isAssignableFrom(Void.TYPE))
         {
-            MessageInfo outputMessage = new MessageInfo(method.getName() + OUTPUT_MESSAGE_SUFFIX);
-            outputMessage.setNamespace(namespace);
-            MessagePartInfo partInfo = new MessagePartInfo(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX);
-            outputMessage.addMethodPart(partInfo);
+            MessageInfo outputMessage = operation.createMessage(method.getName() + OUTPUT_MESSAGE_SUFFIX);
+            outputMessage.addMessagePart(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX);
             return outputMessage;
         }
         else

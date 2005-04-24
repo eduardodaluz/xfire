@@ -9,6 +9,8 @@ import java.util.Map;
 /**
  * Represents the description of a service operation. An operation has a name, and consists of a number of in and out
  * parameters.
+ * <p/>
+ * Operations are created using the {@link ServiceInfo#addOperation(String)} method.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
@@ -16,19 +18,22 @@ public class OperationInfo
         implements Visitable
 {
     private String name;
+    private ServiceInfo service;
     private boolean oneWay;
     private MessageInfo inputMessage;
     private MessageInfo outputMessage;
     private Map faults = new HashMap();
 
     /**
-     * Initializes a new instance of the <code>OperationInfo</code> class with the given name.
+     * Initializes a new instance of the <code>OperationInfo</code> class with the given name and service.
      *
-     * @param name the name of the operation.
+     * @param name    the name of the operation.
+     * @param service the service.
      */
-    public OperationInfo(String name)
+    OperationInfo(String name, ServiceInfo service)
     {
         this.name = name;
+        this.service = service;
     }
 
     /**
@@ -48,7 +53,13 @@ public class OperationInfo
      */
     public void setName(String name)
     {
+        if ((name == null) || (name.length() == 0))
+        {
+            throw new IllegalArgumentException("Invalid name [" + name + "]");
+        }
+        service.removeOperation(this.name);
         this.name = name;
+        service.addOperation(this);
     }
 
     /**
@@ -69,6 +80,29 @@ public class OperationInfo
     public void setOneWay(boolean oneWay)
     {
         this.oneWay = oneWay;
+    }
+
+    /**
+     * Returns the service of this operation.
+     *
+     * @return the service.
+     */
+    public ServiceInfo getService()
+    {
+        return service;
+    }
+
+    /**
+     * Creates a new message. This message can be set as either {@link #setInputMessage(MessageInfo) input message} or
+     * {@link #setOutputMessage(MessageInfo) output message}.
+     *
+     * @param name the name of the message.
+     * @return the created message.
+     */
+    public MessageInfo createMessage(String name)
+    {
+        MessageInfo message = new MessageInfo(name, this);
+        return message;
     }
 
     /**
@@ -114,11 +148,42 @@ public class OperationInfo
     /**
      * Adds an fault to this operation.
      *
-     * @param faultInfo the fault.
+     * @param name the fault name.
      */
-    public void addFault(FaultInfo faultInfo)
+    public FaultInfo addFault(String name)
     {
-        faults.put(faultInfo.getName(), faultInfo);
+        if ((name == null) || (name.length() == 0))
+        {
+            throw new IllegalArgumentException("Invalid name [" + name + "]");
+        }
+        if (faults.containsKey(name))
+        {
+            throw new IllegalArgumentException("A fault with name [" + name + "] already exists in this operation");
+        }
+        FaultInfo fault = new FaultInfo(name, this);
+        fault.setNamespace(service.getNamespace());
+        addFault(fault);
+        return fault;
+    }
+
+    /**
+     * Adds a fault to this operation.
+     *
+     * @param fault the fault.
+     */
+    void addFault(FaultInfo fault)
+    {
+        faults.put(fault.getName(), fault);
+    }
+
+    /**
+     * Removes a fault from this operation.
+     *
+     * @param name the fault name.
+     */
+    public void removeFault(String name)
+    {
+        faults.remove(name);
     }
 
     /**

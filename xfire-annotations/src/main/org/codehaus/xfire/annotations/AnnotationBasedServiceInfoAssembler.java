@@ -150,34 +150,32 @@ public class AnnotationBasedServiceInfoAssembler
      * method returns <code>null</code>.
      *
      * @param method    the method.
-     * @param namespace the default namespace.
+     * @param operation the operation.
      * @return the output message info for the method; or <code>null</code> if the method has no parameters.
      */
-    protected MessageInfo getInputMessageInfo(Method method, String namespace)
+    protected MessageInfo getInputMessage(Method method, OperationInfo operation)
     {
-        MessageInfo inputMessage = new MessageInfo(method.getName() + INPUT_MESSAGE_SUFFIX);
-        inputMessage.setNamespace(namespace);
+        MessageInfo inputMessage = operation.createMessage(method.getName() + INPUT_MESSAGE_SUFFIX);
         final Class[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++)
         {
-            MessagePartInfo partInfo = new MessagePartInfo(
-                    inputMessage.getName() + INPUT_MESSAGE_PART_INFIX + inputMessage.getMessageParts().size());
-            partInfo.setNamespace(namespace);
 
+            MessagePartInfo part = inputMessage.addMessagePart(
+                    inputMessage.getName() + INPUT_MESSAGE_PART_INFIX + inputMessage.getMessageParts().size());
             if (webAnnotations.hasWebParamAnnotation(method, i))
             {
                 WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, i);
                 if ((webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT) ||
                         (webParamAnnotation.isHeader()))
                 {
+                    inputMessage.removeMessagePart(part.getName());
                     continue;
                 }
                 else
                 {
-                    webParamAnnotation.populate(partInfo);
+                    webParamAnnotation.populate(part);
                 }
             }
-            inputMessage.addMethodPart(partInfo);
         }
         if (!inputMessage.getMessageParts().isEmpty())
         {
@@ -196,24 +194,21 @@ public class AnnotationBasedServiceInfoAssembler
      * and returns <code>void</code>; this methods returns <code>null</code>.
      *
      * @param method    the method.
-     * @param namespace the default namespace.
+     * @param operation the operation.
      * @return the output message info for the method; or <code>null</code> if the method returns <code>void</code>.
      */
-    protected MessageInfo getOutputMessageInfo(Method method, String namespace)
+    protected MessageInfo getOutputMessage(Method method, OperationInfo operation)
     {
-        MessageInfo outputMessage = new MessageInfo(method.getName() + OUTPUT_MESSAGE_SUFFIX);
-        outputMessage.setNamespace(namespace);
+        MessageInfo outputMessage = operation.createMessage(method.getName() + OUTPUT_MESSAGE_SUFFIX);
         if (!method.getReturnType().isAssignableFrom(Void.TYPE))
         {
-            MessagePartInfo partInfo = new MessagePartInfo(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX +
-                                                           outputMessage.getMessageParts().size());
-            partInfo.setNamespace(namespace);
+            MessagePartInfo part = outputMessage.addMessagePart(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX +
+                                                                outputMessage.getMessageParts().size());
             if (webAnnotations.hasWebResultAnnotation(method))
             {
                 WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
-                webResultAnnotation.populate(partInfo);
+                webResultAnnotation.populate(part);
             }
-            outputMessage.addMethodPart(partInfo);
         }
         final Class[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++)
@@ -224,11 +219,10 @@ public class AnnotationBasedServiceInfoAssembler
                 if ((webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT) ||
                         (webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT))
                 {
-                    MessagePartInfo partInfo = new MessagePartInfo(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX +
-                                                                   outputMessage.getMessageParts().size());
-                    partInfo.setNamespace(namespace);
+                    MessagePartInfo partInfo = outputMessage.addMessagePart(outputMessage.getName() +
+                                                                            OUTPUT_MESSAGE_PART_INFIX +
+                                                                            outputMessage.getMessageParts().size());
                     webParamAnnotation.populate(partInfo);
-                    outputMessage.addMethodPart(partInfo);
                 }
 
             }

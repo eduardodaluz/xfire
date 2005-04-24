@@ -62,11 +62,42 @@ public class ServiceInfo
     /**
      * Adds an operation to this service.
      *
-     * @param operationInfo the operation info.
+     * @param name the name of the operation.
+     * @return the operation.
      */
-    public void addOperation(OperationInfo operationInfo)
+    public OperationInfo addOperation(String name)
     {
-        operations.put(operationInfo.getName(), operationInfo);
+        if ((name == null) || (name.length() == 0))
+        {
+            throw new IllegalArgumentException("Invalid name [" + name + "]");
+        }
+        if (operations.containsKey(name))
+        {
+            throw new IllegalArgumentException("An operation with name [" + name + "] already exists in this service");
+        }
+        OperationInfo operation = new OperationInfo(name, this);
+        addOperation(operation);
+        return operation;
+    }
+
+    /**
+     * Adds an operation to this service.
+     *
+     * @param operation the operation.
+     */
+    void addOperation(OperationInfo operation)
+    {
+        operations.put(operation.getName(), operation);
+    }
+
+    /**
+     * Removes an operation from this service.
+     *
+     * @param name the operation name.
+     */
+    public void removeOperation(String name)
+    {
+        operations.remove(name);
     }
 
     /**

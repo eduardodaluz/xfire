@@ -18,6 +18,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
     private WebAnnotations webAnnotations;
     private Method methodArgs;
     private Method methodNoArgs;
+    private OperationInfo operation;
 
     protected void setUp()
             throws Exception
@@ -30,6 +31,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         methodArgs = getClass().getMethod("methodArgs", new Class[]{String.class});
         methodNoArgs = getClass().getMethod("methodNoArgs", new Class[0]);
 
+        ServiceInfo serviceInfo = new ServiceInfo();
+        operation = serviceInfo.addOperation("method");
     }
 
     public void methodNoArgs()
@@ -151,10 +154,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
 
         mockControl.replay();
 
-        OperationInfo operationInfo = new OperationInfo("method");
-        assembler.populateOperationInfo(operationInfo, methodNoArgs);
-        assertEquals(webMethodAnnotation.getOperationName(), operationInfo.getName());
-        assertFalse(operationInfo.isOneWay());
+        assembler.populateOperationInfo(operation, methodNoArgs);
+        assertEquals(webMethodAnnotation.getOperationName(), operation.getName());
+        assertFalse(operation.isOneWay());
         mockControl.verify();
     }
 
@@ -167,10 +169,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
 
         mockControl.replay();
 
-        OperationInfo operationInfo = new OperationInfo("method");
-        assembler.populateOperationInfo(operationInfo, methodArgs);
-        assertEquals("method", operationInfo.getName());
-        assertFalse(operationInfo.isOneWay());
+        assembler.populateOperationInfo(operation, methodArgs);
+        assertEquals("method", operation.getName());
+        assertFalse(operation.isOneWay());
         mockControl.verify();
     }
 
@@ -190,10 +191,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
 
         mockControl.replay();
 
-        OperationInfo operationInfo = new OperationInfo("method");
-        assembler.populateOperationInfo(operationInfo, methodNoArgs);
-        assertEquals(webMethodAnnotation.getOperationName(), operationInfo.getName());
-        assertTrue(operationInfo.isOneWay());
+        assembler.populateOperationInfo(operation, methodNoArgs);
+        assertEquals(webMethodAnnotation.getOperationName(), operation.getName());
+        assertTrue(operation.isOneWay());
         mockControl.verify();
     }
 
@@ -212,11 +212,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
 
         mockControl.replay();
 
-        OperationInfo operationInfo = new OperationInfo("method");
-
         try
         {
-            assembler.populateOperationInfo(operationInfo, methodArgs);
+            assembler.populateOperationInfo(operation, methodArgs);
             fail("AnnotationException not thrown");
         }
         catch (AnnotationException e)
@@ -232,10 +230,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
         webAnnotations.hasWebParamAnnotation(methodArgs, 0);
         mockControl.setReturnValue(false);
         mockControl.replay();
-        MessageInfo messageInfo = assembler.getInputMessageInfo(methodArgs, "namespace");
+        MessageInfo messageInfo = assembler.getInputMessage(methodArgs, operation);
         assertNotNull(messageInfo);
         assertEquals("methodArgsRequest", messageInfo.getName());
-        assertEquals("namespace", messageInfo.getNamespace());
         assertEquals(1, messageInfo.getMessageParts().size());
         MessagePartInfo part = messageInfo.getMessagePart("methodArgsRequestin0");
         assertNotNull(part);
@@ -253,10 +250,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(annotation);
         mockControl.replay();
 
-        MessageInfo messageInfo = assembler.getInputMessageInfo(methodArgs, "namespace");
+        MessageInfo messageInfo = assembler.getInputMessage(methodArgs, operation);
         assertNotNull(messageInfo);
         assertEquals("methodArgsRequest", messageInfo.getName());
-        assertEquals("namespace", messageInfo.getNamespace());
         assertEquals(1, messageInfo.getMessageParts().size());
         assertNotNull(messageInfo.getMessagePart("name"));
         mockControl.verify();
@@ -273,7 +269,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(annotation);
         mockControl.replay();
 
-        assertNull(assembler.getInputMessageInfo(methodArgs, "namespace"));
+        assertNull(assembler.getInputMessage(methodArgs, operation));
         mockControl.verify();
     }
 
@@ -288,10 +284,9 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.replay();
 
 
-        MessageInfo messageInfo = assembler.getOutputMessageInfo(methodArgs, "namespace");
+        MessageInfo messageInfo = assembler.getOutputMessage(methodArgs, operation);
         assertNotNull(messageInfo);
         assertEquals("methodArgsResponse", messageInfo.getName());
-        assertEquals("namespace", messageInfo.getNamespace());
         assertEquals(1, messageInfo.getMessageParts().size());
         assertNotNull(messageInfo.getMessagePart("methodArgsResponseout0"));
         mockControl.verify();
@@ -315,7 +310,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(paramAnnotation);
         mockControl.replay();
 
-        MessageInfo messageInfo = assembler.getOutputMessageInfo(methodArgs, "namespace");
+        MessageInfo messageInfo = assembler.getOutputMessage(methodArgs, operation);
         assertNotNull(messageInfo);
         assertEquals("methodArgsResponse", messageInfo.getName());
         assertEquals(2, messageInfo.getMessageParts().size());
@@ -337,7 +332,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(false);
         mockControl.replay();
 
-        MessageInfo messageInfo = assembler.getOutputMessageInfo(methodArgs, "namespace");
+        MessageInfo messageInfo = assembler.getOutputMessage(methodArgs, operation);
         assertNotNull(messageInfo);
         assertEquals("methodArgsResponse", messageInfo.getName());
         assertEquals(1, messageInfo.getMessageParts().size());
@@ -348,6 +343,6 @@ public class AnnotationBasedServiceInfoAssemblerTest
     public void testGetOutputMessageNoParts()
             throws Exception
     {
-        assertNull(assembler.getOutputMessageInfo(methodNoArgs, "namespace"));
+        assertNull(assembler.getOutputMessage(methodNoArgs, operation));
     }
 }

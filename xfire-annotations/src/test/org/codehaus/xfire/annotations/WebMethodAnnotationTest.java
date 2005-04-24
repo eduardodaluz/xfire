@@ -3,6 +3,7 @@ package org.codehaus.xfire.annotations;
 
 import junit.framework.TestCase;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.ServiceInfo;
 
 public class WebMethodAnnotationTest
         extends TestCase
@@ -20,7 +21,7 @@ public class WebMethodAnnotationTest
             throws Exception
     {
         webMethodAnnotation.setOperationName("name");
-        OperationInfo operationInfo = new OperationInfo("other");
+        OperationInfo operationInfo = new ServiceInfo().addOperation("other");
         webMethodAnnotation.populate(operationInfo);
         assertEquals(webMethodAnnotation.getOperationName(), operationInfo.getName());
     }

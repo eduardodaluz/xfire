@@ -8,24 +8,34 @@ import java.util.Map;
 
 /**
  * Represents the description of a service operation message.
+ * <p/>
+ * Messages are created using the {@link OperationInfo#createMessage(String)} method.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class MessageInfo
         implements Visitable
 {
-    private String name;
-    private String namespace;
+    protected String name;
+    protected String namespace;
     private Map messageParts = new HashMap();
+    protected OperationInfo operation;
 
-    /**
-     * Initializes a new instance of the <code>MessageInfo</code> class with the given name.
-     *
-     * @param name the name.
-     */
-    public MessageInfo(String name)
+    private MessageInfo(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Initializes a new instance of the <code>MessageInfo</code> class with the given name and operation.
+     *
+     * @param name      the name.
+     * @param operation the operation.
+     */
+    MessageInfo(String name, OperationInfo operation)
+    {
+        this.name = name;
+        this.operation = operation;
     }
 
     /**
@@ -49,13 +59,13 @@ public class MessageInfo
     }
 
     /**
-     * Returns the namespace of the message.
+     * Returns the namespace of the message. Defaults to the namespace of the service.
      *
      * @return the namespace of the message.
      */
     public String getNamespace()
     {
-        return namespace;
+        return (namespace != null) ? namespace : operation.getService().getNamespace();
     }
 
     /**
@@ -69,14 +79,56 @@ public class MessageInfo
     }
 
     /**
+     * Returns the operation of this message.
+     *
+     * @return the operation.
+     */
+    public OperationInfo getOperation()
+    {
+        return operation;
+    }
+
+    /**
      * Adds an message part to this message info.
      *
-     * @param messagePartInfo the message part.
+     * @param name the message part name.
      */
-    public void addMethodPart(MessagePartInfo messagePartInfo)
+    public MessagePartInfo addMessagePart(String name)
     {
-        messageParts.put(messagePartInfo.getName(), messagePartInfo);
+        if ((name == null) || (name.length() == 0))
+        {
+            throw new IllegalArgumentException("Invalid name [" + name + "]");
+        }
+        if (messageParts.containsKey(name))
+        {
+            throw new IllegalArgumentException(
+                    "An message part with name [" + name + "] already exists in this message");
+        }
+        MessagePartInfo part = new MessagePartInfo(name, this);
+        addMessagePart(part);
+        return part;
     }
+
+    /**
+     * Adds an message part to this message.
+     *
+     * @param part the message part.
+     */
+    void addMessagePart(MessagePartInfo part)
+    {
+        messageParts.put(part.getName(), part);
+    }
+
+    /**
+     * Removes an message part from this message.
+     *
+     * @param name the message part name.
+     */
+    public void removeMessagePart(String name)
+    {
+        messageParts.remove(name);
+    }
+
 
     /**
      * Returns the message part with the given name, if found.

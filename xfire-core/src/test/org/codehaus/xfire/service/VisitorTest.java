@@ -11,27 +11,24 @@ public class VisitorTest
 {
     public void testVisitor()
     {
-        ServiceInfo serviceInfo = new ServiceInfo();
-        OperationInfo operationInfo = new OperationInfo("operation");
-        serviceInfo.addOperation(operationInfo);
-        MessageInfo inputMessageInfo = new MessageInfo("input");
-        operationInfo.setInputMessage(inputMessageInfo);
-        MessageInfo outputMessageInfo = new MessageInfo("output");
-        operationInfo.setOutputMessage(outputMessageInfo);
-        FaultInfo faultInfo = new FaultInfo("fault");
-        operationInfo.addFault(faultInfo);
-        MessagePartInfo partInfo1 = new MessagePartInfo("part1");
-        inputMessageInfo.addMethodPart(partInfo1);
-        MessagePartInfo partInfo2 = new MessagePartInfo("part2");
-        inputMessageInfo.addMethodPart(partInfo2);
+        ServiceInfo service = new ServiceInfo();
+        OperationInfo operation = service.addOperation("operation");
+        service.addOperation(operation);
+        MessageInfo inputMessage = operation.createMessage("input");
+        operation.setInputMessage(inputMessage);
+        MessageInfo outputMessage = operation.createMessage("output");
+        operation.setOutputMessage(outputMessage);
+        FaultInfo faultInfo = operation.addFault("fault");
+        MessagePartInfo partInfo1 = inputMessage.addMessagePart("part1");
+        MessagePartInfo partInfo2 = inputMessage.addMessagePart("part2");
 
         MockVisitor visitor = new MockVisitor();
-        serviceInfo.accept(visitor);
+        service.accept(visitor);
 
-        assertTrue(visitor.visited(serviceInfo));
-        assertTrue(visitor.visited(operationInfo));
-        assertTrue(visitor.visited(inputMessageInfo));
-        assertTrue(visitor.visited(outputMessageInfo));
+        assertTrue(visitor.visited(service));
+        assertTrue(visitor.visited(operation));
+        assertTrue(visitor.visited(inputMessage));
+        assertTrue(visitor.visited(outputMessage));
         assertTrue(visitor.visited(faultInfo));
         assertTrue(visitor.visited(partInfo1));
         assertTrue(visitor.visited(partInfo2));

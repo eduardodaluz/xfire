@@ -121,7 +121,8 @@ public class ReflectiveServiceInfoAssemblerTest
         Method noArgsMethod = ReflectiveServiceInfoAssemblerTest.class.getMethod("methodWithNoArgs",
                                                                                  new Class[0]);
         ReflectiveServiceInfoAssembler assembler = new ReflectiveServiceInfoAssembler(getClass());
-        assertNull(assembler.getOutputMessageInfo(noArgsMethod, ""));
+        OperationInfo operation = new ServiceInfo().addOperation("operation");
+        assertNull(assembler.getOutputMessage(noArgsMethod, operation));
     }
 
     public void testGetOutputMessagePart()
@@ -130,7 +131,10 @@ public class ReflectiveServiceInfoAssemblerTest
         Method argsMethod = ReflectiveServiceInfoAssemblerTest.class.getMethod("methodWithArgs",
                                                                                new Class[]{String.class});
         ReflectiveServiceInfoAssembler assembler = new ReflectiveServiceInfoAssembler(getClass());
-        MessageInfo outputMessage = assembler.getOutputMessageInfo(argsMethod, "namespace");
+        ServiceInfo service = new ServiceInfo();
+        service.setNamespace("namespace");
+        OperationInfo operation = service.addOperation("operation");
+        MessageInfo outputMessage = assembler.getOutputMessage(argsMethod, operation);
         assertNotNull(outputMessage);
         assertEquals("methodWithArgsResponse", outputMessage.getName());
         assertEquals("namespace", outputMessage.getNamespace());
