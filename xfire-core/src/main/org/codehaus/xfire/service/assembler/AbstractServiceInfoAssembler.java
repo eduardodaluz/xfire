@@ -16,12 +16,12 @@ public abstract class AbstractServiceInfoAssembler
      * Creates an instance of the <code>ServiceInfo</code> class, and populates it through calls to the subclass.
      *
      * @return the populated service info.
-     * @see #populate(org.codehaus.xfire.service.ServiceInfo)
+     * @see #populateServiceInfo(org.codehaus.xfire.service.ServiceInfo)
      */
     public final ServiceInfo getServiceInfo()
     {
         ServiceInfo serviceInfo = new ServiceInfo();
-        populate(serviceInfo);
+        populateServiceInfo(serviceInfo);
         return serviceInfo;
     }
 
@@ -31,6 +31,6 @@ public abstract class AbstractServiceInfoAssembler
      *
      * @param serviceInfo the constructed service info.
      */
-    protected abstract void populate(ServiceInfo serviceInfo);
+    protected abstract void populateServiceInfo(ServiceInfo serviceInfo);
 
 }

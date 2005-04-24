@@ -67,7 +67,7 @@ public class ReflectiveServiceInfoAssembler
      *
      * @param serviceInfo the service info.
      */
-    protected final void populate(ServiceInfo serviceInfo)
+    protected final void populateServiceInfo(ServiceInfo serviceInfo)
     {
         serviceInfo.setName(ServiceUtils.makeServiceNameFromClassName(serviceClass));
         serviceInfo.setNamespace(NamespaceHelper.makeNamespaceFromClassName(serviceClass.getName(), "http"));
@@ -91,8 +91,8 @@ public class ReflectiveServiceInfoAssembler
     private OperationInfo getOperation(Method method, ServiceInfo service)
     {
         OperationInfo operation = service.addOperation(method.getName());
-        operation.setInputMessage(getInputMessage(method, operation));
-        operation.setOutputMessage(getOutputMessage(method, operation));
+        populateInputMessage(method, operation);
+        populateOutputMessage(method, operation);
         Class[] faultTypes = method.getExceptionTypes();
         operation.setOneWay((operation.getInputMessage() == null) &&
                             (operation.getOutputMessage() == null) &&
@@ -130,14 +130,14 @@ public class ReflectiveServiceInfoAssembler
     }
 
     /**
-     * Returns the input message info for the given method. Default implementation returns a message with a part for
-     * each of the method parameters it it has parameters; and <code>null</code> if it has no parameters..
+     * Populates the input message info of the given operation with the given method. Default implementation returns a
+     * message with a part for each of the method parameters it it has parameters; and <code>null</code> if it has no
+     * parameters..
      *
      * @param method    the method.
      * @param operation the operation.
-     * @return the output message info for the method; or <code>null</code> if the method has no parameters.
      */
-    protected MessageInfo getInputMessage(Method method, OperationInfo operation)
+    protected void populateInputMessage(Method method, OperationInfo operation)
     {
         final Class[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 0)
@@ -147,35 +147,26 @@ public class ReflectiveServiceInfoAssembler
             {
                 inputMessage.addMessagePart(inputMessage.getName() + INPUT_MESSAGE_PART_INFIX + i);
             }
-            return inputMessage;
-        }
-        else
-        {
-            return null;
+            operation.setInputMessage(inputMessage);
         }
     }
 
     /**
-     * Returns the output message info for the given method. Default implementation returns a message with a single part
-     * info if the method returns a value; and <code>null</code> if it return <code>void</code>.
+     * Populates the output message info of the given operation with the given method. Default implementation returns a
+     * message with a single part info if the method returns a value; and <code>null</code> if it return
+     * <code>void</code>.
      *
      * @param method    the method.
      * @param operation the operation.
-     * @return the output message info for the method; or <code>null</code> if the method returns <code>void</code>.
      */
-    protected MessageInfo getOutputMessage(Method method, OperationInfo operation)
+    protected void populateOutputMessage(Method method, OperationInfo operation)
     {
         if (!method.getReturnType().isAssignableFrom(Void.TYPE))
         {
             MessageInfo outputMessage = operation.createMessage(method.getName() + OUTPUT_MESSAGE_SUFFIX);
             outputMessage.addMessagePart(outputMessage.getName() + OUTPUT_MESSAGE_PART_INFIX);
-            return outputMessage;
+            operation.setOutputMessage(outputMessage);
         }
-        else
-        {
-            return null;
-        }
-
     }
 
 

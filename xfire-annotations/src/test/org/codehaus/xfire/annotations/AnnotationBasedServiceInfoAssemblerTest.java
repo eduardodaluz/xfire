@@ -230,7 +230,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         webAnnotations.hasWebParamAnnotation(methodArgs, 0);
         mockControl.setReturnValue(false);
         mockControl.replay();
-        MessageInfo messageInfo = assembler.getInputMessage(methodArgs, operation);
+        assembler.populateInputMessage(methodArgs, operation);
+        MessageInfo messageInfo = operation.getInputMessage();
         assertNotNull(messageInfo);
         assertEquals("methodArgsRequest", messageInfo.getName());
         assertEquals(1, messageInfo.getMessageParts().size());
@@ -250,7 +251,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(annotation);
         mockControl.replay();
 
-        MessageInfo messageInfo = assembler.getInputMessage(methodArgs, operation);
+        assembler.populateInputMessage(methodArgs, operation);
+        MessageInfo messageInfo = operation.getInputMessage();
         assertNotNull(messageInfo);
         assertEquals("methodArgsRequest", messageInfo.getName());
         assertEquals(1, messageInfo.getMessageParts().size());
@@ -269,7 +271,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(annotation);
         mockControl.replay();
 
-        assertNull(assembler.getInputMessage(methodArgs, operation));
+        assembler.populateInputMessage(methodArgs, operation);
+        assertNull(operation.getInputMessage());
         mockControl.verify();
     }
 
@@ -284,7 +287,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.replay();
 
 
-        MessageInfo messageInfo = assembler.getOutputMessage(methodArgs, operation);
+        assembler.populateOutputMessage(methodArgs, operation);
+        MessageInfo messageInfo = operation.getOutputMessage();
         assertNotNull(messageInfo);
         assertEquals("methodArgsResponse", messageInfo.getName());
         assertEquals(1, messageInfo.getMessageParts().size());
@@ -310,7 +314,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(paramAnnotation);
         mockControl.replay();
 
-        MessageInfo messageInfo = assembler.getOutputMessage(methodArgs, operation);
+        assembler.populateOutputMessage(methodArgs, operation);
+        MessageInfo messageInfo = operation.getOutputMessage();
         assertNotNull(messageInfo);
         assertEquals("methodArgsResponse", messageInfo.getName());
         assertEquals(2, messageInfo.getMessageParts().size());
@@ -332,7 +337,8 @@ public class AnnotationBasedServiceInfoAssemblerTest
         mockControl.setReturnValue(false);
         mockControl.replay();
 
-        MessageInfo messageInfo = assembler.getOutputMessage(methodArgs, operation);
+        assembler.populateOutputMessage(methodArgs, operation);
+        MessageInfo messageInfo = operation.getOutputMessage();
         assertNotNull(messageInfo);
         assertEquals("methodArgsResponse", messageInfo.getName());
         assertEquals(1, messageInfo.getMessageParts().size());
@@ -343,6 +349,7 @@ public class AnnotationBasedServiceInfoAssemblerTest
     public void testGetOutputMessageNoParts()
             throws Exception
     {
-        assertNull(assembler.getOutputMessage(methodNoArgs, operation));
+        assembler.populateOutputMessage(methodNoArgs, operation);
+        assertNull(operation.getOutputMessage());
     }
 }

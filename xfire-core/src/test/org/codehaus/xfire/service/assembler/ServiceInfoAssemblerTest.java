@@ -14,7 +14,7 @@ public class ServiceInfoAssemblerTest
         AbstractServiceInfoAssembler assembler = new AbstractServiceInfoAssembler()
         {
 
-            protected void populate(ServiceInfo serviceInfo)
+            protected void populateServiceInfo(ServiceInfo serviceInfo)
             {
             }
         };

@@ -145,15 +145,14 @@ public class AnnotationBasedServiceInfoAssembler
     }
 
     /**
-     * Returns the input message info for the given method. The returned message contains parts for all parameters that
-     * have not been annotated with the {@link WebParamAnnotation#MODE_OUT} mode. If this results in no parts, this
-     * method returns <code>null</code>.
+     * Populates the input message info of the given operation with the given method. The returned message contains
+     * parts for all parameters that have not been annotated with the {@link WebParamAnnotation#MODE_OUT} mode. If this
+     * results in no parts, this method returns <code>null</code>.
      *
      * @param method    the method.
      * @param operation the operation.
-     * @return the output message info for the method; or <code>null</code> if the method has no parameters.
      */
-    protected MessageInfo getInputMessage(Method method, OperationInfo operation)
+    protected void populateInputMessage(Method method, OperationInfo operation)
     {
         MessageInfo inputMessage = operation.createMessage(method.getName() + INPUT_MESSAGE_SUFFIX);
         final Class[] parameterTypes = method.getParameterTypes();
@@ -179,25 +178,20 @@ public class AnnotationBasedServiceInfoAssembler
         }
         if (!inputMessage.getMessageParts().isEmpty())
         {
-            return inputMessage;
-        }
-        else
-        {
-            return null;
+            operation.setInputMessage(inputMessage);
         }
     }
 
     /**
-     * Returns the output message info for the given method. The returned message contains parts for all parameters that
-     * have been annotated with a {@link WebParamAnnotation#MODE_INOUT} or {@link WebParamAnnotation#MODE_OUT} mode. The
-     * message contains an additional part info if the method returns a value. If the method has no outwards parameters
-     * and returns <code>void</code>; this methods returns <code>null</code>.
+     * Populates the output message info of the given operation with the given method. The returned message contains
+     * parts for all parameters that have been annotated with a {@link WebParamAnnotation#MODE_INOUT} or {@link
+     * WebParamAnnotation#MODE_OUT} mode. The message contains an additional part info if the method returns a value. If
+     * the method has no outwards parameters and returns <code>void</code>; this methods returns <code>null</code>.
      *
      * @param method    the method.
      * @param operation the operation.
-     * @return the output message info for the method; or <code>null</code> if the method returns <code>void</code>.
      */
-    protected MessageInfo getOutputMessage(Method method, OperationInfo operation)
+    protected void populateOutputMessage(Method method, OperationInfo operation)
     {
         MessageInfo outputMessage = operation.createMessage(method.getName() + OUTPUT_MESSAGE_SUFFIX);
         if (!method.getReturnType().isAssignableFrom(Void.TYPE))
@@ -229,11 +223,7 @@ public class AnnotationBasedServiceInfoAssembler
         }
         if (!outputMessage.getMessageParts().isEmpty())
         {
-            return outputMessage;
-        }
-        else
-        {
-            return null;
+            operation.setOutputMessage(outputMessage);
         }
     }
 }

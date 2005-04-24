@@ -28,7 +28,7 @@ public class ReflectiveServiceInfoAssemblerTest
             }
 
         };
-        assembler.populate(new ServiceInfo());
+        assembler.populateServiceInfo(new ServiceInfo());
     }
 
     public String methodWithArgs(String s)
@@ -88,7 +88,7 @@ public class ReflectiveServiceInfoAssemblerTest
 
 
         };
-        assembler.populate(new ServiceInfo());
+        assembler.populateServiceInfo(new ServiceInfo());
     }
 
     public void testGetOperationMethods()
@@ -122,10 +122,11 @@ public class ReflectiveServiceInfoAssemblerTest
                                                                                  new Class[0]);
         ReflectiveServiceInfoAssembler assembler = new ReflectiveServiceInfoAssembler(getClass());
         OperationInfo operation = new ServiceInfo().addOperation("operation");
-        assertNull(assembler.getOutputMessage(noArgsMethod, operation));
+        assembler.populateOutputMessage(noArgsMethod, operation);
+        assertNull(operation.getOutputMessage());
     }
 
-    public void testGetOutputMessagePart()
+    public void testPopulateOutputMessagePart()
             throws Exception
     {
         Method argsMethod = ReflectiveServiceInfoAssemblerTest.class.getMethod("methodWithArgs",
@@ -134,7 +135,8 @@ public class ReflectiveServiceInfoAssemblerTest
         ServiceInfo service = new ServiceInfo();
         service.setNamespace("namespace");
         OperationInfo operation = service.addOperation("operation");
-        MessageInfo outputMessage = assembler.getOutputMessage(argsMethod, operation);
+        assembler.populateOutputMessage(argsMethod, operation);
+        MessageInfo outputMessage = operation.getOutputMessage();
         assertNotNull(outputMessage);
         assertEquals("methodWithArgsResponse", outputMessage.getName());
         assertEquals("namespace", outputMessage.getNamespace());
