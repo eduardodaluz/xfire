@@ -14,10 +14,10 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.fault.Soap11FaultHandler;
-import org.codehaus.xfire.handler.EchoHandler;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 
@@ -30,15 +30,12 @@ public class AttachmentTest
     public void setUp() throws Exception
     {
         super.setUp();
-        
-        MessageService service = new MessageService();
-        service.setName("Echo");
-        service.setSoapVersion(Soap12.getInstance());
-        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
-        
-        service.setServiceHandler(new EchoHandler());
-        service.setFaultHandler(new Soap11FaultHandler());
-        
+
+        Service service = getServiceFactory().create(Echo.class,
+                                                     Soap12.getInstance(),
+                                                     SoapConstants.STYLE_DOCUMENT,
+                                                     SoapConstants.USE_LITERAL);
+
         getServiceRegistry().register(service);
     }
 

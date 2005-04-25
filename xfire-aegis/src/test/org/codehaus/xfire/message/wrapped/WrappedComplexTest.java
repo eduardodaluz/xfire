@@ -1,7 +1,7 @@
 package org.codehaus.xfire.message.wrapped;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.ComplexService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -13,14 +13,14 @@ import org.codehaus.yom.Document;
 public class WrappedComplexTest
     extends AbstractXFireAegisTest
 {
-    ObjectService service;
+    Service service;
 
     public void setUp()
         throws Exception
     {
         super.setUp();
 
-        service = (ObjectService) getServiceFactory().create(ComplexService.class);
+        service = getServiceFactory().create(ComplexService.class);
 
         getServiceRegistry().register(service);
     }

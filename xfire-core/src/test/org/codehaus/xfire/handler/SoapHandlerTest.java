@@ -2,7 +2,7 @@ package org.codehaus.xfire.handler;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -21,7 +21,7 @@ public class SoapHandlerTest
     {
         super.setUp();
         
-        MessageService service = new MessageService();
+        DefaultService service = new DefaultService();
         service.setName("Echo");
         service.setSoapVersion(Soap12.getInstance());
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());

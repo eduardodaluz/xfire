@@ -60,24 +60,6 @@ public class WebResultAnnotation
     }
 
     /**
-     * Populates the given message part info with the information contained in this annotation.
-     *
-     * @param messagePartInfo the operation info.
-     */
-    public void populate(MessagePartInfo messagePartInfo)
-    {
-        if (name.length() != 0)
-        {
-            messagePartInfo.setName(name);
-        }
-        if (targetNamespace.length() != 0)
-        {
-            messagePartInfo.setNamespace(targetNamespace);
-        }
-    }
-
-
-    /**
      * Returns a String representation of this <code>WebResultAnnotation</code> attribute.
      *
      * @return a string representation.

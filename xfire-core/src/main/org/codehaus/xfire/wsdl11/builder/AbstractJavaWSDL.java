@@ -13,12 +13,11 @@ import javax.wsdl.Message;
 import javax.wsdl.Output;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.binding.ObjectService;
-import org.codehaus.xfire.service.binding.Operation;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
@@ -40,7 +39,7 @@ public abstract class AbstractJavaWSDL
 
     private Map wsdlOps;
 
-    public AbstractJavaWSDL(ObjectService service, Collection transports) throws WSDLException
+    public AbstractJavaWSDL(Service service, Collection transports) throws WSDLException
     {
         super(service);
 
@@ -58,7 +57,7 @@ public abstract class AbstractJavaWSDL
     public PortType createAbstractInterface()
         throws WSDLException
     {
-        ObjectService service = (ObjectService) getService();
+        Service service = getService();
         Definition def = getDefinition();
 
         QName portName = new QName(getInfo().getTargetNamespace(), getInfo().getPortType());
@@ -71,12 +70,12 @@ public abstract class AbstractJavaWSDL
         // Create Abstract operations
         for (Iterator itr = service.getOperations().iterator(); itr.hasNext();)
         {
-            Operation op = (Operation) itr.next();
+            OperationInfo op = (OperationInfo) itr.next();
             Message req = getInputMessage(op);
             def.addMessage(req);
 
             Message res = null;
-            if (!op.isAsync())
+            if (!op.isOneWay())
             {
                 res = getOutputMessage(op);
                 def.addMessage(res);
@@ -94,13 +93,13 @@ public abstract class AbstractJavaWSDL
 
     public void createConcreteInterface(PortType portType)
     {
-        ObjectService service = (ObjectService) getService();
+        Service service = (Service) getService();
         Definition def = getDefinition();
 
         QName name = new QName(getInfo().getTargetNamespace(), getInfo().getServiceName());
 
         // Create a concrete instance for each transport.
-        Service wsdlService = def.createService();
+        javax.wsdl.Service wsdlService = def.createService();
         wsdlService.setQName(name);
 
         for (Iterator itr = transports.iterator(); itr.hasNext();)
@@ -117,7 +116,7 @@ public abstract class AbstractJavaWSDL
             {
                 // todo: move out of the first loop, we'll be creating req/res
                 // multiple times otherwise
-                Operation op = (Operation) oitr.next();
+                OperationInfo op = (OperationInfo) oitr.next();
 
                 javax.wsdl.Operation wsdlOp = (javax.wsdl.Operation) wsdlOps.get(op.getName());
 
@@ -135,7 +134,7 @@ public abstract class AbstractJavaWSDL
 
     }
 
-    private Message getOutputMessage(Operation op)
+    private Message getOutputMessage(OperationInfo op)
     {
         // response message
         Message res = getDefinition().createMessage();
@@ -148,7 +147,7 @@ public abstract class AbstractJavaWSDL
         return res;
     }
 
-    private Message getInputMessage(Operation op)
+    private Message getInputMessage(OperationInfo op)
     {
         Message req = getDefinition().createMessage();
         req.setQName(new QName(getInfo().getTargetNamespace(), op.getName() + "Request"));
@@ -159,11 +158,11 @@ public abstract class AbstractJavaWSDL
         return req;
     }
 
-    protected abstract void createInputParts(Message req, Operation op);
+    protected abstract void createInputParts(Message req, OperationInfo op);
 
-    protected abstract void createOutputParts(Message req, Operation op);
+    protected abstract void createOutputParts(Message req, OperationInfo op);
 
-    public javax.wsdl.Operation createOperation(Operation op, Message req, Message res)
+    public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res)
     {
         Definition def = getDefinition();
         javax.wsdl.Operation wsdlOp = def.createOperation();

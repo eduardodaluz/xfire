@@ -13,6 +13,9 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.fault.XFireFault;
 
 public class TypeInfo
 {
@@ -23,7 +26,8 @@ public class TypeInfo
     private String defaultNamespace;
     private QName schemaType;
     private PropertyDescriptor[] descriptors;
-
+    private TypeMapping typeMapping;
+    
     public TypeInfo(Class typeClass, QName complexType)
     {
         this.typeClass = typeClass;
@@ -37,22 +41,6 @@ public class TypeInfo
         this.typeClass = typeClass;
 
         initializeProperties();
-    }
-
-    protected PropertyDescriptor[] getPropertyDescriptors()
-    {
-        return descriptors;
-    }
-
-    protected PropertyDescriptor getPropertyDescriptor(String name)
-    {
-        for (int i = 0; i < descriptors.length; i++)
-        {
-            if (descriptors[i].getName().equals(name));
-                return descriptors[i];
-        }
-        
-        return null;
     }
     
     public void initialize()
@@ -77,6 +65,69 @@ public class TypeInfo
         {
             throw new XFireRuntimeException("Couldn't create TypeInfo.", e);
         }
+    }
+    protected PropertyDescriptor[] getPropertyDescriptors()
+    {
+        return descriptors;
+    }
+
+    protected PropertyDescriptor getPropertyDescriptor(String name)
+    {
+        for (int i = 0; i < descriptors.length; i++)
+        {
+            if (descriptors[i].getName().equals(name));
+                return descriptors[i];
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get the type class for the field with the specified QName.
+     * @param object
+     * @param name
+     * @param namespace
+     * @return
+     * @throws XFireFault
+     */
+    protected Type getType(QName name) 
+    {
+        Type type = getTypeMapping().getType(name);
+        
+        if (type == null)
+        {
+            PropertyDescriptor desc = null;
+            try
+            {
+                desc = getPropertyDescriptor(name);
+            }
+            catch (Exception e)
+            {
+                throw new XFireRuntimeException("Couldn't get properties.", e);
+            }
+            
+            if (desc == null)
+            {
+                return null;
+            }
+            
+            type = getTypeMapping().getType(desc.getPropertyType());
+        }
+        
+        if ( type == null )
+            throw new XFireRuntimeException( "Couldn't find type for property " + name );
+        
+        return type;
+    }
+
+    public TypeMapping getTypeMapping()
+    {
+        return typeMapping;
+    }
+
+    public void setTypeMapping(TypeMapping typeMapping)
+    {
+        this.typeMapping = typeMapping;
     }
 
     protected QName createQName(PropertyDescriptor desc)

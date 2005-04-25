@@ -3,8 +3,8 @@ package org.codehaus.xfire.wsdl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.wsdl.WSDLException;
 

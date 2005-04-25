@@ -1,7 +1,5 @@
 package org.codehaus.xfire.annotations;
 
-import org.codehaus.xfire.service.ServiceInfo;
-
 /**
  * Represents an common representation of a web service annotation. Specifies that the given method is exposed as a Web
  * Service operation, making it part of the Web Service’s public contract. A WebMethod annotation is required for each
@@ -99,23 +97,6 @@ public class WebServiceAnnotation
     public void setTargetNamespace(String targetNamespace)
     {
         this.targetNamespace = targetNamespace;
-    }
-
-    /**
-     * Populates the given service info with the information contained in this annotation.
-     *
-     * @param serviceInfo the service info.
-     */
-    public void populate(ServiceInfo serviceInfo)
-    {
-        if (name.length() != 0)
-        {
-            serviceInfo.setName(name);
-        }
-        if (targetNamespace.length() != 0)
-        {
-            serviceInfo.setNamespace(targetNamespace);
-        }
     }
 
     /**

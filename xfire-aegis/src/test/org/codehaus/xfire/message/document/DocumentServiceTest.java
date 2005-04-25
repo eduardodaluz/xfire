@@ -1,7 +1,7 @@
 package org.codehaus.xfire.message.document;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
@@ -17,7 +17,7 @@ public class DocumentServiceTest
     {
         super.setUp();
         
-        DefaultObjectService service = (DefaultObjectService)
+        DefaultService service = (DefaultService)
         getServiceFactory().create(DocumentService.class,
                                    "Doc",
                                    "urn:Doc",

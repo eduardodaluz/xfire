@@ -6,7 +6,6 @@ import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.ObjectService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -31,11 +30,9 @@ public class WSDLBuilder
 	 * @param s The service WSDL is being generated for.
 	 * @return
 	 */
-	public WSDLWriter createWSDLWriter( Service s )
+	public WSDLWriter createWSDLWriter( Service service )
         throws WSDLException
 	{
-        ObjectService service = (ObjectService) s;
-        
         Collection transports = manager.getTransports(service.getName());
 	    
 		if (service.getStyle().equals(SoapConstants.STYLE_WRAPPED) 

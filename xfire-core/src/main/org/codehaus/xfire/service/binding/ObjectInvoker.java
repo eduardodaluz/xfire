@@ -5,10 +5,11 @@ import java.lang.reflect.Method;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.DefaultService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Session;
 
 /**
@@ -71,20 +72,20 @@ public class ObjectInvoker implements Invoker
     public Object getServiceObject( final MessageContext context )
         throws XFireFault
     {
-        final ObjectService service = (ObjectService)context.getService();
+        final Service service = (Service)context.getService();
         final int scope = service.getScope();
-        if( scope == ObjectService.SCOPE_APPLICATION )
+        if( scope == Service.SCOPE_APPLICATION )
         {
             if( appObj == null )
             {
-                synchronized( DefaultObjectService.class )
+                synchronized( DefaultService.class )
                 {
                     appObj = createServiceObject( service );
                 }
             }
             return appObj;
         }
-        else if( scope == ObjectService.SCOPE_SESSION )
+        else if( scope == Service.SCOPE_SESSION )
         {
             final Session session = context.getSession();
             final String key = "service." + service.getName();
@@ -92,7 +93,7 @@ public class ObjectInvoker implements Invoker
             Object sessObj = session.get( key );
             if( sessObj == null )
             {
-                synchronized( DefaultObjectService.class )
+                synchronized( DefaultService.class )
                 {
                     sessObj = createServiceObject( service );
                     session.put( key, sessObj );
@@ -100,7 +101,7 @@ public class ObjectInvoker implements Invoker
             }
             return sessObj;
         }
-        else if( scope == ObjectService.SCOPE_REQUEST )
+        else if( scope == Service.SCOPE_REQUEST )
         {
             return createServiceObject( service );
         }
@@ -116,11 +117,11 @@ public class ObjectInvoker implements Invoker
      * @return
      * @throws XFireFault
      */
-    public Object createServiceObject( final ObjectService service ) throws XFireFault
+    public Object createServiceObject( final Service service ) throws XFireFault
     {
         try
         {
-            Class svcClass = (Class) service.getProperty(ObjectService.SERVICE_IMPL_CLASS);
+            Class svcClass = (Class) service.getProperty(Service.SERVICE_IMPL_CLASS);
             
             if (svcClass == null)
             {

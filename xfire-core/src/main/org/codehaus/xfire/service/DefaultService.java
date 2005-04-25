@@ -1,27 +1,30 @@
 package org.codehaus.xfire.service;
 
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.WSDLException;
 
-import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 /**
- * A simple service implementation.
- * 
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  */
-public class MessageService
-    extends AbstractXFireComponent
+public class DefaultService
     implements Service
 {
     private String name;
@@ -34,7 +37,7 @@ public class MessageService
     
     private String defaultNamespace;
     
-    private Hashtable properties;
+    private Map properties;
     
     private WSDLWriter wsdl;
     
@@ -47,18 +50,29 @@ public class MessageService
     private FaultHandlerPipeline faultPipeline;
     
     private BindingProvider bindingProvider;
-    
-    public MessageService()
+
+    private List allowedMethods;
+
+    private Class serviceClass;
+
+    private Map operations;
+
+    private WSDLBuilder wsdlBuilder;
+
+    private boolean autoTyped = false;
+
+    private int scope = Service.SCOPE_APPLICATION;
+
+    private String encodingStyleURI;
+
+    private Invoker invoker;
+
+    public DefaultService()
     {
-        properties = new Hashtable();   
-    }
-    
-    /**
-     * @see org.codehaus.xfire.service.Service#getWSDLWriter()
-     */
-    public WSDLWriter getWSDLWriter() throws WSDLException
-    {
-        return wsdl;
+        super();
+        this.allowedMethods = new ArrayList();
+        this.operations = new HashMap();
+        this.properties = new HashMap();
     }
 
     public void setWSDLWriter(WSDLWriter wsdl)
@@ -143,20 +157,20 @@ public class MessageService
         return soapVersion;
     }
 
-	public void setSoapVersion(SoapVersion soapVersion)
-	{
-		this.soapVersion = soapVersion;
-	}
+    public void setSoapVersion(SoapVersion soapVersion)
+    {
+        this.soapVersion = soapVersion;
+    }
     
-	public String getName()
-	{
-		return name;
-	}
+    public String getName()
+    {
+        return name;
+    }
     
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public void setName(String name)
+    {
+        this.name = name;
+    }
     
     /**
      * @see org.codehaus.xfire.service.Service#setProperty(java.lang.String, java.lang.Object)
@@ -255,5 +269,167 @@ public class MessageService
     public void setBindingProvider(BindingProvider bindingProvider)
     {
         this.bindingProvider = bindingProvider;
+    }
+    
+    /**
+     * @param className
+     */
+    public void setServiceClass(final String className)
+        throws ClassNotFoundException
+    {
+        setServiceClass(loadClass(className));
+    }
+
+    /**
+     * @param serviceClass
+     */
+    public void setServiceClass(final Class serviceClass)
+    {
+        this.serviceClass = serviceClass;
+    }
+
+    public void addOperation(final OperationInfo op)
+    {
+        operations.put(op.getName(), op);
+    }
+
+    /**
+     * Determines whether or not to expose the specified method.
+     * 
+     * @param methodName
+     */
+    private boolean isAllowed(final String methodName)
+    {
+        return (allowedMethods.isEmpty() || allowedMethods.contains(methodName));
+    }
+
+    public OperationInfo getOperation(final String localName)
+    {
+        return (OperationInfo) operations.get(localName);
+    }
+
+    public Collection getOperations()
+    {
+        return operations.values();
+    }
+
+    protected Map getOperationsMap()
+    {
+        return operations;
+    }
+
+    public void removeOperation(String name)
+    {
+        operations.remove(name);
+    }
+
+    public List getAllowedMethods()
+    {
+        return allowedMethods;
+    }
+
+    /**
+     * @param allowedMethods
+     *            The allowedMethods to set.
+     */
+    public void setAllowedMethods(final List allowedMethods)
+    {
+        this.allowedMethods = allowedMethods;
+    }
+
+    /**
+     * @return
+     */
+    public Class getServiceClass()
+    {
+        return serviceClass;
+    }
+
+    /**
+     * Load a class from the class loader.
+     * 
+     * @param className
+     *            The name of the class.
+     * 
+     * @return The class.
+     */
+    protected Class loadClass(final String className)
+        throws ClassNotFoundException
+    {
+        try
+        {
+            return getClass().getClassLoader().loadClass(className);
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            try
+            {
+                return Class.forName(className);
+            }
+            catch (ClassNotFoundException cnf2)
+            {
+                return Thread.currentThread().getContextClassLoader().loadClass(className);
+            }
+        }
+    }
+
+    public WSDLWriter getWSDLWriter()
+        throws WSDLException
+    {
+        if (wsdl == null)
+        {
+            final WSDLBuilder b = getWSDLBuilder();
+
+            if (b != null)
+                return getWSDLBuilder().createWSDLWriter(this);
+        }
+
+        return wsdl;
+    }
+
+    public int getScope()
+    {
+        return scope;
+    }
+
+    public void setScope(final int scope)
+    {
+        this.scope = scope;
+    }
+
+    public WSDLBuilder getWSDLBuilder()
+    {
+        return wsdlBuilder;
+    }
+
+    public void setWSDLBuilder(final WSDLBuilder wsdlBuilder)
+    {
+        this.wsdlBuilder = wsdlBuilder;
+    }
+
+    public Invoker getInvoker()
+    {
+        return invoker;
+    }
+
+    public void setInvoker(Invoker invoker)
+    {
+        this.invoker = invoker;
+    }
+
+    /**
+     * Acceps the given visitor. Iterates over all operation infos.
+     *
+     * @param visitor the visitor.
+     */
+    public void accept(Visitor visitor)
+    {
+        visitor.visit(this);
+        
+        for (Iterator iterator = operations.values().iterator(); iterator.hasNext();)
+        {
+            OperationInfo operationInfo = (OperationInfo) iterator.next();
+            operationInfo.accept(visitor);
+        }
     }
 }

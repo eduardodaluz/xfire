@@ -14,7 +14,6 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.binding.ObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -71,14 +70,14 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
         }
 
         final Configuration configuration = (Configuration)m_configurations.get( key );
-        final ObjectService service;
+        final Service service;
 
         if( null == configuration )
         {
             if( getLogger().isInfoEnabled() )
                 getLogger().info( "No configuration found for '" + key + "', using defaults" );
 
-            service = (ObjectService)m_defaultServiceFactory.create( object.getClass() );
+            service = m_defaultServiceFactory.create( object.getClass() );
         }
         else
         {
@@ -93,11 +92,11 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
         registerService( key, service );
     }
 
-    private ObjectService createServiceFromConfiguration( final Configuration configuration )
+    private Service createServiceFromConfiguration( final Configuration configuration )
         throws ConfigurationException
     {
         final ServiceFactory factory = getServiceFactory( configuration.getChild( "factory" ).getValue( null ) );
-        final ObjectService service = (ObjectService)
+        final Service service =
             factory.create( loadClass( configuration.getChild( "serviceClass" ) ),
                             configuration.getChild( "name" ).getValue(),
                             configuration.getChild( "namespace" ).getValue( "" ),

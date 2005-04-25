@@ -9,7 +9,6 @@ import org.codehaus.xfire.picocontainer.util.ThreadLocalObjectReference;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.binding.ObjectService;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;
@@ -70,11 +69,8 @@ public class XFireServiceRegisterVisitor
         Iterator i = pico.getComponentInstancesOfType(Service.class).iterator();
         while (i.hasNext())
         {
-            Service service = (ObjectService) i.next();
-            if (service instanceof ObjectService)
-            {
-                prepareObjectService((ObjectService) service);
-            }
+            Service service = (Service) i.next();
+            prepareObjectService(service);
             serviceRegistry.register(service);
 
             if (log.isInfoEnabled())
@@ -88,15 +84,14 @@ public class XFireServiceRegisterVisitor
     {
         if (ca instanceof ObjectServiceComponentAdapter)
         {
-            ObjectService objectService;
+            Service objectService;
             if (ca.getComponentKey() instanceof Class)
             {
-                objectService = (ObjectService) serviceFactory.create((Class) ca.getComponentKey());
+                objectService = serviceFactory.create((Class) ca.getComponentKey());
             }
             else
             {
-                objectService = (ObjectService) serviceFactory.create(ca
-                        .getComponentImplementation());
+                objectService = serviceFactory.create(ca.getComponentImplementation());
             }
 
             prepareObjectService(objectService);
@@ -117,9 +112,9 @@ public class XFireServiceRegisterVisitor
     /**
      * Prepare an ObjectService to use pico.
      */
-    protected void prepareObjectService(ObjectService objectService)
+    protected void prepareObjectService(Service objectService)
     {
-        objectService.setInvoker(new PicoObjectInvoker(picoReference, objectService
-                .getServiceClass()));
+        objectService.setInvoker(new PicoObjectInvoker(picoReference, 
+                                                       objectService.getServiceClass()));
     }
 }

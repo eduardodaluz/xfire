@@ -4,8 +4,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.binding.ObjectService;
-import org.codehaus.xfire.service.binding.Operation;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapHandler;
 
 /**
@@ -16,13 +16,13 @@ import org.codehaus.xfire.soap.SoapHandler;
 public abstract class AbstractMessageBridge
     implements MessageBridge
 {
-    private ObjectService service;
+    private Service service;
 
     private MessageContext context;
     
     private XMLStreamReader request;
 
-    protected Operation operation;
+    protected OperationInfo operation;
     
     public AbstractMessageBridge()
     {
@@ -30,7 +30,7 @@ public abstract class AbstractMessageBridge
     
     public AbstractMessageBridge(MessageContext context)
     {
-        this.service = (ObjectService) context.getService();
+        this.service = context.getService();
         this.context = context;
         this.request = context.getXMLStreamReader();
     }
@@ -38,7 +38,7 @@ public abstract class AbstractMessageBridge
     /**
      * @return Returns the service.
      */
-    public ObjectService getService()
+    public Service getService()
     {
         return service;
     }
@@ -76,7 +76,7 @@ public abstract class AbstractMessageBridge
     /**
      * @see org.codehaus.xfire.aegis.bridge.MessageBridge#getOperation()
      */
-    public Operation getOperation()
+    public OperationInfo getOperation()
     {
         return operation;
     }
@@ -85,7 +85,7 @@ public abstract class AbstractMessageBridge
      * @param operation
      *            The operation to set.
      */
-    public void setOperation(Operation operation)
+    public void setOperation(OperationInfo operation)
     {
         this.operation = operation;
     }

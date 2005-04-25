@@ -8,8 +8,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.AutoTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.aegis.type.basic.BeanType;
-import org.codehaus.xfire.aegis.type.basic.TypeInfo;
+import org.codehaus.xfire.aegis.type.collection.CollectionType;
 
 public class DescriptorTest
     extends AbstractXFireAegisTest
@@ -55,4 +54,22 @@ public class DescriptorTest
         assertEquals("Prop2", el2.getLocalPart());
     }
 
+    public void testListHolder() throws Exception
+    {
+        TypeMapping tm = new AutoTypeMapping();
+        tm.setEncodingStyleURI("urn:xfire:bean");
+
+        Type type = tm.getType(ListHolderBean.class);
+        TypeInfo info = ((BeanType) type).getTypeInfo();
+        
+        Iterator elItr = info.getElements();
+        assertTrue(elItr.hasNext());
+        QName el = (QName) elItr.next();
+        assertEquals("urn:xfire:bean", el.getNamespaceURI());
+        assertEquals("Beans", el.getLocalPart());
+        
+        Type beanList = info.getType(el);
+        assertTrue( beanList instanceof CollectionType );
+    }
+   
 }

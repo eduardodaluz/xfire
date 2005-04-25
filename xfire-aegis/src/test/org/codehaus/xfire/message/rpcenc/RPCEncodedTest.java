@@ -4,7 +4,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.services.Echo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -18,13 +18,13 @@ import org.codehaus.yom.Document;
 public class RPCEncodedTest
     extends AbstractXFireAegisTest
 {
-    private DefaultObjectService service;
+    private DefaultService service;
     
     public void setUp() throws Exception
     {
         super.setUp();
         
-        service = (DefaultObjectService) 
+        service = (DefaultService) 
             getServiceFactory().create(Echo.class,
                                        "Echo",
                                        "urn:Echo",

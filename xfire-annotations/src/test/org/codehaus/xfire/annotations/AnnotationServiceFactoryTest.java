@@ -5,13 +5,13 @@ package org.codehaus.xfire.annotations;
  */
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.ObjectService;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
@@ -187,14 +187,16 @@ public class AnnotationServiceFactoryTest
 
         webAnnotationsControl.replay();
 
-        ObjectService service = (ObjectService) annotationServiceFactory.create(EchoServiceImpl.class);
+        Service service = annotationServiceFactory.create(EchoServiceImpl.class);
         assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
         assertEquals("EchoService", service.getName());
 
-        final Operation operation = service.getOperation("echo");
+        final OperationInfo operation = service.getOperation("echo");
         assertNotNull(operation);
-        assertEquals(1, operation.getInParameters().size());
-        assertEquals("input", ((Parameter) operation.getInParameters().iterator().next()).getName().getLocalPart());
+
+        Collection parts = operation.getInputMessage().getMessageParts();
+        assertEquals(1, parts.size());
+        assertEquals("input", ((MessagePartInfo) parts.iterator().next()).getName().getLocalPart());
 
         webAnnotationsControl.verify();
     }

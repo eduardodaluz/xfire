@@ -5,8 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
-import org.codehaus.xfire.service.binding.ObjectService;
 
 /**
  * Invokes a Plexus service.
@@ -26,7 +26,7 @@ public class ServiceInvoker
         this.locator = locator;
     }
 
-    public Object createServiceObject(ObjectService service)
+    public Object createServiceObject(Service service)
         throws XFireFault
     {
         try

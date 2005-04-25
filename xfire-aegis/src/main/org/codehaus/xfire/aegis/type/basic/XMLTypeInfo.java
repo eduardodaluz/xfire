@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
@@ -63,7 +64,7 @@ public class XMLTypeInfo
             buildMapping(mapping);
         }
     }
-    
+
     protected void buildMapping(Element mapping)
     {
         Elements elements = mapping.getChildElements();
@@ -76,6 +77,8 @@ public class XMLTypeInfo
                 mapAttribute(e);
             else if (e.getLocalName().equals("element"))
                 mapElement(e);
+            else if (e.getLocalName().equals("collection"))
+                mapCollection(e);
         }
     }
 
@@ -111,6 +114,46 @@ public class XMLTypeInfo
             name = createQName(pd);
         
         mapAttribute(property, name);
+    }
+
+    protected void mapCollection(Element e)
+    {
+        String property = e.getAttributeValue("property");
+        logger.debug("Mapping collection for property " + property);
+        
+        PropertyDescriptor pd = getPropertyDescriptor(property);
+        if (pd == null)
+            throw new XFireRuntimeException("Invalid property: " + property);
+        
+        QName name = createQName(e, e.getAttributeValue("name"));
+        
+        if (name == null)
+            name = createQName(pd);
+        
+        String componentType = e.getAttributeValue("componentType");
+        if (componentType == null)
+            throw new XFireRuntimeException("Component type cannot be empty!");
+        
+        CollectionType type = new CollectionType(loadClass(componentType));
+        type.setSchemaType(name);
+        type.setTypeMapping(getTypeMapping());
+        type.setTypeClass(pd.getPropertyType());
+        
+        getTypeMapping().register(type);
+        
+        mapElement(property, name);
+    }
+
+    private Class loadClass(String componentType)
+    {
+        try
+        {
+            return getClass().getClassLoader().loadClass(componentType);
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new XFireRuntimeException("Couldn't find component type: " + componentType, e);
+        }
     }
 
     protected QName createQName(Element e, String value)

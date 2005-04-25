@@ -7,7 +7,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.soap.Soap11;
@@ -26,7 +26,7 @@ public class BeanServiceTest
     {
         super.setUp();
         
-        DefaultObjectService service = (DefaultObjectService) 
+        DefaultService service = (DefaultService) 
             getServiceFactory().create(BeanService.class,
                                        "Bean",
                                        "urn:Bean",

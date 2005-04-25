@@ -3,6 +3,7 @@ package org.codehaus.xfire.transport.http;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;

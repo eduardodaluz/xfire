@@ -8,11 +8,11 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.DefaultService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.ObjectService;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.picocontainer.MutablePicoContainer;
@@ -46,7 +46,7 @@ public class XFireServiceRegisterVisitorTest
 
         // Register our service mocked directly.
         ServiceFactory sf = (ServiceFactory) pico.getComponentInstance(ServiceFactory.class);
-        MessageService ms = (MessageService) sf.create(DummyServiceThatCounts.class);
+        DefaultService ms = (DefaultService) sf.create(DummyServiceThatCounts.class);
         ms.setName("test");
         pico.registerComponentInstance(ms);
 
@@ -77,7 +77,7 @@ public class XFireServiceRegisterVisitorTest
         ServiceRegistry sr = (ServiceRegistry) pico.getComponentInstance(ServiceRegistry.class);
         assertNotNull(sr);
 
-        ObjectService s = (ObjectService) sr.getService("test");
+        Service s = sr.getService("test");
         assertNotNull(s);
 
         Invoker invoker = s.getInvoker();
@@ -112,7 +112,7 @@ public class XFireServiceRegisterVisitorTest
         ServiceRegistry sr = (ServiceRegistry) pico.getComponentInstance(ServiceRegistry.class);
         assertNotNull(sr);
 
-        ObjectService s = (ObjectService) sr.getService("test");
+        Service s = sr.getService("test");
         assertNotNull(s);
 
         Invoker invoker = s.getInvoker();

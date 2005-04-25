@@ -22,14 +22,13 @@ import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
-import org.codehaus.xfire.service.binding.ObjectService;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
@@ -60,7 +59,7 @@ public class ObjectServiceConfigurator
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
         
-        DefaultObjectService service = null;
+        DefaultService service = null;
         if (wsdlUrl.length() > 0)
         {
             try
@@ -83,7 +82,7 @@ public class ObjectServiceConfigurator
                 }
                     
                 getLogger().info("Creating service with " + url.toString() );
-                service = (DefaultObjectService) builder.create(loadClass(serviceClass), url);
+                service = (DefaultService) builder.create(loadClass(serviceClass), url);
             }
             catch (WSDLException e)
             {
@@ -106,7 +105,7 @@ public class ObjectServiceConfigurator
                 version = Soap12.getInstance();
             }
             
-            service = (DefaultObjectService) builder.create(clazz, name, namespace, version, style, use, null );
+            service = (DefaultService) builder.create(clazz, name, namespace, version, style, use, null );
             
             PlexusConfiguration[] types = config.getChild("types").getChildren("type");
             for ( int i = 0; i < types.length; i++ )
@@ -118,16 +117,16 @@ public class ObjectServiceConfigurator
         
         if (implClass.length() > 0)
         {
-            service.setProperty(ObjectService.SERVICE_IMPL_CLASS, loadClass(implClass));
+            service.setProperty(Service.SERVICE_IMPL_CLASS, loadClass(implClass));
         }
 
         final String scope = config.getChild( "scope" ).getValue( "application" );
         if( scope.equals( "application" ) )
-            service.setScope( ObjectService.SCOPE_APPLICATION );
+            service.setScope( Service.SCOPE_APPLICATION );
         else if( scope.equals( "session" ) )
-            service.setScope( ObjectService.SCOPE_SESSION );
+            service.setScope( Service.SCOPE_SESSION );
         else if( scope.equals( "request" ) )
-            service.setScope( ObjectService.SCOPE_REQUEST );
+            service.setScope( Service.SCOPE_REQUEST );
         
         Invoker invoker = null;
         

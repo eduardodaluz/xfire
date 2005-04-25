@@ -8,9 +8,9 @@ import javax.wsdl.Part;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.binding.ObjectService;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Attribute;
@@ -24,19 +24,19 @@ import org.codehaus.yom.Element;
 public class DocumentWSDL
     extends AbstractJavaWSDL
 {
-    public DocumentWSDL(ObjectService service, Collection transports) throws WSDLException
+    public DocumentWSDL(Service service, Collection transports) throws WSDLException
     {
         super(service, transports);
     }
 
-    protected void createOutputParts(Message res, Operation op)
+    protected void createOutputParts(Message res, OperationInfo op)
     {
-        writeParameters(res, op.getOutParameters());
+        writeParameters(res, op.getOutputMessage().getMessageParts());
     }
 
-    protected void createInputParts(Message req, Operation op)
+    protected void createInputParts(Message req, OperationInfo op)
     {
-        writeParameters(req, op.getInParameters());
+        writeParameters(req, op.getInputMessage().getMessageParts());
     }
 
     /**
@@ -46,11 +46,11 @@ public class DocumentWSDL
      */
     private void writeParameters(Message message, Collection params)
     {
-        ObjectService service = (ObjectService) getService();
+        Service service = getService();
 
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {
-            Parameter param = (Parameter) itr.next();
+            MessagePartInfo param = (MessagePartInfo) itr.next();
             Class clazz = param.getTypeClass();
             QName pName = param.getName();
             SchemaType type = service.getBindingProvider().getSchemaType(service, param);

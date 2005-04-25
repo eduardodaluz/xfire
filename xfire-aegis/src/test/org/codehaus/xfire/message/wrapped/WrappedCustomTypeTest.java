@@ -6,7 +6,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
-import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -19,13 +19,13 @@ import org.codehaus.yom.Document;
 public class WrappedCustomTypeTest 
     extends AbstractXFireAegisTest
 {
-    ObjectService service;
+    Service service;
     
     public void setUp() throws Exception
     {
         super.setUp();
 
-        service = (ObjectService) getServiceFactory().create(BeanService.class);
+        service = getServiceFactory().create(BeanService.class);
 
         getServiceRegistry().register( service );
 

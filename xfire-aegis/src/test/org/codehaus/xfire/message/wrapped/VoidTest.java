@@ -1,7 +1,7 @@
 package org.codehaus.xfire.message.wrapped;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.VoidService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -33,8 +33,8 @@ public class VoidTest
     
     public void testVoidAsync() throws Exception
     {
-        ObjectService service = (ObjectService) getServiceRegistry().getService("VoidService");
-        service.getOperation("doNothing").setAsync(true);
+        Service service = getServiceRegistry().getService("VoidService");
+        service.getOperation("doNothing").setOneWay(true);
         
         Document response = 
             invokeService("VoidService", 
@@ -61,8 +61,8 @@ public class VoidTest
     
     public void testAsyncWSDL() throws Exception
     {
-        ObjectService service = (ObjectService) getServiceRegistry().getService("VoidService");
-        service.getOperation("doNothing").setAsync(true);
+        Service service = getServiceRegistry().getService("VoidService");
+        service.getOperation("doNothing").setOneWay(true);
         
         Document doc = getWSDLDocument("VoidService");
         printNode(doc);

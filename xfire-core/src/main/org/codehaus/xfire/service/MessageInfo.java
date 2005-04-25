@@ -2,9 +2,11 @@ package org.codehaus.xfire.service;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.LinkedHashMap;
+
+import javax.xml.namespace.QName;
+
 
 /**
  * Represents the description of a service operation message.
@@ -17,8 +19,7 @@ public class MessageInfo
         implements Visitable
 {
     protected String name;
-    protected String namespace;
-    private Map messageParts = new HashMap();
+    private LinkedHashMap messageParts = new LinkedHashMap();
     protected OperationInfo operation;
 
     private MessageInfo(String name)
@@ -59,26 +60,6 @@ public class MessageInfo
     }
 
     /**
-     * Returns the namespace of the message. Defaults to the namespace of the service.
-     *
-     * @return the namespace of the message.
-     */
-    public String getNamespace()
-    {
-        return (namespace != null) ? namespace : operation.getService().getNamespace();
-    }
-
-    /**
-     * Sets the namespace of the message.
-     *
-     * @param namespace the namespace of the message.
-     */
-    public void setNamespace(String namespace)
-    {
-        this.namespace = namespace;
-    }
-
-    /**
      * Returns the operation of this message.
      *
      * @return the operation.
@@ -93,18 +74,20 @@ public class MessageInfo
      *
      * @param name the message part name.
      */
-    public MessagePartInfo addMessagePart(String name)
+    public MessagePartInfo addMessagePart(QName name, Class clazz)
     {
-        if ((name == null) || (name.length() == 0))
+        if (name == null)
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
+        
         if (messageParts.containsKey(name))
         {
             throw new IllegalArgumentException(
                     "An message part with name [" + name + "] already exists in this message");
         }
-        MessagePartInfo part = new MessagePartInfo(name, this);
+        
+        MessagePartInfo part = new MessagePartInfo(name, clazz, this);
         addMessagePart(part);
         return part;
     }
@@ -124,7 +107,7 @@ public class MessageInfo
      *
      * @param name the message part name.
      */
-    public void removeMessagePart(String name)
+    public void removeMessagePart(QName name)
     {
         messageParts.remove(name);
     }
@@ -136,7 +119,7 @@ public class MessageInfo
      * @param name the name.
      * @return the message part; or <code>null</code> if not found.
      */
-    public MessagePartInfo getMessagePart(String name)
+    public MessagePartInfo getMessagePart(QName name)
     {
         return (MessagePartInfo) messageParts.get(name);
     }

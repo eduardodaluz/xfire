@@ -71,6 +71,7 @@ public class BeanTest
     {
         TypeInfo info = new TypeInfo(SimpleBean.class, new QName("urn:Bean", "bean"));
         info.mapElement("howdy", new QName("urn:Bean", "howdycustom"));
+        info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
         type.setTypeClass(SimpleBean.class);
@@ -100,6 +101,7 @@ public class BeanTest
         TypeInfo info = new TypeInfo(SimpleBean.class, new QName("urn:Bean", "bean"));
         info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
         info.mapAttribute("bleh", new QName("urn:Bean", "bleh"));
+        info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
         type.setTypeClass(SimpleBean.class);
@@ -138,6 +140,7 @@ public class BeanTest
         throws Exception
     {
         TypeInfo info = new TypeInfo(SimpleBean.class, new QName("urn:Bean", "bean"));
+        info.setTypeMapping(mapping);
         info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
         info.mapElement("bleh", new QName("urn:Bean", "bleh"));
         
@@ -172,6 +175,7 @@ public class BeanTest
         throws Exception
     {
         TypeInfo info = new TypeInfo(SimpleBean.class, new QName("urn:Bean", "bean"));
+        info.setTypeMapping(mapping);
         info.mapElement("howdy", new QName("urn:anotherns", "howdy"));
         info.mapElement("bleh", new QName("urn:anotherns", "bleh"));
         

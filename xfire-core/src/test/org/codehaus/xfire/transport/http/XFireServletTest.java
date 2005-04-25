@@ -3,17 +3,19 @@ package org.codehaus.xfire.transport.http;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.AsyncHandler;
 import org.codehaus.xfire.handler.BadHandler;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.service.DefaultService;
+import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractServletTest;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.yom.Document;
 
+import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
-import com.meterware.httpunit.GetMethodWebRequest;
 
 /**
  * XFireServletTest
@@ -27,18 +29,15 @@ public class XFireServletTest
     {
         super.setUp();
         
-        MessageService service = new MessageService();
-        service.setName("Echo");
-        service.setSoapVersion(Soap12.getInstance());
+        DefaultService service = (DefaultService) getServiceFactory().create(Echo.class);
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
         
-        service.setServiceHandler(new MockSessionHandler());
-        service.setFaultHandler(new Soap12FaultHandler());
-        
+        service.setRequestPipeline(new HandlerPipeline());
+        service.getRequestPipeline().addHandler(new MockSessionHandler());
         getServiceRegistry().register(service);
         
         // A service which throws a fault
-        MessageService fault = new MessageService();
+        DefaultService fault = new DefaultService();
         fault.setName("Exception");
         fault.setSoapVersion(Soap12.getInstance());
         fault.setServiceHandler(new SoapHandler(new BadHandler()));
@@ -47,7 +46,7 @@ public class XFireServletTest
         getServiceRegistry().register(fault);
         
         // Asynchronous service
-        MessageService asyncService = new MessageService();
+        DefaultService asyncService = new DefaultService();
         asyncService.setName("Async");
         asyncService.setSoapVersion(Soap12.getInstance());
         asyncService.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());

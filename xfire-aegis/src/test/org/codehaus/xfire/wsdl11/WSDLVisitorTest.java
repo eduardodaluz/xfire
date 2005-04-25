@@ -1,15 +1,6 @@
 package org.codehaus.xfire.wsdl11;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.type.AutoTypeMapping;
-import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.aegis.type.basic.StringType;
-import org.codehaus.xfire.service.binding.ObjectService;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.services.Echo;
-import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

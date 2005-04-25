@@ -4,6 +4,8 @@ package org.codehaus.xfire.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
 public class VisitorTest
@@ -11,16 +13,17 @@ public class VisitorTest
 {
     public void testVisitor()
     {
-        ServiceInfo service = new ServiceInfo();
-        OperationInfo operation = service.addOperation("operation");
+        DefaultService service = new DefaultService();
+        
+        OperationInfo operation = new OperationInfo("test", service, null);
         service.addOperation(operation);
         MessageInfo inputMessage = operation.createMessage("input");
         operation.setInputMessage(inputMessage);
         MessageInfo outputMessage = operation.createMessage("output");
         operation.setOutputMessage(outputMessage);
         FaultInfo faultInfo = operation.addFault("fault");
-        MessagePartInfo partInfo1 = inputMessage.addMessagePart("part1");
-        MessagePartInfo partInfo2 = inputMessage.addMessagePart("part2");
+        MessagePartInfo partInfo1 = inputMessage.addMessagePart(new QName("urn:test", "part1"), null);
+        MessagePartInfo partInfo2 = inputMessage.addMessagePart(new QName("urn:test", "part2"), null);
 
         MockVisitor visitor = new MockVisitor();
         service.accept(visitor);
@@ -39,7 +42,7 @@ public class VisitorTest
     {
         private List visited = new ArrayList();
 
-        public void visit(ServiceInfo serviceInfo)
+        public void visit(Service serviceInfo)
         {
             assertNotNull(serviceInfo);
             visited.add(serviceInfo);

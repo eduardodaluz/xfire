@@ -9,9 +9,11 @@ import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.EndpointHandler;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
 
@@ -29,7 +31,7 @@ public class XMLBeansBindingProvider
     {
     }
 
-    public Object readParameter(Parameter p, MessageContext context)
+    public Object readParameter(MessagePartInfo p, MessageContext context)
         throws XFireFault
     {
         try
@@ -42,7 +44,7 @@ public class XMLBeansBindingProvider
         }
     }
 
-    public void writeParameter(Parameter p, MessageContext context, Object value)
+    public void writeParameter(MessagePartInfo p, MessageContext context, Object value)
         throws XFireFault
     {
         try
@@ -69,8 +71,13 @@ public class XMLBeansBindingProvider
         }
     }
 
-    public SchemaType getSchemaType(Service service, Parameter param)
+    public SchemaType getSchemaType(Service service, MessagePartInfo param)
     {
         return new XMLBeansType();
+    }
+
+    public EndpointHandler createEndpointHandler()
+    {
+        return new ObjectServiceHandler();
     }
 }

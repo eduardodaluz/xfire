@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis.type.collection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,19 +13,18 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.basic.ArrayType;
 import org.codehaus.xfire.fault.XFireFault;
 
-public class ListType
+public class CollectionType
     extends ArrayType
 {
     private Class componentType;
     
-    public ListType(Class componentType)
+    public CollectionType(Class componentType)
     {
         super();
         
         this.componentType = componentType;
     }
-    
-    
+
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
@@ -56,7 +56,7 @@ public class ListType
     
         try
         {
-            List list = (List) object;
+            Collection list = (Collection) object;
 
             Type type = getComponentType();
 

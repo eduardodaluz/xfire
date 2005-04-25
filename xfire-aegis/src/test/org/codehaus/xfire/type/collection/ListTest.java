@@ -1,6 +1,5 @@
 package org.codehaus.xfire.type.collection;
 
-
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -8,10 +7,11 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.aegis.type.collection.ListType;
-import org.codehaus.xfire.service.binding.ObjectService;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.aegis.type.collection.CollectionType;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
 
@@ -21,33 +21,35 @@ public class ListTest
     public void setUp() throws Exception
     {
         super.setUp();
-        ObjectService service = (ObjectService) getServiceFactory().create(ListService.class);
+        Service service = getServiceFactory().create(ListService.class);
         getServiceRegistry().register( service );
        
         TypeMapping tm = (TypeMapping) service.getProperty(AegisBindingProvider.TYPE_MAPPING_KEY);
-        ListType strings = new ListType(String.class);
+        CollectionType strings = new CollectionType(String.class);
         QName strQ = new QName("urn:string", "strings");
         strings.setSchemaType(strQ);
         strings.setTypeClass(List.class);
         tm.register(strings);
         
-        ListType doubles = new ListType(Double.class);
+        CollectionType doubles = new CollectionType(Double.class);
         QName dblQ = new QName("urn:double", "doubles");
         doubles.setSchemaType(dblQ);
         doubles.setTypeClass(List.class);
         tm.register(doubles);
         
-        Operation o = service.getOperation("getDoubles");
-        Parameter p = o.getOutParameter(new QName(service.getDefaultNamespace(), "out"));
-        p.getSchemaType(dblQ);
+        OperationInfo o = service.getOperation("getDoubles");
+        MessageInfo outMsg = o.getOutputMessage();
+        MessagePartInfo p = outMsg.getMessagePart(new QName(service.getDefaultNamespace(), "out"));
+        p.setSchemaType(dblQ);
 
         o = service.getOperation("getStrings");
-        p = o.getOutParameter(new QName(service.getDefaultNamespace(), "out"));
-        p.getSchemaType(strQ);
+        outMsg = o.getOutputMessage();
+        p = outMsg.getMessagePart(new QName(service.getDefaultNamespace(), "out"));
+        p.setSchemaType(strQ);
         
         o = service.getOperation("receiveDoubles");
-        p = o.getInParameter(new QName(service.getDefaultNamespace(), "in0"));
-        p.getSchemaType(dblQ);
+        p = o.getInputMessage().getMessagePart(new QName(service.getDefaultNamespace(), "in0"));
+        p.setSchemaType(dblQ);
     }
     
     public void testGetStrings()

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,33 +8,33 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Represents the description of a service operation. An operation has a name, and consists of a number of in and out
- * parameters.
- * <p/>
- * Operations are created using the {@link ServiceInfo#addOperation(String)} method.
- *
- * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
+ * An operation that be performed on a service.
+ * 
+ * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @since Feb 20, 2004
  */
 public class OperationInfo
-        implements Visitable
+    implements Visitable
 {
     private String name;
-    private ServiceInfo service;
+    private Service service;
     private boolean oneWay;
     private MessageInfo inputMessage;
     private MessageInfo outputMessage;
     private Map faults = new HashMap();
-
+    private Method method;
+    
     /**
      * Initializes a new instance of the <code>OperationInfo</code> class with the given name and service.
      *
      * @param name    the name of the operation.
      * @param service the service.
      */
-    OperationInfo(String name, ServiceInfo service)
+    public OperationInfo(String name, Service service, Method method)
     {
         this.name = name;
         this.service = service;
+        this.method = method;
     }
 
     /**
@@ -57,9 +58,15 @@ public class OperationInfo
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
+        
         service.removeOperation(this.name);
         this.name = name;
         service.addOperation(this);
+    }
+
+    public Method getMethod()
+    {
+        return method;
     }
 
     /**
@@ -87,7 +94,7 @@ public class OperationInfo
      *
      * @return the service.
      */
-    public ServiceInfo getService()
+    public Service getService()
     {
         return service;
     }
@@ -160,8 +167,8 @@ public class OperationInfo
         {
             throw new IllegalArgumentException("A fault with name [" + name + "] already exists in this operation");
         }
+
         FaultInfo fault = new FaultInfo(name, this);
-        fault.setNamespace(service.getNamespace());
         addFault(fault);
         return fault;
     }

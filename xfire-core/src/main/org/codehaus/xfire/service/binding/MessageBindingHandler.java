@@ -1,6 +1,7 @@
-package org.codehaus.xfire.service.bridge;
+package org.codehaus.xfire.service.binding;
 
-import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,8 +11,10 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.EndpointHandler;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.Service;
 
 /**
  * Handles java services.
@@ -19,28 +22,18 @@ import org.codehaus.xfire.service.binding.Invoker;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @since Feb 18, 2004
  */
-public class ObjectServiceHandler
+public class MessageBindingHandler
     extends AbstractHandler
     implements EndpointHandler
 {
-    private static final Log logger = LogFactory.getLog(ObjectServiceHandler.class.getName());
+    private static final Log logger = LogFactory.getLog(MessageBindingHandler.class.getName());
 
-    public static final String NAME = "java";
+    public static final String RESPONSE_VALUE = "xfire.message.response";
 
-    public static final String RESPONSE_VALUE = "xfire.java.response";
-
-    public static final String RESPONSE_PIPE = "xfire.java.responsePipe";
-
-    private final Class bridgeClass;
+    public static final String RESPONSE_OP = "xfire.message.operation";
     
-    public ObjectServiceHandler()
+    public MessageBindingHandler()
     {
-        bridgeClass = null;
-    }
-    
-    public ObjectServiceHandler(final Class bridge)
-    {
-        this.bridgeClass = bridge;
     }
 
     /**
@@ -51,24 +44,27 @@ public class ObjectServiceHandler
     {
         try
         {
-            final MessageBridge pipe = getMessageBridge(context);
-            
-            // Read in the parameters...
-            final List params = pipe.read();
-
-            // Don't read the operation in until after reading. Otherwise
-            // it won't work for document style services.
-            final OperationInfo operation = pipe.getOperation();
-
+            final Service service = context.getService();
+            final OperationInfo operation = (OperationInfo) service.getOperations().iterator().next();
             final Invoker invoker = context.getService().getInvoker();
+
+            context.setProperty(RESPONSE_OP, operation);
+            
+            final List params = new ArrayList();
+            
+            for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
+            {
+                MessagePartInfo p = (MessagePartInfo) itr.next();
+                
+                params.add( service.getBindingProvider().readParameter(p, context) );
+            }
             
             // invoke the service method...
             if (!operation.isOneWay())
             {
-                final Object value = invoker.invoke(operation.getMethod(), params.toArray(), context);
-
+                Object value = invoker.invoke(operation.getMethod(), params.toArray(), context);
+                
                 context.setProperty(RESPONSE_VALUE, value);
-                context.setProperty(RESPONSE_PIPE, pipe);
             }
             else
             {
@@ -98,46 +94,23 @@ public class ObjectServiceHandler
         }
     }
 
-    /**
-     * @return
-     * @throws XFireFault 
-     */
-    protected MessageBridge getMessageBridge(MessageContext context) 
-        throws XFireFault
-    {
-        if (bridgeClass != null)
-        {
-            try
-            {
-                Constructor constructor =
-                    bridgeClass.getConstructor(new Class[] {MessageContext.class});
-                
-                return (MessageBridge) constructor.newInstance( new Object[] { context } );
-            }
-            catch (Exception e)
-            {
-                logger.error("Couldn't create message bridge.", e);
-                throw new XFireFault("Couldn't create message bridge", e, XFireFault.RECEIVER);
-            }
-            
-        }
-        return MessageBridgeFactory.createMessageBridge(context);
-    }
-
     public void writeResponse(final MessageContext context)
         throws XFireFault
     {
-        final MessageBridge pipe = (MessageBridge) context.getProperty(RESPONSE_PIPE);
         final Object value = context.getProperty(RESPONSE_VALUE);
+        final OperationInfo op = (OperationInfo) context.getProperty(RESPONSE_OP);
 
-        if (pipe != null)
+        if (value != null)
         {
-            pipe.write(new Object[] { value });
+            MessageInfo outMsg = op.getOutputMessage();
+            MessagePartInfo outP = (MessagePartInfo) outMsg.getMessageParts().iterator().next();
+            
+            context.getService().getBindingProvider().writeParameter(outP, context, value);
         }
     }
 
     public boolean hasResponse(MessageContext context)
     {
-        return (context.getProperty(RESPONSE_PIPE) != null);
+        return (context.getProperty(RESPONSE_VALUE) != null);
     }
 }

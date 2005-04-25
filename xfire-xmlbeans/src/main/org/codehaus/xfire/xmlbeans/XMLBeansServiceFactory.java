@@ -8,11 +8,8 @@ import javax.xml.namespace.QName;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
@@ -26,66 +23,31 @@ public class XMLBeansServiceFactory
         super( transportManager, new XMLBeansBindingProvider() );
     }
 
-    protected void addOperation(DefaultObjectService service, Method method)
+    protected QName getInParameterName(Service service, Method method, int paramNumber, boolean doc)
     {
-        final Operation op = new Operation( method );
-        
-        service.addOperation(op);
-        
         Class[] paramClasses = method.getParameterTypes();
-        
-        boolean isDoc = service.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
-        
-        Parameter p = null;
-        
-        for ( int j = 0; j < paramClasses.length; j++ )
+        if ( XmlObject.class.isAssignableFrom(paramClasses[paramNumber]) )
         {
-            if ( XmlObject.class.isAssignableFrom(paramClasses[j]) )
-            {
-                SchemaType st = getSchemaType(paramClasses[j]);
-
-                p = new Parameter(st.getDocumentElementName(), paramClasses[j]);
-            }
-            else
-            {
-                String paramName = "";
-                if (isDoc)
-                    paramName = method.getName();
-
-                paramName = paramName + "in" + j;
-
-                final QName q = new QName(service.getDefaultNamespace(), paramName);
-                p = new Parameter(q, paramClasses[j]);
-            }
-            
-            op.addInParameter( p );
+            return getSchemaType(paramClasses[paramNumber]).getDocumentElementName();
         }
-
-        Parameter outP = null;
-        
-        Class outClass = op.getMethod().getReturnType();
-        if (!outClass.isAssignableFrom(void.class))
+        else
         {
-            if ( XmlObject.class.isAssignableFrom(op.getMethod().getReturnType()) )
-            {
-                SchemaType st = getSchemaType(outClass);
-    
-                outP = new Parameter(st.getDocumentElementName(), outClass);
-            }
-            else
-            {
-                String outName = "";
-                if ( isDoc )
-                    outName = method.getName();
-                
-                final QName q = new QName(service.getDefaultNamespace(), outName + "out");
-                outP = new Parameter(q, method.getReturnType());
-            }
-            
-            op.addOutParameter(outP);
+            return super.getInParameterName(service, method, paramNumber, doc);
         }
     }
-    
+
+    protected QName getOutParameterName(Service service, Method method, boolean doc)
+    {
+        if ( XmlObject.class.isAssignableFrom(method.getReturnType()) )
+        {
+            return getSchemaType(method.getReturnType()).getDocumentElementName();
+        }
+        else
+        {
+            return super.getOutParameterName(service, method, doc);
+        }
+    }
+
     /**
      * Introspect to find the SchemaType for a particular XMLBeans class.
      */

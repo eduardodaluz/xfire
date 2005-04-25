@@ -4,9 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -27,7 +27,7 @@ public class XFireExporter
         extends RemoteExporter
         implements Controller, InitializingBean, BeanNameAware
 {
-    private DefaultObjectService service;
+    private DefaultService service;
     private ServiceFactory serviceFactory;
     private XFireServletControllerAdapter delegate;
     private XFire xFire;
@@ -49,7 +49,7 @@ public class XFireExporter
             theName = theName.substring(1);
         }
 
-        service = (DefaultObjectService) serviceFactory.create(getServiceInterface(),
+        service = (DefaultService) serviceFactory.create(getServiceInterface(),
                                                                theName,
                                                                namespace,
                                                                soapVersion,

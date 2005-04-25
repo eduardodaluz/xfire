@@ -14,11 +14,11 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;

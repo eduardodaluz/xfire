@@ -1,7 +1,7 @@
 package org.codehaus.xfire.xmpp;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
@@ -16,7 +16,7 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
 public class TransportTest
     extends AbstractXFireAegisTest
 {
-    private DefaultObjectService echo;
+    private Service echo;
     
     XMPPConnection conn;
     
@@ -31,7 +31,7 @@ public class TransportTest
         super.setUp();
         try
         {
-            echo = (DefaultObjectService) getServiceFactory().create(Echo.class);
+            echo = getServiceFactory().create(Echo.class);
 
             getServiceRegistry().register( echo );
 

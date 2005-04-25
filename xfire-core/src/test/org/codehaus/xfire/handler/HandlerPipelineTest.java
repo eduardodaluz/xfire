@@ -18,9 +18,8 @@ public class HandlerPipelineTest
             throws Exception
     {
         handlerPipeline = new HandlerPipeline();
-        handler = new EchoHandler();
+        handler = new AsyncHandler();
         handlerPipeline.addHandler(handler);
-
     }
 
 

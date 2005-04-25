@@ -11,9 +11,11 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.EndpointHandler;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 
@@ -62,7 +64,7 @@ public class AegisBindingProvider
         registry.register(service.getDefaultNamespace(), tm);
     }
 
-    public Object readParameter(Parameter p, MessageContext context) 
+    public Object readParameter(MessagePartInfo p, MessageContext context) 
         throws XFireFault
     {
         Type type = getParameterType(getTypeMapping(context.getService()), p);
@@ -72,7 +74,7 @@ public class AegisBindingProvider
         return type.readObject(reader, context);
     }
     
-    public void writeParameter(Parameter p, MessageContext context, Object value) 
+    public void writeParameter(MessagePartInfo p, MessageContext context, Object value) 
         throws XFireFault
     {
         Type type = getParameterType(getTypeMapping(context.getService()), p);
@@ -85,7 +87,7 @@ public class AegisBindingProvider
         mw.close();
     }
 
-    private Type getParameterType(TypeMapping tm, Parameter param)
+    private Type getParameterType(TypeMapping tm, MessagePartInfo param)
     {
         Type type = null;
         if (param.getSchemaType() != null)
@@ -102,8 +104,13 @@ public class AegisBindingProvider
         return (TypeMapping) service.getProperty(TYPE_MAPPING_KEY);
     }
 
-    public SchemaType getSchemaType(Service service, Parameter param)
+    public SchemaType getSchemaType(Service service, MessagePartInfo param)
     {
         return getParameterType(getTypeMapping(service), param);
+    }
+
+    public EndpointHandler createEndpointHandler()
+    {
+        return new ObjectServiceHandler();
     }
 }

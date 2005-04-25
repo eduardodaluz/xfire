@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.codehaus.xfire.client.http.SoapHttpClient;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**

@@ -5,6 +5,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
+
 import org.codehaus.xfire.fault.XFireFault;
 
 public class AbstractClientHandlerTest

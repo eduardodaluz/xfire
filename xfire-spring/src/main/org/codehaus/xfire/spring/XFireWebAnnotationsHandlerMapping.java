@@ -5,8 +5,8 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContextException;
@@ -59,7 +59,7 @@ public class XFireWebAnnotationsHandlerMapping
             Class clazz = getApplicationContext().getType(beanNames[i]);
             if (webAnnotations.hasWebServiceAnnotation(clazz))
             {
-                DefaultObjectService service = (DefaultObjectService) serviceFactory.create(clazz);
+                DefaultService service = (DefaultService) serviceFactory.create(clazz);
                 if (logger.isInfoEnabled())
                 {
                     logger.info("Exposing SOAP v." + service.getSoapVersion().getVersion() + " service " +

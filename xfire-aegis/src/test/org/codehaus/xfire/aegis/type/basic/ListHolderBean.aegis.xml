@@ -1,0 +1,10 @@
+<mappings xmlns="urn:xfire:aegis:200504" 
+          xmlns:bean="urn:xfire:bean">
+
+  <mapping uri="urn:xfire:bean">
+    <collection property="beans" 
+                name="bean:Beans" 
+                componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
+  </mapping>
+
+</mappings>

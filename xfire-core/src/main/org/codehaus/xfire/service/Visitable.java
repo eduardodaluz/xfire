@@ -3,7 +3,7 @@ package org.codehaus.xfire.service;
 /**
  * Indicates that a class may be visited by a {@link Visitor}.
  * <p/>
- * Used to recurse into {@link ServiceInfo}, {@link OperationInfo}, {@link MessageInfo}, etc.
+ * Used to recurse into {@link Service}, {@link OperationInfo}, {@link MessageInfo}, etc.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see Visitor

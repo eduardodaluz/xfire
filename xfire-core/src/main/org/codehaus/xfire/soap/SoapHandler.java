@@ -1,6 +1,7 @@
 package org.codehaus.xfire.soap;
 
 import java.util.Stack;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

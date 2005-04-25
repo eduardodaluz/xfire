@@ -10,8 +10,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -38,7 +38,7 @@ public class WrappedBridge
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
-        Operation op = getService().getOperation( dr.getLocalName() );
+        OperationInfo op = getService().getOperation( dr.getLocalName() );
         setOperation(op);
 
         if (op == null)
@@ -48,7 +48,7 @@ public class WrappedBridge
 
         while(STAXUtils.toNextElement(dr))
         {
-            Parameter p = op.getInParameter(dr.getName());
+            MessagePartInfo p = op.getInputMessage().getMessagePart(dr.getName());
 
             if (p == null)
             {
@@ -74,9 +74,9 @@ public class WrappedBridge
             writeStartElement(getResponseWriter(), name, getService().getDefaultNamespace());
             
             int i = 0;
-            for(Iterator itr = getOperation().getOutParameters().iterator(); itr.hasNext();)
+            for(Iterator itr = getOperation().getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
             {
-                Parameter outParam = (Parameter) itr.next();
+                MessagePartInfo outParam = (MessagePartInfo) itr.next();
     
                 getService().getBindingProvider().writeParameter(outParam, getContext(), values[i]);
                 i++;

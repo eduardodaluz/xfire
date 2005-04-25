@@ -34,7 +34,7 @@ public class BeanType
     
     private static Map objectProperties = null;
     
-    private TypeInfo info;
+    private TypeInfo _info;
     
     public BeanType()
     {
@@ -42,7 +42,7 @@ public class BeanType
     
     public BeanType(TypeInfo info)
     {
-        this.info = info;
+        this._info = info;
         
         this.setTypeClass(info.getTypeClass());
     }
@@ -63,7 +63,7 @@ public class BeanType
                 MessageReader childReader = reader.getNextAttributeReader();
                 QName name = childReader.getName();
                 
-                Type type = getType(name);
+                Type type = info.getType(name);
 
                 if (type != null)
                 {
@@ -79,7 +79,7 @@ public class BeanType
                 MessageReader childReader = reader.getNextElementReader();
                 QName name = childReader.getName();
                 
-                Type type = getType(name);
+                Type type = info.getType(name);
 
                 if (type != null)
                 {
@@ -130,43 +130,6 @@ public class BeanType
         }
     }
 
-    /**
-     * Get the type class for the field with the specified QName.
-     * @param object
-     * @param name
-     * @param namespace
-     * @return
-     * @throws XFireFault
-     */
-    protected Type getType(QName name) 
-    {
-        Type type = getTypeMapping().getType(name);
-        
-        if (type == null)
-        {
-            PropertyDescriptor desc = null;
-            try
-            {
-                desc = getTypeInfo().getPropertyDescriptor(name);
-            }
-            catch (Exception e)
-            {
-                throw new XFireRuntimeException("Couldn't get properties.", e);
-            }
-            
-            if (desc == null)
-            {
-                return null;
-            }
-            
-            type = getTypeMapping().getType(desc.getPropertyType());
-        }
-        
-        if ( type == null )
-            throw new XFireRuntimeException( "Couldn't find type for property " + name );
-        
-        return type;
-    }
 
 
     /**
@@ -268,7 +231,7 @@ public class BeanType
                                           SoapConstants.XSD);
             seq.appendChild(element);
             
-            Type type = getType(name);
+            Type type = info.getType(name);
             
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
@@ -284,7 +247,7 @@ public class BeanType
                                           SoapConstants.XSD);
             complex.appendChild(element);
             
-            Type type = getType(name);
+            Type type = info.getType(name);
             
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
@@ -304,7 +267,7 @@ public class BeanType
             element.addAttribute(new Attribute("name", name.getLocalPart()));
             element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
             
-            if (info.isNillable(name))
+            if (getTypeInfo().isNillable(name))
                 element.addAttribute(new Attribute("nillable", "true"));
         }
         else
@@ -333,14 +296,14 @@ public class BeanType
         {
             QName name = (QName) itr.next();
 
-            deps.add(getType(name));
+            deps.add(info.getType(name));
         }
 
         for (Iterator itr = info.getElements(); itr.hasNext(); )
         {
             QName name = (QName) itr.next();
 
-            deps.add(getType(name));
+            deps.add(info.getType(name));
         }
         
         return deps;
@@ -348,10 +311,10 @@ public class BeanType
 
     public TypeInfo getTypeInfo()
     {
-        if (info == null)
-            info = createTypeInfo();
+        if (_info == null)
+            _info = createTypeInfo();
         
-        return info;
+        return _info;
     }
 
     public TypeInfo createTypeInfo()
@@ -373,6 +336,7 @@ public class BeanType
                                    is);
         }
 
+        info.setTypeMapping(getTypeMapping());
         info.initialize();
         
         return info;

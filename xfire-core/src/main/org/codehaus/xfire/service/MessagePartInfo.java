@@ -1,84 +1,74 @@
 package org.codehaus.xfire.service;
 
+import javax.xml.namespace.QName;
+
+
 /**
  * Represents the description of a service operation message part.
  * <p/>
  * Message parts are created using the {@link MessageInfo#addMessagePart(String)} method.
- *
+ * 
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
+ * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @since Nov 16, 2004
  */
 public class MessagePartInfo
-        implements Visitable
+    implements Visitable
 {
-    private String name;
-    private String namespace;
-    private MessageInfo message;
-
-    /**
-     * Initializes a new <code>MessagePartInfo</code> with the given name and message.
-     *
-     * @param name
-     */
-    MessagePartInfo(String name, MessageInfo message)
+    private QName name;
+    private QName schemaType;
+    private Class typeClass;
+    private MessageInfo messageInfo;
+    
+    MessagePartInfo()
+    {
+    }
+    
+    MessagePartInfo(QName name, Class typeClass, MessageInfo messageInfo)
     {
         this.name = name;
-        this.message = message;
+        this.typeClass = typeClass;
+        this.messageInfo = messageInfo;
     }
-
+    
     /**
-     * Returns the name of this message part info.
-     *
-     * @return the name.
+     * @return Returns the name.
      */
-    public String getName()
+    public QName getName()
     {
         return name;
     }
-
+    
     /**
-     * Sets the name of this message part info.
-     *
-     * @param name the name.
+     * @param name The name to set.
      */
-    public void setName(String name)
+    public void setName(QName name)
     {
-        if ((name == null) || (name.length() == 0))
-        {
-            throw new IllegalArgumentException("Invalid name [" + name + "]");
-        }
-        message.removeMessagePart(this.name);
         this.name = name;
-        message.addMessagePart(this);
     }
 
     /**
-     * Returns the namespace of this message part info. Defaults to the namespace of the mesage.
-     *
-     * @return the namespace.
+     * The xml schema type of this parameter.
+     * @return
      */
-    public String getNamespace()
+    public QName getSchemaType()
     {
-        return (namespace != null) ? namespace : message.getNamespace();
+        return schemaType;
     }
 
-    /**
-     * Sets the namespace of this message part info.
-     *
-     * @param namespace the namespace.
-     */
-    public void setNamespace(String namespace)
+    public void setSchemaType(QName schemaType)
     {
-        this.namespace = namespace;
+        this.schemaType = schemaType;
     }
 
-    /**
-     * Returns the message of this part.
-     *
-     * @return the message.
-     */
-    public MessageInfo getMessage()
+    public Class getTypeClass()
     {
-        return message;
+        return typeClass;
+    }
+    
+    public void setTypeClass(Class typeClass)
+    {
+        this.typeClass = typeClass;
     }
 
     /**

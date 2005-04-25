@@ -81,7 +81,7 @@ public class Jsr181WebAnnotations
         {
             WebResultAnnotation annot = new WebResultAnnotation();
             annot.setName(webResult.name());
-            annot.setTargetNameSpace(webResult.targetNamespace());
+            annot.setTargetNamespace(webResult.targetNamespace());
 
             return annot;
         }

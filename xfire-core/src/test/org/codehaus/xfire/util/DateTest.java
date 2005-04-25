@@ -1,6 +1,7 @@
 package org.codehaus.xfire.util;
 
 import java.util.Date;
+
 import junit.framework.TestCase;
 
 /**

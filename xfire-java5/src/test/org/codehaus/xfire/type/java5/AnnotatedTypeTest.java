@@ -7,7 +7,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.service.binding.DefaultObjectService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
 
@@ -18,7 +18,7 @@ public class AnnotatedTypeTest
     {
         super.setUp();
         
-        DefaultObjectService service = (DefaultObjectService)
+        DefaultService service = (DefaultService)
             getServiceFactory().create(AnnotatedService.class);
 
         TypeMapping tm = AegisBindingProvider.getTypeMapping(service);

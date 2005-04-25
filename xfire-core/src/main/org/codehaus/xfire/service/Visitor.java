@@ -17,7 +17,7 @@ public interface Visitor
      *
      * @param serviceInfo the service.
      */
-    void visit(ServiceInfo serviceInfo);
+    void visit(Service service);
 
     /**
      * Visits the given operation.

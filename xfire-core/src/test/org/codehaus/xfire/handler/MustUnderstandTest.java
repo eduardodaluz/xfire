@@ -4,7 +4,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.Soap11FaultHandler;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -13,13 +13,13 @@ import org.codehaus.yom.Document;
 public class MustUnderstandTest
     extends AbstractXFireTest
 {
-    private MessageService service;
+    private DefaultService service;
     
     public void setUp() throws Exception
     {
         super.setUp();
         
-        service = new MessageService();
+        service = new DefaultService();
         service.setName("Echo");
         service.setSoapVersion(Soap11.getInstance());
  

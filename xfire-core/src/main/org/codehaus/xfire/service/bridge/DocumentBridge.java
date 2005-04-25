@@ -8,8 +8,8 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -35,7 +35,7 @@ public class DocumentBridge
 
         while (STAXUtils.toNextElement(dr))
         {
-            Parameter p = findParameter(dr.getName());
+            MessagePartInfo p = findParameter(dr.getName());
             
             if (p == null)
             {
@@ -51,12 +51,12 @@ public class DocumentBridge
         return parameters;
     }
 
-    protected Parameter findParameter(QName name)
+    protected MessagePartInfo findParameter(QName name)
     {
         for ( Iterator itr = getService().getOperations().iterator(); itr.hasNext(); )
         {
-            Operation op = (Operation) itr.next();
-            Parameter p = op.getInParameter(name);
+            OperationInfo op = (OperationInfo) itr.next();
+            MessagePartInfo p = op.getInputMessage().getMessagePart(name);
             
             if ( p != null )
                 return p;
@@ -64,12 +64,12 @@ public class DocumentBridge
         return null;
     }
 
-    protected Operation findOperation(int i)
+    protected OperationInfo findOperation(int i)
     {
         for ( Iterator itr = getService().getOperations().iterator(); itr.hasNext(); )
         {
-            Operation o = (Operation) itr.next();
-            if ( o.getInParameters().size() == i )
+            OperationInfo o = (OperationInfo) itr.next();
+            if ( o.getInputMessage().getMessageParts().size() == i )
                 return o;
         }
         
@@ -80,9 +80,9 @@ public class DocumentBridge
     	throws XFireFault
     {
         int i = 0;
-        for(Iterator itr = getOperation().getOutParameters().iterator(); itr.hasNext();)
+        for(Iterator itr = getOperation().getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
-            Parameter outParam = (Parameter) itr.next();
+            MessagePartInfo outParam = (MessagePartInfo) itr.next();
             
             getService().getBindingProvider().writeParameter(outParam, getContext(), values[i]);
             i++;

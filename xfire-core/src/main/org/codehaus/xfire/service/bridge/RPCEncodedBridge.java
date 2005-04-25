@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.binding.Operation;
-import org.codehaus.xfire.service.binding.Parameter;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -34,7 +34,7 @@ public class RPCEncodedBridge
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
         String opName = dr.getLocalName();
-        Operation operation = getService().getOperation( opName );
+        OperationInfo operation = getService().getOperation( opName );
         if (operation == null)
         {
             // Determine the operation name which is in the form of:
@@ -55,7 +55,7 @@ public class RPCEncodedBridge
 
         while(STAXUtils.toNextElement(dr))
         {
-            Parameter p = operation.getInParameter(dr.getName());
+            MessagePartInfo p = operation.getInputMessage().getMessagePart(dr.getName());
 
             if (p == null)
             {

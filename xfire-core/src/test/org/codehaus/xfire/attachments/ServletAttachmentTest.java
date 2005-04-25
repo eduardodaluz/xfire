@@ -9,10 +9,10 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 
-import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.handler.EchoHandler;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractServletTest;
 
 import com.meterware.httpunit.PostMethodWebRequest;
@@ -31,14 +31,11 @@ public class ServletAttachmentTest
     {
         super.setUp();
         
-        MessageService service = new MessageService();
-        service.setName("Echo");
-        service.setSoapVersion(Soap12.getInstance());
-        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
-        
-        service.setServiceHandler(new EchoHandler());
-        service.setFaultHandler(new Soap12FaultHandler());
-        
+        Service service = getServiceFactory().create(Echo.class,
+                                                     Soap12.getInstance(),
+                                                     SoapConstants.STYLE_DOCUMENT,
+                                                     SoapConstants.USE_LITERAL);
+
         getServiceRegistry().register(service);
     }
     

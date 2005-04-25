@@ -105,7 +105,11 @@ public class DefaultXFire
         else if( handler != null )
         {
             XFireFault fault = XFireFault.createFault(e);
-            logger.error("Fault occurred.", fault);
+
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Fault occurred.", fault);
+            }
             
             handler.handleFault(fault, context);
             

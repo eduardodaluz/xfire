@@ -2,7 +2,7 @@ package org.codehaus.xfire.service.bridge;
 import java.util.List;
 
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.binding.Operation;
+import org.codehaus.xfire.service.OperationInfo;
 
 /**
  * Reads/Writes Messages.
@@ -19,5 +19,5 @@ public interface MessageBridge
     /**
      * @return The operation that is being invoked in this request.
      */
-    Operation getOperation();
+    OperationInfo getOperation();
 }

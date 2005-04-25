@@ -2,6 +2,8 @@ package org.codehaus.xfire.service;
 
 import java.util.Iterator;
 
+
+
 /**
  * Represents the description of a service operation fault.
  * <p/>

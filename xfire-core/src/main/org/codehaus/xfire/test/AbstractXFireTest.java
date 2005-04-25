@@ -214,6 +214,12 @@ public abstract class AbstractXFireTest
 
     public ServiceFactory getServiceFactory()
     {
+        if (factory == null)
+        {
+            factory = new ObjectServiceFactory(getXFire().getTransportManager(),
+                                               new MessageBindingProvider());
+        }
+        
         return factory;
     }
 

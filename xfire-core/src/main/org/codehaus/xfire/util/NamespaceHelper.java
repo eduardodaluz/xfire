@@ -1,6 +1,7 @@
 package org.codehaus.xfire.util;
 
 import java.util.StringTokenizer;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 

@@ -1,7 +1,7 @@
 package org.codehaus.xfire.handler;
 
 import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.service.MessageService;
+import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -16,7 +16,7 @@ public class AsyncServiceTest
     {
         super.setUp();
         
-        MessageService asyncService = new MessageService();
+        DefaultService asyncService = new DefaultService();
         asyncService.setName("Async");
         asyncService.setSoapVersion(Soap12.getInstance());
         asyncService.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());

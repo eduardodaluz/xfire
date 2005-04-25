@@ -1,7 +1,7 @@
 package org.codehaus.xfire.service.bridge;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.binding.ObjectService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
@@ -14,7 +14,7 @@ public class MessageBridgeFactory
 {
 	public static MessageBridge createMessageBridge(MessageContext context)
     {
-        ObjectService service = (ObjectService) context.getService();
+        Service service = context.getService();
         
         AbstractMessageBridge bridge;
         if (service.getStyle().equals(SoapConstants.STYLE_WRAPPED) 
