@@ -44,6 +44,10 @@ public class XFireExporter
     {
         // Use specific name if given, else fall back to bean name.
         String theName = (this.name != null ? this.name : this.beanName);
+        if (theName.startsWith("/"))
+        {
+            theName = theName.substring(1);
+        }
 
         service = (DefaultObjectService) serviceFactory.create(getServiceInterface(),
                                                                theName,
