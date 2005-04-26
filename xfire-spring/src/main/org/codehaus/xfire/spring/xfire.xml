@@ -32,6 +32,14 @@
         singleton="true">
     </bean>
 
+    <bean id="xfire.aegisBindingProvider"
+        class="org.codehaus.xfire.aegis.AegisBindingProvider"
+        singleton="true">
+        <constructor-arg index="0">
+          <ref bean="xfire.typeMappingRegistry"/>
+        </constructor-arg>
+    </bean>
+
     <bean id="xfire.serviceFactory"
         class="org.codehaus.xfire.service.binding.ObjectServiceFactory"
         singleton="true">
@@ -39,7 +47,7 @@
             <ref bean="xfire.transportManager"/>
         </constructor-arg>
         <constructor-arg index="1">
-            <ref bean="xfire.typeMappingRegistry"/>
+            <ref bean="xfire.aegisBindingProvider"/>
         </constructor-arg>
     </bean>
 
