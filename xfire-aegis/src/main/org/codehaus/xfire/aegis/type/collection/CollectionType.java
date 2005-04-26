@@ -2,8 +2,10 @@ package org.codehaus.xfire.aegis.type.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -32,7 +34,7 @@ public class CollectionType
         {
             Type compType = getComponentType();
             
-            List values = new ArrayList();
+            Collection values = createCollection();
             
             while (reader.hasMoreElementReaders())
             {
@@ -48,6 +50,27 @@ public class CollectionType
             throw new XFireRuntimeException("Illegal argument.", e);
         }
     }
+
+    protected Collection createCollection()
+    {
+        Collection values = null;
+        
+        if (getTypeClass().isAssignableFrom(List.class))
+        {
+            values = new ArrayList();
+        }
+        else if (getTypeClass().isAssignableFrom(Set.class))
+        {
+            values = new HashSet();
+        }
+        else
+        {
+            values = new ArrayList();
+        }
+        
+        return values;
+    }
+
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
         throws XFireFault
     {
