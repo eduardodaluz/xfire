@@ -7,8 +7,6 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,7 +42,7 @@ public class XFireExporter
     {
         // Use specific name if given, else fall back to bean name.
         String theName = (this.name != null ? this.name : this.beanName);
-        if (theName.startsWith("/"))
+        if (theName != null && theName.startsWith("/"))
         {
             theName = theName.substring(1);
         }
