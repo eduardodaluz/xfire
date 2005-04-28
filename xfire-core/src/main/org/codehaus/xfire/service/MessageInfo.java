@@ -1,17 +1,18 @@
 package org.codehaus.xfire.service;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javax.xml.namespace.QName;
 
 
 /**
  * Represents the description of a service operation message.
  * <p/>
- * Messages are created using the {@link OperationInfo#createMessage(String)} method.
+ * Messages are created using the {@link OperationInfo#createMessage} method.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
@@ -19,13 +20,9 @@ public class MessageInfo
         implements Visitable
 {
     protected String name;
-    private LinkedHashMap messageParts = new LinkedHashMap();
+    private Map messageParts = new HashMap();
+    private List messagePartList = new LinkedList();
     protected OperationInfo operation;
-
-    private MessageInfo(String name)
-    {
-        this.name = name;
-    }
 
     /**
      * Initializes a new instance of the <code>MessageInfo</code> class with the given name and operation.
@@ -72,7 +69,8 @@ public class MessageInfo
     /**
      * Adds an message part to this message info.
      *
-     * @param name the message part name.
+     * @param name  the qualified name of the message part.
+     * @param clazz the type of the message part.
      */
     public MessagePartInfo addMessagePart(QName name, Class clazz)
     {
@@ -80,13 +78,12 @@ public class MessageInfo
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
-        
+
         if (messageParts.containsKey(name))
         {
-            throw new IllegalArgumentException(
-                    "An message part with name [" + name + "] already exists in this message");
+            throw new IllegalArgumentException("An message part with name [" + name + "] already exists in this message");
         }
-        
+
         MessagePartInfo part = new MessagePartInfo(name, clazz, this);
         addMessagePart(part);
         return part;
@@ -100,6 +97,7 @@ public class MessageInfo
     void addMessagePart(MessagePartInfo part)
     {
         messageParts.put(part.getName(), part);
+        messagePartList.add(part);
     }
 
     /**
@@ -109,7 +107,12 @@ public class MessageInfo
      */
     public void removeMessagePart(QName name)
     {
-        messageParts.remove(name);
+        MessagePartInfo messagePart = getMessagePart(name);
+        if (messagePart != null)
+        {
+            messageParts.remove(name);
+            messagePartList.remove(messagePart);
+        }
     }
 
 
@@ -129,9 +132,9 @@ public class MessageInfo
      *
      * @return all message parts.
      */
-    public Collection getMessageParts()
+    public List getMessageParts()
     {
-        return Collections.unmodifiableCollection(messageParts.values());
+        return Collections.unmodifiableList(messagePartList);
     }
 
     /**
@@ -142,7 +145,7 @@ public class MessageInfo
     public void accept(Visitor visitor)
     {
         visitor.visit(this);
-        for (Iterator iterator = messageParts.values().iterator(); iterator.hasNext();)
+        for (Iterator iterator = getMessageParts().iterator(); iterator.hasNext();)
         {
             MessagePartInfo messagePartInfo = (MessagePartInfo) iterator.next();
             messagePartInfo.accept(visitor);
