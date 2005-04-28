@@ -5,7 +5,9 @@ package org.codehaus.xfire.spring;
  */
 
 import java.io.ByteArrayInputStream;
-
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Service;
@@ -19,11 +21,15 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.servlet.HandlerExecutionChain;
+import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
 import org.xml.sax.InputSource;
 
 public class XFireExporterTest
@@ -99,12 +105,39 @@ public class XFireExporterTest
     {
         exporter.afterPropertiesSet();
 
+        HttpServletRequest request = getRequest();
+        HttpServletResponse response = new MockHttpServletResponse();
+        exporter.handleRequest(request, response);
+    }
+
+    private HttpServletRequest getRequest()
+            throws IOException
+    {
         Resource resource = new ClassPathResource("/org/codehaus/xfire/spring/echoRequest.xml");
         byte[] bytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "Echo");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/Echo");
         request.setContentType("text/xml");
         request.setContent(bytes);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        exporter.handleRequest(request, response);
+        return request;
+    }
+
+    public void testSpringIntegration()
+            throws Exception
+    {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext(new String[]{
+            "/org/codehaus/xfire/spring/xfire.xml",
+            "/org/codehaus/xfire/spring/applicationContext.xml"});
+
+        assertNotNull(appContext.getBean("xfire.serviceFactory"));
+        assertNotNull(appContext.getBean("echo"));
+        XFireExporter exporter = (XFireExporter) appContext.getBean("/Echo");
+        assertNotNull(exporter);
+        BeanNameUrlHandlerMapping handlerMapping = new BeanNameUrlHandlerMapping();
+        handlerMapping.setApplicationContext(appContext);
+        HttpServletRequest request = getRequest();
+
+        HandlerExecutionChain chain = handlerMapping.getHandler(request);
+        assertNotNull(chain);
+        assertEquals(exporter, chain.getHandler());
     }
 }
