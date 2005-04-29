@@ -1,7 +1,9 @@
 package org.codehaus.xfire.service;
 
+import java.net.URL;
 import java.util.Collection;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
@@ -134,5 +136,66 @@ public class ServiceEndpointAdapter
     public void setInvoker(Invoker invoker)
     {
         endpoint.setInvoker(invoker);
+    }
+
+    public void setWSDLURL(URL wsdlUri)
+    {
+        endpoint.setWSDLURL(wsdlUri);
+    }
+
+    public void setSoapVersion(SoapVersion soapVersion)
+    {
+        endpoint.setSoapVersion(soapVersion);
+    }
+
+    public void setStyle(String style)
+    {
+        endpoint.setStyle(style);
+    }
+
+    public void setUse(String use)
+    {
+        endpoint.setUse(use);
+    }
+
+    public void setName(String name)
+    {
+        endpoint.getService().setName(new QName(name));
+    }
+
+    public void setFaultHandler(FaultHandler faultHandler)
+    {
+        endpoint.setFaultHandler(faultHandler);
+    }
+
+    public void setServiceHandler(Handler serviceHandler)
+    {
+        endpoint.setServiceHandler(serviceHandler);
+    }
+
+    public void setWSDLURL(String wsdlUri)
+            throws WSDLException
+    {
+        endpoint.setWSDLURL(wsdlUri);
+    }
+
+    public void setScope(int scope)
+    {
+        endpoint.setScope(scope);
+    }
+
+    public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
+    {
+        endpoint.setFaultPipeline(faultPipeline);
+    }
+
+    public void setRequestPipeline(HandlerPipeline requestPipeline)
+    {
+        endpoint.setRequestPipeline(requestPipeline);
+    }
+
+    public void setResponsePipeline(HandlerPipeline responsePipeline)
+    {
+        endpoint.setResponsePipeline(responsePipeline);
     }
 }

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service;
 
+import java.net.URL;
 import java.util.Collection;
 import javax.wsdl.WSDLException;
 
@@ -110,4 +111,28 @@ public interface Service
 
     void setInvoker(Invoker invoker);
 
+    void setWSDLURL(URL wsdlUri);
+
+    void setSoapVersion(SoapVersion soapVersion);
+
+    void setStyle(String style);
+
+    void setUse(String use);
+
+    void setName(String name);
+
+    void setFaultHandler(FaultHandler faultHandler);
+
+    void setServiceHandler(Handler serviceHandler);
+
+    void setWSDLURL(String wsdlUri)
+            throws WSDLException;
+
+    void setScope(int scope);
+
+    void setFaultPipeline(FaultHandlerPipeline faultPipeline);
+
+    void setRequestPipeline(HandlerPipeline requestPipeline);
+
+    void setResponsePipeline(HandlerPipeline responsePipeline);
 }

@@ -310,5 +310,20 @@ public class ServiceEndpoint
     {
         return use;
     }
+
+    public void setSoapVersion(SoapVersion soapVersion)
+    {
+        this.soapVersion = soapVersion;
+    }
+
+    public void setStyle(String style)
+    {
+        this.style = style;
+    }
+
+    public void setUse(String use)
+    {
+        this.use = use;
+    }
 }
 
