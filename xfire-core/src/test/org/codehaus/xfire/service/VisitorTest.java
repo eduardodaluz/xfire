@@ -7,7 +7,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
-import org.codehaus.xfire.service.binding.Binding;
 
 public class VisitorTest
         extends TestCase
@@ -134,18 +133,6 @@ public class VisitorTest
         {
             assertNotNull(messagePartInfo);
             ended.add(messagePartInfo);
-        }
-
-        public void startBinding(Binding binding)
-        {
-            assertNotNull(binding);
-            started.add(binding);
-        }
-
-        public void endBinding(Binding binding)
-        {
-            assertNotNull(binding);
-            ended.add(binding);
         }
 
         public boolean started(Visitable visitable)

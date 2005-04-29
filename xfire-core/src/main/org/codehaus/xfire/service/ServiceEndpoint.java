@@ -13,7 +13,7 @@ import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -28,9 +28,7 @@ public class ServiceEndpoint
         implements Visitable
 {
     private ServiceInfo service;
-    private String style;
-    private String use;
-    private SoapVersion soapVersion;
+    private SOAPBinding binding;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private FaultHandler faultHandler;
@@ -52,6 +50,19 @@ public class ServiceEndpoint
     public ServiceEndpoint(ServiceInfo service)
     {
         this.service = service;
+    }
+
+    /**
+     * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code> and
+     * <code>Binding</code>.
+     *
+     * @param service the service.
+     * @param binding the binding.
+     */
+    public ServiceEndpoint(ServiceInfo service, SOAPBinding binding)
+    {
+        this.service = service;
+        this.binding = binding;
     }
 
     /**
@@ -91,42 +102,6 @@ public class ServiceEndpoint
     public WSDLBuilder getWSDLBuilder()
     {
         return wsdlBuilder;
-    }
-
-    /**
-     * Returns the WSDL writer for this service endpoint.
-     *
-     * @return the WSDL writer.
-     */
-    public WSDLWriter getWsdlWriter()
-    {
-        return null;
-    }
-
-    /**
-     * Load a class from the class loader.
-     *
-     * @param className The name of the class.
-     * @return The class.
-     */
-    protected Class loadClass(final String className)
-            throws ClassNotFoundException
-    {
-        try
-        {
-            return getClass().getClassLoader().loadClass(className);
-        }
-        catch (ClassNotFoundException cnfe)
-        {
-            try
-            {
-                return Class.forName(className);
-            }
-            catch (ClassNotFoundException cnf2)
-            {
-                return Thread.currentThread().getContextClassLoader().loadClass(className);
-            }
-        }
     }
 
     /**
@@ -296,34 +271,25 @@ public class ServiceEndpoint
         this.serviceHandler = serviceHandler;
     }
 
-    public SoapVersion getSoapVersion()
+    /**
+     * Returns the binding for this endpoint.
+     *
+     * @return the binding.
+     */
+    public SOAPBinding getBinding()
     {
-        return soapVersion;
+        return binding;
     }
 
-    public String getStyle()
+    /**
+     * Sets the binding for this endpoint.
+     *
+     * @param binding the binding.
+     */
+    public void setBinding(SOAPBinding binding)
     {
-        return style;
+        this.binding = binding;
     }
 
-    public String getUse()
-    {
-        return use;
-    }
-
-    public void setSoapVersion(SoapVersion soapVersion)
-    {
-        this.soapVersion = soapVersion;
-    }
-
-    public void setStyle(String style)
-    {
-        this.style = style;
-    }
-
-    public void setUse(String use)
-    {
-        this.use = use;
-    }
 }
 

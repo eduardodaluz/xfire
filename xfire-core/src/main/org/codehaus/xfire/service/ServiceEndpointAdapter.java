@@ -15,6 +15,9 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
+ * Temporary adapter that wraps a <code>ServiceEndpoint</code> so that it follows the contract of the
+ * <code>Service</code> interface.
+ *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class ServiceEndpointAdapter
@@ -60,12 +63,12 @@ public class ServiceEndpointAdapter
 
     public String getStyle()
     {
-        return endpoint.getStyle();
+        return endpoint.getBinding().getStyle();
     }
 
     public String getUse()
     {
-        return endpoint.getUse();
+        return endpoint.getBinding().getUse();
     }
 
     public String getName()
@@ -90,7 +93,7 @@ public class ServiceEndpointAdapter
 
     public SoapVersion getSoapVersion()
     {
-        return endpoint.getSoapVersion();
+        return endpoint.getBinding().getSoapVersion();
     }
 
     public BindingProvider getBindingProvider()
@@ -145,17 +148,17 @@ public class ServiceEndpointAdapter
 
     public void setSoapVersion(SoapVersion soapVersion)
     {
-        endpoint.setSoapVersion(soapVersion);
+        endpoint.getBinding().setSoapVersion(soapVersion);
     }
 
     public void setStyle(String style)
     {
-        endpoint.setStyle(style);
+        endpoint.getBinding().setStyle(style);
     }
 
     public void setUse(String use)
     {
-        endpoint.setUse(use);
+        endpoint.getBinding().setUse(use);
     }
 
     public void setName(String name)
