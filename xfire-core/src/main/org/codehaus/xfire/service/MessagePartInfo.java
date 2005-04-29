@@ -6,31 +6,28 @@ import javax.xml.namespace.QName;
 /**
  * Represents the description of a service operation message part.
  * <p/>
- * Message parts are created using the {@link MessageInfo#addMessagePart(String)} method.
- * 
+ * Message parts are created using the {@link MessageInfo#addMessagePart} method.
+ *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Nov 16, 2004
  */
 public class MessagePartInfo
-    implements Visitable
+        implements Visitable
 {
     private QName name;
     private QName schemaType;
     private Class typeClass;
-    private MessageInfo messageInfo;
-    
-    MessagePartInfo()
-    {
-    }
-    
-    MessagePartInfo(QName name, Class typeClass, MessageInfo messageInfo)
+    private MessagePartContainer container;
+
+
+    MessagePartInfo(QName name, Class typeClass, MessagePartContainer container)
     {
         this.name = name;
         this.typeClass = typeClass;
-        this.messageInfo = messageInfo;
+        this.container = container;
     }
-    
+
     /**
      * @return Returns the name.
      */
@@ -38,7 +35,7 @@ public class MessagePartInfo
     {
         return name;
     }
-    
+
     /**
      * @param name The name to set.
      */
@@ -49,6 +46,7 @@ public class MessagePartInfo
 
     /**
      * The xml schema type of this parameter.
+     *
      * @return
      */
     public QName getSchemaType()
@@ -65,7 +63,7 @@ public class MessagePartInfo
     {
         return typeClass;
     }
-    
+
     public void setTypeClass(Class typeClass)
     {
         this.typeClass = typeClass;
@@ -78,6 +76,7 @@ public class MessagePartInfo
      */
     public void accept(Visitor visitor)
     {
-        visitor.visit(this);
+        visitor.startMessagePart(this);
+        visitor.endMessagePart(this);
     }
 }

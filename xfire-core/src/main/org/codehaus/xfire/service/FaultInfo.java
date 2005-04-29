@@ -2,8 +2,6 @@ package org.codehaus.xfire.service;
 
 import java.util.Iterator;
 
-
-
 /**
  * Represents the description of a service operation fault.
  * <p/>
@@ -12,8 +10,11 @@ import java.util.Iterator;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class FaultInfo
-        extends MessageInfo
+        extends MessagePartContainer
+        implements Visitable
 {
+    private String name;
+
     /**
      * Initializes a new instance of the <code>FaultInfo</code> class with the given name and operation
      *
@@ -21,7 +22,18 @@ public class FaultInfo
      */
     FaultInfo(String name, OperationInfo operation)
     {
-        super(name, operation);
+        super(operation);
+        this.name = name;
+    }
+
+    /**
+     * Returns the name of the fault.
+     *
+     * @return the name.
+     */
+    public String getName()
+    {
+        return name;
     }
 
     /**
@@ -35,9 +47,9 @@ public class FaultInfo
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
-        operation.removeFault(getName());
+        getOperation().removeFault(getName());
         this.name = name;
-        operation.addFault(this);
+        getOperation().addFault(this);
     }
 
     /**
@@ -47,11 +59,12 @@ public class FaultInfo
      */
     public void accept(Visitor visitor)
     {
-        visitor.visit(this);
+        visitor.startFault(this);
         for (Iterator iterator = getMessageParts().iterator(); iterator.hasNext();)
         {
             MessagePartInfo messagePartInfo = (MessagePartInfo) iterator.next();
             messagePartInfo.accept(visitor);
         }
+        visitor.endFault(this);
     }
 }

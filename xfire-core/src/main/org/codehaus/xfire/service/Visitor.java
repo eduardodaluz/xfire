@@ -1,5 +1,7 @@
 package org.codehaus.xfire.service;
 
+import org.codehaus.xfire.service.binding.Binding;
+
 /**
  * Defines the contract for classes that iterate over the <code>*Info</code> classes. Used to recurse into {@link
  * ServiceInfo}, {@link OperationInfo}, {@link MessageInfo}, etc.
@@ -13,37 +15,101 @@ package org.codehaus.xfire.service;
 public interface Visitor
 {
     /**
-     * Visits the given service.
+     * Receive notification at the beginning of a endpoint visit.
+     *
+     * @param endpoint the service endpoint.
+     */
+    void startEndpoint(ServiceEndpoint endpoint);
+
+    /**
+     * Receive notatification of the end of a endpoint visit.
+     *
+     * @param endpoint
+     */
+    void endEndpoint(ServiceEndpoint endpoint);
+
+    /**
+     * Receive notification at the beginning of a service visit.
      *
      * @param serviceInfo the service.
      */
-    void visit(Service service);
+    void startService(ServiceInfo serviceInfo);
 
     /**
-     * Visits the given operation.
+     * Receive notatification of the end of a service visit.
+     *
+     * @param serviceInfo
+     */
+    void endService(ServiceInfo serviceInfo);
+
+    /**
+     * Receive notification at the beginning of a operation visit.
      *
      * @param operationInfo the operation.
      */
-    void visit(OperationInfo operationInfo);
+    void startOperation(OperationInfo operationInfo);
 
     /**
-     * Visits the given message.
+     * Receive notification at the end of a operation visit.
+     *
+     * @param operationInfo the operation.
+     */
+    void endOperation(OperationInfo operationInfo);
+
+    /**
+     * Receive notification at the beginning of a message visit.
      *
      * @param messageInfo the message.
      */
-    void visit(MessageInfo messageInfo);
+    void startMessage(MessageInfo messageInfo);
 
     /**
-     * Visits the given fault.
+     * Receive notification at the end of a message visit.
+     *
+     * @param messageInfo the message.
+     */
+    void endMessage(MessageInfo messageInfo);
+
+    /**
+     * Receive notification at the beginning of a fault visit.
      *
      * @param faultInfo the fault.
      */
-    void visit(FaultInfo faultInfo);
+    void startFault(FaultInfo faultInfo);
 
     /**
-     * Visits the given message part info.
+     * Receive notification at the end of a fault visit.
+     *
+     * @param faultInfo the fault.
+     */
+    void endFault(FaultInfo faultInfo);
+
+    /**
+     * Receive notification at the beginning of a message part visit.
      *
      * @param messagePartInfo the message part info.
      */
-    void visit(MessagePartInfo messagePartInfo);
+    void startMessagePart(MessagePartInfo messagePartInfo);
+
+    /**
+     * Receive notification at the end of a message part visit.
+     *
+     * @param messagePartInfo the message part info.
+     */
+    void endMessagePart(MessagePartInfo messagePartInfo);
+
+    /**
+     * Receive notification at the beginning of a binding visit.
+     *
+     * @param binding the binding.
+     */
+    void startBinding(Binding binding);
+
+    /**
+     * Receive notification at the end of a binding visit.
+     *
+     * @param binding the binding.
+     */
+    void endBinding(Binding binding);
+
 }

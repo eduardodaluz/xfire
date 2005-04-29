@@ -4,10 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.fault.FaultHandler;
@@ -25,30 +23,30 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  */
 public class DefaultService
-    implements Service
+        implements Service
 {
     private String name;
-        
+
     private String style;
-    
+
     private String use;
-    
+
     private SoapVersion soapVersion;
-    
+
     private String defaultNamespace;
-    
+
     private Map properties;
-    
+
     private WSDLWriter wsdl;
-    
+
     private FaultHandler faultHandler;
-    
+
     private Handler serviceHandler;
-    
+
     private HandlerPipeline requestPipeline;
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
-    
+
     private BindingProvider bindingProvider;
 
     private List allowedMethods;
@@ -83,15 +81,16 @@ public class DefaultService
     /**
      * @param wsdlUri The WSDL URL.
      */
-    public void setWSDLURL(String wsdlUri) throws WSDLException
+    public void setWSDLURL(String wsdlUri)
+            throws WSDLException
     {
-        if ( wsdlUri == null
-             ||
-             wsdlUri.equals("") )
+        if (wsdlUri == null
+                ||
+                wsdlUri.equals(""))
         {
             throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "URL to WSDL file is null");
         }
-        setWSDLWriter( new ResourceWSDL( wsdlUri ) );
+        setWSDLWriter(new ResourceWSDL(wsdlUri));
     }
 
     /**
@@ -99,7 +98,7 @@ public class DefaultService
      */
     public void setWSDLURL(URL wsdlUri)
     {
-        setWSDLWriter( new ResourceWSDL( wsdlUri ) );
+        setWSDLWriter(new ResourceWSDL(wsdlUri));
     }
 
     /**
@@ -109,14 +108,15 @@ public class DefaultService
     {
         return defaultNamespace;
     }
-    
+
     /**
      * @param defaultNamespace The defaultNamespace to set.
      */
-    public void setDefaultNamespace( String defaultNamespace )
+    public void setDefaultNamespace(String defaultNamespace)
     {
         this.defaultNamespace = defaultNamespace;
     }
+
     /**
      * @return Returns the style.
      */
@@ -124,15 +124,15 @@ public class DefaultService
     {
         return style;
     }
-    
+
     /**
      * @param style The style to set.
      */
-    public void setStyle( String style )
+    public void setStyle(String style)
     {
         this.style = style;
     }
-    
+
     /**
      * @return Returns the use.
      */
@@ -140,11 +140,11 @@ public class DefaultService
     {
         return use;
     }
-    
+
     /**
      * @param use The use to set.
      */
-    public void setUse( String use )
+    public void setUse(String use)
     {
         this.use = use;
     }
@@ -161,54 +161,54 @@ public class DefaultService
     {
         this.soapVersion = soapVersion;
     }
-    
+
     public String getName()
     {
         return name;
     }
-    
+
     public void setName(String name)
     {
         this.name = name;
     }
-    
+
     /**
      * @see org.codehaus.xfire.service.Service#setProperty(java.lang.String, java.lang.Object)
      */
-    public void setProperty( String name, Object value )
+    public void setProperty(String name, Object value)
     {
-        properties.put( name, value );
+        properties.put(name, value);
     }
 
     /**
      * @see org.codehaus.xfire.service.Service#getProperty(java.lang.String)
      */
-    public Object getProperty( String name )
+    public Object getProperty(String name)
     {
-        return properties.get( name );
+        return properties.get(name);
     }
-    
+
     public FaultHandler getFaultHandler()
     {
         return faultHandler;
     }
-    
-    public void setFaultHandler( FaultHandler faultHandler )
+
+    public void setFaultHandler(FaultHandler faultHandler)
     {
         this.faultHandler = faultHandler;
     }
-    
+
     public Handler getServiceHandler()
     {
         return serviceHandler;
     }
-    
-    public void setServiceHandler( Handler serviceHandler )
+
+    public void setServiceHandler(Handler serviceHandler)
     {
         this.serviceHandler = serviceHandler;
     }
 
-    public void setWSDL( WSDLWriter wsdl )
+    public void setWSDL(WSDLWriter wsdl)
     {
         this.wsdl = wsdl;
     }
@@ -220,7 +220,7 @@ public class DefaultService
     {
         return faultPipeline;
     }
-    
+
     /**
      * @param faultPipeline The faultPipeline to set.
      */
@@ -228,7 +228,7 @@ public class DefaultService
     {
         this.faultPipeline = faultPipeline;
     }
-    
+
     /**
      * @return Returns the requestPipeline.
      */
@@ -236,7 +236,7 @@ public class DefaultService
     {
         return requestPipeline;
     }
-    
+
     /**
      * @param requestPipeline The requestPipeline to set.
      */
@@ -270,12 +270,12 @@ public class DefaultService
     {
         this.bindingProvider = bindingProvider;
     }
-    
+
     /**
      * @param className
      */
     public void setServiceClass(final String className)
-        throws ClassNotFoundException
+            throws ClassNotFoundException
     {
         setServiceClass(loadClass(className));
     }
@@ -295,7 +295,7 @@ public class DefaultService
 
     /**
      * Determines whether or not to expose the specified method.
-     * 
+     *
      * @param methodName
      */
     private boolean isAllowed(final String methodName)
@@ -329,8 +329,7 @@ public class DefaultService
     }
 
     /**
-     * @param allowedMethods
-     *            The allowedMethods to set.
+     * @param allowedMethods The allowedMethods to set.
      */
     public void setAllowedMethods(final List allowedMethods)
     {
@@ -347,14 +346,12 @@ public class DefaultService
 
     /**
      * Load a class from the class loader.
-     * 
-     * @param className
-     *            The name of the class.
-     * 
+     *
+     * @param className The name of the class.
      * @return The class.
      */
     protected Class loadClass(final String className)
-        throws ClassNotFoundException
+            throws ClassNotFoundException
     {
         try
         {
@@ -374,7 +371,7 @@ public class DefaultService
     }
 
     public WSDLWriter getWSDLWriter()
-        throws WSDLException
+            throws WSDLException
     {
         if (wsdl == null)
         {
@@ -415,21 +412,5 @@ public class DefaultService
     public void setInvoker(Invoker invoker)
     {
         this.invoker = invoker;
-    }
-
-    /**
-     * Acceps the given visitor. Iterates over all operation infos.
-     *
-     * @param visitor the visitor.
-     */
-    public void accept(Visitor visitor)
-    {
-        visitor.visit(this);
-        
-        for (Iterator iterator = operations.values().iterator(); iterator.hasNext();)
-        {
-            OperationInfo operationInfo = (OperationInfo) iterator.next();
-            operationInfo.accept(visitor);
-        }
     }
 }

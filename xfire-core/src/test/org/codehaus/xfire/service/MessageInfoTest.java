@@ -16,8 +16,8 @@ public class MessageInfoTest
     {
         DefaultService service = new DefaultService();
         Method echoMethod = getClass().getMethod("method", new Class[0]);
-        OperationInfo operation = new OperationInfo("operation", service, echoMethod);
-        message = new MessageInfo("name", operation);
+        OperationInfo operation = new OperationInfo("operation", echoMethod, service);
+        message = new MessageInfo(new QName("name"), operation);
     }
 
     public void method()

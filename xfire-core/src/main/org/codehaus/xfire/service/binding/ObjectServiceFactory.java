@@ -3,7 +3,6 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
@@ -40,7 +39,7 @@ public class ObjectServiceFactory
         implements ServiceFactory
 {
     private static final Log logger = LogFactory.getLog(ObjectServiceFactory.class);
-    
+
     private BindingProvider provider;
     private TransportManager transportManager;
 
@@ -71,18 +70,18 @@ public class ObjectServiceFactory
             try
             {
                 provider = (BindingProvider) getClass().getClassLoader()
-                    .loadClass("org.codehaus.xfire.aegis.AegisBindingProvider").newInstance();
+                        .loadClass("org.codehaus.xfire.aegis.AegisBindingProvider").newInstance();
             }
             catch (Exception e)
             {
                 throw new XFireRuntimeException("Couldn't find a binding provider!", e);
             }
         }
-        
+
         return provider;
     }
 
-    
+
     /**
      * @param wsdlUrl
      * @return
@@ -206,7 +205,7 @@ public class ObjectServiceFactory
 
         if (encodingStyleURI != null)
             service.setProperty("type.encodingUri", encodingStyleURI);
-        
+
         if (version instanceof Soap11)
         {
             service.setFaultHandler(new Soap11FaultHandler());
@@ -257,24 +256,24 @@ public class ObjectServiceFactory
 
     protected void addOperation(DefaultService service, final Method method)
     {
-        final OperationInfo op = new OperationInfo(method.getName(), service, method);
+        final OperationInfo op = new OperationInfo(method.getName(), method, service);
 
         final Class[] paramClasses = method.getParameterTypes();
 
         final boolean isDoc = service.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
 
-        MessageInfo inMsg = op.createMessage(op.getName() + "Request");
+        MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
         op.setInputMessage(inMsg);
-        
+
         for (int j = 0; j < paramClasses.length; j++)
         {
             final QName q = getInParameterName(service, method, j, isDoc);
             final MessagePartInfo p = inMsg.addMessagePart(q, paramClasses[j]);
         }
 
-        MessageInfo outMsg = op.createMessage(op.getName() + "Response");
+        MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
         op.setOutputMessage(outMsg);
-        
+
         final Class returnType = method.getReturnType();
         if (!returnType.isAssignableFrom(void.class))
         {
@@ -293,8 +292,8 @@ public class ObjectServiceFactory
     }
 
     protected QName getInParameterName(Service service,
-                                       final Method method, 
-                                       final int paramNumber, 
+                                       final Method method,
+                                       final int paramNumber,
                                        final boolean doc)
     {
         String paramName = "";

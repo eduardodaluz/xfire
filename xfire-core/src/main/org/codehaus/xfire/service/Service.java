@@ -1,7 +1,6 @@
 package org.codehaus.xfire.service;
 
 import java.util.Collection;
-
 import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.fault.FaultHandler;
@@ -15,11 +14,10 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
  * A service descriptor. This class must be thread safe.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public interface Service
-    extends Visitable
 {
     String ROLE = Service.class.getName();
     public static final String ALLOWED_METHODS = "allowedMethods";
@@ -28,31 +26,34 @@ public interface Service
     public final static int SCOPE_SESSION = 2;
     public static final String SERVICE_IMPL_CLASS = "xfire.serviceImplClass";
 
-    WSDLWriter getWSDLWriter() throws WSDLException;
+    WSDLWriter getWSDLWriter()
+            throws WSDLException;
 
     Handler getServiceHandler();
-    
+
     HandlerPipeline getRequestPipeline();
-    
+
     HandlerPipeline getResponsePipeline();
-    
+
     FaultHandlerPipeline getFaultPipeline();
-    
+
     /**
-     * The fault handler which handles exception which occur during 
-     * processing.
+     * The fault handler which handles exception which occur during processing.
+     *
      * @return
      */
     FaultHandler getFaultHandler();
-    
+
     /**
      * Return the service style.  Can be document, rpc, wrapped, or message.
+     *
      * @return
      */
     String getStyle();
 
     /**
      * Return the Use.  Messages can be encoded or literal.
+     *
      * @return
      */
     String getUse();
@@ -64,7 +65,7 @@ public interface Service
 
     /**
      * The namespace of the service.
-     * 
+     *
      * @return
      */
     String getDefaultNamespace();
@@ -72,7 +73,7 @@ public interface Service
     void setProperty(String name, Object value);
 
     Object getProperty(String name);
-    
+
     SoapVersion getSoapVersion();
 
     BindingProvider getBindingProvider();
@@ -81,6 +82,7 @@ public interface Service
 
     /**
      * Get an operation.
+     *
      * @param name The name of the operation.
      * @return
      */
@@ -89,9 +91,10 @@ public interface Service
     void removeOperation(String string);
 
     void addOperation(OperationInfo info);
-    
+
     /**
      * Get all the operations for this service.
+     *
      * @return
      */
     Collection getOperations();
@@ -100,6 +103,7 @@ public interface Service
 
     /**
      * The class which the operations map to.
+     *
      * @return
      */
     Class getServiceClass();
