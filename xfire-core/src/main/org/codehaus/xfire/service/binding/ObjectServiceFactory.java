@@ -230,7 +230,7 @@ public class ObjectServiceFactory
         return service;
     }
 
-    protected void initializeOperations(DefaultService service)
+    protected void initializeOperations(Service service)
     {
         final Method[] methods = service.getServiceClass().getDeclaredMethods();
 
@@ -254,7 +254,7 @@ public class ObjectServiceFactory
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
-    protected void addOperation(DefaultService service, final Method method)
+    protected void addOperation(Service service, final Method method)
     {
         final OperationInfo op = new OperationInfo(method.getName(), method, service);
 

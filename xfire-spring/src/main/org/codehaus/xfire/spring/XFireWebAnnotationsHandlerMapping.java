@@ -5,7 +5,7 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
-import org.codehaus.xfire.service.DefaultService;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -41,17 +41,18 @@ public class XFireWebAnnotationsHandlerMapping
     {
         if (!(getApplicationContext() instanceof ConfigurableApplicationContext))
         {
-            throw new ApplicationContextException("[" + getClass().getName() + "] needs to run in a ConfigurableApplicationContext");
+            throw new ApplicationContextException(
+                    "[" + getClass().getName() + "] needs to run in a ConfigurableApplicationContext");
         }
         ConfigurableListableBeanFactory beanFactory =
                 ((ConfigurableApplicationContext) getApplicationContext()).getBeanFactory();
 
         String[] beanNames = getApplicationContext().getBeanDefinitionNames();
 
-        AnnotationServiceFactory serviceFactory = 
-            new AnnotationServiceFactory(webAnnotations,
-                                         xFire.getTransportManager(),
-                                         new AegisBindingProvider(typeMappingRegistry));
+        AnnotationServiceFactory serviceFactory =
+                new AnnotationServiceFactory(webAnnotations,
+                                             xFire.getTransportManager(),
+                                             new AegisBindingProvider(typeMappingRegistry));
 
         // Take any bean name or alias that has a web service annotation
         for (int i = 0; i < beanNames.length; i++)
@@ -59,7 +60,7 @@ public class XFireWebAnnotationsHandlerMapping
             Class clazz = getApplicationContext().getType(beanNames[i]);
             if (webAnnotations.hasWebServiceAnnotation(clazz))
             {
-                DefaultService service = (DefaultService) serviceFactory.create(clazz);
+                Service service = serviceFactory.create(clazz);
                 if (logger.isInfoEnabled())
                 {
                     logger.info("Exposing SOAP v." + service.getSoapVersion().getVersion() + " service " +

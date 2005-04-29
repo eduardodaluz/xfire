@@ -14,7 +14,7 @@ public class MessageInfoTest
     protected void setUp()
             throws Exception
     {
-        DefaultService service = new DefaultService();
+        Service service = new DefaultService();
         Method echoMethod = getClass().getMethod("method", new Class[0]);
         OperationInfo operation = new OperationInfo("operation", echoMethod, service);
         message = new MessageInfo(new QName("name"), operation);
