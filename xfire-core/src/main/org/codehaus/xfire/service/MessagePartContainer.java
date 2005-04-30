@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 /**
+ * Represents the base class for containers of <code>MessagePartInfo</code> objects.
+ *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public abstract class MessagePartContainer
@@ -30,7 +32,7 @@ public abstract class MessagePartContainer
     }
 
     /**
-     * Returns the operation of this message.
+     * Returns the operation of this container.
      *
      * @return the operation.
      */
@@ -40,7 +42,7 @@ public abstract class MessagePartContainer
     }
 
     /**
-     * Adds an message part to this message info.
+     * Adds an message part to this conainer.
      *
      * @param name  the qualified name of the message part.
      * @param clazz the type of the message part.
@@ -51,11 +53,10 @@ public abstract class MessagePartContainer
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
-
         if (messageParts.containsKey(name))
         {
             throw new IllegalArgumentException(
-                    "An message part with name [" + name + "] already exists in this message");
+                    "An message part with name [" + name + "] already exists in this container");
         }
 
         MessagePartInfo part = new MessagePartInfo(name, clazz, this);
@@ -64,7 +65,7 @@ public abstract class MessagePartContainer
     }
 
     /**
-     * Adds an message part to this message.
+     * Adds an message part to this container.
      *
      * @param part the message part.
      */
@@ -75,9 +76,9 @@ public abstract class MessagePartContainer
     }
 
     /**
-     * Removes an message part from this message.
+     * Removes an message part from this container.
      *
-     * @param name the message part name.
+     * @param name the qualified message part name.
      */
     public void removeMessagePart(QName name)
     {
@@ -92,7 +93,7 @@ public abstract class MessagePartContainer
     /**
      * Returns the message part with the given name, if found.
      *
-     * @param name the name.
+     * @param name the qualified name.
      * @return the message part; or <code>null</code> if not found.
      */
     public MessagePartInfo getMessagePart(QName name)

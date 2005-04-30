@@ -3,22 +3,20 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.MessageInfo;
-import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -26,6 +24,7 @@ import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
@@ -38,8 +37,6 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 public class ObjectServiceFactory
         implements ServiceFactory
 {
-    private static final Log logger = LogFactory.getLog(ObjectServiceFactory.class);
-
     private BindingProvider provider;
     private TransportManager transportManager;
 
@@ -55,7 +52,7 @@ public class ObjectServiceFactory
      * mapping registry.
      *
      * @param transportManager the transport manager
-     * @param registry         the type mapping registry
+     * @param provider         the binding provider
      */
     public ObjectServiceFactory(TransportManager transportManager, BindingProvider provider)
     {
@@ -90,24 +87,21 @@ public class ObjectServiceFactory
             throws Exception
     {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        Definition def = reader.readWSDL(wsdlUrl.toString());
+        reader.readWSDL(wsdlUrl.toString());
 
-        DefaultService service = new DefaultService();
-        service.setBindingProvider(getBindingProvider());
-        service.setServiceClass(clazz);
+        QName name = ServiceUtils.makeQualifiedNameFromClass(clazz);
+        ServiceInfo serviceInfo = new ServiceInfo(name, clazz);
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
+        endpoint.setBindingProvider(getBindingProvider());
 
-        // XXX: this will be revisited soon in reference 
-        //ObjectServiceVisitor builder = new ObjectServiceVisitor(def, service);
-        //builder.configure();
-
-        service.setFaultHandler(new Soap11FaultHandler());
-        service.setWSDL(new ResourceWSDL(wsdlUrl));
+        endpoint.setFaultHandler(new Soap11FaultHandler());
+        endpoint.setWSDL(new ResourceWSDL(wsdlUrl));
 
         SoapHandler handler = new SoapHandler(new ObjectServiceHandler());
-        service.setServiceHandler(handler);
-        service.setInvoker(new ObjectInvoker());
+        endpoint.setServiceHandler(handler);
+        endpoint.setInvoker(new ObjectInvoker());
 
-        return service;
+        return new ServiceEndpointAdapter(endpoint);
     }
 
     /**
@@ -162,10 +156,12 @@ public class ObjectServiceFactory
      *                         name.
      * @param namespace        The default namespace of the service. If <code>null</code>, a namespace will be generated
      *                         from the class package.
-     * @param version          The soap version. If <code>null</code>, {@link Soap11} will be used.
-     * @param style            The service style. If <code>null</code>, {@link SoapConstants#STYLE_WRAPPED} will be
+     * @param version          The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be
      *                         used.
-     * @param use              The service use. If <code>null</code>, {@link SoapConstants#USE_LITERAL} will be used.
+     * @param style            The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
+     *                         will be used.
+     * @param use              The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
+     *                         will be used.
      * @param encodingStyleURI The encoding style to use.
      * @return The service.
      */
@@ -180,22 +176,20 @@ public class ObjectServiceFactory
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(
                 clazz.getName(), "http");
+        QName qName = new QName(theNamespace, theName);
         SoapVersion theVersion = (version != null) ? version : Soap11.getInstance();
         String theStyle = (style != null) ? style : SoapConstants.STYLE_WRAPPED;
         String theUse = (use != null) ? use : SoapConstants.USE_LITERAL;
 
-        DefaultService service = new DefaultService();
+        ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
 
-        service.setName(theName);
-        service.setDefaultNamespace(theNamespace);
-        service.setServiceClass(clazz);
-
-        service.setSoapVersion(theVersion);
-        service.setStyle(theStyle);
-        service.setUse(theUse);
+        endpoint.getBinding().setSoapVersion(theVersion);
+        endpoint.getBinding().setStyle(theStyle);
+        endpoint.getBinding().setUse(theUse);
         try
         {
-            service.setBindingProvider(getBindingProvider());
+            endpoint.setBindingProvider(getBindingProvider());
         }
         catch (Exception e)
         {
@@ -204,35 +198,37 @@ public class ObjectServiceFactory
 
 
         if (encodingStyleURI != null)
-            service.setProperty("type.encodingUri", encodingStyleURI);
+            endpoint.setProperty("type.encodingUri", encodingStyleURI);
 
         if (version instanceof Soap11)
         {
-            service.setFaultHandler(new Soap11FaultHandler());
+            endpoint.setFaultHandler(new Soap11FaultHandler());
         }
         else
         {
-            service.setFaultHandler(new Soap12FaultHandler());
+            endpoint.setFaultHandler(new Soap12FaultHandler());
         }
 
         if (transportManager != null)
         {
-            service.setWSDLBuilder(new WSDLBuilder(transportManager));
+            endpoint.setWSDLBuilder(new WSDLBuilder(transportManager));
         }
 
-        SoapHandler handler = new SoapHandler(service.getBindingProvider().createEndpointHandler());
-        service.setServiceHandler(handler);
-        service.setInvoker(new ObjectInvoker());
+        SoapHandler handler = new SoapHandler(endpoint.getBindingProvider().createEndpointHandler());
+        endpoint.setServiceHandler(handler);
+        endpoint.setInvoker(new ObjectInvoker());
 
-        initializeOperations(service);
-        service.getBindingProvider().initialize(service);
+        initializeOperations(endpoint);
+        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
 
-        return service;
+        endpoint.getBindingProvider().initialize(adapter);
+
+        return adapter;
     }
 
-    protected void initializeOperations(Service service)
+    protected void initializeOperations(ServiceEndpoint endpoint)
     {
-        final Method[] methods = service.getServiceClass().getDeclaredMethods();
+        final Method[] methods = endpoint.getService().getServiceClass().getDeclaredMethods();
 
         // TODO: go through superclasses, stopping at Object.class
 
@@ -242,7 +238,7 @@ public class ObjectServiceFactory
 
             if (isValidMethod(method))
             {
-                addOperation(service, method);
+                addOperation(endpoint, method);
             }
         }
     }
@@ -254,21 +250,22 @@ public class ObjectServiceFactory
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
-    protected void addOperation(Service service, final Method method)
+    protected void addOperation(ServiceEndpoint endpoint, final Method method)
     {
-        final OperationInfo op = new OperationInfo(method.getName(), method, service);
+        ServiceInfo service = endpoint.getService();
+        final OperationInfo op = service.addOperation(method.getName(), method);
 
         final Class[] paramClasses = method.getParameterTypes();
 
-        final boolean isDoc = service.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        final boolean isDoc = endpoint.getBinding().getStyle().equals(SoapConstants.STYLE_DOCUMENT);
 
         MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
         op.setInputMessage(inMsg);
 
         for (int j = 0; j < paramClasses.length; j++)
         {
-            final QName q = getInParameterName(service, method, j, isDoc);
-            final MessagePartInfo p = inMsg.addMessagePart(q, paramClasses[j]);
+            final QName q = getInParameterName(endpoint, method, j, isDoc);
+            inMsg.addMessagePart(q, paramClasses[j]);
         }
 
         MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
@@ -277,13 +274,11 @@ public class ObjectServiceFactory
         final Class returnType = method.getReturnType();
         if (!returnType.isAssignableFrom(void.class))
         {
-            final QName q = getOutParameterName(service, method, isDoc);
-            final MessagePartInfo outP = outMsg.addMessagePart(q, method.getReturnType());
+            final QName q = getOutParameterName(endpoint, method, isDoc);
+            outMsg.addMessagePart(q, method.getReturnType());
         }
 
         op.setOneWay(isAsync(method));
-
-        service.addOperation(op);
     }
 
     protected boolean isAsync(final Method method)
@@ -291,7 +286,7 @@ public class ObjectServiceFactory
         return false;
     }
 
-    protected QName getInParameterName(Service service,
+    protected QName getInParameterName(ServiceEndpoint endpoint,
                                        final Method method,
                                        final int paramNumber,
                                        final boolean doc)
@@ -300,15 +295,15 @@ public class ObjectServiceFactory
         if (doc)
             paramName = method.getName();
 
-        return new QName(service.getDefaultNamespace(), paramName + "in" + paramNumber);
+        return new QName(endpoint.getService().getName().getNamespaceURI(), paramName + "in" + paramNumber);
     }
 
-    protected QName getOutParameterName(Service service, final Method method, final boolean doc)
+    protected QName getOutParameterName(ServiceEndpoint endpoint, final Method method, final boolean doc)
     {
         String outName = "";
         if (doc)
             outName = method.getName();
 
-        return new QName(service.getDefaultNamespace(), outName + "out");
+        return new QName(endpoint.getService().getName().getNamespaceURI(), outName + "out");
     }
 }

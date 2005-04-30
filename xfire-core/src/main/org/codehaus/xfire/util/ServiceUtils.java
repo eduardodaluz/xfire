@@ -1,5 +1,7 @@
 package org.codehaus.xfire.util;
 
+import javax.xml.namespace.QName;
+
 /**
  * Helps when constructing, or using services.
  *
@@ -28,6 +30,13 @@ public class ServiceUtils
             name = name.substring(last + 1);
         }
         return name;
+    }
+
+    public static QName makeQualifiedNameFromClass(Class clazz)
+    {
+        String namespace = NamespaceHelper.makeNamespaceFromClassName(clazz.getName(), "http");
+        String localPart = makeServiceNameFromClassName(clazz);
+        return new QName(namespace, localPart);
     }
 
 }

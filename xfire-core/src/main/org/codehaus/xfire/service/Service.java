@@ -12,6 +12,7 @@ import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 /**
  * A service descriptor. This class must be thread safe.
@@ -135,4 +136,12 @@ public interface Service
     void setRequestPipeline(HandlerPipeline requestPipeline);
 
     void setResponsePipeline(HandlerPipeline responsePipeline);
+
+    void setDefaultNamespace(String defaultNamespace);
+
+    void setBindingProvider(BindingProvider bindingProvider);
+
+    WSDLBuilder getWSDLBuilder();
+
+    void setWSDLBuilder(WSDLBuilder wsdlBuilder);
 }

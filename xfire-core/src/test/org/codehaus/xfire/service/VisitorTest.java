@@ -7,6 +7,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+import org.codehaus.xfire.service.binding.Binding;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 
 public class VisitorTest
         extends TestCase
@@ -20,11 +22,10 @@ public class VisitorTest
             throws Exception
     {
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
-        ServiceEndpoint endpoint = new ServiceEndpoint(service);
-        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
+        SOAPBinding binding = new SOAPBinding(new QName("binding"));
+        ServiceEndpoint endpoint = new ServiceEndpoint(service, binding);
         Method method = getClass().getMethod("method", new Class[0]);
-        OperationInfo operation = new OperationInfo("operation", method, adapter);
-        service.addOperation(operation);
+        OperationInfo operation = service.addOperation("operation", method);
         MessageInfo inputMessage = operation.createMessage(new QName("input"));
         operation.setInputMessage(inputMessage);
         MessageInfo outputMessage = operation.createMessage(new QName("output"));
@@ -44,6 +45,7 @@ public class VisitorTest
         assertTrue(visitor.started(faultInfo));
         assertTrue(visitor.started(partInfo1));
         assertTrue(visitor.started(partInfo2));
+        assertTrue(visitor.started(binding));
 
         assertTrue(visitor.ended(endpoint));
         assertTrue(visitor.ended(service));
@@ -53,6 +55,7 @@ public class VisitorTest
         assertTrue(visitor.ended(faultInfo));
         assertTrue(visitor.ended(partInfo1));
         assertTrue(visitor.ended(partInfo2));
+        assertTrue(visitor.ended(binding));
     }
 
     private class MockVisitor
@@ -133,6 +136,18 @@ public class VisitorTest
         {
             assertNotNull(messagePartInfo);
             ended.add(messagePartInfo);
+        }
+
+        public void startBinding(Binding binding)
+        {
+            assertNotNull(binding);
+            started.add(binding);
+        }
+
+        public void endBinding(Binding binding)
+        {
+            assertNotNull(binding);
+            ended.add(binding);
         }
 
         public boolean started(Visitable visitable)

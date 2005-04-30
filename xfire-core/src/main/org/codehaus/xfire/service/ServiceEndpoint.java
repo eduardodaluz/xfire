@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
@@ -50,6 +51,8 @@ public class ServiceEndpoint
     public ServiceEndpoint(ServiceInfo service)
     {
         this.service = service;
+
+        this.binding = new SOAPBinding(new QName(service.getName().getNamespaceURI(), service.getName() + "Binding"));
     }
 
     /**

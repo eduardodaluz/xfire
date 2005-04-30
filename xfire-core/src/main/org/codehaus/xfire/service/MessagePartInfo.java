@@ -6,7 +6,7 @@ import javax.xml.namespace.QName;
 /**
  * Represents the description of a service operation message part.
  * <p/>
- * Message parts are created using the {@link MessageInfo#addMessagePart} method.
+ * Message parts are created using the {@link MessageInfo#addMessagePart} or {@link FaultInfo#addMessagePart}  method.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

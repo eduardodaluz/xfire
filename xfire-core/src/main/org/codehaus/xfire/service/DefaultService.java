@@ -293,16 +293,6 @@ public class DefaultService
         operations.put(op.getName(), op);
     }
 
-    /**
-     * Determines whether or not to expose the specified method.
-     *
-     * @param methodName
-     */
-    private boolean isAllowed(final String methodName)
-    {
-        return (allowedMethods.isEmpty() || allowedMethods.contains(methodName));
-    }
-
     public OperationInfo getOperation(final String localName)
     {
         return (OperationInfo) operations.get(localName);

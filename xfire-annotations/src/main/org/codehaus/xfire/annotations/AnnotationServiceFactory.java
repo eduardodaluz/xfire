@@ -1,11 +1,11 @@
 package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
-
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -33,7 +33,7 @@ public class AnnotationServiceFactory
      * @param transportManager the transport manager
      * @param provider         the registry
      */
-    public AnnotationServiceFactory(WebAnnotations webAnnotations, 
+    public AnnotationServiceFactory(WebAnnotations webAnnotations,
                                     final TransportManager transportManager,
                                     final BindingProvider provider)
     {
@@ -232,7 +232,7 @@ public class AnnotationServiceFactory
         return webAnnotations.hasWebMethodAnnotation(method);
     }
 
-    protected QName getInParameterName(Service service, Method method, int paramNumber, boolean doc)
+    protected QName getInParameterName(ServiceEndpoint endpoint, Method method, int paramNumber, boolean doc)
     {
         if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
         {
@@ -240,18 +240,18 @@ public class AnnotationServiceFactory
 
             String name = webParamAnnotation.getName();
             String ns = webParamAnnotation.getTargetNamespace();
-            
-            if (ns == null) ns = service.getDefaultNamespace();
-            
+
+            if (ns == null) ns = endpoint.getService().getName().getNamespaceURI();
+
             return new QName(ns, name);
         }
         else
         {
-            return super.getInParameterName(service, method, paramNumber, doc);
+            return super.getInParameterName(endpoint, method, paramNumber, doc);
         }
     }
 
-    protected QName getOutParameterName(Service service, Method method, boolean doc)
+    protected QName getOutParameterName(ServiceEndpoint endpoint, Method method, boolean doc)
     {
         if (webAnnotations.hasWebResultAnnotation(method))
         {
@@ -259,14 +259,14 @@ public class AnnotationServiceFactory
 
             String name = webResultAnnotation.getName();
             String ns = webResultAnnotation.getTargetNamespace();
-            
-            if (ns == null) ns = service.getDefaultNamespace();
-            
+
+            if (ns == null) ns = endpoint.getService().getName().getNamespaceURI();
+
             return new QName(ns, name);
         }
         else
         {
-            return super.getOutParameterName(service, method, doc);
+            return super.getOutParameterName(endpoint, method, doc);
         }
     }
 

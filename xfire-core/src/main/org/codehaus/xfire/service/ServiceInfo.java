@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,7 +49,6 @@ public class ServiceInfo
      * @param name the qualified name of the operation.
      * @return the operation.
      */
-    /* TODO: reinstitute this method instead of the public OperationInfo constructor
     public OperationInfo addOperation(String name, Method method)
     {
         if ((name == null) || (name.length() == 0))
@@ -63,7 +63,7 @@ public class ServiceInfo
         OperationInfo operation = new OperationInfo(name, method, this);
         addOperation(operation);
         return operation;
-    }*/
+    }
 
     /**
      * Adds an operation to this service.

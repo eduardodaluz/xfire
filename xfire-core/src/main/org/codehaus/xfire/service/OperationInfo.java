@@ -12,14 +12,14 @@ import javax.xml.namespace.QName;
  * An operation that be performed on a service.
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @since Feb 20, 2004
  */
 public class OperationInfo
         implements Visitable
 {
     private String name;
-    // TODO: change this to a ServiceInfo
-    private Service service;
+    private ServiceInfo service;
     private boolean oneWay;
     private MessageInfo inputMessage;
     private MessageInfo outputMessage;
@@ -33,8 +33,7 @@ public class OperationInfo
      * @param name    the name of the operation.
      * @param service the service.
      */
-    // TODO: make this constructor package local, and change the Service to a ServiceInfo
-    public OperationInfo(String name, Method method, Service service)
+    OperationInfo(String name, Method method, ServiceInfo service)
     {
         this.name = name;
         this.service = service;
@@ -98,7 +97,7 @@ public class OperationInfo
      *
      * @return the service.
      */
-    public Service getService()
+    public ServiceInfo getService()
     {
         return service;
     }

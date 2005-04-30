@@ -13,6 +13,7 @@ import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 /**
  * Temporary adapter that wraps a <code>ServiceEndpoint</code> so that it follows the contract of the
@@ -30,15 +31,65 @@ public class ServiceEndpointAdapter
         this.endpoint = endpoint;
     }
 
-    public WSDLWriter getWSDLWriter()
-            throws WSDLException
+    public void addOperation(OperationInfo info)
     {
-        return endpoint.getWSDLWriter();
+        endpoint.getService().addOperation(info);
     }
 
-    public Handler getServiceHandler()
+    public OperationInfo getOperation(String name)
     {
-        return endpoint.getServiceHandler();
+        return endpoint.getService().getOperation(name);
+    }
+
+    public Object getProperty(String name)
+    {
+        return endpoint.getProperty(name);
+    }
+
+    public void removeOperation(String string)
+    {
+        endpoint.getService().removeOperation(string);
+    }
+
+    public void setProperty(String name, Object value)
+    {
+        endpoint.setProperty(name, value);
+    }
+
+// properties
+    public BindingProvider getBindingProvider()
+    {
+        return endpoint.getBindingProvider();
+    }
+
+    public String getDefaultNamespace()
+    {
+        return endpoint.getService().getName().getNamespaceURI();
+    }
+
+    public FaultHandler getFaultHandler()
+    {
+        return endpoint.getFaultHandler();
+    }
+
+    public FaultHandlerPipeline getFaultPipeline()
+    {
+        return endpoint.getFaultPipeline();
+    }
+
+    public Invoker getInvoker()
+    {
+        return endpoint.getInvoker();
+    }
+
+    public String getName()
+    {
+        return endpoint.getService().getName().getLocalPart();
+    }
+
+    public Collection getOperations()
+    {
+        return endpoint.getService().getOperations();
     }
 
     public HandlerPipeline getRequestPipeline()
@@ -51,14 +102,24 @@ public class ServiceEndpointAdapter
         return endpoint.getResponsePipeline();
     }
 
-    public FaultHandlerPipeline getFaultPipeline()
+    public int getScope()
     {
-        return endpoint.getFaultPipeline();
+        return endpoint.getScope();
     }
 
-    public FaultHandler getFaultHandler()
+    public Class getServiceClass()
     {
-        return endpoint.getFaultHandler();
+        return endpoint.getService().getServiceClass();
+    }
+
+    public Handler getServiceHandler()
+    {
+        return endpoint.getServiceHandler();
+    }
+
+    public SoapVersion getSoapVersion()
+    {
+        return endpoint.getBinding().getSoapVersion();
     }
 
     public String getStyle()
@@ -71,69 +132,35 @@ public class ServiceEndpointAdapter
         return endpoint.getBinding().getUse();
     }
 
-    public String getName()
+    public WSDLBuilder getWSDLBuilder()
     {
-        return endpoint.getService().getName().getLocalPart();
+        return endpoint.getWSDLBuilder();
     }
 
-    public String getDefaultNamespace()
+    public WSDLWriter getWSDLWriter()
+            throws WSDLException
     {
-        return endpoint.getService().getName().getNamespaceURI();
+        return endpoint.getWSDLWriter();
     }
 
-    public void setProperty(String name, Object value)
+    public void setBindingProvider(BindingProvider bindingProvider)
     {
-        endpoint.setProperty(name, value);
+        endpoint.setBindingProvider(bindingProvider);
     }
 
-    public Object getProperty(String name)
+    public void setDefaultNamespace(String defaultNamespace)
     {
-        return endpoint.getProperty(name);
+
     }
 
-    public SoapVersion getSoapVersion()
+    public void setFaultHandler(FaultHandler faultHandler)
     {
-        return endpoint.getBinding().getSoapVersion();
+        endpoint.setFaultHandler(faultHandler);
     }
 
-    public BindingProvider getBindingProvider()
+    public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
     {
-        return endpoint.getBindingProvider();
-    }
-
-    public Invoker getInvoker()
-    {
-        return endpoint.getInvoker();
-    }
-
-    public OperationInfo getOperation(String name)
-    {
-        return endpoint.getService().getOperation(name);
-    }
-
-    public void removeOperation(String string)
-    {
-        endpoint.getService().removeOperation(string);
-    }
-
-    public void addOperation(OperationInfo info)
-    {
-        endpoint.getService().addOperation(info);
-    }
-
-    public Collection getOperations()
-    {
-        return endpoint.getService().getOperations();
-    }
-
-    public int getScope()
-    {
-        return endpoint.getScope();
-    }
-
-    public Class getServiceClass()
-    {
-        return endpoint.getService().getServiceClass();
+        endpoint.setFaultPipeline(faultPipeline);
     }
 
     public void setInvoker(Invoker invoker)
@@ -141,9 +168,29 @@ public class ServiceEndpointAdapter
         endpoint.setInvoker(invoker);
     }
 
-    public void setWSDLURL(URL wsdlUri)
+    public void setName(String name)
     {
-        endpoint.setWSDLURL(wsdlUri);
+        endpoint.getService().setName(new QName(endpoint.getService().getName().getNamespaceURI(), name));
+    }
+
+    public void setRequestPipeline(HandlerPipeline requestPipeline)
+    {
+        endpoint.setRequestPipeline(requestPipeline);
+    }
+
+    public void setResponsePipeline(HandlerPipeline responsePipeline)
+    {
+        endpoint.setResponsePipeline(responsePipeline);
+    }
+
+    public void setScope(int scope)
+    {
+        endpoint.setScope(scope);
+    }
+
+    public void setServiceHandler(Handler serviceHandler)
+    {
+        endpoint.setServiceHandler(serviceHandler);
     }
 
     public void setSoapVersion(SoapVersion soapVersion)
@@ -161,19 +208,14 @@ public class ServiceEndpointAdapter
         endpoint.getBinding().setUse(use);
     }
 
-    public void setName(String name)
+    public void setWSDLBuilder(WSDLBuilder wsdlBuilder)
     {
-        endpoint.getService().setName(new QName(name));
+        endpoint.setWSDLBuilder(wsdlBuilder);
     }
 
-    public void setFaultHandler(FaultHandler faultHandler)
+    public void setWSDLURL(URL wsdlUri)
     {
-        endpoint.setFaultHandler(faultHandler);
-    }
-
-    public void setServiceHandler(Handler serviceHandler)
-    {
-        endpoint.setServiceHandler(serviceHandler);
+        endpoint.setWSDLURL(wsdlUri);
     }
 
     public void setWSDLURL(String wsdlUri)
@@ -181,24 +223,5 @@ public class ServiceEndpointAdapter
     {
         endpoint.setWSDLURL(wsdlUri);
     }
-
-    public void setScope(int scope)
-    {
-        endpoint.setScope(scope);
-    }
-
-    public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
-    {
-        endpoint.setFaultPipeline(faultPipeline);
-    }
-
-    public void setRequestPipeline(HandlerPipeline requestPipeline)
-    {
-        endpoint.setRequestPipeline(requestPipeline);
-    }
-
-    public void setResponsePipeline(HandlerPipeline responsePipeline)
-    {
-        endpoint.setResponsePipeline(responsePipeline);
-    }
 }
+
