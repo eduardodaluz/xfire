@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2005 Your Corporation. All Rights Reserved.
- */
 package org.codehaus.xfire.annotations.soap;
 
 import org.codehaus.xfire.soap.SoapConstants;
@@ -63,7 +60,7 @@ public class SOAPBindingAnnotation
      */
     public String getStyleString()
     {
-        if (style == SOAPBindingAnnotation.STYLE_DOCUMENT 
+        if (style == SOAPBindingAnnotation.STYLE_DOCUMENT
                 && parameterStyle == SOAPBindingAnnotation.PARAMETER_STYLE_WRAPPED)
         {
             return SoapConstants.STYLE_WRAPPED;
