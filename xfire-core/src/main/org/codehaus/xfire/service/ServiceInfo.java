@@ -21,6 +21,13 @@ public class ServiceInfo
     private Map operations = new HashMap();
     private Class serviceClass;
 
+    /**
+     * Initializes a new instance of the <code>ServiceInfo</code> class with the given qualified name and service
+     * class.
+     *
+     * @param name         the qualified name.
+     * @param serviceClass the service class.
+     */
     public ServiceInfo(QName name, Class serviceClass)
     {
         this.name = name;

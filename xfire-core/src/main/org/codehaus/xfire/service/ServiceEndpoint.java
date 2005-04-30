@@ -77,6 +77,7 @@ public class ServiceEndpoint
     {
         visitor.startEndpoint(this);
         service.accept(visitor);
+        binding.accept(visitor);
         visitor.endEndpoint(this);
     }
 

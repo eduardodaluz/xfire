@@ -1,5 +1,7 @@
 package org.codehaus.xfire.service;
 
+import org.codehaus.xfire.service.binding.Binding;
+
 
 /**
  * Defines the contract for classes that iterate over the <code>*Info</code> classes. Used to recurse into {@link
@@ -96,4 +98,18 @@ public interface Visitor
      * @param messagePartInfo the message part info.
      */
     void endMessagePart(MessagePartInfo messagePartInfo);
+
+    /**
+     * Receive notification at the beginning of a binding visit.
+     *
+     * @param binding the binding.
+     */
+    void startBinding(Binding binding);
+
+    /**
+     * Receive notification at the end of a binding visit.
+     *
+     * @param binding the binding.
+     */
+    void endBinding(Binding binding);
 }
