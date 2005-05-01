@@ -9,11 +9,13 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 /**
- * An operation that be performed on a service.
+ * Represents the description of a service operation. An operation has a name, and consists of a number of in and out
+ * parameters.
+ * <p/>
+ * Operations are created using the {@link ServiceInfo#addOperation} method.
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
- * @since Feb 20, 2004
  */
 public class OperationInfo
         implements Visitable
