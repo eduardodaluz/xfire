@@ -8,7 +8,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 import org.codehaus.xfire.service.binding.Binding;
-import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.DocumentBinding;
 
 public class VisitorTest
         extends TestCase
@@ -22,7 +22,7 @@ public class VisitorTest
             throws Exception
     {
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
-        SOAPBinding binding = new SOAPBinding(new QName("binding"));
+        Binding binding = new DocumentBinding(new QName("binding"));
         ServiceEndpoint endpoint = new ServiceEndpoint(service, binding);
         Method method = getClass().getMethod("method", new Class[0]);
         OperationInfo operation = service.addOperation("operation", method);

@@ -1,9 +1,7 @@
 package org.codehaus.xfire.service;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -12,9 +10,12 @@ import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.service.binding.Binding;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.DocumentBinding;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.transport.Transport;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -22,14 +23,22 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 /**
  * Represents a service endpoint. A service endpoint is a resource to which web service messages can be addressed.
  * Endpoint references convey the information needed to address a web service endpoint.
+ * <p/>
+ * The <code>ServiceEndpoint</code> is basically a facade for a <code>ServiceInfo</code>, <code>Binding</code>, and
+ * <code>Transport</code>. As such, it provides a unified interface to these subsystems.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
+ * @see ServiceInfo
+ * @see org.codehaus.xfire.service.binding.Binding
+ * @see SOAPBinding
+ * @see Transport
  */
 public class ServiceEndpoint
         implements Visitable
 {
     private ServiceInfo service;
-    private SOAPBinding binding;
+    private Binding binding;
+    private Transport transport;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private FaultHandler faultHandler;
@@ -38,34 +47,54 @@ public class ServiceEndpoint
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
     private BindingProvider bindingProvider;
-    private List allowedMethods = new ArrayList();
     private WSDLBuilder wsdlBuilder;
     private int scope = Service.SCOPE_APPLICATION;
     private Invoker invoker;
 
     /**
-     * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code>.
+     * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code>.
+     * It uses a <code>SOAPBinding</code> and a <code>HTTPTransport</code>.
      *
      * @param service the service.
      */
     public ServiceEndpoint(ServiceInfo service)
     {
-        this.service = service;
-
-        this.binding = new SOAPBinding(new QName(service.getName().getNamespaceURI(), service.getName() + "Binding"));
+        this(service, null, null);
     }
 
     /**
      * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code> and
-     * <code>Binding</code>.
+     * <code>Binding</code>. It uses a <code>SOAPBinding</code> and a <code>HTTPTransport</code>.
      *
      * @param service the service.
      * @param binding the binding.
      */
-    public ServiceEndpoint(ServiceInfo service, SOAPBinding binding)
+    public ServiceEndpoint(ServiceInfo service, Binding binding)
+    {
+        this(service, binding, null);
+    }
+
+    /**
+     * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code>,
+     * <code>Binding</code> and <code>Transport</code>.
+     *
+     * @param service   the service.
+     * @param binding   the binding.
+     * @param transport the transport.
+     */
+    public ServiceEndpoint(ServiceInfo service, Binding binding, Transport transport)
     {
         this.service = service;
-        this.binding = binding;
+        if (binding != null)
+        {
+            this.binding = binding;
+        }
+        else
+        {
+            this.binding = new DocumentBinding(new QName(service.getName().getLocalPart() + "Binding"));
+        }
+
+        this.transport = transport;
     }
 
     /**
@@ -89,25 +118,6 @@ public class ServiceEndpoint
         return properties.get(name);
     }
 
-    public WSDLWriter getWSDLWriter()
-            throws WSDLException
-    {
-        if (wsdlWriter == null)
-        {
-            final WSDLBuilder builder = getWSDLBuilder();
-
-            if (builder != null)
-                return getWSDLBuilder().createWSDLWriter(new ServiceEndpointAdapter(this));
-        }
-
-        return wsdlWriter;
-    }
-
-    public WSDLBuilder getWSDLBuilder()
-    {
-        return wsdlBuilder;
-    }
-
     /**
      * @see org.codehaus.xfire.service.Service#setProperty(java.lang.String, java.lang.Object)
      */
@@ -116,55 +126,24 @@ public class ServiceEndpoint
         properties.put(name, value);
     }
 
-    public void setWSDL(WSDLWriter wsdlWriter)
+    /**
+     * Returns the binding for this endpoint.
+     *
+     * @return the binding.
+     */
+    public Binding getBinding()
     {
-        this.wsdlWriter = wsdlWriter;
-    }
-
-    public void setWSDLBuilder(final WSDLBuilder wsdlBuilder)
-    {
-        this.wsdlBuilder = wsdlBuilder;
+        return binding;
     }
 
     /**
-     * @param wsdlUri The WSDL URL.
+     * Sets the binding for this endpoint.
+     *
+     * @param binding the binding.
      */
-    public void setWSDLURL(URL wsdlUri)
+    public void setBinding(Binding binding)
     {
-        setWSDLWriter(new ResourceWSDL(wsdlUri));
-    }
-
-    /**
-     * @param wsdlUri The WSDL URL.
-     */
-    public void setWSDLURL(String wsdlUri)
-            throws WSDLException
-    {
-        if (wsdlUri == null
-                ||
-                wsdlUri.equals(""))
-        {
-            throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "URL to WSDL file is null");
-        }
-        setWSDLWriter(new ResourceWSDL(wsdlUri));
-    }
-
-    public void setWSDLWriter(WSDLWriter wsdl)
-    {
-        this.wsdlWriter = wsdl;
-    }
-
-    public List getAllowedMethods()
-    {
-        return allowedMethods;
-    }
-
-    /**
-     * @param allowedMethods The allowedMethods to set.
-     */
-    public void setAllowedMethods(final List allowedMethods)
-    {
-        this.allowedMethods = allowedMethods;
+        this.binding = binding;
     }
 
     public BindingProvider getBindingProvider()
@@ -276,24 +255,80 @@ public class ServiceEndpoint
     }
 
     /**
-     * Returns the binding for this endpoint.
+     * Returns the transport for this endpoint.
      *
-     * @return the binding.
+     * @return the transport.
      */
-    public SOAPBinding getBinding()
+    public Transport getTransport()
     {
-        return binding;
+        return transport;
     }
 
     /**
-     * Sets the binding for this endpoint.
+     * Sets the transport for this binding.
      *
-     * @param binding the binding.
+     * @param transport the transport.
      */
-    public void setBinding(SOAPBinding binding)
+    public void setTransport(Transport transport)
     {
-        this.binding = binding;
+        this.transport = transport;
     }
 
+    public WSDLWriter getWSDLWriter()
+            throws WSDLException
+    {
+        if (wsdlWriter == null)
+        {
+            final WSDLBuilder builder = getWSDLBuilder();
+
+            if (builder != null)
+                return getWSDLBuilder().createWSDLWriter(new ServiceEndpointAdapter(this));
+        }
+
+        return wsdlWriter;
+    }
+
+    public WSDLBuilder getWSDLBuilder()
+    {
+        return wsdlBuilder;
+    }
+
+    public void setWSDL(WSDLWriter wsdlWriter)
+    {
+        this.wsdlWriter = wsdlWriter;
+    }
+
+    public void setWSDLBuilder(final WSDLBuilder wsdlBuilder)
+    {
+        this.wsdlBuilder = wsdlBuilder;
+    }
+
+    /**
+     * @param wsdlUri The WSDL URL.
+     */
+    public void setWSDLURL(String wsdlUri)
+            throws WSDLException
+    {
+        if (wsdlUri == null
+                ||
+                wsdlUri.equals(""))
+        {
+            throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "URL to WSDL file is null");
+        }
+        setWSDLWriter(new ResourceWSDL(wsdlUri));
+    }
+
+    /**
+     * @param wsdlUri The WSDL URL.
+     */
+    public void setWSDLURL(URL wsdlUri)
+    {
+        setWSDLWriter(new ResourceWSDL(wsdlUri));
+    }
+
+    public void setWSDLWriter(WSDLWriter wsdl)
+    {
+        this.wsdlWriter = wsdl;
+    }
 }
 

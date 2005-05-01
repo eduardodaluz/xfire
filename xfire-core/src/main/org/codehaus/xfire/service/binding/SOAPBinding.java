@@ -14,17 +14,17 @@ import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.service.transport.Transport;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLCreationException;
 
 /**
- * Represents a SOAP Binding, used by a <code>ServiceEndpoint</code>.
+ * Represents the abstract base class for SOAP bindings, used by a <code>ServiceEndpoint</code>.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class SOAPBinding
+public abstract class SOAPBinding
         extends Binding
 {
     /**
@@ -36,19 +36,6 @@ public class SOAPBinding
      */
     public static final String WSDL_SOAP_PREFIX = "soap";
     private SoapVersion soapVersion;
-    private String style = SoapConstants.STYLE_DOCUMENT;
-    private String use = SoapConstants.USE_LITERAL;
-
-    /**
-     * Initializes a new instance of the <code>SOAPBinding</code> class with the given qualified name. The {@link
-     * #getSoapVersion() soap version} is set to <code>1.1</code>.
-     *
-     * @param name the qualified name.
-     */
-    public SOAPBinding(QName name)
-    {
-        this(name, Soap11.getInstance());
-    }
 
     /**
      * Initializes a new instance of the <code>SOAPBinding</code> class with the given qualified name and soap version.
@@ -56,7 +43,7 @@ public class SOAPBinding
      * @param name    the name.
      * @param version the soap version.
      */
-    public SOAPBinding(QName name, SoapVersion version)
+    protected SOAPBinding(QName name, SoapVersion version)
     {
         super(name);
         this.soapVersion = version;
@@ -77,7 +64,7 @@ public class SOAPBinding
                     (javax.wsdl.extensions.soap.SOAPBinding) definition.getExtensionRegistry().createExtension(
                             javax.wsdl.Binding.class,
                             new QName(WSDL_SOAP_NAMESPACE, "binding"));
-            soapBinding.setStyle(style);
+            soapBinding.setStyle(getStyle());
             wsdlBinding.addExtensibilityElement(soapBinding);
         }
         catch (WSDLException e)
@@ -102,7 +89,7 @@ public class SOAPBinding
                     (SOAPFault) definition.getExtensionRegistry().createExtension(BindingFault.class,
                                                                                   new QName(WSDL_SOAP_NAMESPACE,
                                                                                             "fault"));
-            soapFault.setUse(use);
+            soapFault.setUse(getUse());
             bindingFault.addExtensibilityElement(soapFault);
         }
         catch (WSDLException e)
@@ -126,7 +113,7 @@ public class SOAPBinding
                     (SOAPBody) definition.getExtensionRegistry().createExtension(BindingInput.class,
                                                                                  new QName(WSDL_SOAP_NAMESPACE,
                                                                                            "body"));
-            soapBody.setUse(use);
+            soapBody.setUse(getUse());
             bindingInput.addExtensibilityElement(soapBody);
         }
         catch (WSDLException e)
@@ -174,7 +161,7 @@ public class SOAPBinding
                     (SOAPBody) definition.getExtensionRegistry().createExtension(BindingOutput.class,
                                                                                  new QName(WSDL_SOAP_NAMESPACE,
                                                                                            "body"));
-            soapBody.setUse(use);
+            soapBody.setUse(getUse());
             bindingOutput.addExtensibilityElement(soapBody);
         }
         catch (WSDLException e)
@@ -188,8 +175,9 @@ public class SOAPBinding
      *
      * @param definition the definition used.
      * @param port       the WSDL port to populate.
+     * @param transport  the tranport used when binding.
      */
-    public void populateWSDLPort(Definition definition, Port port)
+    public void populateWSDLPort(Definition definition, Port port, Transport transport)
     {
         definition.addNamespace(WSDL_SOAP_PREFIX, WSDL_SOAP_NAMESPACE);
         try
@@ -198,13 +186,12 @@ public class SOAPBinding
                     (SOAPAddress) definition.getExtensionRegistry().createExtension(Port.class,
                                                                                     new QName(WSDL_SOAP_NAMESPACE,
                                                                                               "address"));
-            // TODO: set the location uri to someplace
-            soapAddress.setLocationURI("");
+            soapAddress.setLocationURI(transport.getAddress());
             port.addExtensibilityElement(soapAddress);
         }
         catch (WSDLException e)
         {
-            throw new WSDLCreationException("Could not create SOAPFault", e);
+            throw new WSDLCreationException("Could not create SOAPAddress", e);
         }
     }
 
@@ -234,29 +221,7 @@ public class SOAPBinding
      *
      * @return the style used.
      */
-    public String getStyle()
-    {
-        return style;
-    }
-
-    /**
-     * Sets the SOAP binding style used by this binding. The given parameter must be one of {@link
-     * SoapConstants#STYLE_DOCUMENT} or {@link SoapConstants#STYLE_RPC}.
-     *
-     * @param style the binding style.
-     * @throws IllegalArgumentException if <code>style</code> is not a valid parameter style.
-     */
-    public void setStyle(String style)
-    {
-        if (SoapConstants.STYLE_DOCUMENT.equals(style) || SoapConstants.STYLE_RPC.equals(style))
-        {
-            this.style = style;
-        }
-        else
-        {
-            throw new IllegalArgumentException("Invalid style [" + style + "]");
-        }
-    }
+    public abstract String getStyle();
 
     /**
      * Returns the SOAP binding use used by this binding. The returned value is one of {@link SoapConstants#USE_LITERAL}
@@ -264,28 +229,6 @@ public class SOAPBinding
      *
      * @return the use used.
      */
-    public String getUse()
-    {
-        return use;
-    }
-
-    /**
-     * Sets the SOAP binding use used by this binding. The given parameter must be is one of {@link
-     * SoapConstants#USE_LITERAL} or {@link SoapConstants#USE_ENCODED}.
-     *
-     * @param use the use used.
-     * @throws IllegalArgumentException if <code>use</code> is not a valid parameter style.
-     */
-    public void setUse(String use)
-    {
-        if (SoapConstants.USE_LITERAL.equals(style) || SoapConstants.USE_ENCODED.equals(style))
-        {
-            this.use = use;
-        }
-        else
-        {
-            throw new IllegalArgumentException("Invalid use [" + use + "]");
-        }
-    }
+    public abstract String getUse();
 }
 

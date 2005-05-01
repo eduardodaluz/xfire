@@ -5,6 +5,8 @@ import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
@@ -12,8 +14,10 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+import org.codehaus.xfire.service.transport.MockTransport;
+import org.codehaus.xfire.service.transport.Transport;
 
-public class SOAPBindingTest
+public class DocumentBindingTest
         extends TestCase
 {
     private SOAPBinding soapBinding;
@@ -23,7 +27,7 @@ public class SOAPBindingTest
             throws Exception
     {
         name = new QName("SoapBinding");
-        soapBinding = new SOAPBinding(name);
+        soapBinding = new DocumentBinding(name);
     }
 
 
@@ -103,31 +107,22 @@ public class SOAPBindingTest
         assertEquals(new QName(SOAPBinding.WSDL_SOAP_NAMESPACE, "fault"), soapFault.getElementType());
     }
 
-    public void testSetStyle()
+    public void testPopulateWSDLPort()
             throws Exception
     {
-        try
-        {
-            soapBinding.setStyle("something");
-            fail("No IllegalArgumentException thrown");
-        }
-        catch (IllegalArgumentException e)
-        {
-            // Expected behavior
-        }
-    }
+        WSDLFactory factory = WSDLFactory.newInstance();
+        Definition definition = factory.newDefinition();
+        Port port = definition.createPort();
 
-    public void testSetUse()
-            throws Exception
-    {
-        try
-        {
-            soapBinding.setUse("something");
-            fail("No IllegalArgumentException thrown");
-        }
-        catch (IllegalArgumentException e)
-        {
-            // Expected behavior
-        }
+        Transport mockTransport = new MockTransport("address");
+
+        soapBinding.populateWSDLPort(definition, port, mockTransport);
+        assertFalse(port.getExtensibilityElements().isEmpty());
+        SOAPAddress soapAddress =
+                (SOAPAddress) port.getExtensibilityElements().get(0);
+        assertNotNull(soapAddress);
+        assertEquals(new QName(SOAPBinding.WSDL_SOAP_NAMESPACE, "address"), soapAddress.getElementType());
+        assertEquals("address", soapAddress.getLocationURI());
+
     }
 }

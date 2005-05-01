@@ -5,11 +5,13 @@ import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
+import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.Visitable;
 import org.codehaus.xfire.service.Visitor;
+import org.codehaus.xfire.service.transport.Transport;
 
 /**
  * Forms the abstract base class for <code>ServiceEndpoint</code> bindings.
@@ -93,12 +95,13 @@ public abstract class Binding
     }
 
     /**
-     * Allows subclasses to customize the giben WSDL port.
+     * Allows subclasses to customize the given WSDL port.
      *
      * @param definition the definition.
      * @param port       the WSDL port.
+     * @param transport  the transport used for binding.
      */
-    public void populateWSDLPort(Definition definition, Port port)
+    public void populateWSDLPort(Definition definition, Port port, Transport transport)
     {
     }
 
@@ -120,6 +123,17 @@ public abstract class Binding
     public void setName(QName name)
     {
         this.name = name;
+    }
+
+    /**
+     * Allows subclasses to customize the given WSDL message part.
+     *
+     * @param definition the definition.
+     * @param part       the WSDL message part.
+     * @param typeClass  the class represented by the part.
+     */
+    public void populateWSDLPart(Definition definition, Part part, Class typeClass)
+    {
     }
 }
 

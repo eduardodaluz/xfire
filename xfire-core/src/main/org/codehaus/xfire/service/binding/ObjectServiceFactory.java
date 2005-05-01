@@ -182,11 +182,26 @@ public class ObjectServiceFactory
         String theUse = (use != null) ? use : SoapConstants.USE_LITERAL;
 
         ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
-
-        endpoint.getBinding().setSoapVersion(theVersion);
-        endpoint.getBinding().setStyle(theStyle);
-        endpoint.getBinding().setUse(theUse);
+        SOAPBinding binding = null;
+        QName bindingQName = new QName(theName + "Binding");
+        if (theStyle.equals(SoapConstants.STYLE_DOCUMENT) && theUse.equals(SoapConstants.USE_LITERAL))
+        {
+            binding = new DocumentBinding(bindingQName, theVersion);
+        }
+        else if (theStyle.equals(SoapConstants.STYLE_WRAPPED) && theUse.equals(SoapConstants.USE_LITERAL))
+        {
+            binding = new WrappedBinding(bindingQName, theVersion);
+        }
+        else if (theStyle.equals(SoapConstants.STYLE_RPC) && theUse.equals(SoapConstants.USE_ENCODED))
+        {
+            binding = new RPCEncodedBinding(bindingQName, theVersion);
+        }
+        else
+        {
+            throw new IllegalArgumentException("Illegal style/use combination [" + style + "/" + use + "]");
+        }
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
+        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
         try
         {
             endpoint.setBindingProvider(getBindingProvider());
@@ -219,7 +234,6 @@ public class ObjectServiceFactory
         endpoint.setInvoker(new ObjectInvoker());
 
         initializeOperations(endpoint);
-        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
 
         endpoint.getBindingProvider().initialize(adapter);
 
@@ -252,12 +266,13 @@ public class ObjectServiceFactory
 
     protected void addOperation(ServiceEndpoint endpoint, final Method method)
     {
+        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
         ServiceInfo service = endpoint.getService();
         final OperationInfo op = service.addOperation(method.getName(), method);
 
         final Class[] paramClasses = method.getParameterTypes();
 
-        final boolean isDoc = endpoint.getBinding().getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        final boolean isDoc = adapter.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
 
         MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
         op.setInputMessage(inMsg);

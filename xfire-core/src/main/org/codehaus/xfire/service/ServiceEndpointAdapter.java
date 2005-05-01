@@ -10,7 +10,12 @@ import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.DocumentBinding;
 import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.binding.RPCEncodedBinding;
+import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.WrappedBinding;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -33,12 +38,12 @@ public class ServiceEndpointAdapter
 
     public void addOperation(OperationInfo info)
     {
-        endpoint.getService().addOperation(info);
+        getService().addOperation(info);
     }
 
     public OperationInfo getOperation(String name)
     {
-        return endpoint.getService().getOperation(name);
+        return getService().getOperation(name);
     }
 
     public Object getProperty(String name)
@@ -48,7 +53,7 @@ public class ServiceEndpointAdapter
 
     public void removeOperation(String string)
     {
-        endpoint.getService().removeOperation(string);
+        getService().removeOperation(string);
     }
 
     public void setProperty(String name, Object value)
@@ -56,7 +61,6 @@ public class ServiceEndpointAdapter
         endpoint.setProperty(name, value);
     }
 
-// properties
     public BindingProvider getBindingProvider()
     {
         return endpoint.getBindingProvider();
@@ -64,7 +68,7 @@ public class ServiceEndpointAdapter
 
     public String getDefaultNamespace()
     {
-        return endpoint.getService().getName().getNamespaceURI();
+        return getService().getName().getNamespaceURI();
     }
 
     public FaultHandler getFaultHandler()
@@ -84,12 +88,12 @@ public class ServiceEndpointAdapter
 
     public String getName()
     {
-        return endpoint.getService().getName().getLocalPart();
+        return getService().getName().getLocalPart();
     }
 
     public Collection getOperations()
     {
-        return endpoint.getService().getOperations();
+        return getService().getOperations();
     }
 
     public HandlerPipeline getRequestPipeline()
@@ -109,7 +113,12 @@ public class ServiceEndpointAdapter
 
     public Class getServiceClass()
     {
-        return endpoint.getService().getServiceClass();
+        return getService().getServiceClass();
+    }
+
+    private ServiceInfo getService()
+    {
+        return endpoint.getService();
     }
 
     public Handler getServiceHandler()
@@ -119,17 +128,22 @@ public class ServiceEndpointAdapter
 
     public SoapVersion getSoapVersion()
     {
-        return endpoint.getBinding().getSoapVersion();
+        return getSOAPBinding().getSoapVersion();
+    }
+
+    private SOAPBinding getSOAPBinding()
+    {
+        return ((SOAPBinding) endpoint.getBinding());
     }
 
     public String getStyle()
     {
-        return endpoint.getBinding().getStyle();
+        return getSOAPBinding().getStyle();
     }
 
     public String getUse()
     {
-        return endpoint.getBinding().getUse();
+        return getSOAPBinding().getUse();
     }
 
     public WSDLBuilder getWSDLBuilder()
@@ -150,7 +164,7 @@ public class ServiceEndpointAdapter
 
     public void setDefaultNamespace(String defaultNamespace)
     {
-
+        getService().setName(new QName(defaultNamespace, getService().getName().getLocalPart()));
     }
 
     public void setFaultHandler(FaultHandler faultHandler)
@@ -170,7 +184,7 @@ public class ServiceEndpointAdapter
 
     public void setName(String name)
     {
-        endpoint.getService().setName(new QName(endpoint.getService().getName().getNamespaceURI(), name));
+        getService().setName(new QName(getService().getName().getNamespaceURI(), name));
     }
 
     public void setRequestPipeline(HandlerPipeline requestPipeline)
@@ -195,17 +209,59 @@ public class ServiceEndpointAdapter
 
     public void setSoapVersion(SoapVersion soapVersion)
     {
-        endpoint.getBinding().setSoapVersion(soapVersion);
+        getSOAPBinding().setSoapVersion(soapVersion);
     }
 
     public void setStyle(String style)
     {
-        endpoint.getBinding().setStyle(style);
+        SoapVersion oldVersion = getSOAPBinding().getSoapVersion();
+        if (SoapConstants.STYLE_DOCUMENT.equals(style))
+        {
+            endpoint.setBinding(
+                    new DocumentBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+        }
+        else if (SoapConstants.STYLE_RPC.equals(style))
+        {
+            endpoint.setBinding(
+                    new RPCEncodedBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+        }
+        else if (SoapConstants.STYLE_WRAPPED.equals(style))
+        {
+            endpoint.setBinding(
+                    new WrappedBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+        }
+        else
+        {
+            throw new IllegalArgumentException("Invalid style [" + style + "]");
+        }
     }
 
     public void setUse(String use)
     {
-        endpoint.getBinding().setUse(use);
+        String oldStyle = getSOAPBinding().getStyle();
+        SoapVersion oldVersion = getSOAPBinding().getSoapVersion();
+        if (SoapConstants.USE_LITERAL.equals(use))
+        {
+            if (SoapConstants.STYLE_DOCUMENT.equals(oldStyle))
+            {
+                endpoint.setBinding(
+                        new DocumentBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+            }
+            else if (SoapConstants.STYLE_WRAPPED.equals(oldStyle))
+            {
+                endpoint.setBinding(
+                        new DocumentBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+            }
+        }
+        else if (SoapConstants.USE_ENCODED.equals(use))
+        {
+            endpoint.setBinding(
+                    new RPCEncodedBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+        }
+        else
+        {
+            throw new IllegalArgumentException("Invalid use [" + use + "]");
+        }
     }
 
     public void setWSDLBuilder(WSDLBuilder wsdlBuilder)

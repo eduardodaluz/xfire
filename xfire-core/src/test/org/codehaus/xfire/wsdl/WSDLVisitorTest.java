@@ -2,19 +2,21 @@ package org.codehaus.xfire.wsdl;
 
 import java.lang.reflect.Method;
 import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLWriter;
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.HTTPBinding;
+import org.codehaus.xfire.service.transport.MockTransport;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 public class WSDLVisitorTest
-        extends TestCase
+        extends XMLTestCase
 {
     private WSDLVisitor wsdlVisitor;
     private ServiceEndpoint endpoint;
@@ -30,6 +32,7 @@ public class WSDLVisitorTest
         wsdlVisitor = new WSDLVisitor();
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
         endpoint = new ServiceEndpoint(service);
+        endpoint.setTransport(new MockTransport("address"));
         Method method = getClass().getMethod("method", new Class[0]);
 
         OperationInfo operation = service.addOperation("operation", method);
@@ -47,14 +50,34 @@ public class WSDLVisitorTest
 
     }
 
-    public void testWsdl()
+    public void testSOAPWsdl()
             throws Exception
     {
         endpoint.accept(wsdlVisitor);
         Definition definition = wsdlVisitor.getDefinition();
-        WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
-        writer.writeWSDL(definition, System.out);
+        assertNotNull(definition);
+        PortType portType = definition.getPortType(endpoint.getService().getName());
+        assertNotNull(portType);
+        assertEquals(1, portType.getOperations().size());
+        Operation operation = portType.getOperation("operation", "input", "output");
+        assertNotNull(operation);
+        assertNotNull(operation.getInput());
+        assertNotNull(operation.getOutput());
+        assertEquals(1, operation.getFaults().size());
+        assertEquals(3, definition.getMessages().size());
+        assertNotNull(definition.getMessage(new QName("input")));
+        assertNotNull(definition.getMessage(new QName("output")));
+        assertNotNull(definition.getMessage(new QName("fault")));
+        wsdlVisitor.write(System.out);
     }
 
+    public void testHTTPWsdl()
+            throws Exception
+    {
+        HTTPBinding httpBinding = new HTTPBinding(new QName("httpBinding"));
+        endpoint.setBinding(httpBinding);
+        endpoint.accept(wsdlVisitor);
+        wsdlVisitor.write(System.out);
+    }
 
 }

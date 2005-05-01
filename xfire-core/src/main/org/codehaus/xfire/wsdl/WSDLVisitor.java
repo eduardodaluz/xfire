@@ -1,5 +1,7 @@
 package org.codehaus.xfire.wsdl;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +40,7 @@ import org.codehaus.xfire.service.binding.Binding;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class WSDLVisitor
-        implements Visitor
+        implements Visitor, WSDLWriter
 {
     private Definition definition;
     private PortType currentPortType;
@@ -46,6 +48,7 @@ public class WSDLVisitor
     private List operations = new ArrayList();
     private Message currentMessage;
     private Part currentPart;
+    private List messageParts = new ArrayList();
     private javax.wsdl.Binding currentBinding;
 
     /**
@@ -74,9 +77,9 @@ public class WSDLVisitor
         this.definition = definition;
     }
 
-
-    public void startEndpoint(ServiceEndpoint endpoint)
+    public void endBinding(Binding binding)
     {
+        definition.addBinding(currentBinding);
     }
 
     public void endEndpoint(ServiceEndpoint endpoint)
@@ -85,7 +88,7 @@ public class WSDLVisitor
         Port port = definition.createPort();
         port.setName(endpoint.getService().getName().getLocalPart() + "Port");
         port.setBinding(currentBinding);
-        endpoint.getBinding().populateWSDLPort(definition, port);
+        endpoint.getBinding().populateWSDLPort(definition, port, endpoint.getTransport());
         service.addPort(port);
         definition.addService(service);
         currentPortType = null;
@@ -93,70 +96,12 @@ public class WSDLVisitor
     }
 
     /**
-     * Visits the given service.
+     * Receive notification at the end of a fault visit.
      *
-     * @param serviceInfo the service.
+     * @param faultInfo the fault.
      */
-    public void startService(ServiceInfo serviceInfo)
+    public void endFault(FaultInfo faultInfo)
     {
-        currentPortType = definition.createPortType();
-        currentPortType.setQName(serviceInfo.getName());
-        currentPortType.setUndefined(false);
-        definition.addNamespace("tns", serviceInfo.getName().getNamespaceURI());
-    }
-
-    /**
-     * Receive notatification of the end of a service visit.
-     *
-     * @param serviceInfo
-     */
-    public void endService(ServiceInfo serviceInfo)
-    {
-        definition.addPortType(currentPortType);
-    }
-
-    /**
-     * Visits the given operation.
-     *
-     * @param operationInfo the operation.
-     */
-    public void startOperation(OperationInfo operationInfo)
-    {
-        currentOperation = definition.createOperation();
-        currentOperation.setName(operationInfo.getName());
-        if (operationInfo.isOneWay())
-        {
-            currentOperation.setStyle(OperationType.ONE_WAY);
-        }
-        else
-        {
-            currentOperation.setStyle(OperationType.SOLICIT_RESPONSE);
-        }
-        currentOperation.setUndefined(false);
-    }
-
-    /**
-     * Receive notification at the end of a operation visit.
-     *
-     * @param operationInfo the operation.
-     */
-    public void endOperation(OperationInfo operationInfo)
-    {
-        currentPortType.addOperation(currentOperation);
-        operations.add(currentOperation);
-        currentOperation = null;
-    }
-
-    /**
-     * Visits the given message.
-     *
-     * @param messageInfo the message.
-     */
-    public void startMessage(MessageInfo messageInfo)
-    {
-        currentMessage = definition.createMessage();
-        currentMessage.setQName(messageInfo.getName());
-        currentMessage.setUndefined(false);
     }
 
     /**
@@ -185,50 +130,36 @@ public class WSDLVisitor
     }
 
     /**
-     * Visits the given fault.
-     *
-     * @param faultInfo the fault.
-     */
-    public void startFault(FaultInfo faultInfo)
-    {
-        currentMessage = definition.createMessage();
-        currentMessage.setQName(new QName(faultInfo.getName()));
-        currentMessage.setUndefined(false);
-        definition.addMessage(currentMessage);
-        Fault fault = definition.createFault();
-        fault.setName(faultInfo.getName());
-        fault.setMessage(currentMessage);
-        currentOperation.addFault(fault);
-    }
-
-    /**
-     * Receive notification at the end of a fault visit.
-     *
-     * @param faultInfo the fault.
-     */
-    public void endFault(FaultInfo faultInfo)
-    {
-    }
-
-    /**
-     * Visits the given message part info.
-     *
-     * @param messagePartInfo the message part info.
-     */
-    public void startMessagePart(MessagePartInfo messagePartInfo)
-    {
-        currentPart = definition.createPart();
-        currentPart.setName(messagePartInfo.getName().getLocalPart());
-    }
-
-    /**
      * Receive notification at the end of a message part visit.
      *
      * @param messagePartInfo the message part info.
      */
     public void endMessagePart(MessagePartInfo messagePartInfo)
     {
+        messageParts.add(new PartClassPair(currentPart, messagePartInfo.getTypeClass()));
         currentMessage.addPart(currentPart);
+    }
+
+    /**
+     * Receive notification at the end of a operation visit.
+     *
+     * @param operationInfo the operation.
+     */
+    public void endOperation(OperationInfo operationInfo)
+    {
+        currentPortType.addOperation(currentOperation);
+        operations.add(currentOperation);
+        currentOperation = null;
+    }
+
+    /**
+     * Receive notatification of the end of a service visit.
+     *
+     * @param serviceInfo
+     */
+    public void endService(ServiceInfo serviceInfo)
+    {
+        definition.addPortType(currentPortType);
     }
 
     public void startBinding(Binding binding)
@@ -239,6 +170,18 @@ public class WSDLVisitor
         currentBinding.setPortType(currentPortType);
 
         binding.populateWSDLBinding(definition, currentBinding);
+        if (!operations.isEmpty())
+        {
+            createBindingOperations(binding);
+        }
+        if (!messageParts.isEmpty())
+        {
+            createBindingMessageParts(binding);
+        }
+    }
+
+    private void createBindingOperations(Binding binding)
+    {
         for (Iterator iterator = operations.iterator(); iterator.hasNext();)
         {
             Operation operation = (Operation) iterator.next();
@@ -260,7 +203,6 @@ public class WSDLVisitor
                 bindingOutput.setName(operation.getOutput().getName());
                 bindingOperation.setBindingOutput(bindingOutput);
                 binding.populateWSDLBindingOutput(definition, bindingOutput);
-
             }
             if (!operation.getFaults().isEmpty())
             {
@@ -274,18 +216,156 @@ public class WSDLVisitor
                 }
             }
             currentBinding.addBindingOperation(bindingOperation);
-
         }
     }
 
-    public void endBinding(Binding binding)
+    private void createBindingMessageParts(Binding binding)
     {
-        definition.addBinding(currentBinding);
+        for (Iterator iterator = messageParts.iterator(); iterator.hasNext();)
+        {
+            PartClassPair pair = (PartClassPair) iterator.next();
+            binding.populateWSDLPart(definition, pair.getPart(), pair.getTypeClass());
+        }
     }
 
+    public void startEndpoint(ServiceEndpoint endpoint)
+    {
+        currentPortType = null;
+        currentOperation = null;
+        operations.clear();
+        currentMessage = null;
+        currentPart = null;
+        messageParts.clear();
+        currentBinding = null;
+    }
 
+    /**
+     * Visits the given fault.
+     *
+     * @param faultInfo the fault.
+     */
+    public void startFault(FaultInfo faultInfo)
+    {
+        currentMessage = definition.createMessage();
+        currentMessage.setQName(new QName(faultInfo.getName()));
+        currentMessage.setUndefined(false);
+        definition.addMessage(currentMessage);
+        Fault fault = definition.createFault();
+        fault.setName(faultInfo.getName());
+        fault.setMessage(currentMessage);
+        currentOperation.addFault(fault);
+    }
+
+    /**
+     * Visits the given message.
+     *
+     * @param messageInfo the message.
+     */
+    public void startMessage(MessageInfo messageInfo)
+    {
+        currentMessage = definition.createMessage();
+        currentMessage.setQName(messageInfo.getName());
+        currentMessage.setUndefined(false);
+    }
+
+    /**
+     * Visits the given message part info.
+     *
+     * @param messagePartInfo the message part info.
+     */
+    public void startMessagePart(MessagePartInfo messagePartInfo)
+    {
+        currentPart = definition.createPart();
+        currentPart.setName(messagePartInfo.getName().getLocalPart());
+    }
+
+    /**
+     * Visits the given operation.
+     *
+     * @param operationInfo the operation.
+     */
+    public void startOperation(OperationInfo operationInfo)
+    {
+        currentOperation = definition.createOperation();
+        currentOperation.setName(operationInfo.getName());
+        if (operationInfo.isOneWay())
+        {
+            currentOperation.setStyle(OperationType.ONE_WAY);
+        }
+        else
+        {
+            currentOperation.setStyle(OperationType.SOLICIT_RESPONSE);
+        }
+        currentOperation.setUndefined(false);
+    }
+
+    /**
+     * Visits the given service.
+     *
+     * @param serviceInfo the service.
+     */
+    public void startService(ServiceInfo serviceInfo)
+    {
+        currentPortType = definition.createPortType();
+        currentPortType.setQName(serviceInfo.getName());
+        currentPortType.setUndefined(false);
+        definition.addNamespace("tns", serviceInfo.getName().getNamespaceURI());
+    }
+
+    /**
+     * Writes the WSDL definition to the given stream.
+     *
+     * @param out the output stream
+     * @throws IOException when an I/O exception occurs.
+     */
+    public void write(OutputStream out)
+            throws IOException
+    {
+        try
+        {
+            WSDLFactory factory = WSDLFactory.newInstance();
+            javax.wsdl.xml.WSDLWriter writer = factory.newWSDLWriter();
+            writer.writeWSDL(definition, out);
+        }
+        catch (WSDLException e)
+        {
+            throw new WSDLCreationException("Could not create WSDLFActory", e);
+        }
+    }
+
+    /**
+     * Returns the definition created by this instance.
+     *
+     * @return the WSDL definition.
+     */
     public Definition getDefinition()
     {
         return definition;
     }
+
+    /**
+     * A simple pair of a WSDL Part and a type class for it. Used when creating binding-specific parts.
+     */
+    private static class PartClassPair
+    {
+        private Part part;
+        private Class typeClass;
+
+        public PartClassPair(Part part, Class typeClass)
+        {
+            this.part = part;
+            this.typeClass = typeClass;
+        }
+
+        public Part getPart()
+        {
+            return part;
+        }
+
+        public Class getTypeClass()
+        {
+            return typeClass;
+        }
+    }
 }
+
