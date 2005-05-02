@@ -31,7 +31,7 @@ public class WSDLVisitorTest
         wsdlVisitor = new WSDLVisitor();
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
         endpoint = new ServiceEndpoint(service);
-        endpoint.setTransport(new MockTransport("address"));
+        endpoint.setTransport(new MockTransport("address", "location"));
         Method method = getClass().getMethod("method", new Class[0]);
 
         OperationInfo operation = service.addOperation("operation", method);

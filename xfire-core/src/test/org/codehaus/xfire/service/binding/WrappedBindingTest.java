@@ -4,15 +4,12 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.soap.Soap11;
 
-public class DocumentBindingTest
 
+public class WrappedBindingTest
         extends AbstractSOAPBindingTest
 {
-
     protected SOAPBinding getSOAPBinding(QName name)
     {
-        return new DocumentBinding(name, Soap11.getInstance());
+        return new WrappedBinding(name, Soap11.getInstance());
     }
-
-
 }

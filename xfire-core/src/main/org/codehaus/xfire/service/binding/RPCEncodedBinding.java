@@ -4,7 +4,6 @@ import javax.wsdl.Definition;
 import javax.wsdl.Part;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 
@@ -13,21 +12,9 @@ import org.codehaus.xfire.soap.SoapVersion;
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class RPCEncodedBinding
+class RPCEncodedBinding
         extends SOAPBinding
 {
-    /**
-     * Initializes a new instance of the <code>RPCEncodedBinding</code> class with the given qualified name. The {@link
-     * #getSoapVersion() soap version} is set to <code>1.1</code>.
-     *
-     * @param name the qualified name.
-     */
-    public RPCEncodedBinding(QName name)
-    {
-        this(name, Soap11.getInstance());
-
-    }
-
     /**
      * Initializes a new instance of the <code>RPCEncodedBinding</code> class with the given qualified name and soap
      * version.
@@ -35,7 +22,7 @@ public class RPCEncodedBinding
      * @param name    the name.
      * @param version the soap version.
      */
-    public RPCEncodedBinding(QName name, SoapVersion version)
+    RPCEncodedBinding(QName name, SoapVersion version)
     {
         super(name, version);
     }

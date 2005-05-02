@@ -4,7 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -25,7 +26,7 @@ public class XFireExporter
         extends RemoteExporter
         implements Controller, InitializingBean, BeanNameAware
 {
-    private Service service;
+    private ServiceEndpoint endpoint;
     private ServiceFactory serviceFactory;
     private XFireServletControllerAdapter delegate;
     private XFire xFire;
@@ -47,24 +48,25 @@ public class XFireExporter
             theName = theName.substring(1);
         }
 
-        service = serviceFactory.create(getServiceInterface(),
-                                        theName,
-                                        namespace,
-                                        soapVersion,
-                                        style,
-                                        use,
-                                        null);
+        endpoint = serviceFactory.create(getServiceInterface(),
+                                         theName,
+                                         namespace,
+                                         soapVersion,
+                                         style,
+                                         use,
+                                         null);
+        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
         if (logger.isInfoEnabled())
         {
-            logger.info("Exposing SOAP v." + service.getSoapVersion().getVersion() + " service " + service.getName() +
-                        " as " + service.getStyle() + "/" + service.getUse());
+            logger.info("Exposing SOAP v." + adapter.getSoapVersion().getVersion() + " service " + adapter.getName() +
+                        " as " + adapter.getStyle() + "/" + adapter.getUse());
         }
 
-        xFire.getServiceRegistry().register(service);
+        xFire.getServiceRegistry().register(adapter);
 
-        service.setInvoker(new BeanInvoker(getProxyForService()));
+        endpoint.setInvoker(new BeanInvoker(getProxyForService()));
 
-        delegate = new XFireServletControllerAdapter(xFire, service.getName());
+        delegate = new XFireServletControllerAdapter(xFire, endpoint.getService().getName().getLocalPart());
     }
 
     /**

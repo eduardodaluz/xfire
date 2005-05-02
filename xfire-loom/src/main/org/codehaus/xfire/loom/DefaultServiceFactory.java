@@ -9,7 +9,7 @@ import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -20,17 +20,20 @@ import org.codehaus.xfire.transport.TransportManager;
  *
  * @author <a href="mailto:peter.royal@pobox.com">peter royal</a>
  */
-public class DefaultServiceFactory extends AbstractLogEnabled implements ServiceFactory, Serviceable, Initializable
+public class DefaultServiceFactory
+        extends AbstractLogEnabled
+        implements ServiceFactory, Serviceable, Initializable
 {
     private TypeMappingRegistry m_typeMappingRegistry;
     private TransportManager m_transportManager;
 
     private ObjectServiceFactory m_factory;
 
-    public void service( final ServiceManager manager ) throws ServiceException
+    public void service(final ServiceManager manager)
+            throws ServiceException
     {
-        m_typeMappingRegistry = (TypeMappingRegistry)manager.lookup( TypeMappingRegistry.ROLE );
-        m_transportManager = (TransportManager)manager.lookup( TransportManager.ROLE );
+        m_typeMappingRegistry = (TypeMappingRegistry) manager.lookup(TypeMappingRegistry.ROLE);
+        m_transportManager = (TransportManager) manager.lookup(TransportManager.ROLE);
     }
 
     protected final TransportManager getTransportManager()
@@ -43,40 +46,42 @@ public class DefaultServiceFactory extends AbstractLogEnabled implements Service
         return m_typeMappingRegistry;
     }
 
-    protected final void setFactory( final ObjectServiceFactory factory )
+    protected final void setFactory(final ObjectServiceFactory factory)
     {
         m_factory = factory;
     }
 
-    public void initialize() throws Exception
+    public void initialize()
+            throws Exception
     {
-        setFactory( new ObjectServiceFactory( m_transportManager, 
-                                              new AegisBindingProvider(m_typeMappingRegistry) ) );
+        setFactory(new ObjectServiceFactory(m_transportManager,
+                                            new AegisBindingProvider(m_typeMappingRegistry)));
     }
 
-    public Service create( final Class clazz )
+    public ServiceEndpoint create(final Class clazz)
     {
-        return m_factory.create( clazz );
+        return m_factory.create(clazz);
     }
 
-    public Service create( final Class clazz,
-                           final String name,
-                           final String namespace,
-                           final SoapVersion version,
-                           final String style,
-                           final String use,
-                           final String encodingStyleURI )
+    public ServiceEndpoint create(final Class clazz,
+                                  final String name,
+                                  final String namespace,
+                                  final SoapVersion version,
+                                  final String style,
+                                  final String use,
+                                  final String encodingStyleURI)
     {
-        return m_factory.create( clazz, name, namespace, version, style, use, encodingStyleURI );
+        return m_factory.create(clazz, name, namespace, version, style, use, encodingStyleURI);
     }
 
-    public Service create( final Class clazz, final URL wsdlUrl ) throws Exception
+    public ServiceEndpoint create(final Class clazz, final URL wsdlUrl)
+            throws Exception
     {
-        return m_factory.create( clazz, wsdlUrl );
+        return m_factory.create(clazz, wsdlUrl);
     }
 
-    public Service create( final Class clazz, final SoapVersion version, final String style, final String use )
+    public ServiceEndpoint create(final Class clazz, final SoapVersion version, final String style, final String use)
     {
-        return m_factory.create( clazz, version, style, use );
+        return m_factory.create(clazz, version, style, use);
     }
 }

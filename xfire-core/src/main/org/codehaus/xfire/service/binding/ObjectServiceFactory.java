@@ -12,7 +12,6 @@ import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -83,7 +82,7 @@ public class ObjectServiceFactory
      * @param wsdlUrl
      * @return
      */
-    public Service create(Class clazz, URL wsdlUrl)
+    public ServiceEndpoint create(Class clazz, URL wsdlUrl)
             throws Exception
     {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
@@ -101,7 +100,7 @@ public class ObjectServiceFactory
         endpoint.setServiceHandler(handler);
         endpoint.setInvoker(new ObjectInvoker());
 
-        return new ServiceEndpointAdapter(endpoint);
+        return endpoint;
     }
 
     /**
@@ -111,7 +110,7 @@ public class ObjectServiceFactory
      * @param clazz The service class used to populate the operations and parameters.
      * @return The service.
      */
-    public Service create(Class clazz)
+    public ServiceEndpoint create(Class clazz)
     {
         return create(clazz, null, null, null);
     }
@@ -124,12 +123,14 @@ public class ObjectServiceFactory
      * parameters for more info.
      *
      * @param clazz   The service class used to populate the operations and parameters.
-     * @param version The soap version. If <code>null</code>, {@link Soap11} will be used.
-     * @param style   The service style. If <code>null</code>, {@link SoapConstants#STYLE_WRAPPED} will be used.
-     * @param use     The service use. If <code>null</code>, {@link SoapConstants#USE_LITERAL} will be used.
+     * @param version The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be used.
+     * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
+     *                will be used.
+     * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
+     *                will be used.
      * @return The service.
      */
-    public Service create(Class clazz, SoapVersion version, String style, String use)
+    public ServiceEndpoint create(Class clazz, SoapVersion version, String style, String use)
     {
         return create(clazz, null, null, version, style, use, null);
     }
@@ -165,13 +166,13 @@ public class ObjectServiceFactory
      * @param encodingStyleURI The encoding style to use.
      * @return The service.
      */
-    public Service create(Class clazz,
-                          String name,
-                          String namespace,
-                          SoapVersion version,
-                          String style,
-                          String use,
-                          String encodingStyleURI)
+    public ServiceEndpoint create(Class clazz,
+                                  String name,
+                                  String namespace,
+                                  SoapVersion version,
+                                  String style,
+                                  String use,
+                                  String encodingStyleURI)
     {
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(
@@ -237,7 +238,7 @@ public class ObjectServiceFactory
 
         endpoint.getBindingProvider().initialize(adapter);
 
-        return adapter;
+        return endpoint;
     }
 
     protected void initializeOperations(ServiceEndpoint endpoint)

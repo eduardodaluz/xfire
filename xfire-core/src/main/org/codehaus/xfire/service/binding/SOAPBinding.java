@@ -55,7 +55,7 @@ public abstract class SOAPBinding
      * @param definition  the definition used.
      * @param wsdlBinding the WSDL binding to populate.
      */
-    public void populateWSDLBinding(Definition definition, javax.wsdl.Binding wsdlBinding)
+    public void populateWSDLBinding(Definition definition, javax.wsdl.Binding wsdlBinding, Transport transport)
     {
         definition.addNamespace(WSDL_SOAP_PREFIX, WSDL_SOAP_NAMESPACE);
         try
@@ -65,6 +65,7 @@ public abstract class SOAPBinding
                             javax.wsdl.Binding.class,
                             new QName(WSDL_SOAP_NAMESPACE, "binding"));
             soapBinding.setStyle(getStyle());
+            soapBinding.setTransportURI(transport.getTransportURI());
             wsdlBinding.addExtensibilityElement(soapBinding);
         }
         catch (WSDLException e)

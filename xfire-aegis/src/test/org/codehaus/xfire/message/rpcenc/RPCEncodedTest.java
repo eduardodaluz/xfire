@@ -4,7 +4,8 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.Echo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -18,7 +19,7 @@ import org.codehaus.yom.Document;
 public class RPCEncodedTest
         extends AbstractXFireAegisTest
 {
-    private Service service;
+    private ServiceEndpoint service;
 
     public void setUp()
             throws Exception
@@ -32,13 +33,13 @@ public class RPCEncodedTest
                                              SoapConstants.STYLE_RPC,
                                              SoapConstants.USE_ENCODED, null);
 
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(service));
     }
 
     public void testBeanService()
             throws Exception
     {
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
+        TypeMapping tm = AegisBindingProvider.getTypeMapping(new ServiceEndpointAdapter(service));
         Type type = tm.getType(String.class);
 
         Document response =
@@ -75,7 +76,7 @@ public class RPCEncodedTest
                     "/wsdlsoap:body[@use='encoded']", doc);
         assertValid("//wsdl:binding/wsdl:operation/wsdl:input[@name='echoRequest']" +
                     "/wsdlsoap:body[@namespace='" +
-                    service.getDefaultNamespace() + "']", doc);
+                    service.getService().getName().getNamespaceURI() + "']", doc);
 
         assertValid("//wsdl:binding/wsdl:operation/wsdl:output[@name='echoResponse']" +
                     "/wsdlsoap:body", doc);
@@ -86,7 +87,7 @@ public class RPCEncodedTest
                     "/wsdlsoap:body[@use='encoded']", doc);
         assertValid("//wsdl:binding/wsdl:operation/wsdl:output[@name='echoResponse']" +
                     "/wsdlsoap:body[@namespace='" +
-                    service.getDefaultNamespace() + "']", doc);
+                    service.getService().getName().getNamespaceURI() + "']", doc);
 
         assertValid(
                 "/wsdl:definitions/wsdl:service/wsdl:port/wsdlsoap:address[@location='http://localhost/services/Echo']",

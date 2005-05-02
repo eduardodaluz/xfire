@@ -88,6 +88,7 @@ public class WSDLVisitor
         Port port = definition.createPort();
         port.setName(endpoint.getService().getName().getLocalPart() + "Port");
         port.setBinding(currentBinding);
+        endpoint.getBinding().populateWSDLBinding(definition, currentBinding, endpoint.getTransport());
         endpoint.getBinding().populateWSDLPort(definition, port, endpoint.getTransport());
         service.addPort(port);
         definition.addService(service);
@@ -169,7 +170,6 @@ public class WSDLVisitor
         currentBinding.setUndefined(false);
         currentBinding.setPortType(currentPortType);
 
-        binding.populateWSDLBinding(definition, currentBinding);
         if (!operations.isEmpty())
         {
             createBindingOperations(binding);

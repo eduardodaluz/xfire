@@ -10,11 +10,9 @@ import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.DocumentBinding;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.RPCEncodedBinding;
 import org.codehaus.xfire.service.binding.SOAPBinding;
-import org.codehaus.xfire.service.binding.WrappedBinding;
+import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -217,18 +215,18 @@ public class ServiceEndpointAdapter
         SoapVersion oldVersion = getSOAPBinding().getSoapVersion();
         if (SoapConstants.STYLE_DOCUMENT.equals(style))
         {
-            endpoint.setBinding(
-                    new DocumentBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+            endpoint.setBinding(SOAPBindingFactory.createDocumentBinding(
+                    new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
         }
         else if (SoapConstants.STYLE_RPC.equals(style))
         {
-            endpoint.setBinding(
-                    new RPCEncodedBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+            endpoint.setBinding(SOAPBindingFactory.createRPCEncodedBinding(
+                    new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
         }
         else if (SoapConstants.STYLE_WRAPPED.equals(style))
         {
-            endpoint.setBinding(
-                    new WrappedBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+            endpoint.setBinding(SOAPBindingFactory.createWrappedBinding(
+                    new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
         }
         else
         {
@@ -244,19 +242,19 @@ public class ServiceEndpointAdapter
         {
             if (SoapConstants.STYLE_DOCUMENT.equals(oldStyle))
             {
-                endpoint.setBinding(
-                        new DocumentBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+                endpoint.setBinding(SOAPBindingFactory.createDocumentBinding(
+                        new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
             }
             else if (SoapConstants.STYLE_WRAPPED.equals(oldStyle))
             {
-                endpoint.setBinding(
-                        new DocumentBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+                endpoint.setBinding(SOAPBindingFactory.createWrappedBinding(
+                        new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
             }
         }
         else if (SoapConstants.USE_ENCODED.equals(use))
         {
-            endpoint.setBinding(
-                    new RPCEncodedBinding(new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
+            endpoint.setBinding(SOAPBindingFactory.createRPCEncodedBinding(
+                    new QName(getService().getName().getLocalPart() + "Binding"), oldVersion));
         }
         else
         {

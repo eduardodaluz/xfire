@@ -1,6 +1,7 @@
 package org.codehaus.xfire.picocontainer;
 
 import java.lang.reflect.Method;
+import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 import org.codehaus.xfire.XFire;
@@ -8,6 +9,7 @@ import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.Invoker;
@@ -44,8 +46,8 @@ public class XFireServiceRegisterVisitorTest
 
         // Register our service mocked directly.
         ServiceFactory sf = (ServiceFactory) pico.getComponentInstance(ServiceFactory.class);
-        Service ms = sf.create(DummyServiceThatCounts.class);
-        ms.setName("test");
+        ServiceEndpoint ms = sf.create(DummyServiceThatCounts.class);
+        ms.getService().setName(new QName("test"));
         pico.registerComponentInstance(ms);
 
         // Register container's services

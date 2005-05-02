@@ -6,12 +6,15 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
@@ -135,11 +138,11 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(false);
         webAnnotationsControl.replay();
 
-        Service service = annotationServiceFactory.create(EchoServiceImpl.class);
-        assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
-        assertEquals("EchoService", service.getName());
+        ServiceEndpoint endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
+        ServiceInfo service = endpoint.getService();
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoService"), service.getName());
 
-        WSDLBuilderInfo info = (WSDLBuilderInfo) service.getProperty(WSDLBuilderInfo.KEY);
+        WSDLBuilderInfo info = (WSDLBuilderInfo) endpoint.getProperty(WSDLBuilderInfo.KEY);
         assertEquals("Echo", info.getPortType());
         assertEquals("EchoService", info.getServiceName());
         assertEquals("http://xfire.codehaus.org/EchoService", info.getTargetNamespace());
@@ -187,9 +190,9 @@ public class AnnotationServiceFactoryTest
 
         webAnnotationsControl.replay();
 
-        Service service = annotationServiceFactory.create(EchoServiceImpl.class);
-        assertEquals("http://xfire.codehaus.org/EchoService", service.getDefaultNamespace());
-        assertEquals("EchoService", service.getName());
+        ServiceEndpoint endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
+        ServiceInfo service = endpoint.getService();
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoService"), service.getName());
 
         final OperationInfo operation = service.getOperation("echo");
         assertNotNull(operation);
@@ -233,8 +236,9 @@ public class AnnotationServiceFactoryTest
 
         webAnnotationsControl.replay();
 
-        Service service = service = annotationServiceFactory.create(EchoServiceImpl.class);
-        assertEquals(SoapConstants.USE_LITERAL, service.getUse());
+        ServiceEndpoint service = service = annotationServiceFactory.create(EchoServiceImpl.class);
+        SOAPBinding binding = (SOAPBinding) service.getBinding();
+        assertEquals(SoapConstants.USE_LITERAL, binding.getUse());
 
         webAnnotationsControl.verify();
 

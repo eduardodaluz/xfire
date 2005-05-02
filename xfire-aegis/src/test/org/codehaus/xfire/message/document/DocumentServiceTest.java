@@ -1,7 +1,8 @@
 package org.codehaus.xfire.message.document;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
@@ -18,14 +19,14 @@ public class DocumentServiceTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(DocumentService.class,
-                                                     "Doc",
-                                                     "urn:Doc",
-                                                     Soap11.getInstance(),
-                                                     SoapConstants.STYLE_DOCUMENT,
-                                                     SoapConstants.USE_LITERAL, null);
+        ServiceEndpoint service = getServiceFactory().create(DocumentService.class,
+                                                             "Doc",
+                                                             "urn:Doc",
+                                                             Soap11.getInstance(),
+                                                             SoapConstants.STYLE_DOCUMENT,
+                                                             SoapConstants.USE_LITERAL, null);
 
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(service));
     }
 
     public void testNoParams()

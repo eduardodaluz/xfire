@@ -1,7 +1,6 @@
 package org.codehaus.xfire.service.transport;
 
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.MessageContext;
 
 /**
  * Mock implmentation of the <code>Transport</code> interface.
@@ -12,10 +11,17 @@ public class MockTransport
         implements Transport
 {
     private String address;
+    private String locationURI;
 
-    public MockTransport(String address)
+    public MockTransport(String address, String locationURI)
     {
         this.address = address;
+        this.locationURI = locationURI;
+    }
+
+    public MessageContext createMessageContext()
+    {
+        return null;  //TODO: implement
     }
 
     public String getAddress()
@@ -28,19 +34,9 @@ public class MockTransport
         this.address = address;
     }
 
-    public FaultHandlerPipeline getFaultPipeline()
+    public String getTransportURI()
     {
-        return null;  //TODO: implement
-    }
-
-    public Handler getRequestHandler()
-    {
-        return null;  //TODO: implement
-    }
-
-    public Handler getResponseHandler()
-    {
-        return null;  //TODO: implement
+        return locationURI;
     }
 }
 

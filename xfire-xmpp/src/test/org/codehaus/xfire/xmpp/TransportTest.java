@@ -1,7 +1,8 @@
 package org.codehaus.xfire.xmpp;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
@@ -14,31 +15,31 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class TransportTest
-    extends AbstractXFireAegisTest
+        extends AbstractXFireAegisTest
 {
-    private Service echo;
-    
+    private ServiceEndpoint echo;
+
     XMPPConnection conn;
-    
+
     String username = "xfireTestServer";
     String password = "password1";
     String server = "bloodyxml.com";
     String id = username + "@" + server;
-    
-    public void setUp() 
-        throws Exception
+
+    public void setUp()
+            throws Exception
     {
         super.setUp();
         try
         {
             echo = getServiceFactory().create(Echo.class);
 
-            getServiceRegistry().register( echo );
+            getServiceRegistry().register(new ServiceEndpointAdapter(echo));
 
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);
             conn.login(username, password, "Echo");
-            
+
             XFirePacketListener listener = new XFirePacketListener(getXFire(), conn);
             conn.addPacketListener(listener, new ToContainsFilter("xfireTestServer"));
         }
@@ -49,24 +50,25 @@ public class TransportTest
     }
 
     protected void tearDown()
-        throws Exception
+            throws Exception
     {
         conn.close();
-        
+
         super.tearDown();
     }
-        
-    public void testTransport() throws Exception
+
+    public void testTransport()
+            throws Exception
     {
         try
         {
-            XMPPClient client = new XMPPClient("bloodyxml.com", 
+            XMPPClient client = new XMPPClient("bloodyxml.com",
                                                "xfireTestClient",
                                                "password2",
                                                "Echo",
                                                id + "/Echo",
                                                new EchoHandler());
-    
+
             client.invoke();
             client.close();
         }
@@ -75,19 +77,19 @@ public class TransportTest
             e.printStackTrace();
         }
     }
-    
+
     public void testWSDL()
-        throws Exception
+            throws Exception
     {
         Document wsdl = getWSDLDocument("Echo");
-        
+
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("swsdl", WSDLWriter.WSDL11_SOAP_NS);
-        
+
         assertValid("//wsdl:binding[@name='EchoXMPPBinding'][@type='tns:EchoPortType']", wsdl);
         assertValid("//wsdl:binding[@name='EchoXMPPBinding']/swsdl:binding[@transport='" +
-                        XMPPTransport.XMPP_TRANSPORT_NS + "']", wsdl);
-        
+                    XMPPTransport.XMPP_TRANSPORT_NS + "']", wsdl);
+
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']", wsdl);
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +
                     "/swsdl:address[@location='xfiretestserver@bloodyxml.com/Echo']", wsdl);

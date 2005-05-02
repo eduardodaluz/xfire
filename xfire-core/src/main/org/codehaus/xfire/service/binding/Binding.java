@@ -49,8 +49,9 @@ public abstract class Binding
      *
      * @param definition  the definition.
      * @param wsdlBinding the WSDL binding.
+     * @param transport   the transport used for binding.
      */
-    public void populateWSDLBinding(Definition definition, javax.wsdl.Binding wsdlBinding)
+    public void populateWSDLBinding(Definition definition, javax.wsdl.Binding wsdlBinding, Transport transport)
     {
     }
 

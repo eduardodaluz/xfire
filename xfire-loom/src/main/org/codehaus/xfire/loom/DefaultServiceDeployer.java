@@ -11,7 +11,8 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;
@@ -23,9 +24,11 @@ import org.codehaus.xfire.soap.SoapVersion;
  *
  * @author <a href="mailto:peter.royal@pobox.com">peter royal</a>
  */
-public class DefaultServiceDeployer extends AbstractLogEnabled implements ServiceDeployer, Serviceable, Configurable
+public class DefaultServiceDeployer
+        extends AbstractLogEnabled
+        implements ServiceDeployer, Serviceable, Configurable
 {
-    private final Map m_services = Collections.synchronizedMap( new HashMap() );
+    private final Map m_services = Collections.synchronizedMap(new HashMap());
 
     private ServiceRegistry m_serviceRegistry;
     private Map m_serviceFactories;
@@ -34,92 +37,95 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
 
     private Map m_configurations;
 
-    public void configure( final Configuration configuration ) throws ConfigurationException
+    public void configure(final Configuration configuration)
+            throws ConfigurationException
     {
-        final Configuration[] kids = configuration.getChildren( "service" );
+        final Configuration[] kids = configuration.getChildren("service");
 
-        m_configurations = new HashMap( kids.length );
+        m_configurations = new HashMap(kids.length);
 
-        for( int i = 0; i < kids.length; i++ )
+        for (int i = 0; i < kids.length; i++)
         {
-            m_configurations.put( kids[i].getAttribute( "key" ), kids[i] );
+            m_configurations.put(kids[i].getAttribute("key"), kids[i]);
         }
 
-        final Configuration child = configuration.getChild( "defaultFactory" );
+        final Configuration child = configuration.getChild("defaultFactory");
 
-        m_defaultServiceFactory = (ServiceFactory)m_serviceFactories.get( child.getValue() );
+        m_defaultServiceFactory = (ServiceFactory) m_serviceFactories.get(child.getValue());
 
-        if( null == m_defaultServiceFactory )
+        if (null == m_defaultServiceFactory)
         {
             final String msg = "Missing default factory '" + child.getValue() + "' at " + child.getLocation();
-            throw new ConfigurationException( msg );
+            throw new ConfigurationException(msg);
         }
     }
 
-    public void service( final ServiceManager manager ) throws ServiceException
+    public void service(final ServiceManager manager)
+            throws ServiceException
     {
-        m_serviceRegistry = (ServiceRegistry)manager.lookup( ServiceRegistry.ROLE );
-        m_serviceFactories = (Map)manager.lookup( ServiceFactory.class.getName() + "{}" );
+        m_serviceRegistry = (ServiceRegistry) manager.lookup(ServiceRegistry.ROLE);
+        m_serviceFactories = (Map) manager.lookup(ServiceFactory.class.getName() + "{}");
     }
 
-    public void deploy( final String key, final Object object ) throws Exception
+    public void deploy(final String key, final Object object)
+            throws Exception
     {
-        if( m_services.containsKey( key ) )
+        if (m_services.containsKey(key))
         {
-            throw new IllegalStateException( "Service with key '" + key + "' already deployed" );
+            throw new IllegalStateException("Service with key '" + key + "' already deployed");
         }
 
-        final Configuration configuration = (Configuration)m_configurations.get( key );
-        final Service service;
+        final Configuration configuration = (Configuration) m_configurations.get(key);
+        final ServiceEndpoint endpoint;
 
-        if( null == configuration )
+        if (null == configuration)
         {
-            if( getLogger().isInfoEnabled() )
-                getLogger().info( "No configuration found for '" + key + "', using defaults" );
+            if (getLogger().isInfoEnabled())
+                getLogger().info("No configuration found for '" + key + "', using defaults");
 
-            service = m_defaultServiceFactory.create( object.getClass() );
+            endpoint = m_defaultServiceFactory.create(object.getClass());
         }
         else
         {
-            service = createServiceFromConfiguration( configuration );
+            endpoint = createServiceFromConfiguration(configuration);
 
-            if( getLogger().isDebugEnabled() )
-                getLogger().debug( "Created '" + service.getName() + "' from key '" + key + "'" );
+            if (getLogger().isDebugEnabled())
+                getLogger().debug("Created '" + endpoint.getService().getName() + "' from key '" + key + "'");
         }
 
-        service.setInvoker( new ServiceInvoker( object ) );
+        endpoint.setInvoker(new ServiceInvoker(object));
 
-        registerService( key, service );
+        registerService(key, endpoint);
     }
 
-    private Service createServiceFromConfiguration( final Configuration configuration )
-        throws ConfigurationException
+    private ServiceEndpoint createServiceFromConfiguration(final Configuration configuration)
+            throws ConfigurationException
     {
-        final ServiceFactory factory = getServiceFactory( configuration.getChild( "factory" ).getValue( null ) );
-        final Service service =
-            factory.create( loadClass( configuration.getChild( "serviceClass" ) ),
-                            configuration.getChild( "name" ).getValue(),
-                            configuration.getChild( "namespace" ).getValue( "" ),
-                            getSoapVersion( configuration.getChild( "soapVersion" ) ),
-                            configuration.getChild( "style" ).getValue( "wrapped" ),
-                            configuration.getChild( "use" ).getValue( "literal" ),
-                            configuration.getChild( "encodingStyleURI" ).getValue( null ) );
+        final ServiceFactory factory = getServiceFactory(configuration.getChild("factory").getValue(null));
+        final ServiceEndpoint service =
+                factory.create(loadClass(configuration.getChild("serviceClass")),
+                               configuration.getChild("name").getValue(),
+                               configuration.getChild("namespace").getValue(""),
+                               getSoapVersion(configuration.getChild("soapVersion")),
+                               configuration.getChild("style").getValue("wrapped"),
+                               configuration.getChild("use").getValue("literal"),
+                               configuration.getChild("encodingStyleURI").getValue(null));
 
-        final Configuration[] properties = configuration.getChildren( "property" );
+        final Configuration[] properties = configuration.getChildren("property");
 
-        for( int i = 0; i < properties.length; i++ )
+        for (int i = 0; i < properties.length; i++)
         {
-            service.setProperty( properties[i].getAttribute( "name" ), properties[i].getAttribute( "value" ) );
+            service.setProperty(properties[i].getAttribute("name"), properties[i].getAttribute("value"));
         }
 
         return service;
     }
 
-    private ServiceFactory getServiceFactory( final String key )
+    private ServiceFactory getServiceFactory(final String key)
     {
-        if( m_serviceFactories.containsKey( key ) )
+        if (m_serviceFactories.containsKey(key))
         {
-            return (ServiceFactory)m_serviceFactories.get( key );
+            return (ServiceFactory) m_serviceFactories.get(key);
         }
         else
         {
@@ -127,55 +133,56 @@ public class DefaultServiceDeployer extends AbstractLogEnabled implements Servic
         }
     }
 
-    private SoapVersion getSoapVersion( final Configuration configuration ) throws ConfigurationException
+    private SoapVersion getSoapVersion(final Configuration configuration)
+            throws ConfigurationException
     {
-        final String value = configuration.getValue( "1.1" );
+        final String value = configuration.getValue("1.1");
 
-        if( value.equals( "1.1" ) )
+        if (value.equals("1.1"))
         {
             return Soap11.getInstance();
         }
-        else if( value.equals( "1.2" ) )
+        else if (value.equals("1.2"))
         {
             return Soap12.getInstance();
         }
         else
         {
             final String msg = "Invalid soap version at " + configuration.getLocation() + ". Must be 1.1 or 1.2.";
-            throw new ConfigurationException( msg );
+            throw new ConfigurationException(msg);
         }
     }
 
-    private Class loadClass( final Configuration configuration )
-        throws ConfigurationException
+    private Class loadClass(final Configuration configuration)
+            throws ConfigurationException
     {
         try
         {
-            return Thread.currentThread().getContextClassLoader().loadClass( configuration.getValue() );
+            return Thread.currentThread().getContextClassLoader().loadClass(configuration.getValue());
         }
-        catch( ClassNotFoundException e )
+        catch (ClassNotFoundException e)
         {
             final String msg = "Unable to load " + configuration.getValue() + " at " + configuration.getLocation();
-            throw new ConfigurationException( msg, e );
+            throw new ConfigurationException(msg, e);
         }
     }
 
-    private void registerService( final String key, final Service service )
+    private void registerService(final String key, final ServiceEndpoint endpoint)
     {
-        m_serviceRegistry.register( service );
+        m_serviceRegistry.register(new ServiceEndpointAdapter(endpoint));
 
-        m_services.put( key, service.getName() );
+        m_services.put(key, endpoint.getService().getName().getLocalPart());
     }
 
-    public void undeploy( final String key )
+    public void undeploy(final String key)
     {
-        if( m_services.containsKey( key ) )
+        if (m_services.containsKey(key))
         {
-            m_serviceRegistry.unregister( (String)m_services.remove( key ) );
+            m_serviceRegistry.unregister((String) m_services.remove(key));
         }
-        else if( getLogger().isWarnEnabled() )
+        else if (getLogger().isWarnEnabled())
         {
-            getLogger().warn( "Attempted to undeploy unknown key: " + key );
+            getLogger().warn("Attempted to undeploy unknown key: " + key);
         }
     }
 }

@@ -11,6 +11,8 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractServletTest;
@@ -30,12 +32,12 @@ public class XFireServletTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class);
+        ServiceEndpoint service = getServiceFactory().create(Echo.class);
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
 
         service.setRequestPipeline(new HandlerPipeline());
         service.getRequestPipeline().addHandler(new MockSessionHandler());
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(service));
         
         // A service which throws a fault
         Service fault = new DefaultService();

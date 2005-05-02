@@ -4,15 +4,11 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.soap.Soap11;
 
-public class DocumentBindingTest
-
+public class RPCEncodedBindingTest
         extends AbstractSOAPBindingTest
 {
-
     protected SOAPBinding getSOAPBinding(QName name)
     {
-        return new DocumentBinding(name, Soap11.getInstance());
+        return new RPCEncodedBinding(name, Soap11.getInstance());
     }
-
-
 }

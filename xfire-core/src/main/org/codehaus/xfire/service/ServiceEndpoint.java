@@ -12,10 +12,10 @@ import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.binding.Binding;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.DocumentBinding;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.service.transport.Transport;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -29,8 +29,8 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see ServiceInfo
- * @see org.codehaus.xfire.service.binding.Binding
- * @see SOAPBinding
+ * @see Binding
+ * @see org.codehaus.xfire.service.binding.SOAPBinding
  * @see Transport
  */
 public class ServiceEndpoint
@@ -91,7 +91,10 @@ public class ServiceEndpoint
         }
         else
         {
-            this.binding = new DocumentBinding(new QName(service.getName().getLocalPart() + "Binding"));
+            this.binding = SOAPBindingFactory.createSOAPBinding(
+                    new QName(service.getName().getLocalPart() + "Binding"),
+                    SoapConstants.STYLE_DOCUMENT,
+                    SoapConstants.USE_LITERAL);
         }
 
         this.transport = transport;

@@ -1,7 +1,8 @@
 package org.codehaus.xfire.wsdl11;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -13,26 +14,26 @@ import org.codehaus.yom.Document;
  * @since Feb 21, 2004
  */
 public class WSDLBuilderInfoTest
-    extends AbstractXFireAegisTest
+        extends AbstractXFireAegisTest
 {
     public void setUp()
-        throws Exception
+            throws Exception
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(BeanService.class);
+        ServiceEndpoint service = getServiceFactory().create(BeanService.class);
 
-        WSDLBuilderInfo info = new WSDLBuilderInfo(service);
+        WSDLBuilderInfo info = new WSDLBuilderInfo(new ServiceEndpointAdapter(service));
         info.setPortType("MyPortType");
         info.setServiceName("MyServiceName");
         info.setTargetNamespace("urn:my:namespace");
         service.setProperty(WSDLBuilderInfo.KEY, info);
 
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(service));
     }
 
     public void testBeanServiceWSDL()
-        throws Exception
+            throws Exception
     {
         Document doc = getWSDLDocument("BeanService");
         printNode(doc);
@@ -47,8 +48,8 @@ public class WSDLBuilderInfoTest
                     doc);
 
         assertValid("/wsdl:definitions/wsdl:types"
-                + "/xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']"
-                + "/xsd:complexType[@name=\"SimpleBean\"]", doc);
+                    + "/xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']"
+                    + "/xsd:complexType[@name=\"SimpleBean\"]", doc);
 
         assertValid("/wsdl:definitions/wsdl:portType[@name='MyPortType']", doc);
         assertValid("/wsdl:definitions/wsdl:binding[@type='tns:MyPortType']", doc);

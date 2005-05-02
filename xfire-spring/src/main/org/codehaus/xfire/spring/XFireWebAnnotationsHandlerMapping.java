@@ -5,8 +5,11 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BeanInvoker;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContextException;
@@ -60,17 +63,20 @@ public class XFireWebAnnotationsHandlerMapping
             Class clazz = getApplicationContext().getType(beanNames[i]);
             if (webAnnotations.hasWebServiceAnnotation(clazz))
             {
-                Service service = serviceFactory.create(clazz);
+                ServiceEndpoint endpoint = serviceFactory.create(clazz);
+                ServiceInfo service = endpoint.getService();
                 if (logger.isInfoEnabled())
                 {
-                    logger.info("Exposing SOAP v." + service.getSoapVersion().getVersion() + " service " +
-                                service.getName() + " to " + urlPrefix + service.getName() +
-                                " as " + service.getStyle() + "/" + service.getUse());
+                    SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+                    logger.info("Exposing SOAP v." + binding.getSoapVersion().getVersion() + " service " +
+                                service.getName() + " to " + urlPrefix + service.getName().getLocalPart() +
+                                " as " + binding.getStyle() + "/" + binding.getUse());
                 }
-                xFire.getServiceRegistry().register(service);
-                service.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
-                Controller controller = new XFireServletControllerAdapter(xFire, service.getName());
-                registerHandler(urlPrefix + service.getName(), controller);
+                ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
+                xFire.getServiceRegistry().register(adapter);
+                endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
+                Controller controller = new XFireServletControllerAdapter(xFire, adapter.getName());
+                registerHandler(urlPrefix + adapter.getName(), controller);
             }
             else
             {

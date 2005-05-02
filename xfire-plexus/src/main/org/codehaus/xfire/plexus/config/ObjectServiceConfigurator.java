@@ -22,6 +22,8 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -57,7 +59,7 @@ public class ObjectServiceConfigurator
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
 
-        Service service = null;
+        ServiceEndpoint service = null;
         if (wsdlUrl.length() > 0)
         {
             try
@@ -109,7 +111,7 @@ public class ObjectServiceConfigurator
             for (int i = 0; i < types.length; i++)
             {
                 initializeType(types[i],
-                               AegisBindingProvider.getTypeMapping(service));
+                               AegisBindingProvider.getTypeMapping(new ServiceEndpointAdapter(service)));
             }
         }
 
@@ -140,9 +142,9 @@ public class ObjectServiceConfigurator
         service.setResponsePipeline(createHandlerPipeline(config.getChild("responseHandlers")));
         service.setFaultPipeline(createFaultPipeline(config.getChild("faultHandlers")));
 
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(service));
 
-        return service;
+        return new ServiceEndpointAdapter(service);
     }
 
     private HandlerPipeline createHandlerPipeline(PlexusConfiguration child)

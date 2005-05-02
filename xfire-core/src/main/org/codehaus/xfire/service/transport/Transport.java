@@ -1,7 +1,7 @@
 package org.codehaus.xfire.service.transport;
 
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.MessageContext;
+
 
 /**
  * Transport
@@ -13,9 +13,9 @@ public interface Transport
 {
     String getAddress();
 
-    Handler getRequestHandler();
+    String getTransportURI();
 
-    Handler getResponseHandler();
+    MessageContext createMessageContext();
 
-    FaultHandlerPipeline getFaultPipeline();
+
 }

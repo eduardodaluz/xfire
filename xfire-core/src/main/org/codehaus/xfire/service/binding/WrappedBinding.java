@@ -8,22 +8,13 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 
 /**
+ * Represents a SOAP wrapped style binding, used by a <code>ServiceEndpoint</code>.
+ *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class WrappedBinding
+class WrappedBinding
         extends DocumentBinding
 {
-    /**
-     * Initializes a new instance of the <code>WrappedBinding</code> class with the given qualified name. The {@link
-     * #getSoapVersion() soap version} is set to <code>1.1</code>.
-     *
-     * @param name the qualified name.
-     */
-    public WrappedBinding(QName name)
-    {
-        super(name);
-    }
-
     /**
      * Initializes a new instance of the <code>WrappedBinding</code> class with the given qualified name and soap
      * version.
@@ -31,7 +22,7 @@ public class WrappedBinding
      * @param name    the name.
      * @param version the soap version.
      */
-    public WrappedBinding(QName name, SoapVersion version)
+    WrappedBinding(QName name, SoapVersion version)
     {
         super(name, version);
     }

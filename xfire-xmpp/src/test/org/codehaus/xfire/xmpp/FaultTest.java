@@ -1,7 +1,8 @@
 package org.codehaus.xfire.xmpp;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
 import org.jivesoftware.smack.XMPPConnection;
@@ -12,31 +13,31 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class FaultTest
-    extends AbstractXFireAegisTest
+        extends AbstractXFireAegisTest
 {
-    private Service echo;
-    
+    private ServiceEndpoint echo;
+
     XMPPConnection conn;
-    
+
     String username = "xfireTestServer";
     String password = "password1";
     String server = "bloodyxml.com";
     String id = username + "@" + server;
-    
-    public void setUp() 
-        throws Exception
+
+    public void setUp()
+            throws Exception
     {
         super.setUp();
         try
         {
             echo = getServiceFactory().create(BadEcho.class);
 
-            getServiceRegistry().register( echo );
+            getServiceRegistry().register(new ServiceEndpointAdapter(echo));
 
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);
             conn.login(username, password, "Echo");
-            
+
             XFirePacketListener listener = new XFirePacketListener(getXFire(), conn);
             conn.addPacketListener(listener, new ToContainsFilter("xfireTestServer"));
         }
@@ -47,24 +48,25 @@ public class FaultTest
     }
 
     protected void tearDown()
-        throws Exception
+            throws Exception
     {
         conn.close();
-        
+
         super.tearDown();
     }
-        
-    public void testTransport() throws Exception
+
+    public void testTransport()
+            throws Exception
     {
         try
         {
-            XMPPClient client = new XMPPClient("bloodyxml.com", 
+            XMPPClient client = new XMPPClient("bloodyxml.com",
                                                "xfireTestClient",
                                                "password2",
                                                "Echo",
                                                id + "/BadEcho",
                                                new EchoHandler());
-    
+
             client.invoke();
 
             client.close();

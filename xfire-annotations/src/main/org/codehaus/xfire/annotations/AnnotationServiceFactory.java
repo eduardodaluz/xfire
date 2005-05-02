@@ -6,6 +6,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -49,7 +50,7 @@ public class AnnotationServiceFactory
      * @param clazz The service class used to populate the operations and parameters.
      * @return The service.
      */
-    public Service create(final Class clazz)
+    public ServiceEndpoint create(final Class clazz)
     {
         if (webAnnotations.hasSOAPBindingAnnotation(clazz))
         {
@@ -76,9 +77,8 @@ public class AnnotationServiceFactory
      * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
      *                will be used.
      * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
-     *                will be used.
      */
-    public Service create(Class clazz, SoapVersion version, String style, String use)
+    public ServiceEndpoint create(Class clazz, SoapVersion version, String style, String use)
     {
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
@@ -122,10 +122,10 @@ public class AnnotationServiceFactory
                 portType = createPortType(serviceName, webServiceAnnotation);
             }
 
-            Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
+            ServiceEndpoint service = create(endpointInterface, serviceName, tns, version, style, use, null);
 
             // Fill in WSDL Builder metadata from annotations.
-            WSDLBuilderInfo info = new WSDLBuilderInfo(service);
+            WSDLBuilderInfo info = new WSDLBuilderInfo(new ServiceEndpointAdapter(service));
             info.setTargetNamespace(tns);
             info.setServiceName(serviceName);
             info.setPortType(portType);

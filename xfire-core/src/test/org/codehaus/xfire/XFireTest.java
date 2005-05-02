@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -24,13 +26,13 @@ public class XFireTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class,
-                                                     Soap12.getInstance(),
-                                                     SoapConstants.STYLE_DOCUMENT,
-                                                     SoapConstants.USE_LITERAL);
+        ServiceEndpoint service = getServiceFactory().create(Echo.class,
+                                                             Soap12.getInstance(),
+                                                             SoapConstants.STYLE_DOCUMENT,
+                                                             SoapConstants.USE_LITERAL);
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
 
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(service));
     }
 
     public void testInvoke()
