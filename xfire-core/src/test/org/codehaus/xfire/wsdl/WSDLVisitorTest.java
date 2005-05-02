@@ -11,7 +11,6 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.HTTPBinding;
 import org.codehaus.xfire.service.transport.MockTransport;
 import org.custommonkey.xmlunit.XMLTestCase;
 
@@ -70,14 +69,4 @@ public class WSDLVisitorTest
         assertNotNull(definition.getMessage(new QName("fault")));
         wsdlVisitor.write(System.out);
     }
-
-    public void testHTTPWsdl()
-            throws Exception
-    {
-        HTTPBinding httpBinding = new HTTPBinding(new QName("httpBinding"));
-        endpoint.setBinding(httpBinding);
-        endpoint.accept(wsdlVisitor);
-        wsdlVisitor.write(System.out);
-    }
-
 }
