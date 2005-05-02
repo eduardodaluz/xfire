@@ -1,4 +1,4 @@
-package org.codehaus.xfire.wsdl;
+package org.codehaus.xfire.wsdl11;
 
 import java.lang.reflect.Method;
 import javax.wsdl.Definition;
@@ -14,10 +14,10 @@ import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.transport.MockTransport;
 import org.custommonkey.xmlunit.XMLTestCase;
 
-public class WSDLVisitorTest
+public class WSDLCreationVisitorTest
         extends XMLTestCase
 {
-    private WSDLVisitor wsdlVisitor;
+    private WSDLCreationVisitor wsdlCreationVisitor;
     private ServiceEndpoint endpoint;
 
     public void method()
@@ -28,7 +28,7 @@ public class WSDLVisitorTest
     protected void setUp()
             throws Exception
     {
-        wsdlVisitor = new WSDLVisitor();
+        wsdlCreationVisitor = new WSDLCreationVisitor();
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
         endpoint = new ServiceEndpoint(service);
         endpoint.setTransport(new MockTransport("address", "location"));
@@ -52,8 +52,8 @@ public class WSDLVisitorTest
     public void testSOAPWsdl()
             throws Exception
     {
-        endpoint.accept(wsdlVisitor);
-        Definition definition = wsdlVisitor.getDefinition();
+        endpoint.accept(wsdlCreationVisitor);
+        Definition definition = wsdlCreationVisitor.getDefinition();
         assertNotNull(definition);
         PortType portType = definition.getPortType(endpoint.getService().getName());
         assertNotNull(portType);
@@ -67,6 +67,6 @@ public class WSDLVisitorTest
         assertNotNull(definition.getMessage(new QName("input")));
         assertNotNull(definition.getMessage(new QName("output")));
         assertNotNull(definition.getMessage(new QName("fault")));
-        wsdlVisitor.write(System.out);
+        wsdlCreationVisitor.write(System.out);
     }
 }

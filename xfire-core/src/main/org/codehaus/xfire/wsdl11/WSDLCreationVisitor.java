@@ -1,4 +1,4 @@
-package org.codehaus.xfire.wsdl;
+package org.codehaus.xfire.wsdl11;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,6 +32,8 @@ import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.Visitor;
 import org.codehaus.xfire.service.binding.Binding;
+import org.codehaus.xfire.wsdl.WSDLCreationException;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
  * Implementation of the <code>Visitor</code> interface that creates a WSDL from a <code>ServiceEndpoint</code>. After
@@ -39,7 +41,7 @@ import org.codehaus.xfire.service.binding.Binding;
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class WSDLVisitor
+public class WSDLCreationVisitor
         implements Visitor, WSDLWriter
 {
     private Definition definition;
@@ -54,7 +56,7 @@ public class WSDLVisitor
     /**
      * Initializes a new instance of the <code>WSDLVisitor</code> class. Creates its own WSDL definition.
      */
-    public WSDLVisitor()
+    public WSDLCreationVisitor()
     {
         try
         {
@@ -72,7 +74,7 @@ public class WSDLVisitor
      *
      * @param definition the definition to fill.
      */
-    public WSDLVisitor(Definition definition)
+    public WSDLCreationVisitor(Definition definition)
     {
         this.definition = definition;
     }
