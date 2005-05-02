@@ -1,5 +1,7 @@
 package org.codehaus.xfire.transport.http;
 
+import javax.xml.namespace.QName;
+
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
@@ -8,11 +10,12 @@ import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.AsyncHandler;
 import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.handler.HandlerPipeline;
-import org.codehaus.xfire.service.DefaultService;
 import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceEndpointAdapter;
+import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractServletTest;
@@ -38,26 +41,29 @@ public class XFireServletTest
         service.setRequestPipeline(new HandlerPipeline());
         service.getRequestPipeline().addHandler(new MockSessionHandler());
         getServiceRegistry().register(new ServiceEndpointAdapter(service));
-        
-        // A service which throws a fault
-        Service fault = new DefaultService();
-        fault.setName("Exception");
-        fault.setSoapVersion(Soap12.getInstance());
-        fault.setServiceHandler(new SoapHandler(new BadHandler()));
-        fault.setFaultHandler(new Soap12FaultHandler());
 
-        getServiceRegistry().register(fault);
+        // A service which throws a fault
+        ServiceInfo faultInfo = new ServiceInfo(new QName("Exception"), getClass());
+        SOAPBinding faultBinding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"),
+                                                                            Soap12.getInstance());
+        ServiceEndpoint faultEndpoint = new ServiceEndpoint(faultInfo, faultBinding);
+
+        faultEndpoint.setServiceHandler(new SoapHandler(new BadHandler()));
+        faultEndpoint.setFaultHandler(new Soap12FaultHandler());
+
+        getServiceRegistry().register(new ServiceEndpointAdapter(faultEndpoint));
         
         // Asynchronous service
-        Service asyncService = new DefaultService();
-        asyncService.setName("Async");
-        asyncService.setSoapVersion(Soap12.getInstance());
-        asyncService.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        ServiceInfo asyncInfo = new ServiceInfo(new QName("Async"), getClass());
+        SOAPBinding asyncBinding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"),
+                                                                            Soap12.getInstance());
+        ServiceEndpoint asyncEndpoint = new ServiceEndpoint(asyncInfo, asyncBinding);
+        asyncEndpoint.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
 
-        asyncService.setServiceHandler(new SoapHandler(new AsyncHandler()));
-        asyncService.setFaultHandler(new Soap12FaultHandler());
+        asyncEndpoint.setServiceHandler(new SoapHandler(new AsyncHandler()));
+        asyncEndpoint.setFaultHandler(new Soap12FaultHandler());
 
-        getServiceRegistry().register(asyncService);
+        getServiceRegistry().register(new ServiceEndpointAdapter(asyncEndpoint));
     }
 
     public void testServlet()

@@ -1,9 +1,14 @@
 package org.codehaus.xfire.handler;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.service.DefaultService;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
+import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -22,26 +27,25 @@ public class SoapHandlerTest
             throws Exception
     {
         super.setUp();
+        ServiceInfo serviceInfo = new ServiceInfo(new QName("Echo"), getClass());
+        SOAPBinding binding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"), Soap12.getInstance());
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
+        endpoint.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
 
-        Service service = new DefaultService();
-        service.setName("Echo");
-        service.setSoapVersion(Soap12.getInstance());
-        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
-
-        service.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
-        service.setFaultHandler(new Soap12FaultHandler());
+        endpoint.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
+        endpoint.setFaultHandler(new Soap12FaultHandler());
 
         HandlerPipeline reqPipeline = new HandlerPipeline();
         reqHandler = new CheckpointHandler();
         reqPipeline.addHandler(reqHandler);
-        service.setRequestPipeline(reqPipeline);
+        endpoint.setRequestPipeline(reqPipeline);
 
         HandlerPipeline resPipeline = new HandlerPipeline();
         resHandler = new CheckpointHandler();
         resPipeline.addHandler(resHandler);
-        service.setResponsePipeline(resPipeline);
+        endpoint.setResponsePipeline(resPipeline);
 
-        getServiceRegistry().register(service);
+        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
     }
 
     public void testInvoke()

@@ -4,9 +4,9 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.Soap11FaultHandler;
-import org.codehaus.xfire.service.DefaultService;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
@@ -14,21 +14,21 @@ import org.codehaus.yom.Document;
 public class MustUnderstandTest
         extends AbstractXFireTest
 {
-    private Service service;
+    private ServiceEndpoint endpoint;
 
     public void setUp()
             throws Exception
     {
         super.setUp();
 
-        service = new DefaultService();
-        service.setName("Echo");
-        service.setSoapVersion(Soap11.getInstance());
 
-        service.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
-        service.setFaultHandler(new Soap11FaultHandler());
+        ServiceInfo service = new ServiceInfo(new QName("Echo"), getClass());
+        endpoint = new ServiceEndpoint(service);
 
-        getServiceRegistry().register(service);
+        endpoint.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
+        endpoint.setFaultHandler(new Soap11FaultHandler());
+
+        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
     }
 
     public void testNotUnderstood()
@@ -46,7 +46,7 @@ public class MustUnderstandTest
         HandlerPipeline reqPipeline = new HandlerPipeline();
         UnderstandingHandler handler = new UnderstandingHandler();
         reqPipeline.addHandler(handler);
-        service.setRequestPipeline(reqPipeline);
+        endpoint.setRequestPipeline(reqPipeline);
 
         Document response = invokeService("Echo",
                                           "/org/codehaus/xfire/handler/mustUnderstand.xml");

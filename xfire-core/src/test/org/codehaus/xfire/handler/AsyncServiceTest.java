@@ -1,8 +1,13 @@
 package org.codehaus.xfire.handler;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.service.DefaultService;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
+import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -18,15 +23,16 @@ public class AsyncServiceTest
     {
         super.setUp();
 
-        Service asyncService = new DefaultService();
-        asyncService.setName("Async");
-        asyncService.setSoapVersion(Soap12.getInstance());
-        asyncService.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        ServiceInfo serviceInfo = new ServiceInfo(new QName("Async"), getClass());
+        SOAPBinding binding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"), Soap12.getInstance());
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
 
-        asyncService.setServiceHandler(new SoapHandler(new AsyncHandler()));
-        asyncService.setFaultHandler(new Soap12FaultHandler());
+        endpoint.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
 
-        getServiceRegistry().register(asyncService);
+        endpoint.setServiceHandler(new SoapHandler(new AsyncHandler()));
+        endpoint.setFaultHandler(new Soap12FaultHandler());
+
+        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
     }
 
     public void testInvoke()
