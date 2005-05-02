@@ -29,7 +29,7 @@ public class WSDLBuilderInfoTest
         info.setTargetNamespace("urn:my:namespace");
         service.setProperty(WSDLBuilderInfo.KEY, info);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
     }
 
     public void testBeanServiceWSDL()

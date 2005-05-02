@@ -2,6 +2,7 @@ package org.codehaus.xfire.spring;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.transport.http.XFireServletController;
@@ -18,7 +19,7 @@ public class XFireServletControllerAdapter
         extends XFireServletController
         implements Controller
 {
-    private String serviceName;
+    private QName serviceName;
 
     /**
      * Initializes a new instance of the adapter with the given XFire instance and service name.
@@ -26,7 +27,7 @@ public class XFireServletControllerAdapter
      * @param xfire       the XFire instance
      * @param serviceName the name of the service
      */
-    public XFireServletControllerAdapter(XFire xfire, String serviceName)
+    public XFireServletControllerAdapter(XFire xfire, QName serviceName)
     {
         super(xfire);
         this.serviceName = serviceName;
@@ -34,7 +35,7 @@ public class XFireServletControllerAdapter
 
     protected String getService(HttpServletRequest request)
     {
-        return serviceName;
+        return serviceName.getLocalPart();
     }
 
     /**

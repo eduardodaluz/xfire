@@ -11,7 +11,6 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
@@ -24,7 +23,7 @@ public class ListTest
     {
         super.setUp();
         ServiceEndpoint endpoint = getServiceFactory().create(ListService.class);
-        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
+        getServiceRegistry().register(endpoint);
 
         TypeMapping tm = (TypeMapping) endpoint.getProperty(AegisBindingProvider.TYPE_MAPPING_KEY);
         CollectionType strings = new CollectionType(String.class);

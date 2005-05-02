@@ -114,6 +114,19 @@ public class ServiceEndpoint
     }
 
     /**
+     * Returns the name of this endpoint. This method simply returns the local part of the qualified name of the
+     * <code>ServiceInfo</code>.
+     *
+     * @return the service name.
+     * @see ServiceInfo#getName()
+     * @see javax.xml.namespace.QName#getLocalPart()
+     */
+    public String getName()
+    {
+        return service.getName().getLocalPart();
+    }
+
+    /**
      * @see org.codehaus.xfire.service.Service#getProperty(java.lang.String)
      */
     public Object getProperty(String name)

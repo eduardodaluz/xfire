@@ -142,7 +142,7 @@ public class ObjectServiceConfigurator
         service.setResponsePipeline(createHandlerPipeline(config.getChild("responseHandlers")));
         service.setFaultPipeline(createFaultPipeline(config.getChild("faultHandlers")));
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
 
         return new ServiceEndpointAdapter(service);
     }

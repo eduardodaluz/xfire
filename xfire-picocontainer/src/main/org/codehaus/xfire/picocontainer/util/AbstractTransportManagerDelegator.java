@@ -6,15 +6,14 @@ import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
- * Abstract base class for TransportManager delegators. Delegates all calls to
- * TransportManager obtained by implementing class. All methods are just
- * delegations.
- * 
+ * Abstract base class for TransportManager delegators. Delegates all calls to TransportManager obtained by implementing
+ * class. All methods are just delegations.
+ *
  * @author Jose Peleteiro <juzepeleteiro@intelli.biz>
  * @version $Revision$
  */
 public abstract class AbstractTransportManagerDelegator
-    implements TransportManager
+        implements TransportManager
 {
 
     public abstract TransportManager getTransportManager();
@@ -39,29 +38,29 @@ public abstract class AbstractTransportManagerDelegator
         return getTransportManager().getTransports(service);
     }
 
-    public void enableAll(String service)
+    public void enableAll(String serviceName)
     {
-        getTransportManager().enableAll(service);
+        getTransportManager().enableAll(serviceName);
     }
 
-    public void disableAll(String service)
+    public void disableAll(String serviceName)
     {
-        getTransportManager().disableAll(service);
+        getTransportManager().disableAll(serviceName);
     }
 
-    public void enable(String transport, String service)
+    public void enable(String transport, String serviceName)
     {
-        getTransportManager().enable(transport, service);
+        getTransportManager().enable(transport, serviceName);
     }
 
-    public void disable(String transport, String service)
+    public void disable(String transport, String serviceName)
     {
-        getTransportManager().disable(transport, service);
+        getTransportManager().disable(transport, serviceName);
     }
 
-    public boolean isEnabled(String serviceName, String name)
+    public boolean isEnabled(String serviceName, String transportName)
     {
-        return getTransportManager().isEnabled(serviceName, name);
+        return getTransportManager().isEnabled(serviceName, transportName);
     }
 
 }

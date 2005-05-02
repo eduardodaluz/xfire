@@ -2,7 +2,6 @@ package org.codehaus.xfire.message.document;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
@@ -26,7 +25,7 @@ public class DocumentServiceTest
                                                              SoapConstants.STYLE_DOCUMENT,
                                                              SoapConstants.USE_LITERAL, null);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
     }
 
     public void testNoParams()

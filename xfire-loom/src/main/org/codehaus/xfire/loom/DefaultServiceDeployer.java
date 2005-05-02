@@ -12,7 +12,6 @@ import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;
@@ -169,9 +168,9 @@ public class DefaultServiceDeployer
 
     private void registerService(final String key, final ServiceEndpoint endpoint)
     {
-        m_serviceRegistry.register(new ServiceEndpointAdapter(endpoint));
+        m_serviceRegistry.register(endpoint);
 
-        m_services.put(key, endpoint.getService().getName().getLocalPart());
+        m_services.put(key, endpoint.getName());
     }
 
     public void undeploy(final String key)

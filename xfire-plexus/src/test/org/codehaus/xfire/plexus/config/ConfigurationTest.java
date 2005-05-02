@@ -1,7 +1,7 @@
 package org.codehaus.xfire.plexus.config;
 
 import org.codehaus.xfire.plexus.PlexusXFireTest;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.yom.Document;
 
 /**
@@ -23,14 +23,14 @@ public class ConfigurationTest
     public void testRegister()
             throws Exception
     {
-        Service service = getServiceRegistry().getService("Echo");
+        ServiceEndpoint service = getServiceRegistry().getServiceEndpoint("Echo");
         assertNotNull(service);
         assertNotNull(service.getRequestPipeline());
         assertEquals(2, service.getRequestPipeline().size());
         assertNotNull(service.getResponsePipeline());
         assertEquals(1, service.getResponsePipeline().size());
 
-        service = getServiceRegistry().getService("EchoXMLBeans");
+        service = getServiceRegistry().getServiceEndpoint("EchoXMLBeans");
         assertNotNull(service);
         
         //service = (ObjectService) getServiceRegistry().getService("EchoWSDL");

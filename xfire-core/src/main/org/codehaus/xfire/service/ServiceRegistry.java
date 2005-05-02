@@ -5,27 +5,66 @@ import java.util.Collection;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
 /**
- * The central place to register, unregister, and get information about 
- * services.
- * 
+ * Defines the interface that for places to register, unregister, and get information about services.
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- * @since Feb 18, 2004
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public interface ServiceRegistry
 {
-	final public static String ROLE = ServiceRegistry.class.getName();
-    
-	Service getService( String serviceName );
+    /**
+     * Constant used to define the role of service registries.
+     */
+    public static final String ROLE = ServiceRegistry.class.getName();
 
-    void register( Service service );
-    
-    void unregister( String serviceName );
+    /**
+     * Returns the <code>ServiceEndpoint</code> with the given name, if found. Returns <code>null</code> if not found.
+     *
+     * @param name the service name.
+     * @return the service endpoint, or <code>null</code> if not found.
+     */
+    ServiceEndpoint getServiceEndpoint(String name);
 
-	boolean hasService(String service);
+    /**
+     * Registers a given <code>ServiceEndpoint</code> with this registry.
+     *
+     * @param endpoint the endpoint.
+     */
+    void register(ServiceEndpoint endpoint);
 
-	Collection getServices();
-    
+    /**
+     * Unregisters the service endpoint with the given name, if found.
+     *
+     * @param name the service name.
+     */
+    void unregister(String name);
+
+    /**
+     * Indicates whether this registry has a service endpoint with the given name.
+     *
+     * @param name the service name.
+     * @return <code>true</code> if this registry has a service with the given name; <code>false</code> otherwise.
+     */
+    boolean hasServiceEndpoint(String name);
+
+    /**
+     * Returns all <code>ServiceEndpoint</code> registered to this registry.
+     *
+     * @return all service endpoints.
+     */
+    Collection getServiceEndpoints();
+
+    /**
+     * Add a listener for registration events.
+     *
+     * @param listener the listener.
+     */
     void addRegistrationEventListener(RegistrationEventListener listener);
-    
+
+    /**
+     * Remove a listener for registration events.
+     *
+     * @param listener the listener.
+     */
     void removeRegistrationEventListener(RegistrationEventListener listener);
 }

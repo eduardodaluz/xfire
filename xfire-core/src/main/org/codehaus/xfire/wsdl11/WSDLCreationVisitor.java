@@ -88,7 +88,7 @@ public class WSDLCreationVisitor
     {
         Service service = definition.createService();
         Port port = definition.createPort();
-        port.setName(endpoint.getService().getName().getLocalPart() + "Port");
+        port.setName(endpoint.getName() + "Port");
         port.setBinding(currentBinding);
         endpoint.getBinding().populateWSDLBinding(definition, currentBinding, endpoint.getTransport());
         endpoint.getBinding().populateWSDLPort(definition, port, endpoint.getTransport());

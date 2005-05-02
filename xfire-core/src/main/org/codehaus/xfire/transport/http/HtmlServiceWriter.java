@@ -3,12 +3,12 @@ package org.codehaus.xfire.transport.http;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
-
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 
 /**
  * Provides a basic HTML description of a {@link Service}.
@@ -49,9 +49,9 @@ public class HtmlServiceWriter
             writer.writeStartElement("ul");
             for (Iterator iterator = services.iterator(); iterator.hasNext();)
             {
-                Service service = (Service) iterator.next();
+                ServiceEndpoint service = (ServiceEndpoint) iterator.next();
                 writer.writeStartElement("li");
-                writer.writeCharacters(service.getName());
+                writer.writeCharacters(service.getName().toString());
                 writer.writeEndElement(); // li
             }
         }
@@ -67,7 +67,7 @@ public class HtmlServiceWriter
      * @param service the service
      * @throws XMLStreamException if an XML writing exception occurs
      */
-    public void write(OutputStream out, Service service)
+    public void write(OutputStream out, ServiceEndpoint service)
             throws XMLStreamException
     {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();

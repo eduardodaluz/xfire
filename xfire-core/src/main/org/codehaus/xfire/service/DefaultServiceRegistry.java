@@ -2,87 +2,98 @@ package org.codehaus.xfire.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.codehaus.xfire.AbstractXFireComponent;
+import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
 /**
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- * @since Feb 18, 2004
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class DefaultServiceRegistry
-    extends AbstractXFireComponent
-    implements ServiceRegistry
+        implements ServiceRegistry
 {
-    private Hashtable services;
-    
-    private List eventListeners;
-    
-    public DefaultServiceRegistry()
+    // maps string names to service endpoints
+    private Map services = new HashMap();
+    private List eventListeners = new ArrayList();
+
+    /**
+     * Returns the <code>ServiceEndpoint</code> with the given qualified name, if found. Returns <code>null</code> if
+     * not found.
+     *
+     * @param name the service name.
+     * @return the service endpoint, or <code>null</code> if not found.
+     */
+    public ServiceEndpoint getServiceEndpoint(String name)
     {
-        services = new Hashtable();
-        eventListeners = new ArrayList();
+        return (ServiceEndpoint) services.get(name);
     }
-    
-	/**
-	 * @see org.codehaus.xfire.service.ServiceRegistry#getServiceDescriptor(java.lang.String)
-	 */
-	public Service getService( String serviceName )
-	{
-		return (Service) services.get( serviceName );
-	}
 
     /**
-	 * @see org.codehaus.xfire.service.ServiceRegistry#register(org.codehaus.xfire.service.ServiceDescriptor)
-	 */
-	public void register( Service service )
-	{
-        services.put( service.getName(), service );
-        
-        for (Iterator itr = eventListeners.iterator(); itr.hasNext();)
+     * Registers a given <code>ServiceEndpoint</code> with this registry.
+     *
+     * @param endpoint the endpoint.
+     */
+    public void register(ServiceEndpoint endpoint)
+    {
+        services.put(endpoint.getName(), endpoint);
+
+        for (Iterator iterator = eventListeners.iterator(); iterator.hasNext();)
         {
-            RegistrationEventListener listener = (RegistrationEventListener) itr.next();
-            listener.onRegister(service);
+            RegistrationEventListener listener = (RegistrationEventListener) iterator.next();
+            RegistrationEvent event = new RegistrationEvent(this, endpoint);
+            listener.endpointRegistered(event);
         }
-	}
-    
-	/**
-	 * @see org.codehaus.xfire.service.ServiceRegistry#unregister(java.lang.String)
-	 */
-	public void unregister( String serviceName )
-	{
-        Service service = getService( serviceName );
-		
-        for (Iterator itr = eventListeners.iterator(); itr.hasNext();)
-        {
-            RegistrationEventListener listener = (RegistrationEventListener) itr.next();
-            listener.onUnregister(service);
-        }
-
-        services.remove( service );
-	}
-
-	/**
-	 * @see org.codehaus.xfire.service.ServiceRegistry#hasService(java.lang.String)
-	 */
-	public boolean hasService(String service)
-	{
-		return services.containsKey( service );
-	}
-
-	/**
-	 * @see org.codehaus.xfire.service.ServiceRegistry#getServices()
-	 */
-	public Collection getServices()
-	{
-		return services.values();
-	}
+    }
 
     /**
-     * @param listener
+     * Unregisters the service with the given qualified name, if found.
+     *
+     * @param name the service name.
+     */
+    public void unregister(String name)
+    {
+        ServiceEndpoint endpoint = getServiceEndpoint(name);
+
+        for (Iterator iterator = eventListeners.iterator(); iterator.hasNext();)
+        {
+            RegistrationEventListener listener = (RegistrationEventListener) iterator.next();
+            RegistrationEvent event = new RegistrationEvent(this, endpoint);
+            listener.endpointUnregistered(event);
+        }
+
+        services.remove(name);
+    }
+
+    /**
+     * Indicates whether this registry has a service with the given name.
+     *
+     * @param name the service name.
+     * @return <code>true</code> if this registry has a service with the given name; <code>false</code> otherwise.
+     */
+    public boolean hasServiceEndpoint(String name)
+    {
+        return services.containsKey(name);
+    }
+
+    /**
+     * Returns all <code>ServiceEndpoint</code> registered to this registry.
+     *
+     * @return all service endpoints.
+     */
+    public Collection getServiceEndpoints()
+    {
+        return Collections.unmodifiableCollection(services.values());
+    }
+
+    /**
+     * Add a listener for registration events.
+     *
+     * @param listener the listener.
      */
     public void addRegistrationEventListener(RegistrationEventListener listener)
     {
@@ -90,7 +101,9 @@ public class DefaultServiceRegistry
     }
 
     /**
-     * @param listener
+     * Remove a listener for registration events.
+     *
+     * @param listener the listener.
      */
     public void removeRegistrationEventListener(RegistrationEventListener listener)
     {

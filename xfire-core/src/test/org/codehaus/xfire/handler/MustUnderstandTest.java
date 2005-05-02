@@ -5,7 +5,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -28,7 +27,7 @@ public class MustUnderstandTest
         endpoint.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
         endpoint.setFaultHandler(new Soap11FaultHandler());
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
+        getServiceRegistry().register(endpoint);
     }
 
     public void testNotUnderstood()

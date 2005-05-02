@@ -36,7 +36,7 @@ public class BeanServiceTest
                                                              SoapConstants.USE_LITERAL, null);
 
         ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(service);
-        getServiceRegistry().register(adapter);
+        getServiceRegistry().register(service);
 
         TypeMapping tm = AegisBindingProvider.getTypeMapping(adapter);
         tm.register(SimpleBean.class, new QName("urn:Bean", "SimpleBean"), new BeanType());

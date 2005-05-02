@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.picocontainer.util.PicoObjectInvoker;
 import org.codehaus.xfire.picocontainer.util.ThreadLocalObjectReference;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.picocontainer.ComponentAdapter;
@@ -70,7 +69,7 @@ public class XFireServiceRegisterVisitor
         {
             ServiceEndpoint endpoint = (ServiceEndpoint) i.next();
             prepareObjectService(endpoint);
-            serviceRegistry.register(new ServiceEndpointAdapter(endpoint));
+            serviceRegistry.register(endpoint);
 
             if (log.isInfoEnabled())
             {
@@ -94,11 +93,11 @@ public class XFireServiceRegisterVisitor
             }
 
             prepareObjectService(endpoint);
-            serviceRegistry.register(new ServiceEndpointAdapter(endpoint));
+            serviceRegistry.register(endpoint);
 
             if (log.isInfoEnabled())
             {
-                log.info("Service \"" + endpoint.getService().getName() + "\" registred.");
+                log.info("Service \"" + endpoint.getService().getName() + "\" registered.");
             }
         }
     }

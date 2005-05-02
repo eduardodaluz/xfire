@@ -15,7 +15,6 @@ import javax.mail.internet.MimeMultipart;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -37,7 +36,7 @@ public class AttachmentTest
                                                              SoapConstants.STYLE_DOCUMENT,
                                                              SoapConstants.USE_LITERAL);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
     }
 
     public void testAttachments()
@@ -45,17 +44,15 @@ public class AttachmentTest
     {
         JavaMailAttachments sendAtts = new JavaMailAttachments();
 
-        sendAtts.setSoapMessage(
-                new SimpleAttachment("echo.xml",
-                                     createDataHandler(
-                                             getTestFile("src/test/org/codehaus/xfire/attachments/echo11.xml")
-                                             .getAbsolutePath())));
+        sendAtts.setSoapMessage(new SimpleAttachment("echo.xml",
+                                                     createDataHandler(getTestFile(
+                                                             "src/test/org/codehaus/xfire/attachments/echo11.xml")
+                                                                       .getAbsolutePath())));
 
-        sendAtts.addPart(
-                new SimpleAttachment("xfire_logo.jpg",
-                                     createDataHandler(
-                                             getTestFile("src/test/org/codehaus/xfire/attachments/xfire_logo.jpg")
-                                             .getAbsolutePath())));
+        sendAtts.addPart(new SimpleAttachment("xfire_logo.jpg",
+                                              createDataHandler(getTestFile(
+                                                      "src/test/org/codehaus/xfire/attachments/xfire_logo.jpg")
+                                                                .getAbsolutePath())));
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         sendAtts.write(bos);

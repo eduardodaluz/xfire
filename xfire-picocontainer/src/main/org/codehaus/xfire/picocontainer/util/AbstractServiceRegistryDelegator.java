@@ -2,30 +2,29 @@ package org.codehaus.xfire.picocontainer.util;
 
 import java.util.Collection;
 
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
 /**
- * Abstract base class for ServiceRegistry delegators. Delegates all calls to
- * ServiceRegistry obtained by implementing class. All methods are just
- * delegations.
- * 
+ * Abstract base class for ServiceRegistry delegators. Delegates all calls to ServiceRegistry obtained by implementing
+ * class. All methods are just delegations.
+ *
  * @author Jose Peleteiro <juzepeleteiro@intelli.biz>
  * @version $Revision$
  */
 public abstract class AbstractServiceRegistryDelegator
-    implements ServiceRegistry
+        implements ServiceRegistry
 {
 
     public abstract ServiceRegistry getServiceRegistry();
 
-    public Service getService(String serviceName)
+    public ServiceEndpoint getServiceEndpoint(String serviceName)
     {
-        return this.getServiceRegistry().getService(serviceName);
+        return this.getServiceRegistry().getServiceEndpoint(serviceName);
     }
 
-    public void register(Service service)
+    public void register(ServiceEndpoint service)
     {
         this.getServiceRegistry().register(service);
     }
@@ -35,14 +34,14 @@ public abstract class AbstractServiceRegistryDelegator
         this.getServiceRegistry().unregister(serviceName);
     }
 
-    public boolean hasService(String service)
+    public boolean hasServiceEndpoint(String service)
     {
-        return this.getServiceRegistry().hasService(service);
+        return this.getServiceRegistry().hasServiceEndpoint(service);
     }
 
-    public Collection getServices()
+    public Collection getServiceEndpoints()
     {
-        return this.getServiceRegistry().getServices();
+        return this.getServiceRegistry().getServiceEndpoints();
     }
 
     public void addRegistrationEventListener(RegistrationEventListener listener)

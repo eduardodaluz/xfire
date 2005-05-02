@@ -4,7 +4,6 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.service.binding.SOAPBindingFactory;
@@ -32,7 +31,7 @@ public class AsyncServiceTest
         endpoint.setServiceHandler(new SoapHandler(new AsyncHandler()));
         endpoint.setFaultHandler(new Soap12FaultHandler());
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
+        getServiceRegistry().register(endpoint);
     }
 
     public void testInvoke()

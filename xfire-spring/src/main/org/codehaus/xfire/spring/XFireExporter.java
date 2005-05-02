@@ -62,11 +62,11 @@ public class XFireExporter
                         " as " + adapter.getStyle() + "/" + adapter.getUse());
         }
 
-        xFire.getServiceRegistry().register(adapter);
+        xFire.getServiceEndpointRegistry().register(endpoint);
 
         endpoint.setInvoker(new BeanInvoker(getProxyForService()));
 
-        delegate = new XFireServletControllerAdapter(xFire, endpoint.getService().getName().getLocalPart());
+        delegate = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
     }
 
     /**

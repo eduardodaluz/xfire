@@ -1,7 +1,6 @@
 package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -30,7 +29,7 @@ public class XMLBeansServiceTest
                                   SoapConstants.STYLE_DOCUMENT,
                                   SoapConstants.USE_LITERAL, null);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
+        getServiceRegistry().register(endpoint);
     }
 
     public void testService()

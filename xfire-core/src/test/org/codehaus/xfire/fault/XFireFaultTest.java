@@ -6,7 +6,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.service.binding.SOAPBindingFactory;
@@ -132,7 +131,7 @@ public class XFireFaultTest
         endpoint.setServiceHandler(new BadHandler());
         endpoint.setFaultHandler(soap11);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
+        getServiceRegistry().register(endpoint);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         MessageContext context =

@@ -3,9 +3,7 @@ package org.codehaus.xfire;
 import java.io.ByteArrayOutputStream;
 
 import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -32,7 +30,7 @@ public class XFireTest
                                                              SoapConstants.USE_LITERAL);
         service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
     }
 
     public void testInvoke()
@@ -47,7 +45,7 @@ public class XFireTest
     public void testWSDL()
             throws Exception
     {
-        Service service = (Service) getServiceRegistry().getService("Echo");
+        ServiceEndpoint service = (ServiceEndpoint) getServiceRegistry().getServiceEndpoint("Echo");
 
         WSDLWriter wsdl = service.getWSDLWriter();
 

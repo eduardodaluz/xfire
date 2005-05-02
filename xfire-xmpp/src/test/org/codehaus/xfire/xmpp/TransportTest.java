@@ -2,7 +2,6 @@ package org.codehaus.xfire.xmpp;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.xmpp.client.EchoHandler;
 import org.codehaus.xfire.xmpp.client.XMPPClient;
@@ -34,7 +33,7 @@ public class TransportTest
         {
             echo = getServiceFactory().create(Echo.class);
 
-            getServiceRegistry().register(new ServiceEndpointAdapter(echo));
+            getServiceRegistry().register(echo);
 
             //XMPPConnection.DEBUG_ENABLED = true;
             conn = new XMPPConnection(server);

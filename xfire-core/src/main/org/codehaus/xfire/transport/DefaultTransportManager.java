@@ -6,33 +6,29 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.codehaus.xfire.AbstractXFireComponent;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
 /**
  * The default <code>TransportService</code> implementation.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class DefaultTransportManager
-	extends AbstractXFireComponent
-    implements TransportManager, RegistrationEventListener
+        extends AbstractXFireComponent
+        implements TransportManager, RegistrationEventListener
 {
-    Map services;
-    Map transports;
-    
+    private Map services = new HashMap();
+    private Map transports = new HashMap();
+
     protected DefaultTransportManager()
     {
-        services = new HashMap();
-        transports = new HashMap();
     }
 
     public DefaultTransportManager(ServiceRegistry registry)
     {
-        services = new HashMap();
-        transports = new HashMap();
-        
         initializeTransports(registry);
     }
 
@@ -41,21 +37,19 @@ public class DefaultTransportManager
      */
     protected void initializeTransports(ServiceRegistry registry)
     {
-        for (Iterator itr = registry.getServices().iterator(); itr.hasNext();)
+        for (Iterator itr = registry.getServiceEndpoints().iterator(); itr.hasNext();)
         {
-            Service service = (Service) itr.next();
-            enableAll(service.getName());
+            ServiceEndpoint endpoint = (ServiceEndpoint) itr.next();
+            enableAll(endpoint.getName());
         }
         registry.addRegistrationEventListener(this);
     }
-    
-    /**
-     * @see org.codehaus.xfire.transport.TransportManager#register(org.codehaus.xfire.transport.Transport)
-     */
+
+
     public void register(Transport transport)
     {
         transports.put(transport.getName(), transport);
-        
+
         for (Iterator itr = services.values().iterator(); itr.hasNext();)
         {
             Map serviceTransports = (Map) itr.next();
@@ -66,17 +60,17 @@ public class DefaultTransportManager
     public void unregister(Transport transport)
     {
         transports.remove(transport);
-        
+
         for (Iterator itr = services.values().iterator(); itr.hasNext();)
         {
             Map serviceTransports = (Map) itr.next();
-            if (serviceTransports != null )
+            if (serviceTransports != null)
             {
                 serviceTransports.remove(transport);
             }
         }
     }
-    
+
     /**
      * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
      */
@@ -85,39 +79,33 @@ public class DefaultTransportManager
         return (Transport) transports.get(name);
     }
 
-    /**
-     * @see org.codehaus.xfire.transport.TransportManager#enable(java.lang.String, java.lang.String)
-     */
-    public void enable(String transport, String service)
+    public void enable(String transport, String serviceName)
     {
-        Map serviceTransports = (Map) services.get(service);
-        if ( serviceTransports == null )
+        Map serviceTransports = (Map) services.get(serviceName);
+        if (serviceTransports == null)
         {
             serviceTransports = new HashMap();
-            services.put(service, serviceTransports);
+            services.put(serviceName, serviceTransports);
         }
-        
+
         serviceTransports.put(transport, getTransport(transport));
     }
 
-    /**
-     * @see org.codehaus.xfire.transport.TransportManager#disable(java.lang.String, java.lang.String)
-     */
-    public void disable(String transport, String service)
+    public void disable(String transport, String serviceName)
     {
-        Map serviceTransports = (Map) services.get(service);
-        if ( serviceTransports == null )
+        Map serviceTransports = (Map) services.get(serviceName);
+        if (serviceTransports == null)
         {
-           return;
+            return;
         }
-        
+
         serviceTransports.remove(transport);
     }
 
     /**
-     * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
      * @param service
      * @return
+     * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
      */
     public Collection getTransports(String service)
     {
@@ -130,17 +118,17 @@ public class DefaultTransportManager
     }
 
     /**
-     * @param service
+     * @param serviceName
      */
-    public void enableAll(String service)
+    public void enableAll(String serviceName)
     {
-        Map serviceTransports = (Map) services.get(service);
+        Map serviceTransports = (Map) services.get(serviceName);
         if (serviceTransports == null)
         {
             serviceTransports = new HashMap();
-            services.put(service, serviceTransports);
+            services.put(serviceName, serviceTransports);
         }
-        
+
         for (Iterator itr = transports.values().iterator(); itr.hasNext();)
         {
             Transport t = (Transport) itr.next();
@@ -150,16 +138,16 @@ public class DefaultTransportManager
     }
 
     /**
-     * @param service
+     * @param serviceName
      */
-    public void disableAll(String service)
+    public void disableAll(String serviceName)
     {
-        Map serviceTransports = (Map) services.get(service);
+        Map serviceTransports = (Map) services.get(serviceName);
         if (serviceTransports == null)
         {
             return;
         }
-        
+
         for (Iterator itr = transports.values().iterator(); itr.hasNext();)
         {
             Transport t = (Transport) itr.next();
@@ -170,38 +158,44 @@ public class DefaultTransportManager
 
     /**
      * @param service
-     */
-    public void onRegister(Service service)
-    {
-        enableAll(service.getName());
-    }
-
-    /**
-     * @param service
-     */
-    public void onUnregister(Service service)
-    {
-        disableAll(service.getName());
-    }
-
-    /**
-     * @param service
-     * @param name
+     * @param transportName
      * @return
      */
-    public boolean isEnabled(String service, String name)
+    public boolean isEnabled(String service, String transportName)
     {
         Map serviceTransports = (Map) services.get(service);
         if (serviceTransports == null)
         {
             return false;
         }
-        
-        if (serviceTransports.containsKey(name))
+
+        if (serviceTransports.containsKey(transportName))
         {
             return true;
         }
-        
+
         return false;
+    }
+
+    /**
+     * Notifies this <code>RegistrationEventListener</code> that the <code>ServiceEndpointRegistry</code> has registered
+     * an endpoint.
+     *
+     * @param event an event object describing the source of the event
+     */
+    public void endpointRegistered(RegistrationEvent event)
+    {
+        enableAll(event.getEndpoint().getName());
+    }
+
+    /**
+     * Notifies this <code>RegistrationEventListener</code> that the <code>ServiceEndpointRegistry</code> has
+     * deregistered an endpoint.
+     *
+     * @param event an event object describing the source of the event
+     */
+    public void endpointUnregistered(RegistrationEvent event)
+    {
+        disableAll(event.getEndpoint().getName());
     }
 }

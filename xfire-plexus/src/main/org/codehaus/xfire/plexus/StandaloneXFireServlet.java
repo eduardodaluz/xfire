@@ -1,7 +1,6 @@
 package org.codehaus.xfire.plexus;
 
 import java.io.File;
-
 import javax.servlet.ServletException;
 
 import org.codehaus.xfire.XFire;
@@ -11,26 +10,26 @@ import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.XFireServlet;
 
 /**
- * Creates an embedded version of XFire within a servlet.  For most
- * applications this will probably be sufficient.  For more advanced
- * container usages, see the XFireServlet and Plexus documentation.
- * 
+ * Creates an embedded version of XFire within a servlet.  For most applications this will probably be sufficient.  For
+ * more advanced container usages, see the XFireServlet and Plexus documentation.
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class StandaloneXFireServlet
-	extends XFireServlet
+        extends XFireServlet
 {
     XFireFactory factory;
-    
+
     private File webInfPath;
-    
+
     static
     {
         // register the PlexusXFireFactory
         XFireFactory.registerFactory(PlexusXFireFactory.class, true);
     }
-    
-    public XFire getXFire() throws ServletException
+
+    public XFire getXFire()
+            throws ServletException
     {
         try
         {
@@ -52,37 +51,38 @@ public class StandaloneXFireServlet
 
         return webInfPath;
     }
-    
-    public XFire createXFire() throws ServletException
+
+    public XFire createXFire()
+            throws ServletException
     {
         File config = new File(getWebappBase(), getInitParameter("config"));
-        
+
         System.setProperty("xfire.config", config.getAbsolutePath());
         log("Configuration set to: " + config.getAbsolutePath());
-        
+
         String plexusConfig = getInitParameter("plexus-config");
-        if ( plexusConfig != null )
+        if (plexusConfig != null)
         {
-        	System.setProperty("xfire.plexusConfig", plexusConfig);
+            System.setProperty("xfire.plexusConfig", plexusConfig);
         }
-        
+
         try
         {
             return XFireFactory.newInstance().getXFire();
-        }       
+        }
         catch (Exception e)
         {
             e.printStackTrace();
             throw new ServletException("Couldn't start XFire service.  Check configuration.", e);
         }
     }
-    
+
     /**
      * @return
      * @throws Exception
      */
     protected TransportManager getTransportManager()
-    	throws ServletException
+            throws ServletException
     {
         try
         {
@@ -93,20 +93,20 @@ public class StandaloneXFireServlet
             throw new ServletException("No transport service found!", e);
         }
     }
-    
+
     public ServiceRegistry getServiceRegistry()
-        throws ServletException
+            throws ServletException
     {
         try
         {
-            return factory.getXFire().getServiceRegistry();
+            return factory.getXFire().getServiceEndpointRegistry();
         }
         catch (Exception e)
         {
             throw new ServletException("No service registry found!", e);
         }
     }
-    
+
     public void destroy()
     {
         factory = null;

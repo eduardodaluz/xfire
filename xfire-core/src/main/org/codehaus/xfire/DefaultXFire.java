@@ -3,7 +3,6 @@ package org.codehaus.xfire;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.wsdl.WSDLException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -14,7 +13,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.Transport;
@@ -26,14 +26,14 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
  * @since Feb 13, 2004
  */
 public class DefaultXFire
-    extends AbstractXFireComponent
-    implements XFire
+        extends AbstractXFireComponent
+        implements XFire
 {
     private ServiceRegistry registry;
 
     private TransportManager transportManager;
 
-    private static final Log logger = LogFactory.getLog( DefaultXFire.class );
+    private static final Log logger = LogFactory.getLog(DefaultXFire.class);
 
     public DefaultXFire()
     {
@@ -41,18 +41,18 @@ public class DefaultXFire
         transportManager = new DefaultTransportManager(registry);
     }
 
-    public DefaultXFire( final ServiceRegistry registry,
-                         final TransportManager transportManager )
+    public DefaultXFire(final ServiceRegistry registry,
+                        final TransportManager transportManager)
     {
         this.registry = registry;
         this.transportManager = transportManager;
     }
 
-    public void invoke( final XMLStreamReader reader,
-                        final MessageContext context )
+    public void invoke(final XMLStreamReader reader,
+                       final MessageContext context)
     {
-        final String serviceName =  context.getServiceName();
-        final Service service = findService( serviceName );
+        final String serviceName = context.getServiceName();
+        final ServiceEndpoint endpoint = findService(serviceName);
 
         Handler handler = null;
         try
@@ -60,49 +60,49 @@ public class DefaultXFire
             final Transport transport = context.getTransport();
             
             // Verify that the transport can be used for this service.
-            if (transport != null 
-                &&
-                !getTransportManager().isEnabled(context.getServiceName(), transport.getName()))
+            if (transport != null
+                    &&
+                    !getTransportManager().isEnabled(context.getServiceName(), transport.getName()))
             {
-                throw new XFireFault("Service " + serviceName + 
-                                         " is unavailable for current transport.", 
+                throw new XFireFault("Service " + serviceName +
+                                     " is unavailable for current transport.",
                                      XFireFault.SENDER);
             }
-            
-            context.setService( service );
-            context.setXMLStreamReader( reader );
 
-            if( service == null )
+            context.setService(new ServiceEndpointAdapter(endpoint));
+            context.setXMLStreamReader(reader);
+
+            if (endpoint == null)
             {
-                throw new XFireRuntimeException( "No such service: " + serviceName );
+                throw new XFireRuntimeException("No such service: " + serviceName);
             }
 
-            handler = service.getServiceHandler();
+            handler = endpoint.getServiceHandler();
 
-            handler.invoke( context );
+            handler.invoke(context);
         }
-        catch( Exception e )
+        catch (Exception e)
         {
-            handleException(context, service, handler, e);
+            handleException(context, endpoint, handler, e);
         }
     }
 
     /**
      * @param context
-     * @param service
+     * @param endpoint
      * @param handler
      * @param e
      */
-    protected void handleException(final MessageContext context, 
-                                   final Service service, 
-                                   final Handler handler, 
+    protected void handleException(final MessageContext context,
+                                   final ServiceEndpoint endpoint,
+                                   final Handler handler,
                                    final Exception e)
     {
-        if(e instanceof XFireRuntimeException)
+        if (e instanceof XFireRuntimeException)
         {
-            throw (XFireRuntimeException)e;
+            throw (XFireRuntimeException) e;
         }
-        else if( handler != null )
+        else if (handler != null)
         {
             XFireFault fault = XFireFault.createFault(e);
 
@@ -110,11 +110,11 @@ public class DefaultXFire
             {
                 logger.debug("Fault occurred.", fault);
             }
-            
+
             handler.handleFault(fault, context);
-            
-            if (service.getFaultHandler() != null)
-                service.getFaultHandler().handleFault(fault, context);
+
+            if (endpoint.getFaultHandler() != null)
+                endpoint.getFaultHandler().handleFault(fault, context);
         }
         else
         {
@@ -122,54 +122,54 @@ public class DefaultXFire
         }
     }
 
-    protected Service findService( final String serviceName )
+    protected ServiceEndpoint findService(final String serviceName)
     {
-        return getServiceRegistry().getService( serviceName );
+        return getServiceEndpointRegistry().getServiceEndpoint(serviceName);
     }
 
-    public void invoke( final InputStream stream,
-                        final MessageContext context )
+    public void invoke(final InputStream stream,
+                       final MessageContext context)
     {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
 
         try
         {
-            invoke( factory.createXMLStreamReader( stream ),
-                    context );
+            invoke(factory.createXMLStreamReader(stream),
+                   context);
         }
-        catch( XMLStreamException e )
+        catch (XMLStreamException e)
         {
-            throw new XFireRuntimeException( "Couldn't parse stream.", e );
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
 
-    public void generateWSDL( final String serviceName, final OutputStream out )
+    public void generateWSDL(final String serviceName, final OutputStream out)
     {
         try
         {
-            final WSDLWriter wsdl = getWSDL( serviceName );
+            final WSDLWriter wsdl = getWSDL(serviceName);
 
-            wsdl.write( out );
+            wsdl.write(out);
         }
-        catch( WSDLException e )
+        catch (WSDLException e)
         {
-            throw new XFireRuntimeException( "Couldn't generate WSDL.", e );
+            throw new XFireRuntimeException("Couldn't generate WSDL.", e);
         }
-        catch( IOException e )
+        catch (IOException e)
         {
-            throw new XFireRuntimeException( "Couldn't generate WSDL.", e );
+            throw new XFireRuntimeException("Couldn't generate WSDL.", e);
         }
     }
 
-    private WSDLWriter getWSDL( final String serviceName )
-        throws WSDLException
+    private WSDLWriter getWSDL(final String serviceName)
+            throws WSDLException
     {
-        final Service service = findService( serviceName );
+        final ServiceEndpoint service = findService(serviceName);
 
         return service.getWSDLWriter();
     }
 
-    public ServiceRegistry getServiceRegistry()
+    public ServiceRegistry getServiceEndpointRegistry()
     {
         return registry;
     }

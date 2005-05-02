@@ -12,7 +12,6 @@ import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.service.binding.SOAPBindingFactory;
@@ -40,7 +39,7 @@ public class XFireServletTest
 
         service.setRequestPipeline(new HandlerPipeline());
         service.getRequestPipeline().addHandler(new MockSessionHandler());
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
 
         // A service which throws a fault
         ServiceInfo faultInfo = new ServiceInfo(new QName("Exception"), getClass());
@@ -51,7 +50,7 @@ public class XFireServletTest
         faultEndpoint.setServiceHandler(new SoapHandler(new BadHandler()));
         faultEndpoint.setFaultHandler(new Soap12FaultHandler());
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(faultEndpoint));
+        getServiceRegistry().register(faultEndpoint);
         
         // Asynchronous service
         ServiceInfo asyncInfo = new ServiceInfo(new QName("Async"), getClass());
@@ -63,7 +62,7 @@ public class XFireServletTest
         asyncEndpoint.setServiceHandler(new SoapHandler(new AsyncHandler()));
         asyncEndpoint.setFaultHandler(new Soap12FaultHandler());
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(asyncEndpoint));
+        getServiceRegistry().register(asyncEndpoint);
     }
 
     public void testServlet()

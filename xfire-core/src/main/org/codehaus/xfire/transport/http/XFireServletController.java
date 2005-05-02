@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -18,7 +17,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 
@@ -85,9 +84,9 @@ public class XFireServletController
         requests.set(request);
         responses.set(response);
 
-        if (serviceName == null || serviceName.length() == 0 || !reg.hasService(serviceName))
+        if (serviceName == null || serviceName.length() == 0 || !reg.hasServiceEndpoint(serviceName))
         {
-            if (!reg.hasService(serviceName))
+            if (!reg.hasServiceEndpoint(serviceName))
             {
                 response.setStatus(404);
             }
@@ -127,11 +126,11 @@ public class XFireServletController
 
     {
         response.setContentType("text/html");
-        Service service = getServiceRegistry().getService(serviceName);
+        ServiceEndpoint endpoint = getServiceRegistry().getServiceEndpoint(serviceName);
         HtmlServiceWriter writer = new HtmlServiceWriter();
         try
         {
-            writer.write(response.getOutputStream(), service);
+            writer.write(response.getOutputStream(), endpoint);
         }
         catch (XMLStreamException e)
         {
@@ -151,7 +150,7 @@ public class XFireServletController
         HtmlServiceWriter writer = new HtmlServiceWriter();
         try
         {
-            writer.write(response.getOutputStream(), getServiceRegistry().getServices());
+            writer.write(response.getOutputStream(), getServiceRegistry().getServiceEndpoints());
         }
         catch (XMLStreamException e)
         {
@@ -283,6 +282,6 @@ public class XFireServletController
 
     public ServiceRegistry getServiceRegistry()
     {
-        return xfire.getServiceRegistry();
+        return xfire.getServiceEndpointRegistry();
     }
 }

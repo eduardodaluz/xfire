@@ -33,7 +33,7 @@ public class RPCEncodedTest
                                              SoapConstants.STYLE_RPC,
                                              SoapConstants.USE_ENCODED, null);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
     }
 
     public void testBeanService()

@@ -13,7 +13,6 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractServletTest;
@@ -36,7 +35,7 @@ public class ServletAttachmentTest
                                                              SoapConstants.STYLE_DOCUMENT,
                                                              SoapConstants.USE_LITERAL);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
     }
 
     public void testServlet()

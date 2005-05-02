@@ -2,7 +2,6 @@ package org.codehaus.xfire.aegis.type.basic;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.PrimitiveService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -27,7 +26,7 @@ public class PrimitiveTest
                                                               Soap11.getInstance(),
                                                               SoapConstants.STYLE_WRAPPED,
                                                               SoapConstants.USE_LITERAL, null);
-        getServiceRegistry().register(new ServiceEndpointAdapter(endpoint));
+        getServiceRegistry().register(endpoint);
     }
 
     public void testWrappedPrimitive()

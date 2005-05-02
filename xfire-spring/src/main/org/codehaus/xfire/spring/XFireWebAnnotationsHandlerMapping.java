@@ -69,13 +69,13 @@ public class XFireWebAnnotationsHandlerMapping
                 {
                     SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
                     logger.info("Exposing SOAP v." + binding.getSoapVersion().getVersion() + " service " +
-                                service.getName() + " to " + urlPrefix + service.getName().getLocalPart() +
+                                service.getName() + " to " + urlPrefix + endpoint.getName() +
                                 " as " + binding.getStyle() + "/" + binding.getUse());
                 }
                 ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
-                xFire.getServiceRegistry().register(adapter);
+                xFire.getServiceEndpointRegistry().register(endpoint);
                 endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
-                Controller controller = new XFireServletControllerAdapter(xFire, adapter.getName());
+                Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
                 registerHandler(urlPrefix + adapter.getName(), controller);
             }
             else

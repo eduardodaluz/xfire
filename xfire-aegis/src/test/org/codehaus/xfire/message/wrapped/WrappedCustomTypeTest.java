@@ -29,7 +29,7 @@ public class WrappedCustomTypeTest
 
         service = getServiceFactory().create(BeanService.class);
 
-        getServiceRegistry().register(new ServiceEndpointAdapter(service));
+        getServiceRegistry().register(service);
 
         TypeMapping tm = AegisBindingProvider.getTypeMapping(new ServiceEndpointAdapter(service));
         tm.register(SimpleBean.class,

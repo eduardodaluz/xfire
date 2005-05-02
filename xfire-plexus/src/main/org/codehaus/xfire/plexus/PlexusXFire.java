@@ -10,44 +10,45 @@ import org.codehaus.xfire.transport.TransportManager;
 
 /**
  * An instance of XFire that is managed by Plexus.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Sep 19, 2004
  */
-public class PlexusXFire 
-    extends DefaultXFire
-    implements Serviceable
+public class PlexusXFire
+        extends DefaultXFire
+        implements Serviceable
 {
     private ServiceLocator locator;
-    
-    public ServiceRegistry getServiceRegistry()
+
+    public ServiceRegistry getServiceEndpointRegistry()
     {
         try
         {
-            return (ServiceRegistry) locator.lookup( ServiceRegistry.ROLE );
+            return (org.codehaus.xfire.plexus.ServiceRegistry) locator.lookup(
+                    org.codehaus.xfire.plexus.ServiceRegistry.ROLE);
         }
         catch (ComponentLookupException e)
         {
             throw new XFireRuntimeException("Couldn't find component.", e);
         }
     }
-    
+
     public TransportManager getTransportManager()
     {
         try
         {
-            return (TransportManager) locator.lookup( TransportManager.ROLE );
+            return (TransportManager) locator.lookup(TransportManager.ROLE);
         }
         catch (ComponentLookupException e)
         {
             throw new XFireRuntimeException("Couldn't find component.", e);
         }
     }
-    
+
     /**
      * @see org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable#service(org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator)
      */
-    public void service( ServiceLocator locator )
+    public void service(ServiceLocator locator)
     {
         this.locator = locator;
     }
