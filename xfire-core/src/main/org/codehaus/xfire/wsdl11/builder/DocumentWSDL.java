@@ -8,9 +8,9 @@ import javax.wsdl.Part;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Attribute;
@@ -24,7 +24,7 @@ import org.codehaus.yom.Element;
 public class DocumentWSDL
     extends AbstractJavaWSDL
 {
-    public DocumentWSDL(Service service, Collection transports) throws WSDLException
+    public DocumentWSDL(ServiceEndpoint service, Collection transports) throws WSDLException
     {
         super(service, transports);
     }
@@ -46,7 +46,7 @@ public class DocumentWSDL
      */
     private void writeParameters(Message message, Collection params)
     {
-        Service service = getService();
+        ServiceEndpoint service = getService();
 
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {

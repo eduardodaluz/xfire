@@ -38,7 +38,7 @@ public class WrappedBridge
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
-        OperationInfo op = getService().getOperation( dr.getLocalName() );
+        OperationInfo op = getService().getService().getOperation( dr.getLocalName() );
         setOperation(op);
 
         if (op == null)
@@ -71,7 +71,7 @@ public class WrappedBridge
         try
         {
             String name = getOperation().getName() + "Response";
-            writeStartElement(getResponseWriter(), name, getService().getDefaultNamespace());
+            writeStartElement(getResponseWriter(), name, getService().getService().getName().getNamespaceURI());
             
             int i = 0;
             for(Iterator itr = getOperation().getOutputMessage().getMessageParts().iterator(); itr.hasNext();)

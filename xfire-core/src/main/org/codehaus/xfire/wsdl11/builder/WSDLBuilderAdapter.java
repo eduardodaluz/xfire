@@ -3,7 +3,7 @@ package org.codehaus.xfire.wsdl11.builder;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -15,9 +15,9 @@ public class WSDLBuilderAdapter
         implements WSDLWriter
 {
     private WSDLBuilder wsdlBuilder;
-    private Service service;
+    private ServiceEndpoint service;
 
-    public WSDLBuilderAdapter(WSDLBuilder wsdlBuilder, Service service)
+    public WSDLBuilderAdapter(WSDLBuilder wsdlBuilder, ServiceEndpoint service)
     {
         this.wsdlBuilder = wsdlBuilder;
         this.service = service;

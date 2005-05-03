@@ -1,8 +1,8 @@
 package org.codehaus.xfire.type.basic.intf;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
@@ -20,7 +20,7 @@ public class BeanIntfTest
         super.setUp();
 
         ServiceEndpoint service = getServiceFactory().create(BeanServiceIntf.class);
-        service.setProperty(Service.SERVICE_IMPL_CLASS, BeanServiceImpl.class);
+        service.setProperty(Invoker.SERVICE_IMPL_CLASS, BeanServiceImpl.class);
 
         getServiceRegistry().register(service);
     }

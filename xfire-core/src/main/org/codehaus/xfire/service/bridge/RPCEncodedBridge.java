@@ -34,7 +34,7 @@ public class RPCEncodedBridge
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
         String opName = dr.getLocalName();
-        OperationInfo operation = getService().getOperation( opName );
+        OperationInfo operation = getService().getService().getOperation( opName );
         if (operation == null)
         {
             // Determine the operation name which is in the form of:
@@ -42,7 +42,7 @@ public class RPCEncodedBridge
             int index = opName.indexOf("Request");
             if (index > 0)
             {
-                operation = getService().getOperation( opName.substring(0, index) );
+                operation = getService().getService().getOperation( opName.substring(0, index) );
             }
         }
         

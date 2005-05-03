@@ -7,7 +7,6 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -31,7 +30,7 @@ public class WrappedCustomTypeTest
 
         getServiceRegistry().register(service);
 
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(new ServiceEndpointAdapter(service));
+        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
         tm.register(SimpleBean.class,
                     new QName("urn:ReallyNotSoSimpleBean", "SimpleBean"),
                     new BeanType());

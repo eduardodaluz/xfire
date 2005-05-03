@@ -11,7 +11,7 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.util.STAXUtils;
@@ -27,7 +27,7 @@ public class XMLBeansBindingProvider
     }
     
     
-    public void initialize(Service newParam)
+    public void initialize(ServiceEndpoint newParam)
     {
     }
 
@@ -71,7 +71,7 @@ public class XMLBeansBindingProvider
         }
     }
 
-    public SchemaType getSchemaType(Service service, MessagePartInfo param)
+    public SchemaType getSchemaType(ServiceEndpoint service, MessagePartInfo param)
     {
         return new XMLBeansType();
     }

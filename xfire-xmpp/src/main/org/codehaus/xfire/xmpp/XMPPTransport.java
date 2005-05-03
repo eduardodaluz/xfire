@@ -1,7 +1,7 @@
 package org.codehaus.xfire.xmpp;
 
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
@@ -45,7 +45,7 @@ public class XMPPTransport
      * @param service
      * @return
      */
-    public String getServiceURL(Service service)
+    public String getServiceURL(ServiceEndpoint service)
     {
         return id;
     }
@@ -54,7 +54,7 @@ public class XMPPTransport
      * @param service
      * @return
      */
-    public String getTransportURI(Service service)
+    public String getTransportURI(ServiceEndpoint service)
     {
         return XMPP_TRANSPORT_NS;
     }

@@ -3,6 +3,7 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -13,7 +14,6 @@ import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
@@ -203,7 +203,6 @@ public class ObjectServiceFactory
             throw new IllegalArgumentException("Illegal style/use combination [" + style + "/" + use + "]");
         }
         ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
-        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
         try
         {
             endpoint.setBindingProvider(getBindingProvider());
@@ -229,7 +228,7 @@ public class ObjectServiceFactory
         if (transportManager != null)
         {
             WSDLBuilder wsdlBuilder = new WSDLBuilder(transportManager);
-            endpoint.setWSDLWriter(new WSDLBuilderAdapter(wsdlBuilder, adapter));
+            endpoint.setWSDLWriter(new WSDLBuilderAdapter(wsdlBuilder, endpoint));
         }
 
         SoapHandler handler = new SoapHandler(endpoint.getBindingProvider().createEndpointHandler());
@@ -238,7 +237,7 @@ public class ObjectServiceFactory
 
         initializeOperations(endpoint);
 
-        endpoint.getBindingProvider().initialize(adapter);
+        endpoint.getBindingProvider().initialize(endpoint);
 
         return endpoint;
     }
@@ -269,13 +268,14 @@ public class ObjectServiceFactory
 
     protected void addOperation(ServiceEndpoint endpoint, final Method method)
     {
-        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
         ServiceInfo service = endpoint.getService();
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        
         final OperationInfo op = service.addOperation(method.getName(), method);
 
         final Class[] paramClasses = method.getParameterTypes();
 
-        final boolean isDoc = adapter.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        final boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
 
         MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
         op.setInputMessage(inMsg);

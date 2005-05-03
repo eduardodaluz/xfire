@@ -3,6 +3,7 @@ package org.codehaus.xfire;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.wsdl.WSDLException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -14,7 +15,6 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.Transport;
@@ -69,7 +69,7 @@ public class DefaultXFire
                                      XFireFault.SENDER);
             }
 
-            context.setService(new ServiceEndpointAdapter(endpoint));
+            context.setService(endpoint);
             context.setXMLStreamReader(reader);
 
             if (endpoint == null)

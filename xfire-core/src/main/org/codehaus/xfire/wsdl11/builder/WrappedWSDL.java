@@ -8,9 +8,9 @@ import javax.wsdl.Part;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Attribute;
@@ -24,14 +24,14 @@ import org.codehaus.yom.Element;
 public class WrappedWSDL
     extends DocumentWSDL
 {
-    public WrappedWSDL(Service service, Collection transports) throws WSDLException
+    public WrappedWSDL(ServiceEndpoint service, Collection transports) throws WSDLException
     {
         super(service, transports);
     }
 
     private QName createResponseDocumentType(OperationInfo op, Part part)
     {
-        Service service = getService();
+        ServiceEndpoint service = getService();
 
         String opName = op.getName() + "Response";
 
@@ -56,7 +56,7 @@ public class WrappedWSDL
 
     private QName createRequestDocumentType(OperationInfo op, Part part)
     {
-        Service service = getService();
+        ServiceEndpoint service = getService();
 
         String opName = op.getName();// + "Request";
 
@@ -85,7 +85,7 @@ public class WrappedWSDL
      */
     private void writeParametersSchema(Collection params, Element sequence)
     {
-        Service service = getService();
+        ServiceEndpoint service = getService();
 
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {

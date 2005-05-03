@@ -12,7 +12,7 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.stax.StaxBuilder;
@@ -23,7 +23,7 @@ public class MessageBindingProvider
 {
     private static final Log logger = LogFactory.getLog(MessageBindingProvider.class);
     
-    public void initialize(Service newParam)
+    public void initialize(ServiceEndpoint newParam)
     {
     }
 
@@ -80,7 +80,7 @@ public class MessageBindingProvider
         }
     }
 
-    public SchemaType getSchemaType(Service service, MessagePartInfo param)
+    public SchemaType getSchemaType(ServiceEndpoint service, MessagePartInfo param)
     {
         return null;
     }

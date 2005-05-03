@@ -2,7 +2,6 @@ package org.codehaus.xfire.wsdl11;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -23,7 +22,7 @@ public class WSDLBuilderInfoTest
 
         ServiceEndpoint service = getServiceFactory().create(BeanService.class);
 
-        WSDLBuilderInfo info = new WSDLBuilderInfo(new ServiceEndpointAdapter(service));
+        WSDLBuilderInfo info = new WSDLBuilderInfo(service);
         info.setPortType("MyPortType");
         info.setServiceName("MyServiceName");
         info.setTargetNamespace("urn:my:namespace");

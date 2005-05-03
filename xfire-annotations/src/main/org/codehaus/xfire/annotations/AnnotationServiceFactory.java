@@ -1,14 +1,14 @@
 package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
@@ -125,7 +125,7 @@ public class AnnotationServiceFactory
             ServiceEndpoint service = create(endpointInterface, serviceName, tns, version, style, use, null);
 
             // Fill in WSDL Builder metadata from annotations.
-            WSDLBuilderInfo info = new WSDLBuilderInfo(new ServiceEndpointAdapter(service));
+            WSDLBuilderInfo info = new WSDLBuilderInfo(service);
             info.setTargetNamespace(tns);
             info.setServiceName(serviceName);
             info.setPortType(portType);
@@ -133,7 +133,7 @@ public class AnnotationServiceFactory
 
             if (clazz != endpointInterface)
             {
-                service.setProperty(Service.SERVICE_IMPL_CLASS, clazz);
+                service.setProperty(Invoker.SERVICE_IMPL_CLASS, clazz);
             }
 
             return service;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
@@ -21,9 +22,7 @@ import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -45,7 +44,7 @@ public class ObjectServiceConfigurator
         extends PlexusXFireComponent
         implements Configurator
 {
-    public Service createService(PlexusConfiguration config)
+    public ServiceEndpoint createService(PlexusConfiguration config)
             throws Exception
     {
         ServiceFactory builder = getServiceFactory(config);
@@ -111,22 +110,22 @@ public class ObjectServiceConfigurator
             for (int i = 0; i < types.length; i++)
             {
                 initializeType(types[i],
-                               AegisBindingProvider.getTypeMapping(new ServiceEndpointAdapter(service)));
+                               AegisBindingProvider.getTypeMapping(service));
             }
         }
 
         if (implClass.length() > 0)
         {
-            service.setProperty(Service.SERVICE_IMPL_CLASS, loadClass(implClass));
+            service.setProperty(Invoker.SERVICE_IMPL_CLASS, loadClass(implClass));
         }
 
         final String scope = config.getChild("scope").getValue("application");
         if (scope.equals("application"))
-            service.setScope(Service.SCOPE_APPLICATION);
+            service.setScope(Invoker.SCOPE_APPLICATION);
         else if (scope.equals("session"))
-            service.setScope(Service.SCOPE_SESSION);
+            service.setScope(Invoker.SCOPE_SESSION);
         else if (scope.equals("request"))
-            service.setScope(Service.SCOPE_REQUEST);
+            service.setScope(Invoker.SCOPE_REQUEST);
 
         Invoker invoker = null;
 
@@ -144,7 +143,7 @@ public class ObjectServiceConfigurator
 
         getServiceRegistry().register(service);
 
-        return new ServiceEndpointAdapter(service);
+        return service;
     }
 
     private HandlerPipeline createHandlerPipeline(PlexusConfiguration child)

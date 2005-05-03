@@ -53,7 +53,7 @@ public class DocumentBridge
 
     protected MessagePartInfo findParameter(QName name)
     {
-        for ( Iterator itr = getService().getOperations().iterator(); itr.hasNext(); )
+        for ( Iterator itr = getService().getService().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo op = (OperationInfo) itr.next();
             MessagePartInfo p = op.getInputMessage().getMessagePart(name);
@@ -66,7 +66,7 @@ public class DocumentBridge
 
     protected OperationInfo findOperation(int i)
     {
-        for ( Iterator itr = getService().getOperations().iterator(); itr.hasNext(); )
+        for ( Iterator itr = getService().getService().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo o = (OperationInfo) itr.next();
             if ( o.getInputMessage().getMessageParts().size() == i )

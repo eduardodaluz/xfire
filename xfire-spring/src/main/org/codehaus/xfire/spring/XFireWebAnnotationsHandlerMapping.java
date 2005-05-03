@@ -6,7 +6,6 @@ import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.SOAPBinding;
@@ -72,11 +71,11 @@ public class XFireWebAnnotationsHandlerMapping
                                 service.getName() + " to " + urlPrefix + endpoint.getName() +
                                 " as " + binding.getStyle() + "/" + binding.getUse());
                 }
-                ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(endpoint);
+                
                 xFire.getServiceEndpointRegistry().register(endpoint);
                 endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
                 Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
-                registerHandler(urlPrefix + adapter.getName(), controller);
+                registerHandler(urlPrefix + endpoint.getName(), controller);
             }
             else
             {

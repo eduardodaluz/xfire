@@ -14,7 +14,7 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 import org.codehaus.yom.stax.StaxBuilder;
@@ -264,13 +264,13 @@ public class SoapHandler
     protected void assertUnderstandsHeader(MessageContext context, QName name)
             throws XFireFault
     {
-        Service service = context.getService();
-        if (service.getRequestPipeline() != null &&
-                understands(service.getRequestPipeline(), name))
+        ServiceEndpoint endpoint = context.getService();
+        if (endpoint.getRequestPipeline() != null &&
+                understands(endpoint.getRequestPipeline(), name))
             return;
 
-        if (service.getResponsePipeline() != null &&
-                understands(service.getResponsePipeline(), name))
+        if (endpoint.getResponsePipeline() != null &&
+                understands(endpoint.getResponsePipeline(), name))
             return;
 
         throw new XFireFault("Header {" + name.getLocalPart() + "}" + name.getNamespaceURI()

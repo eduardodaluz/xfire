@@ -9,7 +9,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.transport.Session;
@@ -34,7 +34,7 @@ public class MessageContext
     private Map properties;
 
     private SoapVersion soapVersion;
-    private Service service;
+    private ServiceEndpoint service;
     private Transport transport;
     private XMLStreamReader xmlStreamReader;
 
@@ -186,12 +186,12 @@ public class MessageContext
      *
      * @return
      */
-    public Service getService()
+    public ServiceEndpoint getService()
     {
         return service;
     }
 
-    public void setService(Service service)
+    public void setService(ServiceEndpoint service)
     {
         this.service = service;
     }

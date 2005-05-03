@@ -2,6 +2,7 @@ package org.codehaus.xfire.service;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.FaultHandler;
@@ -33,6 +34,8 @@ import org.codehaus.xfire.wsdl11.WSDLCreationVisitorAdapter;
 public class ServiceEndpoint
         implements Visitable
 {
+    public final static String ROLE = ServiceEndpoint.class.getName();
+
     private ServiceInfo service;
     private Binding binding;
     private Map properties = new HashMap();
@@ -43,7 +46,8 @@ public class ServiceEndpoint
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
     private BindingProvider bindingProvider;
-    private int scope = Service.SCOPE_APPLICATION;
+    private int scope = Invoker.SCOPE_APPLICATION;
+
     private Invoker invoker;
 
     /**

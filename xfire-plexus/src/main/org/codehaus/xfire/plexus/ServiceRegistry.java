@@ -7,7 +7,6 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
 
 /**
@@ -27,7 +26,7 @@ public class ServiceRegistry
     public void initialize()
             throws Exception
     {
-        Map services = locator.lookupMap(Service.ROLE);
+        Map services = locator.lookupMap(ServiceEndpoint.ROLE);
         for (Iterator itr = services.values().iterator(); itr.hasNext();)
         {
             ServiceEndpoint service = (ServiceEndpoint) itr.next();

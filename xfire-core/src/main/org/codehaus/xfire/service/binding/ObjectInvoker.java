@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.transport.Session;
 
 /**
@@ -71,20 +71,20 @@ public class ObjectInvoker
     public Object getServiceObject(final MessageContext context)
             throws XFireFault
     {
-        final Service service = (Service) context.getService();
+        final ServiceEndpoint service = context.getService();
         final int scope = service.getScope();
-        if (scope == Service.SCOPE_APPLICATION)
+        if (scope == Invoker.SCOPE_APPLICATION)
         {
             if (appObj == null)
             {
-                synchronized (Service.class)
+                synchronized (ServiceEndpoint.class)
                 {
                     appObj = createServiceObject(service);
                 }
             }
             return appObj;
         }
-        else if (scope == Service.SCOPE_SESSION)
+        else if (scope == Invoker.SCOPE_SESSION)
         {
             final Session session = context.getSession();
             final String key = "service." + service.getName();
@@ -92,7 +92,7 @@ public class ObjectInvoker
             Object sessObj = session.get(key);
             if (sessObj == null)
             {
-                synchronized (Service.class)
+                synchronized (ServiceEndpoint.class)
                 {
                     sessObj = createServiceObject(service);
                     session.put(key, sessObj);
@@ -100,7 +100,7 @@ public class ObjectInvoker
             }
             return sessObj;
         }
-        else if (scope == Service.SCOPE_REQUEST)
+        else if (scope == Invoker.SCOPE_REQUEST)
         {
             return createServiceObject(service);
         }
@@ -117,16 +117,16 @@ public class ObjectInvoker
      * @return
      * @throws XFireFault
      */
-    public Object createServiceObject(final Service service)
+    public Object createServiceObject(final ServiceEndpoint service)
             throws XFireFault
     {
         try
         {
-            Class svcClass = (Class) service.getProperty(Service.SERVICE_IMPL_CLASS);
+            Class svcClass = (Class) service.getProperty(Invoker.SERVICE_IMPL_CLASS);
 
             if (svcClass == null)
             {
-                svcClass = service.getServiceClass();
+                svcClass = service.getService().getServiceClass();
             }
 
             return svcClass.newInstance();

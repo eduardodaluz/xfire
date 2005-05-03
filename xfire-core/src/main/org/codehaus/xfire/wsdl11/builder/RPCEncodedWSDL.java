@@ -11,7 +11,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Attribute;
@@ -26,7 +26,7 @@ import org.codehaus.yom.Element;
 public class RPCEncodedWSDL
         extends AbstractJavaWSDL
 {
-    public RPCEncodedWSDL(Service service, Collection transports)
+    public RPCEncodedWSDL(ServiceEndpoint service, Collection transports)
             throws WSDLException
     {
         super(service, transports);
@@ -44,7 +44,7 @@ public class RPCEncodedWSDL
 
     protected void writeParametersSchema(Message message, MessageInfo xmsg)
     {
-        Service service = getService();
+        ServiceEndpoint service = getService();
         Collection params = xmsg.getMessageParts();
         
         for (Iterator itr = params.iterator(); itr.hasNext();)

@@ -1,10 +1,12 @@
 package org.codehaus.xfire.wsdl11.builder;
 
 import java.util.Collection;
+
 import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.AbstractXFireComponent;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLCreationException;
@@ -30,31 +32,32 @@ public class WSDLBuilder
      * @param s The service WSDL is being generated for.
      * @return
      */
-    public WSDLWriter createWSDLWriter(Service service)
+    public WSDLWriter createWSDLWriter(ServiceEndpoint endpoint)
     {
-        Collection transports = manager.getTransports(service.getName());
-
+        Collection transports = manager.getTransports(endpoint.getName());
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        
         try
         {
-            if (service.getStyle().equals(SoapConstants.STYLE_WRAPPED)
-                    && service.getUse().equals(SoapConstants.USE_LITERAL))
+            if (binding.getStyle().equals(SoapConstants.STYLE_WRAPPED)
+                    && binding.getUse().equals(SoapConstants.USE_LITERAL))
             {
-                return new WrappedWSDL(service, transports);
+                return new WrappedWSDL(endpoint, transports);
             }
-            else if (service.getStyle().equals(SoapConstants.STYLE_DOCUMENT)
-                    && service.getUse().equals(SoapConstants.USE_LITERAL))
+            else if (binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT)
+                    && binding.getUse().equals(SoapConstants.USE_LITERAL))
             {
-                return new DocumentWSDL(service, transports);
+                return new DocumentWSDL(endpoint, transports);
             }
-            else if (service.getStyle().equals(SoapConstants.STYLE_RPC)
-                    && service.getUse().equals(SoapConstants.USE_ENCODED))
+            else if (binding.getStyle().equals(SoapConstants.STYLE_RPC)
+                    && binding.getUse().equals(SoapConstants.USE_ENCODED))
             {
-                return new RPCEncodedWSDL(service, transports);
+                return new RPCEncodedWSDL(endpoint, transports);
             }
             else
             {
                 throw new UnsupportedOperationException("Service style/use combination is not supported: "
-                                                        + service.getStyle() + "/" + service.getUse());
+                                                        + binding.getStyle() + "/" + binding.getUse());
             }
         }
         catch (WSDLException e)

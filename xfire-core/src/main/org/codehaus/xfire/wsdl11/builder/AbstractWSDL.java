@@ -14,7 +14,8 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -38,7 +39,7 @@ public abstract class AbstractWSDL
 
     private String targetNamespace;
 
-    private Service service;
+    private ServiceEndpoint service;
 
     private Document wsdlDocument;
 
@@ -62,7 +63,7 @@ public abstract class AbstractWSDL
 
     protected final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
 
-    public AbstractWSDL(Service service) throws WSDLException
+    public AbstractWSDL(ServiceEndpoint service) throws WSDLException
     {
         dependencies = new HashMap();
         this.service = service;
@@ -79,8 +80,9 @@ public abstract class AbstractWSDL
         setSchemaTypes(root);
         root.addNamespaceDeclaration(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
 
-        addNamespace("soap", service.getSoapVersion().getNamespace());
-        addNamespace("soapenc", service.getSoapVersion().getSoapEncodingStyle());
+        SOAPBinding binding = (SOAPBinding) service.getBinding();
+        addNamespace("soap", binding.getSoapVersion().getNamespace());
+        addNamespace("soapenc", binding.getSoapVersion().getSoapEncodingStyle());
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("wsdl", WSDL11_NS);
         addNamespace("wsdlsoap", WSDL11_SOAP_NS);
@@ -237,12 +239,12 @@ public abstract class AbstractWSDL
         this.def = definition;
     }
 
-    public Service getService()
+    public ServiceEndpoint getService()
     {
         return service;
     }
 
-    public void setService(Service service)
+    public void setService(ServiceEndpoint service)
     {
         this.service = service;
     }

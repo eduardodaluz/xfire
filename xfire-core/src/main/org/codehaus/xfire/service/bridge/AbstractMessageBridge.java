@@ -5,7 +5,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapHandler;
 
 /**
@@ -16,7 +16,7 @@ import org.codehaus.xfire.soap.SoapHandler;
 public abstract class AbstractMessageBridge
     implements MessageBridge
 {
-    private Service service;
+    private ServiceEndpoint endpoint;
 
     private MessageContext context;
     
@@ -30,7 +30,7 @@ public abstract class AbstractMessageBridge
     
     public AbstractMessageBridge(MessageContext context)
     {
-        this.service = context.getService();
+        this.endpoint = context.getService();
         this.context = context;
         this.request = context.getXMLStreamReader();
     }
@@ -38,9 +38,9 @@ public abstract class AbstractMessageBridge
     /**
      * @return Returns the service.
      */
-    public Service getService()
+    public ServiceEndpoint getService()
     {
-        return service;
+        return endpoint;
     }
 
     /**

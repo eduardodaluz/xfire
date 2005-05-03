@@ -5,7 +5,6 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.Echo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -39,7 +38,7 @@ public class RPCEncodedTest
     public void testBeanService()
             throws Exception
     {
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(new ServiceEndpointAdapter(service));
+        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
         Type type = tm.getType(String.class);
 
         Document response =

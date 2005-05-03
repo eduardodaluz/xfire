@@ -8,7 +8,6 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceEndpointAdapter;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.soap.Soap11;
@@ -35,10 +34,9 @@ public class BeanServiceTest
                                                              SoapConstants.STYLE_DOCUMENT,
                                                              SoapConstants.USE_LITERAL, null);
 
-        ServiceEndpointAdapter adapter = new ServiceEndpointAdapter(service);
         getServiceRegistry().register(service);
 
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(adapter);
+        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
         tm.register(SimpleBean.class, new QName("urn:Bean", "SimpleBean"), new BeanType());
     }
 

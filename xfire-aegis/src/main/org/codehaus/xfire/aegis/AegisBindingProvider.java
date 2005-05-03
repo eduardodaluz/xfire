@@ -13,8 +13,9 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -41,15 +42,16 @@ public class AegisBindingProvider
      * Creates a type mapping for this class and registers it with the TypeMappingRegistry. This needs to be called
      * before initializeOperations().
      */
-    public void initialize(Service service)
+    public void initialize(ServiceEndpoint endpoint)
     {
-        String encodingStyle = (String) service.getProperty(ENCODING_URI_KEY);
+        String encodingStyle = (String) endpoint.getProperty(ENCODING_URI_KEY);
 
         if (encodingStyle == null)
         {
-            if (service.getUse().equals(SoapConstants.USE_ENCODED))
+            SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+            if (binding.getUse().equals(SoapConstants.USE_ENCODED))
             {
-                encodingStyle = service.getSoapVersion().getSoapEncodingStyle();
+                encodingStyle = binding.getSoapVersion().getSoapEncodingStyle();
             }
             else
             {
@@ -57,11 +59,11 @@ public class AegisBindingProvider
             }
         }
 
-        service.setProperty(ENCODING_URI_KEY, encodingStyle);
+        endpoint.setProperty(ENCODING_URI_KEY, encodingStyle);
         final TypeMapping tm = registry.createTypeMapping(encodingStyle, true);
 
-        service.setProperty(TYPE_MAPPING_KEY, tm);
-        registry.register(service.getDefaultNamespace(), tm);
+        endpoint.setProperty(TYPE_MAPPING_KEY, tm);
+        registry.register(endpoint.getService().getName().getNamespaceURI(), tm);
     }
 
     public Object readParameter(MessagePartInfo p, MessageContext context) 
@@ -99,12 +101,12 @@ public class AegisBindingProvider
         return type;
     }
     
-    public static TypeMapping getTypeMapping(Service service)
+    public static TypeMapping getTypeMapping(ServiceEndpoint service)
     {
         return (TypeMapping) service.getProperty(TYPE_MAPPING_KEY);
     }
 
-    public SchemaType getSchemaType(Service service, MessagePartInfo param)
+    public SchemaType getSchemaType(ServiceEndpoint service, MessagePartInfo param)
     {
         return getParameterType(getTypeMapping(service), param);
     }

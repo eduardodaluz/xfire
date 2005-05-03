@@ -1,7 +1,8 @@
 package org.codehaus.xfire.service.bridge;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
@@ -14,21 +15,22 @@ public class MessageBridgeFactory
 {
 	public static MessageBridge createMessageBridge(MessageContext context)
     {
-        Service service = context.getService();
+        ServiceEndpoint endpoint = context.getService();
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         
         AbstractMessageBridge bridge;
-        if (service.getStyle().equals(SoapConstants.STYLE_WRAPPED) 
-            && service.getUse().equals(SoapConstants.USE_LITERAL))
+        if (binding.getStyle().equals(SoapConstants.STYLE_WRAPPED) 
+            && binding.getUse().equals(SoapConstants.USE_LITERAL))
         {
             bridge = new WrappedBridge(context);
         }
-        else if (service.getStyle().equals(SoapConstants.STYLE_DOCUMENT) 
-                 && service.getUse().equals(SoapConstants.USE_LITERAL))
+        else if (binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT) 
+                 && binding.getUse().equals(SoapConstants.USE_LITERAL))
         {
             bridge = new DocumentBridge(context);
         }
-        else if (service.getStyle().equals(SoapConstants.STYLE_RPC) 
-                 && service.getUse().equals(SoapConstants.USE_ENCODED))
+        else if (binding.getStyle().equals(SoapConstants.STYLE_RPC) 
+                 && binding.getUse().equals(SoapConstants.USE_ENCODED))
         {
             bridge = new RPCEncodedBridge(context);
         }

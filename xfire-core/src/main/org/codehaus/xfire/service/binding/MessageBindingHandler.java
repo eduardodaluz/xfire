@@ -12,9 +12,9 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessageInfo;
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.ServiceEndpoint;
 
 /**
  * Handles java services.
@@ -44,8 +44,8 @@ public class MessageBindingHandler
     {
         try
         {
-            final Service service = context.getService();
-            final OperationInfo operation = (OperationInfo) service.getOperations().iterator().next();
+            final ServiceEndpoint endpoint = context.getService();
+            final OperationInfo operation = (OperationInfo) endpoint.getService().getOperations().iterator().next();
             final Invoker invoker = context.getService().getInvoker();
 
             context.setProperty(RESPONSE_OP, operation);
@@ -56,7 +56,7 @@ public class MessageBindingHandler
             {
                 MessagePartInfo p = (MessagePartInfo) itr.next();
                 
-                params.add( service.getBindingProvider().readParameter(p, context) );
+                params.add( endpoint.getBindingProvider().readParameter(p, context) );
             }
             
             // invoke the service method...

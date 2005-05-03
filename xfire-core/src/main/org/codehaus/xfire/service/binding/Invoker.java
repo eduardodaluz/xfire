@@ -15,6 +15,11 @@ import org.codehaus.xfire.fault.XFireFault;
  */
 public interface Invoker
 {
+    public final static int SCOPE_APPLICATION = 1;
+    public final static int SCOPE_REQUEST = 3;
+    public final static int SCOPE_SESSION = 2;
+    public static final String SERVICE_IMPL_CLASS = "xfire.serviceImplClass";
+
     Object invoke( Method m, Object[] params, MessageContext context )
     	throws XFireFault;
 }

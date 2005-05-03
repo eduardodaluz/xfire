@@ -17,7 +17,7 @@ import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
@@ -39,7 +39,7 @@ public abstract class AbstractJavaWSDL
 
     private Map wsdlOps;
 
-    public AbstractJavaWSDL(Service service, Collection transports) throws WSDLException
+    public AbstractJavaWSDL(ServiceEndpoint service, Collection transports) throws WSDLException
     {
         super(service);
 
@@ -57,7 +57,7 @@ public abstract class AbstractJavaWSDL
     public PortType createAbstractInterface()
         throws WSDLException
     {
-        Service service = getService();
+        ServiceEndpoint service = getService();
         Definition def = getDefinition();
 
         QName portName = new QName(getInfo().getTargetNamespace(), getInfo().getPortType());
@@ -68,7 +68,7 @@ public abstract class AbstractJavaWSDL
         def.addPortType(portType);
 
         // Create Abstract operations
-        for (Iterator itr = service.getOperations().iterator(); itr.hasNext();)
+        for (Iterator itr = service.getService().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo op = (OperationInfo) itr.next();
             Message req = getInputMessage(op);
@@ -93,7 +93,7 @@ public abstract class AbstractJavaWSDL
 
     public void createConcreteInterface(PortType portType)
     {
-        Service service = (Service) getService();
+        ServiceEndpoint service = getService();
         Definition def = getDefinition();
 
         QName name = new QName(getInfo().getTargetNamespace(), getInfo().getServiceName());
@@ -112,7 +112,7 @@ public abstract class AbstractJavaWSDL
 
             Binding transportBinding = transport.createBinding(portType, service);
 
-            for (Iterator oitr = service.getOperations().iterator(); oitr.hasNext();)
+            for (Iterator oitr = service.getService().getOperations().iterator(); oitr.hasNext();)
             {
                 // todo: move out of the first loop, we'll be creating req/res
                 // multiple times otherwise
