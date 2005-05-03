@@ -7,7 +7,7 @@
             <ref bean="echo"/>
         </property>
         <property name="serviceInterface">
-            <value>org.codehaus.xfire.spring.Echo</value>
+            <value>org.codehaus.xfire.test.Echo</value>
         </property>
         <property name="serviceFactory">
             <ref bean="xfire.serviceFactory"/>
@@ -17,6 +17,6 @@
         </property>
     </bean>
 
-    <bean id="echo" class="org.codehaus.xfire.spring.EchoImpl"/>
+    <bean id="echo" class="org.codehaus.xfire.test.EchoImpl"/>
 </beans>
 
