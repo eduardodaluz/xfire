@@ -1,9 +1,7 @@
 package org.codehaus.xfire.service;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.FaultHandler;
@@ -16,16 +14,15 @@ import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.service.transport.Transport;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
+import org.codehaus.xfire.wsdl11.WSDLCreationVisitorAdapter;
 
 /**
  * Represents a service endpoint. A service endpoint is a resource to which web service messages can be addressed.
  * Endpoint references convey the information needed to address a web service endpoint.
  * <p/>
- * The <code>ServiceEndpoint</code> is basically a facade for a <code>ServiceInfo</code>, <code>Binding</code>, and
- * <code>Transport</code>. As such, it provides a unified interface to these subsystems.
+ * The <code>ServiceEndpoint</code> is basically a facade for a <code>ServiceInfo</code>, <code>Binding</code>. As such,
+ * it provides a unified interface to these subsystems.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see ServiceInfo
@@ -38,7 +35,6 @@ public class ServiceEndpoint
 {
     private ServiceInfo service;
     private Binding binding;
-    private Transport transport;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private FaultHandler faultHandler;
@@ -47,7 +43,6 @@ public class ServiceEndpoint
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
     private BindingProvider bindingProvider;
-    private WSDLBuilder wsdlBuilder;
     private int scope = Service.SCOPE_APPLICATION;
     private Invoker invoker;
 
@@ -59,30 +54,17 @@ public class ServiceEndpoint
      */
     public ServiceEndpoint(ServiceInfo service)
     {
-        this(service, null, null);
-    }
-
-    /**
-     * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code> and
-     * <code>Binding</code>. It uses a <code>SOAPBinding</code> and a <code>HTTPTransport</code>.
-     *
-     * @param service the service.
-     * @param binding the binding.
-     */
-    public ServiceEndpoint(ServiceInfo service, Binding binding)
-    {
-        this(service, binding, null);
+        this(service, null);
     }
 
     /**
      * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code>,
      * <code>Binding</code> and <code>Transport</code>.
      *
-     * @param service   the service.
-     * @param binding   the binding.
-     * @param transport the transport.
+     * @param service the service.
+     * @param binding the binding.
      */
-    public ServiceEndpoint(ServiceInfo service, Binding binding, Transport transport)
+    public ServiceEndpoint(ServiceInfo service, Binding binding)
     {
         this.service = service;
         if (binding != null)
@@ -96,12 +78,10 @@ public class ServiceEndpoint
                     SoapConstants.STYLE_DOCUMENT,
                     SoapConstants.USE_LITERAL);
         }
-
-        this.transport = transport;
     }
 
     /**
-     * Acceps the given visitor. Iterates over all operation infos.
+     * Acceps the given visitor. Iterates over all the contained service.
      *
      * @param visitor the visitor.
      */
@@ -109,21 +89,7 @@ public class ServiceEndpoint
     {
         visitor.startEndpoint(this);
         service.accept(visitor);
-        binding.accept(visitor);
         visitor.endEndpoint(this);
-    }
-
-    /**
-     * Returns the name of this endpoint. This method simply returns the local part of the qualified name of the
-     * <code>ServiceInfo</code>.
-     *
-     * @return the service name.
-     * @see ServiceInfo#getName()
-     * @see javax.xml.namespace.QName#getLocalPart()
-     */
-    public String getName()
-    {
-        return service.getName().getLocalPart();
     }
 
     /**
@@ -209,6 +175,19 @@ public class ServiceEndpoint
     }
 
     /**
+     * Returns the name of this endpoint. This method simply returns the local part of the qualified name of the
+     * <code>ServiceInfo</code>.
+     *
+     * @return the service name.
+     * @see ServiceInfo#getName()
+     * @see javax.xml.namespace.QName#getLocalPart()
+     */
+    public String getName()
+    {
+        return service.getName().getLocalPart();
+    }
+
+    /**
      * @return Returns the requestPipeline.
      */
     public HandlerPipeline getRequestPipeline()
@@ -271,80 +250,28 @@ public class ServiceEndpoint
     }
 
     /**
-     * Returns the transport for this endpoint.
+     * Returns the <code>WSDLWriter</code> for this endpoint. If a writer has not been {@link #setWSDLWriter(WSDLWriter)
+     * explicitly set}, a default implementation is used.
      *
-     * @return the transport.
+     * @return the wsdl writer.
      */
-    public Transport getTransport()
-    {
-        return transport;
-    }
-
-    /**
-     * Sets the transport for this binding.
-     *
-     * @param transport the transport.
-     */
-    public void setTransport(Transport transport)
-    {
-        this.transport = transport;
-    }
-
     public WSDLWriter getWSDLWriter()
-            throws WSDLException
     {
         if (wsdlWriter == null)
         {
-            final WSDLBuilder builder = getWSDLBuilder();
-
-            if (builder != null)
-                return getWSDLBuilder().createWSDLWriter(new ServiceEndpointAdapter(this));
+            wsdlWriter = new WSDLCreationVisitorAdapter(this);
         }
-
         return wsdlWriter;
     }
 
-    public WSDLBuilder getWSDLBuilder()
-    {
-        return wsdlBuilder;
-    }
-
-    public void setWSDL(WSDLWriter wsdlWriter)
+    /**
+     * Sets the <code>WSDLWriter</code> for this endpoint.
+     *
+     * @param wsdlWriter
+     */
+    public void setWSDLWriter(WSDLWriter wsdlWriter)
     {
         this.wsdlWriter = wsdlWriter;
-    }
-
-    public void setWSDLBuilder(final WSDLBuilder wsdlBuilder)
-    {
-        this.wsdlBuilder = wsdlBuilder;
-    }
-
-    /**
-     * @param wsdlUri The WSDL URL.
-     */
-    public void setWSDLURL(String wsdlUri)
-            throws WSDLException
-    {
-        if (wsdlUri == null
-                ||
-                wsdlUri.equals(""))
-        {
-            throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "URL to WSDL file is null");
-        }
-        setWSDLWriter(new ResourceWSDL(wsdlUri));
-    }
-
-    /**
-     * @param wsdlUri The WSDL URL.
-     */
-    public void setWSDLURL(URL wsdlUri)
-    {
-        setWSDLWriter(new ResourceWSDL(wsdlUri));
-    }
-
-    public void setWSDLWriter(WSDLWriter wsdl)
-    {
-        this.wsdlWriter = wsdl;
     }
 }
 

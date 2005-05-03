@@ -1,7 +1,5 @@
 package org.codehaus.xfire.wsdl11;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +31,6 @@ import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.Visitor;
 import org.codehaus.xfire.service.binding.Binding;
 import org.codehaus.xfire.wsdl.WSDLCreationException;
-import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
  * Implementation of the <code>Visitor</code> interface that creates a WSDL from a <code>ServiceEndpoint</code>. After
@@ -42,7 +39,7 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class WSDLCreationVisitor
-        implements Visitor, WSDLWriter
+        implements Visitor
 {
     private Definition definition;
     private PortType currentPortType;
@@ -90,8 +87,10 @@ public class WSDLCreationVisitor
         Port port = definition.createPort();
         port.setName(endpoint.getName() + "Port");
         port.setBinding(currentBinding);
+/*
         endpoint.getBinding().populateWSDLBinding(definition, currentBinding, endpoint.getTransport());
         endpoint.getBinding().populateWSDLPort(definition, port, endpoint.getTransport());
+*/
         service.addPort(port);
         definition.addService(service);
         currentPortType = null;
@@ -312,27 +311,6 @@ public class WSDLCreationVisitor
         currentPortType.setQName(serviceInfo.getName());
         currentPortType.setUndefined(false);
         definition.addNamespace("tns", serviceInfo.getName().getNamespaceURI());
-    }
-
-    /**
-     * Writes the WSDL definition to the given stream.
-     *
-     * @param out the output stream
-     * @throws IOException when an I/O exception occurs.
-     */
-    public void write(OutputStream out)
-            throws IOException
-    {
-        try
-        {
-            WSDLFactory factory = WSDLFactory.newInstance();
-            javax.wsdl.xml.WSDLWriter writer = factory.newWSDLWriter();
-            writer.writeWSDL(definition, out);
-        }
-        catch (WSDLException e)
-        {
-            throw new WSDLCreationException("Could not create WSDLFActory", e);
-        }
     }
 
     /**

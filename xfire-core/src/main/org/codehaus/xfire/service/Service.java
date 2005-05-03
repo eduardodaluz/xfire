@@ -1,6 +1,5 @@
 package org.codehaus.xfire.service;
 
-import java.net.URL;
 import java.util.Collection;
 import javax.wsdl.WSDLException;
 
@@ -12,7 +11,6 @@ import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 /**
  * A service descriptor. This class must be thread safe.
@@ -112,7 +110,6 @@ public interface Service
 
     void setInvoker(Invoker invoker);
 
-    void setWSDLURL(URL wsdlUri);
 
     void setSoapVersion(SoapVersion soapVersion);
 
@@ -126,8 +123,6 @@ public interface Service
 
     void setServiceHandler(Handler serviceHandler);
 
-    void setWSDLURL(String wsdlUri)
-            throws WSDLException;
 
     void setScope(int scope);
 
@@ -141,7 +136,5 @@ public interface Service
 
     void setBindingProvider(BindingProvider bindingProvider);
 
-    WSDLBuilder getWSDLBuilder();
 
-    void setWSDLBuilder(WSDLBuilder wsdlBuilder);
 }

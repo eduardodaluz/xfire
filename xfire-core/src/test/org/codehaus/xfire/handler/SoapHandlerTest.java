@@ -11,6 +11,8 @@ import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 
 /**
@@ -29,7 +31,8 @@ public class SoapHandlerTest
         ServiceInfo serviceInfo = new ServiceInfo(new QName("Echo"), getClass());
         SOAPBinding binding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"), Soap12.getInstance());
         ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
-        endpoint.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
+        endpoint.setWSDLWriter(writer);
 
         endpoint.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
         endpoint.setFaultHandler(new Soap12FaultHandler());

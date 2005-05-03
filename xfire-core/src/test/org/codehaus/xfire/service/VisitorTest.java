@@ -22,7 +22,6 @@ public class VisitorTest
     {
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
         ServiceEndpoint endpoint = new ServiceEndpoint(service);
-        Binding binding = endpoint.getBinding();
         Method method = getClass().getMethod("method", new Class[0]);
         OperationInfo operation = service.addOperation("operation", method);
         MessageInfo inputMessage = operation.createMessage(new QName("input"));
@@ -44,7 +43,6 @@ public class VisitorTest
         assertTrue(visitor.started(faultInfo));
         assertTrue(visitor.started(partInfo1));
         assertTrue(visitor.started(partInfo2));
-        assertTrue(visitor.started(binding));
 
         assertTrue(visitor.ended(endpoint));
         assertTrue(visitor.ended(service));
@@ -54,7 +52,6 @@ public class VisitorTest
         assertTrue(visitor.ended(faultInfo));
         assertTrue(visitor.ended(partInfo1));
         assertTrue(visitor.ended(partInfo2));
-        assertTrue(visitor.ended(binding));
     }
 
     private class MockVisitor

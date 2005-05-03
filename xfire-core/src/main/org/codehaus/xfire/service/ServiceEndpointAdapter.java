@@ -1,6 +1,5 @@
 package org.codehaus.xfire.service;
 
-import java.net.URL;
 import java.util.Collection;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -16,7 +15,6 @@ import org.codehaus.xfire.service.binding.SOAPBindingFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 /**
  * Temporary adapter that wraps a <code>ServiceEndpoint</code> so that it follows the contract of the
@@ -144,10 +142,6 @@ public class ServiceEndpointAdapter
         return getSOAPBinding().getUse();
     }
 
-    public WSDLBuilder getWSDLBuilder()
-    {
-        return endpoint.getWSDLBuilder();
-    }
 
     public WSDLWriter getWSDLWriter()
             throws WSDLException
@@ -262,20 +256,6 @@ public class ServiceEndpointAdapter
         }
     }
 
-    public void setWSDLBuilder(WSDLBuilder wsdlBuilder)
-    {
-        endpoint.setWSDLBuilder(wsdlBuilder);
-    }
 
-    public void setWSDLURL(URL wsdlUri)
-    {
-        endpoint.setWSDLURL(wsdlUri);
-    }
-
-    public void setWSDLURL(String wsdlUri)
-            throws WSDLException
-    {
-        endpoint.setWSDLURL(wsdlUri);
-    }
 }
 

@@ -7,6 +7,7 @@ import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 
@@ -28,7 +29,8 @@ public class XFireTest
                                                              Soap12.getInstance(),
                                                              SoapConstants.STYLE_DOCUMENT,
                                                              SoapConstants.USE_LITERAL);
-        service.setWSDLURL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl").toString());
+        WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
+        service.setWSDLWriter(writer);
 
         getServiceRegistry().register(service);
     }

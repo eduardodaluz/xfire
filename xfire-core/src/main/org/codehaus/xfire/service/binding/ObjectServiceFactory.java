@@ -26,6 +26,7 @@ import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 
 /**
  * Java objects-specific implementation of the {@link ServiceFactory} interface.
@@ -94,7 +95,7 @@ public class ObjectServiceFactory
         endpoint.setBindingProvider(getBindingProvider());
 
         endpoint.setFaultHandler(new Soap11FaultHandler());
-        endpoint.setWSDL(new ResourceWSDL(wsdlUrl));
+        endpoint.setWSDLWriter(new ResourceWSDL(wsdlUrl));
 
         SoapHandler handler = new SoapHandler(new ObjectServiceHandler());
         endpoint.setServiceHandler(handler);
@@ -227,7 +228,8 @@ public class ObjectServiceFactory
 
         if (transportManager != null)
         {
-            endpoint.setWSDLBuilder(new WSDLBuilder(transportManager));
+            WSDLBuilder wsdlBuilder = new WSDLBuilder(transportManager);
+            endpoint.setWSDLWriter(new WSDLBuilderAdapter(wsdlBuilder, adapter));
         }
 
         SoapHandler handler = new SoapHandler(endpoint.getBindingProvider().createEndpointHandler());
