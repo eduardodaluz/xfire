@@ -9,10 +9,11 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 /**
- * Represents an description of a service. A service consists of a number of {@link OperationInfo operations}, a name
- * and a namespace.
+ * Represents an description of a service. A service consists of a number of <code>OperationInfo</code> objects, a
+ * qualified name, and a service class.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
+ * @see OperationInfo
  */
 public class ServiceInfo
         implements Visitable

@@ -30,13 +30,13 @@ public class ServiceEndpoints
      * <code>echoResponse</code>. Both messages contain a single part, named <code>echoRequestin0</code> and
      * <code>echoResponseout</code> respectively.
      * <p/>
-     * The endpoints <code>Class</code> and <code>Method</code> are mapped to {@link Echo}.
+     * The endpoints <code>Class</code> and <code>Method</code> are mapped to {@link EchoImpl}.
      *
      * @return an echo service endpoint.
      */
     public static ServiceEndpoint getEchoService()
     {
-        Class echoClass = Echo.class;
+        Class echoClass = EchoImpl.class;
         Method echoMethod = null;
         try
         {

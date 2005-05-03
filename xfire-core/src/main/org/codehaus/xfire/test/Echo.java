@@ -1,14 +1,9 @@
 package org.codehaus.xfire.test;
 
 /**
- * Echo
- *
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class Echo
+public interface Echo
 {
-    public String echo(String echo)
-    {
-        return echo;
-    }
+    String echo(String echo);
 }
