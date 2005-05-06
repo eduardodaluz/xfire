@@ -1,9 +1,11 @@
 package org.codehaus.xfire.picocontainer;
 
 import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -12,6 +14,7 @@ import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.picocontainer.MutablePicoContainer;
@@ -79,7 +82,7 @@ public class XFireServiceRegisterVisitorTest
         ServiceEndpoint endpoint = sr.getServiceEndpoint("test");
         assertNotNull(endpoint);
 
-        Invoker invoker = endpoint.getInvoker();
+        Invoker invoker = ((ObjectBinding) endpoint.getBinding()).getInvoker();
         assertNotNull(invoker);
 
         Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[]{});
@@ -114,7 +117,7 @@ public class XFireServiceRegisterVisitorTest
         ServiceEndpoint endpoint = sr.getServiceEndpoint("test");
         assertNotNull(endpoint);
 
-        Invoker invoker = endpoint.getInvoker();
+        Invoker invoker = ((ObjectBinding) endpoint.getBinding()).getInvoker();
         assertNotNull(invoker);
 
         Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[]{});

@@ -87,6 +87,6 @@ public class MessageBindingProvider
 
     public EndpointHandler createEndpointHandler()
     {
-        return new MessageBindingHandler();
+        return new MessageBinding();
     }
 }

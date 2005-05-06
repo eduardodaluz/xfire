@@ -1,6 +1,5 @@
 package org.codehaus.xfire.service;
 
-import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.yom.Element;
 
@@ -12,10 +11,7 @@ import org.codehaus.yom.Element;
  */
 public class Echo
 {
-    /**
-     * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
-     */
-    public Element echo(Element e, MessageContext context) 
+    public Element echo(Element e) 
         throws XFireFault
     {
         return e;

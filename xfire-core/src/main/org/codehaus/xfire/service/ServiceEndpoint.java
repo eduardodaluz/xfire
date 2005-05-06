@@ -3,33 +3,28 @@ package org.codehaus.xfire.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
-import org.codehaus.xfire.service.binding.Binding;
-import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.SOAPBindingFactory;
-import org.codehaus.xfire.service.transport.Transport;
-import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDLCreationVisitorAdapter;
 
 /**
- * Represents a service endpoint. A service endpoint is a resource to which web service messages can be addressed.
- * Endpoint references convey the information needed to address a web service endpoint.
- * <p/>
- * The <code>ServiceEndpoint</code> is basically a facade for a <code>ServiceInfo</code>, <code>Binding</code>. As such,
- * it provides a unified interface to these subsystems.
+ * Represents a service endpoint. A service endpoints sole job is to process xml messages. The
+ * servicehandler is is the central processing point - responsible for invoking 
+ * request/response/fault handlers as well reading in the xml message to the service.  
+ * <p>
+ * The binding is then responsible for taking the SOAP Body and binding it to something - JavaBeans,
+ * XMLBeans, W3C DOM tree, etc.
+ * <p>
+ * The <code>ServiceInfo</code> represents an optional contract for the service. This can be used
+ * to generate WSDL and/or provide information on serialization.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see ServiceInfo
- * @see Binding
  * @see org.codehaus.xfire.service.binding.SOAPBinding
- * @see Transport
  */
 public class ServiceEndpoint
         implements Visitable
@@ -37,7 +32,7 @@ public class ServiceEndpoint
     public final static String ROLE = ServiceEndpoint.class.getName();
 
     private ServiceInfo service;
-    private Binding binding;
+    private Handler binding;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private FaultHandler faultHandler;
@@ -45,44 +40,19 @@ public class ServiceEndpoint
     private HandlerPipeline requestPipeline;
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
-    private BindingProvider bindingProvider;
-    private int scope = Invoker.SCOPE_APPLICATION;
-
-    private Invoker invoker;
+    private SoapVersion soapVersion;
 
     /**
-     * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code>.
-     * It uses a <code>SOAPBinding</code> and a <code>HTTPTransport</code>.
+     * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified 
+     * <code>ServiceInfo</code>.
      *
      * @param service the service.
      */
     public ServiceEndpoint(ServiceInfo service)
     {
-        this(service, null);
+        this.service = service;
     }
 
-    /**
-     * Initializes a new instance of the <code>ServiceEndpoint</code> for a specified <code>ServiceInfo</code>,
-     * <code>Binding</code> and <code>Transport</code>.
-     *
-     * @param service the service.
-     * @param binding the binding.
-     */
-    public ServiceEndpoint(ServiceInfo service, Binding binding)
-    {
-        this.service = service;
-        if (binding != null)
-        {
-            this.binding = binding;
-        }
-        else
-        {
-            this.binding = SOAPBindingFactory.createSOAPBinding(
-                    new QName(service.getName().getLocalPart() + "Binding"),
-                    SoapConstants.STYLE_DOCUMENT,
-                    SoapConstants.USE_LITERAL);
-        }
-    }
 
     /**
      * Acceps the given visitor. Iterates over all the contained service.
@@ -117,7 +87,7 @@ public class ServiceEndpoint
      *
      * @return the binding.
      */
-    public Binding getBinding()
+    public Handler getBinding()
     {
         return binding;
     }
@@ -127,19 +97,9 @@ public class ServiceEndpoint
      *
      * @param binding the binding.
      */
-    public void setBinding(Binding binding)
+    public void setBinding(Handler binding)
     {
         this.binding = binding;
-    }
-
-    public BindingProvider getBindingProvider()
-    {
-        return bindingProvider;
-    }
-
-    public void setBindingProvider(BindingProvider bindingProvider)
-    {
-        this.bindingProvider = bindingProvider;
     }
 
     public FaultHandler getFaultHandler()
@@ -166,16 +126,6 @@ public class ServiceEndpoint
     public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
     {
         this.faultPipeline = faultPipeline;
-    }
-
-    public Invoker getInvoker()
-    {
-        return invoker;
-    }
-
-    public void setInvoker(Invoker invoker)
-    {
-        this.invoker = invoker;
     }
 
     /**
@@ -223,16 +173,6 @@ public class ServiceEndpoint
         this.responsePipeline = responsePipeline;
     }
 
-    public int getScope()
-    {
-        return scope;
-    }
-
-    public void setScope(final int scope)
-    {
-        this.scope = scope;
-    }
-
     /**
      * Returns the service descriptor for this endpoint.
      *
@@ -276,6 +216,16 @@ public class ServiceEndpoint
     public void setWSDLWriter(WSDLWriter wsdlWriter)
     {
         this.wsdlWriter = wsdlWriter;
+    }
+
+    public SoapVersion getSoapVersion()
+    {
+        return soapVersion;
+    }
+
+    public void setSoapVersion(SoapVersion soapVersion)
+    {
+        this.soapVersion = soapVersion;
     }
 }
 

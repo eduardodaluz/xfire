@@ -16,7 +16,6 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapHandler;
@@ -25,7 +24,6 @@ import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 
 /**
@@ -92,16 +90,17 @@ public class ObjectServiceFactory
         QName name = ServiceUtils.makeQualifiedNameFromClass(clazz);
         ServiceInfo serviceInfo = new ServiceInfo(name, clazz);
         ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
-        endpoint.setBindingProvider(getBindingProvider());
 
         endpoint.setFaultHandler(new Soap11FaultHandler());
         endpoint.setWSDLWriter(new ResourceWSDL(wsdlUrl));
 
-        SoapHandler handler = new SoapHandler(new ObjectServiceHandler());
-        endpoint.setServiceHandler(handler);
-        endpoint.setInvoker(new ObjectInvoker());
+        endpoint.setServiceHandler( new SoapHandler());
 
-        return endpoint;
+        // TODO: Bring wsdl configuration functionality back!
+
+        throw new UnsupportedOperationException("create() isn't working yet.");
+        
+        // return endpoint;
     }
 
     /**
@@ -184,34 +183,13 @@ public class ObjectServiceFactory
         String theUse = (use != null) ? use : SoapConstants.USE_LITERAL;
 
         ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
-        SOAPBinding binding = null;
-        QName bindingQName = new QName(theName + "Binding");
-        if (theStyle.equals(SoapConstants.STYLE_DOCUMENT) && theUse.equals(SoapConstants.USE_LITERAL))
-        {
-            binding = new DocumentBinding(bindingQName, theVersion);
-        }
-        else if (theStyle.equals(SoapConstants.STYLE_WRAPPED) && theUse.equals(SoapConstants.USE_LITERAL))
-        {
-            binding = new WrappedBinding(bindingQName, theVersion);
-        }
-        else if (theStyle.equals(SoapConstants.STYLE_RPC) && theUse.equals(SoapConstants.USE_ENCODED))
-        {
-            binding = new RPCEncodedBinding(bindingQName, theVersion);
-        }
-        else
-        {
-            throw new IllegalArgumentException("Illegal style/use combination [" + style + "/" + use + "]");
-        }
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
-        try
-        {
-            endpoint.setBindingProvider(getBindingProvider());
-        }
-        catch (Exception e)
-        {
-            throw new XFireRuntimeException("Couldn't load provider.", e);
-        }
-
+        
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
+        endpoint.setSoapVersion(theVersion);
+        
+        ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
+        binding.setInvoker(new ObjectInvoker());
+        endpoint.setBinding(binding);
 
         if (encodingStyleURI != null)
             endpoint.setProperty("type.encodingUri", encodingStyleURI);
@@ -227,18 +205,25 @@ public class ObjectServiceFactory
 
         if (transportManager != null)
         {
-            WSDLBuilder wsdlBuilder = new WSDLBuilder(transportManager);
-            endpoint.setWSDLWriter(new WSDLBuilderAdapter(wsdlBuilder, endpoint));
+            endpoint.setWSDLWriter(new WSDLBuilderAdapter(endpoint, transportManager));
         }
 
-        SoapHandler handler = new SoapHandler(endpoint.getBindingProvider().createEndpointHandler());
-        endpoint.setServiceHandler(handler);
-        endpoint.setInvoker(new ObjectInvoker());
+        endpoint.setServiceHandler(new SoapHandler());
 
         initializeOperations(endpoint);
 
-        endpoint.getBindingProvider().initialize(endpoint);
-
+        BindingProvider provider = null;
+        try
+        {
+            provider = getBindingProvider();
+            provider.initialize(endpoint);
+            binding.setBindingProvider(provider);
+        }
+        catch (Exception e)
+        {
+            throw new XFireRuntimeException("Couldn't load provider.", e);
+        }
+        
         return endpoint;
     }
 
@@ -269,7 +254,7 @@ public class ObjectServiceFactory
     protected void addOperation(ServiceEndpoint endpoint, final Method method)
     {
         ServiceInfo service = endpoint.getService();
-        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         
         final OperationInfo op = service.addOperation(method.getName(), method);
 

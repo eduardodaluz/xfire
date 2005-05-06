@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -56,16 +56,17 @@ public class XFireExporter
                                          use,
                                          null);
         
-        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         if (logger.isInfoEnabled())
         {
-            logger.info("Exposing SOAP v." + binding.getSoapVersion().getVersion() + " service " + binding.getName() +
-                        " as " + binding.getStyle() + "/" + binding.getUse());
+            logger.info("Exposing SOAP v." + endpoint.getSoapVersion().getVersion() + 
+                        " service " + endpoint.getName() + " as " + binding.getStyle() + 
+                        "/" + binding.getUse());
         }
 
         xFire.getServiceEndpointRegistry().register(endpoint);
 
-        endpoint.setInvoker(new BeanInvoker(getProxyForService()));
+        binding.setInvoker(new BeanInvoker(getProxyForService()));
 
         delegate = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
     }

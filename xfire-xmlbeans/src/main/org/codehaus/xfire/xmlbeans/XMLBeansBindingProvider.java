@@ -9,11 +9,9 @@ import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
-import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
 
@@ -74,10 +72,5 @@ public class XMLBeansBindingProvider
     public SchemaType getSchemaType(ServiceEndpoint service, MessagePartInfo param)
     {
         return new XMLBeansType();
-    }
-
-    public EndpointHandler createEndpointHandler()
-    {
-        return new ObjectServiceHandler();
     }
 }

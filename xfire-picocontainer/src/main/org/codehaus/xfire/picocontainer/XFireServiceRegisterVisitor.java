@@ -9,6 +9,7 @@ import org.codehaus.xfire.picocontainer.util.ThreadLocalObjectReference;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;
@@ -112,7 +113,7 @@ public class XFireServiceRegisterVisitor
      */
     protected void prepareObjectService(ServiceEndpoint endpoint)
     {
-        endpoint.setInvoker(new PicoObjectInvoker(picoReference,
-                                                  endpoint.getService().getServiceClass()));
+        ((ObjectBinding) endpoint.getBinding()).setInvoker(
+            new PicoObjectInvoker(picoReference, endpoint.getService().getServiceClass()));
     }
 }

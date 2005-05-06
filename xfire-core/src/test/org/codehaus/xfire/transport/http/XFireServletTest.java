@@ -2,10 +2,6 @@ package org.codehaus.xfire.transport.http;
 
 import javax.xml.namespace.QName;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.handler.AsyncHandler;
 import org.codehaus.xfire.handler.BadHandler;
@@ -13,15 +9,19 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.SOAPBinding;
-import org.codehaus.xfire.service.binding.SOAPBindingFactory;
-import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractServletTest;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.PostMethodWebRequest;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 
 /**
  * XFireServletTest
@@ -36,7 +36,10 @@ public class XFireServletTest
     {
         super.setUp();
 
-        ServiceEndpoint service = getServiceFactory().create(Echo.class);
+        ServiceEndpoint service = getServiceFactory().create(Echo.class,
+                                                             Soap11.getInstance(),
+                                                             SoapConstants.STYLE_MESSAGE,
+                                                             SoapConstants.USE_LITERAL);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
@@ -46,23 +49,21 @@ public class XFireServletTest
 
         // A service which throws a fault
         ServiceInfo faultInfo = new ServiceInfo(new QName("Exception"), getClass());
-        SOAPBinding faultBinding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"),
-                                                                            Soap12.getInstance());
-        ServiceEndpoint faultEndpoint = new ServiceEndpoint(faultInfo, faultBinding);
+        ServiceEndpoint faultEndpoint = new ServiceEndpoint(faultInfo);
 
-        faultEndpoint.setServiceHandler(new SoapHandler(new BadHandler()));
+        faultEndpoint.setBinding(new BadHandler());
+        faultEndpoint.setServiceHandler(new SoapHandler());
         faultEndpoint.setFaultHandler(new Soap12FaultHandler());
 
         getServiceRegistry().register(faultEndpoint);
         
         // Asynchronous service
         ServiceInfo asyncInfo = new ServiceInfo(new QName("Async"), getClass());
-        SOAPBinding asyncBinding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"),
-                                                                            Soap12.getInstance());
-        ServiceEndpoint asyncEndpoint = new ServiceEndpoint(asyncInfo, asyncBinding);
+        ServiceEndpoint asyncEndpoint = new ServiceEndpoint(asyncInfo);
         asyncEndpoint.setWSDLWriter(writer);
 
-        asyncEndpoint.setServiceHandler(new SoapHandler(new AsyncHandler()));
+        asyncEndpoint.setBinding(new AsyncHandler());
+        asyncEndpoint.setServiceHandler(new SoapHandler());
         asyncEndpoint.setFaultHandler(new Soap12FaultHandler());
 
         getServiceRegistry().register(asyncEndpoint);

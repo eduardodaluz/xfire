@@ -27,6 +27,7 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
@@ -54,7 +55,6 @@ public class ObjectServiceConfigurator
         String use = config.getChild("use").getValue("literal");
         String style = config.getChild("style").getValue("wrapped");
         String serviceClass = config.getChild("serviceClass").getValue();
-        String implClass = config.getChild("implementationClass").getValue("");
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
 
@@ -114,27 +114,35 @@ public class ObjectServiceConfigurator
             }
         }
 
-        if (implClass.length() > 0)
-        {
-            service.setProperty(Invoker.SERVICE_IMPL_CLASS, loadClass(implClass));
-        }
-
-        final String scope = config.getChild("scope").getValue("application");
-        if (scope.equals("application"))
-            service.setScope(Invoker.SCOPE_APPLICATION);
-        else if (scope.equals("session"))
-            service.setScope(Invoker.SCOPE_SESSION);
-        else if (scope.equals("request"))
-            service.setScope(Invoker.SCOPE_REQUEST);
-
-        Invoker invoker = null;
-
+        ObjectBinding binding = ((ObjectBinding) service.getBinding());
+        // Setup the Invoker
         if (getServiceLocator().hasComponent(serviceClass))
-            invoker = new ServiceInvoker(getServiceLocator());
+        {
+            Invoker invoker = new ServiceInvoker(getServiceLocator());
+            
+            binding.setInvoker(invoker);
+        }
         else
-            invoker = new ObjectInvoker();
+        {
+            ObjectInvoker oinvoker = new ObjectInvoker();
+            
+            final String scope = config.getChild("scope").getValue("application");
+            if (scope.equals("application"))
+                oinvoker.setScope(ObjectInvoker.SCOPE_APPLICATION);
+            else if (scope.equals("session"))
+                oinvoker.setScope(ObjectInvoker.SCOPE_SESSION);
+            else if (scope.equals("request"))
+                oinvoker.setScope(ObjectInvoker.SCOPE_REQUEST);
+            
+            String implClass = config.getChild("implementationClass").getValue("");
+            
+            if (implClass.length() > 0)
+            {
+                service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, loadClass(implClass));
+            }
 
-        service.setInvoker(invoker);
+            binding.setInvoker(oinvoker);
+        }
 
         // Setup pipelines
         service.setRequestPipeline(createHandlerPipeline(config.getChild("requestHandlers")));

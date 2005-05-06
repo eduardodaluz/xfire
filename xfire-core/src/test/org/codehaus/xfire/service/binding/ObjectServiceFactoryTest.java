@@ -39,11 +39,12 @@ public class ObjectServiceFactoryTest
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getService();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
-        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        assertEquals(Soap11.getInstance(), endpoint.getSoapVersion());
+        
+        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertNotNull(binding);
         assertEquals(SoapConstants.STYLE_WRAPPED, binding.getStyle());
         assertEquals(SoapConstants.USE_LITERAL, binding.getUse());
-        assertEquals(Soap11.getInstance(), binding.getSoapVersion());
     }
 
     public void testCreateVersionStyleUse()
@@ -56,10 +57,11 @@ public class ObjectServiceFactoryTest
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getService();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
-        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
+        
+        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
         assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
-        assertEquals(Soap12.getInstance(), binding.getSoapVersion());
     }
 
 
@@ -76,10 +78,11 @@ public class ObjectServiceFactoryTest
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getService();
         assertEquals(new QName("http://xfire.codehaus.org", "EchoService"), service.getName());
-        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
+        
+        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
         assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
-        assertEquals(Soap12.getInstance(), binding.getSoapVersion());
     }
 
     public void testCreateNameNamespaceNull()
@@ -95,11 +98,11 @@ public class ObjectServiceFactoryTest
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getService();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
-        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+        assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
+
+        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
         assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
-        assertEquals(Soap12.getInstance(), binding.getSoapVersion());
-
     }
 
 }

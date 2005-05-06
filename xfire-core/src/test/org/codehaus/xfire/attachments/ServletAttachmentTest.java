@@ -32,7 +32,7 @@ public class ServletAttachmentTest
 
         ServiceEndpoint service = getServiceFactory().create(Echo.class,
                                                              Soap12.getInstance(),
-                                                             SoapConstants.STYLE_DOCUMENT,
+                                                             SoapConstants.STYLE_MESSAGE,
                                                              SoapConstants.USE_LITERAL);
 
         getServiceRegistry().register(service);

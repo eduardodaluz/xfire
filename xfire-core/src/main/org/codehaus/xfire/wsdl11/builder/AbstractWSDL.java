@@ -15,7 +15,6 @@ import javax.wsdl.factory.WSDLFactory;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -55,13 +54,13 @@ public abstract class AbstractWSDL
      * Namespace and QName definitions for easy access.
      *-------------------------------------------------*/
 
-    protected final static String schemaQ = SoapConstants.XSD_PREFIX + ":" + "schema";
+    public final static String schemaQ = SoapConstants.XSD_PREFIX + ":" + "schema";
 
-    protected final static String elementQ = SoapConstants.XSD_PREFIX + ":" + "element";
+    public final static String elementQ = SoapConstants.XSD_PREFIX + ":" + "element";
 
-    protected final static String complexQ = SoapConstants.XSD_PREFIX + ":" + "complexType";
+    public final static String complexQ = SoapConstants.XSD_PREFIX + ":" + "complexType";
 
-    protected final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
+    public final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
 
     public AbstractWSDL(ServiceEndpoint service) throws WSDLException
     {
@@ -80,9 +79,8 @@ public abstract class AbstractWSDL
         setSchemaTypes(root);
         root.addNamespaceDeclaration(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
 
-        SOAPBinding binding = (SOAPBinding) service.getBinding();
-        addNamespace("soap", binding.getSoapVersion().getNamespace());
-        addNamespace("soapenc", binding.getSoapVersion().getSoapEncodingStyle());
+        addNamespace("soap", service.getSoapVersion().getNamespace());
+        addNamespace("soapenc", service.getSoapVersion().getSoapEncodingStyle());
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("wsdl", WSDL11_NS);
         addNamespace("wsdlsoap", WSDL11_SOAP_NS);

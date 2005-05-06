@@ -20,6 +20,7 @@ public class MessengerTest
     {
         ServiceEndpoint service = getServiceFactory().create(Messenger.class);
 
-        assertNotNull(service.getBindingProvider());
+        assertNotNull(service.getBinding());
+        assertNotNull(((ObjectBinding) service.getBinding()).getBindingProvider());
     }
 }

@@ -24,7 +24,8 @@ public class MustUnderstandTest
         ServiceInfo service = new ServiceInfo(new QName("Echo"), getClass());
         endpoint = new ServiceEndpoint(service);
 
-        endpoint.setServiceHandler(new SoapHandler(new EndpointTestHandler()));
+        endpoint.setBinding(new EndpointTestHandler());
+        endpoint.setServiceHandler(new SoapHandler());
         endpoint.setFaultHandler(new Soap11FaultHandler());
 
         getServiceRegistry().register(endpoint);

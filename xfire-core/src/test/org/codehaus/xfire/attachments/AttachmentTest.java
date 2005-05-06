@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
@@ -15,7 +16,7 @@ import javax.mail.internet.MimeMultipart;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
@@ -32,8 +33,8 @@ public class AttachmentTest
         super.setUp();
 
         ServiceEndpoint service = getServiceFactory().create(Echo.class,
-                                                             Soap12.getInstance(),
-                                                             SoapConstants.STYLE_DOCUMENT,
+                                                             Soap11.getInstance(),
+                                                             SoapConstants.STYLE_MESSAGE,
                                                              SoapConstants.USE_LITERAL);
 
         getServiceRegistry().register(service);

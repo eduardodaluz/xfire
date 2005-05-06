@@ -1,65 +1,143 @@
 package org.codehaus.xfire.service.binding;
 
-import javax.wsdl.Definition;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.wsdl.Message;
 import javax.wsdl.Part;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.util.DepthXMLStreamReader;
+import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.wsdl.SchemaType;
+import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
+import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.yom.Attribute;
+import org.codehaus.yom.Element;
 
-/**
- * Represents a SOAP RPC encoded binding, used by a <code>ServiceEndpoint</code>.
- *
- * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
- */
-class RPCEncodedBinding
-        extends SOAPBinding
+public class RPCEncodedBinding
+    extends WrappedBinding
+    implements WSDL11ParameterBinding
 {
-    /**
-     * Initializes a new instance of the <code>RPCEncodedBinding</code> class with the given qualified name and soap
-     * version.
-     *
-     * @param name    the name.
-     * @param version the soap version.
-     */
-    RPCEncodedBinding(QName name, SoapVersion version)
+    public RPCEncodedBinding()
     {
-        super(name, version);
+        setStyle(SoapConstants.STYLE_RPC);
+        setUse(SoapConstants.USE_ENCODED);
     }
 
-    /**
-     * Returns the SOAP binding style used by this binding. This class always returns {@link SoapConstants#STYLE_RPC}.
-     *
-     * @return {@link SoapConstants#STYLE_RPC}
-     */
-    public String getStyle()
+    public Object[] read(MessageContext context) throws XFireFault
     {
-        return SoapConstants.STYLE_RPC;
+        ServiceEndpoint endpoint = context.getService();
+        
+        List parameters = new ArrayList();
+        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getXMLStreamReader());
+        
+        if ( !STAXUtils.toNextElement(dr) )
+            throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
+        
+        String opName = dr.getLocalName();
+        OperationInfo operation = endpoint.getService().getOperation( opName );
+        if (operation == null)
+        {
+            // Determine the operation name which is in the form of:
+            // xxxxRequest where xxxx is the operation.
+            int index = opName.indexOf("Request");
+            if (index > 0)
+            {
+                operation =endpoint.getService().getOperation( opName.substring(0, index) );
+            }
+        }
+        
+        context.setProperty(OPERATION_KEY, operation);
+
+        if (operation == null)
+        {
+            throw new XFireFault("Invalid operation.", XFireFault.SENDER);
+        }
+
+        while(STAXUtils.toNextElement(dr))
+        {
+            MessagePartInfo p = operation.getInputMessage().getMessagePart(dr.getName());
+
+            if (p == null)
+            {
+                throw new XFireFault("Parameter " + dr.getName() + " does not exist!", 
+                                     XFireFault.SENDER);
+            }
+
+            parameters.add( getBindingProvider().readParameter(p, context) );
+        }
+
+        return parameters.toArray();
     }
 
-    /**
-     * Returns the SOAP binding use used by this binding. This class always returns {@link
-     * org.codehaus.xfire.soap.SoapConstants#USE_ENCODED}.
-     *
-     * @return {@link SoapConstants#USE_ENCODED}.
-     */
-    public String getUse()
+    public void createInputParts(ServiceEndpoint endpoint, 
+                                 AbstractWSDL wsdl,
+                                 Message req, 
+                                 OperationInfo op)
     {
-        return SoapConstants.USE_ENCODED;
+        writeParametersSchema(endpoint, wsdl, req, op.getInputMessage());
     }
 
-    /**
-     * Populates the given WSDL part with a WSDL SOAP binding.
-     *
-     * @param definition the definition.
-     * @param part       the WSDL message part.
-     * @param typeClass  the class represented by the part.
-     * @see org.codehaus.xfire.wsdl11.builder.DocumentWSDL
-     */
-    public void populateWSDLPart(Definition definition, Part part, Class typeClass)
+    public void createOutputParts(ServiceEndpoint endpoint, 
+                                  AbstractWSDL wsdl,
+                                  Message req, 
+                                  OperationInfo op)
     {
-        // TODO: move the code from org.codehaus.xfire.wsdl11.builder.RPCEncodedWSDL that generates XSD types here
-        QName typeName = new QName(part.getName());
-        part.setElementName(typeName);
+        writeParametersSchema(endpoint, wsdl, req, op.getOutputMessage());
+    }
+    
+    protected void writeParametersSchema(ServiceEndpoint service, 
+                                         AbstractWSDL wsdl,
+                                         Message message, 
+                                         MessageInfo xmsg)
+    {
+        Collection params = xmsg.getMessageParts();
+        
+        for (Iterator itr = params.iterator(); itr.hasNext();)
+        {
+            MessagePartInfo param = (MessagePartInfo) itr.next();
+            Class clazz = param.getTypeClass();
+            QName pName = param.getName();
+
+            SchemaType type = getBindingProvider().getSchemaType(service, param);
+            wsdl.addDependency(type);
+            QName schemaType = type.getSchemaType();
+
+            Part part = wsdl.getDefinition().createPart();
+            part.setName(pName.getLocalPart());
+
+            if (type.isComplex())
+            {
+                part.setElementName(pName);
+
+                Element schemaEl = wsdl.createSchemaType(wsdl.getInfo().getTargetNamespace());
+                Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
+                schemaEl.appendChild(element);
+
+                element.addAttribute(new Attribute("name", pName.getLocalPart()));
+
+                String prefix = wsdl.getNamespacePrefix(schemaType.getNamespaceURI());
+                wsdl.addNamespace(prefix, schemaType.getNamespaceURI());
+
+                element.addAttribute(new Attribute("type", 
+                                                   prefix + ":" + schemaType.getLocalPart()));
+            }
+            else
+            {
+                part.setElementName(type.getSchemaType());
+            }
+
+            message.addPart(part);
+        }
     }
 }

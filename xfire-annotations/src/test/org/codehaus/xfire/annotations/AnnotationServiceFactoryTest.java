@@ -6,6 +6,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
@@ -14,8 +15,8 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.SOAPBinding;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
 
@@ -237,7 +238,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.replay();
 
         ServiceEndpoint service = service = annotationServiceFactory.create(EchoServiceImpl.class);
-        SOAPBinding binding = (SOAPBinding) service.getBinding();
+        WSDL11ParameterBinding binding = (WSDL11ParameterBinding) service.getBinding();
         assertEquals(SoapConstants.USE_LITERAL, binding.getUse());
 
         webAnnotationsControl.verify();

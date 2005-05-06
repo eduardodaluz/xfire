@@ -18,9 +18,8 @@ import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
-
-import sun.security.action.GetLongAction;
 
 import com.ibm.wsdl.BindingImpl;
 import com.ibm.wsdl.BindingInputImpl;
@@ -63,18 +62,17 @@ public abstract class AbstractTransport
         return binding;
     }
 
-    protected SOAPBinding createSoapBinding(ServiceEndpoint service)
+    protected SOAPBinding createSoapBinding(ServiceEndpoint endpoint)
     {
         SOAPBinding soapBind = new SOAPBindingImpl();
-        org.codehaus.xfire.service.binding.SOAPBinding binding = 
-            (org.codehaus.xfire.service.binding.SOAPBinding) service.getBinding();
+        WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
         
         String style = binding.getStyle();
         if ( style.equals( SoapConstants.STYLE_WRAPPED ) )
             style = SoapConstants.STYLE_DOCUMENT;
         
         soapBind.setStyle( style );
-        soapBind.setTransportURI( getTransportURI(service) );
+        soapBind.setTransportURI( getTransportURI(endpoint) );
 
         return soapBind;
     }
@@ -128,23 +126,22 @@ public abstract class AbstractTransport
         return bindOp;
     }
     
-    public SOAPBody createSoapBody( ServiceEndpoint service )
+    public SOAPBody createSoapBody( ServiceEndpoint endpoint )
     {
-        org.codehaus.xfire.service.binding.SOAPBinding binding = 
-            (org.codehaus.xfire.service.binding.SOAPBinding) service.getBinding();
+        WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
         
         SOAPBody body = new SOAPBodyImpl();
         body.setUse( binding.getUse() ); 
 
         if ( binding.getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
-            body.setNamespaceURI( service.getService().getName().getNamespaceURI() );
+            body.setNamespaceURI( endpoint.getService().getName().getNamespaceURI() );
         }
         
         if ( binding.getUse().equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
-            encodingStyles.add( binding.getSoapVersion().getSoapEncodingStyle() );
+            encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
             
             body.setEncodingStyles(encodingStyles);
         }

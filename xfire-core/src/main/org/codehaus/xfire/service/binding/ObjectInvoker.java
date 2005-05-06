@@ -22,6 +22,16 @@ public class ObjectInvoker
 {
     private static final Log logger = LogFactory.getLog(ObjectInvoker.class.getName());
 
+    public final static int SCOPE_APPLICATION = 1;
+
+    public final static int SCOPE_REQUEST = 3;
+
+    public final static int SCOPE_SESSION = 2;
+
+    public static final String SERVICE_IMPL_CLASS = "xfire.serviceImplClass";
+
+    private int scope = ObjectInvoker.SCOPE_APPLICATION;
+
     /**
      * The object if the scope is SCOPE_APPLICATION.
      */
@@ -72,8 +82,8 @@ public class ObjectInvoker
             throws XFireFault
     {
         final ServiceEndpoint service = context.getService();
-        final int scope = service.getScope();
-        if (scope == Invoker.SCOPE_APPLICATION)
+        
+        if (scope == ObjectInvoker.SCOPE_APPLICATION)
         {
             if (appObj == null)
             {
@@ -84,7 +94,7 @@ public class ObjectInvoker
             }
             return appObj;
         }
-        else if (scope == Invoker.SCOPE_SESSION)
+        else if (scope == ObjectInvoker.SCOPE_SESSION)
         {
             final Session session = context.getSession();
             final String key = "service." + service.getName();
@@ -100,7 +110,7 @@ public class ObjectInvoker
             }
             return sessObj;
         }
-        else if (scope == Invoker.SCOPE_REQUEST)
+        else if (scope == ObjectInvoker.SCOPE_REQUEST)
         {
             return createServiceObject(service);
         }
@@ -122,7 +132,7 @@ public class ObjectInvoker
     {
         try
         {
-            Class svcClass = (Class) service.getProperty(Invoker.SERVICE_IMPL_CLASS);
+            Class svcClass = (Class) service.getProperty(ObjectInvoker.SERVICE_IMPL_CLASS);
 
             if (svcClass == null)
             {
@@ -139,5 +149,15 @@ public class ObjectInvoker
         {
             throw new XFireFault("Couldn't access service object.", e, XFireFault.RECEIVER);
         }
+    }
+
+    public int getScope()
+    {
+        return scope;
+    }
+
+    public void setScope(int scope)
+    {
+        this.scope = scope;
     }
 }

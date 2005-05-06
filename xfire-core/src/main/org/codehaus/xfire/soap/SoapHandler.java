@@ -36,11 +36,8 @@ public class SoapHandler
 {
     private static final String HANDLER_STACK = "xfire.handlerStack";
 
-    private EndpointHandler bodyHandler;
-
-    public SoapHandler(EndpointHandler bodyHandler)
+    public SoapHandler()
     {
-        this.bodyHandler = bodyHandler;
     }
 
     /**
@@ -55,6 +52,8 @@ public class SoapHandler
         Stack handlerStack = new Stack();
         context.setProperty(HANDLER_STACK, handlerStack);
 
+        EndpointHandler bodyHandler = (EndpointHandler) context.getService().getBinding();
+        
         boolean end = false;
         while (!end && reader.hasNext())
         {
@@ -95,7 +94,7 @@ public class SoapHandler
 
         if (bodyHandler.hasResponse(context) && context.getReplyDestination() != null)
         {
-            writeResponse(context, encoding, handlerStack);
+            writeResponse(context, encoding, handlerStack, bodyHandler);
         }
     }
 
@@ -107,7 +106,10 @@ public class SoapHandler
      * @param handlerStack
      * @throws Exception
      */
-    protected void writeResponse(MessageContext context, String encoding, Stack handlerStack)
+    protected void writeResponse(MessageContext context, 
+                                 String encoding, 
+                                 Stack handlerStack,
+                                 EndpointHandler bodyHandler)
             throws Exception
     {
         Attachments atts = (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);

@@ -1,6 +1,6 @@
 package org.codehaus.xfire.service;
 
-import org.codehaus.xfire.service.binding.Binding;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 
 
 /**
@@ -104,12 +104,12 @@ public interface Visitor
      *
      * @param binding the binding.
      */
-    void startBinding(Binding binding);
+    void startBinding(ObjectBinding binding);
 
     /**
      * Receive notification at the end of a binding visit.
      *
      * @param binding the binding.
      */
-    void endBinding(Binding binding);
+    void endBinding(ObjectBinding binding);
 }

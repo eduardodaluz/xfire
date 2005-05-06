@@ -13,7 +13,6 @@ public class SoapConstants
 
     /**
      * Constant used to specify a rpc binding style.
-     * @deprecated RPC style is not (and probably never will be) supported by XFire.
      */
     public static final String STYLE_RPC = "rpc";
 
@@ -39,7 +38,6 @@ public class SoapConstants
 
     /**
      * Constant used to specify a encoded binding use.
-     * @deprecated Encoded use is not (and probably never will be) supported by XFire.
      */
     public static final String USE_ENCODED = "encoded";
 

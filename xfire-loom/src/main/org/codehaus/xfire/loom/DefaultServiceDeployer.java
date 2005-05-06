@@ -14,6 +14,7 @@ import org.apache.avalon.framework.service.Serviceable;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -92,7 +93,7 @@ public class DefaultServiceDeployer
                 getLogger().debug("Created '" + endpoint.getService().getName() + "' from key '" + key + "'");
         }
 
-        endpoint.setInvoker(new ServiceInvoker(object));
+        ((ObjectBinding) endpoint.getBinding()).setInvoker(new ServiceInvoker(object));
 
         registerService(key, endpoint);
     }

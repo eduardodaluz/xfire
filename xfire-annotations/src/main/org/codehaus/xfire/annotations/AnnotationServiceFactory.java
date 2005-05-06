@@ -8,7 +8,7 @@ import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
@@ -133,7 +133,7 @@ public class AnnotationServiceFactory
 
             if (clazz != endpointInterface)
             {
-                service.setProperty(Invoker.SERVICE_IMPL_CLASS, clazz);
+                service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, clazz);
             }
 
             return service;

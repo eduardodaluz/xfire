@@ -3,7 +3,11 @@ package org.codehaus.xfire.wsdl11.builder;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.wsdl.WSDLException;
+
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -14,13 +18,13 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
 public class WSDLBuilderAdapter
         implements WSDLWriter
 {
-    private WSDLBuilder wsdlBuilder;
     private ServiceEndpoint service;
-
-    public WSDLBuilderAdapter(WSDLBuilder wsdlBuilder, ServiceEndpoint service)
+    private TransportManager transportManager;
+    
+    public WSDLBuilderAdapter(ServiceEndpoint service, TransportManager transports)
     {
-        this.wsdlBuilder = wsdlBuilder;
         this.service = service;
+        this.transportManager = transports;
     }
 
     /**
@@ -30,8 +34,15 @@ public class WSDLBuilderAdapter
      * @throws java.io.IOException
      */
     public void write(OutputStream out)
-            throws IOException
+        throws IOException
     {
-        wsdlBuilder.createWSDLWriter(service).write(out);
+        try
+        {
+            new WSDLBuilder(service, transportManager.getTransports(service.getName())).write(out);
+        }
+        catch (WSDLException e)
+        {
+            throw new XFireRuntimeException("Couldn't build wsdl document.", e);
+        }
     }
 }

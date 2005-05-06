@@ -1,12 +1,8 @@
 package org.codehaus.xfire.wsdl11;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import javax.wsdl.BindingFault;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
+
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
@@ -29,7 +25,7 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.Visitor;
-import org.codehaus.xfire.service.binding.Binding;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.wsdl.WSDLCreationException;
 
 /**
@@ -76,7 +72,7 @@ public class WSDLCreationVisitor
         this.definition = definition;
     }
 
-    public void endBinding(Binding binding)
+    public void endBinding(ObjectBinding binding)
     {
         definition.addBinding(currentBinding);
     }
@@ -164,8 +160,8 @@ public class WSDLCreationVisitor
         definition.addPortType(currentPortType);
     }
 
-    public void startBinding(Binding binding)
-    {
+    public void startBinding(ObjectBinding binding)
+    {/*
         currentBinding = definition.createBinding();
         currentBinding.setQName(binding.getName());
         currentBinding.setUndefined(false);
@@ -178,11 +174,11 @@ public class WSDLCreationVisitor
         if (!messageParts.isEmpty())
         {
             createBindingMessageParts(binding);
-        }
+        }*/
     }
 
-    private void createBindingOperations(Binding binding)
-    {
+    private void createBindingOperations(ObjectBinding binding)
+    {/*
         for (Iterator iterator = operations.iterator(); iterator.hasNext();)
         {
             Operation operation = (Operation) iterator.next();
@@ -217,9 +213,9 @@ public class WSDLCreationVisitor
                 }
             }
             currentBinding.addBindingOperation(bindingOperation);
-        }
+        }*/
     }
-
+/*
     private void createBindingMessageParts(Binding binding)
     {
         for (Iterator iterator = messageParts.iterator(); iterator.hasNext();)
@@ -227,7 +223,7 @@ public class WSDLCreationVisitor
             PartClassPair pair = (PartClassPair) iterator.next();
             binding.populateWSDLPart(definition, pair.getPart(), pair.getTypeClass());
         }
-    }
+    }*/
 
     public void startEndpoint(ServiceEndpoint endpoint)
     {

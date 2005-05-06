@@ -5,9 +5,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.SOAPBinding;
-import org.codehaus.xfire.service.binding.SOAPBindingFactory;
-import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
@@ -25,12 +22,12 @@ public class AsyncServiceTest
         super.setUp();
 
         ServiceInfo serviceInfo = new ServiceInfo(new QName("Async"), getClass());
-        SOAPBinding binding = SOAPBindingFactory.createDocumentBinding(new QName("EchoBinding"), Soap12.getInstance());
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo, binding);
+        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         endpoint.setWSDLWriter(writer);
 
-        endpoint.setServiceHandler(new SoapHandler(new AsyncHandler()));
+        endpoint.setBinding(new AsyncHandler());
+        endpoint.setServiceHandler(new SoapHandler());
         endpoint.setFaultHandler(new Soap12FaultHandler());
 
         getServiceRegistry().register(endpoint);

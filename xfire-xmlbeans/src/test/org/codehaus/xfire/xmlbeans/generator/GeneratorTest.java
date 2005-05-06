@@ -1,11 +1,8 @@
 package org.codehaus.xfire.xmlbeans.generator;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.util.List;
 
 import org.codehaus.xfire.test.AbstractXFireTest;
-
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

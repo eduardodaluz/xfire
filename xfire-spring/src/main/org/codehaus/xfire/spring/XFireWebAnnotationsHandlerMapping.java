@@ -8,7 +8,8 @@ import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.SOAPBinding;
+import org.codehaus.xfire.service.binding.ObjectBinding;
+import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContextException;
@@ -66,14 +67,14 @@ public class XFireWebAnnotationsHandlerMapping
                 ServiceInfo service = endpoint.getService();
                 if (logger.isInfoEnabled())
                 {
-                    SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
-                    logger.info("Exposing SOAP v." + binding.getSoapVersion().getVersion() + " service " +
+                    WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
+                    logger.info("Exposing SOAP v." + endpoint.getSoapVersion().getVersion() + " service " +
                                 service.getName() + " to " + urlPrefix + endpoint.getName() +
                                 " as " + binding.getStyle() + "/" + binding.getUse());
                 }
                 
                 xFire.getServiceEndpointRegistry().register(endpoint);
-                endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
+                ((ObjectBinding) endpoint.getBinding()).setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
                 Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
                 registerHandler(urlPrefix + endpoint.getName(), controller);
             }
