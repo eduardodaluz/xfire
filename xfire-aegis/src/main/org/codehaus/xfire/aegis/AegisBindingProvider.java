@@ -11,12 +11,10 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
-import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.SOAPBinding;
-import org.codehaus.xfire.service.bridge.ObjectServiceHandler;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 
@@ -48,10 +46,10 @@ public class AegisBindingProvider
 
         if (encodingStyle == null)
         {
-            SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
+            AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
             if (binding.getUse().equals(SoapConstants.USE_ENCODED))
             {
-                encodingStyle = binding.getSoapVersion().getSoapEncodingStyle();
+                encodingStyle = endpoint.getSoapVersion().getSoapEncodingStyle();
             }
             else
             {
@@ -109,10 +107,5 @@ public class AegisBindingProvider
     public SchemaType getSchemaType(ServiceEndpoint service, MessagePartInfo param)
     {
         return getParameterType(getTypeMapping(service), param);
-    }
-
-    public EndpointHandler createEndpointHandler()
-    {
-        return new ObjectServiceHandler();
     }
 }
