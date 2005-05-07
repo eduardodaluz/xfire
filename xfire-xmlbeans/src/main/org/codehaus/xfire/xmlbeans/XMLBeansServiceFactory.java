@@ -17,6 +17,10 @@ import org.codehaus.xfire.transport.TransportManager;
 public class XMLBeansServiceFactory
         extends ObjectServiceFactory
 {
+    public XMLBeansServiceFactory()
+    {
+    }
+
     public XMLBeansServiceFactory(TransportManager transportManager)
     {
         super(transportManager, new XMLBeansBindingProvider());
