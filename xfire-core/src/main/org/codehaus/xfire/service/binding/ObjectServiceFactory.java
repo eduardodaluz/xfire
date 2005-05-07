@@ -36,7 +36,7 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 public class ObjectServiceFactory
         implements ServiceFactory
 {
-    private BindingProvider provider;
+    private BindingProvider bindingProvider;
     private TransportManager transportManager;
     private Handler serviceHandler = new SoapHandler();
     
@@ -56,17 +56,17 @@ public class ObjectServiceFactory
      */
     public ObjectServiceFactory(TransportManager transportManager, BindingProvider provider)
     {
-        this.provider = provider;
+        this.bindingProvider = provider;
         this.transportManager = transportManager;
     }
 
-    private BindingProvider getBindingProvider()
+    public BindingProvider getBindingProvider()
     {
-        if (provider == null)
+        if (bindingProvider == null)
         {
             try
             {
-                provider = (BindingProvider) getClass().getClassLoader()
+                bindingProvider = (BindingProvider) getClass().getClassLoader()
                         .loadClass("org.codehaus.xfire.aegis.AegisBindingProvider").newInstance();
             }
             catch (Exception e)
@@ -75,9 +75,8 @@ public class ObjectServiceFactory
             }
         }
 
-        return provider;
+        return bindingProvider;
     }
-
 
     /**
      * @param wsdlUrl
@@ -320,5 +319,20 @@ public class ObjectServiceFactory
     public void setServiceHandler(Handler serviceHandler)
     {
         this.serviceHandler = serviceHandler;
+    }
+
+    public TransportManager getTransportManager()
+    {
+        return transportManager;
+    }
+
+    public void setTransportManager(TransportManager transportManager)
+    {
+        this.transportManager = transportManager;
+    }
+
+    public void setBindingProvider(BindingProvider bindingProvider)
+    {
+        this.bindingProvider = bindingProvider;
     }
 }
