@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.Soap11FaultHandler;
 import org.codehaus.xfire.fault.Soap12FaultHandler;
+import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceEndpoint;
@@ -37,7 +38,8 @@ public class ObjectServiceFactory
 {
     private BindingProvider provider;
     private TransportManager transportManager;
-
+    private Handler serviceHandler = new SoapHandler();
+    
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      */
@@ -208,7 +210,7 @@ public class ObjectServiceFactory
             endpoint.setWSDLWriter(new WSDLBuilderAdapter(endpoint, transportManager));
         }
 
-        endpoint.setServiceHandler(new SoapHandler());
+        endpoint.setServiceHandler(serviceHandler);
 
         initializeOperations(endpoint);
 
@@ -308,5 +310,15 @@ public class ObjectServiceFactory
             outName = method.getName();
 
         return new QName(endpoint.getService().getName().getNamespaceURI(), outName + "out");
+    }
+
+    public Handler getServiceHandler()
+    {
+        return serviceHandler;
+    }
+
+    public void setServiceHandler(Handler serviceHandler)
+    {
+        this.serviceHandler = serviceHandler;
     }
 }
