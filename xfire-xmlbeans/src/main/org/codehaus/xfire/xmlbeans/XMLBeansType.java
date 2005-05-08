@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeSystem;
 import org.codehaus.yom.Element;
 
 /**
@@ -14,7 +15,7 @@ import org.codehaus.yom.Element;
 public class XMLBeansType 
     implements org.codehaus.xfire.wsdl.SchemaType
 {
-    private QName schemaType;
+    private SchemaType schemaType;
 
     public XMLBeansType()
     {
@@ -22,22 +23,24 @@ public class XMLBeansType
     
     public XMLBeansType(SchemaType schemaType)
     {
-        this.schemaType = schemaType.getDocumentElementName();
+        this.schemaType = schemaType;
     }
 
     public void writeSchema(Element element)
     {
         // todo:
+        SchemaTypeSystem typeSys = null;
+
     }
     
     public boolean isComplex()
     {
-        return true;
+        return !schemaType.isPrimitiveType();
     }
 
     public boolean isAbstract()
     {
-        return false;
+        return schemaType.isAbstract();
     }
 
     public Set getDependencies()
@@ -47,6 +50,6 @@ public class XMLBeansType
 
     public QName getSchemaType()
     {
-        return schemaType;
+        return schemaType.getDocumentElementName();
     }
 }

@@ -54,7 +54,7 @@
           fork="true">
       <arg value="-d"/>
       <arg value="${maven.test.dest}"/>
-      <arg value="${basedir}/src/test-schemas"/>
+      <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
     </java>
     
     <ant:path id="generate.path">

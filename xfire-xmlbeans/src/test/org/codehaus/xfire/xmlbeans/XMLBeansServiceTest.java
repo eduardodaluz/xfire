@@ -1,9 +1,13 @@
 package org.codehaus.xfire.xmlbeans;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 
 /**
@@ -28,8 +32,18 @@ public class XMLBeansServiceTest
                                   Soap11.getInstance(),
                                   SoapConstants.STYLE_DOCUMENT,
                                   SoapConstants.USE_LITERAL, null);
-
+        
         getServiceRegistry().register(endpoint);
+        
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        
+        org.w3c.dom.Document schema = builder.parse(getTestFile("src/test-schemas/WeatherForecast.xsd"));
+        
+        endpoint.setWSDLWriter(new XMLBeansWSDLBuilder(endpoint, 
+                                                       getXFire().getTransportManager().getTransports("WeatherService"),
+                                                       schema));
     }
 
     public void testService()
@@ -44,10 +58,15 @@ public class XMLBeansServiceTest
         printNode(response);
     }
     
-    /*public void testWSDL() 
+    public void testWSDL() 
 		throws Exception
 	{
 	    Document wsdl = getWSDLDocument("WeatherService");
-	    printNode(wsdl);
-	}*/
+        
+        addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
+        addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
+        addNamespace( "xsd", SoapConstants.XSD );
+
+	    assertValid("//wsdl:types/xsd:schema[@targetNamespace='http://www.webservicex.net']", wsdl);
+	}
 }

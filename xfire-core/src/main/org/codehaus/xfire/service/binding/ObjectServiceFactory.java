@@ -25,6 +25,7 @@ import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
+import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 
 /**
@@ -204,9 +205,11 @@ public class ObjectServiceFactory
             endpoint.setFaultHandler(new Soap12FaultHandler());
         }
 
-        if (transportManager != null)
+        if (transportManager != null && binding instanceof WSDL11ParameterBinding)
         {
-            endpoint.setWSDLWriter(new WSDLBuilderAdapter(endpoint, transportManager));
+            endpoint.setWSDLWriter(new WSDLBuilderAdapter(endpoint, 
+                                                          transportManager, 
+                                                          (WSDL11ParameterBinding) binding));
         }
 
         endpoint.setServiceHandler(serviceHandler);

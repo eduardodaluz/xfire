@@ -40,12 +40,17 @@ public class WSDLBuilder
 
     private Map wsdlOps;
 
-    public WSDLBuilder(ServiceEndpoint service, Collection transports) throws WSDLException
+    private WSDL11ParameterBinding paramBinding;
+
+    public WSDLBuilder(ServiceEndpoint service, 
+                       Collection transports,
+                       WSDL11ParameterBinding paramBinding) throws WSDLException
     {
         super(service);
 
         this.transports = transports;
-
+        this.paramBinding = paramBinding;
+        
         wsdlOps = new HashMap();
 
         PortType portType = createAbstractInterface();
@@ -111,7 +116,7 @@ public class WSDLBuilder
 
             WSDL11Transport transport = (WSDL11Transport) transportObj;
 
-            Binding transportBinding = transport.createBinding(portType, service);
+            Binding transportBinding = transport.createBinding(portType, service, paramBinding);
 
             for (Iterator oitr = service.getService().getOperations().iterator(); oitr.hasNext();)
             {
@@ -121,7 +126,7 @@ public class WSDLBuilder
 
                 javax.wsdl.Operation wsdlOp = (javax.wsdl.Operation) wsdlOps.get(op.getName());
 
-                BindingOperation bop = transport.createBindingOperation(portType, wsdlOp, service);
+                BindingOperation bop = transport.createBindingOperation(portType, wsdlOp, service, paramBinding);
                 transportBinding.addBindingOperation(bop);
             }
 
@@ -143,7 +148,7 @@ public class WSDLBuilder
 
         res.setUndefined(false);
 
-        ((WSDL11ParameterBinding) getService().getBinding()).createOutputParts(getService(), this, res, op);
+        paramBinding.createOutputParts(getService(), this, res, op);
 
         return res;
     }
@@ -154,7 +159,7 @@ public class WSDLBuilder
         req.setQName(new QName(getInfo().getTargetNamespace(), op.getName() + "Request"));
         req.setUndefined(false);
 
-        ((WSDL11ParameterBinding) getService().getBinding()).createInputParts(getService(), this, req, op);
+        paramBinding.createInputParts(getService(), this, req, op);
 
         return req;
     }

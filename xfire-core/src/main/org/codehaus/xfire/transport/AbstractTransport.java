@@ -49,7 +49,7 @@ public abstract class AbstractTransport
      /**
      * @see org.codehaus.xfire.transport.Transport#createBinding(javax.wsdl.PortType)
      */
-    public Binding createBinding(PortType portType, ServiceEndpoint service)
+    public Binding createBinding(PortType portType, ServiceEndpoint service,  WSDL11ParameterBinding paramBinding)
     {
         Binding binding = new BindingImpl();
         binding.setQName( new QName( service.getService().getName().getNamespaceURI(),
@@ -57,16 +57,15 @@ public abstract class AbstractTransport
         binding.setPortType( portType );
         binding.setUndefined(false);
         
-        binding.addExtensibilityElement( createSoapBinding(service) );
+        binding.addExtensibilityElement( createSoapBinding(service, paramBinding) );
 
         return binding;
     }
 
-    protected SOAPBinding createSoapBinding(ServiceEndpoint endpoint)
+    protected SOAPBinding createSoapBinding(ServiceEndpoint endpoint, WSDL11ParameterBinding binding)
     {
         SOAPBinding soapBind = new SOAPBindingImpl();
-        WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
-        
+
         String style = binding.getStyle();
         if ( style.equals( SoapConstants.STYLE_WRAPPED ) )
             style = SoapConstants.STYLE_DOCUMENT;
@@ -96,12 +95,15 @@ public abstract class AbstractTransport
     /**
      * @see org.codehaus.xfire.transport.Transport#createBindingOperation(javax.wsdl.Message, javax.wsdl.Message, org.codehaus.xfire.java.JavaService)
      */
-    public BindingOperation createBindingOperation(PortType portType, Operation wsdlOp, ServiceEndpoint service)
+    public BindingOperation createBindingOperation(PortType portType, 
+                                                   Operation wsdlOp, 
+                                                   ServiceEndpoint service,
+                                                   WSDL11ParameterBinding binding)
     {
         BindingOperation bindOp = new BindingOperationImpl();
         
         // Create bindings
-        SOAPBody body = createSoapBody( service );
+        SOAPBody body = createSoapBody( service , binding);
 
         SOAPOperationImpl soapOp = new SOAPOperationImpl();
         soapOp.setSoapActionURI("");
@@ -126,10 +128,8 @@ public abstract class AbstractTransport
         return bindOp;
     }
     
-    public SOAPBody createSoapBody( ServiceEndpoint endpoint )
+    public SOAPBody createSoapBody( ServiceEndpoint endpoint, WSDL11ParameterBinding binding )
     {
-        WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
-        
         SOAPBody body = new SOAPBodyImpl();
         body.setUse( binding.getUse() ); 
 

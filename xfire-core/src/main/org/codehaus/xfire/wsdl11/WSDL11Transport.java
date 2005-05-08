@@ -19,7 +19,7 @@ public interface WSDL11Transport
      * @param portType
      * @param service
      */
-    Binding createBinding(PortType portType, ServiceEndpoint service);
+    Binding createBinding(PortType portType, ServiceEndpoint service, WSDL11ParameterBinding binding);
 
     /**
      * @param transportBinding
@@ -33,5 +33,8 @@ public interface WSDL11Transport
      * @param service
      * @return
      */
-    BindingOperation createBindingOperation(PortType portType, Operation wsdlOp, ServiceEndpoint service);
+    BindingOperation createBindingOperation(PortType portType,
+                                            Operation wsdlOp,
+                                            ServiceEndpoint service,
+                                            WSDL11ParameterBinding binding);
 }
