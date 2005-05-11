@@ -140,15 +140,15 @@ public abstract class AbstractWSDL
 
             Element e = createSchemaType(type.getSchemaType().getNamespaceURI());
             type.writeSchema(e);
-        }
+            
+            Set deps = type.getDependencies();
 
-        Set deps = type.getDependencies();
-
-        if (deps != null)
-        {
-            for (Iterator itr = deps.iterator(); itr.hasNext();)
+            if (deps != null)
             {
-                addDependency((SchemaType) itr.next());
+                for (Iterator itr = deps.iterator(); itr.hasNext();)
+                {
+                    addDependency((SchemaType) itr.next());
+                }
             }
         }
     }
