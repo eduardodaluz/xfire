@@ -231,7 +231,7 @@ public class BeanType
                                           SoapConstants.XSD);
             seq.appendChild(element);
             
-            Type type = info.getType(name);
+            Type type = getType(info, name);
             
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
@@ -247,8 +247,8 @@ public class BeanType
                                           SoapConstants.XSD);
             complex.appendChild(element);
             
-            Type type = info.getType(name);
-            
+            Type type = getType(info, name);
+
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
             
@@ -256,8 +256,23 @@ public class BeanType
             element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
             
             if (info.isNillable(name))
+            {
                 element.addAttribute(new Attribute("nillable", "true"));
+            }
         }
+    }
+
+    private Type getType(TypeInfo info, QName name)
+    {
+        Type type = info.getType(name);
+        
+        if (type == null)
+        {
+            throw new NullPointerException("Couldn't find type for" + name + " in class " + 
+                                           getTypeClass().getName());
+        }
+        
+        return type;
     }
 
     private void writeTypeReference(QName name, Element element, Type type, String prefix)

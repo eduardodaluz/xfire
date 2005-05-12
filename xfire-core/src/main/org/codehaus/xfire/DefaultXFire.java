@@ -124,7 +124,14 @@ public class DefaultXFire
 
     protected ServiceEndpoint findService(final String serviceName)
     {
-        return getServiceEndpointRegistry().getServiceEndpoint(serviceName);
+        ServiceEndpoint service = getServiceEndpointRegistry().getServiceEndpoint(serviceName);
+        
+        if (service == null)
+        {
+            throw new XFireRuntimeException("Couldn't find service " + serviceName);
+        }
+        
+        return service;
     }
 
     public void invoke(final InputStream stream,

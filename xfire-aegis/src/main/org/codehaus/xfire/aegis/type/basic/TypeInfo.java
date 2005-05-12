@@ -176,14 +176,7 @@ public class TypeInfo
 
     public PropertyDescriptor getPropertyDescriptor(QName name)
     {
-        String propName = getPropertyName(name);
-        for (int i = 0; i < descriptors.length; i++)
-        {
-            if (descriptors[i].getName().equals(propName))
-                return descriptors[i];
-        }
-        
-        return null;
+        return getPropertyDescriptor( getPropertyName(name) );
     }
     
     protected boolean isAttribute(PropertyDescriptor desc)
