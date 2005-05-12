@@ -15,7 +15,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.fault.XFireFault;
 
 public class TypeInfo
 {
