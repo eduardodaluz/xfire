@@ -74,7 +74,7 @@ public class TypeInfo
     {
         for (int i = 0; i < descriptors.length; i++)
         {
-            if (descriptors[i].getName().equals(name));
+            if (descriptors[i].getName().equals(name))
                 return descriptors[i];
         }
         
