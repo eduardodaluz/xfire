@@ -99,7 +99,7 @@
           fork="true">
       <arg value="-out"/>
       <arg value="${basedir}/target/weather.jar"/>
-      <arg value="${basedir}/src/test-schemas"/>
+      <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
     </java>
   </goal>
   
