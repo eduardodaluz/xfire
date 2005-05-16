@@ -86,6 +86,7 @@
   </goal>
   
   <goal name="support-jars">
+	<mkdir dir="${basedir}/target"/>
     <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
           classpathref="xmlbeans.path"
           fork="true">
