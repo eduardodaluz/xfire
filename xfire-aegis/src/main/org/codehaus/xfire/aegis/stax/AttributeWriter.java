@@ -40,7 +40,6 @@ public class AttributeWriter
     
     public void writeValue(Object value)
     {
-        System.out.println("writing " +value + " to " + prefix + ":" + name + "{"+namespace+"}");
         try
         {
             writer.writeAttribute(prefix, namespace, name, value.toString());
