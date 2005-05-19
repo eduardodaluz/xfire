@@ -241,7 +241,10 @@ public class AnnotationServiceFactory
             String name = webParamAnnotation.getName();
             String ns = webParamAnnotation.getTargetNamespace();
 
-            if (ns == null) ns = endpoint.getService().getName().getNamespaceURI();
+            if (ns == null || ns.length() == 0) 
+            {
+                ns = endpoint.getService().getName().getNamespaceURI();
+            }
 
             return new QName(ns, name);
         }
@@ -260,7 +263,10 @@ public class AnnotationServiceFactory
             String name = webResultAnnotation.getName();
             String ns = webResultAnnotation.getTargetNamespace();
 
-            if (ns == null) ns = endpoint.getService().getName().getNamespaceURI();
+            if (ns == null || ns.length() == 0)
+            {
+                ns = endpoint.getService().getName().getNamespaceURI();
+            }
 
             return new QName(ns, name);
         }
