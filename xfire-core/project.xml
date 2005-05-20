@@ -6,7 +6,14 @@
     <shortDescription/>
     <description/>
     <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
-    <dependencies/>
+    <dependencies>
+        <dependency>
+            <groupId>jetty</groupId>
+            <artifactId>org.mortbay.jetty</artifactId>
+            <version>5.1.3</version>
+            <url>http://jetty.mortbay.org</url>
+        </dependency>
+    </dependencies>
     <build>
         <sourceDirectory>${basedir}/src/main</sourceDirectory>
         <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
