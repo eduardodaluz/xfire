@@ -48,7 +48,7 @@ public class XFireHttpServer
 
     public boolean isStarted()
     {
-        return (httpServer != null) || httpServer.isStarted();
+        return (httpServer != null) && httpServer.isStarted();
     }
 
     public int getPort()
