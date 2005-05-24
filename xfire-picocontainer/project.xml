@@ -13,7 +13,7 @@
             <version>${pom.currentVersion}</version>
             <url>${pom.url}</url>
             <properties>
-                <eclipse.depedency>true</eclipse.depedency>
+                <eclipse.dependency>true</eclipse.dependency>
             </properties>
         </dependency>
         <dependency>
@@ -22,7 +22,7 @@
             <version>${pom.currentVersion}</version>
             <url>${pom.url}</url>
             <properties>
-                <eclipse.depedency>true</eclipse.depedency>
+                <eclipse.dependency>true</eclipse.dependency>
             </properties>
         </dependency>
         <dependency>
@@ -31,7 +31,7 @@
             <version>${pom.currentVersion}</version>
             <url>${pom.url}</url>
             <properties>
-                <eclipse.depedency>true</eclipse.depedency>
+                <eclipse.dependency>true</eclipse.dependency>
             </properties>
         </dependency>
         <!-- picocontainer -->

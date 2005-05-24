@@ -23,6 +23,7 @@ import org.picocontainer.defaults.ConstantParameter;
 import org.picocontainer.defaults.ConstructorInjectionComponentAdapter;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
+
 public class XFireServiceRegisterVisitorTest
         extends TestCase
 {
