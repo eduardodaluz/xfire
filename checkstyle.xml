@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+	<property name="localeCountry" value="US"/>
+    <property name="localeLanguage" value="en"/>
+    <module name="TreeWalker">
+        <property name="tabWidth" value="4" />
+		<property name="severity" value="warning"/>
+
+
+        <module name="AvoidStarImport"/>
+		
+		<!--
+			Block
+		-->
+        <module name="EmptyBlock">
+			<property name="tokens" value="LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_IF,LITERAL_FOR,LITERAL_TRY,LITERAL_WHILE,INSTANCE_INIT,STATIC_INIT"/>
+		</module>		
+		<module name="EmptyBlock">
+			<property name="option" value="text"/>
+			<property name="tokens" value="LITERAL_CATCH"/>
+		</module>
+		<module name="NeedBraces"/>
+		<module name="LeftCurly">
+			<property name="option" value="nl"/>
+			<property name="maxLineLength" value="999999"/>
+		</module>
+		<module name="RightCurly">
+			<property name="option" value="alone"/>
+			<property name="tokens" value="LITERAL_ELSE"/>
+		</module>
+		<module name="AvoidNestedBlocks"/>
+		
+		<!-- Tab should not exists, we use space to ident. -->
+		<module name="TabCharacter"/>
+		<!-- Should be space after a comma, semi and typecast. -->
+		<module name="WhitespaceAfter"/>
+		<!-- If a class overwrite equals it needs to overwirte hashCode as well. -->
+		<module name="EqualsHashCode">
+			<property name="severity" value="error"/>
+		</module>
+		
+		<!--
+			Unused
+		-->
+		<module name="UnusedImports">
+			<property name="severity" value="error"/>
+		</module>
+		<module name="usage.UnusedPrivateField">
+			<property name="severity" value="error"/>
+		</module>
+		<module name="usage.UnusedPrivateMethod">
+			<property name="severity" value="error"/>
+		</module>
+		<module name="usage.UnusedLocalVariable">
+			<property name="severity" value="error"/>
+		</module>
+		
+		<!--
+			About complex
+		-->
+		<!-- No more than 4 boolean operation on a expression -->
+		<module name="BooleanExpressionComplexity">
+			<property name="severity" value="error"/>
+			<property name="max" value="4"/>
+		</module>
+		<!--  Checks cyclomatic complexity against a specified limit. The complexity is measured by the number of if, while, do, for, ?:, catch, switch, case  statements, and operators && and || (plus one) in the body of a constructor, method, static initializer, or instance initializer. It is a measure of the minimum number of possible paths through the source and therefore the number of required tests. Generally 1-4 is considered good, 5-8 ok, 9-10 consider re-factoring, and 11+ re-factor now! -->
+		<module name="CyclomaticComplexity">
+			<property name="severity" value="error"/>
+			<property name="max" value="10"/>
+		</module>
+		<!-- Checks method lines count, if a method has more tham 60 lines consider to refactor it. -->
+		<module name="MethodLength">
+			<property name="severity" value="error"/>
+			<property name="max" value="60"/>
+			<property name="countEmpty" value="false"/>
+		</module>		
+		
+	</module>
+</module>

@@ -223,6 +223,13 @@
             <url>http://statcvs-xml.berlios.de/</url>
 			<type>plugin</type>
         </dependency>
+        <dependency>
+            <groupId>maven</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.5</version>
+            <url>http://maven.apache.org/references/checkstyle</url>
+			<type>plugin</type>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>${basedir}/src/main</sourceDirectory>
@@ -258,6 +265,7 @@
         </resources>
     </build>
     <reports>
+        <report>maven-checkstyle-plugin</report>
         <report>maven-jdepend-plugin</report>
         <report>maven-changes-plugin</report>
         <report>maven-changelog-plugin</report>
@@ -270,6 +278,6 @@
         <report>maven-faq-plugin</report>
 		<report>maven-statcvs-plugin</report>
 		<report>maven-dashboard-plugin</report>
-		<report>maven-multiproject-plugin</report>		
+		<report>maven-multiproject-plugin</report>
     </reports>
 </project>
