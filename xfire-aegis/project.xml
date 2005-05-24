@@ -5,7 +5,7 @@
     <package>org.codehaus.xfire</package>
     <shortDescription/>
     <description/>
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}</siteDirectory>
     <dependencies>
         <dependency>
             <groupId>xfire</groupId>
@@ -13,7 +13,7 @@
             <version>${pom.currentVersion}</version>
             <url>${pom.url}</url>
             <properties>
-                <eclipse.depedency>true</eclipse.depedency>
+                <eclipse.dependency>true</eclipse.dependency>
             </properties>
         </dependency>	
     </dependencies>

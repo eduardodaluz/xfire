@@ -15,7 +15,7 @@
     <url>http://xfire.codehaus.org</url>
     <issueTrackingUrl>http://jira.codehaus.org/secure/BrowseProject.jspa?id=10750</issueTrackingUrl>
     <siteAddress>xfire.codehaus.org</siteAddress>
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire</siteDirectory>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}</siteDirectory>
     <distributionSite>xfire.codehaus.org</distributionSite>
     <distributionDirectory>/dist</distributionDirectory>
     <repository>

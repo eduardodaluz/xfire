@@ -5,7 +5,7 @@
     <package>org.codehaus.xfire.xmlbeans</package>
     <shortDescription>An XMLBeans binding module for XFire.</shortDescription>
     <description>An XMLBeans binding module for XFire.</description>
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}</siteDirectory>
     <dependencies>
         <dependency>
             <groupId>xfire</groupId>

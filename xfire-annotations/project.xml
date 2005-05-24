@@ -6,7 +6,7 @@
     <package>org.codehaus.xfire.annotations</package>
     <shortDescription>Annotations support for XFire.</shortDescription>
     <description>Annotations (JSR-175) support for XFire.</description>
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire/multiproject/${pom.artifactId}</siteDirectory>
+    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}</siteDirectory>
     <dependencies>
         <dependency>
             <groupId>xfire</groupId>

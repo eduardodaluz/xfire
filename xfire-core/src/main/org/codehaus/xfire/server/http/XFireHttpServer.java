@@ -29,10 +29,15 @@ public class XFireHttpServer
         
         httpServer = new HttpServer();
         httpServer.addListener(new InetAddrPort(port));
+        
         HttpContext context = httpServer.getContext("/");
+        context.setRequestLog(null);
+        
         ServletHandler handler = new ServletHandler();
         handler.addServlet("XFireServlet", "/*", "org.codehaus.xfire.transport.http.XFireServlet");
+        
         context.addHandler(handler);
+        
         httpServer.start();
     }
 
