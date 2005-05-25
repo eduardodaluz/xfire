@@ -1,0 +1,28 @@
+<project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
+
+	<postGoal name="build:start">
+		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+		<c:forEach items="${modules}" var="module" indexVar="i">
+			<!-- Adds source folders -->
+			<ant:path id="xfire.all.source.${i}" location="${module.build.sourceDirectory}"/>
+			<maven:addPath id="maven.compile.src.set" refid="xfire.all.source.${i}"/>
+			
+			<!-- Adds dependencies -->
+			<c:forEach items="${module.artifacts}" var="dependency" indexVar="j">
+				<c:if test="${dependency.groupId != 'xfire'}">
+					<ant:path id="xfire.all.dependency.${i}.${j}" location="${dependency.path}"/>
+					<maven:addPath id="maven.dependency.classpath" refid="xfire.all.dependency.${i}.${j}"/>
+				</c:if>
+			</c:forEach>
+		</c:forEach>
+		<c:set var="sourcesPresent" value="true"/>
+	</postGoal>
+
+	<goal name="eclipse:generate-project">
+		<ant:echo>Its just a meta project. No Eclipse for you project.<ant:echo>
+	</echo>
+	<goal name="eclipse:generate-classpath">
+		<ant:echo>Its just a meta project. No Eclipse for you project.<ant:echo>
+	</echo>
+
+</project>

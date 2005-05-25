@@ -1,0 +1,16 @@
+target
+*~
+*.log*
+junit*.properties
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+bin
+build.properties
+*.lnk
+*.sh
+*.ajsym
+*.lst
+*.jar
