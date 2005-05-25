@@ -19,10 +19,10 @@
 	</postGoal>
 
 	<goal name="eclipse:generate-project">
-		<ant:echo>Its just a meta project. No Eclipse for you project.<ant:echo>
+		<ant:echo>Its just a meta project. No Eclipse for you project.</ant:echo>
 	</echo>
 	<goal name="eclipse:generate-classpath">
-		<ant:echo>Its just a meta project. No Eclipse for you project.<ant:echo>
+		<ant:echo>Its just a meta project. No Eclipse for you project.</ant:echo>
 	</echo>
 
 </project>
