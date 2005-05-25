@@ -3,6 +3,9 @@
 #
 # Version: $Id$
 
+### Includes Java 5 modules or not ###
+xfire.java5=false or true
+
 ### Artifact upload ###
 maven.repo.codehaus.username=YOUR_BEAVER_LOGIN
 maven.repo.codehaus.privatekey=${user.home}/YOUR_BEAVER_OPENSSH_PRIVATE_KEY

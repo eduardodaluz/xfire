@@ -1,9 +1,24 @@
 <project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
 
 	<preGoal name="multiproject:projects-init">
-		<c:if test="${xfire.java5}">
-			<c:set var="maven.multiproject.excludes" value="project.xml"/>
-		</c:if>
+		<c:set var="x" value="${xfire.java5}"/>
+		<c:choose>
+			<c:when test="${x == true}">
+				<c:set var="maven.multiproject.excludes" value="project.xml"/>
+			</c:when>
+			<c:otherwise>
+				<ant:echo><![CDATA[
+************************************************************
+* WARNING!                                                 *
+*                                                          *
+* Your are running a build without Java 5 modules.         *
+*                                                          *
+* In order to get Java 5 modules adds "-Dxfire.java5=true" *
+* to the maven command line                                *
+************************************************************
+				]]></ant:echo>
+			</c:otherwise>
+		</c:choose>
 	</preGoal>
 	
 	<preGoal name="multiproject:site">
@@ -14,38 +29,6 @@
 	<goal name="site:deploy">
 		<attainGoal name="site:${maven.site.deploy.method}deploy"/>
 	</goal>	
-	
-	<!-- Generates all javadocs in one -->
-	<goal name="multiproject:javadoc" prereqs="__mergesource">
-		<maven:reactor basedir="${basedir}" collectOnly="true" collectionVar="reatorPoms" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}"/>
-		<ant:javadoc destDir="${basedir}/target/docs/apidocs">
-			<c:if test="${context.getVariable('maven.compile.encoding') != null}">
-				<ant:setProperty name="encoding" value="${maven.compile.encoding}" />
-			</c:if>
-			<classpath>
-				<ant:path refid="maven.dependency.classpath"/>
-				<c:forEach var="reatorPom" items="${reatorPoms}">
-					<ant:pathelement path="${reatorPom.dependencyClasspath}"/>   		
-				</c:forEach>
-			</classpath>
-			<packageset dir="${basedir}/target/all-source" defaultexcludes="yes">
-				<include name="org/codehaus/xfire/**"/>
-			</packageset>
-		</ant:javadoc>
-	</goal>
-	
-	<!-- 
-		Private goals. 
-	-->
-	<goal name="__mergesource_project_goal">
-		<copy toDir="${basedir}/../target/all-source">
-			<fileset dir="${pom.build.sourceDirectory}"/>
-		</copy>
-	</goal>
-	
-	<goal name="__mergesource">
-		<mkdir dir="${basedir}/target/all-source"/>
-		<maven:reactor basedir="${basedir}" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}" goals="__mergesource_project_goal"/>
-	</goal>
+
 
 </project>

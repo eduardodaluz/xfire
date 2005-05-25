@@ -1,4 +1,4 @@
-<project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
+<project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant" xmlns:util="jelly:util">
 
 	<postGoal name="build:start">
 		<!-- In order to process dependencies -->
@@ -6,13 +6,24 @@
 		<!-- Collects data -->
 		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
 		
-		<!-- Prepares filesystem -->
+		<!-- Prepares -->
 		<ant:mkdir dir="${maven.build.dest}"/>
+		<ant:mkdir dir="${maven.test.dest}"/>
+		<ant:path id="maven.test.compile.src.set"/>
 		
 		<c:forEach items="${modules}" var="module" indexVar="i">
 			<!-- Adds source folders -->
 			<ant:path id="xfire.all.source.${i}" location="${module.build.sourceDirectory}"/>
 			<maven:addPath id="maven.compile.src.set" refid="xfire.all.source.${i}"/>
+
+			<!-- Adds tests source folders -->
+			<c:if test="${module.artifactId != 'xfire-xmlbeans'}">
+				<util:file var="testFolder" name="${module.build.unitTestSourceDirectory}"/>
+				<c:if test="${testFolder.exists()}">
+					<ant:path id="xfire.all.test.source.${i}" location="${module.build.unitTestSourceDirectory}"/>
+					<maven:addPath id="maven.test.compile.src.set" refid="xfire.all.test.source.${i}"/>
+				</c:if>
+			</c:if>
 			
 			<!-- Adds dependencies -->
 			<c:forEach items="${module.artifacts}" var="dependency" indexVar="j">
@@ -24,8 +35,10 @@
 			
 			<!-- Copy resources -->
 			<maven:copy-resources resources="${module.build.resources}" todir="${maven.build.dest}"/>
+			<maven:copy-resources resources="${module.build.unitTest.resources}" todir="${maven.test.dest}"/>
 		</c:forEach>
 		<c:set var="sourcesPresent" value="true"/>
+		<c:set var="unitTestSourcesPresent" value="true"/>
 	</postGoal>
 
 	<goal name="eclipse:generate-project">

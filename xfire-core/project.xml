@@ -14,38 +14,4 @@
             <url>http://jetty.mortbay.org</url>
         </dependency>
     </dependencies>
-    <build>
-        <sourceDirectory>${basedir}/src/main</sourceDirectory>
-        <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
-        <unitTest>
-            <includes>
-                <include>**/*Test.java</include>
-                <include>**/*TestCase.java</include>
-            </includes>
-            <excludes>
-                <exclude>**/*Abstract*.java</exclude>
-            </excludes>
-            <resources>
-                <resource>
-                    <directory>${basedir}/src/test</directory>
-                    <includes>
-                        <include>**/*.xml</include>
-                        <include>**/*.wsdl</include>
-                        <include>**/*.vm</include>
-                    </includes>
-                    <filtering>false</filtering>
-                </resource>
-            </resources>
-        </unitTest>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-    </build>
-    <properties/>
 </project>

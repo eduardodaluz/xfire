@@ -238,16 +238,15 @@
             <includes>
                 <include>**/*Test.java</include>
                 <include>**/*TestCase.java</include>
+                <include>**/*Test.class</include>
+                <include>**/*TestCase.class</include>
             </includes>
             <excludes>
-                <exclude>**/*Abstract*.java</exclude>
+                <exclude>**/*Abstract*</exclude>
             </excludes>
             <resources>
                 <resource>
                     <directory>${basedir}/src/test</directory>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
                     <excludes>
                         <exclude>**/*.java</exclude>
                     </excludes>
