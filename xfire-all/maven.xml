@@ -1,7 +1,14 @@
 <project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
 
 	<postGoal name="build:start">
+		<!-- In order to process dependencies -->
+		<maven:reactor goals="build:start" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+		<!-- Collects data -->
 		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+		
+		<!-- Prepares filesystem -->
+		<ant:mkdir dir="${maven.build.dest}"/>
+		
 		<c:forEach items="${modules}" var="module" indexVar="i">
 			<!-- Adds source folders -->
 			<ant:path id="xfire.all.source.${i}" location="${module.build.sourceDirectory}"/>
@@ -14,15 +21,18 @@
 					<maven:addPath id="maven.dependency.classpath" refid="xfire.all.dependency.${i}.${j}"/>
 				</c:if>
 			</c:forEach>
+			
+			<!-- Copy resources -->
+			<maven:copy-resources resources="${module.build.resources}" todir="${maven.build.dest}"/>
 		</c:forEach>
 		<c:set var="sourcesPresent" value="true"/>
 	</postGoal>
 
 	<goal name="eclipse:generate-project">
-		<ant:echo>Its just a meta project. No Eclipse for you project.</ant:echo>
+		<ant:echo>Its just a meta project. No Eclipse project for you.</ant:echo>
 	</goal>
 	<goal name="eclipse:generate-classpath">
-		<ant:echo>Its just a meta project. No Eclipse for you project.</ant:echo>
+		<ant:echo>Its just a meta project. No Eclipse project for you.</ant:echo>
 	</goal>
 
 </project>
