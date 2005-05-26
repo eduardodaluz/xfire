@@ -11,7 +11,7 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.ObjectBinding;
@@ -76,7 +76,7 @@ public class DefaultServiceDeployer
         }
 
         final Configuration configuration = (Configuration) m_configurations.get(key);
-        final ServiceEndpoint endpoint;
+        final Service endpoint;
 
         if (null == configuration)
         {
@@ -90,7 +90,7 @@ public class DefaultServiceDeployer
             endpoint = createServiceFromConfiguration(configuration);
 
             if (getLogger().isDebugEnabled())
-                getLogger().debug("Created '" + endpoint.getService().getName() + "' from key '" + key + "'");
+                getLogger().debug("Created '" + endpoint.getServiceInfo().getName() + "' from key '" + key + "'");
         }
 
         ((ObjectBinding) endpoint.getBinding()).setInvoker(new ServiceInvoker(object));
@@ -98,11 +98,11 @@ public class DefaultServiceDeployer
         registerService(key, endpoint);
     }
 
-    private ServiceEndpoint createServiceFromConfiguration(final Configuration configuration)
+    private Service createServiceFromConfiguration(final Configuration configuration)
             throws ConfigurationException
     {
         final ServiceFactory factory = getServiceFactory(configuration.getChild("factory").getValue(null));
-        final ServiceEndpoint service =
+        final Service service =
                 factory.create(loadClass(configuration.getChild("serviceClass")),
                                configuration.getChild("name").getValue(),
                                configuration.getChild("namespace").getValue(""),
@@ -167,7 +167,7 @@ public class DefaultServiceDeployer
         }
     }
 
-    private void registerService(final String key, final ServiceEndpoint endpoint)
+    private void registerService(final String key, final Service endpoint)
     {
         m_serviceRegistry.register(endpoint);
 

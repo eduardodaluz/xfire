@@ -17,7 +17,8 @@ import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
@@ -42,7 +43,7 @@ public class WSDLBuilder
 
     private WSDL11ParameterBinding paramBinding;
 
-    public WSDLBuilder(ServiceEndpoint service, 
+    public WSDLBuilder(Service service, 
                        Collection transports,
                        WSDL11ParameterBinding paramBinding) throws WSDLException
     {
@@ -63,7 +64,7 @@ public class WSDLBuilder
     public PortType createAbstractInterface()
         throws WSDLException
     {
-        ServiceEndpoint service = getService();
+        Service service = getService();
         Definition def = getDefinition();
 
         QName portName = new QName(getInfo().getTargetNamespace(), getInfo().getPortType());
@@ -74,14 +75,14 @@ public class WSDLBuilder
         def.addPortType(portType);
 
         // Create Abstract operations
-        for (Iterator itr = service.getService().getOperations().iterator(); itr.hasNext();)
+        for (Iterator itr = service.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo op = (OperationInfo) itr.next();
             Message req = getInputMessage(op);
             def.addMessage(req);
 
             Message res = null;
-            if (!op.isOneWay())
+            if (op.getMEP().equals(SoapConstants.MEP_IN_OUT))
             {
                 res = getOutputMessage(op);
                 def.addMessage(res);
@@ -99,7 +100,7 @@ public class WSDLBuilder
 
     public void createConcreteInterface(PortType portType)
     {
-        ServiceEndpoint service = getService();
+        Service service = getService();
         Definition def = getDefinition();
 
         QName name = new QName(getInfo().getTargetNamespace(), getInfo().getServiceName());
@@ -111,14 +112,17 @@ public class WSDLBuilder
         for (Iterator itr = transports.iterator(); itr.hasNext();)
         {
             Object transportObj = (Transport) itr.next();
-            if (!(transportObj instanceof WSDL11Transport))
-                break;
 
+            if (!(transportObj instanceof WSDL11Transport))
+            {
+                continue;
+            }
+            
             WSDL11Transport transport = (WSDL11Transport) transportObj;
 
             Binding transportBinding = transport.createBinding(portType, service, paramBinding);
 
-            for (Iterator oitr = service.getService().getOperations().iterator(); oitr.hasNext();)
+            for (Iterator oitr = service.getServiceInfo().getOperations().iterator(); oitr.hasNext();)
             {
                 // todo: move out of the first loop, we'll be creating req/res
                 // multiple times otherwise

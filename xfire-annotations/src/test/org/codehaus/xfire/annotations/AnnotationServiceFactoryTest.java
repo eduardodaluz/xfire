@@ -13,7 +13,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
@@ -59,6 +59,8 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
 
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
         webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
 
@@ -134,13 +136,15 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
         webAnnotationsControl.replay();
 
-        ServiceEndpoint endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
-        ServiceInfo service = endpoint.getService();
+        Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
+        ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoService"), service.getName());
 
         WSDLBuilderInfo info = (WSDLBuilderInfo) endpoint.getProperty(WSDLBuilderInfo.KEY);
@@ -173,6 +177,8 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(false);
 
         WebParamAnnotation paramAnnotation = new WebParamAnnotation();
         paramAnnotation.setName("input");
@@ -191,8 +197,8 @@ public class AnnotationServiceFactoryTest
 
         webAnnotationsControl.replay();
 
-        ServiceEndpoint endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
-        ServiceInfo service = endpoint.getService();
+        Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
+        ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoService"), service.getName());
 
         final OperationInfo operation = service.getOperation("echo");
@@ -237,7 +243,7 @@ public class AnnotationServiceFactoryTest
 
         webAnnotationsControl.replay();
 
-        ServiceEndpoint service = service = annotationServiceFactory.create(EchoServiceImpl.class);
+        Service service = service = annotationServiceFactory.create(EchoServiceImpl.class);
         WSDL11ParameterBinding binding = (WSDL11ParameterBinding) service.getBinding();
         assertEquals(SoapConstants.USE_LITERAL, binding.getUse());
 

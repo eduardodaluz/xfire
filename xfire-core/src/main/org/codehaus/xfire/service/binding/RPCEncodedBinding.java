@@ -10,11 +10,12 @@ import javax.wsdl.Part;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
@@ -34,18 +35,22 @@ public class RPCEncodedBinding
         setUse(SoapConstants.USE_ENCODED);
     }
 
-    public Object[] read(MessageContext context) throws XFireFault
+    public void readMessage(InMessage inMessage, MessageContext context)
+        throws XFireFault
     {
-        ServiceEndpoint endpoint = context.getService();
+        Service endpoint = context.getService();
         
         List parameters = new ArrayList();
-        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getXMLStreamReader());
+        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
+        
+        // Move from Body element to whitespace or start element
+        nextEvent(dr);
         
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
         String opName = dr.getLocalName();
-        OperationInfo operation = endpoint.getService().getOperation( opName );
+        OperationInfo operation = endpoint.getServiceInfo().getOperation( opName );
         if (operation == null)
         {
             // Determine the operation name which is in the form of:
@@ -53,11 +58,14 @@ public class RPCEncodedBinding
             int index = opName.indexOf("Request");
             if (index > 0)
             {
-                operation =endpoint.getService().getOperation( opName.substring(0, index) );
+                operation = endpoint.getServiceInfo().getOperation( opName.substring(0, index) );
             }
         }
         
-        context.setProperty(OPERATION_KEY, operation);
+        // Move from operation element to whitespace or start element
+        nextEvent(dr);
+        
+        setOperation(operation, context);
 
         if (operation == null)
         {
@@ -74,13 +82,13 @@ public class RPCEncodedBinding
                                      XFireFault.SENDER);
             }
 
-            parameters.add( getBindingProvider().readParameter(p, context) );
+            parameters.add( getBindingProvider().readParameter(p, dr, context) );
         }
 
-        return parameters.toArray();
+        context.getInMessage().setBody(parameters.toArray());
     }
 
-    public void createInputParts(ServiceEndpoint endpoint, 
+    public void createInputParts(Service endpoint, 
                                  AbstractWSDL wsdl,
                                  Message req, 
                                  OperationInfo op)
@@ -88,7 +96,7 @@ public class RPCEncodedBinding
         writeParametersSchema(endpoint, wsdl, req, op.getInputMessage());
     }
 
-    public void createOutputParts(ServiceEndpoint endpoint, 
+    public void createOutputParts(Service endpoint, 
                                   AbstractWSDL wsdl,
                                   Message req, 
                                   OperationInfo op)
@@ -96,7 +104,7 @@ public class RPCEncodedBinding
         writeParametersSchema(endpoint, wsdl, req, op.getOutputMessage());
     }
     
-    protected void writeParametersSchema(ServiceEndpoint service, 
+    protected void writeParametersSchema(Service service, 
                                          AbstractWSDL wsdl,
                                          Message message, 
                                          MessageInfo xmsg)

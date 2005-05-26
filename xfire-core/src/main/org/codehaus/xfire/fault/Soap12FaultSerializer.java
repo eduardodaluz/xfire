@@ -2,41 +2,36 @@ package org.codehaus.xfire.fault;
 
 import java.util.Iterator;
 import java.util.Map;
-import javax.xml.stream.XMLOutputFactory;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.MessageSerializer;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * Creates a fault message based on an exception for SOAP 1.2 messages.
- *
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- */
-public class Soap12FaultHandler
-        extends AbstractFaultHandler
+public class Soap12FaultSerializer
+    implements MessageSerializer
 {
-    public static final String NAME = "1.2";
-
-    /**
-     * @see org.codehaus.xfire.fault.FaultHandler#handleFault(java.lang.Exception, org.codehaus.xfire.MessageContext)
-     */
-    public void handleFault(XFireFault fault,
-                            MessageContext context)
+    public void readMessage(InMessage message, MessageContext context)
+        throws XFireFault
     {
-        super.handleFault(fault, context);
+        throw new UnsupportedOperationException("Reading faults is currently unsupported.");
+    }
 
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        XMLStreamWriter writer;
+    public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
+        throws XFireFault
+    {
+        XFireFault fault = (XFireFault) message.getBody();
         try
         {
-            writer = factory.createXMLStreamWriter(context.getFaultDestination().getOutputStream());
             writer.writeStartDocument();
             writer.writeStartElement("soap:Envelope");
             writer.writeAttribute("xmlns:soap", Soap12.getInstance().getNamespace());

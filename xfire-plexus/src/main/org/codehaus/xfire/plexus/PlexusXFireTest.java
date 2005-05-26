@@ -1,20 +1,23 @@
 package org.codehaus.xfire.plexus;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.XPathAssert;
+import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Node;
@@ -60,16 +63,17 @@ public class PlexusXFireTest
             throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context =
-                new MessageContext(service,
-                                   null,
-                                   out,
-                                   null,
-                                   null);
+        MessageContext context = new MessageContext(service, null, null);
+        context.setProperty(Channel.BACKCHANNEL_URI, out);
+        
+        InputStream stream = getResourceAsStream(document); 
+        getXFire().invoke(stream, context);
 
-        getXFire().invoke(getResourceAsStream(document), context);
+        String response = out.toString();
+        if (response == null || response.length() == 0)
+            return null;
 
-        return readDocument(out.toString());
+        return readDocument(response);
     }
 
     protected Document readDocument(String text)
@@ -176,7 +180,7 @@ public class PlexusXFireTest
             throws Exception
     {
         ServiceRegistry reg = getServiceRegistry();
-        ServiceEndpoint hello = reg.getServiceEndpoint(service);
+        Service hello = reg.getService(service);
 
         return hello.getWSDLWriter();
     }
@@ -190,6 +194,6 @@ public class PlexusXFireTest
     protected ServiceRegistry getServiceRegistry()
             throws Exception
     {
-        return getXFire().getServiceEndpointRegistry();
+        return getXFire().getServiceRegistry();
     }
 }

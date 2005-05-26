@@ -15,10 +15,11 @@ import javax.mail.internet.MimeMultipart;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.transport.Channel;
 import org.codehaus.yom.Document;
 
 /**
@@ -32,7 +33,7 @@ public class AttachmentTest
     {
         super.setUp();
 
-        ServiceEndpoint service = getServiceFactory().create(Echo.class,
+        Service service = getServiceFactory().create(Echo.class,
                                                              Soap11.getInstance(),
                                                              SoapConstants.STYLE_MESSAGE,
                                                              SoapConstants.USE_LITERAL);
@@ -71,15 +72,13 @@ public class AttachmentTest
         assertNotNull(atts.getSoapMessage());
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context =
-                new MessageContext("Echo",
-                                   null,
-                                   out,
-                                   null,
-                                   null);
+        MessageContext context = new MessageContext("Echo", null, null);
+        context.setProperty(Channel.BACKCHANNEL_URI, out);
+        
         context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);
 
-        getXFire().invoke(atts.getSoapMessage().getDataHandler().getInputStream(), context);
+        InputStream stream = atts.getSoapMessage().getDataHandler().getInputStream();
+        getXFire().invoke(stream, context);
 
         Document response = readDocument(out.toString());
         addNamespace("m", "urn:Echo");

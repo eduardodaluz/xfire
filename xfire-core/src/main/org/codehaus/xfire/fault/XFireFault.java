@@ -28,6 +28,11 @@ public class XFireFault
         extends Exception
 {
     /**
+	 * Serialization ID. 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	/**
      * Fault codes.
      */
     public final static String VERSION_MISMATCH = "VersionMismatch";

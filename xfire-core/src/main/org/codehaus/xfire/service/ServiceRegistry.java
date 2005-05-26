@@ -23,14 +23,14 @@ public interface ServiceRegistry
      * @param name the service name.
      * @return the service endpoint, or <code>null</code> if not found.
      */
-    ServiceEndpoint getServiceEndpoint(String name);
+    Service getService(String name);
 
     /**
      * Registers a given <code>ServiceEndpoint</code> with this registry.
      *
      * @param endpoint the endpoint.
      */
-    void register(ServiceEndpoint endpoint);
+    void register(Service endpoint);
 
     /**
      * Unregisters the service endpoint with the given name, if found.
@@ -45,14 +45,14 @@ public interface ServiceRegistry
      * @param name the service name.
      * @return <code>true</code> if this registry has a service with the given name; <code>false</code> otherwise.
      */
-    boolean hasServiceEndpoint(String name);
+    boolean hasService(String name);
 
     /**
      * Returns all <code>ServiceEndpoint</code> registered to this registry.
      *
      * @return all service endpoints.
      */
-    Collection getServiceEndpoints();
+    Collection getServices();
 
     /**
      * Add a listener for registration events.

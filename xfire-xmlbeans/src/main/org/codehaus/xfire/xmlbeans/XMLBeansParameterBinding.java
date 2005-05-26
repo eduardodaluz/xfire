@@ -9,7 +9,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
@@ -27,17 +27,17 @@ public class XMLBeansParameterBinding
         return SoapConstants.USE_LITERAL;
     }
 
-    public void createInputParts(ServiceEndpoint service, AbstractWSDL wsdl, Message req, OperationInfo op)
+    public void createInputParts(Service service, AbstractWSDL wsdl, Message req, OperationInfo op)
     {
         writeParameters(service, wsdl, req, op.getInputMessage().getMessageParts());
     }
 
-    public void createOutputParts(ServiceEndpoint service, AbstractWSDL wsdl, Message req, OperationInfo op)
+    public void createOutputParts(Service service, AbstractWSDL wsdl, Message req, OperationInfo op)
     {
         writeParameters(service, wsdl, req, op.getOutputMessage().getMessageParts());
     }
     
-    private void writeParameters(ServiceEndpoint service, 
+    private void writeParameters(Service service, 
                                  AbstractWSDL wsdl,
                                  Message message, 
                                  Collection params)

@@ -6,7 +6,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 
 /**
  * Indicates that a particular transport supports WSDL 1.1 generation.
@@ -19,13 +19,13 @@ public interface WSDL11Transport
      * @param portType
      * @param service
      */
-    Binding createBinding(PortType portType, ServiceEndpoint service, WSDL11ParameterBinding binding);
+    Binding createBinding(PortType portType, Service service, WSDL11ParameterBinding binding);
 
     /**
      * @param transportBinding
      * @return
      */
-    Port createPort(Binding transportBinding, ServiceEndpoint service);
+    Port createPort(Binding transportBinding, Service service);
 
     /**
      * @param portType
@@ -35,6 +35,6 @@ public interface WSDL11Transport
      */
     BindingOperation createBindingOperation(PortType portType,
                                             Operation wsdlOp,
-                                            ServiceEndpoint service,
+                                            Service service,
                                             WSDL11ParameterBinding binding);
 }

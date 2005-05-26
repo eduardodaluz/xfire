@@ -11,7 +11,6 @@ import org.codehaus.xfire.fault.XFireFault;
  */
 public class BadHandler
     extends AbstractHandler
-    implements EndpointHandler
 {
     /**
      * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
@@ -20,20 +19,5 @@ public class BadHandler
         throws Exception
     {
         throw new Exception("Bad handler!");
-    }
-
-    /**
-     * @see org.codehaus.xfire.handler.EndpointHandler#writeResponse(org.codehaus.xfire.MessageContext)
-     * @param context
-     * @throws XFireFault
-     */
-    public void writeResponse(MessageContext context)
-        throws XFireFault
-    {
-    }
-
-    public boolean hasResponse(MessageContext context)
-    {
-        return true;
     }
 }

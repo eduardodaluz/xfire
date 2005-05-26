@@ -21,7 +21,7 @@ public class VisitorTest
             throws Exception
     {
         ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
-        ServiceEndpoint endpoint = new ServiceEndpoint(service);
+        Service endpoint = new Service(service);
         Method method = getClass().getMethod("method", new Class[0]);
         OperationInfo operation = service.addOperation("operation", method);
         MessageInfo inputMessage = operation.createMessage(new QName("input"));
@@ -60,13 +60,13 @@ public class VisitorTest
         private List started = new ArrayList();
         private List ended = new ArrayList();
 
-        public void startEndpoint(ServiceEndpoint endpoint)
+        public void startEndpoint(Service endpoint)
         {
             assertNotNull(endpoint);
             started.add(endpoint);
         }
 
-        public void endEndpoint(ServiceEndpoint endpoint)
+        public void endEndpoint(Service endpoint)
         {
             assertNotNull(endpoint);
             ended.add(endpoint);

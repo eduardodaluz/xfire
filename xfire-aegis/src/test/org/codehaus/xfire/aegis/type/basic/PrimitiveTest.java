@@ -1,7 +1,7 @@
 package org.codehaus.xfire.aegis.type.basic;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.PrimitiveService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -20,7 +20,7 @@ public class PrimitiveTest
     {
         super.setUp();
 
-        ServiceEndpoint endpoint = getServiceFactory().create(PrimitiveService.class,
+        Service endpoint = getServiceFactory().create(PrimitiveService.class,
                                                               "PrimitiveService",
                                                               "urn:PrimitiveService",
                                                               Soap11.getInstance(),

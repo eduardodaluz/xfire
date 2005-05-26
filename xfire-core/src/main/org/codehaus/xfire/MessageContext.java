@@ -1,20 +1,23 @@
 package org.codehaus.xfire;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.xfire.soap.SoapVersionFactory;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.InExchange;
+import org.codehaus.xfire.exchange.RobustInOutExchange;
+import org.codehaus.xfire.exchange.MessageExchange;
+import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Session;
-import org.codehaus.xfire.transport.Transport;
-import org.codehaus.yom.Element;
 
 /**
  * Holds inforrmation about the message request and response.
@@ -25,29 +28,25 @@ import org.codehaus.yom.Element;
 public class MessageContext
 {
     private static ThreadLocal messageContexts = new ThreadLocal();
-
+	
     private Session session;
-    private OutputStream responseStream;
-    private String requestUri;
     private String serviceName;
     private String action;
     private Map properties;
 
-    private SoapVersion soapVersion;
-    private ServiceEndpoint service;
-    private Transport transport;
-    private XMLStreamReader xmlStreamReader;
+    private Service service;
 
-    private Element requestHeader;
-    private Element responseHeader;
-
-    private MessageDestination replyDestination;
-    private MessageDestination faultDestination;
-
+    private MessageExchange exchange;
+    private InMessage inMessage;
+    private OutMessage replyMessage;
+    
+    private Stack handlerStack;
+    
     public MessageContext()
     {
         properties = new HashMap();
         messageContexts.set(this);
+        handlerStack = new Stack();
     }
 
     /**
@@ -55,41 +54,69 @@ public class MessageContext
      */
     public MessageContext(String service,
                           String action,
-                          OutputStream response,
-                          Session session,
-                          String requestUri)
+                          Session session)
     {
-        messageContexts.set(this);
-
-        properties = new HashMap();
+        this();
 
         this.serviceName = service;
         this.action = action;
         this.session = session;
-        this.requestUri = requestUri;
-
-        this.replyDestination = new MessageDestination(response, requestUri);
-        this.faultDestination = replyDestination;
     }
 
-    public MessageDestination getFaultDestination()
+    public MessageExchange createMessageExchange(OperationInfo operation)
     {
-        return faultDestination;
+        MessageExchange ex = createMessageExchange(operation.getMEP());
+        ex.setOperation(operation);
+        
+        return ex;
     }
 
-    public void setFaultDestination(MessageDestination faultDestination)
+    public MessageExchange createMessageExchange(String mepUri)
     {
-        this.faultDestination = faultDestination;
+        MessageExchange ex = null;
+        
+        if (mepUri.equals(SoapConstants.MEP_IN_OUT))
+        {
+            ex = new RobustInOutExchange(this);
+        }
+        else if (mepUri.equals(SoapConstants.MEP_IN))
+        {
+            ex = new InExchange(this);
+        }
+        
+        setExchange(ex);
+        
+        return ex;
+    }
+    
+    public MessageExchange getExchange()
+    {
+        return exchange;
     }
 
-    public MessageDestination getReplyDestination()
+    public void setExchange(MessageExchange exchange)
     {
-        return replyDestination;
+        this.exchange = exchange;
     }
 
-    public void setReplyDestination(MessageDestination replyDestination)
+    public OutMessage getOutMessage()
     {
-        this.replyDestination = replyDestination;
+        return replyMessage;
+    }
+
+    public void setOutMessage(OutMessage replyDestination)
+    {
+        this.replyMessage = replyDestination;
+    }
+
+    public InMessage getInMessage()
+    {
+        return inMessage;
+    }
+
+    public void setInMessage(InMessage inMessage)
+    {
+        this.inMessage = inMessage;
     }
 
     /**
@@ -112,23 +139,14 @@ public class MessageContext
         properties.put(key, value);
     }
 
-    public String getRequestUri()
-    {
-        return requestUri;
-    }
-
-    public void setRequestUri(String requestUri)
-    {
-        this.requestUri = requestUri;
-    }
-
-    public void setRequestStream(InputStream requestStream)
+    public void setRequestStream(InputStream requestStream, String uri)
     {
         try
         {
             XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
             XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(requestStream);
-            setXMLStreamReader(xmlStreamReader);
+            
+            setInMessage(new InMessage(xmlStreamReader, uri));
         }
         catch (XMLStreamException e)
         {
@@ -171,80 +189,29 @@ public class MessageContext
         this.serviceName = service;
     }
 
-    public SoapVersion getSoapVersion()
-    {
-        return soapVersion;
-    }
-
-    public void setSoapVersion(String soapVersion)
-    {
-        this.soapVersion = SoapVersionFactory.getInstance().getSoapVersion(soapVersion);
-    }
-
     /**
      * The service being invoked.
      *
      * @return
      */
-    public ServiceEndpoint getService()
+    public Service getService()
     {
         return service;
     }
 
-    public void setService(ServiceEndpoint service)
+    public void setService(Service service)
     {
         this.service = service;
     }
 
-    /**
-     * @return Returns the xmlStreamReader.
-     */
-    public XMLStreamReader getXMLStreamReader()
+    public Stack getHandlerStack()
     {
-        return xmlStreamReader;
+        return handlerStack;
     }
 
-    /**
-     * @param xmlStreamReader The xmlStreamReader to set.
-     */
-    public void setXMLStreamReader(XMLStreamReader xmlStreamReader)
+    public void setHandlerStack(Stack handlerStack)
     {
-        this.xmlStreamReader = xmlStreamReader;
+        this.handlerStack = handlerStack;
     }
-
-    /**
-     * @return Returns the transport.
-     */
-    public Transport getTransport()
-    {
-        return transport;
-    }
-
-    /**
-     * @param transport The transport to set.
-     */
-    public void setTransport(Transport transport)
-    {
-        this.transport = transport;
-    }
-
-    public Element getRequestHeader()
-    {
-        return requestHeader;
-    }
-
-    public void setRequestHeader(Element requestHeader)
-    {
-        this.requestHeader = requestHeader;
-    }
-
-    public Element getResponseHeader()
-    {
-        return responseHeader;
-    }
-
-    public void setResponseHeader(Element responseHeader)
-    {
-        this.responseHeader = responseHeader;
-    }
+    
 }

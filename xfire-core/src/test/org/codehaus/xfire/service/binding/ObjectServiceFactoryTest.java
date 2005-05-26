@@ -3,7 +3,7 @@ package org.codehaus.xfire.service.binding;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
@@ -35,9 +35,9 @@ public class ObjectServiceFactoryTest
     public void testCreateClass()
             throws Exception
     {
-        ServiceEndpoint endpoint = objectServiceFactory.create(Echo.class);
+        Service endpoint = objectServiceFactory.create(Echo.class);
         assertNotNull(endpoint);
-        ServiceInfo service = endpoint.getService();
+        ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
         assertEquals(Soap11.getInstance(), endpoint.getSoapVersion());
         
@@ -50,12 +50,12 @@ public class ObjectServiceFactoryTest
     public void testCreateVersionStyleUse()
             throws Exception
     {
-        ServiceEndpoint endpoint = objectServiceFactory.create(Echo.class,
+        Service endpoint = objectServiceFactory.create(Echo.class,
                                                                Soap12.getInstance(),
                                                                SoapConstants.STYLE_RPC,
                                                                SoapConstants.USE_ENCODED);
         assertNotNull(endpoint);
-        ServiceInfo service = endpoint.getService();
+        ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
         
@@ -68,7 +68,7 @@ public class ObjectServiceFactoryTest
     public void testCreateNameNamespaceVersionStyleUseEncodingStyle()
             throws Exception
     {
-        ServiceEndpoint endpoint = objectServiceFactory.create(Echo.class,
+        Service endpoint = objectServiceFactory.create(Echo.class,
                                                                "EchoService",
                                                                "http://xfire.codehaus.org",
                                                                Soap12.getInstance(),
@@ -76,7 +76,7 @@ public class ObjectServiceFactoryTest
                                                                SoapConstants.USE_ENCODED,
                                                                null);
         assertNotNull(endpoint);
-        ServiceInfo service = endpoint.getService();
+        ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://xfire.codehaus.org", "EchoService"), service.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
         
@@ -88,7 +88,7 @@ public class ObjectServiceFactoryTest
     public void testCreateNameNamespaceNull()
             throws Exception
     {
-        ServiceEndpoint endpoint = objectServiceFactory.create(Echo.class,
+        Service endpoint = objectServiceFactory.create(Echo.class,
                                                                null,
                                                                null,
                                                                Soap12.getInstance(),
@@ -96,7 +96,7 @@ public class ObjectServiceFactoryTest
                                                                SoapConstants.USE_ENCODED,
                                                                null);
         assertNotNull(endpoint);
-        ServiceInfo service = endpoint.getService();
+        ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
 

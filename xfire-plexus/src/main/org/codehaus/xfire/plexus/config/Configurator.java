@@ -1,7 +1,7 @@
 package org.codehaus.xfire.plexus.config;
 
 import org.codehaus.plexus.configuration.PlexusConfiguration;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 
 /**
  * Builds a service of a specified type from a plexus
@@ -14,6 +14,6 @@ public interface Configurator
 {
     String ROLE = Configurator.class.getName();
 
-    public ServiceEndpoint createService( PlexusConfiguration config ) 
+    public Service createService( PlexusConfiguration config ) 
         throws Exception;
 }

@@ -46,6 +46,10 @@ public class SoapConstants
      */
     public static final String XSD = "http://www.w3.org/2001/XMLSchema";
     public static final String XSD_PREFIX = "xsd";
+
     public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
+    public static final String MEP_IN_OUT = "urn:xfire:mep:in-out";
+    public static final String MEP_IN = "urn:xfire:mep:in";
+    
 }

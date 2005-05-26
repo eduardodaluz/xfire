@@ -1,15 +1,11 @@
 package org.codehaus.xfire.handler;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.soap.SoapHandler;
+import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.wsdl.ResourceWSDL;
-import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 
 /**
@@ -25,24 +21,22 @@ public class SoapHandlerTest
             throws Exception
     {
         super.setUp();
-        ServiceInfo serviceInfo = new ServiceInfo(new QName("Echo"), getClass());
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
-        WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
-        endpoint.setWSDLWriter(writer);
-
-        endpoint.setBinding(new EndpointTestHandler());
-        endpoint.setServiceHandler(new SoapHandler());
-        endpoint.setFaultHandler(new Soap12FaultHandler());
+        
+        Service endpoint = getServiceFactory().create(Echo.class,
+                                                      Soap12.getInstance(),
+                                                      SoapConstants.STYLE_MESSAGE,
+                                                      SoapConstants.USE_LITERAL);
 
         HandlerPipeline reqPipeline = new HandlerPipeline();
         reqHandler = new CheckpointHandler();
         reqPipeline.addHandler(reqHandler);
-        endpoint.setRequestPipeline(reqPipeline);
+        endpoint.setInPipeline(reqPipeline);
 
         HandlerPipeline resPipeline = new HandlerPipeline();
         resHandler = new CheckpointHandler();
         resPipeline.addHandler(resHandler);
-        endpoint.setResponsePipeline(resPipeline);
+        resPipeline.addHandler(new EchoHeaderHandler());
+        endpoint.setOutPipeline(resPipeline);
 
         getServiceRegistry().register(endpoint);
     }
@@ -67,6 +61,8 @@ public class SoapHandlerTest
         assertValid("/s:Envelope/s:Header/e:echo", response);
     }
 
+ 
+    
     public class CheckpointHandler
             extends AbstractHandler
     {
@@ -76,6 +72,15 @@ public class SoapHandlerTest
                 throws Exception
         {
             this.invoked = true;
+        }
+    }
+    public class EchoHeaderHandler
+        extends AbstractHandler
+    {
+        public void invoke(MessageContext context)
+            throws Exception
+        {
+            context.getOutMessage().setHeader(context.getInMessage().getHeader());
         }
     }
 }

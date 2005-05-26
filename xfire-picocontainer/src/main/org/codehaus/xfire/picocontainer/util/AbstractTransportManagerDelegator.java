@@ -63,4 +63,8 @@ public abstract class AbstractTransportManagerDelegator
         return getTransportManager().isEnabled(serviceName, transportName);
     }
 
+    public Collection getTransports()
+    {
+        return getTransportManager().getTransports();
+    }
 }

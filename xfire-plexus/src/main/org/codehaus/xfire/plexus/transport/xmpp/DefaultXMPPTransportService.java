@@ -1,24 +1,24 @@
 package org.codehaus.xfire.plexus.transport.xmpp;
 
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.xmpp.XFirePacketListener;
-import org.jivesoftware.smack.XMPPConnection;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
+import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.xmpp.XMPPTransport;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class DefaultXMPPTransportService
-    implements Initializable
+    implements Initializable, Serviceable
 {
     private String username;
     private String password;
     private String server;
-    private String resource;
-    
-    private XMPPConnection conn;
-    private XFirePacketListener transport;
-    private XFire xfire;
+    private ServiceLocator locator;
     
     /**
      * @throws Exception
@@ -26,14 +26,40 @@ public class DefaultXMPPTransportService
     public void initialize()
         throws Exception
     {
-        conn = new XMPPConnection(server);
-        conn.login(username, password, resource);
-        
-        transport = new XFirePacketListener(xfire, conn);
+        XMPPTransport transport = new XMPPTransport(getServiceRegistry(), server, username, password);
+        getTransportManager().register(transport);
     }
-    
-    public XMPPConnection getXMPPConnection()
+
+    public ServiceRegistry getServiceRegistry()
     {
-        return conn;
+        try
+        {
+            return (org.codehaus.xfire.plexus.ServiceRegistry) locator.lookup(
+                    org.codehaus.xfire.plexus.ServiceRegistry.ROLE);
+        }
+        catch (ComponentLookupException e)
+        {
+            throw new XFireRuntimeException("Couldn't find component.", e);
+        }
+    }
+
+    public TransportManager getTransportManager()
+    {
+        try
+        {
+            return (TransportManager) locator.lookup(TransportManager.ROLE);
+        }
+        catch (ComponentLookupException e)
+        {
+            throw new XFireRuntimeException("Couldn't find component.", e);
+        }
+    }
+
+    /**
+     * @see org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable#service(org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator)
+     */
+    public void service(ServiceLocator locator)
+    {
+        this.locator = locator;
     }
 }

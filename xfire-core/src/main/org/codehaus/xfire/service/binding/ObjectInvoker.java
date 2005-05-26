@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Session;
 
 /**
@@ -81,13 +81,13 @@ public class ObjectInvoker
     public Object getServiceObject(final MessageContext context)
             throws XFireFault
     {
-        final ServiceEndpoint service = context.getService();
+        final Service service = context.getService();
         
         if (scope == ObjectInvoker.SCOPE_APPLICATION)
         {
             if (appObj == null)
             {
-                synchronized (ServiceEndpoint.class)
+                synchronized (Service.class)
                 {
                     appObj = createServiceObject(service);
                 }
@@ -102,7 +102,7 @@ public class ObjectInvoker
             Object sessObj = session.get(key);
             if (sessObj == null)
             {
-                synchronized (ServiceEndpoint.class)
+                synchronized (Service.class)
                 {
                     sessObj = createServiceObject(service);
                     session.put(key, sessObj);
@@ -127,7 +127,7 @@ public class ObjectInvoker
      * @return
      * @throws XFireFault
      */
-    public Object createServiceObject(final ServiceEndpoint service)
+    public Object createServiceObject(final Service service)
             throws XFireFault
     {
         try
@@ -136,7 +136,7 @@ public class ObjectInvoker
 
             if (svcClass == null)
             {
-                svcClass = service.getService().getServiceClass();
+                svcClass = service.getServiceInfo().getServiceClass();
             }
 
             return svcClass.newInstance();

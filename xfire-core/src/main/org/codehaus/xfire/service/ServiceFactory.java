@@ -15,7 +15,7 @@ public interface ServiceFactory
      * @param clazz The service class used to populate the operations and parameters.
      * @return The service.
      */
-    public ServiceEndpoint create(Class clazz);
+    public Service create(Class clazz);
 
     /**
      * Create a service from the specified class.
@@ -30,7 +30,7 @@ public interface ServiceFactory
      * @see org.codehaus.xfire.soap.Soap12
      * @see org.codehaus.xfire.soap.SoapVersion
      */
-    public ServiceEndpoint create(Class clazz, SoapVersion version, String style, String use);
+    public Service create(Class clazz, SoapVersion version, String style, String use);
 
     /**
      * Create a service from the specified class.
@@ -48,7 +48,7 @@ public interface ServiceFactory
      * @see org.codehaus.xfire.soap.Soap12
      * @see org.codehaus.xfire.soap.SoapVersion
      */
-    public ServiceEndpoint create(Class clazz,
+    public Service create(Class clazz,
                                   String name,
                                   String namespace,
                                   SoapVersion version,
@@ -64,6 +64,6 @@ public interface ServiceFactory
      * @return
      * @throws Exception
      */
-    public ServiceEndpoint create(Class clazz, URL wsdlUrl)
+    public Service create(Class clazz, URL wsdlUrl)
             throws Exception;
 }

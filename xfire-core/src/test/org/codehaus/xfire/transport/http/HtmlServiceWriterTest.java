@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.custommonkey.xmlunit.XMLTestCase;
 
@@ -16,14 +16,14 @@ public class HtmlServiceWriterTest
         extends XMLTestCase
 {
     private HtmlServiceWriter htmlServiceWriter;
-    private ServiceEndpoint service;
+    private Service service;
 
     protected void setUp()
             throws Exception
     {
         htmlServiceWriter = new HtmlServiceWriter();
         ServiceInfo serviceInfo = new ServiceInfo(new QName("service"), getClass());
-        service = new ServiceEndpoint(serviceInfo);
+        service = new Service(serviceInfo);
     }
 
     public void testdescribeServices()

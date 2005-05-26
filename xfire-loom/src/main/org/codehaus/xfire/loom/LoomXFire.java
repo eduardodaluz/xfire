@@ -24,7 +24,7 @@ public class LoomXFire
         super(null, null); // Use this to prevent component instantiation in the superclass default cxtor
     }
 
-    public ServiceRegistry getServiceEndpointRegistry()
+    public ServiceRegistry getServiceRegistry()
     {
         return m_serviceRegistry;
     }

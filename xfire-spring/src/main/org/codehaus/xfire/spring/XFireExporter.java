@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
@@ -26,7 +26,7 @@ public class XFireExporter
         extends RemoteExporter
         implements Controller, InitializingBean, BeanNameAware
 {
-    private ServiceEndpoint endpoint;
+    private Service endpoint;
     private ServiceFactory serviceFactory;
     private XFireServletControllerAdapter delegate;
     private XFire xFire;
@@ -64,11 +64,11 @@ public class XFireExporter
                         "/" + binding.getUse());
         }
 
-        xFire.getServiceEndpointRegistry().register(endpoint);
+        xFire.getServiceRegistry().register(endpoint);
 
         binding.setInvoker(new BeanInvoker(getProxyForService()));
 
-        delegate = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
+        delegate = new XFireServletControllerAdapter(xFire, endpoint.getServiceInfo().getName());
     }
 
     /**

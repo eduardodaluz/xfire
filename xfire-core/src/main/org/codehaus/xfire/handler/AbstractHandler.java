@@ -1,13 +1,9 @@
 package org.codehaus.xfire.handler;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**
@@ -18,9 +14,7 @@ public abstract class AbstractHandler
     extends AbstractXFireComponent
     implements Handler
 {
-    public static final String STAX_WRITER_KEY = "xfire.stax-writer";
-
-    /**
+	/**
      * Returns null by default, indicating that no headers
      * were understood.
      * 
@@ -43,27 +37,5 @@ public abstract class AbstractHandler
      */
     public void handleFault(XFireFault fault, MessageContext context)
     {
-    }
-    
-    public XMLStreamWriter getXMLStreamWriter(MessageContext context)
-    {
-        XMLStreamWriter writer = (XMLStreamWriter) context.getProperty(STAX_WRITER_KEY);
-        
-        if ( writer == null )
-        {
-            XMLOutputFactory factory = XMLOutputFactory.newInstance();
-            try
-            {
-                writer = factory.createXMLStreamWriter(context.getReplyDestination().getOutputStream());
-            }
-            catch (XMLStreamException e)
-            {
-                throw new XFireRuntimeException("Couldn't create STAX writer.", e);
-            }
-            
-            context.setProperty(STAX_WRITER_KEY, writer);
-        }
-        
-        return writer;
     }
 }

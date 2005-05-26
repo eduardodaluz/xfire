@@ -1,12 +1,17 @@
 package org.codehaus.xfire.service.binding;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.exchange.MessageExchange;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.util.DepthXMLStreamReader;
 
 public abstract class AbstractBinding
     extends AbstractHandler
@@ -24,13 +29,17 @@ public abstract class AbstractBinding
     private String use;
     private Invoker invoker;
     private BindingProvider bindingProvider;
-    
-    public abstract Object[] read(MessageContext context) throws XFireFault;
-    public abstract void write(Object[] values, MessageContext context) throws XFireFault;;
 
+    public void setOperation(OperationInfo operation, MessageContext context)
+    {
+        MessageExchange exchange = context.createMessageExchange(operation);
+        
+        context.setExchange(exchange);
+    }
+    
     public OperationInfo getOperation(MessageContext context)
     {
-        return (OperationInfo) context.getProperty(OPERATION_KEY);
+        return context.getExchange().getOperation();
     }
 
     public void invoke(final MessageContext context)
@@ -39,7 +48,7 @@ public abstract class AbstractBinding
         try
         {
             // Read in the parameters...
-            final Object[] params = read(context);
+            final Object[] params = (Object[]) context.getInMessage().getBody();
 
             // Don't read the operation in until after reading. Otherwise
             // it won't work for document style services.
@@ -48,11 +57,16 @@ public abstract class AbstractBinding
             final Invoker invoker = getInvoker();
             
             // invoke the service method...
-            if (!operation.isOneWay())
+            if (!operation.isAsync())
             {
                 final Object value = invoker.invoke(operation.getMethod(), params, context);
 
-                context.setProperty(RESPONSE_VALUE, value);
+                OutMessage outMsg = context.getOutMessage();
+                if (outMsg != null)
+                {
+                    outMsg.setBody(new Object[] {value});
+                    context.setOutMessage(outMsg);
+                }
             }
             else
             {
@@ -62,11 +76,18 @@ public abstract class AbstractBinding
                     {
                         try
                         {
-                            invoker.invoke(operation.getMethod(), params, context);
+                            final Object value = invoker.invoke(operation.getMethod(), params, context);
+
+                            OutMessage outMsg = context.getOutMessage();
+                            if (outMsg != null)
+                            {
+                                outMsg.setBody(new Object[] {value});
+                                context.setOutMessage(outMsg);
+                            }
                         }
                         catch (XFireFault e)
                         {
-                            context.getService().getFaultHandler().handleFault(e, context);
+                            context.getExchange().handleFault(e);
                         }
                     }
                 };
@@ -82,19 +103,18 @@ public abstract class AbstractBinding
         }
     }
 
-    public void writeResponse(final MessageContext context)
-        throws XFireFault
+    protected void nextEvent(DepthXMLStreamReader dr)
     {
-        final Object value = context.getProperty(RESPONSE_VALUE);
-            
-        write(new Object[] { value }, context);
+        try
+        {
+            dr.next();
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
+        }
     }
 
-    public boolean hasResponse(MessageContext context)
-    {
-        return !getOperation(context).isOneWay();
-    }
- 
     public Invoker getInvoker()
     {
         return invoker;

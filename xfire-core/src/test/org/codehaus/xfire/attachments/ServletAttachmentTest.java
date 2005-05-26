@@ -12,7 +12,7 @@ import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractServletTest;
@@ -30,7 +30,7 @@ public class ServletAttachmentTest
     {
         super.setUp();
 
-        ServiceEndpoint service = getServiceFactory().create(Echo.class,
+        Service service = getServiceFactory().create(Echo.class,
                                                              Soap12.getInstance(),
                                                              SoapConstants.STYLE_MESSAGE,
                                                              SoapConstants.USE_LITERAL);

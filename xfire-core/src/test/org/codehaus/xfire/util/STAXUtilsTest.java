@@ -22,6 +22,19 @@ import org.w3c.dom.Element;
 public class STAXUtilsTest
     extends AbstractXFireTest
 {
+    public void testSkip() throws Exception
+    {
+        XMLInputFactory ifactory = XMLInputFactory.newInstance();
+        XMLStreamReader reader = ifactory.createXMLStreamReader(getClass().getResourceAsStream("/org/codehaus/xfire/util/nowhitespace.xml"));
+        
+        DepthXMLStreamReader dr = new DepthXMLStreamReader(reader);
+        STAXUtils.toNextElement(dr);
+        assertEquals("Envelope", dr.getLocalName());
+        dr.next();
+        STAXUtils.toNextElement(dr);
+        assertEquals("Header", dr.getLocalName());
+    }
+    
     public void testAmazonDoc() throws Exception
     {
         String outS = doCopy("amazon.xml");

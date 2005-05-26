@@ -2,17 +2,14 @@ package org.codehaus.xfire.fault;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.handler.BadHandler;
-import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.DOMUtils;
-import org.codehaus.xfire.wsdl.ResourceWSDL;
-import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,13 +19,13 @@ import org.w3c.dom.Node;
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class XFireFaultTest
+public class FaultSerializerTest
         extends AbstractXFireTest
 {
     public void testFaults()
             throws Exception
     {
-        Soap12FaultHandler soap12 = new Soap12FaultHandler();
+        Soap12FaultSerializer soap12 = new Soap12FaultSerializer();
 
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
@@ -45,15 +42,12 @@ public class XFireFaultTest
         fault.addNamespace("m", "urn:test");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context =
-                new MessageContext("Echo",
-                                   null,
-                                   out,
-                                   null,
-                                   null);
 
-        soap12.handleFault(fault, context);
-
+        OutMessage message = new OutMessage("urn:bleh");
+        message.setBody(fault);
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8");
+        soap12.writeMessage(message, writer, new MessageContext());
+        
         Document doc = readDocument(out.toString());
         printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
@@ -67,7 +61,7 @@ public class XFireFaultTest
     public void testFaults11()
             throws Exception
     {
-        Soap11FaultHandler soap11 = new Soap11FaultHandler();
+        Soap11FaultSerializer soap11 = new Soap11FaultSerializer();
 
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
@@ -84,15 +78,12 @@ public class XFireFaultTest
         fault.addNamespace("m", "urn:test");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context =
-                new MessageContext("Echo",
-                                   null,
-                                   out,
-                                   null,
-                                   null);
-
-        soap11.handleFault(fault, context);
-        System.err.println(out.toString());
+        
+        OutMessage message = new OutMessage("urn:bleh");
+        message.setBody(fault);
+        
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8");
+        soap11.writeMessage(message, writer, new MessageContext());
 
         Document doc = readDocument(out.toString());
         printNode(doc);
@@ -100,51 +91,5 @@ public class XFireFaultTest
         addNamespace("t", "urn:test2");
         assertValid("//detail/t:bah2[text()='bleh']", doc);
         assertValid("//faultactor[text()='http://someuri']", doc);
-    }
-
-    public void testSOAP12()
-            throws Exception
-    {
-        Soap12FaultHandler soap12 = new Soap12FaultHandler();
-
-        testHandler(soap12);
-    }
-
-    public void testSOAP11()
-            throws Exception
-    {
-        Soap11FaultHandler soap11 = new Soap11FaultHandler();
-
-        testHandler(soap11);
-    }
-
-    /**
-     * @param soap11
-     */
-    private void testHandler(FaultHandler soap11)
-    {
-        ServiceInfo serviceInfo = new ServiceInfo(new QName("Echo"), getClass());
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
-
-        WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
-        endpoint.setWSDLWriter(writer);
-
-        endpoint.setServiceHandler(new BadHandler());
-        endpoint.setFaultHandler(soap11);
-
-        getServiceRegistry().register(endpoint);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context =
-                new MessageContext("Echo",
-                                   null,
-                                   out,
-                                   null,
-                                   null);
-
-        getXFire().invoke(getResourceAsStream("/org/codehaus/xfire/echo11.xml"),
-                          context);
-
-        System.out.println(out.toString());
     }
 }

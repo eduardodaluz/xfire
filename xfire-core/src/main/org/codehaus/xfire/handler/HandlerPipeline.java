@@ -79,4 +79,15 @@ public class HandlerPipeline
     {
         return handlers.iterator();
     }
+
+    public static void invokePipeline(HandlerPipeline pipeline,
+                                      MessageContext context)
+            throws Exception
+    {
+        if (pipeline != null)
+        {
+            context.getHandlerStack().push(pipeline);
+            pipeline.invoke(context);
+        }
+    }
 }

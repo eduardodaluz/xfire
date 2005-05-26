@@ -1,6 +1,7 @@
 package org.codehaus.xfire.service.binding;
 
-import org.codehaus.xfire.handler.EndpointHandler;
+import org.codehaus.xfire.exchange.MessageSerializer;
+import org.codehaus.xfire.handler.Handler;
 
 /**
  * Binds a SOAP Body and its Headers to Java objects. It will (de)Serialize any wrapper 
@@ -8,8 +9,8 @@ import org.codehaus.xfire.handler.EndpointHandler;
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public interface ObjectBinding 
-    extends EndpointHandler
+public interface ObjectBinding
+    extends Handler, MessageSerializer
 {
     Invoker getInvoker();
     

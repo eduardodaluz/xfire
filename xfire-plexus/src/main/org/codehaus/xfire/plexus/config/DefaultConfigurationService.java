@@ -14,7 +14,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 
 /**
  * Loads in XFire components from the XFire configuration file.
@@ -67,7 +67,7 @@ public class DefaultConfigurationService
     private void createService(PlexusConfiguration c) 
         throws Exception
     {
-        ServiceEndpoint endpoint = configurator.createService(c);
+        Service endpoint = configurator.createService(c);
     }
 
 	protected Reader findConfigurationReader() throws FileNotFoundException

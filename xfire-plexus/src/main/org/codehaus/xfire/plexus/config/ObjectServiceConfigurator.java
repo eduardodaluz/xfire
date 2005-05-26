@@ -22,7 +22,7 @@ import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -45,7 +45,7 @@ public class ObjectServiceConfigurator
         extends PlexusXFireComponent
         implements Configurator
 {
-    public ServiceEndpoint createService(PlexusConfiguration config)
+    public Service createService(PlexusConfiguration config)
             throws Exception
     {
         ServiceFactory builder = getServiceFactory(config);
@@ -58,7 +58,7 @@ public class ObjectServiceConfigurator
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
 
-        ServiceEndpoint service = null;
+        Service service = null;
         if (wsdlUrl.length() > 0)
         {
             try
@@ -145,8 +145,8 @@ public class ObjectServiceConfigurator
         }
 
         // Setup pipelines
-        service.setRequestPipeline(createHandlerPipeline(config.getChild("requestHandlers")));
-        service.setResponsePipeline(createHandlerPipeline(config.getChild("responseHandlers")));
+        service.setInPipeline(createHandlerPipeline(config.getChild("requestHandlers")));
+        service.setOutPipeline(createHandlerPipeline(config.getChild("responseHandlers")));
         service.setFaultPipeline(createFaultPipeline(config.getChild("faultHandlers")));
 
         getServiceRegistry().register(service);

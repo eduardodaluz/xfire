@@ -3,7 +3,10 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -12,14 +15,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.util.STAXUtils;
 
 /**
  * Loads XFire and processes requests.
@@ -31,11 +40,14 @@ public class XFireServletController
 {
     private static ThreadLocal requests = new ThreadLocal();
     private static ThreadLocal responses = new ThreadLocal();
-
+    private final static Log logger = LogFactory.getLog(XFireServletController.class);
+    
     protected XFire xfire;
 
     protected SoapHttpTransport transport;
 
+    private Map channels = new HashMap();
+    
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
@@ -84,9 +96,9 @@ public class XFireServletController
         requests.set(request);
         responses.set(response);
 
-        if (serviceName == null || serviceName.length() == 0 || !reg.hasServiceEndpoint(serviceName))
+        if (serviceName == null || serviceName.length() == 0 || !reg.hasService(serviceName))
         {
-            if (!reg.hasServiceEndpoint(serviceName))
+            if (!reg.hasService(serviceName))
             {
                 response.setStatus(404);
             }
@@ -110,6 +122,8 @@ public class XFireServletController
         }
         catch (Exception e)
         {
+            logger.error("Couldn't invoke servlet request.", e);
+            
             if (e instanceof ServletException)
             {
                 throw (ServletException) e;
@@ -126,7 +140,7 @@ public class XFireServletController
 
     {
         response.setContentType("text/html");
-        ServiceEndpoint endpoint = getServiceRegistry().getServiceEndpoint(serviceName);
+        Service endpoint = getServiceRegistry().getService(serviceName);
         HtmlServiceWriter writer = new HtmlServiceWriter();
         try
         {
@@ -150,7 +164,7 @@ public class XFireServletController
         HtmlServiceWriter writer = new HtmlServiceWriter();
         try
         {
-            writer.write(response.getOutputStream(), getServiceRegistry().getServiceEndpoints());
+            writer.write(response.getOutputStream(), getServiceRegistry().getServices());
         }
         catch (XMLStreamException e)
         {
@@ -180,21 +194,22 @@ public class XFireServletController
         response.setContentType("text/xml; charset=UTF-8");
 
         XFireHttpSession session = new XFireHttpSession(request);
-        MessageContext context =
-                new MessageContext(service,
-                                   null,
-                                   response.getOutputStream(),
-                                   session,
-                                   request.getRequestURI());
-
-        context.setTransport(transport);
-
+        MessageContext context = new MessageContext(service, null, session);
+        context.setService(getService(service));
+        
+        Channel channel = transport.createChannel(getService(service));
+        
         String contentType = request.getContentType();
         if (null == contentType || contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
             try
             {
-                getXFire().invoke(createMIMERequest(request, context), context);
+                InputStream stream = createMIMERequest(request, context);
+                
+                XMLStreamReader reader = 
+                    STAXUtils.createXMLStreamReader(stream, request.getCharacterEncoding());
+                InMessage message = new InMessage(reader, request.getRequestURI());
+                channel.receive(context, message);
             }
             catch (MessagingException e)
             {
@@ -203,7 +218,12 @@ public class XFireServletController
         }
         else
         {
-            getXFire().invoke(request.getInputStream(), context);
+            XMLStreamReader reader = 
+                STAXUtils.createXMLStreamReader(request.getInputStream(), 
+                                                request.getCharacterEncoding());
+            
+            InMessage message = new InMessage(reader, request.getRequestURI());
+            channel.receive(context, message);
         }
     }
 
@@ -272,6 +292,11 @@ public class XFireServletController
         return serviceName;
     }
 
+    protected Service getService(String name)
+    {
+        return getXFire().getServiceRegistry().getService(name);
+    }
+
     /**
      * @return
      */
@@ -282,6 +307,6 @@ public class XFireServletController
 
     public ServiceRegistry getServiceRegistry()
     {
-        return xfire.getServiceEndpointRegistry();
+        return xfire.getServiceRegistry();
     }
 }

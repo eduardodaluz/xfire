@@ -3,7 +3,7 @@ package org.codehaus.xfire;
 import java.io.ByteArrayOutputStream;
 
 import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -25,10 +25,10 @@ public class XFireTest
     {
         super.setUp();
 
-        ServiceEndpoint service = getServiceFactory().create(Echo.class,
-                                                             Soap12.getInstance(),
-                                                             SoapConstants.STYLE_MESSAGE,
-                                                             SoapConstants.USE_LITERAL);
+        Service service = getServiceFactory().create(Echo.class,
+                                                     Soap12.getInstance(),
+                                                     SoapConstants.STYLE_MESSAGE,
+                                                     SoapConstants.USE_LITERAL);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
@@ -39,7 +39,7 @@ public class XFireTest
             throws Exception
     {
         Document response = invokeService("Echo", "/org/codehaus/xfire/echo11.xml");
-        printNode(response);
+        System.out.println(response.toXML());
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", response);
     }
@@ -47,7 +47,7 @@ public class XFireTest
     public void testWSDL()
             throws Exception
     {
-        ServiceEndpoint service = (ServiceEndpoint) getServiceRegistry().getServiceEndpoint("Echo");
+        Service service = (Service) getServiceRegistry().getService("Echo");
 
         WSDLWriter wsdl = service.getWSDLWriter();
 

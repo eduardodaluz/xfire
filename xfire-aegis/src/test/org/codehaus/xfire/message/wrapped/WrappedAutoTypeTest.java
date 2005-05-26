@@ -100,6 +100,18 @@ public class WrappedAutoTypeTest
         assertValid("//a:SubmitStringArrayResponse/a:out[text()='true']", response);
     }
 
+    public void testArrayServiceNoWhitespace()
+            throws Exception
+    {
+        Document response = invokeService("Array",
+                                          "/org/codehaus/xfire/message/wrapped/SubmitStringArray11NoWS.xml");
+
+        addNamespace("a", "urn:Array");
+        addNamespace("sb", "http://test.java.xfire.codehaus.org");
+        assertValid("//a:SubmitStringArrayResponse", response);
+        assertValid("//a:SubmitStringArrayResponse/a:out[text()='true']", response);
+    }
+
     public void testArrayServiceWSDL()
             throws Exception
     {

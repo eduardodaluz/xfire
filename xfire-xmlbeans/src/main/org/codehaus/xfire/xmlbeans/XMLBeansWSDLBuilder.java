@@ -11,7 +11,7 @@ import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,14 +19,14 @@ import org.w3c.dom.Element;
 public class XMLBeansWSDLBuilder
     extends WSDLBuilder
 {
-    public XMLBeansWSDLBuilder(ServiceEndpoint service, 
+    public XMLBeansWSDLBuilder(Service service, 
                                Collection transports,
                                Document schema) throws WSDLException
     {
         this(service, transports, new Document[] {schema});
     }
 
-    public XMLBeansWSDLBuilder(ServiceEndpoint service, 
+    public XMLBeansWSDLBuilder(Service service, 
                                Collection transports,
                                Document[] schemas) throws WSDLException
     {

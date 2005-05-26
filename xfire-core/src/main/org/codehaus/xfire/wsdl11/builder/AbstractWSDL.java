@@ -14,7 +14,7 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -38,7 +38,7 @@ public abstract class AbstractWSDL
 
     private String targetNamespace;
 
-    private ServiceEndpoint service;
+    private Service service;
 
     private Document wsdlDocument;
 
@@ -62,7 +62,7 @@ public abstract class AbstractWSDL
 
     public final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
 
-    public AbstractWSDL(ServiceEndpoint service) throws WSDLException
+    public AbstractWSDL(Service service) throws WSDLException
     {
         dependencies = new HashMap();
         this.service = service;
@@ -237,12 +237,12 @@ public abstract class AbstractWSDL
         this.def = definition;
     }
 
-    public ServiceEndpoint getService()
+    public Service getService()
     {
         return service;
     }
 
-    public void setService(ServiceEndpoint service)
+    public void setService(Service service)
     {
         this.service = service;
     }

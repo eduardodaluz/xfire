@@ -1,17 +1,13 @@
 package org.codehaus.xfire.transport.http;
 
-import javax.xml.namespace.QName;
-
-import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.handler.AsyncHandler;
-import org.codehaus.xfire.handler.BadHandler;
 import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.service.AsyncService;
+import org.codehaus.xfire.service.BadEcho;
 import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapHandler;
 import org.codehaus.xfire.test.AbstractServletTest;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
@@ -36,37 +32,32 @@ public class XFireServletTest
     {
         super.setUp();
 
-        ServiceEndpoint service = getServiceFactory().create(Echo.class,
-                                                             Soap11.getInstance(),
-                                                             SoapConstants.STYLE_MESSAGE,
-                                                             SoapConstants.USE_LITERAL);
+        Service service = getServiceFactory().create(Echo.class,
+                                                     Soap11.getInstance(),
+                                                     SoapConstants.STYLE_MESSAGE,
+                                                     SoapConstants.USE_LITERAL);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
-        service.setRequestPipeline(new HandlerPipeline());
-        service.getRequestPipeline().addHandler(new MockSessionHandler());
+        service.setInPipeline(new HandlerPipeline());
+        service.getInPipeline().addHandler(new MockSessionHandler());
         getServiceRegistry().register(service);
 
-        // A service which throws a fault
-        ServiceInfo faultInfo = new ServiceInfo(new QName("Exception"), getClass());
-        ServiceEndpoint faultEndpoint = new ServiceEndpoint(faultInfo);
+        Service faultService = getServiceFactory().create(BadEcho.class,
+                                                          Soap11.getInstance(),
+                                                          SoapConstants.STYLE_MESSAGE,
+                                                          SoapConstants.USE_LITERAL);
 
-        faultEndpoint.setBinding(new BadHandler());
-        faultEndpoint.setServiceHandler(new SoapHandler());
-        faultEndpoint.setFaultHandler(new Soap12FaultHandler());
-
-        getServiceRegistry().register(faultEndpoint);
+        getServiceRegistry().register(faultService);
         
         // Asynchronous service
-        ServiceInfo asyncInfo = new ServiceInfo(new QName("Async"), getClass());
-        ServiceEndpoint asyncEndpoint = new ServiceEndpoint(asyncInfo);
-        asyncEndpoint.setWSDLWriter(writer);
-
-        asyncEndpoint.setBinding(new AsyncHandler());
-        asyncEndpoint.setServiceHandler(new SoapHandler());
-        asyncEndpoint.setFaultHandler(new Soap12FaultHandler());
-
-        getServiceRegistry().register(asyncEndpoint);
+        Service asyncService = getServiceFactory().create(AsyncService.class,
+                                                          Soap11.getInstance(),
+                                                          SoapConstants.STYLE_MESSAGE,
+                                                          SoapConstants.USE_LITERAL);
+        OperationInfo op = asyncService.getServiceInfo().getOperation("echo");
+        op.setMEP(SoapConstants.MEP_IN);
+        getServiceRegistry().register(asyncService);
     }
 
     public void testServlet()
@@ -90,7 +81,7 @@ public class XFireServletTest
     public void testFaultCode()
             throws Exception
     {
-        WebRequest req = new PostMethodWebRequest("http://localhost/services/Exception",
+        WebRequest req = new PostMethodWebRequest("http://localhost/services/BadEcho",
                                                   getClass().getResourceAsStream("/org/codehaus/xfire/echo11.xml"),
                                                   "text/xml");
 
@@ -111,7 +102,7 @@ public class XFireServletTest
     public void testAsync()
             throws Exception
     {
-        WebRequest req = new PostMethodWebRequest("http://localhost/services/Async",
+        WebRequest req = new PostMethodWebRequest("http://localhost/services/AsyncService",
                                                   getClass().getResourceAsStream("/org/codehaus/xfire/echo11.xml"),
                                                   "text/xml");
 

@@ -1,7 +1,8 @@
 package org.codehaus.xfire.message.wrapped;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.VoidService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -19,7 +20,7 @@ public class VoidTest
     {
         super.setUp();
 
-        ServiceEndpoint endpoint = getServiceFactory().create(VoidService.class);
+        Service endpoint = getServiceFactory().create(VoidService.class);
         getServiceRegistry().register(endpoint);
     }
 
@@ -37,8 +38,10 @@ public class VoidTest
     public void testVoidAsync()
             throws Exception
     {
-        ServiceEndpoint endpoint = getServiceRegistry().getServiceEndpoint("VoidService");
-        endpoint.getService().getOperation("doNothing").setOneWay(true);
+        Service endpoint = getServiceRegistry().getService("VoidService");
+        OperationInfo op = endpoint.getServiceInfo().getOperation("doNothing");
+        op.setAsync(true);
+        op.setMEP(SoapConstants.MEP_IN);
 
         Document response =
                 invokeService("VoidService",
@@ -67,8 +70,10 @@ public class VoidTest
     public void testAsyncWSDL()
             throws Exception
     {
-        ServiceEndpoint endpoint = getServiceRegistry().getServiceEndpoint("VoidService");
-        endpoint.getService().getOperation("doNothing").setOneWay(true);
+        Service endpoint = getServiceRegistry().getService("VoidService");
+        OperationInfo op = endpoint.getServiceInfo().getOperation("doNothing");
+        op.setAsync(true);
+        op.setMEP(SoapConstants.MEP_IN);
 
         Document doc = getWSDLDocument("VoidService");
         printNode(doc);

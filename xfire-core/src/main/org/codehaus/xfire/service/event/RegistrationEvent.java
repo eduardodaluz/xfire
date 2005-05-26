@@ -2,7 +2,7 @@ package org.codehaus.xfire.service.event;
 
 import java.util.EventObject;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 
 /**
@@ -12,13 +12,13 @@ import org.codehaus.xfire.service.ServiceRegistry;
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see RegistrationEventListener
- * @see ServiceEndpoint
+ * @see Service
  * @see org.codehaus.xfire.service.ServiceRegistry
  */
 public class RegistrationEvent
         extends EventObject
 {
-    private ServiceEndpoint endpoint;
+    private Service endpoint;
 
     /**
      * Initializes a <code>RegistrationEvent</code> object initialized with the given
@@ -27,7 +27,7 @@ public class RegistrationEvent
      * @param source   the endpoint registry that is the source of the event
      * @param endpoint the endpoint that has been registered
      */
-    public RegistrationEvent(ServiceRegistry source, ServiceEndpoint endpoint)
+    public RegistrationEvent(ServiceRegistry source, Service endpoint)
     {
         super(source);
         this.endpoint = endpoint;
@@ -38,7 +38,7 @@ public class RegistrationEvent
      *
      * @return the endpoint
      */
-    public ServiceEndpoint getEndpoint()
+    public Service getEndpoint()
     {
         return endpoint;
     }

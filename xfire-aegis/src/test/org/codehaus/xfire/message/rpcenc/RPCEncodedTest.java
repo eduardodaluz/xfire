@@ -4,7 +4,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.Echo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -18,7 +18,7 @@ import org.codehaus.yom.Document;
 public class RPCEncodedTest
         extends AbstractXFireAegisTest
 {
-    private ServiceEndpoint service;
+    private Service service;
 
     public void setUp()
             throws Exception
@@ -75,7 +75,7 @@ public class RPCEncodedTest
                     "/wsdlsoap:body[@use='encoded']", doc);
         assertValid("//wsdl:binding/wsdl:operation/wsdl:input[@name='echoRequest']" +
                     "/wsdlsoap:body[@namespace='" +
-                    service.getService().getName().getNamespaceURI() + "']", doc);
+                    service.getServiceInfo().getName().getNamespaceURI() + "']", doc);
 
         assertValid("//wsdl:binding/wsdl:operation/wsdl:output[@name='echoResponse']" +
                     "/wsdlsoap:body", doc);
@@ -86,7 +86,7 @@ public class RPCEncodedTest
                     "/wsdlsoap:body[@use='encoded']", doc);
         assertValid("//wsdl:binding/wsdl:operation/wsdl:output[@name='echoResponse']" +
                     "/wsdlsoap:body[@namespace='" +
-                    service.getService().getName().getNamespaceURI() + "']", doc);
+                    service.getServiceInfo().getName().getNamespaceURI() + "']", doc);
 
         assertValid(
                 "/wsdl:definitions/wsdl:service/wsdl:port/wsdlsoap:address[@location='http://localhost/services/Echo']",

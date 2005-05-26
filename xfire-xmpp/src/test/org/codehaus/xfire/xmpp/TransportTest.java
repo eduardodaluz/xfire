@@ -1,14 +1,19 @@
 package org.codehaus.xfire.xmpp;
 
+import javax.xml.stream.XMLStreamException;
+
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.ChannelEndpoint;
+import org.codehaus.xfire.util.YOMSerializer;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.xfire.xmpp.client.EchoHandler;
-import org.codehaus.xfire.xmpp.client.XMPPClient;
 import org.codehaus.yom.Document;
+import org.codehaus.yom.stax.StaxBuilder;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.ToContainsFilter;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -16,9 +21,10 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
 public class TransportTest
         extends AbstractXFireAegisTest
 {
-    private ServiceEndpoint echo;
+    private Service echo;
 
-    XMPPConnection conn;
+    private XMPPTransport transport1;
+    private XMPPTransport transport2;
 
     String username = "xfireTestServer";
     String password = "password1";
@@ -29,54 +35,90 @@ public class TransportTest
             throws Exception
     {
         super.setUp();
-        try
-        {
-            echo = getServiceFactory().create(Echo.class);
 
-            getServiceRegistry().register(echo);
+        echo = getServiceFactory().create(Echo.class);
 
-            //XMPPConnection.DEBUG_ENABLED = true;
-            conn = new XMPPConnection(server);
-            conn.login(username, password, "Echo");
+        getServiceRegistry().register(echo);
 
-            XFirePacketListener listener = new XFirePacketListener(getXFire(), conn);
-            conn.addPacketListener(listener, new ToContainsFilter("xfireTestServer"));
-        }
-        catch (XMPPException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    protected void tearDown()
-            throws Exception
-    {
-        conn.close();
-
-        super.tearDown();
+        transport2 = new XMPPTransport(getServiceRegistry(), server, username, password);
+ 
+        getXFire().getTransportManager().register(transport2);
+        // XMPPConnection.DEBUG_ENABLED = true;
     }
 
     public void testTransport()
             throws Exception
     {
-        try
-        {
-            XMPPClient client = new XMPPClient("bloodyxml.com",
-                                               "xfireTestClient",
-                                               "password2",
-                                               "Echo",
-                                               id + "/Echo",
-                                               new EchoHandler());
+        transport1 = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
+        
+        String peer1 = "Peer1";
+        String peer2 = "Peer2";
+        
+        Channel channel1 = transport1.createChannel(peer1);
+        channel1.open();
 
-            client.invoke();
-            client.close();
-        }
-        catch (XMPPException e)
-        {
-            e.printStackTrace();
-        }
+        Channel channel2 = transport2.createChannel(peer2);
+        channel2.open();
+        channel2.setEndpoint(new YOMEndpoint());
+        
+        // Document to send
+        StaxBuilder builder = new StaxBuilder();
+        Document doc = builder.build(getResourceAsStream("/org/codehaus/xfire/xmpp/echo.xml"));
+        
+        MessageContext context = new MessageContext();
+
+        OutMessage msg = new OutMessage(id + "/" + peer2);
+        msg.setSerializer(new YOMSerializer());
+        msg.setBody(doc);
+
+        channel1.send(context, msg);
+        Thread.sleep(1000);
+        
+        channel1.send(context, msg);
+        Thread.sleep(1000);
+
+        channel1.close();
+        channel2.close(); 
     }
 
+    public void testService()
+            throws Exception
+    {
+        transport1 = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
+        
+        String peer1 = "Peer1";
+        String peer2 = "Peer2";
+        
+        Channel channel1 = transport1.createChannel(peer1);
+        channel1.open();
+        YOMEndpoint peer = new YOMEndpoint();
+        channel1.setEndpoint(peer);
+        
+        Channel channel2 = transport2.createChannel(echo);
+        channel2.open();
+
+        // Document to send
+        StaxBuilder builder = new StaxBuilder();
+        Document doc = builder.build(getResourceAsStream("/org/codehaus/xfire/xmpp/echo.xml"));
+        
+        MessageContext context = new MessageContext();
+
+        OutMessage msg = new OutMessage(id + "/" + peer2);
+        msg.setSerializer(new YOMSerializer());
+        msg.setBody(doc);
+
+        channel1.send(context, msg);
+        Thread.sleep(1000);
+        
+        channel1.send(context, msg);
+        Thread.sleep(1000);
+
+        channel1.close();
+        channel2.close(); 
+        
+        assertEquals(2, peer.getCount());
+    }
+ 
     public void testWSDL()
             throws Exception
     {
@@ -91,6 +133,33 @@ public class TransportTest
 
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']", wsdl);
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +
-                    "/swsdl:address[@location='xfiretestserver@bloodyxml.com/Echo']", wsdl);
+                    "/swsdl:address[@location='xfireTestServer@bloodyxml.com/Echo']", wsdl);
+    }
+    
+    public class YOMEndpoint
+        implements ChannelEndpoint
+    {
+        private int count = 0;
+        
+        public void onReceive(MessageContext context, InMessage msg)
+        {
+            count++;
+            
+            StaxBuilder builder = new StaxBuilder();
+            try
+            {
+                Document doc = builder.build(msg.getXMLStreamReader());
+                System.out.println("Received message.");
+            }
+            catch (XMLStreamException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        
+        public int getCount()
+        {
+            return count;
+        }
     }
 }

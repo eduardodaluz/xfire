@@ -26,6 +26,8 @@ public interface TransportManager
      */
     Collection getTransports(String service);
 
+    Collection getTransports();
+
     void enableAll(String serviceName);
 
     void disableAll(String serviceName);

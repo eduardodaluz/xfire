@@ -20,14 +20,14 @@ public interface Visitor
      *
      * @param endpoint the service endpoint.
      */
-    void startEndpoint(ServiceEndpoint endpoint);
+    void startEndpoint(Service endpoint);
 
     /**
      * Receive notatification of the end of a endpoint visit.
      *
      * @param endpoint
      */
-    void endEndpoint(ServiceEndpoint endpoint);
+    void endEndpoint(Service endpoint);
 
     /**
      * Receive notification at the beginning of a service visit.

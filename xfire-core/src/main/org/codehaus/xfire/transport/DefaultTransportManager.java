@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.AbstractXFireComponent;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
+import org.codehaus.xfire.transport.local.LocalTransport;
 
 /**
  * The default <code>TransportService</code> implementation.
@@ -20,16 +23,20 @@ public class DefaultTransportManager
         extends AbstractXFireComponent
         implements TransportManager, RegistrationEventListener
 {
+    private static final Log log = LogFactory.getLog(DefaultTransportManager.class);
+
     private Map services = new HashMap();
     private Map transports = new HashMap();
 
     protected DefaultTransportManager()
     {
+        register(new LocalTransport());
     }
 
     public DefaultTransportManager(ServiceRegistry registry)
     {
         initializeTransports(registry);
+        register(new LocalTransport());
     }
 
     /**
@@ -37,9 +44,9 @@ public class DefaultTransportManager
      */
     protected void initializeTransports(ServiceRegistry registry)
     {
-        for (Iterator itr = registry.getServiceEndpoints().iterator(); itr.hasNext();)
+        for (Iterator itr = registry.getServices().iterator(); itr.hasNext();)
         {
-            ServiceEndpoint endpoint = (ServiceEndpoint) itr.next();
+            Service endpoint = (Service) itr.next();
             enableAll(endpoint.getName());
         }
         registry.addRegistrationEventListener(this);
@@ -55,6 +62,8 @@ public class DefaultTransportManager
             Map serviceTransports = (Map) itr.next();
             serviceTransports.put(transport.getName(), transport);
         }
+
+        log.debug("Registered transport " + transport.getName());
     }
 
     public void unregister(Transport transport)
@@ -117,6 +126,11 @@ public class DefaultTransportManager
             return null;
     }
 
+    public Collection getTransports()
+    {
+        return transports.values();
+    }
+
     /**
      * @param serviceName
      */
@@ -148,11 +162,11 @@ public class DefaultTransportManager
             return;
         }
 
-        for (Iterator itr = transports.values().iterator(); itr.hasNext();)
+        for (Iterator itr = transports.keySet().iterator(); itr.hasNext();)
         {
-            Transport t = (Transport) itr.next();
+            String name = (String) itr.next();
 
-            serviceTransports.remove(t);
+            serviceTransports.remove(name);
         }
     }
 

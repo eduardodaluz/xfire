@@ -61,6 +61,8 @@ public class XFireWebAnnotationsHandlerMappingTest
         control.setReturnValue(false);
         webAnnotations.hasOnewayAnnotation(echoMethod);
         control.setReturnValue(false);
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        control.setReturnValue(false);
 
         control.replay();
 

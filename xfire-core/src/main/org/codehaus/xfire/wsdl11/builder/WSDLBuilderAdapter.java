@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import javax.wsdl.WSDLException;
 
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
@@ -19,11 +19,11 @@ import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 public class WSDLBuilderAdapter
         implements WSDLWriter
 {
-    private ServiceEndpoint service;
+    private Service service;
     private TransportManager transportManager;
     private WSDL11ParameterBinding paramBinding;
     
-    public WSDLBuilderAdapter(ServiceEndpoint service, 
+    public WSDLBuilderAdapter(Service service, 
                               TransportManager transports,
                               WSDL11ParameterBinding paramBinding)
     {

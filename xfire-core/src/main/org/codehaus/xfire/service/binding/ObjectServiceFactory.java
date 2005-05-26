@@ -9,17 +9,17 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.fault.Soap11FaultHandler;
-import org.codehaus.xfire.fault.Soap12FaultHandler;
-import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.exchange.MessageSerializer;
+import org.codehaus.xfire.fault.Soap11FaultSerializer;
+import org.codehaus.xfire.fault.Soap12FaultSerializer;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapHandler;
+import org.codehaus.xfire.soap.SoapSerializer;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -39,13 +39,17 @@ public class ObjectServiceFactory
 {
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
-    private Handler serviceHandler = new SoapHandler();
-    
+    private MessageSerializer serializer = new SoapSerializer();
+    private String style;
+    private String use;
+
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      */
     public ObjectServiceFactory()
     {
+        setStyle(SoapConstants.STYLE_WRAPPED);
+        setUse(SoapConstants.USE_LITERAL);
     }
 
     /**
@@ -57,6 +61,8 @@ public class ObjectServiceFactory
      */
     public ObjectServiceFactory(TransportManager transportManager, BindingProvider provider)
     {
+        this();
+        
         this.bindingProvider = provider;
         this.transportManager = transportManager;
     }
@@ -83,7 +89,7 @@ public class ObjectServiceFactory
      * @param wsdlUrl
      * @return
      */
-    public ServiceEndpoint create(Class clazz, URL wsdlUrl)
+    public Service create(Class clazz, URL wsdlUrl)
             throws Exception
     {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
@@ -91,12 +97,11 @@ public class ObjectServiceFactory
 
         QName name = ServiceUtils.makeQualifiedNameFromClass(clazz);
         ServiceInfo serviceInfo = new ServiceInfo(name, clazz);
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
+        Service endpoint = new Service(serviceInfo);
 
-        endpoint.setFaultHandler(new Soap11FaultHandler());
         endpoint.setWSDLWriter(new ResourceWSDL(wsdlUrl));
 
-        endpoint.setServiceHandler( new SoapHandler());
+        endpoint.setSerializer(serializer);
 
         // TODO: Bring wsdl configuration functionality back!
 
@@ -112,7 +117,7 @@ public class ObjectServiceFactory
      * @param clazz The service class used to populate the operations and parameters.
      * @return The service.
      */
-    public ServiceEndpoint create(Class clazz)
+    public Service create(Class clazz)
     {
         return create(clazz, null, null, null);
     }
@@ -132,7 +137,7 @@ public class ObjectServiceFactory
      *                will be used.
      * @return The service.
      */
-    public ServiceEndpoint create(Class clazz, SoapVersion version, String style, String use)
+    public Service create(Class clazz, SoapVersion version, String style, String use)
     {
         return create(clazz, null, null, version, style, use, null);
     }
@@ -168,7 +173,7 @@ public class ObjectServiceFactory
      * @param encodingStyleURI The encoding style to use.
      * @return The service.
      */
-    public ServiceEndpoint create(Class clazz,
+    public Service create(Class clazz,
                                   String name,
                                   String namespace,
                                   SoapVersion version,
@@ -181,28 +186,30 @@ public class ObjectServiceFactory
                 clazz.getName(), "http");
         QName qName = new QName(theNamespace, theName);
         SoapVersion theVersion = (version != null) ? version : Soap11.getInstance();
-        String theStyle = (style != null) ? style : SoapConstants.STYLE_WRAPPED;
-        String theUse = (use != null) ? use : SoapConstants.USE_LITERAL;
+        String theStyle = (style != null) ? style : this.style;
+        String theUse = (use != null) ? use : this.use;
 
         ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
         
-        ServiceEndpoint endpoint = new ServiceEndpoint(serviceInfo);
+        Service endpoint = new Service(serviceInfo);
         endpoint.setSoapVersion(theVersion);
         
         ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
         binding.setInvoker(new ObjectInvoker());
         endpoint.setBinding(binding);
 
+        endpoint.setSerializer(serializer);
+
         if (encodingStyleURI != null)
             endpoint.setProperty("type.encodingUri", encodingStyleURI);
 
         if (version instanceof Soap11)
         {
-            endpoint.setFaultHandler(new Soap11FaultHandler());
+            endpoint.setFaultSerializer(new Soap11FaultSerializer());
         }
         else
         {
-            endpoint.setFaultHandler(new Soap12FaultHandler());
+            endpoint.setFaultSerializer(new Soap12FaultSerializer());
         }
 
         if (transportManager != null && binding instanceof WSDL11ParameterBinding)
@@ -211,8 +218,6 @@ public class ObjectServiceFactory
                                                           transportManager, 
                                                           (WSDL11ParameterBinding) binding));
         }
-
-        endpoint.setServiceHandler(serviceHandler);
 
         initializeOperations(endpoint);
 
@@ -231,9 +236,9 @@ public class ObjectServiceFactory
         return endpoint;
     }
 
-    protected void initializeOperations(ServiceEndpoint endpoint)
+    protected void initializeOperations(Service endpoint)
     {
-        final Method[] methods = endpoint.getService().getServiceClass().getDeclaredMethods();
+        final Method[] methods = endpoint.getServiceInfo().getServiceClass().getDeclaredMethods();
 
         // TODO: go through superclasses, stopping at Object.class
 
@@ -255,9 +260,9 @@ public class ObjectServiceFactory
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
-    protected void addOperation(ServiceEndpoint endpoint, final Method method)
+    protected void addOperation(Service endpoint, final Method method)
     {
-        ServiceInfo service = endpoint.getService();
+        ServiceInfo service = endpoint.getServiceInfo();
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         
         final OperationInfo op = service.addOperation(method.getName(), method);
@@ -285,7 +290,13 @@ public class ObjectServiceFactory
             outMsg.addMessagePart(q, method.getReturnType());
         }
 
-        op.setOneWay(isAsync(method));
+        op.setMEP(getMEP(method));
+        op.setAsync(isAsync(method));
+    }
+
+    protected String getMEP(final Method method)
+    {
+        return SoapConstants.MEP_IN_OUT;
     }
 
     protected boolean isAsync(final Method method)
@@ -293,7 +304,7 @@ public class ObjectServiceFactory
         return false;
     }
 
-    protected QName getInParameterName(ServiceEndpoint endpoint,
+    protected QName getInParameterName(Service endpoint,
                                        final Method method,
                                        final int paramNumber,
                                        final boolean doc)
@@ -302,26 +313,26 @@ public class ObjectServiceFactory
         if (doc)
             paramName = method.getName();
 
-        return new QName(endpoint.getService().getName().getNamespaceURI(), paramName + "in" + paramNumber);
+        return new QName(endpoint.getServiceInfo().getName().getNamespaceURI(), paramName + "in" + paramNumber);
     }
 
-    protected QName getOutParameterName(ServiceEndpoint endpoint, final Method method, final boolean doc)
+    protected QName getOutParameterName(Service endpoint, final Method method, final boolean doc)
     {
         String outName = "";
         if (doc)
             outName = method.getName();
 
-        return new QName(endpoint.getService().getName().getNamespaceURI(), outName + "out");
+        return new QName(endpoint.getServiceInfo().getName().getNamespaceURI(), outName + "out");
     }
 
-    public Handler getServiceHandler()
+    public MessageSerializer getSerializer()
     {
-        return serviceHandler;
+        return serializer;
     }
 
-    public void setServiceHandler(Handler serviceHandler)
+    public void setSerializer(MessageSerializer serializer)
     {
-        this.serviceHandler = serviceHandler;
+        this.serializer = serializer;
     }
 
     public TransportManager getTransportManager()
@@ -337,5 +348,25 @@ public class ObjectServiceFactory
     public void setBindingProvider(BindingProvider bindingProvider)
     {
         this.bindingProvider = bindingProvider;
+    }
+
+    public String getStyle()
+    {
+        return style;
+    }
+
+    public void setStyle(String style)
+    {
+        this.style = style;
+    }
+
+    public String getUse()
+    {
+        return use;
+    }
+
+    public void setUse(String use)
+    {
+        this.use = use;
     }
 }

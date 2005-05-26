@@ -8,12 +8,15 @@ import java.util.List;
 import javax.wsdl.Message;
 import javax.wsdl.Part;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
@@ -33,13 +36,17 @@ public class DocumentBinding
         setUse(SoapConstants.USE_LITERAL);
     }
 
-    public Object[] read(MessageContext context) throws XFireFault
+    public void readMessage(InMessage inMessage, MessageContext context)
+        throws XFireFault
     {
-        ServiceEndpoint endpoint = context.getService();
+        Service endpoint = context.getService();
         
         List parameters = new ArrayList();
-        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getXMLStreamReader());
+        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
 
+        // Move from Body element to whitespace or start element
+        nextEvent(dr);
+        
         while (STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p = findMessagePart(endpoint, dr.getName());
@@ -50,30 +57,31 @@ public class DocumentBinding
                                      XFireFault.SENDER);
             }
 
-            parameters.add( getBindingProvider().readParameter(p, context) );
+            parameters.add( getBindingProvider().readParameter(p, dr, context) );
         }
 
-        context.setProperty(OPERATION_KEY, 
-                            findOperation(endpoint, parameters.size()) );
+        setOperation(findOperation(endpoint, parameters.size()), context);
         
-        return parameters.toArray();
+        context.getInMessage().setBody(parameters.toArray());
     }
 
-    public void write(Object[] values, MessageContext context) throws XFireFault
+    public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
+        throws XFireFault
     {
+        Object[] values = (Object[]) message.getBody();
         int i = 0;
         for(Iterator itr = getOperation(context).getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo outParam = (MessagePartInfo) itr.next();
             
-            getBindingProvider().writeParameter(outParam, context, values[i]);
+            getBindingProvider().writeParameter(outParam, writer, context, values[i]);
             i++;
         }
     }
 
-    protected OperationInfo findOperation(ServiceEndpoint endpoint, int i)
+    protected OperationInfo findOperation(Service endpoint, int i)
     {
-        for ( Iterator itr = endpoint.getService().getOperations().iterator(); itr.hasNext(); )
+        for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo o = (OperationInfo) itr.next();
             if ( o.getInputMessage().getMessageParts().size() == i )
@@ -83,9 +91,9 @@ public class DocumentBinding
         return null;
     }
     
-    protected MessagePartInfo findMessagePart(ServiceEndpoint endpoint, QName name)
+    protected MessagePartInfo findMessagePart(Service endpoint, QName name)
     {
-        for ( Iterator itr = endpoint.getService().getOperations().iterator(); itr.hasNext(); )
+        for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo op = (OperationInfo) itr.next();
             MessagePartInfo p = op.getInputMessage().getMessagePart(name);
@@ -97,7 +105,7 @@ public class DocumentBinding
     }
     
     
-    public void createInputParts(ServiceEndpoint endpoint, 
+    public void createInputParts(Service endpoint, 
                                  AbstractWSDL wsdl,
                                  Message req, 
                                  OperationInfo op)
@@ -105,7 +113,7 @@ public class DocumentBinding
         writeParameters(endpoint, wsdl, req, op.getInputMessage().getMessageParts());
     }
 
-    public void createOutputParts(ServiceEndpoint endpoint, 
+    public void createOutputParts(Service endpoint, 
                                   AbstractWSDL wsdl,
                                   Message req, 
                                   OperationInfo op)
@@ -113,7 +121,7 @@ public class DocumentBinding
         writeParameters(endpoint, wsdl, req, op.getOutputMessage().getMessageParts());
     }
 
-    private void writeParameters(ServiceEndpoint service, 
+    private void writeParameters(Service service, 
                                  AbstractWSDL wsdl,
                                  Message message, 
                                  Collection params)

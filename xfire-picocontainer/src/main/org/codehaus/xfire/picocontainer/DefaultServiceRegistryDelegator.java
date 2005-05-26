@@ -19,7 +19,7 @@ public final class DefaultServiceRegistryDelegator
 
     public DefaultServiceRegistryDelegator(final XFire xfire)
     {
-        serviceRegistry = xfire.getServiceEndpointRegistry();
+        serviceRegistry = xfire.getServiceRegistry();
     }
 
     public ServiceRegistry getServiceRegistry()

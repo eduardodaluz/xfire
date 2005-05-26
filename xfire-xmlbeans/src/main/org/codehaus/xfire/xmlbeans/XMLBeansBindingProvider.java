@@ -1,6 +1,7 @@
 package org.codehaus.xfire.xmlbeans;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.xmlbeans.XmlException;
@@ -8,9 +9,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -25,16 +25,17 @@ public class XMLBeansBindingProvider
     }
     
     
-    public void initialize(ServiceEndpoint newParam)
+    public void initialize(Service newParam)
     {
     }
 
-    public Object readParameter(MessagePartInfo p, MessageContext context)
+
+    public Object readParameter(MessagePartInfo p, XMLStreamReader reader, MessageContext context)
         throws XFireFault
     {
         try
         {
-            return XmlObject.Factory.parse(context.getXMLStreamReader());
+            return XmlObject.Factory.parse(reader);
         }
         catch( XmlException e )
         {
@@ -42,7 +43,7 @@ public class XMLBeansBindingProvider
         }
     }
 
-    public void writeParameter(MessagePartInfo p, MessageContext context, Object value)
+    public void writeParameter(MessagePartInfo p, XMLStreamWriter writer, MessageContext context, Object value)
         throws XFireFault
     {
         try
@@ -50,7 +51,7 @@ public class XMLBeansBindingProvider
             XmlObject obj = (XmlObject) value; 
 
             STAXUtils.copy(obj.newXMLStreamReader(), 
-                           (XMLStreamWriter) context.getProperty(AbstractHandler.STAX_WRITER_KEY));
+                           writer);
             
             /*XmlCursor cursor = obj.newCursor();
             if (cursor.toFirstChild() && cursor.toFirstChild())
@@ -69,7 +70,7 @@ public class XMLBeansBindingProvider
         }
     }
 
-    public SchemaType getSchemaType(ServiceEndpoint service, MessagePartInfo param)
+    public SchemaType getSchemaType(Service service, MessagePartInfo param)
     {
         return new XMLBeansType();
     }

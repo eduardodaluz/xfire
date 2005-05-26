@@ -1,6 +1,6 @@
 package org.codehaus.xfire.test;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
 
 /**
@@ -11,7 +11,7 @@ import org.codehaus.xfire.transport.http.SoapHttpTransport;
 public class TestHttpTransport
     extends SoapHttpTransport
 {
-    public String getServiceURL( ServiceEndpoint service )
+    public String getServiceURL( Service service )
     {
         return "http://localhost/services/" + service.getName();
 	}

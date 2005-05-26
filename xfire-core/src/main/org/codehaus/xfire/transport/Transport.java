@@ -9,6 +9,7 @@ import org.codehaus.xfire.handler.HandlerPipeline;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public interface Transport
+    extends ChannelFactory
 {
     String getName();
 

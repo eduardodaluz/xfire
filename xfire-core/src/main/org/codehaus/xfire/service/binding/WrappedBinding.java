@@ -13,12 +13,14 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.MessageSerializer;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
@@ -30,31 +32,39 @@ import org.codehaus.yom.Element;
 
 public class WrappedBinding
     extends AbstractBinding
-    implements WSDL11ParameterBinding
+    implements WSDL11ParameterBinding, MessageSerializer
 {
     public WrappedBinding()
     {
         setStyle(SoapConstants.STYLE_WRAPPED);
         setUse(SoapConstants.USE_LITERAL);
     }
-
-    public Object[] read(MessageContext context) throws XFireFault
+    
+    public void readMessage(InMessage inMessage, MessageContext context)
+        throws XFireFault
     {
-        ServiceEndpoint endpoint = context.getService();
+        Service endpoint = context.getService();
         
         List parameters = new ArrayList();
-        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getXMLStreamReader());
+        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
+        
+        // Move from Body element to whitespace or start element
+        nextEvent(dr);
         
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
-        OperationInfo op = endpoint.getService().getOperation( dr.getLocalName() );
+        OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
         
         if (op == null)
         {
-            throw new XFireFault("Invalid operation.", XFireFault.SENDER);
+            throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
         }
-        context.setProperty(OPERATION_KEY, op);
+
+        setOperation(op, context);
+        
+        // Move from Operation element to whitespace or start element
+        nextEvent(dr);
         
         while(STAXUtils.toNextElement(dr))
         {
@@ -66,29 +76,30 @@ public class WrappedBinding
                                      XFireFault.SENDER);
             }
 
-            parameters.add( getBindingProvider().readParameter(p, context) );
+            parameters.add( getBindingProvider().readParameter(p, inMessage.getXMLStreamReader(), context) );
         }
         
-        return parameters.toArray();
+        inMessage.setBody(parameters.toArray());
     }
-
-    public void write(Object[] values, MessageContext context) throws XFireFault
+    
+    public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
+        throws XFireFault
     {
         try
         {
-            ServiceEndpoint endpoint = context.getService();
-            XMLStreamWriter writer = (XMLStreamWriter) context.getProperty(AbstractHandler.STAX_WRITER_KEY);
+            Service endpoint = context.getService();
+            Object[] values = (Object[]) message.getBody();
             
             OperationInfo op = getOperation(context);
             String name = op.getName() + "Response";
-            writeStartElement(writer, name, endpoint.getService().getName().getNamespaceURI());
+            writeStartElement(writer, name, endpoint.getServiceInfo().getName().getNamespaceURI());
             
             int i = 0;
             for(Iterator itr = op.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
             {
                 MessagePartInfo outParam = (MessagePartInfo) itr.next();
     
-                getBindingProvider().writeParameter(outParam, context, values[i]);
+                getBindingProvider().writeParameter(outParam, writer, context, values[i]);
                 i++;
             }
     
@@ -110,7 +121,7 @@ public class WrappedBinding
         writer.writeNamespace(prefix, namespace);
     }
 
-    public void createInputParts(ServiceEndpoint endpoint, 
+    public void createInputParts(Service endpoint, 
                                  AbstractWSDL wsdl,
                                  Message req, 
                                  OperationInfo op)
@@ -128,7 +139,7 @@ public class WrappedBinding
         req.addPart(part);
     }
 
-    public void createOutputParts(ServiceEndpoint endpoint, 
+    public void createOutputParts(Service endpoint, 
                                   AbstractWSDL wsdl,
                                   Message req, 
                                   OperationInfo op)
@@ -148,7 +159,7 @@ public class WrappedBinding
         req.addPart(part);
     }
     
-    private QName createDocumentType(ServiceEndpoint service, 
+    private QName createDocumentType(Service service, 
                                      AbstractWSDL wsdl,
                                      MessageInfo message, 
                                      Part part,
@@ -177,7 +188,7 @@ public class WrappedBinding
      * @param op
      * @param sequence
      */
-    private void writeParametersSchema(ServiceEndpoint service, 
+    private void writeParametersSchema(Service service, 
                                        AbstractWSDL wsdl,
                                        Collection params, 
                                        Element sequence)

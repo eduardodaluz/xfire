@@ -7,7 +7,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 
 /**
@@ -15,7 +15,7 @@ import org.codehaus.xfire.service.ServiceInfo;
  * <code>ServiceEndpoint</code> to test their code.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
- * @see ServiceEndpoint
+ * @see Service
  */
 public class ServiceEndpoints
 {
@@ -34,7 +34,7 @@ public class ServiceEndpoints
      *
      * @return an echo service endpoint.
      */
-    public static ServiceEndpoint getEchoService()
+    public static Service getEchoService()
     {
         Class echoClass = EchoImpl.class;
         Method echoMethod = null;
@@ -55,7 +55,7 @@ public class ServiceEndpoints
         inputMessage.addMessagePart(new QName("echoRequestin0"), String.class);
         outputMessage.addMessagePart(new QName("echoResponseout"), String.class);
 
-        return new ServiceEndpoint(service);
+        return new Service(service);
     }
 
     /**
@@ -65,10 +65,10 @@ public class ServiceEndpoints
      *
      * @return the echo service endpoint.
      */
-    public static ServiceEndpoint getEchoFaultService()
+    public static Service getEchoFaultService()
     {
-        ServiceEndpoint endpoint = getEchoService();
-        OperationInfo operation = endpoint.getService().getOperation("echo");
+        Service endpoint = getEchoService();
+        OperationInfo operation = endpoint.getServiceInfo().getOperation("echo");
         FaultInfo fault = operation.addFault("echoFault");
         fault.addMessagePart(new QName("echoFault0"), String.class);
 

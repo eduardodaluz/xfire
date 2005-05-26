@@ -1,27 +1,33 @@
 package org.codehaus.xfire.transport.http;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceEndpoint;
-import org.codehaus.xfire.transport.AbstractTransport;
-import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.wsdl11.WSDL11Transport;
+import org.codehaus.xfire.transport.AbstractWSDLTransport;
+import org.codehaus.xfire.transport.Channel;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class SoapHttpTransport
-    extends AbstractTransport
-	implements Transport, WSDL11Transport
+    extends AbstractWSDLTransport
 {
+    private static final Log log = LogFactory.getLog(SoapHttpTransport.class);
+    
     public final static String NAME = "Http";
 
-    public static final String HTTP_TRANSPORT_NS = "http://schemas.xmlsoap.org/soap/http";
+    public final static String HTTP_TRANSPORT_NS = "http://schemas.xmlsoap.org/soap/http";
 
+    private final static String URI_PREFIX = "urn:xfire:transport:http:";
+    
     public SoapHttpTransport()
     {
         FaultHandlerPipeline faultPipe = new FaultHandlerPipeline();
@@ -37,10 +43,29 @@ public class SoapHttpTransport
         return NAME;
     }
 
+    protected Channel createNewChannel(String uri, Service service)
+    {
+        log.debug("Creating new channel for uri: " + uri);
+        
+        HttpChannel c = new HttpChannel(uri, this);
+        
+        if (service != null)
+        {
+            c.setEndpoint(new ServiceEndpoint());
+        }
+        
+        channels.put(uri, c);
+        return c;
+    }
+
+    protected String getUriPrefix()
+    {
+        return URI_PREFIX;
+    }
     /**
 	 * Get the URL for a particular service.
 	 */
-	public String getServiceURL( ServiceEndpoint service )
+	public String getServiceURL( Service service )
 	{
 		HttpServletRequest req = XFireServletController.getRequest();
         
@@ -63,7 +88,7 @@ public class SoapHttpTransport
         return output.toString();
 	}
 
-    public String getTransportURI( ServiceEndpoint service )
+    public String getTransportURI( Service service )
     {
         return HTTP_TRANSPORT_NS;
     }
@@ -93,7 +118,9 @@ public class SoapHttpTransport
          */
         public void handleFault(XFireFault fault, MessageContext context)
         {
-            XFireServletController.getResponse().setStatus(500);
+            HttpServletResponse response = XFireServletController.getResponse();
+            if ( response != null )
+                response.setStatus(500);
         }    
     }
 }

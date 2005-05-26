@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.picocontainer.util.PicoObjectInvoker;
 import org.codehaus.xfire.picocontainer.util.ThreadLocalObjectReference;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.ObjectBinding;
@@ -65,16 +65,16 @@ public class XFireServiceRegisterVisitor
         setPicocontainer(pico);
 
         // Iterate over the container looking for services and register them.
-        Iterator i = pico.getComponentInstancesOfType(ServiceEndpoint.class).iterator();
+        Iterator i = pico.getComponentInstancesOfType(Service.class).iterator();
         while (i.hasNext())
         {
-            ServiceEndpoint endpoint = (ServiceEndpoint) i.next();
+            Service endpoint = (Service) i.next();
             prepareObjectService(endpoint);
             serviceRegistry.register(endpoint);
 
             if (log.isInfoEnabled())
             {
-                log.info("Service \"" + endpoint.getService().getName() + "\" registred.");
+                log.info("Service \"" + endpoint.getServiceInfo().getName() + "\" registred.");
             }
         }
     }
@@ -83,7 +83,7 @@ public class XFireServiceRegisterVisitor
     {
         if (ca instanceof ObjectServiceComponentAdapter)
         {
-            ServiceEndpoint endpoint;
+            Service endpoint;
             if (ca.getComponentKey() instanceof Class)
             {
                 endpoint = serviceFactory.create((Class) ca.getComponentKey());
@@ -98,7 +98,7 @@ public class XFireServiceRegisterVisitor
 
             if (log.isInfoEnabled())
             {
-                log.info("Service \"" + endpoint.getService().getName() + "\" registered.");
+                log.info("Service \"" + endpoint.getServiceInfo().getName() + "\" registered.");
             }
         }
     }
@@ -111,9 +111,9 @@ public class XFireServiceRegisterVisitor
     /**
      * Prepare an ObjectService to use pico.
      */
-    protected void prepareObjectService(ServiceEndpoint endpoint)
+    protected void prepareObjectService(Service endpoint)
     {
         ((ObjectBinding) endpoint.getBinding()).setInvoker(
-            new PicoObjectInvoker(picoReference, endpoint.getService().getServiceClass()));
+            new PicoObjectInvoker(picoReference, endpoint.getServiceInfo().getServiceClass()));
     }
 }

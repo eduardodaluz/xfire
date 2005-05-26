@@ -9,19 +9,22 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
+
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
@@ -73,14 +76,11 @@ public abstract class AbstractXFireTest
             throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context =
-                new MessageContext(service,
-                                   null,
-                                   out,
-                                   null,
-                                   null);
-
-        getXFire().invoke(getResourceAsStream(document), context);
+        MessageContext context = new MessageContext(service, null, null);
+        context.setProperty(Channel.BACKCHANNEL_URI, out);
+        
+        InputStream stream = getResourceAsStream(document); 
+        getXFire().invoke(stream, context);
 
         String response = out.toString();
         if (response == null || response.length() == 0)
@@ -196,7 +196,7 @@ public abstract class AbstractXFireTest
             throws Exception
     {
         ServiceRegistry reg = getServiceRegistry();
-        ServiceEndpoint hello = reg.getServiceEndpoint(service);
+        Service hello = reg.getService(service);
 
         return hello.getWSDLWriter();
     }
@@ -208,7 +208,7 @@ public abstract class AbstractXFireTest
 
     protected ServiceRegistry getServiceRegistry()
     {
-        return getXFire().getServiceEndpointRegistry();
+        return getXFire().getServiceRegistry();
     }
 
     public ServiceFactory getServiceFactory()

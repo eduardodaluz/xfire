@@ -1,6 +1,6 @@
 package org.codehaus.xfire.wsdl11.builder;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 
 /**
  * Information used when building WSDL 1.1 documents.
@@ -14,11 +14,11 @@ public class WSDLBuilderInfo
     private String targetNamespace;
     public static final String KEY = WSDLBuilderInfo.class.getName();
     
-    public WSDLBuilderInfo(ServiceEndpoint service)
+    public WSDLBuilderInfo(Service service)
     {
         serviceName = service.getName();
         portType = service.getName() + "PortType";
-        targetNamespace = service.getService().getName().getNamespaceURI();
+        targetNamespace = service.getServiceInfo().getName().getNamespaceURI();
     }
     
     public String getTargetNamespace()

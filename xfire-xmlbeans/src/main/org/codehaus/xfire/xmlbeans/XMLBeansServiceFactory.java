@@ -7,8 +7,9 @@ import javax.xml.namespace.QName;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
@@ -19,14 +20,16 @@ public class XMLBeansServiceFactory
 {
     public XMLBeansServiceFactory()
     {
+        setStyle(SoapConstants.STYLE_DOCUMENT);
     }
 
     public XMLBeansServiceFactory(TransportManager transportManager)
     {
         super(transportManager, new XMLBeansBindingProvider());
+        setStyle(SoapConstants.STYLE_DOCUMENT);
     }
 
-    protected QName getInParameterName(ServiceEndpoint service, Method method, int paramNumber, boolean doc)
+    protected QName getInParameterName(Service service, Method method, int paramNumber, boolean doc)
     {
         Class[] paramClasses = method.getParameterTypes();
         if (XmlObject.class.isAssignableFrom(paramClasses[paramNumber]))
@@ -39,7 +42,7 @@ public class XMLBeansServiceFactory
         }
     }
 
-    protected QName getOutParameterName(ServiceEndpoint service, Method method, boolean doc)
+    protected QName getOutParameterName(Service service, Method method, boolean doc)
     {
         if (XmlObject.class.isAssignableFrom(method.getReturnType()))
         {

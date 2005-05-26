@@ -5,7 +5,7 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.ObjectBinding;
@@ -63,8 +63,8 @@ public class XFireWebAnnotationsHandlerMapping
             Class clazz = getApplicationContext().getType(beanNames[i]);
             if (webAnnotations.hasWebServiceAnnotation(clazz))
             {
-                ServiceEndpoint endpoint = serviceFactory.create(clazz);
-                ServiceInfo service = endpoint.getService();
+                Service endpoint = serviceFactory.create(clazz);
+                ServiceInfo service = endpoint.getServiceInfo();
                 if (logger.isInfoEnabled())
                 {
                     WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
@@ -73,9 +73,9 @@ public class XFireWebAnnotationsHandlerMapping
                                 " as " + binding.getStyle() + "/" + binding.getUse());
                 }
                 
-                xFire.getServiceEndpointRegistry().register(endpoint);
+                xFire.getServiceRegistry().register(endpoint);
                 ((ObjectBinding) endpoint.getBinding()).setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
-                Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getService().getName());
+                Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getServiceInfo().getName());
                 registerHandler(urlPrefix + endpoint.getName(), controller);
             }
             else

@@ -9,7 +9,7 @@ import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -58,12 +58,12 @@ public class DefaultServiceFactory
                                             new AegisBindingProvider(m_typeMappingRegistry)));
     }
 
-    public ServiceEndpoint create(final Class clazz)
+    public Service create(final Class clazz)
     {
         return m_factory.create(clazz);
     }
 
-    public ServiceEndpoint create(final Class clazz,
+    public Service create(final Class clazz,
                                   final String name,
                                   final String namespace,
                                   final SoapVersion version,
@@ -74,13 +74,13 @@ public class DefaultServiceFactory
         return m_factory.create(clazz, name, namespace, version, style, use, encodingStyleURI);
     }
 
-    public ServiceEndpoint create(final Class clazz, final URL wsdlUrl)
+    public Service create(final Class clazz, final URL wsdlUrl)
             throws Exception
     {
         return m_factory.create(clazz, wsdlUrl);
     }
 
-    public ServiceEndpoint create(final Class clazz, final SoapVersion version, final String style, final String use)
+    public Service create(final Class clazz, final SoapVersion version, final String style, final String use)
     {
         return m_factory.create(clazz, version, style, use);
     }

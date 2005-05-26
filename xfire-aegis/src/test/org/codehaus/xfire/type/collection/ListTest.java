@@ -10,7 +10,7 @@ import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
@@ -22,7 +22,7 @@ public class ListTest
             throws Exception
     {
         super.setUp();
-        ServiceEndpoint endpoint = getServiceFactory().create(ListService.class);
+        Service endpoint = getServiceFactory().create(ListService.class);
         getServiceRegistry().register(endpoint);
 
         TypeMapping tm = (TypeMapping) endpoint.getProperty(AegisBindingProvider.TYPE_MAPPING_KEY);
@@ -37,7 +37,7 @@ public class ListTest
         doubles.setSchemaType(dblQ);
         doubles.setTypeClass(List.class);
         tm.register(doubles);
-        ServiceInfo service = endpoint.getService();
+        ServiceInfo service = endpoint.getServiceInfo();
         OperationInfo o = service.getOperation("getDoubles");
         MessageInfo outMsg = o.getOutputMessage();
         MessagePartInfo p = outMsg.getMessagePart(new QName(service.getName().getNamespaceURI(), "out"));

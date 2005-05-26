@@ -9,7 +9,6 @@ import junit.framework.TestCase;
 public class XFireFactoryTest
         extends TestCase
 {
-
     public void testRegisterFactory()
             throws Exception
     {

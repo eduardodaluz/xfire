@@ -2,7 +2,7 @@ package org.codehaus.xfire.picocontainer.util;
 
 import java.util.Collection;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
@@ -19,12 +19,12 @@ public abstract class AbstractServiceRegistryDelegator
 
     public abstract ServiceRegistry getServiceRegistry();
 
-    public ServiceEndpoint getServiceEndpoint(String serviceName)
+    public Service getService(String serviceName)
     {
-        return this.getServiceRegistry().getServiceEndpoint(serviceName);
+        return this.getServiceRegistry().getService(serviceName);
     }
 
-    public void register(ServiceEndpoint service)
+    public void register(Service service)
     {
         this.getServiceRegistry().register(service);
     }
@@ -34,14 +34,14 @@ public abstract class AbstractServiceRegistryDelegator
         this.getServiceRegistry().unregister(serviceName);
     }
 
-    public boolean hasServiceEndpoint(String service)
+    public boolean hasService(String service)
     {
-        return this.getServiceRegistry().hasServiceEndpoint(service);
+        return this.getServiceRegistry().hasService(service);
     }
 
-    public Collection getServiceEndpoints()
+    public Collection getServices()
     {
-        return this.getServiceRegistry().getServiceEndpoints();
+        return this.getServiceRegistry().getServices();
     }
 
     public void addRegistrationEventListener(RegistrationEventListener listener)

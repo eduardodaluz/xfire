@@ -5,11 +5,12 @@ import java.lang.reflect.Method;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -50,7 +51,7 @@ public class AnnotationServiceFactory
      * @param clazz The service class used to populate the operations and parameters.
      * @return The service.
      */
-    public ServiceEndpoint create(final Class clazz)
+    public Service create(final Class clazz)
     {
         if (webAnnotations.hasSOAPBindingAnnotation(clazz))
         {
@@ -78,7 +79,7 @@ public class AnnotationServiceFactory
      *                will be used.
      * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
      */
-    public ServiceEndpoint create(Class clazz, SoapVersion version, String style, String use)
+    public Service create(Class clazz, SoapVersion version, String style, String use)
     {
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
@@ -122,7 +123,7 @@ public class AnnotationServiceFactory
                 portType = createPortType(serviceName, webServiceAnnotation);
             }
 
-            ServiceEndpoint service = create(endpointInterface, serviceName, tns, version, style, use, null);
+            Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
 
             // Fill in WSDL Builder metadata from annotations.
             WSDLBuilderInfo info = new WSDLBuilderInfo(service);
@@ -232,7 +233,7 @@ public class AnnotationServiceFactory
         return webAnnotations.hasWebMethodAnnotation(method);
     }
 
-    protected QName getInParameterName(ServiceEndpoint endpoint, Method method, int paramNumber, boolean doc)
+    protected QName getInParameterName(Service endpoint, Method method, int paramNumber, boolean doc)
     {
         if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
         {
@@ -243,7 +244,7 @@ public class AnnotationServiceFactory
 
             if (ns == null || ns.length() == 0) 
             {
-                ns = endpoint.getService().getName().getNamespaceURI();
+                ns = endpoint.getServiceInfo().getName().getNamespaceURI();
             }
 
             return new QName(ns, name);
@@ -254,7 +255,7 @@ public class AnnotationServiceFactory
         }
     }
 
-    protected QName getOutParameterName(ServiceEndpoint endpoint, Method method, boolean doc)
+    protected QName getOutParameterName(Service endpoint, Method method, boolean doc)
     {
         if (webAnnotations.hasWebResultAnnotation(method))
         {
@@ -265,7 +266,7 @@ public class AnnotationServiceFactory
 
             if (ns == null || ns.length() == 0)
             {
-                ns = endpoint.getService().getName().getNamespaceURI();
+                ns = endpoint.getServiceInfo().getName().getNamespaceURI();
             }
 
             return new QName(ns, name);
@@ -280,4 +281,15 @@ public class AnnotationServiceFactory
     {
         return webAnnotations.hasOnewayAnnotation(method);
     }
+
+    protected String getMEP(Method method)
+    {
+        if (webAnnotations.hasOnewayAnnotation(method))
+        {
+            return SoapConstants.MEP_IN;
+        }
+        
+        return super.getMEP(method);
+    }
+
 }

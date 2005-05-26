@@ -28,9 +28,9 @@ public class DefaultServiceRegistry
      * @param name the service name.
      * @return the service endpoint, or <code>null</code> if not found.
      */
-    public ServiceEndpoint getServiceEndpoint(String name)
+    public Service getService(String name)
     {
-        return (ServiceEndpoint) services.get(name);
+        return (Service) services.get(name);
     }
 
     /**
@@ -38,7 +38,7 @@ public class DefaultServiceRegistry
      *
      * @param endpoint the endpoint.
      */
-    public void register(ServiceEndpoint endpoint)
+    public void register(Service endpoint)
     {
         services.put(endpoint.getName(), endpoint);
 
@@ -57,7 +57,7 @@ public class DefaultServiceRegistry
      */
     public void unregister(String name)
     {
-        ServiceEndpoint endpoint = getServiceEndpoint(name);
+        Service endpoint = getService(name);
 
         for (Iterator iterator = eventListeners.iterator(); iterator.hasNext();)
         {
@@ -75,7 +75,7 @@ public class DefaultServiceRegistry
      * @param name the service name.
      * @return <code>true</code> if this registry has a service with the given name; <code>false</code> otherwise.
      */
-    public boolean hasServiceEndpoint(String name)
+    public boolean hasService(String name)
     {
         return services.containsKey(name);
     }
@@ -85,7 +85,7 @@ public class DefaultServiceRegistry
      *
      * @return all service endpoints.
      */
-    public Collection getServiceEndpoints()
+    public Collection getServices()
     {
         return Collections.unmodifiableCollection(services.values());
     }

@@ -20,7 +20,7 @@ public class PlexusXFire
 {
     private ServiceLocator locator;
 
-    public ServiceRegistry getServiceEndpointRegistry()
+    public ServiceRegistry getServiceRegistry()
     {
         try
         {

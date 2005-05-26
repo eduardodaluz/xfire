@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.handler.EndpointHandler;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
@@ -22,7 +25,6 @@ import org.codehaus.xfire.soap.SoapConstants;
  */
 public class MessageBinding
     extends AbstractBinding
-    implements EndpointHandler, ObjectBinding
 {
     private static final Log logger = LogFactory.getLog(MessageBinding.class.getName());
 
@@ -32,38 +34,39 @@ public class MessageBinding
         setUse(SoapConstants.USE_LITERAL);
     }
 
-    public Object[] read(MessageContext context)
+    public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
     {
-        final ServiceEndpoint endpoint = context.getService();
-        final OperationInfo operation = (OperationInfo) endpoint.getService().getOperations().iterator().next();
+        final Service endpoint = context.getService();
+        final OperationInfo operation = (OperationInfo) endpoint.getServiceInfo().getOperations().iterator().next();
+        setOperation(operation, context);
+
         final Invoker invoker = getInvoker();
 
-        context.setProperty(OPERATION_KEY, operation);
-        
         final List params = new ArrayList();
         
         for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
             
-            params.add( getBindingProvider().readParameter(p, context) );
+            params.add( getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
         }
-        
-        return params.toArray();
+
+        message.setBody( params.toArray() );
     }
 
-    public void write(Object[] values, MessageContext context)
+    public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {
+        Object[] values = (Object[]) message.getBody();
         final OperationInfo operation = getOperation(context);
         
         int i = 0;
-        for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
+        for (Iterator itr = operation.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
             
-            getBindingProvider().writeParameter(p, context, values[i]);
+            getBindingProvider().writeParameter(p, writer, context, values[i]);
             i++;
         }
     }

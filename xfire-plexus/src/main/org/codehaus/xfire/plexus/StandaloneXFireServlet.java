@@ -99,7 +99,7 @@ public class StandaloneXFireServlet
     {
         try
         {
-            return factory.getXFire().getServiceEndpointRegistry();
+            return factory.getXFire().getServiceRegistry();
         }
         catch (Exception e)
         {

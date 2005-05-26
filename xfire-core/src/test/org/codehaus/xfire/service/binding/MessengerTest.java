@@ -1,6 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
 
 /**
@@ -18,7 +18,7 @@ public class MessengerTest
     public void testInvoke()
             throws Exception
     {
-        ServiceEndpoint service = getServiceFactory().create(Messenger.class);
+        Service service = getServiceFactory().create(Messenger.class);
 
         assertNotNull(service.getBinding());
         assertNotNull(((ObjectBinding) service.getBinding()).getBindingProvider());

@@ -1,7 +1,7 @@
 package org.codehaus.xfire.message.document;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -20,7 +20,7 @@ public class DocumentAutoTypeTest
     {
         super.setUp();
 
-        ServiceEndpoint service = getServiceFactory().create(BeanService.class,
+        Service service = getServiceFactory().create(BeanService.class,
                                                              "Bean",
                                                              "urn:Bean",
                                                              Soap11.getInstance(),

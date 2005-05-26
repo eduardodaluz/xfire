@@ -11,14 +11,17 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
-import org.codehaus.xfire.service.ServiceEndpoint;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -52,12 +55,18 @@ public class DefaultXFire
                        final MessageContext context)
     {
         final String serviceName = context.getServiceName();
-        final ServiceEndpoint endpoint = findService(serviceName);
-
+        final Service endpoint = findService(serviceName);
+        
+        if (endpoint == null)
+        {
+            throw new XFireRuntimeException("No such service: " + serviceName);
+        }
+        
         Handler handler = null;
         try
         {
-            final Transport transport = context.getTransport();
+            final Transport transport = getTransportManager().getTransport(LocalTransport.NAME);
+            Channel channel = transport.createChannel(endpoint);
             
             // Verify that the transport can be used for this service.
             if (transport != null
@@ -70,61 +79,19 @@ public class DefaultXFire
             }
 
             context.setService(endpoint);
-            context.setXMLStreamReader(reader);
-
-            if (endpoint == null)
-            {
-                throw new XFireRuntimeException("No such service: " + serviceName);
-            }
-
-            handler = endpoint.getServiceHandler();
-
-            handler.invoke(context);
+            
+            InMessage inMessage = new InMessage(reader, channel.getUri());
+            channel.receive(context, inMessage);
         }
         catch (Exception e)
         {
-            handleException(context, endpoint, handler, e);
+            logger.error("Could not initiate service operation.", e);
         }
     }
 
-    /**
-     * @param context
-     * @param endpoint
-     * @param handler
-     * @param e
-     */
-    protected void handleException(final MessageContext context,
-                                   final ServiceEndpoint endpoint,
-                                   final Handler handler,
-                                   final Exception e)
+    protected Service findService(final String serviceName)
     {
-        if (e instanceof XFireRuntimeException)
-        {
-            throw (XFireRuntimeException) e;
-        }
-        else if (handler != null)
-        {
-            XFireFault fault = XFireFault.createFault(e);
-
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Fault occurred.", fault);
-            }
-
-            handler.handleFault(fault, context);
-
-            if (endpoint.getFaultHandler() != null)
-                endpoint.getFaultHandler().handleFault(fault, context);
-        }
-        else
-        {
-            throw new XFireRuntimeException("Couldn't process message.", e);
-        }
-    }
-
-    protected ServiceEndpoint findService(final String serviceName)
-    {
-        ServiceEndpoint service = getServiceEndpointRegistry().getServiceEndpoint(serviceName);
+        Service service = getServiceRegistry().getService(serviceName);
         
         if (service == null)
         {
@@ -171,12 +138,12 @@ public class DefaultXFire
     private WSDLWriter getWSDL(final String serviceName)
             throws WSDLException
     {
-        final ServiceEndpoint service = findService(serviceName);
+        final Service service = findService(serviceName);
 
         return service.getWSDLWriter();
     }
 
-    public ServiceRegistry getServiceEndpointRegistry()
+    public ServiceRegistry getServiceRegistry()
     {
         return registry;
     }

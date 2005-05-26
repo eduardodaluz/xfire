@@ -28,6 +28,7 @@ public interface XFire
      *
      * @param in      An InputStream to the SOAP document.
      * @param context The MessageContext.
+     * @deprecated
      */
     void invoke(InputStream in, MessageContext context)
             throws XFireRuntimeException;
@@ -39,6 +40,7 @@ public interface XFire
      *
      * @param in      An InputStream to the SOAP document.
      * @param context The MessageContext.
+     * @deprecated
      */
     void invoke(XMLStreamReader reader, MessageContext context)
             throws XFireRuntimeException;
@@ -54,7 +56,7 @@ public interface XFire
     /**
      * Get the <code>ServiceRegistry</code>.
      */
-    ServiceRegistry getServiceEndpointRegistry();
+    ServiceRegistry getServiceRegistry();
 
     /**
      * Get the <code>TransportManager</code>.

@@ -22,7 +22,8 @@ public class OperationInfo
 {
     private String name;
     private ServiceInfo service;
-    private boolean oneWay;
+    private String mep;
+    private boolean async;
     private MessageInfo inputMessage;
     private MessageInfo outputMessage;
     // maps string names to FaultInfo objects
@@ -75,23 +76,32 @@ public class OperationInfo
     }
 
     /**
-     * Indicates whether the operation is one-way or not.
-     *
-     * @return <code>true</code> if the operation is one-way; <code>false</code> otherwise.
+     * Whether or not the operation should be invoked asynchronously.
+     * 
+     * @return
      */
-    public boolean isOneWay()
+    public boolean isAsync()
     {
-        return oneWay;
+        return async;
+    }
+
+    public void setAsync(boolean async)
+    {
+        this.async = async;
     }
 
     /**
-     * Determines whether the operation is one-way or not.
-     *
-     * @param oneWay <code>true</code> if the operation is one-way; <code>false</code> otherwise.
+     * Get the message exchange pattern of this operation.
+     * @return
      */
-    public void setOneWay(boolean oneWay)
+    public String getMEP()
     {
-        this.oneWay = oneWay;
+        return mep;
+    }
+
+    public void setMEP(String mep)
+    {
+        this.mep = mep;
     }
 
     /**

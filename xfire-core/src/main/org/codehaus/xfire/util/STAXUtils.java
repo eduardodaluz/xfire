@@ -1,5 +1,10 @@
 package org.codehaus.xfire.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -40,13 +45,16 @@ public class STAXUtils
 
     public static boolean toNextElement(DepthXMLStreamReader dr)
     {
+        if (dr.getEventType() == XMLStreamReader.START_ELEMENT)
+            return true;
+        
         try
         {
             int depth = dr.getDepth();
             
             for (int event = dr.getEventType(); dr.getDepth() >= depth; event = dr.next())
             {
-                if (event == XMLStreamReader.START_ELEMENT && dr.getDepth() == depth +1)
+                if (event == XMLStreamReader.START_ELEMENT && dr.getDepth() == depth + 1)
                 {
                     return true;
                 }
@@ -335,6 +343,40 @@ public class STAXUtils
                 default:
                     break;
             }
+        }
+    }
+    
+    public static XMLStreamWriter createXMLStreamWriter(OutputStream out, String encoding)
+    {
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+
+        if (encoding == null) encoding = "UTF-8";
+        
+        try
+        {
+            XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+
+            return writer;
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
+        }
+    }
+
+    public static XMLStreamReader createXMLStreamReader(InputStream in, String encoding)
+    {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+
+        if (encoding == null) encoding = "UTF-8";
+        
+        try
+        {
+            return factory.createXMLStreamReader(in, encoding);
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
 }
