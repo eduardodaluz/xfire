@@ -80,10 +80,22 @@ public class XPathAssert
         Map namespaces = new HashMap();
         namespaces.put("s", Soap11.getInstance().getNamespace());
         namespaces.put("s12", Soap12.getInstance().getNamespace());
+        
         assertInvalid("/s:Envelope/s:Body/s:Fault", node, namespaces);
-        assertInvalid("/s12:Envelope/s12Body/s12:Fault", node, namespaces);
+        assertInvalid("/s12:Envelope/s12:Body/s12:Fault", node, namespaces);
     }
 
+    public static void assertFault(Node node)
+        throws Exception
+    {
+        Map namespaces = new HashMap();
+        namespaces.put("s", Soap11.getInstance().getNamespace());
+        namespaces.put("s12", Soap12.getInstance().getNamespace());
+        
+        assertValid("/s:Envelope/s:Body/s:Fault", node, namespaces);
+        assertValid("/s12:Envelope/s12:Body/s12:Fault", node, namespaces);
+    }
+    
     /**
      * Create the specified XPath expression with the namespaces added via
      * addNamespace().
