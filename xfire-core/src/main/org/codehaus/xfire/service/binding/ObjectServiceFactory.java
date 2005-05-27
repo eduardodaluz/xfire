@@ -9,7 +9,6 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
 import org.codehaus.xfire.fault.Soap12FaultSerializer;
 import org.codehaus.xfire.service.MessageInfo;
@@ -19,7 +18,6 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapSerializer;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -39,7 +37,6 @@ public class ObjectServiceFactory
 {
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
-    private MessageSerializer serializer = new SoapSerializer();
     private String style;
     private String use;
 
@@ -100,8 +97,6 @@ public class ObjectServiceFactory
         Service endpoint = new Service(serviceInfo);
 
         endpoint.setWSDLWriter(new ResourceWSDL(wsdlUrl));
-
-        endpoint.setSerializer(serializer);
 
         // TODO: Bring wsdl configuration functionality back!
 
@@ -197,8 +192,6 @@ public class ObjectServiceFactory
         ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
         binding.setInvoker(new ObjectInvoker());
         endpoint.setBinding(binding);
-
-        endpoint.setSerializer(serializer);
 
         if (encodingStyleURI != null)
             endpoint.setProperty("type.encodingUri", encodingStyleURI);
@@ -323,16 +316,6 @@ public class ObjectServiceFactory
             outName = method.getName();
 
         return new QName(endpoint.getServiceInfo().getName().getNamespaceURI(), outName + "out");
-    }
-
-    public MessageSerializer getSerializer()
-    {
-        return serializer;
-    }
-
-    public void setSerializer(MessageSerializer serializer)
-    {
-        this.serializer = serializer;
     }
 
     public TransportManager getTransportManager()

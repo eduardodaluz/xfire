@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.xfire.attachments.Attachments;
+import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.transport.Channel;
@@ -18,7 +19,7 @@ public abstract class AbstractMessage
     private String encoding;
     private Object body;
     private Attachments attachments;
-    private SoapVersion soapVersion;
+    private SoapVersion soapVersion = Soap11.getInstance();
     private Channel channel;
     private Map properties = new HashMap();
 

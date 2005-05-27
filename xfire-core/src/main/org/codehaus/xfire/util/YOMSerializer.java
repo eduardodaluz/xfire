@@ -43,7 +43,7 @@ public class YOMSerializer
         
         try
         {
-            serializer.writeDocument(doc, writer);
+            serializer.writeElement(doc.getRootElement(), writer);
         }
         catch (XMLStreamException e)
         {

@@ -12,14 +12,14 @@ import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.transport.AbstractChannel;
+import org.codehaus.xfire.transport.AbstractSoapChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 
-public class HttpChannel
-    extends AbstractChannel
+public class HttpSoapChannel
+    extends AbstractSoapChannel
 {
-    public HttpChannel(String uri, SoapHttpTransport transport)
+    public HttpSoapChannel(String uri, SoapHttpTransport transport)
     {
         setTransport(transport);
         setUri(uri);
@@ -51,7 +51,7 @@ public class HttpChannel
                 OutputStream out = response.getOutputStream();
                 XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
                 
-                message.getSerializer().writeMessage(message, writer, context);
+                sendSoapMessage(message, writer, context);
                 
                 writer.flush();
                 writer.close();

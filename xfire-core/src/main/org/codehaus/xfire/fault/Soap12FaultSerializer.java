@@ -11,7 +11,6 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,10 +31,6 @@ public class Soap12FaultSerializer
         XFireFault fault = (XFireFault) message.getBody();
         try
         {
-            writer.writeStartDocument();
-            writer.writeStartElement("soap:Envelope");
-            writer.writeAttribute("xmlns:soap", Soap12.getInstance().getNamespace());
-
             Map namespaces = fault.getNamespaces();
             for (Iterator itr = namespaces.keySet().iterator(); itr.hasNext();)
             {
@@ -43,7 +38,6 @@ public class Soap12FaultSerializer
                 writer.writeAttribute("xmlns:" + prefix, (String) namespaces.get(prefix));
             }
 
-            writer.writeStartElement("soap:Body");
             writer.writeStartElement("soap:Fault");
 
             writer.writeStartElement("soap:Code");
@@ -96,10 +90,6 @@ public class Soap12FaultSerializer
             }
 
             writer.writeEndElement(); // Fault
-            writer.writeEndElement(); // Body
-            writer.writeEndElement(); // Envelope
-            writer.writeEndDocument();
-            writer.close();
         }
         catch (XMLStreamException xe)
         {

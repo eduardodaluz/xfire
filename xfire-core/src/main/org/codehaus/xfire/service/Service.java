@@ -212,15 +212,5 @@ public class Service
     {
         this.soapVersion = soapVersion;
     }
-
-    public MessageSerializer getSerializer()
-    {
-        return serializer;
-    }
-
-    public void setSerializer(MessageSerializer serializer)
-    {
-        this.serializer = serializer;
-    }
 }
 

@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.DOMUtils;
@@ -46,7 +47,13 @@ public class FaultSerializerTest
         OutMessage message = new OutMessage("urn:bleh");
         message.setBody(fault);
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8");
+        writer.writeStartDocument();
+        writer.writeStartElement("soap", "Body", Soap12.getInstance().getNamespace());
+        writer.writeNamespace("soap", Soap12.getInstance().getNamespace());
         soap12.writeMessage(message, writer, new MessageContext());
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.close();
         
         Document doc = readDocument(out.toString());
         printNode(doc);
@@ -83,7 +90,13 @@ public class FaultSerializerTest
         message.setBody(fault);
         
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8");
+        writer.writeStartDocument();
+        writer.writeStartElement("soap", "Body", Soap11.getInstance().getNamespace());
+        writer.writeNamespace("soap", Soap11.getInstance().getNamespace());
         soap11.writeMessage(message, writer, new MessageContext());
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.close();
 
         Document doc = readDocument(out.toString());
         printNode(doc);

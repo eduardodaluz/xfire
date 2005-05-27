@@ -35,8 +35,9 @@ public class InExchange
     {
         try
         {
-            validateHeaders(context);
-            
+            // In pipeline
+            invokeInPipeline(context);
+
             Handler binding = context.getService().getBinding();
             binding.invoke(context);
         }

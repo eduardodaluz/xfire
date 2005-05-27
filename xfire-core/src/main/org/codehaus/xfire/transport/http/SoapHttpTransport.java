@@ -10,9 +10,9 @@ import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.SoapServiceEndpoint;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -47,11 +47,11 @@ public class SoapHttpTransport
     {
         log.debug("Creating new channel for uri: " + uri);
         
-        HttpChannel c = new HttpChannel(uri, this);
+        HttpSoapChannel c = new HttpSoapChannel(uri, this);
         
         if (service != null)
         {
-            c.setEndpoint(new ServiceEndpoint());
+            c.setEndpoint(new SoapServiceEndpoint());
         }
         
         channels.put(uri, c);

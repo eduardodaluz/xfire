@@ -79,7 +79,8 @@ public class RobustInOutExchange
     {
         try
         {
-            validateHeaders(context);
+            // In pipeline
+            invokeInPipeline(context);
 
             OutMessage outMsg = createOutMessage();
             context.setOutMessage(outMsg);
@@ -90,7 +91,7 @@ public class RobustInOutExchange
             // The out pipeline
             invokeOutPipeline(context);
 
-            MessageSerializer serializer = context.getService().getSerializer();
+            MessageSerializer serializer = context.getService().getBinding();
             outMsg.setSerializer(serializer);
             
             MessageExchange exchange = context.getExchange();

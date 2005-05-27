@@ -13,12 +13,12 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.transport.AbstractChannel;
+import org.codehaus.xfire.transport.AbstractSoapChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 
 public class LocalChannel
-    extends AbstractChannel
+    extends AbstractSoapChannel
 {
     private String uri;
     
@@ -39,7 +39,7 @@ public class LocalChannel
             final OutputStream out = (OutputStream) context.getProperty(Channel.BACKCHANNEL_URI);
             final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
             
-            message.getSerializer().writeMessage(message, writer, context);
+            sendSoapMessage(message, writer, context);
         }
         else
         {
@@ -85,7 +85,7 @@ public class LocalChannel
                     try
                     {
                         final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(outStream, message.getEncoding());
-                        message.getSerializer().writeMessage(message, writer, context);
+                        sendSoapMessage(message, writer, context);
                         
                         writer.flush();
                         writer.close();
