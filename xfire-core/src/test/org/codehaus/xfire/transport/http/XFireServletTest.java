@@ -63,16 +63,21 @@ public class XFireServletTest
     public void testServlet()
             throws Exception
     {
-    	WebRequest getReq = new GetMethodWebRequest("http://localhost/services/Echo?wsdl"){
-    		
-				/* Work around bug 1212204 in httpUnit where as of 1.6
-				 * there was not a way to support query strings with null values.
-				 * @see com.meterware.httpunit.HeaderOnlyWebRequest#getQueryString()
-				 */
-				public String getQueryString() {
-					return "WSDL";
-				}
-    	};
+    	WebRequest getReq = new GetMethodWebRequest("http://localhost/services/Echo?wsdl")
+        {
+
+            /*
+             * Work around bug 1212204 in httpUnit where as of 1.6 there was not
+             * a way to support query strings with null values.
+             * 
+             * @see com.meterware.httpunit.HeaderOnlyWebRequest#getQueryString()
+             */
+            public String getQueryString()
+            {
+                return "WSDL";
+            }
+        };
+        
     	WebResponse response = newClient().getResponse(getReq);
 
         WebRequest req = new PostMethodWebRequest("http://localhost/services/Echo",
