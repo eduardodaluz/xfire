@@ -4,10 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceEndpoint;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.SoapServiceEndpoint;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 
@@ -86,7 +86,7 @@ public class XMPPTransport
         
         if (service != null)
         {
-            c.setEndpoint(new ServiceEndpoint());
+            c.setEndpoint(new SoapServiceEndpoint());
         }
         
         channels.put(uri, c);
