@@ -109,10 +109,8 @@ public class XFireServletController
 
         try
         {
-            String wsdl = request.getParameter("wsdl");
-            if (wsdl == null) wsdl = request.getParameter("WSDL");
-            
-            if (wsdl != null)
+            if (request.getQueryString() == null || 
+                request.getQueryString().trim().equalsIgnoreCase("wsdl"))
             {
                 generateWSDL(response, serviceName);
             }
