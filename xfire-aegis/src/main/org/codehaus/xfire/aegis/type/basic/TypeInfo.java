@@ -151,7 +151,7 @@ public class TypeInfo
         BeanInfo beanInfo = null;
         try
         {
-            if (typeClass.isInterface())
+            if (typeClass.isInterface() || typeClass.isPrimitive())
             {
                 beanInfo = Introspector.getBeanInfo(typeClass);
             }
