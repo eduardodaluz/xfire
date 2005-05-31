@@ -10,7 +10,7 @@ import org.codehaus.xfire.test.AbstractXFireTest;
 public class AbstractXFireAegisTest
     extends AbstractXFireTest
 {
-    public void setUp()
+    protected void setUp()
         throws Exception
     {
         super.setUp();
