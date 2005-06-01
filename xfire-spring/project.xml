@@ -27,6 +27,15 @@
         </dependency>
         <dependency>
             <groupId>xfire</groupId>
+            <artifactId>xfire-xmlbeans</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.dependency>true</eclipse.dependency>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
             <artifactId>xfire-annotations</artifactId>
             <version>${pom.currentVersion}</version>
             <url>${pom.url}</url>
