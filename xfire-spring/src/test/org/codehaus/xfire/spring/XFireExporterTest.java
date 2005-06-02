@@ -58,8 +58,14 @@ public class XFireExporterTest
             throws Exception
     {
         exporter.afterPropertiesSet();
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "Echo");
-        request.addParameter("wsdl", "");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "Echo") 
+        {
+            public String getQueryString()
+            {
+                return "wsdl";
+            }
+        };
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         exporter.handleRequest(request, response);
         InputSource source = new InputSource(new ByteArrayInputStream(response.getContentAsByteArray()));
@@ -81,8 +87,13 @@ public class XFireExporterTest
         exporter.setSoapVersion(new Soap11());
         exporter.afterPropertiesSet();
 
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "Echo");
-        request.addParameter("wsdl", "");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "Echo") 
+        {
+            public String getQueryString()
+            {
+                return "wsdl";
+            }
+        };
         MockHttpServletResponse response = new MockHttpServletResponse();
         exporter.handleRequest(request, response);
         InputSource source = new InputSource(new ByteArrayInputStream(response.getContentAsByteArray()));
