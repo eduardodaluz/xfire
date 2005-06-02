@@ -199,7 +199,14 @@ public class XFireServletController
         Channel channel = transport.createChannel(getService(service));
         
         String contentType = request.getContentType();
-        if (null == contentType || contentType.toLowerCase().indexOf("multipart/related") != -1)
+        if (null == contentType)
+        {
+            // TODO: generate service description here
+            
+            response.getWriter().write("Invalid request.");
+            response.getWriter().close();
+        }
+        else if (contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
             try
             {
