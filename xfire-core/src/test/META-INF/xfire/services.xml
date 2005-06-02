@@ -1,0 +1,33 @@
+<xfire>
+  
+  <services>
+    <service>
+      <name>Echo</name>
+      <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+      <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
+      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
+    </service>
+
+
+    <service>
+      <name>Echo1</name>
+      <namespace>urn:Echo</namespace>
+      <style>wrapped</style>
+      <use>literal</use>
+      <serviceClass>org.codehaus.xfire.service.Echo</serviceClass>
+      <soapVersion>1.2</soapVersion>
+      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
+      
+      <requestHandlers>
+        <handler>test</handler>
+        <handler>org.codehaus.xfire.plexus.config.TestHandler</handler>
+      </requestHandlers>
+      
+      <responseHandlers>
+        <handler>test</handler>
+      </responseHandlers>
+    </service>
+
+  </services>
+  
+</xfire>
