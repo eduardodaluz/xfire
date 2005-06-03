@@ -12,6 +12,12 @@ public interface WSAConstants
 
     String WSA_PREFIX = "wsa";
     
+    String WSA_ACTION = "Action";
+    String WSA_TO = "To";
+    String WSA_FROM = "From";
+    String WSA_REPLY_TO = "ReplyTo";
+    String WSA_MESSAGE_ID = "MessageID";
+
     String WSA_ADDRESS = "Address";
     String WSA_ADDRESS_QNAME = WSA_PREFIX + ":" + WSA_ADDRESS;
     

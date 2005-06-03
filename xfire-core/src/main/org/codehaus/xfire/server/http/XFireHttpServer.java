@@ -1,6 +1,7 @@
 package org.codehaus.xfire.server.http;
 
 import org.codehaus.xfire.server.XFireServer;
+import org.codehaus.xfire.transport.http.XFireServlet;
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.HttpServer;
 import org.mortbay.jetty.servlet.ServletHandler;
@@ -34,7 +35,7 @@ public class XFireHttpServer
         context.setRequestLog(null);
         
         ServletHandler handler = new ServletHandler();
-        handler.addServlet("XFireServlet", "/*", "org.codehaus.xfire.transport.http.XFireServlet");
+        handler.addServlet("XFireServlet", "/*", XFireServlet.class.getName());
         
         context.addHandler(handler);
         

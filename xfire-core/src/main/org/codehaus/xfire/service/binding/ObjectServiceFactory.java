@@ -169,12 +169,12 @@ public class ObjectServiceFactory
      * @return The service.
      */
     public Service create(Class clazz,
-                                  String name,
-                                  String namespace,
-                                  SoapVersion version,
-                                  String style,
-                                  String use,
-                                  String encodingStyleURI)
+                          String name,
+                          String namespace,
+                          SoapVersion version,
+                          String style,
+                          String use,
+                          String encodingStyleURI)
     {
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(

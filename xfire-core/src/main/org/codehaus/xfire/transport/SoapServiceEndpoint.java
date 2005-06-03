@@ -27,9 +27,11 @@ public class SoapServiceEndpoint
     implements ChannelEndpoint
 {
     private static final Log log = LogFactory.getLog(SoapServiceEndpoint.class);
-
+ 
     public void onReceive(MessageContext context, InMessage msg)
     {
+        if (log.isDebugEnabled()) log.debug("Received message to " + msg.getUri());
+        
         context.setInMessage(msg);
         
         try

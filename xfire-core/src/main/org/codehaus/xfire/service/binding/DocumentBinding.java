@@ -68,9 +68,10 @@ public class DocumentBinding
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {
+        OperationInfo op = context.getExchange().getOperation();
         Object[] values = (Object[]) message.getBody();
         int i = 0;
-        for(Iterator itr = getOperation(context).getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
+        for(Iterator itr = op.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo outParam = (MessagePartInfo) itr.next();
             

@@ -29,17 +29,13 @@ public abstract class AbstractBinding
     private String use;
     private Invoker invoker;
     private BindingProvider bindingProvider;
-
+    private boolean clientModeOn = false;
+    
     public void setOperation(OperationInfo operation, MessageContext context)
     {
         MessageExchange exchange = context.createMessageExchange(operation);
         
         context.setExchange(exchange);
-    }
-    
-    public OperationInfo getOperation(MessageContext context)
-    {
-        return context.getExchange().getOperation();
     }
 
     public void invoke(final MessageContext context)
@@ -52,7 +48,7 @@ public abstract class AbstractBinding
 
             // Don't read the operation in until after reading. Otherwise
             // it won't work for document style services.
-            final OperationInfo operation = getOperation(context);
+            final OperationInfo operation = context.getExchange().getOperation();
 
             final Invoker invoker = getInvoker();
             
@@ -153,5 +149,15 @@ public abstract class AbstractBinding
     public void setBindingProvider(BindingProvider bindingProvider)
     {
         this.bindingProvider = bindingProvider;
+    }
+
+    public boolean isClientModeOn()
+    {
+        return clientModeOn;
+    }
+
+    public void setClientModeOn(boolean clientModeOn)
+    {
+        this.clientModeOn = clientModeOn;
     }
 }

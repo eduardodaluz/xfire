@@ -6,7 +6,6 @@ import org.codehaus.xfire.service.BadEcho;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractServletTest;
 import org.codehaus.xfire.transport.Transport;
@@ -32,10 +31,7 @@ public class XFireServletTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class,
-                                                     Soap11.getInstance(),
-                                                     SoapConstants.STYLE_MESSAGE,
-                                                     SoapConstants.USE_LITERAL);
+        Service service = getServiceFactory().create(Echo.class);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
@@ -43,18 +39,12 @@ public class XFireServletTest
         service.getInPipeline().addHandler(new MockSessionHandler());
         getServiceRegistry().register(service);
 
-        Service faultService = getServiceFactory().create(BadEcho.class,
-                                                          Soap11.getInstance(),
-                                                          SoapConstants.STYLE_MESSAGE,
-                                                          SoapConstants.USE_LITERAL);
+        Service faultService = getServiceFactory().create(BadEcho.class);
 
         getServiceRegistry().register(faultService);
         
         // Asynchronous service
-        Service asyncService = getServiceFactory().create(AsyncService.class,
-                                                          Soap11.getInstance(),
-                                                          SoapConstants.STYLE_MESSAGE,
-                                                          SoapConstants.USE_LITERAL);
+        Service asyncService = getServiceFactory().create(AsyncService.class);
         OperationInfo op = asyncService.getServiceInfo().getOperation("echo");
         op.setMEP(SoapConstants.MEP_IN);
         getServiceRegistry().register(asyncService);

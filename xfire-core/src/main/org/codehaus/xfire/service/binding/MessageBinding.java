@@ -18,7 +18,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
- * Handles java services.
+ * Handles messages.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @since Feb 18, 2004
@@ -38,8 +38,19 @@ public class MessageBinding
         throws XFireFault
     {
         final Service endpoint = context.getService();
-        final OperationInfo operation = (OperationInfo) endpoint.getServiceInfo().getOperations().iterator().next();
-        setOperation(operation, context);
+        
+        OperationInfo operation = null;
+        
+        if (isClientModeOn())
+        {
+            operation = context.getExchange().getOperation();
+        }
+        else
+        {
+            operation = (OperationInfo) endpoint.getServiceInfo().getOperations().iterator().next();
+            
+            setOperation(operation, context);
+        }
 
         final Invoker invoker = getInvoker();
 
@@ -48,7 +59,7 @@ public class MessageBinding
         for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
-            
+
             params.add( getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
         }
 
@@ -59,7 +70,7 @@ public class MessageBinding
         throws XFireFault
     {
         Object[] values = (Object[]) message.getBody();
-        final OperationInfo operation = getOperation(context);
+        final OperationInfo operation = context.getExchange().getOperation();
         
         int i = 0;
         for (Iterator itr = operation.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)

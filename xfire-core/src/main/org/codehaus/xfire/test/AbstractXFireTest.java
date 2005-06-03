@@ -24,6 +24,7 @@ import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -131,8 +132,6 @@ public abstract class AbstractXFireTest
 
         TransportManager trans = getXFire().getTransportManager();
         trans.register(new TestHttpTransport());
-
-        factory = new ObjectServiceFactory(trans, new MessageBindingProvider());
     }
 
     /**
@@ -215,8 +214,13 @@ public abstract class AbstractXFireTest
     {
         if (factory == null)
         {
-            factory = new ObjectServiceFactory(getXFire().getTransportManager(),
-                                               new MessageBindingProvider());
+            ObjectServiceFactory ofactory = 
+                new ObjectServiceFactory(getXFire().getTransportManager(),
+                                         new MessageBindingProvider());
+            
+            ofactory.setStyle(SoapConstants.STYLE_MESSAGE);
+            
+            factory = ofactory;
         }
 
         return factory;

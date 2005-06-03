@@ -50,25 +50,37 @@ public class WrappedBinding
         
         // Move from Body element to whitespace or start element
         nextEvent(dr);
-        
+        System.out.println(dr.getName());
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
-        OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
-        
-        if (op == null)
+        MessageInfo msgInfo = null;
+        if (isClientModeOn())
         {
-            throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
+            OperationInfo op = context.getExchange().getOperation();
+            
+            msgInfo = op.getOutputMessage();
         }
-
-        setOperation(op, context);
+        else
+        {
+            OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
+            
+            if (op == null)
+            {
+                throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
+            }
+    
+            setOperation(op, context);
+            
+            msgInfo = op.getInputMessage();
+        }
         
         // Move from Operation element to whitespace or start element
         nextEvent(dr);
         
         while(STAXUtils.toNextElement(dr))
         {
-            MessagePartInfo p = op.getInputMessage().getMessagePart(dr.getName());
+            MessagePartInfo p = msgInfo.getMessagePart(dr.getName());
 
             if (p == null)
             {
@@ -90,8 +102,18 @@ public class WrappedBinding
             Service endpoint = context.getService();
             Object[] values = (Object[]) message.getBody();
             
-            OperationInfo op = getOperation(context);
-            String name = op.getName() + "Response";
+            OperationInfo op = context.getExchange().getOperation();
+            String name = null;
+            
+            if (isClientModeOn())
+            {
+                name = op.getName() + "Response";
+            }
+            else
+            {
+                name = op.getName();
+            }
+
             writeStartElement(writer, name, endpoint.getServiceInfo().getName().getNamespaceURI());
             
             int i = 0;

@@ -16,7 +16,7 @@ public abstract class AbstractMessage
 
     private Element header;
     private String uri;
-    private String encoding;
+    private String encoding = "UTF-8";
     private Object body;
     private Attachments attachments;
     private SoapVersion soapVersion = Soap11.getInstance();

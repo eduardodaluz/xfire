@@ -69,7 +69,7 @@ public abstract class MessagePartContainer
      *
      * @param part the message part.
      */
-    void addMessagePart(MessagePartInfo part)
+    public void addMessagePart(MessagePartInfo part)
     {
         messageParts.put(part.getName(), part);
         messagePartList.add(part);

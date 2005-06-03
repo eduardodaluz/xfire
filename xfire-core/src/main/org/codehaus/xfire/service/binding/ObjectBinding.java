@@ -19,4 +19,8 @@ public interface ObjectBinding
     BindingProvider getBindingProvider();
     
     void setBindingProvider(BindingProvider bindingProvider);
+    
+    boolean isClientModeOn();
+    
+    void setClientModeOn(boolean value);
 }

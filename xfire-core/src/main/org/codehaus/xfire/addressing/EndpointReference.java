@@ -4,25 +4,78 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.yom.Element;
-
-public interface EndpointReference 
+public class EndpointReference
 {
-    String getAddress();
+    private String address;
 
-    QName getInterfaceName();
+    private QName interfaceName;
 
-    QName getServiceName();
+    private QName serviceName;
 
-    String getEndpointName();
+    private String endpointName;
 
-    Element getPolicies();
-    
-    /**
-     * Other non-standard WS-Adressing elements which should be included in the
-     * endpoint reference.
-     * 
-     * @return
-     */
-    List getAnyContent();
+    private List policies;
+
+    private List any;
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String address)
+    {
+        this.address = address;
+    }
+
+    public List getAny()
+    {
+        return any;
+    }
+
+    public void setAny(List any)
+    {
+        this.any = any;
+    }
+
+    public String getEndpointName()
+    {
+        return endpointName;
+    }
+
+    public void setEndpointName(String endpointName)
+    {
+        this.endpointName = endpointName;
+    }
+
+    public QName getInterfaceName()
+    {
+        return interfaceName;
+    }
+
+    public void setInterfaceName(QName interfaceName)
+    {
+        this.interfaceName = interfaceName;
+    }
+
+    public List getPolicies()
+    {
+        return policies;
+    }
+
+    public void setPolicies(List policies)
+    {
+        this.policies = policies;
+    }
+
+    public QName getServiceName()
+    {
+        return serviceName;
+    }
+
+    public void setServiceName(QName serviceName)
+    {
+        this.serviceName = serviceName;
+    }
+
 }

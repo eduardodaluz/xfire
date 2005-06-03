@@ -9,7 +9,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
-import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.transport.AbstractSoapChannel;
@@ -40,10 +39,10 @@ public class HttpSoapChannel
                 throw new XFireRuntimeException("No backchannel exists for message");
             }
             
-            Attachments atts = (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
+            Attachments atts = message.getAttachments();
             if (atts != null && atts.size() > 0)
             {
-                // createMimeOutputStream(context);
+                throw new UnsupportedOperationException("Sending attachments isn't supported at this time.");
             }
 
             try
@@ -52,9 +51,7 @@ public class HttpSoapChannel
                 XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
                 
                 sendSoapMessage(message, writer, context);
-                
-                writer.flush();
-                writer.close();
+
                 out.flush();
                 out.close();
             }
@@ -72,14 +69,20 @@ public class HttpSoapChannel
     private void sendViaClient(MessageContext context, OutMessage message)
         throws XFireFault
     {
-        HttpMessageSender sender = new HttpMessageSender();
+        HttpMessageSender sender = new HttpMessageSender(message.getUri(), message.getEncoding());
         try
         {
-            InMessage msg = sender.open();
+            sender.open();
             
-            sender.send(message);
+            OutputStream out = sender.getOutputStream();
+            XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+
+            sendSoapMessage(message, writer, context);
             
-            getReceiver().onReceive(context, msg);
+            out.flush();
+            out.close();
+            
+            getReceiver().onReceive(context, sender.getInMessage());
         }
         catch (IOException e)
         {
@@ -94,6 +97,5 @@ public class HttpSoapChannel
 
     public void close()
     {
-        
     }
 }

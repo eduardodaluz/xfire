@@ -21,6 +21,7 @@ public class LocalChannel
     extends AbstractSoapChannel
 {
     private String uri;
+    protected static final String SENDER_URI = "senderUri";
     
     public LocalChannel(String uri, LocalTransport transport)
     {
@@ -37,24 +38,34 @@ public class LocalChannel
         if (message.getUri().equals(Channel.BACKCHANNEL_URI))
         {
             final OutputStream out = (OutputStream) context.getProperty(Channel.BACKCHANNEL_URI);
-            final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
             
-            sendSoapMessage(message, writer, context);
+            if (out != null)
+            {
+                final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+                
+                sendSoapMessage(message, writer, context);
+            }
+            else
+            {
+                sendViaNewChannel(context, message, (String) context.getProperty(SENDER_URI));
+            }
         }
         else
         {
-            sendViaNewChannel(context, message);
+            sendViaNewChannel(context, message, message.getUri());
         }
     }
 
-    private void sendViaNewChannel(final MessageContext context, final OutMessage message)
+    private void sendViaNewChannel(final MessageContext context, 
+                                   final OutMessage message,
+                                   final String uri)
     {
         try
         {
             final PipedInputStream stream = new PipedInputStream();
             final PipedOutputStream outStream = new PipedOutputStream(stream);
             
-            final Channel channel = getTransport().createChannel(message.getUri());
+            final Channel channel = getTransport().createChannel(uri);
 
             Thread readThread = new Thread(new Runnable() 
             {
@@ -63,9 +74,10 @@ public class LocalChannel
                    try
                     {
                        final XMLStreamReader reader = STAXUtils.createXMLStreamReader(stream, message.getEncoding());
-                       final InMessage inMessage = new InMessage(reader, message.getUri());
+                       final InMessage inMessage = new InMessage(reader, uri);
                        inMessage.setEncoding(message.getEncoding());
                        
+                       context.setProperty(SENDER_URI, getUri());
                        channel.receive(context, inMessage);
                        
                        reader.close();
