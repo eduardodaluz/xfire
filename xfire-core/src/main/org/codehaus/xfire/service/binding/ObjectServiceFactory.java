@@ -106,11 +106,17 @@ public class ObjectServiceFactory
     }
 
     /**
-     * Creates a service from the specified class. The returned service will have a name which is
-     * the class name without the packge. The namespace will be based on the package. The service
-     * will use soap version 1.1, wrapped style, and literal use.
-     *
-     * @param clazz The service class used to populate the operations and parameters.
+     * Creates a service from the specified class. The service name will be the 
+     * unqualified class name. The namespace will be based on the package. 
+     * The service will use soap version 1.1, wrapped style, and literal use.
+     * 
+     * @param clazz
+     *            The service class used to populate the operations and
+     *            parameters. If the class is an interface, then the
+     *            implementation class that implements that interface must be
+     *            set via {@link Service#setProperty(String, Object)} with the
+     *            property key being
+     *            {@link org.codehaus.xfire.service.binding.ObjectInvoker#SERVICE_IMPL_CLASS}
      * @return The service.
      */
     public Service create(Class clazz)
