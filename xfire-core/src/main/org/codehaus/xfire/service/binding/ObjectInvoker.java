@@ -2,6 +2,7 @@ package org.codehaus.xfire.service.binding;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -137,8 +138,21 @@ public class ObjectInvoker
             if (svcClass == null)
             {
                 svcClass = service.getServiceInfo().getServiceClass();
+                if(svcClass.isInterface())
+                {
+                    throw new XFireFault("ObjectInvoker.SERVICE_IMPL_CLASS not set for interface '" + svcClass.getName() + "'", XFireFault.RECEIVER);
+                }
             }
-
+          
+            if(svcClass.isInterface())
+            {
+                throw new XFireFault("Service class '" + svcClass.getName() + "' is an interface", XFireFault.RECEIVER);
+            }
+          
+          if(Modifier.isAbstract(svcClass.getModifiers()))
+          {
+              throw new XFireFault("Service class '" + svcClass.getName() + "' is abstract", XFireFault.RECEIVER);
+          }
             return svcClass.newInstance();
         }
         catch (InstantiationException e)
