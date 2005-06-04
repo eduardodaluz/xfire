@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-xmlbeans" basedir=".">
+  <import file="../build-common.xml"/>
+
+  <path id="module.classpath">
+    <fileset dir="..">
+      <include name="xfire-core/target/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="get-deps" depends="xfire.get-deps">
+    <get-dep artifact="commons-beanutils" version="1.7.0" />
+    <get-dep artifact="commons-collections" version="2.1" />
+    <get-dep artifact="velocity" version="1.4" />
+    <get-dep artifact="log4j" version="1.2.8" />
+    <get-dep artifact="xbean" group="xmlbeans" version="2.0.0-beta1" />
+  </target>
+
+  <target name="init" depends="xfire.init">
+    <check-dep module="xfire-core" />
+  </target>
+  
+  <target name="compile" depends="get-deps,generate-main,xfire.compile" />
+
+  <target name="generate-main" depends="init">
+    <mkdir dir="${target.dir}/xfire-xmlbeans-main"/>
+
+    <!-- Output WSDL types to xfire-xmlbeans-main -->
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="build.classpath"
+          fork="true">
+      <arg value="-srconly"/>
+      <arg value="-d"/>
+      <arg value="${target.dir}/xfire-xmlbeans-main"/>
+      <arg value="src/schemas"/>
+    </java>
+    
+    <mkdir dir="${classesdir}" />
+    <javac destdir="${classesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="${target.dir}/xfire-xmlbeans-main" />
+      </src>
+      <classpath refid="build.classpath" />
+    </javac>
+    <copy todir="${classesdir}">
+      <fileset dir="${target.dir}/xfire-xmlbeans-main">
+        <include name="**/*.xsb"/>
+        <include name="**/*.class"/>
+      </fileset>
+    </copy>
+  </target>
+</project>

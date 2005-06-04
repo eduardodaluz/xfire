@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-aegis" basedir=".">
+  <import file="../build-common.xml"/>
+
+  <path id="module.classpath">
+    <fileset dir="${master.basedir}">
+      <include name="xfire-core/target/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="init" depends="xfire.init">
+    <check-dep module="xfire-core" />
+  </target>
+</project>

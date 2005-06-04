@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-loom" basedir=".">
+  <import file="../build-common.xml"/>
+
+  <path id="module.classpath">
+    <fileset dir="..">
+      <include name="xfire-core/target/*.jar" />
+      <include name="xfire-aegis/target/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="get-deps" depends="xfire.get-deps">
+    <get-dep artifact="avalon-framework" version="4.1.5" />
+    <get-dep artifact="avalon-phoenix-client" group="avalon-phoenix" version="4.0.4" />
+  </target>
+
+  <target name="init" depends="xfire.init">
+    <check-dep module="xfire-core" />
+    <check-dep module="xfire-aegis" />
+  </target>
+</project>

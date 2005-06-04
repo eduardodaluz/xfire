@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire" basedir=".">
+  
+  <dirname property="master.basedir" file="${ant.file.xfire}" />
+
+  <target name="init" description="Initialize project properties">
+    <tstamp />
+    <available property="tests.present" file="src/test"/>
+    <property name="master.libdir" location="${master.basedir}/target/lib" />
+    <property name="target.dir" location="target" />
+    <property name="libdir" value="${target.dir}/lib" />
+    <property file="${master.basedir}/build.properties"/>
+    <property file="build.properties"/>
+    <xmlproperty file="${master.basedir}/project.xml" prefix="maven"/>
+    <property name="classesdir" value="${target.dir}/classes" />
+    <property name="testclassesdir" value="${target.dir}/test-classes" />
+    <property name="testreportdir" value="${target.dir}/test-reports" />
+    <property name="distdir" location="dist" />
+    <property name="javadocdir" location="dist/docs/api" />
+    <property name="final.name" value="${ant.project.name}-${maven.project.currentVersion}" />
+
+    <condition property="tests.available">
+       <and>
+         <available classname="junit.framework.Test" />
+         <available file="src/test"/>
+       </and>
+     </condition>
+    <available property="Junit.present" classname="junit.framework.Test" />
+    <path id="build.classpath">
+      <fileset dir="${libdir}">
+        <include name="*.jar" />
+      </fileset>
+      <fileset dir="${master.basedir}/lib">
+        <include name="**/*.jar" />
+      </fileset>
+      <fileset dir="${master.libdir}">
+        <include name="*.jar" />
+      </fileset>
+      <path refid="module.classpath" />
+    </path>
+    
+    <macrodef name="get-dep">
+      <attribute name="artifact" />
+      <attribute name="group" default="@{artifact}"/>
+      <attribute name="dir" default="${libdir}"/>
+      <attribute name="version" />
+      <sequential>
+        <available property="@{group}.@{artifact}.exists" file="@{dir}/@{artifact}-@{version}.jar" />
+        <antcall target="-download-dep">
+          <param name="file" value="@{dir}/@{artifact}-@{version}.jar" />
+          <param name="source" value="http://www.ibiblio.org/maven/@{group}/jars/@{artifact}-@{version}.jar" />
+          <param name="group" value="@{group}" />
+          <param name="artifact" value="@{artifact}" />
+        </antcall>
+      </sequential>
+    </macrodef>
+  
+    <macrodef name="check-dep">
+      <attribute name="module" />
+      <sequential>
+        <available property="@{module}.file.exists" file="${master.basedir}/@{module}/target/@{module}-${maven.project.currentVersion}.jar" />
+        <fail unless="@{module}.file.exists" message="Required dependency @{module} not found, please build that module first." />
+      </sequential>
+    </macrodef>
+
+  </target>
+
+  <target name="setproxy" if="maven.proxy.host" description="Sets the proxy for download dependencies" depends="init">
+  	<setproxy proxyhost="${maven.proxy.host}" proxyport="${maven.proxy.port}"/>
+  </target>
+	  	   
+  <target name="compile" description="Compile the code" depends="get-deps">
+    <mkdir dir="${classesdir}" />
+    <javac destdir="${classesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="src/main" />
+      </src>
+      <classpath refid="build.classpath" />
+    </javac>
+    <copy todir="${classesdir}">
+      <fileset dir="src/main">
+        <include name="**/*.properties" />
+        <include name="**/*.xml" />
+      </fileset>
+    </copy>
+  </target>
+    
+  <target name="jar" description="Create the jar" depends="compile">
+    <jar jarfile="${target.dir}/${final.name}.jar" excludes="**/package.html" basedir="${classesdir}" />
+  </target>
+  
+  <target name="clean" description="Clean up the generated directories" depends="init">
+    <delete dir="${target.dir}" />
+    <delete dir="${distdir}" />
+  </target>
+  
+  <target name="dist" description="Create a distribution" depends="jar, javadoc">
+    <mkdir dir="dist" />
+    <copy todir="dist">
+      <fileset dir="${target.dir}" includes="*.jar" />
+      <fileset dir="${basedir}" includes="LICENSE*, README*" />
+      <fileset dir="${libdir}" includes="*.jar" />
+    </copy>
+  </target>
+  
+  <target name="test" description="Run the test cases" if="test.failure" depends="internal-test">
+    <fail message="There were test failures." />
+  </target>
+  
+  <target name="internal-test" if="tests.available" depends="junit-present,compile-tests">
+    <mkdir dir="${testreportdir}" />
+    <junit failureproperty="test.failure" printSummary="yes" fork="onceonly" haltonerror="true">
+      <jvmarg value="-Djava.awt.headless=true"/> 
+      <formatter type="xml" />
+      <formatter usefile="false" type="plain" />
+      <classpath>
+        <path refid="build.classpath" />
+        <pathelement path="${testclassesdir}" />
+        <pathelement path="${classesdir}" />
+      </classpath>
+      <batchtest todir="${testreportdir}">
+        <fileset dir="src/test">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  
+  <target name="junit-present" unless="Junit.present" depends="init">
+    <echo>================================= WARNING ================================</echo>
+    <echo>Junit isn't present in your ${ANT_HOME}/lib directory. Tests not executed.</echo>
+    <echo>==========================================================================</echo>
+  </target>
+  
+  <target name="compile-tests" if="tests.available" depends="junit-present,compile">
+    <mkdir dir="${testclassesdir}" />
+    <javac destdir="${testclassesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="src/test" />
+      </src>
+      <classpath>
+        <path refid="build.classpath" />
+        <pathelement path="${classesdir}" />
+      </classpath>
+    </javac>
+    <copy todir="${testclassesdir}">
+      <fileset dir="src/test">
+        <include name="**/*.xml"/>
+        <include name="**/*.wsdl"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="javadoc" description="Generate javadoc" depends="get-deps">
+    <mkdir dir="${javadocdir}" />
+    <tstamp>
+      <format pattern="${maven.project.inceptionYear}-yyyy" property="year" />
+    </tstamp>
+    <property name="copyright" value="Copyright &amp;copy;  ${maven.project.organization.name}. All Rights Reserved." />
+    <property name="title" value="XFire ${maven.project.currentVersion} API" />
+    <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="src/main" packagenames="com.sun.syndication.*" windowtitle="${title}">
+    	  <doctitle>${title}</doctitle>
+    	  <bottom>${copyright}</bottom>
+      <classpath>
+        <path refid="build.classpath" />
+      </classpath>
+    </javadoc>
+  </target>
+  
+  <target name="get-deps" depends="init, setproxy" description="download dependencies">
+    <mkdir dir="${master.libdir}" />
+    <mkdir dir="${libdir}" />
+    <get-dep artifact="stax" version="1.1.1-dev" dir="${master.libdir}"/>
+    <get-dep artifact="stax-api" group="stax" version="1.0" dir="${master.libdir}"/>
+    <get-dep artifact="yom" version="1.0-SNAPSHOT" dir="${master.libdir}"/>
+    <get-dep artifact="wsdl4j" version="1.4" dir="${master.libdir}"/>
+    <get-dep artifact="commons-logging" version="1.0.4" dir="${master.libdir}"/>
+    <get-dep artifact="servletapi" version="2.3" dir="${master.libdir}"/>
+    <get-dep artifact="httpunit" version="1.5.1" dir="${master.libdir}"/>
+    <get-dep artifact="jaxen" version="1.1-beta-5" dir="${master.libdir}"/>
+    <get-dep artifact="easymock" version="1.1" dir="${master.libdir}"/>
+    <get-dep artifact="xmlunit" version="1.0" dir="${master.libdir}"/>
+  </target>
+  
+  <target name="-download-dep" unless="${group}.${artifact}.exists">
+    <get dest="${file}" usetimestamp="true" ignoreerrors="true" 
+         src="${source}" />
+  </target>
+</project>

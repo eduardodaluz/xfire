@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-annotations" basedir=".">
+  <import file="../build-common.xml"/>
+
+  <path id="module.classpath">
+    <fileset dir="${master.basedir}">
+      <include name="xfire-core/target/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="get-deps" depends="xfire.get-deps">
+    <get-dep artifact="commons-beanutils" version="1.7.0" />
+    <get-dep artifact="commons-attributes-api" group="commons-attributes" version="2.1" />
+    <get-dep artifact="backport175" version="1.0.RC1" />
+  </target>
+
+  <target name="init" depends="xfire.init">
+    <check-dep module="xfire-core" />
+  </target>
+</project>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-spring" basedir=".">
+  <import file="../build-common.xml"/>
+
+  <path id="module.classpath">
+    <fileset dir="..">
+      <include name="xfire-core/target/*.jar" />
+      <include name="xfire-annotations/target/*.jar" />
+      <include name="xfire-aegis/target/*.jar" />
+      <include name="xfire-xmlbeans/target/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="get-deps" depends="xfire.get-deps">
+    <get-dep artifact="commons-beanutils" version="1.7.0" />
+    <get-dep artifact="spring" group="springframework" version="1.1.5" />
+    <get-dep artifact="spring-mock" group="springframework" version="1.1.5" />
+    <get-dep artifact="aopalliance" version="1.0" />
+  </target>
+
+  <target name="init" depends="xfire.init">
+    <check-dep module="xfire-core" />
+    <check-dep module="xfire-aegis" />
+    <check-dep module="xfire-annotations" />
+    <check-dep module="xfire-xmlbeans" />
+  </target>
+</project>
