@@ -50,7 +50,7 @@ public class WrappedBinding
         
         // Move from Body element to whitespace or start element
         nextEvent(dr);
-        System.out.println(dr.getName());
+
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         

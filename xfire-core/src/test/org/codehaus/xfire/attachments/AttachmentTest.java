@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -33,7 +33,7 @@ public class AttachmentTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class,
+        Service service = getServiceFactory().create(EchoImpl.class,
                                                              Soap11.getInstance(),
                                                              SoapConstants.STYLE_MESSAGE,
                                                              SoapConstants.USE_LITERAL);
@@ -72,7 +72,7 @@ public class AttachmentTest
         assertNotNull(atts.getSoapMessage());
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = new MessageContext("Echo", null, null);
+        MessageContext context = new MessageContext("EchoImpl", null, null);
         context.setProperty(Channel.BACKCHANNEL_URI, out);
         
         context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);

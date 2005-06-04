@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URL;
 import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.client.http.SoapHttpClient;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.OperationInfo;
 
 /**
  * Proxy implementation for XFire SOAP clients.  Applications will generally use <code>XFireProxyFactory</code> to
@@ -23,11 +22,11 @@ public class XFireProxy
         implements InvocationHandler
 {
     private static final Log log = LogFactory.getLog(XFireProxy.class);
-    private URL url;
+    private Client client;
 
-    XFireProxy(URL url)
+    XFireProxy(Client client)
     {
-        this.url = url;
+        this.client = client;
     }
 
     /**
@@ -46,10 +45,12 @@ public class XFireProxy
         {
             log.debug("Method [" + methodName + "] " + ((args == null) ? "" : Arrays.asList(args).toString()));
         }
+        
         Object result = handleCanonicalMethods(methodName, parameterTypes, args);
+        
         if (result == null)
         {
-            result = handleHttpRequest(methodName, args);
+            result = handleRequest(methodName, args);
         }
         if (log.isDebugEnabled())
         {
@@ -58,14 +59,12 @@ public class XFireProxy
         return result;
     }
 
-    private Object handleHttpRequest(String methodName, Object[] args)
+    private Object handleRequest(String methodName, Object[] args)
             throws XFireFault, IOException
     {
-        // TODO: use new client library here
-        SoapHttpClient soapClient = new SoapHttpClient(null, url.toString());
-        soapClient.invoke();
-        // TODO: return the result
-        return null;
+        OperationInfo op = client.getService().getServiceInfo().getOperation(methodName);
+        
+        return ((Object[]) client.invoke(op, args))[0];
     }
 
     /**
@@ -89,30 +88,20 @@ public class XFireProxy
             {
                 return Boolean.FALSE;
             }
+            
             XFireProxy otherClient = (XFireProxy) Proxy.getInvocationHandler(other);
-            return new Boolean(url.equals(otherClient.getURL()));
+            
+            return new Boolean(otherClient == this);
         }
         else if (methodName.equals("hashCode") && params.length == 0)
         {
-            return new Integer(url.hashCode());
+            return new Integer(hashCode());
         }
         else if (methodName.equals("toString") && params.length == 0)
         {
-            return "XFireProxy[" + url + "]";
+            return "XFireProxy[" + client.getUrl() + "]";
         }
         return null;
     }
-
-    /**
-     * Returns the client url.
-     *
-     * @return
-     */
-    public URL getURL()
-    {
-        return url;
-    }
-
-
 }
 

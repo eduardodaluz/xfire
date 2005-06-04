@@ -3,7 +3,7 @@ package org.codehaus.xfire.handler;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -20,7 +20,7 @@ public class MustUnderstandTest
     {
         super.setUp();
 
-        endpoint = getServiceFactory().create(Echo.class,
+        endpoint = getServiceFactory().create(EchoImpl.class,
                                               Soap11.getInstance(),
                                               SoapConstants.STYLE_MESSAGE,
                                               SoapConstants.USE_LITERAL);
@@ -30,7 +30,7 @@ public class MustUnderstandTest
     public void testNotUnderstood()
             throws Exception
     {
-        Document response = invokeService("Echo",
+        Document response = invokeService("EchoImpl",
                                           "/org/codehaus/xfire/handler/mustUnderstand.xml");
 
         assertValid("//s:Fault", response);
@@ -44,7 +44,7 @@ public class MustUnderstandTest
         reqPipeline.addHandler(handler);
         endpoint.setInPipeline(reqPipeline);
 
-        Document response = invokeService("Echo",
+        Document response = invokeService("EchoImpl",
                                           "/org/codehaus/xfire/handler/mustUnderstand.xml");
 
         assertNoFault(response);

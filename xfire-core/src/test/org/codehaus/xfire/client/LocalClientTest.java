@@ -1,9 +1,11 @@
 package org.codehaus.xfire.client;
 
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.local.LocalTransport;
@@ -23,6 +25,7 @@ public class LocalClientTest
         super.setUp();
 
         service = getServiceFactory().create(Echo.class);
+        service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         service.getBinding().setBindingProvider(new MessageBindingProvider());
 
         clientService = getServiceFactory().create(Echo.class);
@@ -50,4 +53,5 @@ public class LocalClientTest
         Element e = (Element) response[0];
         assertEquals(root.getLocalName(), e.getLocalName());
     }
+
 }

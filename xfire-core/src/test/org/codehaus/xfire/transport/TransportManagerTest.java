@@ -3,7 +3,7 @@ package org.codehaus.xfire.transport;
 import junit.framework.TestCase;
 
 import org.codehaus.xfire.service.DefaultServiceRegistry;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
@@ -25,7 +25,7 @@ public class TransportManagerTest
         assertEquals(2, tm.getTransports().size());
         
         ServiceFactory factory = new ObjectServiceFactory(tm, new MessageBindingProvider());
-        Service service = factory.create(Echo.class);
+        Service service = factory.create(EchoImpl.class);
         reg.register(service);
         
         assertEquals(2, tm.getTransports(service.getName()).size());

@@ -2,7 +2,9 @@ package org.codehaus.xfire.client;
 
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
-import java.net.URL;
+
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.transport.Transport;
 
 /**
  * Factory for creating XFire SOAP client stubs.  The returned stub will call the remote object for all methods.
@@ -30,10 +32,16 @@ public class XFireProxyFactory
      * @param url              the URL where the client object is located.
      * @return a proxy to the object with the specified interface.
      */
-    public Object create(Class serviceInterface, String url)
+    public Object create(Transport transport, Service service, String url)
             throws MalformedURLException
     {
-        XFireProxy handler = new XFireProxy(new URL(url));
-        return Proxy.newProxyInstance(serviceInterface.getClassLoader(), new Class[]{serviceInterface}, handler);
+        Client client = new Client(transport, service, url);
+        
+        XFireProxy handler = new XFireProxy(client);
+        Class serviceClass = service.getServiceInfo().getServiceClass();
+        
+        return Proxy.newProxyInstance(serviceClass.getClassLoader(), 
+                                      new Class[]{serviceClass}, 
+                                      handler);
     }
 }

@@ -3,7 +3,7 @@ package org.codehaus.xfire.transport.http;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.AsyncService;
 import org.codehaus.xfire.service.BadEcho;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -31,7 +31,7 @@ public class XFireServletTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class);
+        Service service = getServiceFactory().create(EchoImpl.class);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
@@ -53,7 +53,7 @@ public class XFireServletTest
     public void testServlet()
             throws Exception
     {
-    	WebRequest getReq = new GetMethodWebRequest("http://localhost/services/Echo?wsdl")
+    	WebRequest getReq = new GetMethodWebRequest("http://localhost/services/EchoImpl?wsdl")
         {
 
             /*
@@ -70,7 +70,7 @@ public class XFireServletTest
         
     	WebResponse response = newClient().getResponse(getReq);
 
-        WebRequest req = new PostMethodWebRequest("http://localhost/services/Echo",
+        WebRequest req = new PostMethodWebRequest("http://localhost/services/EchoImpl",
                                                   getClass().getResourceAsStream("/org/codehaus/xfire/echo11.xml"),
                                                   "text/xml");
 

@@ -2,7 +2,7 @@ package org.codehaus.xfire.transport.http;
 
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.server.http.XFireHttpServer;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
@@ -25,10 +25,10 @@ public class XFireServerTest
         server.setPort(8191);
         server.start();
         
-        service = getServiceFactory().create(Echo.class);
+        service = getServiceFactory().create(EchoImpl.class);
         service.getBinding().setBindingProvider(new MessageBindingProvider());
 
-        clientService = getServiceFactory().create(Echo.class);
+        clientService = getServiceFactory().create(EchoImpl.class);
         clientService.getBinding().setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);

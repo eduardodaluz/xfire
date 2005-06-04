@@ -9,7 +9,12 @@ import org.codehaus.yom.Element;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 18, 2004
  */
-public interface Echo
+public class EchoImpl
+    implements Echo
 {
-    public Element echo(Element e) throws XFireFault;
+    public Element echo(Element e) 
+        throws XFireFault
+    {
+        return e;
+    }
 }

@@ -1,7 +1,7 @@
 package org.codehaus.xfire.handler;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -22,7 +22,7 @@ public class SoapHandlerTest
     {
         super.setUp();
         
-        Service endpoint = getServiceFactory().create(Echo.class,
+        Service endpoint = getServiceFactory().create(EchoImpl.class,
                                                       Soap12.getInstance(),
                                                       SoapConstants.STYLE_MESSAGE,
                                                       SoapConstants.USE_LITERAL);
@@ -44,7 +44,7 @@ public class SoapHandlerTest
     public void testInvoke()
             throws Exception
     {
-        Document response = invokeService("Echo", "/org/codehaus/xfire/echo11.xml");
+        Document response = invokeService("EchoImpl", "/org/codehaus/xfire/echo11.xml");
 
         assertTrue(reqHandler.invoked);
         assertTrue(resHandler.invoked);
@@ -53,7 +53,7 @@ public class SoapHandlerTest
     public void testHeaders()
             throws Exception
     {
-        Document response = invokeService("Echo", "/org/codehaus/xfire/handler/headerMsg.xml");
+        Document response = invokeService("EchoImpl", "/org/codehaus/xfire/handler/headerMsg.xml");
 
         assertTrue(reqHandler.invoked);
         assertTrue(resHandler.invoked);

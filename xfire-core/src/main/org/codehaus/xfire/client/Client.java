@@ -42,6 +42,7 @@ public class Client
         context.setExchange(exchange);
         
         Channel channel = transport.createChannel("client");
+        channel.open();
         channel.setEndpoint(new SoapServiceEndpoint());
         channel.send(context, msg);
         
@@ -59,11 +60,27 @@ public class Client
             }
         }
         
+        channel.close();
         return response;
     }
 
     public void receive(Object[] response)
     {
         this.response = response;
+    }
+    
+    public Service getService()
+    {
+        return service;
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
+    public void setUrl(String url)
+    {
+        this.url = url;
     }
 }

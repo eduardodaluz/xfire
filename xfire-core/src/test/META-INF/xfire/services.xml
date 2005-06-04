@@ -14,7 +14,7 @@
       <namespace>urn:Echo</namespace>
       <style>wrapped</style>
       <use>literal</use>
-      <serviceClass>org.codehaus.xfire.service.Echo</serviceClass>
+      <serviceClass>org.codehaus.xfire.service.EchoImpl</serviceClass>
       <soapVersion>1.2</soapVersion>
       <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
       

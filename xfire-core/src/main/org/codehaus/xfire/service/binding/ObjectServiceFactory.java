@@ -106,8 +106,9 @@ public class ObjectServiceFactory
     }
 
     /**
-     * Creates a service from the specified class. The returned service will have a name based on the class name, a
-     * namespace based on the class package, soap version 1.1, wrapped style, and literal use.
+     * Creates a service from the specified class. The returned service will have a name which is
+     * the class name without the packge. The namespace will be based on the package. The service
+     * will use soap version 1.1, wrapped style, and literal use.
      *
      * @param clazz The service class used to populate the operations and parameters.
      * @return The service.

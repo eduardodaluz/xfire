@@ -11,7 +11,7 @@ import javax.mail.MessagingException;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
-import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -30,10 +30,7 @@ public class ServletAttachmentTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class,
-                                                             Soap12.getInstance(),
-                                                             SoapConstants.STYLE_MESSAGE,
-                                                             SoapConstants.USE_LITERAL);
+        Service service = getServiceFactory().create(EchoImpl.class);
 
         getServiceRegistry().register(service);
     }
@@ -66,7 +63,7 @@ public class ServletAttachmentTest
 
         InputStream is = new ByteArrayInputStream(bos.toByteArray());
 
-        PostMethodWebRequest req = new PostMethodWebRequest("http://localhost/services/Echo",
+        PostMethodWebRequest req = new PostMethodWebRequest("http://localhost/services/EchoImpl",
                                                             is,
                                                             sendAtts.getContentType());
 
