@@ -107,11 +107,11 @@ public class WrappedBinding
             
             if (isClientModeOn())
             {
-                name = op.getName() + "Response";
+                name = op.getName();
             }
             else
             {
-                name = op.getName();
+                name = op.getName() + "Response";
             }
 
             writeStartElement(writer, name, endpoint.getServiceInfo().getName().getNamespaceURI());
