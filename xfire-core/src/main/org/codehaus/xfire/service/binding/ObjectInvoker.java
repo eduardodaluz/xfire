@@ -14,7 +14,9 @@ import org.codehaus.xfire.transport.Session;
 
 /**
  * An invoker which instantiates classes automatically based on the Service's scope.
- *
+ * The default scope is SCOPE_APPLICATION, which creates once instance to use
+ * for the lifetime of the invoker.
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Nov 16, 2004
  */
@@ -23,12 +25,27 @@ public class ObjectInvoker
 {
     private static final Log logger = LogFactory.getLog(ObjectInvoker.class.getName());
 
+    /**
+     * Scope to denote that a single implementation instance should exist for the lifetime
+     * of this invoker and should be reused for every request.
+     */
     public final static int SCOPE_APPLICATION = 1;
 
+    /**
+     * Scope to denote that a new instance of the service implementation should be created
+     * on every call.
+     */
     public final static int SCOPE_REQUEST = 3;
 
+    /**
+     * Scope for storing one object per session. An example of a session implementation is
+     * an http session, whereby one object is created per session and stored in the session scope.
+     */
     public final static int SCOPE_SESSION = 2;
 
+    /**
+     * Constant to denote the implementation class for the service.
+     */
     public static final String SERVICE_IMPL_CLASS = "xfire.serviceImplClass";
 
     private int scope = ObjectInvoker.SCOPE_APPLICATION;
