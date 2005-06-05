@@ -37,17 +37,17 @@
     </java>
     
     <mkdir dir="${classesdir}" />
-    <javac destdir="${classesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
-      <src>
-        <pathelement location="${target.dir}/xfire-xmlbeans-main" />
-      </src>
-      <classpath refid="build.classpath" />
-    </javac>
     <copy todir="${classesdir}">
       <fileset dir="${target.dir}/xfire-xmlbeans-main">
         <include name="**/*.xsb"/>
         <include name="**/*.class"/>
       </fileset>
     </copy>
+    <javac destdir="${classesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="${target.dir}/xfire-xmlbeans-main" />
+      </src>
+      <classpath refid="build.classpath" />
+    </javac>
   </target>
 </project>
