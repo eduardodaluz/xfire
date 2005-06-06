@@ -67,7 +67,7 @@ public class XFireClientInterceptor
     protected Object createXFireProxy(XFireProxyFactory proxyFactory)
             throws MalformedURLException
     {
-        return proxyFactory.create(getServiceInterface(), getServiceUrl());
+        return null; //proxyFactory.create(getServiceInterface(), getServiceUrl());
     }
 
 
