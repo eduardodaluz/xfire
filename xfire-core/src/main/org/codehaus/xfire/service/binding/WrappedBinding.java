@@ -105,19 +105,22 @@ public class WrappedBinding
             OperationInfo op = context.getExchange().getOperation();
             String name = null;
             
+            MessageInfo msgInfo = null;
             if (isClientModeOn())
             {
                 name = op.getName();
+                msgInfo = op.getInputMessage();
             }
             else
             {
                 name = op.getName() + "Response";
+                msgInfo = op.getOutputMessage();
             }
 
             writeStartElement(writer, name, endpoint.getServiceInfo().getName().getNamespaceURI());
             
             int i = 0;
-            for(Iterator itr = op.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
+            for(Iterator itr = msgInfo.getMessageParts().iterator(); itr.hasNext();)
             {
                 MessagePartInfo outParam = (MessagePartInfo) itr.next();
     

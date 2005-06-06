@@ -35,6 +35,8 @@ public interface SoapVersion {
     public QName getHeader();
 
     public QName getBody();
+    
+    public QName getFault();
 
     public String getSoapEncodingStyle();
 

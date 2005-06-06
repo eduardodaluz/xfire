@@ -16,6 +16,10 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.soap.SoapVersionFactory;
+import org.codehaus.xfire.util.DepthXMLStreamReader;
+import org.codehaus.xfire.util.STAXUtils;
 
 /**
  * Handles messages.
@@ -52,6 +56,10 @@ public class MessageBinding
             setOperation(operation, context);
         }
 
+        DepthXMLStreamReader dr = new DepthXMLStreamReader(message.getXMLStreamReader());
+        STAXUtils.toNextElement(dr);
+        checkAndHandleFault(dr);
+        
         final Invoker invoker = getInvoker();
 
         final List params = new ArrayList();
@@ -64,6 +72,20 @@ public class MessageBinding
         }
 
         message.setBody( params.toArray() );
+    }
+
+    private void checkAndHandleFault(DepthXMLStreamReader dr)
+    {
+        SoapVersionFactory factory = SoapVersionFactory.getInstance();
+        for (Iterator itr = factory.getVersions(); itr.hasNext();)
+        {
+            SoapVersion version = (SoapVersion) itr.next();
+            
+            if (dr.getName().equals(version.getFault()))
+            {
+            
+            }
+        }
     }
 
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)

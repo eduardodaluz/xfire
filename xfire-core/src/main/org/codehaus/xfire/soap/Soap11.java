@@ -48,6 +48,8 @@ public class Soap11 implements SoapVersion
 
     private final QName body = new QName(namespace, "Body", prefix);
 
+    private final QName fault = new QName(namespace, "Fault", prefix);
+
     public static Soap11 getInstance()
     {
         return instance;
@@ -81,6 +83,11 @@ public class Soap11 implements SoapVersion
     public QName getBody()
     {
         return body;
+    }
+
+    public QName getFault()
+    {
+        return fault;
     }
 
     public String getSoapEncodingStyle()

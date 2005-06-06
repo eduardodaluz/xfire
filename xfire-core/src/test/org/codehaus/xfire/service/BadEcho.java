@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service;
 
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.yom.Element;
 
 /**
@@ -9,10 +10,11 @@ import org.codehaus.yom.Element;
  * @since Feb 18, 2004
  */
 public class BadEcho
+    implements Echo
 {
     public Element echo(Element e) 
-        throws Exception
+        throws XFireFault
     {
-        throw new Exception("Fault!");
+        throw new XFireFault("Fault!", XFireFault.SENDER);
     }
 }

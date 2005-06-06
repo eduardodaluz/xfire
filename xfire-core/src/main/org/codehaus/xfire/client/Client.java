@@ -5,9 +5,9 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.SoapServiceEndpoint;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.local.LocalChannel;
 
 public class Client
 {
@@ -41,10 +41,11 @@ public class Client
         exchange.setOperation(op);
         context.setExchange(exchange);
         
-        Channel channel = transport.createChannel("client");
+        LocalChannel channel = (LocalChannel) transport.createChannel("client");
         channel.open();
         channel.setEndpoint(new SoapServiceEndpoint());
         channel.send(context, msg);
+        channel.setService(service);
         
         int count = 0;
         while (response == null && count < timeout)

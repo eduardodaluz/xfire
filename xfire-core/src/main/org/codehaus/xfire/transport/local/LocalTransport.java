@@ -24,10 +24,11 @@ public class LocalTransport
     {
         log.debug("Creating new channel for uri: " + uri);
         
-        Channel c = new LocalChannel(uri, this);
+        LocalChannel c = new LocalChannel(uri, this);
         
         if (service != null)
         {
+            c.setService(service);
             c.setEndpoint(new SoapServiceEndpoint());
         }
         
