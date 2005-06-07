@@ -3,6 +3,7 @@ package org.codehaus.xfire.type.basic.intf;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
@@ -19,7 +20,7 @@ public class BeanIntfTest
     {
         super.setUp();
 
-        getServiceFactory().addIgnoredMethods(BeanIgnoredIntf.class.getName());
+        ((ObjectServiceFactory)getServiceFactory()).addIgnoredMethods(BeanIgnoredIntf.class.getName());
         Service service = getServiceFactory().create(BeanServiceIntf.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, BeanServiceImpl.class);
 
