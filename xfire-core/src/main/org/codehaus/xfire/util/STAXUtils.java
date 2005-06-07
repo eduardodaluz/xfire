@@ -252,7 +252,6 @@ public class STAXUtils
         {
             Node attr = attrs.item(i);
             
-            boolean writeAttrNamespace = false;
             String attrPrefix = writer.getNamespaceContext().getPrefix(attr.getNamespaceURI());
             if ( attrPrefix == null )
             {
@@ -304,7 +303,7 @@ public class STAXUtils
         int read = 0; // number of elements read in
         
         Document doc = root.getOwnerDocument();
-        Element e = null;
+        Element e;
         
         StringBuffer text = new StringBuffer();
         
@@ -354,7 +353,7 @@ public class STAXUtils
         
         try
         {
-            XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+            XMLStreamWriter writer = factory.createXMLStreamWriter(out, encoding);
 
             return writer;
         }
