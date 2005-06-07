@@ -110,7 +110,7 @@
   
   <target name="internal-test" if="tests.available" depends="junit-present,compile-tests">
     <mkdir dir="${testreportdir}" />
-    <junit failureproperty="test.failure" printSummary="yes" fork="onceonly" haltonerror="true">
+    <junit failureproperty="test.failure" printSummary="yes" fork="true" haltonerror="true" dir="${basedir}">
       <jvmarg value="-Djava.awt.headless=true"/> 
       <formatter type="xml" />
       <formatter usefile="false" type="plain" />
