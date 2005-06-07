@@ -13,7 +13,7 @@ import java.util.HashMap;
  * instantiation mechanism. </p>
  * <p/>
  * If you want to provide your own Factory you must: <ul> <li>Register your factory via
- * <code>registerFactory</code></li> <li>Implment <code>public static XFireFactory createInstance()</code> </ul> </p>
+ * <code>registerFactory</code></li> <li>Implement <code>public static XFireFactory createInstance()</code> </ul> </p>
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
@@ -27,25 +27,21 @@ public class XFireFactory
     private XFire xfire;
 
     protected XFireFactory()
-            throws Exception
     {
         xfire = new DefaultXFire();
     }
 
     protected XFireFactory(XFire xfire)
-            throws Exception
     {
-        xfire = new DefaultXFire();
+        this.xfire = xfire;
     }
 
     protected static XFireFactory createInstance()
-            throws Exception
     {
         return new XFireFactory();
     }
 
     public static XFireFactory newInstance()
-            throws Exception
     {
         if (standalone == null)
         {
@@ -96,7 +92,6 @@ public class XFireFactory
     }
 
     public static XFireFactory newInstance(String selector)
-            throws Exception
     {
         XFireFactory fac = (XFireFactory) factories.get(selector);
         if (fac == null)
@@ -128,7 +123,6 @@ public class XFireFactory
     }
 
     public XFire getXFire()
-            throws Exception
     {
         return xfire;
     }
