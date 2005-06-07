@@ -247,8 +247,6 @@ public class ObjectServiceFactory
     {
         final Method[] methods = endpoint.getServiceInfo().getServiceClass().getMethods();
 
-        // TODO: go through superclasses, stopping at Object.class
-
         for (int i = 0; i < methods.length; i++)
         {
             final Method method = methods[i];
