@@ -19,6 +19,7 @@ public class BeanIntfTest
     {
         super.setUp();
 
+        getServiceFactory().addIgnoredMethods(BeanIgnoredIntf.class.getName());
         Service service = getServiceFactory().create(BeanServiceIntf.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, BeanServiceImpl.class);
 
@@ -51,4 +52,14 @@ public class BeanIntfTest
         assertValid("//xsd:complexType[@name='BeanIntf']", doc);
     }
 
+    public void testBeanServiceWSDLIgnoreObjectClass()
+            throws Exception
+    {
+        Document doc = getWSDLDocument("BeanServiceIntf");  
+        addNamespace("wsdl", WSDLWriter.WSDL11_NS);
+        addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);
+        addNamespace("xsd", SoapConstants.XSD);
+        //toString shouldn't be exposed
+        assertInvalid("//xsd:element[@name='getStuff']", doc);
+    }
 }

@@ -9,4 +9,9 @@ public class BeanServiceImpl
         b.setName("name");
         return b;
     }
+
+    public String getStuff()
+    {
+        return "stuff";
+    }
 }

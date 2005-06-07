@@ -14,6 +14,19 @@
     <ant inheritall="false" antfile="xfire-plexus/build.xml" />
   </target>
   
+  <target name="test">
+    <ant inheritall="false" antfile="xfire-core/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-aegis/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-annotations/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-java5/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-picocontainer/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-loom/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-xmpp/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-xmlbeans/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-spring/build.xml" target="test"/>
+    <ant inheritall="false" antfile="xfire-plexus/build.xml" target="test"/>
+  </target>
+
   <target name="clean">
     <delete>
       <fileset dir=".">

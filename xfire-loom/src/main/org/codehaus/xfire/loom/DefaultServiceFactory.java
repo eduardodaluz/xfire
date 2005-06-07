@@ -74,6 +74,11 @@ public class DefaultServiceFactory
         return m_factory.create(clazz, name, namespace, version, style, use, encodingStyleURI);
     }
 
+    public void addIgnoredMethods(String className)
+    {
+        m_factory.addIgnoredMethods(className);
+    }
+
     public Service create(final Class clazz, final URL wsdlUrl)
             throws Exception
     {

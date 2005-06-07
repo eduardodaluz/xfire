@@ -3,6 +3,8 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.Set;
+import java.util.HashSet;
 
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
@@ -39,7 +41,8 @@ public class ObjectServiceFactory
     private TransportManager transportManager;
     private String style;
     private String use;
-
+    private Set ignoredClasses = new HashSet();
+  
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      */
@@ -47,6 +50,11 @@ public class ObjectServiceFactory
     {
         setStyle(SoapConstants.STYLE_WRAPPED);
         setUse(SoapConstants.USE_LITERAL);
+        ignoredClasses.add("java.lang.Object");
+        ignoredClasses.add("org.omg.CORBA_2_3.portable.ObjectImpl");
+        ignoredClasses.add("org.omg.CORBA.portable.ObjectImpl");
+        ignoredClasses.add("javax.ejb.EJBObject");
+        ignoredClasses.add("javax.rmi.CORBA.Stub");
     }
 
     /**
@@ -221,10 +229,9 @@ public class ObjectServiceFactory
 
         initializeOperations(endpoint);
 
-        BindingProvider provider = null;
         try
         {
-            provider = getBindingProvider();
+            BindingProvider provider = getBindingProvider();
             provider.initialize(endpoint);
             binding.setBindingProvider(provider);
         }
@@ -238,13 +245,14 @@ public class ObjectServiceFactory
 
     protected void initializeOperations(Service endpoint)
     {
-        final Method[] methods = endpoint.getServiceInfo().getServiceClass().getDeclaredMethods();
+        final Method[] methods = endpoint.getServiceInfo().getServiceClass().getMethods();
 
         // TODO: go through superclasses, stopping at Object.class
 
         for (int i = 0; i < methods.length; i++)
         {
             final Method method = methods[i];
+          System.out.println("checking " + method);
 
             if (isValidMethod(method))
             {
@@ -253,8 +261,28 @@ public class ObjectServiceFactory
         }
     }
 
+    /**
+     * Ignore the specified class' declared methods. 
+     * This can be used to not expose certain interfaces as a service.
+     * By default, the methods specified by the following interfaces/classes are ignored:
+     * <li><code>java.lang.Object</code>
+     * <li><code>org.omg.CORBA_2_3.portable.ObjectImpl</code>
+     * <li><code>org.omg.CORBA.portable.ObjectImpl</code>
+     * <li><code>javax.ejb.EJBObject</code>
+     * <li><code>javax.ejb.EJBLocalObject</code>
+     * <li><code>javax.rmi.CORBA.Stub</code>
+     * 
+     * @param className the fully qualified class name
+     */
+    public void addIgnoredMethods(String className)
+    {
+        ignoredClasses.add(className);
+    }
+  
     protected boolean isValidMethod(final Method method)
     {
+        if(ignoredClasses.contains(method.getDeclaringClass().getName())) return false;
+      
         final int modifiers = method.getModifiers();
 
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);

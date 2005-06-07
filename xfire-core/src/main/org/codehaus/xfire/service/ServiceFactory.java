@@ -66,4 +66,6 @@ public interface ServiceFactory
      */
     public Service create(Class clazz, URL wsdlUrl)
             throws Exception;
+
+  void addIgnoredMethods(String className);
 }
