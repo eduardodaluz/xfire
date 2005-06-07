@@ -252,7 +252,6 @@ public class ObjectServiceFactory
         for (int i = 0; i < methods.length; i++)
         {
             final Method method = methods[i];
-          System.out.println("checking " + method);
 
             if (isValidMethod(method))
             {
