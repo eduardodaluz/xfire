@@ -6,6 +6,7 @@
   <path id="module.classpath">
     <fileset dir="${master.basedir}">
       <include name="xfire-core/target/*.jar" />
+      <include name="xfire-aegis/target/*.jar" />
     </fileset>
   </path>
 
@@ -17,5 +18,6 @@
 
   <target name="init" depends="xfire.init">
     <check-dep module="xfire-core" />
+    <check-dep module="xfire-aegis" />
   </target>
 </project>
