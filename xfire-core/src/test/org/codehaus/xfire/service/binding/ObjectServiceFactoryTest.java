@@ -104,5 +104,20 @@ public class ObjectServiceFactoryTest
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
         assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
     }
+    
+    public void testOverridenNames()
+        throws Exception
+    {
+        Service service = getServiceFactory().create(OperationNameService.class);
+        
+        assertTrue( service.getServiceInfo().getOperation("doSomething") != null );
+        assertTrue( service.getServiceInfo().getOperation("doSomething1") != null );
+    }
+
+    public class OperationNameService
+    {
+        public void doSomething() {}
+        public void doSomething(String bleh) {}
+    }
 
 }

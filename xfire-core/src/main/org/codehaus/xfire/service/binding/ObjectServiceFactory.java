@@ -290,7 +290,9 @@ public class ObjectServiceFactory
         ServiceInfo service = endpoint.getServiceInfo();
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         
-        final OperationInfo op = service.addOperation(method.getName(), method);
+        final String opName = getOperationName(service, method);
+        
+        final OperationInfo op = service.addOperation(opName, method);
 
         final Class[] paramClasses = method.getParameterTypes();
 
@@ -317,6 +319,38 @@ public class ObjectServiceFactory
 
         op.setMEP(getMEP(method));
         op.setAsync(isAsync(method));
+    }
+
+    /**
+     * Creates a name for the operation from the method name. If an operation with that name
+     * already exists, a name is create by appending an integer to the end. I.e. if there is already
+     * two methods named <code>doSomething</code>, the first one will have an operation name of
+     * "doSomething" and the second "doSomething1".
+     * 
+     * @param service
+     * @param method
+     * @return
+     */
+    protected String getOperationName(ServiceInfo service, Method method)
+    {
+        if (service.getOperation(method.getName()) == null)
+        {
+            return method.getName();
+        }
+        
+        int i = 1;
+        while (true)
+        {
+            String name = method.getName() + i;
+            if (service.getOperation(name) == null)
+            {
+                return name;
+            }
+            else
+            {
+                i++;
+            }
+        }
     }
 
     protected String getMEP(final Method method)
