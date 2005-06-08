@@ -1,6 +1,5 @@
 package org.codehaus.xfire.client;
 
-import org.codehaus.xfire.service.BadEcho;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;

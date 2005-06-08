@@ -50,8 +50,6 @@ public class XMPPTransport
         setFaultPipeline(pipeline);
     }
 
-    
-
     /**
      * Gets the transport name. @see NAME.
      */
@@ -82,10 +80,11 @@ public class XMPPTransport
     {
         log.debug("Creating new channel for uri: " + uri);
         
-        Channel c = new XMPPChannel(uri, this);
+        XMPPChannel c = new XMPPChannel(uri, this);
         
         if (service != null)
         {
+            c.setService(service);
             c.setEndpoint(new SoapServiceEndpoint());
         }
         

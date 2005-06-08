@@ -4,9 +4,11 @@ package org.codehaus.xfire.service;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+
 import org.codehaus.xfire.service.binding.ObjectBinding;
 
 public class VisitorTest

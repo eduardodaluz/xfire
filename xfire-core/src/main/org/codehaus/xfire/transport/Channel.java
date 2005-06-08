@@ -4,6 +4,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Service;
 
 /**
  * A channel for communication. This can be a channel on an underlying transport -
@@ -28,6 +29,10 @@ public interface Channel
 
     void setEndpoint(ChannelEndpoint receiver);
 
+    Service getService();
+    
+    void setService(Service service);
+    
     void close();
     
     Transport getTransport();

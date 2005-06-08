@@ -1,14 +1,10 @@
 package org.codehaus.xfire.transport.http;
 
-import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.EchoImpl;
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.transport.Channel;
-import org.codehaus.yom.Element;
 
 public class XFireServerTest
     extends AbstractXFireTest

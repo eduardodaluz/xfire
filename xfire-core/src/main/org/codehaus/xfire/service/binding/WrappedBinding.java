@@ -66,7 +66,7 @@ public class WrappedBinding
             OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
             
             if (op == null)
-            {
+            {System.out.println(inMessage.getChannel().getUri());
                 throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
             }
     

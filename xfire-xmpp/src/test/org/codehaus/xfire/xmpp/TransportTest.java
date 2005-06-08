@@ -13,7 +13,6 @@ import org.codehaus.xfire.util.YOMSerializer;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.stax.StaxBuilder;
-import org.jivesoftware.smack.XMPPConnection;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

@@ -2,6 +2,7 @@ package org.codehaus.xfire.service;
 
 
 import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;

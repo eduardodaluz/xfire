@@ -9,11 +9,11 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.InExchange;
-import org.codehaus.xfire.exchange.RobustInOutExchange;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.exchange.RobustInOutExchange;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;

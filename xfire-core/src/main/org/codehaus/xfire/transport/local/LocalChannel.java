@@ -13,7 +13,6 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractSoapChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
@@ -24,7 +23,6 @@ public class LocalChannel
     private String uri;
     protected static final String SENDER_URI = "senderUri";
     protected static final String OLD_CONTEXT = "urn:xfire:transport:local:oldContext";
-    private Service service;
     
     public LocalChannel(String uri, LocalTransport transport)
     {
@@ -58,7 +56,7 @@ public class LocalChannel
         else
         {
             MessageContext receivingContext = new MessageContext();
-            receivingContext.setService(service);
+            receivingContext.setService(getService());
             receivingContext.setProperty(OLD_CONTEXT, context);
             receivingContext.setProperty(SENDER_URI, getUri());
             
@@ -133,22 +131,12 @@ public class LocalChannel
 
     public void receive(MessageContext context, InMessage message)
     {
-        context.setService(service);
+        context.setService(getService());
         
         super.receive(context, message);
     }
 
     public void close()
     {
-    }
-
-    public Service getService()
-    {
-        return service;
-    }
-
-    public void setService(Service service)
-    {
-        this.service = service;
     }
 }

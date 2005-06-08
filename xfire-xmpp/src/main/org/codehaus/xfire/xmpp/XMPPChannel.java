@@ -7,10 +7,10 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.transport.AbstractChannel;
+import org.codehaus.xfire.transport.AbstractSoapChannel;
+import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -22,10 +22,10 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XMPPError;
 
 public class XMPPChannel
-    extends AbstractChannel
+    extends AbstractSoapChannel
 {
     private XMPPConnection conn;
-    
+
     public XMPPChannel(String uri, XMPPTransport transport)
     {
         setUri(uri);
@@ -49,10 +49,8 @@ public class XMPPChannel
         }
         catch (XMPPException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
     }
 
     public void send(MessageContext context, OutMessage message)
@@ -61,31 +59,38 @@ public class XMPPChannel
         XMPPTransport transport = (XMPPTransport) getTransport();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
-        
-        MessageSerializer ser = message.getSerializer();
-        ser.writeMessage(message, writer, context);
-        
         try
         {
+            final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+            sendSoapMessage(message, writer, context);
+            
             writer.flush();
             writer.close();
+            
+            out.flush();
             out.close();
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            throw new XFireRuntimeException("Couldn't write stream.", e);
         }
 
         SoapEnvelopePacket response = new SoapEnvelopePacket(readDocument(out.toString()));
         response.setFrom(conn.getUser());
-        response.setTo(message.getUri());
-        response.setType(IQ.Type.RESULT);
-
-        String packetId = (String) context.getProperty(ChannelPacketListener.PACKET_ID);
-        if (packetId != null)
-            response.setPacketID("");
-
+        
+        if (message.getUri().equals(Channel.BACKCHANNEL_URI))
+        {
+            SoapEnvelopePacket req = 
+                    (SoapEnvelopePacket) context.getProperty(ChannelPacketListener.PACKET);
+            response.setTo(req.getFrom());
+            response.setType(IQ.Type.RESULT);
+            response.setPacketID(req.getPacketID());
+        }
+        else
+        {
+            response.setTo(message.getUri());
+        }
+        
         XMPPError error = (XMPPError) context.getProperty(XMPPFaultHandler.XMPP_ERROR);
         if (error != null)
             response.setError(error);

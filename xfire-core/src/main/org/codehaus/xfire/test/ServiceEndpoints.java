@@ -1,6 +1,7 @@
 package org.codehaus.xfire.test;
 
 import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;

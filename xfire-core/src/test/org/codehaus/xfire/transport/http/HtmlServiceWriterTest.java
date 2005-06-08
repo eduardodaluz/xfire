@@ -6,6 +6,7 @@ package org.codehaus.xfire.transport.http;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.Service;

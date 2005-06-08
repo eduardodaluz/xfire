@@ -4,18 +4,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 
+import org.codehaus.xfire.service.EchoImpl;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.test.AbstractServletTest;
+
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
-import org.codehaus.xfire.service.EchoImpl;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractServletTest;
 
 /**
  * XFireServletTest

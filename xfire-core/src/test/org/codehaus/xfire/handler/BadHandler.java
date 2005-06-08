@@ -1,7 +1,6 @@
 package org.codehaus.xfire.handler;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * A handler which echoes the SOAP Body back.

@@ -3,8 +3,8 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;

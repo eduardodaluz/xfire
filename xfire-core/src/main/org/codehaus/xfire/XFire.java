@@ -2,6 +2,7 @@ package org.codehaus.xfire;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.service.ServiceRegistry;
