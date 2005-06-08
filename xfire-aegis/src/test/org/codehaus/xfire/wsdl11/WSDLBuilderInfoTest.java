@@ -35,7 +35,7 @@ public class WSDLBuilderInfoTest
             throws Exception
     {
         Document doc = getWSDLDocument("BeanService");
-        printNode(doc);
+        //printNode(doc);
 
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);

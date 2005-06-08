@@ -76,7 +76,7 @@ public class VoidTest
         op.setMEP(SoapConstants.MEP_IN);
 
         Document doc = getWSDLDocument("VoidService");
-        printNode(doc);
+        //printNode(doc);
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);
         addNamespace("xsd", SoapConstants.XSD);

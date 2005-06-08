@@ -43,7 +43,7 @@ public class WrappedCustomTypeTest
                 invokeService("BeanService",
                               "/org/codehaus/xfire/message/wrapped/WrappedCustomTypeTest.bean11.xml");
 
-        printNode(response);
+        //printNode(response);
 
         addNamespace("sb", "http://services.xfire.codehaus.org");
         assertValid("/s:Envelope/s:Body/sb:getSubmitBeanResponse", response);
