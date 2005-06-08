@@ -53,11 +53,8 @@ public class XMPPClientTest
     {
         Channel serverChannel = serverTrans.createChannel(service);
         serverChannel.open();
-
-        assertFalse(service.getBinding().isClientModeOn());
-        
+    
         Client client = new Client(clientTrans, clientService, id + "/Echo");
-        assertTrue(clientService.getBinding().isClientModeOn());
 
         OperationInfo op = clientService.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
