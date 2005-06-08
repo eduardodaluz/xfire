@@ -42,15 +42,14 @@ public class WrappedClientTest
     {
         LocalTransport transport = new LocalTransport();
         Channel channel = transport.createChannel(service);
-        
         Client client = new Client(transport, clientService, channel.getUri());
         
         OperationInfo op = clientService.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
-        assertNotNull(response);
-        assertEquals(1, response.length);
+        assertNotNull("response from client invoke is null", response);
+        assertEquals("unexpected array size in invoke response", 1, response.length);
         
         String resString = (String) response[0];
-        assertEquals("hello", resString);
+        assertEquals("unexpected response string", "hello", resString);
     }
 }
