@@ -27,10 +27,10 @@ public class TypeInfo
     private PropertyDescriptor[] descriptors;
     private TypeMapping typeMapping;
     
-    public TypeInfo(Class typeClass, QName complexType)
+    public TypeInfo(Class typeClass, String defaultNamespace)
     {
         this.typeClass = typeClass;
-        this.defaultNamespace = complexType.getNamespaceURI();
+        this.defaultNamespace = defaultNamespace;
         
         initializeProperties();
     }

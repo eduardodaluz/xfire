@@ -342,7 +342,7 @@ public class BeanType
         {
             logger.debug("Couldn't find type descriptor " + path);
             
-            info = new TypeInfo(getTypeClass(), getSchemaType());
+            info = new TypeInfo(getTypeClass(), getSchemaType().getNamespaceURI());
         }
         else
         {

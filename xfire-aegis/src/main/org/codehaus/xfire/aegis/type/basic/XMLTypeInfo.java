@@ -28,7 +28,7 @@ public class XMLTypeInfo
                        Class typeClass,
                        InputStream is)
     {
-        super(typeClass);
+        super(typeClass, encodingUri);
         
         this.encodingUri = encodingUri;
         this.is = is;
@@ -128,7 +128,10 @@ public class XMLTypeInfo
         QName name = createQName(e, e.getAttributeValue("name"));
         
         if (name == null)
+        {
             name = createQName(pd);
+            System.out.println("created collection qname: " + name);
+        }
         
         String componentType = e.getAttributeValue("componentType");
         if (componentType == null)

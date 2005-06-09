@@ -7,4 +7,9 @@
                 componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
   </mapping>
 
+  <mapping uri="urn:xfire:bean2">
+    <collection property="beans" 
+                componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
+  </mapping>
+
 </mappings>

@@ -71,5 +71,37 @@ public class DescriptorTest
         Type beanList = info.getType(el);
         assertTrue( beanList instanceof CollectionType );
     }
-   
+
+    public void testListHolderNoName() throws Exception
+    {
+        TypeMapping tm = new AutoTypeMapping();
+        tm.setEncodingStyleURI("urn:xfire:bean2");
+
+        Type type = tm.getType(ListHolderBean.class);
+        TypeInfo info = ((BeanType) type).getTypeInfo();
+        
+        Iterator elItr = info.getElements();
+        assertTrue(elItr.hasNext());
+        QName el = (QName) elItr.next();
+        assertEquals("urn:xfire:bean2", el.getNamespaceURI());
+        assertEquals("beans", el.getLocalPart());
+        
+        Type beanList = info.getType(el);
+        assertTrue( beanList instanceof CollectionType );
+    }
+    
+    public void testDefaultName() throws Exception
+    {
+        TypeMapping tm = new AutoTypeMapping();
+        tm.setEncodingStyleURI("urn:xfire:bean4");
+
+        Type type = tm.getType(MyBean.class);
+        TypeInfo info = ((BeanType) type).getTypeInfo();
+        
+        Iterator attItr = info.getAttributes();
+        assertTrue(attItr.hasNext());
+        QName el = (QName) attItr.next();
+        assertEquals("urn:xfire:bean4", el.getNamespaceURI());
+        assertEquals("prop2", el.getLocalPart());
+    }   
 }

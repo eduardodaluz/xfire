@@ -17,5 +17,10 @@
     <element property="prop1" name="bean:Prop1"/>
     <element property="prop2" name="bean:Prop2"/>
   </mapping>
+  
+  <mapping uri="urn:xfire:bean4" 
+           xmlns:bean="urn:xfire:bean3">
+    <attribute property="prop2"/>
+  </mapping>
 
 </mappings>
