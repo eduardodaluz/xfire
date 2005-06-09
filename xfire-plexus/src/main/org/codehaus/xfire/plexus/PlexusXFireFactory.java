@@ -5,9 +5,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 
 /**
  * <p>
@@ -31,23 +33,28 @@ public class PlexusXFireFactory
     protected Embedder embed;
 
     protected PlexusXFireFactory() 
-        throws Exception
     {
-        URL resource = getPlexusConfiguration();
-        
-        embed = new Embedder();
+        try
+        {
+            URL resource = getPlexusConfiguration();
+            
+            embed = new Embedder();
 
-        embed.setConfiguration( resource );
+            embed.setConfiguration( resource );
 
-        Properties contextProperties = new Properties();
+            Properties contextProperties = new Properties();
 
-        embed.setProperties(contextProperties);
-        
-        embed.start();
+            embed.setProperties(contextProperties);
+            
+            embed.start();
+        }
+        catch (Exception e)
+        {
+            throw new XFireRuntimeException("Couldn't load plexus embedder.", e);
+        }
     }
 
     public static XFireFactory createInstance() 
-    	throws Exception
     {
         if ( standalone == null )
         {
@@ -97,9 +104,16 @@ public class PlexusXFireFactory
 		return resource;
 	}
 
-    public XFire getXFire() throws Exception
+    public XFire getXFire()
     {
-        return (XFire) embed.lookup( XFire.ROLE );
+        try
+        {
+            return (XFire) embed.lookup( XFire.ROLE );
+        }
+        catch (ComponentLookupException e)
+        {
+            throw new XFireRuntimeException("Couldn't lookup xfire component.", e);
+        }
     }
 
 	protected void finalize() throws Throwable
