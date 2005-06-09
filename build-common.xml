@@ -172,7 +172,8 @@
   <target name="get-deps" depends="init, setproxy" description="download dependencies">
     <mkdir dir="${master.libdir}" />
     <mkdir dir="${libdir}" />
-    <get-dep artifact="stax" version="1.1.1-dev" dir="${master.libdir}"/>
+  	<get-dep artifact="wstx-asl" group="woodstox" version="1.9" dir="${master.libdir}"/>
+  	<get-dep artifact="stax" version="1.1.1-dev" dir="${master.libdir}"/>
     <get-dep artifact="stax-api" group="stax" version="1.0" dir="${master.libdir}"/>
     <get-dep artifact="yom" version="1.0-SNAPSHOT" dir="${master.libdir}"/>
     <get-dep artifact="wsdl4j" version="1.4" dir="${master.libdir}"/>

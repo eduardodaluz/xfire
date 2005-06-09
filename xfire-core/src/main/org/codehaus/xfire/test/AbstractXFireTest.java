@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
@@ -33,6 +34,8 @@ import org.codehaus.yom.Node;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.stax.StaxBuilder;
 
+import com.ctc.wstx.stax.WstxInputFactory;
+
 /**
  * Contains helpful methods to test SOAP services.
  *
@@ -47,6 +50,8 @@ public abstract class AbstractXFireTest
 
     private static String basedirPath;
 
+    private XMLInputFactory defaultInputFactory = XMLInputFactory.newInstance(WstxInputFactory.class.getName(),
+                                                                              getClass().getClassLoader());
     /**
      * Namespaces for the XPath expressions.
      */
@@ -93,9 +98,15 @@ public abstract class AbstractXFireTest
     protected Document readDocument(String text)
             throws XMLStreamException
     {
+        return readDocument(text, defaultInputFactory);
+    }
+
+    protected Document readDocument(String text, XMLInputFactory ifactory)
+            throws XMLStreamException
+    {
         try
         {
-            StaxBuilder builder = new StaxBuilder();
+            StaxBuilder builder = new StaxBuilder(ifactory);
             return builder.build(new StringReader(text));
         }
         catch (XMLStreamException e)
@@ -105,7 +116,7 @@ public abstract class AbstractXFireTest
             throw e;
         }
     }
-
+    
     protected Document getWSDLDocument(String service)
             throws Exception
     {

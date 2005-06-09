@@ -23,8 +23,7 @@ public class XMLBeansBindingProvider
     {
         options.setSaveInner();
     }
-    
-    
+
     public void initialize(Service newParam)
     {
     }

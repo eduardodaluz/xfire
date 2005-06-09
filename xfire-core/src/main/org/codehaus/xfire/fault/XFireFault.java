@@ -5,13 +5,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.codehaus.xfire.XFireRuntimeException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.codehaus.yom.Element;
 
 /**
  * In XFire, applications throw their own declared exceptions which are then turned into faults.  The
@@ -61,7 +55,7 @@ public class XFireFault
     private String subCode;
     private String message;
     private String role;
-    private Node detail;
+    private Element detail;
     private Map namespaces;
     private Throwable cause;
 
@@ -202,22 +196,11 @@ public class XFireFault
      *
      * @return the detail node.
      */
-    public Node getDetail()
+    public Element getDetail()
     {
         if (detail == null)
         {
-            try
-            {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder b = factory.newDocumentBuilder();
-
-                Document doc = b.newDocument();
-                detail = doc.createElement("detail");
-            }
-            catch (ParserConfigurationException e)
-            {
-                throw new XFireRuntimeException("Couldn't find a DOM parser", e);
-            }
+            detail = new Element("detail");
         }
         return detail;
     }
@@ -227,7 +210,7 @@ public class XFireFault
      *
      * @param details the detail node.
      */
-    public void setDetail(Node details)
+    public void setDetail(Element details)
     {
         detail = details;
     }

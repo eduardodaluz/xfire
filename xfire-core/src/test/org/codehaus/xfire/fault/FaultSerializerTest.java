@@ -12,8 +12,8 @@ import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.Node;
 
 /**
  * XFireTest
@@ -31,14 +31,13 @@ public class FaultSerializerTest
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
         fault.setSubCode("m:NotAvailable");
-        Node details = fault.getDetail();
-        Element e = details.getOwnerDocument().createElementNS("urn:test", "bah");
-        DOMUtils.setText(e, "bleh");
-        details.appendChild(e);
+        Element e = new Element("t:bah", "urn:test");
+        e.appendChild("bleh");
+        fault.getDetail().appendChild(e);
 
-        e = details.getOwnerDocument().createElementNS("urn:test2", "bah2");
-        DOMUtils.setText(e, "bleh");
-        details.appendChild(e);
+        e = new Element("t:bah2", "urn:test2");
+        e.appendChild("bleh");
+        fault.getDetail().appendChild(e);
 
         fault.addNamespace("m", "urn:test");
 
@@ -74,13 +73,13 @@ public class FaultSerializerTest
         fault.setRole("http://someuri");
 
         Node details = fault.getDetail();
-        Element e = details.getOwnerDocument().createElementNS("urn:test", "bah");
-        DOMUtils.setText(e, "bleh");
-        details.appendChild(e);
+        Element e = new Element("t:bah", "urn:test");
+        e.appendChild("bleh");
+        fault.getDetail().appendChild(e);
 
-        e = details.getOwnerDocument().createElementNS("urn:test2", "bah2");
-        DOMUtils.setText(e, "bleh");
-        details.appendChild(e);
+        e = new Element("t:bah2", "urn:test2");
+        e.appendChild("bleh");
+        fault.getDetail().appendChild(e);
 
         fault.addNamespace("m", "urn:test");
 

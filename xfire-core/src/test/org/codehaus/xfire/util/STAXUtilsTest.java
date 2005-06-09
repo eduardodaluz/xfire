@@ -15,6 +15,11 @@ import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 import org.w3c.dom.Element;
 
+import com.bea.xml.stream.MXParserFactory;
+import com.bea.xml.stream.XMLOutputFactoryBase;
+import com.ctc.wstx.stax.WstxInputFactory;
+import com.ctc.wstx.stax.WstxOutputFactory;
+
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 26, 2004
@@ -22,9 +27,41 @@ import org.w3c.dom.Element;
 public class STAXUtilsTest
     extends AbstractXFireTest
 {
-    public void testSkip() throws Exception
+    private XMLInputFactory ifactory;
+    private XMLOutputFactory ofactory;
+    
+    public void testWSTX() throws Exception
     {
-        XMLInputFactory ifactory = XMLInputFactory.newInstance();
+        ifactory = XMLInputFactory.newInstance(WstxInputFactory.class.getName(),
+                                               getClass().getClassLoader());
+       
+        ofactory = new WstxOutputFactory();
+
+        doSkipTest();
+        doAmazonDoc();
+        doEbayDoc();
+        doAmazonDoc2();
+        doDOMWrite();
+        doDOMRead();
+    }
+    
+    public void testRI() throws Exception
+    {
+        ifactory = XMLInputFactory.newInstance(MXParserFactory.class.getName(),
+                                               getClass().getClassLoader());
+
+        ofactory = new XMLOutputFactoryBase();
+        
+        doSkipTest();
+        doAmazonDoc();
+        doEbayDoc();
+        doAmazonDoc2();
+        doDOMWrite();
+        doDOMRead();
+    }
+    
+    public void doSkipTest() throws Exception
+    {
         XMLStreamReader reader = ifactory.createXMLStreamReader(getClass().getResourceAsStream("/org/codehaus/xfire/util/nowhitespace.xml"));
         
         DepthXMLStreamReader dr = new DepthXMLStreamReader(reader);
@@ -35,22 +72,22 @@ public class STAXUtilsTest
         assertEquals("Header", dr.getLocalName());
     }
     
-    public void testAmazonDoc() throws Exception
+    public void doAmazonDoc() throws Exception
     {
         String outS = doCopy("amazon.xml");
         
-        Document doc = readDocument(outS);
+        Document doc = readDocument(outS, ifactory);
         
         addNamespace("a", "http://xml.amazon.com/AWSECommerceService/2004-08-01");
         assertValid("/a:ItemLookup", doc);
         assertValid("/a:ItemLookup/a:Request/a:IdType", doc);
     }
 
-    public void testEbayDoc() throws Exception
+    public void doEbayDoc() throws Exception
     {
         String outS = doCopy("ebay.xml");
         
-        Document doc = readDocument(outS);
+        Document doc = readDocument(outS, ifactory);
         
         addNamespace("e", "urn:ebay:api:eBayAPI");
         addNamespace("ebase", "urn:ebay:apis:eBLBaseComponents");
@@ -59,11 +96,11 @@ public class STAXUtilsTest
         assertValid("//e:UserID", doc);
     }
     
-    public void testAmazonDoc2() throws Exception
+    public void doAmazonDoc2() throws Exception
     {
         String outS = doCopy("amazon2.xml");
         
-        Document doc = readDocument(outS);
+        Document doc = readDocument(outS, ifactory);
         
         addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");
         assertValid("//a:ItemLookupResponse", doc);
@@ -77,12 +114,10 @@ public class STAXUtilsTest
      */
     private String doCopy(String resource) throws FactoryConfigurationError, XMLStreamException
     {
-        XMLInputFactory ifactory = XMLInputFactory.newInstance();
         XMLStreamReader reader = ifactory.createXMLStreamReader(getClass().getResourceAsStream(resource));
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+        XMLStreamWriter writer = ofactory.createXMLStreamWriter(out);
         
         writer.writeStartDocument();
         STAXUtils.copy(reader, writer);
@@ -95,27 +130,25 @@ public class STAXUtilsTest
     }
     
 
-    public void testDOMWrite() throws Exception
+    public void doDOMWrite() throws Exception
     {
         org.w3c.dom.Document doc = DOMUtils.readXml(getResourceAsStream("amazon.xml"));
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
         
         STAXUtils.writeElement(doc.getDocumentElement(), writer);
         
         writer.close();
         
-        Document testDoc = readDocument(bos.toString());
+        Document testDoc = readDocument(bos.toString(), ifactory);
         addNamespace("a", "http://xml.amazon.com/AWSECommerceService/2004-08-01");
         assertValid("//a:ItemLookup", testDoc);
         assertValid("//a:ItemLookup/a:Request", testDoc);
     }
     
-    public void testDOMRead() throws Exception
+    public void doDOMRead() throws Exception
     {
-        XMLInputFactory ifactory = XMLInputFactory.newInstance();
         XMLStreamReader reader = ifactory.createXMLStreamReader(getResourceAsStream("amazon2.xml"));
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

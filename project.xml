@@ -159,10 +159,10 @@
             <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
         </dependency>
         <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j-qname</artifactId>
-            <version>1.4</version>
-            <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+            <groupId>woodstox</groupId>
+            <artifactId>wstx-asl</artifactId>
+            <version>1.9</version>
+            <url>http://woodstox.codehaus.org/</url>
         </dependency>
         <dependency>
             <groupId>yom</groupId>

@@ -1,9 +1,12 @@
 package org.codehaus.xfire.xmlbeans;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.yom.stax.StaxBuilder;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -55,9 +58,17 @@ public class XMLBeansFault
             {
                 setRole( cursor.getTextValue() );
             }
-            if ( cursor.getName().getLocalPart().equals("faultcode") )
+            if ( cursor.getName().getLocalPart().equals("detail") )
             {
-                setDetail( cursor.getDomNode() );
+                StaxBuilder builder = new StaxBuilder();
+                try
+                {
+                    setDetail( builder.buildElement(null, cursor.newXMLStreamReader()) );
+                }
+                catch (XMLStreamException e)
+                {
+                    e.printStackTrace();
+                }
             }
         }
         while( cursor.toNextSibling() );

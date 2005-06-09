@@ -11,10 +11,9 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.util.STAXUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.Elements;
+import org.codehaus.yom.stax.StaxSerializer;
 
 public class Soap12FaultSerializer
     implements MessageSerializer
@@ -72,18 +71,15 @@ public class Soap12FaultSerializer
 
             if (fault.hasDetails())
             {
-                Node details = fault.getDetail();
+                Element detail = fault.getDetail();
 
                 writer.writeStartElement("soap:Detail");
 
-                NodeList children = details.getChildNodes();
-                for (int i = 0; i < children.getLength(); i++)
+                StaxSerializer serializer = new StaxSerializer();
+                Elements details = detail.getChildElements();
+                for (int i = 0; i < details.size(); i++)
                 {
-                    Node n = children.item(i);
-                    if (n instanceof Element)
-                    {
-                        STAXUtils.writeElement((Element) n, writer);
-                    }
+                    serializer.writeElement(details.get(i), writer);
                 }
 
                 writer.writeEndElement(); // Details

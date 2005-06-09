@@ -139,15 +139,24 @@ public class STAXUtils
             prefix = "";
         }
         
+        String boundPrefix = writer.getPrefix(uri);
+        boolean writeElementNS = false;
+        if ( boundPrefix == null || !prefix.equals(boundPrefix) )
+        {   
+            writeElementNS = true;
+        }
+        
         // Write out the element name and possible the default namespace
         if (uri != null)
         {
             if (prefix.length() == 0)
             {
+                writer.setDefaultNamespace(uri);
                 writer.writeStartElement(uri, local);
             }
             else
             {
+                writer.setPrefix(prefix, uri);
                 writer.writeStartElement(prefix, local, uri);
             } 
         }
@@ -159,26 +168,40 @@ public class STAXUtils
         // Write out the namespaces
         for ( int i = 0; i < reader.getNamespaceCount(); i++ )
         {
-            String nsPrefix = reader.getNamespacePrefix(i);
             String nsURI = reader.getNamespaceURI(i);
-
-            if ( nsPrefix == null || nsPrefix.length() ==  0 )
-            {
-                continue;
-            }
+            String nsPrefix = reader.getNamespacePrefix(i);
+            if (nsPrefix == null) nsPrefix = "";
             
-            writer.writeNamespace(nsPrefix, nsURI);
-        }
-
-        String boundPrefix = writer.getPrefix(uri);
-        if ( boundPrefix == null || !prefix.equals(boundPrefix) )
-        {   
-            if ( prefix.length() == 0)
-                writer.writeDefaultNamespace(uri);
+            if ( nsPrefix.length() ==  0 )
+            {
+                writer.writeDefaultNamespace(nsURI);
+            }
             else
-                writer.writeNamespace(prefix, uri);
+            {
+                writer.writeNamespace(nsPrefix, nsURI);
+            }
+
+            if (nsURI.equals(uri) && nsPrefix.equals(prefix))
+            {
+                writeElementNS = false;
+            }
         }
         
+        // Check if the namespace still needs to be written.
+        // We need this check because namespace writing works 
+        // different on Woodstox and the RI.
+        if (writeElementNS)
+        {
+            if ( prefix == null || prefix.length() ==  0 )
+            {
+                writer.writeDefaultNamespace(uri);
+            }
+            else
+            {
+                writer.writeNamespace(prefix, uri);
+            }
+        }
+
         // Write out attributes
         for ( int i = 0; i < reader.getAttributeCount(); i++ )
         {
@@ -225,7 +248,7 @@ public class STAXUtils
             else
             {
                 prefix = "";
-                
+                writer.setDefaultNamespace(ns);
                 writer.writeStartElement( ns, localName );
                 
                 String curUri = writer.getNamespaceContext().getNamespaceURI(prefix);
