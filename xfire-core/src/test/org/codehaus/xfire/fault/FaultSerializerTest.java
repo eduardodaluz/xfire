@@ -55,7 +55,7 @@ public class FaultSerializerTest
         writer.close();
         
         Document doc = readDocument(out.toString());
-        printNode(doc);
+        //printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
         assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc);
         addNamespace("t", "urn:test2");
@@ -98,7 +98,7 @@ public class FaultSerializerTest
         writer.close();
 
         Document doc = readDocument(out.toString());
-        printNode(doc);
+        //printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
         addNamespace("t", "urn:test2");
         assertValid("//detail/t:bah2[text()='bleh']", doc);

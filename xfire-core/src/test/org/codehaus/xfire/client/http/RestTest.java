@@ -38,7 +38,7 @@ public class RestTest
         client.invoke();
         
         String res = handler.getResponse();
-        System.out.println(res);
+        //System.out.println(res);
         assertNotNull(res);
         assertTrue( res.indexOf("ItemSearchResponse") != -1 );
     }
