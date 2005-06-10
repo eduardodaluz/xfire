@@ -14,13 +14,13 @@ public class SoapIQProviderTest
     public void testIQ()
         throws Exception
     {
-        SoapIQProvider.class.getName();
+        new SoapIQProvider();
      
         SoapVersion v11 = Soap11.getInstance();
-        
         Object provider = ProviderManager.getIQProvider(v11.getEnvelope().getLocalPart(), 
                                                         v11.getEnvelope().getNamespaceURI());
-        assertNotNull(provider);
+        assertNotNull("Got null provider for " + v11.getEnvelope().getLocalPart() 
+                + " in namespace " + v11.getEnvelope().getNamespaceURI(), provider);
         assertTrue(provider instanceof SoapIQProvider);
     }
 }
