@@ -20,7 +20,7 @@ package org.codehaus.xfire.soap;
 import javax.xml.namespace.QName;
 
 /**
- * Represents the SOAP 1.2 version
+ * Represents the SOAP 1.1 version
  * 
  * @version $Revision$
  */
