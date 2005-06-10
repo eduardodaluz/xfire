@@ -12,12 +12,54 @@
 
   <target name="get-deps" depends="xfire.get-deps">
     <get-dep artifact="commons-beanutils" version="1.7.0" />
+    <get-dep artifact="commons-collections" version="2.1" />
     <get-dep artifact="commons-attributes-api" group="commons-attributes" version="2.1" />
+    <get-dep artifact="commons-attributes-compiler" group="commons-attributes" version="2.1" />
     <get-dep artifact="backport175" version="1.0.RC1" />
+    <get-dep artifact="xjavadoc" version="1.0.2" />
   </target>
 
   <target name="init" depends="xfire.init">
     <check-dep module="xfire-core" />
     <check-dep module="xfire-aegis" />
+  </target>
+  
+  <target name="compile-tests" depends="xfire.compile-tests,generate-backport-annotations,generate-commons-annotations" />
+  
+  <target name="generate-backport-annotations" depends="get-deps">
+      <mkdir dir="${testclassesdir}" />
+      <taskdef name="annotationc"
+          classname="org.codehaus.backport175.compiler.task.AnnotationCTask"
+          classpathref="build.classpath"/>
+
+      <annotationc destdir="${testclassesdir}">
+          <src path="src/test" />
+          <fileset dir="src/test">
+              <include name="**/backport175/*.java"/>
+          </fileset>
+          <classpath>
+            <pathelement path="${testclassesdir}"/>
+            <pathelement path="${target.dir}/classes"/>
+          </classpath>
+      </annotationc>
+  </target>
+  
+  <target name="generate-commons-annotations" depends="get-deps">
+      <mkdir dir="${target.dir}/commons-attributes" />
+      <taskdef resource="org/apache/commons/attributes/anttasks.properties" classpathref="build.classpath"/>
+      <attribute-compiler destdir="${target.dir}/commons-attributes">
+        <fileset dir="src/test">
+            <include name="**/commons/*.java"/>
+        </fileset>
+      </attribute-compiler>
+      <javac destdir="${testclassesdir}">
+        <classpath>
+          <path refid="build.classpath" />
+          <pathelement path="${target.dir}/classes" />
+        </classpath>
+        <src>
+          <pathelement location="${target.dir}/commons-attributes" />
+        </src>
+      </javac>
   </target>
 </project>
