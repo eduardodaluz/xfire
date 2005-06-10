@@ -21,7 +21,7 @@ public class GeneratorTask
 {
     private String wsdl;
     private boolean overwrite = false;
-    private String outputDir;
+    private File outputDir;
     private String packageName = "";
     private String strategy = ClientGenerationStrategy.class.getName();
     private String name;
@@ -36,7 +36,7 @@ public class GeneratorTask
         {
             WSDLInspector insp = new WSDLInspector();
 
-            URL url = null;
+            URL url;
             try
             {
                 url = new URL(wsdl);
@@ -52,7 +52,7 @@ public class GeneratorTask
             
             for ( Iterator itr = services.iterator(); itr.hasNext(); )
             {
-                strat.write( (WSDLInspector.Service) itr.next(), new File(outputDir), this );
+                strat.write( (WSDLInspector.Service) itr.next(), outputDir, this );
             }
         }
         catch (Exception e)
@@ -78,12 +78,12 @@ public class GeneratorTask
         this.wsdl = wsdl;
     }
     
-    public String getOutputDir()
+    public File getOutputDir()
     {
         return outputDir;
     }
     
-    public void setOutputDir(String outputDir)
+    public void setOutputDir(File outputDir)
     {
         this.outputDir = outputDir;
     }

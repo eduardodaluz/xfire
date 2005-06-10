@@ -22,7 +22,7 @@ public class GeneratorTest
         File output = new File("target/generated-test");
         output.mkdir();
         
-        task.setOutputDir( output.getAbsolutePath() );
+        task.setOutputDir( output );
         
         task.execute();
     }
@@ -39,7 +39,7 @@ public class GeneratorTest
         File output = new File("target/generated-test");
         output.mkdir();
         
-        task.setOutputDir( output.getAbsolutePath() );
+        task.setOutputDir( output );
         
         task.execute();
     }

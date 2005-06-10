@@ -20,7 +20,7 @@ public class ClientGenerationStrategy
     public void write( Service service, File outputDir, GeneratorTask task ) 
         throws Exception
     {
-        File dir = new File(outputDir + File.separator + task.getPackage().replace('.','/'));
+        File dir = new File(outputDir, task.getPackage().replace('.',File.separatorChar));
         
         if ( !dir.exists() )
             dir.mkdirs();
@@ -29,7 +29,7 @@ public class ClientGenerationStrategy
         if ( service.isRest() )
             type = "Rest";
         String name = service.getName();
-        if ( task.getName() != null && !task.getName().equals("") )
+        if ( task.getName() != null && task.getName().length() != 0 )
             name = task.getName();
         
         File stub = new File(dir, name + type + "Client.java" );
