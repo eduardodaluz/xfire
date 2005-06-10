@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.xfire.XFireException;
 import org.codehaus.yom.Element;
 
 /**
@@ -20,7 +21,7 @@ import org.codehaus.yom.Element;
  * @since Feb 14, 2004
  */
 public class XFireFault
-        extends Exception
+        extends XFireException
 {
     /**
 	 * Serialization ID. 

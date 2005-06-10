@@ -9,10 +9,10 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.transport.AbstractSoapChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
@@ -34,7 +34,7 @@ public class LocalChannel
     {
     }
 
-    public void send(final MessageContext context, final OutMessage message) throws XFireFault
+    public void send(final MessageContext context, final OutMessage message) throws XFireException
     {
         if (message.getUri().equals(Channel.BACKCHANNEL_URI))
         {
@@ -67,14 +67,22 @@ public class LocalChannel
     private void sendViaNewChannel(final MessageContext context,
                                    final MessageContext receivingContext,
                                    final OutMessage message,
-                                   final String uri)
+                                   final String uri) throws XFireException
     {
         try
         {
             final PipedInputStream stream = new PipedInputStream();
             final PipedOutputStream outStream = new PipedOutputStream(stream);
             
-            final Channel channel = getTransport().createChannel(uri);
+            final Channel channel;
+            try
+            {
+                channel = getTransport().createChannel(uri);
+            }
+            catch (Exception e)
+            {
+                throw new XFireException("Couldn't create channel.", e);
+            }
 
             Thread readThread = new Thread(new Runnable() 
             {

@@ -196,7 +196,15 @@ public class XFireServletController
         MessageContext context = new MessageContext(service, null, session);
         context.setService(getService(service));
         
-        Channel channel = transport.createChannel(getService(service));
+        Channel channel;
+        try
+        {
+            channel = transport.createChannel(getService(service));
+        }
+        catch (Exception e)
+        {
+            throw new ServletException("Couldn't open channel.", e);
+        }
         
         String contentType = request.getContentType();
         if (null == contentType)

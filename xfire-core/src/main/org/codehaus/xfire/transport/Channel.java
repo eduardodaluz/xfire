@@ -1,9 +1,9 @@
 package org.codehaus.xfire.transport;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Service;
 
 /**
@@ -21,9 +21,16 @@ public interface Channel
      */
     String BACKCHANNEL_URI = "urn:xfire:channel:backchannel";
 
-    void open();
+    void open() throws Exception;
     
-    void send(MessageContext context, OutMessage message) throws XFireFault;
+    /**
+     * Sends a message.
+     * @param context
+     * @param message
+     * @throws XFireException Occurs if there was an error an error sending the message.
+     */
+    void send(MessageContext context, OutMessage message) 
+        throws XFireException;
     
     void receive(MessageContext context, InMessage message);
 

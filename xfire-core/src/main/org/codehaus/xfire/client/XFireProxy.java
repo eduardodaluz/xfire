@@ -1,6 +1,5 @@
 package org.codehaus.xfire.client;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -8,7 +7,7 @@ import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.service.OperationInfo;
 
 /**
@@ -60,7 +59,7 @@ public class XFireProxy
     }
 
     private Object handleRequest(String methodName, Object[] args)
-            throws XFireFault, IOException
+            throws XFireException
     {
         OperationInfo op = client.getService().getServiceInfo().getOperation(methodName);
         

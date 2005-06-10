@@ -5,6 +5,7 @@ import java.util.Stack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.transport.Channel;
@@ -126,9 +127,9 @@ public class RobustInOutExchange
         {
             channel.send(context, outMsg);
         }
-        catch (XFireFault fault2)
+        catch (XFireException e)
         {
-            logger.error("Fault occurred while sending fault.", fault);
+            logger.error("Exception occurred while sending fault.", e);
         }
     }
 

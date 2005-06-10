@@ -1,6 +1,7 @@
 package org.codehaus.xfire.client;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
@@ -29,7 +30,7 @@ public class Client
         service.getBinding().setClientModeOn(true);
     }
 
-    public Object[] invoke(OperationInfo op, Object[] params) throws XFireFault
+    public Object[] invoke(OperationInfo op, Object[] params) throws XFireException, XFireFault
     {
         OutMessage msg = new OutMessage("targeturl");
         msg.setBody(params);
@@ -44,27 +45,42 @@ public class Client
         exchange.setOperation(op);
         context.setExchange(exchange);
         
-        Channel channel = transport.createChannel("client");
-        channel.open();
+        Channel channel = null;
+        try
+        {
+            channel = transport.createChannel();
+        }
+        catch (Exception e)
+        {
+            throw new XFireException("Couldn't open channel.", e);
+        }
+        
         channel.setEndpoint(this);
         channel.setService(service);
         channel.send(context, msg);
         
-        int count = 0;
-        while (response == null && count < timeout)
+        /**
+         * If this is an asynchronous channel, we'll need to sleep() and wait
+         * for a response. Channels such as HTTP will have the response set
+         * by the time we get to this point.
+         */
+        if (response == null)
         {
-            try
+            int count = 0;
+            while (response == null && count < timeout)
             {
-                Thread.sleep(50);
-                count += 50;
-            }
-            catch (InterruptedException e)
-            {
-                break;
+                try
+                {
+                    Thread.sleep(50);
+                    count += 50;
+                }
+                catch (InterruptedException e)
+                {
+                    break;
+                }
             }
         }
-        
-        channel.close();
+
         return response;
     }
 
@@ -92,5 +108,15 @@ public class Client
     public void setUrl(String url)
     {
         this.url = url;
+    }
+
+    public int getTimeout()
+    {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout)
+    {
+        this.timeout = timeout;
     }
 }

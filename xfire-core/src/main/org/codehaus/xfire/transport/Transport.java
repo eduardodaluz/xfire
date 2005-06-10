@@ -18,4 +18,6 @@ public interface Transport
     HandlerPipeline getResponsePipeline();
     
     FaultHandlerPipeline getFaultPipeline();
+    
+    void dispose();
 }

@@ -11,10 +11,8 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
-import org.codehaus.yom.Node;
 import org.codehaus.yom.stax.StaxSerializer;
 
 public class Soap11FaultSerializer

@@ -1,6 +1,8 @@
 package org.codehaus.xfire.transport;
 
+import java.rmi.server.UID;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
@@ -20,6 +22,18 @@ public abstract class AbstractTransport
     
     public Map/*<String uri,Channel c>*/ channels = new HashMap();
  
+    /**
+     * Disposes all the existing channels.
+     */
+    public void dispose()
+    {
+        for (Iterator itr = channels.values().iterator(); itr.hasNext();)
+        {
+            Channel channel = (Channel) itr.next();
+            channel.close();
+        }
+    }
+
     /**
      * @return Returns the faultPipeline.
      */
@@ -68,19 +82,28 @@ public abstract class AbstractTransport
         this.responsePipeline = responsePipeline;
     }
 
-    public Channel createChannel(String uri)
+    public Channel createChannel() throws Exception
+    {
+        return createChannel(getUriPrefix() + new UID().toString());
+    }
+    
+    public Channel createChannel(String uri) throws Exception
     {
         Channel c = (Channel) channels.get(uri);
         
         if (c == null)
         {
             c = createNewChannel(uri, null);
+
+            channels.put(c.getUri(), c);
+            
+            c.open();
         }
         
         return c;
     }
 
-    public Channel createChannel(Service service)
+    public Channel createChannel(Service service) throws Exception
     {
         String uri = getUriPrefix() + service.getName();
         
@@ -89,11 +112,20 @@ public abstract class AbstractTransport
         if (c == null)
         {
             c = createNewChannel(uri, service);
+            
+            channels.put(c.getUri(), c);
+            
+            c.open();
         }
         
         return c;
     }
 
+    protected Map getChannelMap()
+    {
+        return channels;
+    }
+    
     protected abstract Channel createNewChannel(String uri, Service service);
     protected abstract String getUriPrefix();
 }
