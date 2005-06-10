@@ -41,7 +41,7 @@ public class STAXUtilsTest
         doAmazonDoc();
         doEbayDoc();
         doAmazonDoc2();
-        doDOMWrite();
+        //doDOMWrite();
         doDOMRead();
     }
     
