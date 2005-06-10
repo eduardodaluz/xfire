@@ -53,8 +53,7 @@ public class SoapHttpTransport
         {
             c.setEndpoint(new SoapServiceEndpoint());
         }
-        
-        channels.put(uri, c);
+
         return c;
     }
 

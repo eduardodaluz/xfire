@@ -20,7 +20,7 @@ public abstract class AbstractTransport
     private HandlerPipeline responsePipeline;
     private FaultHandlerPipeline faultPipeline;
     
-    public Map/*<String uri,Channel c>*/ channels = new HashMap();
+    private Map/*<String uri,Channel c>*/ channels = new HashMap();
  
     /**
      * Disposes all the existing channels.

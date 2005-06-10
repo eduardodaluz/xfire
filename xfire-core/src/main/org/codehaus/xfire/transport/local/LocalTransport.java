@@ -31,8 +31,7 @@ public class LocalTransport
             c.setService(service);
             c.setEndpoint(new SoapServiceEndpoint());
         }
-        
-        channels.put(uri, c);
+
         return c;
     }
 
