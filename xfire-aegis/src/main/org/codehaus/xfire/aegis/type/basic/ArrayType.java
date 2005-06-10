@@ -43,12 +43,89 @@ public class ArrayType
                 values.add( compType.readObject(reader.getNextElementReader(), context) );
             }
             
-            return values.toArray( (Object[]) Array.newInstance( compType.getTypeClass(), values.size()) );
+            return makeArray(getComponentType().getTypeClass(), values);
         }
         catch (IllegalArgumentException e)
         {
             throw new XFireRuntimeException("Illegal argument.", e);
         }
+    }
+
+    protected Object makeArray(Class arrayType, List values)
+    {
+        if (Integer.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Integer.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        else if (Long.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Long.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        else if (Short.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Short.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        else if (Double.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Double.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        else if (Float.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Float.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        else if (Byte.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Byte.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        else if (Boolean.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Boolean.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
+        
+        return values.toArray( (Object[]) Array.newInstance( getComponentType().getTypeClass(), 
+                                                             values.size()) );
     }
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
