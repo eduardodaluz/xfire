@@ -3,7 +3,7 @@ package org.codehaus.xfire.server.http;
 import org.codehaus.xfire.server.XFireServer;
 import org.codehaus.xfire.transport.http.XFireServlet;
 import org.mortbay.http.HttpContext;
-import org.mortbay.http.HttpServer;
+import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.util.InetAddrPort;
 
@@ -16,7 +16,7 @@ public class XFireHttpServer
     implements XFireServer
 {
     // components
-    private HttpServer httpServer;
+    private Server httpServer;
 
     // properties
     private int port = 8081;
@@ -28,7 +28,7 @@ public class XFireHttpServer
             return;
         }
         
-        httpServer = new HttpServer();
+        httpServer = new Server();
         httpServer.addListener(new InetAddrPort(port));
         
         HttpContext context = httpServer.getContext("/");
