@@ -6,6 +6,7 @@
   <path id="module.classpath">
     <fileset dir="..">
       <include name="xfire-core/target/*.jar" />
+      <include name="${basedir}/target/*.jar" />
     </fileset>
   </path>
 
@@ -50,4 +51,26 @@
       <classpath refid="build.classpath" />
     </javac>
   </target>
+  
+  <target name="internal-test" depends="get-deps,support-jars,xfire.internal-test" />
+
+  <target name="support-jars" depends="init">
+    <mkdir dir="${target.dir}" />
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="build.classpath"
+          fork="true">
+      <arg value="-out"/>
+      <arg value="${target.dir}/wsdl.jar"/>
+      <arg value="${basedir}/src/schemas"/>
+    </java>
+
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="build.classpath"
+          fork="true">
+      <arg value="-out"/>
+      <arg value="${target.dir}/weather.jar"/>
+      <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
+    </java>
+  </target>
+  
 </project>

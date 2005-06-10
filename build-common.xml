@@ -118,6 +118,9 @@
         <path refid="build.classpath" />
         <pathelement path="${testclassesdir}" />
         <pathelement path="${classesdir}" />
+        <fileset dir="${target.dir}">
+          <include name="*.jar" />
+        </fileset>
       </classpath>
       <batchtest todir="${testreportdir}">
         <fileset dir="src/test">
@@ -142,6 +145,9 @@
       <classpath>
         <path refid="build.classpath" />
         <pathelement path="${classesdir}" />
+        <fileset dir="${target.dir}">
+          <include name="*.jar" />
+        </fileset>
       </classpath>
     </javac>
     <copy todir="${testclassesdir}">
