@@ -1,15 +1,19 @@
 package org.codehaus.xfire.fault;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
@@ -61,6 +65,32 @@ public class FaultSerializerTest
         addNamespace("t", "urn:test2");
         assertValid("//s:Detail/t:bah2[text()='bleh']", doc);
         assertValid("//s:Role[text()='http://someuri']", doc);
+        
+        XMLStreamReader reader = readerForString(out.toString());
+        InMessage inMsg = new InMessage(reader);
+        
+        while (reader.hasNext())
+        {
+            reader.next();
+            
+            if (reader.getEventType() == XMLStreamReader.START_ELEMENT 
+                    && reader.getLocalName().equals("Fault"))
+            {
+                break;
+            }
+        }
+        
+        soap12.readMessage(inMsg, new MessageContext());
+        
+        assertNotNull(inMsg.getBody());
+        assertTrue(inMsg.getBody() instanceof XFireFault);
+        XFireFault fault2 = (XFireFault) inMsg.getBody();
+        
+        assertEquals(fault.getMessage(), fault2.getMessage());
+        assertEquals(fault.getSubCode(), fault2.getSubCode());
+        assertEquals(fault.getFaultCode(), fault2.getFaultCode());
+        
+        assertNotNull(fault.getDetail().getFirstChildElement("bah2", "urn:test2"));
     }
 
 
@@ -103,5 +133,26 @@ public class FaultSerializerTest
         addNamespace("t", "urn:test2");
         assertValid("//detail/t:bah2[text()='bleh']", doc);
         assertValid("//faultactor[text()='http://someuri']", doc);
+        
+        XMLStreamReader reader = readerForString(out.toString());
+        InMessage inMsg = new InMessage(reader);
+        
+        soap11.readMessage(inMsg, new MessageContext());
+        
+        assertNotNull(inMsg.getBody());
+        assertTrue(inMsg.getBody() instanceof XFireFault);
+        XFireFault fault2 = (XFireFault) inMsg.getBody();
+        
+        assertEquals("Server", fault2.getFaultCode());
+        assertEquals(fault.getMessage(), fault2.getMessage());
+        
+        assertNotNull(fault.getDetail().getFirstChildElement("bah2", "urn:test2"));
+    }
+
+
+    private XMLStreamReader readerForString(String string) throws XMLStreamException
+    {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        return factory.createXMLStreamReader(new StringReader(string));
     }
 }

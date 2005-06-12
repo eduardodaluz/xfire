@@ -95,7 +95,6 @@ public class RobustInOutExchange
             MessageSerializer serializer = context.getService().getBinding();
             outMsg.setSerializer(serializer);
             
-            MessageExchange exchange = context.getExchange();
             Channel channel = getOutChannel();
             channel.send(context, outMsg);
         }

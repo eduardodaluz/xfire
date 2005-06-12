@@ -43,9 +43,6 @@ public class DocumentBinding
         
         List parameters = new ArrayList();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
-
-        // Move from Body element to whitespace or start element
-        nextEvent(dr);
         
         while (STAXUtils.toNextElement(dr))
         {

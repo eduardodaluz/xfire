@@ -37,6 +37,24 @@ public class SoapServiceEndpoint
         try
         {
             readHeaders(msg, context);
+            
+            XMLStreamReader reader = msg.getXMLStreamReader();
+            seekToWhitespaceEnd(reader);
+            
+            if (msg.getXMLStreamReader().getEventType() == XMLStreamReader.START_ELEMENT)
+            {
+                if (reader.getName().equals(msg.getSoapVersion().getFault()))
+                {
+                    MessageSerializer serializer = context.getService().getFaultSerializer();
+                    
+                    serializer.readMessage(msg, context);
+                    
+                    context.getExchange().handleFault((XFireFault) msg.getBody());
+                    
+                    return;
+                }
+            }
+            
         }
         catch (Exception e)
         {
@@ -70,49 +88,56 @@ public class SoapServiceEndpoint
         context.getExchange().doExchange();
     }
 
+    private void seekToWhitespaceEnd(XMLStreamReader reader)
+        throws XMLStreamException
+    {
+        int event = reader.next();
+        
+        while (event == XMLStreamReader.SPACE)
+        {
+            event = reader.next();
+        }
+        
+        return;
+    }
+
     public void readHeaders(InMessage message, MessageContext context)
-        throws XFireFault
+        throws XMLStreamException
     {
         XMLStreamReader reader = message.getXMLStreamReader();
-        try
+
+        boolean end = false;
+        while (!end && reader.hasNext())
         {
-            boolean end = false;
-            while (!end && reader.hasNext())
+            int event = reader.next();
+            switch (event)
             {
-                int event = reader.next();
-                switch (event)
-                {
-                    case XMLStreamReader.START_DOCUMENT:
-                        String encoding = reader.getCharacterEncodingScheme();
-                        message.setEncoding(encoding);
-                        break;
-                    case XMLStreamReader.END_DOCUMENT:
-                        end = true;
-                        break;
-                    case XMLStreamReader.END_ELEMENT:
-                        break;
-                    case XMLStreamReader.START_ELEMENT:
-                        if (reader.getLocalName().equals("Header"))
-                        {
-                            readHeaders(context);
-                        }
-                        else if (reader.getLocalName().equals("Body"))
-                        {
-                            return;
-                        }
-                        else if (reader.getLocalName().equals("Envelope"))
-                        {
-                            message.setSoapVersion(reader.getNamespaceURI());
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                case XMLStreamReader.START_DOCUMENT:
+                    String encoding = reader.getCharacterEncodingScheme();
+                    message.setEncoding(encoding);
+                    break;
+                case XMLStreamReader.END_DOCUMENT:
+                    end = true;
+                    break;
+                case XMLStreamReader.END_ELEMENT:
+                    break;
+                case XMLStreamReader.START_ELEMENT:
+                    if (reader.getLocalName().equals("Header"))
+                    {
+                        readHeaders(context);
+                    }
+                    else if (reader.getLocalName().equals("Body"))
+                    {
+                        return;
+                    }
+                    else if (reader.getLocalName().equals("Envelope"))
+                    {
+                        message.setSoapVersion(reader.getNamespaceURI());
+                    }
+                    break;
+                default:
+                    break;
             }
-        }
-        catch (XMLStreamException e)
-        {
-            throw new XFireFault("Couldn't parse message.", e, XFireFault.SENDER);
         }
     }
 

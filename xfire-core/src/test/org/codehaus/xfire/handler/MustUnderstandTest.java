@@ -5,8 +5,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 
@@ -20,10 +18,7 @@ public class MustUnderstandTest
     {
         super.setUp();
 
-        endpoint = getServiceFactory().create(EchoImpl.class,
-                                              Soap11.getInstance(),
-                                              SoapConstants.STYLE_MESSAGE,
-                                              SoapConstants.USE_LITERAL);
+        endpoint = getServiceFactory().create(EchoImpl.class);
         getServiceRegistry().register(endpoint);
     }
 

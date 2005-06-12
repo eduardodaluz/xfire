@@ -23,5 +23,6 @@ public class ClientInOutExchange
 
     public void handleFault(XFireFault fault)
     {
+        client.receiveFault(fault);
     }
 }

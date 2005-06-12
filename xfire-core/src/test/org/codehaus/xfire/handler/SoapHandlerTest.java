@@ -3,8 +3,6 @@ package org.codehaus.xfire.handler;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 
@@ -22,10 +20,7 @@ public class SoapHandlerTest
     {
         super.setUp();
         
-        Service endpoint = getServiceFactory().create(EchoImpl.class,
-                                                      Soap12.getInstance(),
-                                                      SoapConstants.STYLE_MESSAGE,
-                                                      SoapConstants.USE_LITERAL);
+        Service endpoint = getServiceFactory().create(EchoImpl.class);
 
         HandlerPipeline reqPipeline = new HandlerPipeline();
         reqHandler = new CheckpointHandler();

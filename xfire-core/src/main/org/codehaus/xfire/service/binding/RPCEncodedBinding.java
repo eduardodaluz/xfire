@@ -43,9 +43,6 @@ public class RPCEncodedBinding
         List parameters = new ArrayList();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
         
-        // Move from Body element to whitespace or start element
-        nextEvent(dr);
-        
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         

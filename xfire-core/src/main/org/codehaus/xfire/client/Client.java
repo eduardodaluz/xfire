@@ -20,6 +20,7 @@ public class Client
     private String url;
     private int timeout = 10*1000;
     private MessageContext context;
+    private XFireFault fault;
     
     public Client(Transport transport, Service service, String url)
     {
@@ -64,10 +65,10 @@ public class Client
          * for a response. Channels such as HTTP will have the response set
          * by the time we get to this point.
          */
-        if (response == null)
+        if (response == null && fault == null)
         {
             int count = 0;
-            while (response == null && count < timeout)
+            while (response == null && fault == null && count < timeout)
             {
                 try
                 {
@@ -81,6 +82,9 @@ public class Client
             }
         }
 
+        if (fault != null)
+            throw fault;
+        
         return response;
     }
 
@@ -118,5 +122,10 @@ public class Client
     public void setTimeout(int timeout)
     {
         this.timeout = timeout;
+    }
+
+    public void receiveFault(XFireFault fault)
+    {
+        this.fault = fault;
     }
 }

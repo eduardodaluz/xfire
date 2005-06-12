@@ -16,8 +16,6 @@ import javax.mail.internet.MimeMultipart;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.yom.Document;
@@ -33,10 +31,7 @@ public class AttachmentTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(EchoImpl.class,
-                                                             Soap11.getInstance(),
-                                                             SoapConstants.STYLE_MESSAGE,
-                                                             SoapConstants.USE_LITERAL);
+        Service service = getServiceFactory().create(EchoImpl.class);
 
         getServiceRegistry().register(service);
     }

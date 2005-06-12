@@ -3,7 +3,10 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.wsdl.factory.WSDLFactory;
@@ -42,7 +45,8 @@ public class ObjectServiceFactory
     private String style;
     private String use;
     private Set ignoredClasses = new HashSet();
-  
+    private SoapVersion soapVersion = Soap11.getInstance();
+    
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      */
@@ -129,9 +133,47 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz)
     {
-        return create(clazz, null, null, null);
+        return create(clazz, null, null, (Map) null);
     }
 
+    /**
+     * Creates a service from the specified class. The service name will be the 
+     * unqualified class name. The namespace will be based on the package. 
+     * The service will use soap version 1.1, wrapped style, and literal use.
+     * 
+     * @param clazz
+     *            The service class used to populate the operations and
+     *            parameters. If the class is an interface, then the
+     *            implementation class that implements that interface must be
+     *            set via {@link Service#setProperty(String, Object)} with the
+     *            property key being
+     *            {@link org.codehaus.xfire.service.binding.ObjectInvoker#SERVICE_IMPL_CLASS}
+     * @return The service.
+     */
+    public Service create(Class clazz, Map properties)
+    {
+        return create(clazz, null, null, properties);
+    }
+    /**
+     * Creates a service from the specified class, soap version, style and use. The returned service will have a name
+     * based on the class name, and a namespace based on the class package.
+     * <p/>
+     * Some parameters can be <code>null</code>, and will be replaced with sensible defaults if so. See the specific
+     * parameters for more info.
+     *
+     * @param clazz   The service class used to populate the operations and parameters.
+     * @param version The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be used.
+     * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
+     *                will be used.
+     * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
+     *                will be used.
+     * @return The service.
+     */
+    public Service create(Class clazz, String name, String namespace, Map properties)
+    {
+        return create(clazz, name, namespace, null, null, null, properties);
+    }
+    
     /**
      * Creates a service from the specified class, soap version, style and use. The returned service will have a name
      * based on the class name, and a namespace based on the class package.
@@ -149,7 +191,7 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz, SoapVersion version, String style, String use)
     {
-        return create(clazz, null, null, version, style, use, null);
+        return create(clazz, null, null, version, style, use, (Map) null);
     }
 
     protected String makeServiceNameFromClassName(Class clazz)
@@ -191,27 +233,41 @@ public class ObjectServiceFactory
                           String use,
                           String encodingStyleURI)
     {
+        Map properties = new HashMap();
+        
+        if (encodingStyleURI != null)
+            properties.put("type.encodingUri", encodingStyleURI);
+        
+        return create (clazz, name, namespace, version, style, use, properties);
+    }
+    
+    public Service create(Class clazz,
+                          String name,
+                          String namespace,
+                          SoapVersion version,
+                          String style,
+                          String use,
+                          Map properties)
+    {
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(
                 clazz.getName(), "http");
         QName qName = new QName(theNamespace, theName);
-        SoapVersion theVersion = (version != null) ? version : Soap11.getInstance();
+        SoapVersion theVersion = (version != null) ? version : soapVersion;
         String theStyle = (style != null) ? style : this.style;
         String theUse = (use != null) ? use : this.use;
 
         ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
         
         Service endpoint = new Service(serviceInfo);
+        setProperties(endpoint, properties);
         endpoint.setSoapVersion(theVersion);
         
         ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
         binding.setInvoker(new ObjectInvoker());
         endpoint.setBinding(binding);
 
-        if (encodingStyleURI != null)
-            endpoint.setProperty("type.encodingUri", encodingStyleURI);
-
-        if (version instanceof Soap11)
+        if (theVersion instanceof Soap11)
         {
             endpoint.setFaultSerializer(new Soap11FaultSerializer());
         }
@@ -241,6 +297,18 @@ public class ObjectServiceFactory
         }
         
         return endpoint;
+    }
+
+    private void setProperties(Service service, Map properties)
+    {
+        if (properties == null) return;
+        
+        for (Iterator itr = properties.entrySet().iterator(); itr.hasNext();)
+        {
+            Map.Entry entry = (Map.Entry) itr.next();
+            
+            service.setProperty((String) entry.getKey(), entry.getValue());
+        }
     }
 
     protected void initializeOperations(Service endpoint)
@@ -417,5 +485,15 @@ public class ObjectServiceFactory
     public void setUse(String use)
     {
         this.use = use;
+    }
+
+    public SoapVersion getSoapVersion()
+    {
+        return soapVersion;
+    }
+
+    public void setSoapVersion(SoapVersion soapVersion)
+    {
+        this.soapVersion = soapVersion;
     }
 }

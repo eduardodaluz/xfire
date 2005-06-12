@@ -28,15 +28,6 @@ public class MessageBindingProvider
     public Object readParameter(MessagePartInfo p, XMLStreamReader reader, MessageContext context)
         throws XFireFault
     {
-        try
-        {
-            reader.next();
-        }
-        catch (XMLStreamException e1)
-        {
-            throw new XFireFault("Couldn't parse message.", e1, XFireFault.SENDER);
-        }
-        
         if (p.getTypeClass().isAssignableFrom(XMLStreamReader.class))
         {
             return context.getInMessage().getXMLStreamReader();

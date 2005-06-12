@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
@@ -13,15 +14,66 @@ import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
+import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.yom.stax.StaxSerializer;
 
 public class Soap11FaultSerializer
     implements MessageSerializer
 {
+    private StaxBuilder builder = new StaxBuilder();
+    
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
     {
-        throw new UnsupportedOperationException("Reading faults is currently unsupported.");
+        XFireFault fault = new XFireFault();
+
+        XMLStreamReader reader = message.getXMLStreamReader();
+
+        try
+        {
+            boolean end = false;
+            while (!end && reader.hasNext())
+            {
+                int event = reader.next();
+                switch (event)
+                {
+                    case XMLStreamReader.START_DOCUMENT:
+                        String encoding = reader.getCharacterEncodingScheme();
+                        message.setEncoding(encoding);
+                        break;
+                    case XMLStreamReader.END_DOCUMENT:
+                        end = true;
+                        break;
+                    case XMLStreamReader.END_ELEMENT:
+                        break;
+                    case XMLStreamReader.START_ELEMENT:
+                        if (reader.getLocalName().equals("faultcode"))
+                        {
+                            fault.setFaultCode(reader.getElementText());
+                        }
+                        else if (reader.getLocalName().equals("faultstring"))
+                        {
+                            fault.setMessage(reader.getElementText());
+                        }
+                        else if (reader.getLocalName().equals("faultactor"))
+                        {
+                            fault.setRole(reader.getElementText());
+                        }
+                        else if (reader.getLocalName().equals("detail"))
+                        {
+                            fault.setDetail(builder.buildElement(null, reader));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireFault("Could not parse message.", e, XFireFault.SENDER);
+        }
+        message.setBody(fault);
     }
 
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
