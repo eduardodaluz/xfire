@@ -2,6 +2,7 @@ package org.codehaus.xfire.xmpp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
@@ -64,7 +65,14 @@ public class XMPPTransport
      */
     public String getServiceURL(Service service)
     {
-        return id + "/" + createChannel(service).getUri();
+        try
+        {
+            return id + "/" + createChannel(service).getUri();
+        }
+        catch (Exception e)
+        {
+            throw new XFireRuntimeException("Couldn't create the channel.", e);
+        }
     }
 
     /**
@@ -87,8 +95,7 @@ public class XMPPTransport
             c.setService(service);
             c.setEndpoint(new SoapServiceEndpoint());
         }
-        
-        channels.put(uri, c);
+
         return c;
     }
 

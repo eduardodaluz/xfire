@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -23,7 +24,6 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.plexus.ServiceInvoker;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
@@ -48,7 +48,7 @@ public class ObjectServiceConfigurator
     public Service createService(PlexusConfiguration config)
             throws Exception
     {
-        ServiceFactory builder = getServiceFactory(config);
+        ObjectServiceFactory builder = getServiceFactory(config);
 
         String name = config.getChild("name").getValue();
         String namespace = config.getChild("namespace").getValue("");
@@ -104,7 +104,18 @@ public class ObjectServiceConfigurator
                 version = Soap12.getInstance();
             }
 
-            service = builder.create(clazz, name, namespace, version, style, use, null);
+            builder.setStyle(style);
+            builder.setUse(use);
+            builder.setSoapVersion(version);
+            
+            if (name.length() == 0 && namespace.length() == 0)
+            {
+                service = builder.create(clazz, (Map) null);
+            }
+            else
+            {
+                service = builder.create(clazz, name, namespace, null);
+            }
 
             PlexusConfiguration[] types = config.getChild("types").getChildren("type");
             for (int i = 0; i < types.length; i++)
@@ -194,7 +205,7 @@ public class ObjectServiceConfigurator
         return pipe;
     }
 
-    public ServiceFactory getServiceFactory(PlexusConfiguration config)
+    public ObjectServiceFactory getServiceFactory(PlexusConfiguration config)
             throws Exception
     {
         String factoryClass = config.getChild("serviceFactory").getValue("");
@@ -223,7 +234,7 @@ public class ObjectServiceConfigurator
      * @return
      * @throws PlexusConfigurationException
      */
-    protected ServiceFactory getServiceFactory(String builderClass, BindingProvider bindingProvider)
+    protected ObjectServiceFactory getServiceFactory(String builderClass, BindingProvider bindingProvider)
             throws Exception
     {
         if (builderClass.length() == 0)
@@ -236,7 +247,7 @@ public class ObjectServiceConfigurator
             Constructor con =
                     clz.getConstructor(new Class[]{TransportManager.class, Class.class});
 
-            return (ServiceFactory)
+            return (ObjectServiceFactory)
                     con.newInstance(new Object[]{getXFire().getTransportManager(), bindingProvider});
         }
     }

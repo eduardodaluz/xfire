@@ -34,7 +34,6 @@ public class WrappedComplexTest
             throws Exception
     {
         final Document doc = getWSDLDocument("ComplexService");
-        //printNode(doc);
 
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);

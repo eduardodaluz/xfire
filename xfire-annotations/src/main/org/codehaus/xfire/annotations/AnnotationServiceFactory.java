@@ -1,6 +1,7 @@
 package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -11,7 +12,6 @@ import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
@@ -44,43 +44,31 @@ public class AnnotationServiceFactory
     }
 
     /**
-     * Creates a service from the specified class. If the class has a {@link SOAPBindingAnnotation}, it will be used to
-     * define the style and use of the service. Otherwise, the {@link ObjectServiceFactory#create(Class) default
-     * behaviour} will be used.
-     *
-     * @param clazz The service class used to populate the operations and parameters.
+     * Creates a service from the specified class. If the class has a
+     * {@link SOAPBindingAnnotation}, it will be used to define the style and
+     * use of the service. If the class has a {@link WebServiceAnnotation}, it will be used to
+     * define the name, service name, target namespace. If the annotation
+     * defines an endpoint interface, all methods of that interface are exposed
+     * as operations. If no endpoint interface is defined, all methods that have
+     * the {@link WebMethodAnnotation} are exposed.
+     * 
+     * @param clazz
+     *            The service class used to populate the operations and
+     *            parameters.
      * @return The service.
      */
     public Service create(final Class clazz)
     {
+        String style = null;
+        String use = null;
         if (webAnnotations.hasSOAPBindingAnnotation(clazz))
         {
             SOAPBindingAnnotation soapBindingAnnotation = webAnnotations.getSOAPBindingAnnotation(clazz);
-            return create(clazz,
-                          null,
-                          soapBindingAnnotation.getStyleString(),
-                          soapBindingAnnotation.getUseString());
+            
+            style = soapBindingAnnotation.getStyleString();
+            use =  soapBindingAnnotation.getUseString();
         }
-        else
-        {
-            return super.create(clazz);
-        }
-    }
 
-    /**
-     * Creates a service from the specified class, soap version, style and use. If the class has a {@link
-     * WebServiceAnnotation}, it will be used to define the name, service name, target namespace. If the annotation
-     * defines an endpoint interface, all methods of that interface are exposed as operations. If no endpoint interface
-     * is defined, all methods that have the {@link WebMethodAnnotation} are exposed.
-     *
-     * @param clazz   The service class used to populate the operations and parameters.
-     * @param version The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be used.
-     * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
-     *                will be used.
-     * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
-     */
-    public Service create(Class clazz, SoapVersion version, String style, String use)
-    {
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
@@ -123,7 +111,7 @@ public class AnnotationServiceFactory
                 portType = createPortType(serviceName, webServiceAnnotation);
             }
 
-            Service service = create(endpointInterface, serviceName, tns, version, style, use, null);
+            Service service = create(endpointInterface, serviceName, tns, null, style, use, (Map) null);
 
             // Fill in WSDL Builder metadata from annotations.
             WSDLBuilderInfo info = new WSDLBuilderInfo(service);

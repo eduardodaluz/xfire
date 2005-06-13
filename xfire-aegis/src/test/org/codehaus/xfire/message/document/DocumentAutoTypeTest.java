@@ -4,8 +4,8 @@ import javax.xml.stream.XMLOutputFactory;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.BeanService;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
@@ -22,12 +22,8 @@ public class DocumentAutoTypeTest
     {
         super.setUp();
         System.out.println(XMLOutputFactory.newInstance().getClass().getName());
-        Service service = getServiceFactory().create(BeanService.class,
-                                                             "Bean",
-                                                             "urn:Bean",
-                                                             Soap11.getInstance(),
-                                                             SoapConstants.STYLE_DOCUMENT,
-                                                             SoapConstants.USE_LITERAL, null);
+        ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_DOCUMENT);
+        Service service = getServiceFactory().create(BeanService.class, "Bean", "urn:Bean", null);
 
         getServiceRegistry().register(service);
     }

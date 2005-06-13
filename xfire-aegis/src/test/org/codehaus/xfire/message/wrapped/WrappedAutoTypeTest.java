@@ -3,7 +3,6 @@ package org.codehaus.xfire.message.wrapped;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.services.ArrayService;
 import org.codehaus.xfire.services.BeanService;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
@@ -24,9 +23,6 @@ public class WrappedAutoTypeTest
         getServiceRegistry().register(getServiceFactory().create(ArrayService.class,
                                                                  "Array",
                                                                  "urn:Array",
-                                                                 Soap11.getInstance(),
-                                                                 SoapConstants.STYLE_WRAPPED,
-                                                                 SoapConstants.USE_LITERAL,
                                                                  null));
     }
 

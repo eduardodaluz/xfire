@@ -15,14 +15,12 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.yom.Document;
@@ -120,8 +118,8 @@ public class XFireConfigurableServlet
     {
         String name = getElementValue(service, "name", "");
         String namespace = getElementValue(service, "namespace", "");
-        String style = getElementValue(service, "style", SoapConstants.STYLE_WRAPPED);
-        String use = getElementValue(service, "use", SoapConstants.USE_LITERAL);
+        String style = getElementValue(service, "style", "");
+        String use = getElementValue(service, "use", "");
         String serviceClass = getElementValue(service, "serviceClass", "");        
         String implClassName = getElementValue(service, "implementationClass", "");
         String bindingProviderName = getElementValue(service, "bindingProvider", "");
@@ -148,17 +146,23 @@ public class XFireConfigurableServlet
         }
 
         BindingProvider bindingProvider = loadBindingProvider(bindingProviderName);
-        ServiceFactory factory = loadServiceFactory(tman, 
-                                                    bindingProvider, 
-                                                    getElementValue(service, "serviceFactory", ""));
+        ObjectServiceFactory factory =
+            loadServiceFactory(tman, bindingProvider, getElementValue(service, "serviceFactory", ""));
         
-        Service svc = factory.create(clazz,
-                                     name,
-                                     namespace,
-                                     soapVersion,
-                                     style,
-                                     use,
-                                     null);
+        if (style.length() > 0) factory.setStyle(style);
+        if (use.length() > 0) factory.setUse(use);
+        
+        factory.setSoapVersion(soapVersion);
+        
+        Service svc = null;
+        if (name.length() > 0 || namespace.length() > 0)
+        {
+            svc = factory.create(clazz, name, namespace, null);
+        }
+        else
+        {
+            svc = factory.create(clazz);
+        }
         
         if (implClassName.length() > 0)
         {
@@ -194,14 +198,16 @@ public class XFireConfigurableServlet
         registry.register(svc);
     }
 
-    private ServiceFactory loadServiceFactory(TransportManager tman, BindingProvider bindingProvider, String serviceFactoryName)
+    private ObjectServiceFactory loadServiceFactory(TransportManager tman,
+                                                    BindingProvider bindingProvider,
+                                                    String serviceFactoryName)
     {
-        ServiceFactory factory = null;
+        ObjectServiceFactory factory = null;
         if (serviceFactoryName.length() > 0)
         {
             try
             {
-                factory = (ServiceFactory) loadClass(serviceFactoryName).newInstance();
+                factory = (ObjectServiceFactory) loadClass(serviceFactoryName).newInstance();
             }
             catch (Exception e)
             {

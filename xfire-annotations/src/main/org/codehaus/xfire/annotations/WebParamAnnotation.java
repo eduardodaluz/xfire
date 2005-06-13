@@ -1,6 +1,5 @@
 package org.codehaus.xfire.annotations;
 
-import org.codehaus.xfire.service.MessagePartInfo;
 
 /**
  * Represents a common representation of a web parameter annotation. Customizes the mapping of an individual parameter

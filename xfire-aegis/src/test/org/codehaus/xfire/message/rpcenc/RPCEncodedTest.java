@@ -5,6 +5,7 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.Echo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -25,12 +26,10 @@ public class RPCEncodedTest
     {
         super.setUp();
 
-        service = getServiceFactory().create(Echo.class,
-                                             "Echo",
-                                             "urn:Echo",
-                                             Soap11.getInstance(),
-                                             SoapConstants.STYLE_RPC,
-                                             SoapConstants.USE_ENCODED, null);
+        ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_RPC);
+        ((ObjectServiceFactory) getServiceFactory()).setUse(SoapConstants.USE_ENCODED);
+        
+        service = getServiceFactory().create(Echo.class, "Echo", "urn:Echo", null);
 
         getServiceRegistry().register(service);
     }

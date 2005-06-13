@@ -6,14 +6,14 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.commons.CommonsWebAttributes;
-import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 
 public class AnnotationServiceConfigurator
     extends ObjectServiceConfigurator
 {
-    public ServiceFactory getServiceFactory(PlexusConfiguration config)
+    public ObjectServiceFactory getServiceFactory(PlexusConfiguration config)
         throws Exception
     {
         Class annotsClz = null;
@@ -42,7 +42,7 @@ public class AnnotationServiceConfigurator
         Constructor con = 
             clz.getConstructor( new Class[] {WebAnnotations.class, TransportManager.class, BindingProvider.class} );
         
-        return (ServiceFactory) 
+        return (ObjectServiceFactory) 
             con.newInstance(new Object[] {annotsClz.newInstance(), 
                     getXFire().getTransportManager(),
                     getBindingProvider(config) });

@@ -3,8 +3,6 @@ package org.codehaus.xfire.aegis.type.basic;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.PrimitiveService;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
 
 
@@ -21,11 +19,9 @@ public class PrimitiveTest
         super.setUp();
 
         Service endpoint = getServiceFactory().create(PrimitiveService.class,
-                                                              "PrimitiveService",
-                                                              "urn:PrimitiveService",
-                                                              Soap11.getInstance(),
-                                                              SoapConstants.STYLE_WRAPPED,
-                                                              SoapConstants.USE_LITERAL, null);
+                                                      "PrimitiveService",
+                                                      "urn:PrimitiveService",
+                                                      null);
         getServiceRegistry().register(endpoint);
     }
 

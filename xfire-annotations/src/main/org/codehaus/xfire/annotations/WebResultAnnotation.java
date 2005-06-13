@@ -1,6 +1,5 @@
 package org.codehaus.xfire.annotations;
 
-import org.codehaus.xfire.service.MessagePartInfo;
 
 /**
  * Represents an common representation of a web result annotation. Customizes the mapping of the return value to a WSDL

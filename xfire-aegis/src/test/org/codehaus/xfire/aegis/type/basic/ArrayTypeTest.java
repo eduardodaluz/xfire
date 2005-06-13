@@ -7,11 +7,8 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
 
 public class ArrayTypeTest
     extends AbstractXFireTest

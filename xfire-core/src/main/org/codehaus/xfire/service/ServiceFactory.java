@@ -61,21 +61,26 @@ public interface ServiceFactory
      * @deprecated Use properties to set the version/style/use parameters.
      */
     public Service create(Class clazz,
-                                  String name,
-                                  String namespace,
-                                  SoapVersion version,
-                                  String style,
-                                  String use,
-                                  String encodingStyleURI);
+                          String name,
+                          String namespace,
+                          SoapVersion version,
+                          String style,
+                          String use,
+                          String encodingStyleURI);
 
     /**
      * Create a service from the specified class.
-     *
-     * @param clazz            The service class used to populate the operations and parameters.
-     * @param name             The name of the service.
-     * @param namespace        The default namespace of the service.
-     * @param properties       Service specific properties which the ServiceFactory will use to
-     *                         create the service.
+     * 
+     * @param clazz
+     *            The service class used to populate the operations and
+     *            parameters.
+     * @param name
+     *            The name of the service.
+     * @param namespace
+     *            The default namespace of the service.
+     * @param properties
+     *            Service specific properties which the ServiceFactory will use
+     *            to create the service.
      * @return The service.
      */
     public Service create(Class clazz,

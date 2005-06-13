@@ -1,6 +1,7 @@
 package org.codehaus.xfire.loom;
 
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
@@ -88,5 +89,15 @@ public class DefaultServiceFactory
     public Service create(final Class clazz, final SoapVersion version, final String style, final String use)
     {
         return m_factory.create(clazz, version, style, use);
+    }
+
+    public Service create(Class clazz, Map properties)
+    {
+        return m_factory.create(clazz, properties);
+    }
+
+    public Service create(Class clazz, String name, String namespace, Map properties)
+    {
+        return m_factory.create(clazz, name, namespace, properties);
     }
 }

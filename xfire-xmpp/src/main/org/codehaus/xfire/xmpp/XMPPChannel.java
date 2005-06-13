@@ -6,6 +6,7 @@ import java.io.StringReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
@@ -32,7 +33,7 @@ public class XMPPChannel
         setTransport(transport);
     }
 
-    public void open()
+    public void open() throws XFireException
     {
         if (conn != null)
             return;
@@ -49,7 +50,7 @@ public class XMPPChannel
         }
         catch (XMPPException e)
         {
-            e.printStackTrace();
+            throw new XFireException("Couldn't open channel.", e);
         }
     }
 
@@ -75,7 +76,8 @@ public class XMPPChannel
             throw new XFireRuntimeException("Couldn't write stream.", e);
         }
 
-        SoapEnvelopePacket response = new SoapEnvelopePacket(readDocument(out.toString()));
+        String body = out.toString();
+        SoapEnvelopePacket response = new SoapEnvelopePacket(body);
         response.setFrom(conn.getUser());
         
         if (message.getUri().equals(Channel.BACKCHANNEL_URI))

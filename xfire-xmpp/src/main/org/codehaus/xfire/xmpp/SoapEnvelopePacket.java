@@ -24,7 +24,7 @@ public class SoapEnvelopePacket
     {
         this.document = document;
     }
-    
+
     public String getChildElementXML()
     {
         if (document != null)

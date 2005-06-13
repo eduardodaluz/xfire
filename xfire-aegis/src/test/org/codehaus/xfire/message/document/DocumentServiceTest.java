@@ -2,7 +2,7 @@ package org.codehaus.xfire.message.document;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
 
@@ -18,12 +18,8 @@ public class DocumentServiceTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(DocumentService.class,
-                                                             "Doc",
-                                                             "urn:Doc",
-                                                             Soap11.getInstance(),
-                                                             SoapConstants.STYLE_DOCUMENT,
-                                                             SoapConstants.USE_LITERAL, null);
+        ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_DOCUMENT);
+        Service service = getServiceFactory().create(DocumentService.class, "Doc", "urn:Doc", null);
 
         getServiceRegistry().register(service);
     }

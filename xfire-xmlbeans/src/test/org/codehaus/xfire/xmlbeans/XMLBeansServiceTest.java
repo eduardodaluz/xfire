@@ -4,7 +4,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -29,10 +28,7 @@ public class XMLBeansServiceTest
         endpoint = builder.create(WeatherService.class,
                                   "WeatherService",
                                   "urn:WeatherService",
-                                  Soap11.getInstance(),
-                                  SoapConstants.STYLE_DOCUMENT,
-                                  SoapConstants.USE_LITERAL, null);
-        
+                                  null);
         getServiceRegistry().register(endpoint);
         
         
@@ -55,7 +51,6 @@ public class XMLBeansServiceTest
 
         addNamespace("w", "http://www.webservicex.net");
         assertValid("//w:GetWeatherByZipCodeResponse", response);
-        printNode(response);
     }
     
     public void testWSDL() 

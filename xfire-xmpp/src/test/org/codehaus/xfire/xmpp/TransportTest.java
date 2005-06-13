@@ -40,30 +40,36 @@ public class TransportTest
         getServiceRegistry().register(echo);
 
         transport2 = new XMPPTransport(getServiceRegistry(), server, username, password);
- 
+        transport1 = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
+        
         getXFire().getTransportManager().register(transport2);
         // XMPPConnection.DEBUG_ENABLED = true;
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
+        transport1.dispose();
+        transport2.dispose();
+        
+        super.tearDown();
     }
 
     public void testTransport()
             throws Exception
     {
-        transport1 = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
-        
         String peer1 = "Peer1";
         String peer2 = "Peer2";
         
         Channel channel1 = transport1.createChannel(peer1);
-        channel1.open();
 
         Channel channel2 = transport2.createChannel(peer2);
-        channel2.open();
         channel2.setEndpoint(new YOMEndpoint());
         
         // Document to send
         StaxBuilder builder = new StaxBuilder();
         Document doc = builder.build(getResourceAsStream("/org/codehaus/xfire/xmpp/echo.xml"));
-        
+
         MessageContext context = new MessageContext();
 
         OutMessage msg = new OutMessage(id + "/" + peer2);
@@ -75,26 +81,21 @@ public class TransportTest
         
         channel1.send(context, msg);
         Thread.sleep(1000);
-
-        channel1.close();
-        channel2.close(); 
     }
 
     public void testService()
             throws Exception
     {
-        transport1 = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
-        
         String peer1 = "Peer1";
         String peer2 = "Peer2";
         
         Channel channel1 = transport1.createChannel(peer1);
-        channel1.open();
+
         YOMEndpoint peer = new YOMEndpoint();
         channel1.setEndpoint(peer);
         
         Channel channel2 = transport2.createChannel(echo);
-        channel2.open();
+
 
         // Document to send
         StaxBuilder builder = new StaxBuilder();
@@ -110,10 +111,7 @@ public class TransportTest
         Thread.sleep(1000);
         
         channel1.send(context, msg);
-        Thread.sleep(1000);
-
-        channel1.close();
-        channel2.close(); 
+        Thread.sleep(1000); 
         
         assertEquals(2, peer.getCount());
     }
