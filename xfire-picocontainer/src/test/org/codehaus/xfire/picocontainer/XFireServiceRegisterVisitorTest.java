@@ -4,80 +4,64 @@ import java.lang.reflect.Method;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
-
-import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireFactory;
-import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
-import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
+import org.codehaus.xfire.picocontainer.test.PicoXFireTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.service.binding.ObjectBinding;
-import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.transport.TransportManager;
-import org.picocontainer.MutablePicoContainer;
-import org.picocontainer.Parameter;
-import org.picocontainer.defaults.ConstantParameter;
+import org.picocontainer.defaults.CachingComponentAdapter;
 import org.picocontainer.defaults.ConstructorInjectionComponentAdapter;
-import org.picocontainer.defaults.DefaultPicoContainer;
-
 
 public class XFireServiceRegisterVisitorTest
-        extends TestCase
+    extends PicoXFireTest
 {
 
     public int instanceCount = 0;
 
     public int callCount = 0;
 
-    private MutablePicoContainer pico;
-
     private XFireServiceRegisterVisitor xfireVisitor;
 
-    protected void setUp()
-            throws Exception
+    public void setUp()
+        throws Exception
     {
         super.setUp();
         instanceCount = 0;
         callCount = 0;
 
-        // Creates picocontainer and put defaults xfire components there.
-        pico = new DefaultPicoContainer();
-        populateXFireComponents(pico);
-
-        // Register our service mocked directly.
-        ServiceFactory sf = (ServiceFactory) pico.getComponentInstance(ServiceFactory.class);
+        // Create using PicoObjectServiceFactory and put the Service into the
+        // pico.
+        ServiceFactory sf = getServiceFactory();
         Service ms = sf.create(DummyServiceThatCounts.class);
         ms.getServiceInfo().setName(new QName("test"));
-        pico.registerComponentInstance(ms);
+        getPico().registerComponentInstance(ms);
 
-        // Register container's services
-        xfireVisitor = (XFireServiceRegisterVisitor) pico
-                .getComponentInstance(XFireServiceRegisterVisitor.class);
-        pico.accept(xfireVisitor);
-    }
+        // Register XFireServiceRegisterVisitor and its dependency into the
+        // pico.
+        getPico().registerComponentInstance(ServiceRegistry.class, getXFire().getServiceRegistry());
+        getPico().registerComponentImplementation(XFireServiceRegisterVisitor.class);
 
-    public void testServiceRegistrationByComponentAdaptor()
-            throws Exception
-    {
-
+        // Get XFireServiceRegisterVisitor and execute it, now out last created
+        // Service must be registred.
+        xfireVisitor = (XFireServiceRegisterVisitor) getPico()
+                .getComponentInstanceOfType(XFireServiceRegisterVisitor.class);
+        getPico().accept(xfireVisitor);
     }
 
     public void testCachedServiceObject()
-            throws Exception
+        throws Exception
     {
-        // Create a child container
-        MutablePicoContainer picoChild = new DefaultPicoContainer(pico);
-        picoChild.registerComponentInstance(this);
-        picoChild.registerComponentImplementation(DummyServiceThatCounts.class);
-
-        // Update pico reference
-        xfireVisitor.setPicocontainer(picoChild);
+        // Put DummyServiceThatCounts and its dependency into the pico. Its
+        // going to be cached, just one instance for container.
+        getPico().registerComponent(new CachingComponentAdapter(
+                new ConstructorInjectionComponentAdapter(DummyServiceThatCounts.class,
+                        DummyServiceThatCounts.class)));
+        getPico().registerComponentInstance(this);
 
         // Execute it 3 times.
-        ServiceRegistry sr = (ServiceRegistry) pico.getComponentInstance(ServiceRegistry.class);
+        ServiceRegistry sr = (ServiceRegistry) getPico()
+                .getComponentInstance(ServiceRegistry.class);
         assertNotNull(sr);
 
         Service endpoint = sr.getService("test");
@@ -86,33 +70,30 @@ public class XFireServiceRegisterVisitorTest
         Invoker invoker = ((ObjectBinding) endpoint.getBinding()).getInvoker();
         assertNotNull(invoker);
 
-        Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[]{});
+        Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[] {});
         assertNotNull(method);
 
-        invoker.invoke(method, new Object[]{}, null);
-        invoker.invoke(method, new Object[]{}, null);
-        invoker.invoke(method, new Object[]{}, null);
+        invoker.invoke(method, new Object[] {}, null);
+        invoker.invoke(method, new Object[] {}, null);
+        invoker.invoke(method, new Object[] {}, null);
 
-        // Just once
+        // Assert it
         assertEquals(1, instanceCount);
-
         assertEquals(3, callCount);
     }
 
     public void testNotCachedServiceObject()
-            throws Exception
+        throws Exception
     {
-        // Create a child container
-        MutablePicoContainer picoChild = new DefaultPicoContainer(pico);
-        picoChild.registerComponentInstance(this);
-        picoChild.registerComponent(new ConstructorInjectionComponentAdapter(DummyServiceThatCounts.class,
-                                                                             DummyServiceThatCounts.class));
-
-        // Update pico reference
-        xfireVisitor.setPicocontainer(picoChild);
+        // Put DummyServiceThatCounts and its dependency into the pico. Its
+        // going to NOT be cached, one instance by request.
+        getPico().registerComponent(new ConstructorInjectionComponentAdapter(
+                DummyServiceThatCounts.class, DummyServiceThatCounts.class));
+        getPico().registerComponentInstance(this);
 
         // Execute it 3 times.
-        ServiceRegistry sr = (ServiceRegistry) pico.getComponentInstance(ServiceRegistry.class);
+        ServiceRegistry sr = (ServiceRegistry) getPico()
+                .getComponentInstance(ServiceRegistry.class);
         assertNotNull(sr);
 
         Service endpoint = sr.getService("test");
@@ -121,36 +102,19 @@ public class XFireServiceRegisterVisitorTest
         Invoker invoker = ((ObjectBinding) endpoint.getBinding()).getInvoker();
         assertNotNull(invoker);
 
-        Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[]{});
+        Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[] {});
         assertNotNull(method);
 
-        invoker.invoke(method, new Object[]{}, null);
-        invoker.invoke(method, new Object[]{}, null);
-        invoker.invoke(method, new Object[]{}, null);
+        invoker.invoke(method, new Object[] {}, null);
+        invoker.invoke(method, new Object[] {}, null);
+        invoker.invoke(method, new Object[] {}, null);
 
-        // Now its 3 times!
+        // Assert it
         assertEquals(3, instanceCount);
-
         assertEquals(3, callCount);
     }
 
-    private void populateXFireComponents(MutablePicoContainer pico)
-            throws Exception
-    {
-        XFire xfire = XFireFactory.newInstance().getXFire();
-        pico.registerComponentInstance(XFire.class, xfire);
-        pico.registerComponentImplementation(TransportManager.class,
-                                             DefaultTransportManagerDelegator.class);
-        pico.registerComponentImplementation(ServiceRegistry.class,
-                                             DefaultServiceRegistryDelegator.class);
-        pico.registerComponentImplementation(ServiceFactory.class, ObjectServiceFactory.class);
-        pico.registerComponentImplementation(XFireServiceRegisterVisitor.class,
-                                             XFireServiceRegisterVisitor.class);
-        pico.registerComponentImplementation(TypeMappingRegistry.class,
-                                             DefaultTypeMappingRegistry.class,
-                                             new Parameter[]{new ConstantParameter(new Boolean(true))});
-    }
-
+    
     public class DummyServiceThatCounts
     {
 
