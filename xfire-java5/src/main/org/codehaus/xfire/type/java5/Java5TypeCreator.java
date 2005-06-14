@@ -22,13 +22,13 @@ public class Java5TypeCreator
         {
             info.setTypeClass(m.getParameterTypes()[index]);
             info.setAnnotations(m.getParameterAnnotations()[index]);
-            info.getGenericType(m.getGenericParameterTypes()[index]);
+            info.setGenericType(m.getGenericParameterTypes()[index]);
         }
         else
         {
             info.setTypeClass(m.getReturnType());
             info.setAnnotations(m.getAnnotations());
-            info.getGenericType(m.getGenericReturnType());
+            info.setGenericType(m.getGenericReturnType());
         }
         
         return info;
@@ -39,7 +39,7 @@ public class Java5TypeCreator
     {
         TypeClassInfo info = super.createClassInfo(pd);
         
-        info.getGenericType(pd.getReadMethod().getGenericReturnType());
+        info.setGenericType(pd.getReadMethod().getGenericReturnType());
         info.setAnnotations(pd.getReadMethod().getAnnotations());
         
         return info;

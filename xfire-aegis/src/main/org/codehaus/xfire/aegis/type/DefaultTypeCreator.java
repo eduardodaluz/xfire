@@ -29,10 +29,8 @@ public class DefaultTypeCreator
 
     /**
      * Create a Type for a Method parameter.
-     * @param m
+     * @param m the method to create a type for
      * @param index The parameter index. If the index is less than zero, the return type is used.
-     * @param tm
-     * @return
      */
     public Type createType(Method m, int index)
     {
@@ -55,9 +53,7 @@ public class DefaultTypeCreator
 
     /**
      * Create type information for a PropertyDescriptor.
-     * @param pd
-     * @param tm
-     * @return
+     * @param pd the propertydescriptor
      */
     public Type createType(PropertyDescriptor pd)
     {
@@ -82,9 +78,7 @@ public class DefaultTypeCreator
 
     /**
      * Create type information for a <code>Field</code>.
-     * @param f
-     * @param tm
-     * @return
+     * @param f the field to create a type from
      */
     public Type createType(Field f)
     {
@@ -195,7 +189,7 @@ public class DefaultTypeCreator
         }
         
         Type type = tm.getType( componentType );
-        String ns = null;
+        String ns;
         
         if ( type.isComplex() )
         {
@@ -218,7 +212,7 @@ public class DefaultTypeCreator
         return createCollectionQName(javaType, javaType.getComponentType());
     }
 
-    public class TypeClassInfo
+    public static class TypeClassInfo
     {
         Class typeClass;
         Object[] annotations;
@@ -236,7 +230,7 @@ public class DefaultTypeCreator
         {
             return genericType;
         }
-        public void getGenericType(Object genericType)
+        public void setGenericType(Object genericType)
         {
             this.genericType = genericType;
         }
