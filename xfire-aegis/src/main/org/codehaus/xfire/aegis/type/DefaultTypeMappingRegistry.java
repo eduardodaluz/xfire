@@ -8,6 +8,7 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.AbstractXFireComponent;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.aegis.type.basic.*;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -133,7 +134,7 @@ public class DefaultTypeMappingRegistry
         {
             String j5TC = "org.codehaus.xfire.type.java5.Java5TypeCreator";
 
-            Class clazz = getClass().getClassLoader().loadClass(j5TC);
+            Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
             
             TypeCreator creator = (TypeCreator) clazz.newInstance();
             

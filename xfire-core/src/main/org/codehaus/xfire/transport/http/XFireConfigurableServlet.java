@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -269,6 +270,6 @@ public class XFireConfigurableServlet
             className = "[L" + className.substring(0, className.length() - 2) + ";";
         }
 
-        return getClass().getClassLoader().loadClass(className);
+        return ClassLoaderUtils.loadClass(className, getClass());
     }
 }

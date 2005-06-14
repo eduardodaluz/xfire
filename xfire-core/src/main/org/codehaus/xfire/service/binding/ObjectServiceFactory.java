@@ -27,6 +27,7 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
@@ -82,8 +83,8 @@ public class ObjectServiceFactory
         {
             try
             {
-                bindingProvider = (BindingProvider) getClass().getClassLoader()
-                        .loadClass("org.codehaus.xfire.aegis.AegisBindingProvider").newInstance();
+                bindingProvider = (BindingProvider) ClassLoaderUtils
+                        .loadClass("org.codehaus.xfire.aegis.AegisBindingProvider", getClass()).newInstance();
             }
             catch (Exception e)
             {

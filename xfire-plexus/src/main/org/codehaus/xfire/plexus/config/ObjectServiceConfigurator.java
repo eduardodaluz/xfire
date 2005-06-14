@@ -13,6 +13,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
@@ -366,7 +367,7 @@ public class ObjectServiceConfigurator
             className = "[L" + className.substring(0, className.length() - 2) + ";";
         }
 
-        return getClass().getClassLoader().loadClass(className);
+        return ClassLoaderUtils.loadClass(className, getClass());
     }
 
     protected ServiceRegistry getServiceRegistry()

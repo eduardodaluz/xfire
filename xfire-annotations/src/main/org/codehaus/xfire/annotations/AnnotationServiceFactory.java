@@ -14,6 +14,7 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 
 /**
@@ -143,21 +144,7 @@ public class AnnotationServiceFactory
     protected Class loadClass(String endpointInterface)
             throws ClassNotFoundException
     {
-        try
-        {
-            return getClass().getClassLoader().loadClass(endpointInterface);
-        }
-        catch (ClassNotFoundException e)
-        {
-            try
-            {
-                return Thread.currentThread().getContextClassLoader().loadClass(endpointInterface);
-            }
-            catch (ClassNotFoundException e1)
-            {
-                throw e;
-            }
-        }
+        return ClassLoaderUtils.loadClass(endpointInterface, getClass());
     }
 
     protected String createServiceNamespace(Class clazz, WebServiceAnnotation webServiceAnnotation)

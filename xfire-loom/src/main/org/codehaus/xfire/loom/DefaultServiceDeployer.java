@@ -18,6 +18,7 @@ import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 
 /**
  * Default implementation of ServiceDeployer
@@ -93,7 +94,7 @@ public class DefaultServiceDeployer
                 getLogger().debug("Created '" + endpoint.getServiceInfo().getName() + "' from key '" + key + "'");
         }
 
-        ((ObjectBinding) endpoint.getBinding()).setInvoker(new ServiceInvoker(object));
+        endpoint.getBinding().setInvoker(new ServiceInvoker(object));
 
         registerService(key, endpoint);
     }
@@ -158,7 +159,7 @@ public class DefaultServiceDeployer
     {
         try
         {
-            return Thread.currentThread().getContextClassLoader().loadClass(configuration.getValue());
+            return ClassLoaderUtils.loadClass(configuration.getValue(), getClass());
         }
         catch (ClassNotFoundException e)
         {
