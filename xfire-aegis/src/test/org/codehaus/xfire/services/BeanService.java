@@ -1,8 +1,6 @@
 package org.codehaus.xfire.services;
 
 /**
- * ComplexService
- * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class BeanService

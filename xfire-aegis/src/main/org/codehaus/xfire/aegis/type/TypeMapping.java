@@ -37,4 +37,6 @@ public interface TypeMapping
     public String getEncodingStyleURI();
 
     public void setEncodingStyleURI(String encodingStyleURI);
+    
+    public TypeCreator getTypeCreator();
 }

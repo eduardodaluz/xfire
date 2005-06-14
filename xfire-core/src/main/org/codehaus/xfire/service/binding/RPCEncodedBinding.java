@@ -114,7 +114,7 @@ public class RPCEncodedBinding
             Class clazz = param.getTypeClass();
             QName pName = param.getName();
 
-            SchemaType type = getBindingProvider().getSchemaType(service, param);
+            SchemaType type = param.getSchemaType();
             wsdl.addDependency(type);
             QName schemaType = type.getSchemaType();
 

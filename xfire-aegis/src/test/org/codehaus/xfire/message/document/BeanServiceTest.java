@@ -7,7 +7,11 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
@@ -33,7 +37,20 @@ public class BeanServiceTest
         getServiceRegistry().register(service);
 
         TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
-        tm.register(SimpleBean.class, new QName("urn:Bean", "SimpleBean"), new BeanType());
+
+        BeanType type = new BeanType();
+        tm.register(SimpleBean.class, new QName("urn:Bean", "SimpleBean"), type);
+        
+        ServiceInfo info = service.getServiceInfo();
+        OperationInfo o = info.getOperation("getSubmitBean");
+        MessageInfo inMsg = o.getInputMessage();
+        MessagePartInfo p = inMsg.getMessagePart(new QName("urn:Bean", "getSubmitBeanin0"));
+        p.setSchemaType(type);
+        
+        o = info.getOperation("getSimpleBean");
+        MessageInfo outMsg = o.getOutputMessage();
+        p = outMsg.getMessagePart(new QName("urn:Bean", "getSimpleBeanout"));
+        p.setSchemaType(type);
     }
 
     public void testBeanService()

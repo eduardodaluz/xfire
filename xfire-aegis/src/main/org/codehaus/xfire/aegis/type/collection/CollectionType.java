@@ -107,7 +107,7 @@ public class CollectionType
         }
     }    
     
-    protected Type getComponentType()
+    public Type getComponentType()
     {
         return getTypeMapping().getType(componentType);
     }

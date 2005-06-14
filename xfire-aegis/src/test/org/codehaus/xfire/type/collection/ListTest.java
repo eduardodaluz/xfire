@@ -1,6 +1,7 @@
 package org.codehaus.xfire.type.collection;
 
 import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
@@ -18,6 +19,7 @@ import org.codehaus.yom.Document;
 public class ListTest
         extends AbstractXFireAegisTest
 {
+
     public void setUp()
             throws Exception
     {
@@ -37,20 +39,25 @@ public class ListTest
         doubles.setSchemaType(dblQ);
         doubles.setTypeClass(List.class);
         tm.register(doubles);
+
         ServiceInfo service = endpoint.getServiceInfo();
         OperationInfo o = service.getOperation("getDoubles");
         MessageInfo outMsg = o.getOutputMessage();
         MessagePartInfo p = outMsg.getMessagePart(new QName(service.getName().getNamespaceURI(), "out"));
-        p.setSchemaType(dblQ);
+        p.setSchemaType(doubles);
 
         o = service.getOperation("getStrings");
         outMsg = o.getOutputMessage();
         p = outMsg.getMessagePart(new QName(service.getName().getNamespaceURI(), "out"));
-        p.setSchemaType(strQ);
+        p.setSchemaType(strings);
 
         o = service.getOperation("receiveDoubles");
         p = o.getInputMessage().getMessagePart(new QName(service.getName().getNamespaceURI(), "in0"));
-        p.setSchemaType(dblQ);
+        p.setSchemaType(doubles);
+
+        o = service.getOperation("receiveStrings");
+        p = o.getInputMessage().getMessagePart(new QName(service.getName().getNamespaceURI(), "in0"));
+        p.setSchemaType(strings);
     }
 
     public void testGetStrings()

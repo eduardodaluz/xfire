@@ -2,14 +2,13 @@ package org.codehaus.xfire.type.java5;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.util.NamespaceHelper;
 
 public class AnnotatedType
     extends BeanType
 {
-    private QName schemaType;
-    
     public AnnotatedType(Class clazz)
     {
         super(new AnnotatedTypeInfo(clazz));
@@ -17,6 +16,8 @@ public class AnnotatedType
 
     public QName getSchemaType()
     {
+        QName schemaType = super.getSchemaType();
+        
         if (schemaType == null)
         {
             String name = null;
@@ -30,8 +31,18 @@ public class AnnotatedType
                 ns = NamespaceHelper.makeNamespaceFromClassName(clsName, "http");
             
             schemaType = new QName(ns, name);
+            setSchemaType(schemaType);
         }
+        
         return schemaType;
+    }
+
+    @Override
+    public void setTypeMapping(TypeMapping typeMapping)
+    {
+        getTypeInfo().setTypeMapping(typeMapping);
+        
+        super.setTypeMapping(typeMapping);
     }
     
     

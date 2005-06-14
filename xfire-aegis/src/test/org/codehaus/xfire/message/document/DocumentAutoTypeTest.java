@@ -1,7 +1,5 @@
 package org.codehaus.xfire.message.document;
 
-import javax.xml.stream.XMLOutputFactory;
-
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -21,7 +19,7 @@ public class DocumentAutoTypeTest
             throws Exception
     {
         super.setUp();
-        System.out.println(XMLOutputFactory.newInstance().getClass().getName());
+
         ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_DOCUMENT);
         Service service = getServiceFactory().create(BeanService.class, "Bean", "urn:Bean", null);
 

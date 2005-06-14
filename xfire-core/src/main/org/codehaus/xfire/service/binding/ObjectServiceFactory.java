@@ -357,7 +357,7 @@ public class ObjectServiceFactory
     {
         ServiceInfo service = endpoint.getServiceInfo();
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
-        
+
         final String opName = getOperationName(service, method);
         
         final OperationInfo op = service.addOperation(opName, method);

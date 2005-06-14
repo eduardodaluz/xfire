@@ -1,5 +1,7 @@
 package org.codehaus.xfire.xmlbeans;
 
+import java.util.Iterator;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -9,11 +11,12 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.wsdl.SchemaType;
 
 public class XMLBeansBindingProvider
     implements BindingProvider
@@ -24,10 +27,26 @@ public class XMLBeansBindingProvider
         options.setSaveInner();
     }
 
-    public void initialize(Service newParam)
+    public void initialize(Service service)
     {
+        for (Iterator itr = service.getServiceInfo().getOperations().iterator(); itr.hasNext();)
+        {
+            OperationInfo opInfo = (OperationInfo) itr.next();
+            
+            initializeMessage(service, opInfo.getInputMessage());
+            initializeMessage(service, opInfo.getOutputMessage());
+        }
     }
 
+    protected void initializeMessage(Service service, MessagePartContainer container)
+    {
+        for (Iterator itr = container.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo part = (MessagePartInfo) itr.next();
+            
+            part.setSchemaType(new XMLBeansType());
+        }
+    }
 
     public Object readParameter(MessagePartInfo p, XMLStreamReader reader, MessageContext context)
         throws XFireFault
@@ -69,8 +88,4 @@ public class XMLBeansBindingProvider
         }
     }
 
-    public SchemaType getSchemaType(Service service, MessagePartInfo param)
-    {
-        return new XMLBeansType();
-    }
 }

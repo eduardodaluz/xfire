@@ -5,17 +5,28 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.type.AutoTypeMapping;
+import org.codehaus.xfire.aegis.type.CustomTypeMapping;
+import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
-import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
 
 public class DescriptorTest
     extends AbstractXFireAegisTest
 {
+    CustomTypeMapping tm;
+    
+    
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        
+        tm = new CustomTypeMapping();
+        tm.setTypeCreator(new DefaultTypeCreator());
+    }
+
     public void testMapping() throws Exception
     {
-        TypeMapping tm = new AutoTypeMapping();
         tm.setEncodingStyleURI("urn:xfire:bean");
 
         Type type = tm.getType(MyBean.class);
@@ -36,7 +47,6 @@ public class DescriptorTest
     
     public void testMapping2() throws Exception
     {
-        TypeMapping tm = new AutoTypeMapping();
         tm.setEncodingStyleURI("urn:xfire:bean2");
 
         Type type = tm.getType(MyBean.class);
@@ -56,7 +66,6 @@ public class DescriptorTest
 
     public void testListHolder() throws Exception
     {
-        TypeMapping tm = new AutoTypeMapping();
         tm.setEncodingStyleURI("urn:xfire:bean");
 
         Type type = tm.getType(ListHolderBean.class);
@@ -74,7 +83,6 @@ public class DescriptorTest
 
     public void testListHolderNoName() throws Exception
     {
-        TypeMapping tm = new AutoTypeMapping();
         tm.setEncodingStyleURI("urn:xfire:bean2");
 
         Type type = tm.getType(ListHolderBean.class);
@@ -92,7 +100,6 @@ public class DescriptorTest
     
     public void testDefaultName() throws Exception
     {
-        TypeMapping tm = new AutoTypeMapping();
         tm.setEncodingStyleURI("urn:xfire:bean4");
 
         Type type = tm.getType(MyBean.class);

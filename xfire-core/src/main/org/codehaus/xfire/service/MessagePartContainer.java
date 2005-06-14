@@ -76,6 +76,11 @@ public abstract class MessagePartContainer
         messagePartList.add(part);
     }
 
+    public int getMessagePartIndex(MessagePartInfo part)
+    {
+        return messagePartList.indexOf(part);
+    }
+
     /**
      * Removes an message part from this container.
      *

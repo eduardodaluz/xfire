@@ -15,23 +15,23 @@ public class AnnotatedTypeTest
     extends AbstractXFireAegisTest
 {
     private TypeMapping tm;
+    private Service service;
     
     public void setUp() throws Exception
     {
         super.setUp();
         
-        Service service = getServiceFactory().create(AnnotatedService.class);
+        service = getServiceFactory().create(AnnotatedService.class);
 
-        tm = AegisBindingProvider.getTypeMapping(service);
         getServiceRegistry().register(service);
-        
-        AnnotatedType type = new AnnotatedType(AnnotatedBean1.class);
-        tm.register(type);
-
-        type = new AnnotatedType(AnnotatedBean2.class);
-        tm.register(type);
+        tm = AegisBindingProvider.getTypeMapping(service);
     }
 
+    public void testTM()
+    {
+        assertTrue( tm.getTypeCreator() instanceof Java5TypeCreator );
+    }
+    
     public void testType()
     {
         AnnotatedTypeInfo type = new AnnotatedTypeInfo(AnnotatedBean1.class);
@@ -47,15 +47,10 @@ public class AnnotatedTypeTest
         QName att = (QName) atts.next();
         assertFalse(atts.hasNext());
     }
-    
-    public void testRead()
-    {
-        
-    }
-    
+
     public void testWSDL() throws Exception
     {
-        /*Document wsdl = getWSDLDocument("AnnotatedService");
+        Document wsdl = getWSDLDocument("AnnotatedService");
         printNode(wsdl);
         
         addNamespace("xsd", SoapConstants.XSD);
@@ -64,6 +59,6 @@ public class AnnotatedTypeTest
         assertInvalid("//xsd:complexType[@name='AnnotatedBean1']/xsd:sequence/xsd:element[@name='bogusProperty']", wsdl);
 
         assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:sequence/xsd:element[@name='element']", wsdl);
-        assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:attribute[@name='attribute']", wsdl);*/
+        assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:attribute[@name='attribute']", wsdl);
     }
 }

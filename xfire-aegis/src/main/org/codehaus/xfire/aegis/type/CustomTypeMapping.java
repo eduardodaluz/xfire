@@ -27,6 +27,8 @@ public class CustomTypeMapping
     
     private String encodingStyleURI;
     
+    private TypeCreator typeCreator;
+    
     public CustomTypeMapping( TypeMapping defaultTM )
     {
         this();
@@ -115,7 +117,16 @@ public class CustomTypeMapping
         Type type = (Type) class2Type.get( javaType );
         
         if ( type == null && defaultTM != null )
+        {
             type = defaultTM.getType( javaType );
+        }
+        
+        if (type == null && getTypeCreator() != null)
+        {
+            type = getTypeCreator().createType(javaType);
+            
+            register(type);
+        }
         
         return type;
     }
@@ -154,5 +165,17 @@ public class CustomTypeMapping
     public void setEncodingStyleURI( String encodingStyleURI )
     {
         this.encodingStyleURI = encodingStyleURI;
+    }
+
+    public TypeCreator getTypeCreator()
+    {
+        return typeCreator;
+    }
+
+    public void setTypeCreator(TypeCreator typeCreator)
+    {
+        this.typeCreator = typeCreator;
+        
+        typeCreator.setTypeMapping(this);
     }
 }

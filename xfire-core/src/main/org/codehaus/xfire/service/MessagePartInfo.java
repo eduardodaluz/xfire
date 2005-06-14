@@ -2,6 +2,8 @@ package org.codehaus.xfire.service;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.wsdl.SchemaType;
+
 
 /**
  * Represents the description of a service operation message part.
@@ -16,10 +18,9 @@ public class MessagePartInfo
         implements Visitable
 {
     private QName name;
-    private QName schemaType;
     private Class typeClass;
     private MessagePartContainer container;
-
+    private SchemaType schemaType;
 
     MessagePartInfo(QName name, Class typeClass, MessagePartContainer container)
     {
@@ -44,21 +45,6 @@ public class MessagePartInfo
         this.name = name;
     }
 
-    /**
-     * The xml schema type of this parameter.
-     *
-     * @return
-     */
-    public QName getSchemaType()
-    {
-        return schemaType;
-    }
-
-    public void setSchemaType(QName schemaType)
-    {
-        this.schemaType = schemaType;
-    }
-
     public Class getTypeClass()
     {
         return typeClass;
@@ -67,6 +53,21 @@ public class MessagePartInfo
     public void setTypeClass(Class typeClass)
     {
         this.typeClass = typeClass;
+    }
+
+    public MessagePartContainer getContainer()
+    {
+        return container;
+    }
+
+    public SchemaType getSchemaType()
+    {
+        return schemaType;
+    }
+
+    public void setSchemaType(SchemaType schemaType)
+    {
+        this.schemaType = schemaType;
     }
 
     /**

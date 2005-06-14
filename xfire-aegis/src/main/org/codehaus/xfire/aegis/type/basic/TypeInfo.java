@@ -111,6 +111,12 @@ public class TypeInfo
             }
             
             type = getTypeMapping().getType(desc.getPropertyType());
+            
+            if (type == null)
+            {
+                type = getTypeMapping().getTypeCreator().createType(desc);
+                getTypeMapping().register(type);
+            }
         }
         
         if ( type == null )

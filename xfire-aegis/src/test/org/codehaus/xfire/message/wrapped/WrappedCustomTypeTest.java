@@ -6,7 +6,11 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -31,9 +35,17 @@ public class WrappedCustomTypeTest
         getServiceRegistry().register(service);
 
         TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
-        tm.register(SimpleBean.class,
-                    new QName("urn:ReallyNotSoSimpleBean", "SimpleBean"),
-                    new BeanType());
+        
+        BeanType type = new BeanType();
+        type.setTypeClass(SimpleBean.class);
+        type.setSchemaType(new QName("urn:ReallyNotSoSimpleBean", "SimpleBean"));
+        type.setTypeMapping(tm);
+        
+        ServiceInfo info = service.getServiceInfo();
+        OperationInfo o = info.getOperation("getSubmitBean");
+        MessageInfo inMsg = o.getInputMessage();
+        MessagePartInfo p = inMsg.getMessagePart(new QName(info.getName().getNamespaceURI(), "in0"));
+        p.setSchemaType(type);
     }
 
     public void testBeanService()
@@ -42,8 +54,6 @@ public class WrappedCustomTypeTest
         final Document response =
                 invokeService("BeanService",
                               "/org/codehaus/xfire/message/wrapped/WrappedCustomTypeTest.bean11.xml");
-
-        //printNode(response);
 
         addNamespace("sb", "http://services.xfire.codehaus.org");
         assertValid("/s:Envelope/s:Body/sb:getSubmitBeanResponse", response);

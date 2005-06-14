@@ -239,7 +239,7 @@ public class ArrayType
      * 
      * @return
      */
-    protected Type getComponentType()
+    public Type getComponentType()
     {
         Class compType = getTypeClass().getComponentType();
         

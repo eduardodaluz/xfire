@@ -44,4 +44,23 @@
             <url>http://www.dom4j.org</url>
         </dependency>
     </dependencies>
+    <build>
+        <unitTest>
+            <excludes>
+                <exclude>**/**.java</exclude>
+            </excludes>
+            <resources>
+                <resource>
+                    <directory>${basedir}/src/test</directory>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                    </excludes>
+                    <filtering>false</filtering>
+                </resource>
+            </resources>
+        </unitTest>
+    </build>
 </project>

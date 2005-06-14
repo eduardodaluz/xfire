@@ -120,13 +120,28 @@ public class DefaultTypeMappingRegistry
 
     protected TypeMapping createTypeMapping(TypeMapping parent, boolean autoTypes)
     {
-        if (autoTypes)
+        CustomTypeMapping tm = new CustomTypeMapping(parent);
+        
+        if (autoTypes) tm.setTypeCreator(createTypeCreator());
+        
+        return tm;
+    }
+
+    private TypeCreator createTypeCreator()
+    {
+        try
         {
-            return new AutoTypeMapping(parent);
+            String j5TC = "org.codehaus.xfire.type.java5.Java5TypeCreator";
+
+            Class clazz = getClass().getClassLoader().loadClass(j5TC);
+            
+            TypeCreator creator = (TypeCreator) clazz.newInstance();
+            
+            return creator;
         }
-        else
+        catch (Exception e)
         {
-            return new CustomTypeMapping(parent);
+            return new DefaultTypeCreator();
         }
     }
 
