@@ -69,9 +69,9 @@ public class EnumTypeTest
         printNode(root);
         
         addNamespace("xsd", SoapConstants.XSD);
-        assertValid("//xsd:simpleType[@name='test']/xsd:restriction[@base='xsd:NMTOKEN']", wsdl);
-        assertValid("//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration[text()='VALUE1']", wsdl);
-        assertValid("//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration[text()='VALUE2']", wsdl);
+        assertValid("//xsd:simpleType[@name='test']/xsd:restriction[@base='xsd:string']", wsdl);
+        assertValid("//xsd:restriction[@base='xsd:string']/xsd:enumeration[@value='VALUE1']", wsdl);
+        assertValid("//xsd:restriction[@base='xsd:string']/xsd:enumeration[@value='VALUE2']", wsdl);
     }
     
     public void testCurrencyService() throws Exception
@@ -81,9 +81,9 @@ public class EnumTypeTest
         Document wsdl = getWSDLDocument("CurrencyService");
 
         addNamespace("xsd", SoapConstants.XSD);
-        assertValid("//xsd:simpleType[@name='Currency']/xsd:restriction[@base='xsd:NMTOKEN']", wsdl);
-        assertValid("normalize-space(//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration)='USD'", wsdl);
-        assertValid("normalize-space(//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration)='EURO'", wsdl);
-        assertValid("normalize-space(//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration)='POUNDS'", wsdl);
+        assertValid("//xsd:simpleType[@name='Currency']/xsd:restriction[@base='xsd:string']", wsdl);
+        assertValid("//xsd:restriction[@base='xsd:string']/xsd:enumeration[@value='USD']", wsdl);
+        assertValid("//xsd:restriction[@base='xsd:string']/xsd:enumeration[@value='EURO']", wsdl);
+        assertValid("//xsd:restriction[@base='xsd:string']/xsd:enumeration[@value='POUNDS']", wsdl);
     }
 }

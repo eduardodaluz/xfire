@@ -27,6 +27,11 @@ public class AnnotatedTypeInfo
         return desc.getReadMethod().isAnnotationPresent(XmlElement.class);
     }
 
+    protected boolean isAnnotatedElement(PropertyDescriptor desc)
+    {
+        return desc.getReadMethod().isAnnotationPresent(XmlElement.class);
+    }
+    
     protected QName createQName(PropertyDescriptor desc)
     {
         String name = null;

@@ -50,7 +50,7 @@ public class EnumType
         
         Element restriction = new Element(SoapConstants.XSD_PREFIX + ":restriction",
                                      SoapConstants.XSD);
-        restriction.addAttribute(new Attribute("base", SoapConstants.XSD_PREFIX + ":NMTOKEN"));
+        restriction.addAttribute(new Attribute("base", SoapConstants.XSD_PREFIX + ":string"));
         simple.appendChild(restriction);
         
         Object[] constants = getTypeClass().getEnumConstants();
@@ -59,7 +59,7 @@ public class EnumType
         {
             Element enumeration = new Element(SoapConstants.XSD_PREFIX + ":enumeration",
                                           SoapConstants.XSD);
-            enumeration.appendChild(((Enum) constant).toString());
+            enumeration.addAttribute(new Attribute("value", ((Enum) constant).toString()));
             restriction.appendChild(enumeration);
         }
     }
