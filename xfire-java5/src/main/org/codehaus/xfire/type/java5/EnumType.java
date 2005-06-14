@@ -63,4 +63,10 @@ public class EnumType
             restriction.appendChild(enumeration);
         }
     }
+
+    @Override
+    public boolean isComplex()
+    {
+        return true;
+    }
 }

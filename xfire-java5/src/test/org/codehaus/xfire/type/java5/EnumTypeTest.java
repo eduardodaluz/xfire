@@ -73,4 +73,17 @@ public class EnumTypeTest
         assertValid("//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration[text()='VALUE1']", wsdl);
         assertValid("//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration[text()='VALUE2']", wsdl);
     }
+    
+    public void testCurrencyService() throws Exception
+    {
+        getServiceRegistry().register( getServiceFactory().create(CurrencyService.class) );
+        
+        Document wsdl = getWSDLDocument("CurrencyService");
+
+        addNamespace("xsd", SoapConstants.XSD);
+        assertValid("//xsd:simpleType[@name='Currency']/xsd:restriction[@base='xsd:NMTOKEN']", wsdl);
+        assertValid("normalize-space(//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration)='USD'", wsdl);
+        assertValid("normalize-space(//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration)='EURO'", wsdl);
+        assertValid("normalize-space(//xsd:restriction[@base='xsd:NMTOKEN']/xsd:enumeration)='POUNDS'", wsdl);
+    }
 }

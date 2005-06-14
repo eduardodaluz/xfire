@@ -8,6 +8,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.util.NamespaceHelper;
 
 public class Java5TypeCreator
     extends DefaultTypeCreator
@@ -81,7 +82,11 @@ public class Java5TypeCreator
     protected Type createEnumType(TypeClassInfo info)
     {
         EnumType type = new EnumType();
-        type.setSchemaType(createQName(info.getTypeClass()));
+        
+        String name = info.getTypeClass().getSimpleName();
+        String ns = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
+        
+        type.setSchemaType(new QName(ns, name));
         type.setTypeClass(info.getTypeClass());
         type.setTypeMapping(getTypeMapping());
         
