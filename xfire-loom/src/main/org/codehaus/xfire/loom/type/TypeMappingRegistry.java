@@ -17,6 +17,7 @@ import org.codehaus.xfire.aegis.type.basic.FloatType;
 import org.codehaus.xfire.aegis.type.basic.IntType;
 import org.codehaus.xfire.aegis.type.basic.LongType;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -90,8 +91,8 @@ public class TypeMappingRegistry extends DefaultTypeMappingRegistry implements L
             final String name = configuration.getAttribute( "name" );
             final QName qname = new QName( ns, name );
 
-            final Class clazz = loadClass( configuration.getAttribute( "class" ) );
-            final Class typeClass = loadClass( configuration.getAttribute( "type" ) );
+            final Class clazz = ClassLoaderUtils.loadClass( configuration.getAttribute( "class" ), getClass() );
+            final Class typeClass = ClassLoaderUtils.loadClass( configuration.getAttribute( "type" ), getClass() );
 
             tm.register( clazz,
                          qname,
@@ -112,25 +113,5 @@ public class TypeMappingRegistry extends DefaultTypeMappingRegistry implements L
     public void enableLogging( final Logger logger )
     {
         this.logger = logger;
-    }
-
-    protected Class loadClass( final String className )
-        throws ClassNotFoundException
-    {
-        try
-        {
-            return getClass().getClassLoader().loadClass( className );
-        }
-        catch( ClassNotFoundException cnfe )
-        {
-            try
-            {
-                return Class.forName( className );
-            }
-            catch( ClassNotFoundException cnf2 )
-            {
-                return Thread.currentThread().getContextClassLoader().loadClass( className );
-            }
-        }
     }
 }

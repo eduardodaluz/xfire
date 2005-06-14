@@ -10,6 +10,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 
 /**
  * Extends and configures the TypeMappingRegistry.
@@ -23,11 +24,11 @@ public class TypeMappingRegistry
 {
     private Logger logger;
 
-    public void configure(PlexusConfiguration config) 
+    public void configure(PlexusConfiguration config)
         throws PlexusConfigurationException
     {
         PlexusConfiguration tmConfig[] = config.getChildren("typeMapping");
-        
+
         for ( int i = 0; i < tmConfig.length; i++ )
         {
             configureTypeMapping( tmConfig[i] );
@@ -38,12 +39,12 @@ public class TypeMappingRegistry
         throws PlexusConfigurationException
     {
         TypeMapping tm = createTypeMapping(false);
-        
+
         register( configuration.getAttribute( "namespace" ), tm );
-        
+
         if ( Boolean.valueOf( configuration.getAttribute("default", "false") ).booleanValue() )
             registerDefault( tm );
-        
+
         PlexusConfiguration[] types = configuration.getChildren( "type" );
 
         for ( int i = 0; i < types.length; i++ )
@@ -51,7 +52,7 @@ public class TypeMappingRegistry
             configureType( types[i], tm );
         }
     }
-    
+
     private void configureType( PlexusConfiguration configuration, TypeMapping tm )
         throws PlexusConfigurationException
     {
@@ -60,49 +61,29 @@ public class TypeMappingRegistry
             String ns = configuration.getAttribute("namespace");
             String name = configuration.getAttribute("name");
             QName qname = new QName(ns, name);
-            
-            Class clazz = loadClass( configuration.getAttribute("class") );
-            Class typeClass = loadClass( configuration.getAttribute("type") );
-            
+
+            Class clazz = ClassLoaderUtils.loadClass( configuration.getAttribute("class"), getClass() );
+            Class typeClass = ClassLoaderUtils.loadClass( configuration.getAttribute("type"), getClass() );
+
             Type type = (Type) typeClass.newInstance();
 
             tm.register(clazz, qname, type);
-            
-            logger.debug( "Registered " + typeClass.getName() + 
+
+            logger.debug( "Registered " + typeClass.getName() +
                               " for " + qname + " with class " + clazz.getName() );
         }
         catch (Exception e)
         {
             if ( e instanceof PlexusConfigurationException )
                 throw (PlexusConfigurationException) e;
-            
+
             throw new PlexusConfigurationException( "Could not configure type.", e );
-        }                     
+        }
     }
 
     public void enableLogging(Logger logger)
     {
         this.logger = logger;
-    }
-    
-    protected Class loadClass( String className )
-        throws ClassNotFoundException
-    {
-        try
-        {
-            return getClass().getClassLoader().loadClass(className);
-        }
-        catch (ClassNotFoundException cnfe)
-        {
-            try
-            {
-                return Class.forName(className);
-            }
-            catch (ClassNotFoundException cnf2)
-            {
-                return Thread.currentThread().getContextClassLoader().loadClass(className);
-            }
-        }
     }
 
     public void initialize()
