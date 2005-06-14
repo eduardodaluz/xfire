@@ -122,7 +122,7 @@ public class DefaultTypeCreator
 
     protected boolean isCollection(Class javaType)
     {
-        return javaType.isAssignableFrom(Collection.class);
+        return Collection.class.isAssignableFrom(javaType);
     }
 
     protected boolean isEnum(Class javaType)
