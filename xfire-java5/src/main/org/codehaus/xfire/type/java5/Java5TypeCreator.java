@@ -54,7 +54,7 @@ public class Java5TypeCreator
             return info;
         }
     }
-
+    
     @Override
     public TypeClassInfo createClassInfo(PropertyDescriptor pd)
     {

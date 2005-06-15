@@ -24,7 +24,7 @@ public class AnnotatedTypeInfo
 
     protected boolean isElement(PropertyDescriptor desc)
     {
-        return desc.getReadMethod().isAnnotationPresent(XmlElement.class);
+        return !isAttribute(desc);
     }
 
     protected boolean isAnnotatedElement(PropertyDescriptor desc)
@@ -43,7 +43,7 @@ public class AnnotatedTypeInfo
             name = att.name();
             ns = att.namespace();
         }
-        else if (isElement(desc))
+        else if (isAnnotatedElement(desc))
         {
             XmlElement att = desc.getReadMethod().getAnnotation(XmlElement.class);
             name = att.name();

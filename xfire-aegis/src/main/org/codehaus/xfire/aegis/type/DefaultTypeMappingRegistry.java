@@ -197,7 +197,7 @@ public class DefaultTypeMappingRegistry
         tm.register(Double.class, XSD_DOUBLE, new DoubleType());
         tm.register(Float.class, XSD_FLOAT, new FloatType());
         tm.register(Long.class, XSD_LONG, new LongType());
-        tm.register(Date.class, XSD_DATETIME, new DateType());
+        tm.register(Date.class, XSD_DATETIME, new DateTimeType());
         tm.register(Calendar.class, XSD_DATETIME, new CalendarType());
         tm.register(byte[].class, XSD_BASE64, new Base64Type());
         tm.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
@@ -219,7 +219,7 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Double.class, ENCODED_DOUBLE, new DoubleType());
         soapTM.register(Float.class, ENCODED_FLOAT, new FloatType());
         soapTM.register(Long.class, ENCODED_LONG, new LongType());
-        soapTM.register(Date.class, ENCODED_DATETIME, new DateType());
+        soapTM.register(Date.class, ENCODED_DATETIME, new DateTimeType());
         soapTM.register(Calendar.class, ENCODED_DATETIME, new CalendarType());
         soapTM.register(byte[].class, ENCODED_BASE64, new Base64Type());
         soapTM.register(BigDecimal.class, ENCODED_DECIMAL, new BigDecimalType());
@@ -235,7 +235,7 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Double.class, XSD_DOUBLE, new DoubleType());
         soapTM.register(Float.class, XSD_FLOAT, new FloatType());
         soapTM.register(Long.class, XSD_LONG, new LongType());
-        soapTM.register(Date.class, XSD_DATETIME, new DateType());
+        soapTM.register(Date.class, XSD_DATETIME, new DateTimeType());
         soapTM.register(Calendar.class, XSD_DATETIME, new CalendarType());
         soapTM.register(byte[].class, XSD_BASE64, new Base64Type());
         soapTM.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());

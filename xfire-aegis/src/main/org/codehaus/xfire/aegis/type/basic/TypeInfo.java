@@ -105,14 +105,17 @@ public class TypeInfo
             {
                 return null;
             }
-            
-            type = getTypeMapping().getType(desc.getPropertyType());
-            
-            if (type == null)
+
+            if (getTypeMapping().isRegistered(desc.getPropertyType()))
+            {
+                type = getTypeMapping().getType(desc.getPropertyType());
+            }
+            else
             {
                 type = getTypeMapping().getTypeCreator().createType(desc);
-                getTypeMapping().register(type);
             }
+            
+            getTypeMapping().register(type);
         }
         
         if ( type == null )
@@ -150,12 +153,15 @@ public class TypeInfo
     
     private void initializeProperties()
     {
-        BeanInfo beanInfo;
+        BeanInfo beanInfo = null;
         try
         {
             if (typeClass.isInterface() || typeClass.isPrimitive())
             {
                 beanInfo = Introspector.getBeanInfo(typeClass);
+            }
+            else if (typeClass == Object.class)
+            {
             }
             else
             {
@@ -167,7 +173,8 @@ public class TypeInfo
             throw new XFireRuntimeException("Couldn't introspect interface.", e);
         }
         
-        descriptors = beanInfo.getPropertyDescriptors();
+        if (beanInfo != null)
+            descriptors = beanInfo.getPropertyDescriptors();
         
         if (descriptors == null)
         {

@@ -6,6 +6,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.util.DateUtils;
 
 /**
  * Type for the Calendar class.
@@ -20,7 +21,12 @@ public class CalendarType
      */
     public Object readObject(MessageReader reader, MessageContext context)
     {
-        return reader.getValueAsCalendar();
+        String value = reader.getValue();
+        if (value == null) return null;
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( DateUtils.parseDateTime(value) );
+        return calendar;
     }
 
     /**
@@ -28,8 +34,7 @@ public class CalendarType
      */
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValueAsCalendar( (Calendar) object );
-        writer.close();
+        writer.writeValue(DateUtils.formatDateTime(((Calendar)object).getTime()));
     }
 
 }

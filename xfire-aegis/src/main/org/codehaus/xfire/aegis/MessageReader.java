@@ -1,8 +1,5 @@
 package org.codehaus.xfire.aegis;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.xml.namespace.QName;
 
 /**
@@ -15,8 +12,6 @@ public interface MessageReader
 {
     public String getValue();
 
-    public Calendar getValueAsCalendar();
-
     public int getValueAsInt();
 
     public long getValueAsLong();
@@ -26,12 +21,6 @@ public interface MessageReader
     public float getValueAsFloat();
 
 	public boolean getValueAsBoolean();
-
-    public Date getValueAsDate();
-
-    //public Date getValueAsTime();
-    
-    public Date getValueAsDateTime();
     
     public boolean hasMoreAttributeReaders();
     

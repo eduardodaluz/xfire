@@ -150,7 +150,7 @@ public class BeanType
             Object value = readProperty(object, name);
             if (value != null)
             {
-                Type type = getTypeMapping().getType( value.getClass() );
+                Type type = getType( info, name );
     
                 if ( type == null )
                     throw new XFireRuntimeException( "Couldn't find type for " + value.getClass() + " for property " + name );
@@ -172,7 +172,7 @@ public class BeanType
 
             if ( value != null)
             {
-                Type type = getTypeMapping().getType( value.getClass() );
+                Type type = getType( info, name );
     
                 if ( type == null )
                     throw new XFireRuntimeException( "Couldn't find type for " + value.getClass() + " for property " + name );

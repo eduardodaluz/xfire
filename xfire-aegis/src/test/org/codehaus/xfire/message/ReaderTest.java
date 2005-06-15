@@ -12,6 +12,7 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.yom.YOMReader;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.util.DateUtils;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.stax.StaxBuilder;
 
@@ -56,24 +57,24 @@ public class ReaderTest
         
         MessageReader reader = new ElementReader(xr);
         
-        Date date0 = reader.getNextElementReader().getValueAsDate();
+        Date date0 = DateUtils.parseDate(reader.getNextElementReader().getValue());
         assertNotNull(date0);
-        Date dateTime0 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime0 =  DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime0);
-        Date dateTime1 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime1 = DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime1);
-        Date dateTime2 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime2 = DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime2);
         
-        Date dateTime3 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime3 = DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime3);
-        Date dateTime4 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime4 = DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime4);
         assertTrue ( dateTime3.before( dateTime4 ) );
         
-        Date dateTime5 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime5 = DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime5);
-        Date dateTime6 = reader.getNextElementReader().getValueAsDateTime();
+        Date dateTime6 = DateUtils.parseDateTime(reader.getNextElementReader().getValue());
         assertNotNull(dateTime6);
         assertTrue ( dateTime5.before( dateTime6 ) );
                         

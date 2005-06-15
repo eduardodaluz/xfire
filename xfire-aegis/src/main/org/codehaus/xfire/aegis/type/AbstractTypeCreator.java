@@ -37,7 +37,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         this.nextCreator = creator;
     }
 
-    private TypeClassInfo createClassInfo(Field f)
+    protected TypeClassInfo createClassInfo(Field f)
     {
         return createBasicClassInfo(f.getType());
     }
@@ -129,14 +129,6 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     protected QName createCollectionQName(Class javaType, Class componentType)
     {
-        // Forget about the [L which prefixes arrays. 
-//        String clsName = javaType.getName();
-//        
-//        if (clsName.startsWith("[L"))
-//        {
-//            clsName = clsName.substring(2, clsName.length() - 1);
-//        }
-
         if(componentType == null)
         {
             throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName() + ", unspecified component type");
@@ -144,7 +136,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         Type type = tm.getType(componentType);
         if(type == null)
         {
-            throw new XFireRuntimeException("No mapping found for type " + componentType);
+            type = createType(componentType);
         }
         String ns;
 

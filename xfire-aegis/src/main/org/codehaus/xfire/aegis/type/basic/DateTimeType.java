@@ -9,11 +9,11 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.util.DateUtils;
 
 /**
- * Type for the Date class which serializes as an xsd:date (no time information).
+ * Type for the Date class which serializes as an xsd:dateTime.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class DateType
+public class DateTimeType
     extends Type
 {
     public Object readObject(MessageReader reader, MessageContext context)
@@ -22,11 +22,11 @@ public class DateType
         
         if (value == null) return null;
         
-        return DateUtils.parseDate( value );
+        return DateUtils.parseDateTime( value );
     }
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValue(DateUtils.formatDate((Date)object));
+        writer.writeValue(DateUtils.formatDateTime((Date)object));
     }
 }

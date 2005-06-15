@@ -1,8 +1,5 @@
 package org.codehaus.xfire.aegis;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.xml.namespace.QName;
 
 /**
@@ -13,13 +10,6 @@ import javax.xml.namespace.QName;
 public interface MessageWriter
 {
     void writeValue( Object value );
-
-    void writeValueAsCalendar( Calendar calendar );
-
-    void writeValueAsDate( Date date );
-
-    void writeValueAsDateTime( Date date );
-    //void writeValueAsTime( Date date );
 
     void writeValueAsInt( Integer i );
 

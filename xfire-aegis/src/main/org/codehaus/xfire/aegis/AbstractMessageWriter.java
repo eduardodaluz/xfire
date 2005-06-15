@@ -23,35 +23,11 @@ public abstract class AbstractMessageWriter
     }
 
     /**
-     * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsCalendar(java.util.Calendar)
-     */
-    public void writeValueAsCalendar(Calendar calendar)
-    {
-        writeValue(DateUtils.formatDateTime(calendar.getTime()));
-    }
-
-    /**
      * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsInt(java.lang.Integer)
      */
     public void writeValueAsInt(Integer i)
     {
         writeValue(i.toString());
-    }
-
-    /**
-     * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsDate(java.util.Date)
-     */
-    public void writeValueAsDateTime(Date date)
-    {
-        writeValue(DateUtils.formatDateTime(date));
-    }
-
-    /**
-     * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsDate(java.util.Date)
-     */
-    public void writeValueAsDate(Date date)
-    {
-        writeValue(DateUtils.formatDate(date));
     }
 
     /**

@@ -40,9 +40,11 @@ public class AnnotatedTypeTest
         Iterator elements = type.getElements();
         assertTrue(elements.hasNext());
         QName element = (QName) elements.next();
+        assertTrue(elements.hasNext());
+        element = (QName) elements.next();
         assertFalse(elements.hasNext());
         
-        Iterator atts = type.getElements();
+        Iterator atts = type.getAttributes();
         assertTrue(atts.hasNext());
         QName att = (QName) atts.next();
         assertFalse(atts.hasNext());
@@ -56,7 +58,7 @@ public class AnnotatedTypeTest
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:complexType[@name='AnnotatedBean1']/xsd:sequence/xsd:element[@name='elementProperty']", wsdl);
         assertValid("//xsd:complexType[@name='AnnotatedBean1']/xsd:attribute[@name='attributeProperty']", wsdl);
-        assertInvalid("//xsd:complexType[@name='AnnotatedBean1']/xsd:sequence/xsd:element[@name='bogusProperty']", wsdl);
+        assertValid("//xsd:complexType[@name='AnnotatedBean1']/xsd:sequence/xsd:element[@name='bogusProperty']", wsdl);
 
         assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:sequence/xsd:element[@name='element']", wsdl);
         assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:attribute[@name='attribute']", wsdl);

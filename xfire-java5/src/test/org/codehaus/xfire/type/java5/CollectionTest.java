@@ -1,7 +1,10 @@
 package org.codehaus.xfire.type.java5;
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -9,6 +12,9 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.type.java5.dto.CollectionDTO;
+import org.codehaus.xfire.type.java5.dto.DTOService;
 
 public class CollectionTest
     extends AbstractXFireAegisTest
@@ -40,7 +46,53 @@ public class CollectionTest
         assertNotNull(type);
         assertTrue(type.getTypeClass().isAssignableFrom(String.class));
     }
+    
+    public void testPDType() throws Exception
+    {
+        PropertyDescriptor pd = 
+            Introspector.getBeanInfo(CollectionDTO.class, Object.class).getPropertyDescriptors()[0];
+        Type type = creator.createType(pd);
+        tm.register(type);
+        assertTrue( type instanceof CollectionType );
+        
+        CollectionType colType = (CollectionType) type;
+        QName componentName = colType.getComponentName();
+        
+        type = colType.getComponentType();
+        assertNotNull(type);
+        assertTrue(type.getTypeClass().isAssignableFrom(String.class));
+    }
 
+    public void testCollectionDTO()
+    {
+        CustomTypeMapping tm = new CustomTypeMapping();
+        Java5TypeCreator creator = new Java5TypeCreator();
+        tm.setTypeCreator(creator);
+        
+        Type dto = creator.createType(CollectionDTO.class);
+        Set deps = dto.getDependencies();
+        
+        Type type = (Type) deps.iterator().next();
+        System.out.println(type.getClass().getName());
+        assertTrue( type instanceof CollectionType );
+        
+        CollectionType colType = (CollectionType) type;
+        
+        deps = dto.getDependencies();
+        assertEquals(1, deps.size());
+        
+        Type comType = colType.getComponentType();
+        assertEquals(String.class, comType.getTypeClass());
+    }
+    
+    public void testCollectionDTOService() throws Exception
+    {
+        Service service = getServiceFactory().create(DTOService.class);
+        getServiceRegistry().register(service);
+        
+        printNode(invokeService(service.getName(), "/org/codehaus/xfire/type/java5/dto/GetDTO.xml"));
+    }
+    
     public class CollectionService
     {
         public Collection<String> getStrings() 

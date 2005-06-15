@@ -33,7 +33,7 @@ public class DescriptorTest
     {
         tm.setEncodingStyleURI("urn:xfire:bean");
 
-        Type type = tm.getType(MyBean.class);
+        Type type = tm.getTypeCreator().createType(MyBean.class);
         TypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
@@ -53,7 +53,7 @@ public class DescriptorTest
     {
         tm.setEncodingStyleURI("urn:xfire:bean2");
 
-        Type type = tm.getType(MyBean.class);
+        Type type = tm.getTypeCreator().createType(MyBean.class);
         TypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
@@ -72,7 +72,7 @@ public class DescriptorTest
     {
         tm.setEncodingStyleURI("urn:xfire:bean");
 
-        Type type = tm.getType(ListHolderBean.class);
+        Type type = tm.getTypeCreator().createType(ListHolderBean.class);
         TypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
@@ -89,7 +89,7 @@ public class DescriptorTest
     {
         tm.setEncodingStyleURI("urn:xfire:bean2");
 
-        Type type = tm.getType(ListHolderBean.class);
+        Type type = tm.getTypeCreator().createType(ListHolderBean.class);
         TypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
@@ -106,7 +106,7 @@ public class DescriptorTest
     {
         tm.setEncodingStyleURI("urn:xfire:bean4");
 
-        Type type = tm.getType(MyBean.class);
+        Type type = tm.getTypeCreator().createType(MyBean.class);
         TypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator attItr = info.getAttributes();
