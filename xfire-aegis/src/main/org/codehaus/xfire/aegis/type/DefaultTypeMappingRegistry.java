@@ -130,19 +130,21 @@ public class DefaultTypeMappingRegistry
 
     private TypeCreator createTypeCreator()
     {
+        AbstractTypeCreator xmlCreator = new XMLTypeCreator();
+        xmlCreator.setNextCreator(new DefaultTypeCreator());
         try
         {
             String j5TC = "org.codehaus.xfire.type.java5.Java5TypeCreator";
 
             Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
             
-            TypeCreator creator = (TypeCreator) clazz.newInstance();
-            
-            return creator;
+            AbstractTypeCreator j5Creator = (AbstractTypeCreator) clazz.newInstance();
+            j5Creator.setNextCreator(xmlCreator);
+            return j5Creator;
         }
         catch (Exception e)
         {
-            return new DefaultTypeCreator();
+            return xmlCreator;
         }
     }
 

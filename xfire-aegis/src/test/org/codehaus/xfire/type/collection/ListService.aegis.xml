@@ -1,0 +1,16 @@
+<mappings>
+  <mapping>
+    <method name="getStrings">
+      <return-type componentType="java.lang.String" />
+    </method>
+    <method name="getDoubles">
+      <return-type componentType="java.lang.Double" />
+    </method>
+    <method name="receiveStrings">
+      <parameter index="0" componentType="java.lang.String" />
+    </method>
+    <method name="receiveDoubles">
+      <parameter index="0" componentType="java.lang.Double" />
+    </method>
+  </mapping>
+</mappings>

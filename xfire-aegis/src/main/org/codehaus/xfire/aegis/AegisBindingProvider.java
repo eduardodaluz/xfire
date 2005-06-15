@@ -74,7 +74,7 @@ public class AegisBindingProvider
         for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo opInfo = (OperationInfo) itr.next();
-            
+            System.out.println("initializing " + opInfo.getMethod());
             initializeMessage(endpoint, opInfo.getInputMessage());
             initializeMessage(endpoint, opInfo.getOutputMessage());
         }

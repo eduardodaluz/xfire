@@ -1,0 +1,10 @@
+<mappings>
+  <mapping>
+    <method name="getCollection">
+      <return-type componentType="java.lang.Double" />
+    </method>
+    <method name="getCollection">
+      <parameter index="0" componentType="java.lang.String" />
+    </method>
+  </mapping>
+</mappings>

@@ -6,39 +6,59 @@ import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.AbstractTypeCreator;
 import org.codehaus.xfire.util.NamespaceHelper;
 
 public class Java5TypeCreator
-    extends DefaultTypeCreator
+    extends AbstractTypeCreator
 {
 
     @Override
-    protected TypeClassInfo createClassInfo(Method m, int index)
+    public TypeClassInfo createClassInfo(Method m, int index)
     {
-        TypeClassInfo info = new TypeClassInfo();
         if (index >= 0)
         {
+            TypeClassInfo info;
+            java.lang.reflect.Type genericType = m.getGenericParameterTypes()[index];
+            if(genericType instanceof Class)
+            {
+                info = nextCreator.createClassInfo(m, index);
+            }
+            else
+            {
+                info = new TypeClassInfo();
+                info.setGenericType(genericType);
+            }
             info.setTypeClass(m.getParameterTypes()[index]);
-            info.setAnnotations(m.getParameterAnnotations()[index]);
-            info.setGenericType(m.getGenericParameterTypes()[index]);
+            if(m.getParameterAnnotations()[index].length > 0)
+                info.setAnnotations(m.getParameterAnnotations()[index]);
+            return info;
         }
         else
         {
+            java.lang.reflect.Type genericReturnType = m.getGenericReturnType();
+            TypeClassInfo info;
+            if(genericReturnType instanceof Class)
+            {
+                info = nextCreator.createClassInfo(m, index);
+            }
+            else
+            {
+                info = new TypeClassInfo();
+                info.setGenericType(genericReturnType);
+            }
             info.setTypeClass(m.getReturnType());
-            info.setAnnotations(m.getAnnotations());
-            info.setGenericType(m.getGenericReturnType());
+            if(m.getAnnotations().length > 0)
+                info.setAnnotations(m.getAnnotations());
+            return info;
         }
-        
-        return info;
     }
 
     @Override
-    protected TypeClassInfo createClassInfo(PropertyDescriptor pd)
+    public TypeClassInfo createClassInfo(PropertyDescriptor pd)
     {
-        TypeClassInfo info = super.createClassInfo(pd);
-        
+        TypeClassInfo info = createBasicClassInfo(pd.getPropertyType());
         info.setGenericType(pd.getReadMethod().getGenericReturnType());
         info.setAnnotations(pd.getReadMethod().getAnnotations());
         
@@ -46,13 +66,7 @@ public class Java5TypeCreator
     }
 
     @Override
-    protected QName createCollectionQName(Class javaType, Class componentType)
-    {
-        return super.createCollectionQName(javaType, componentType);
-    }
-
-    @Override
-    protected Type createCollectionType(TypeClassInfo info)
+    public Type createCollectionType(TypeClassInfo info)
     {
         Object genericType = info.getGenericType();
         Class paramClass = Object.class;
@@ -70,7 +84,7 @@ public class Java5TypeCreator
     }
 
     @Override
-    protected Type createDefaultType(TypeClassInfo info)
+    public Type createDefaultType(TypeClassInfo info)
     {
         AnnotatedType type = new AnnotatedType(info.getTypeClass());
         type.setTypeMapping(getTypeMapping());
@@ -79,7 +93,7 @@ public class Java5TypeCreator
     }
 
     @Override
-    protected Type createEnumType(TypeClassInfo info)
+    public Type createEnumType(TypeClassInfo info)
     {
         EnumType type = new EnumType();
         
