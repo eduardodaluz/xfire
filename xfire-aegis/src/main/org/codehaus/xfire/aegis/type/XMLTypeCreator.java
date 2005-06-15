@@ -71,6 +71,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         {
             doc = new StaxBuilder().build(is);
             documents.put(clazz.getName(), doc);
+            return doc;
         }
         catch(XMLStreamException e)
         {
