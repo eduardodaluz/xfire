@@ -12,6 +12,7 @@ import org.codehaus.yom.Element;
 import org.codehaus.yom.xpath.YOMXPath;
 import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jaxen.XPath;
@@ -229,9 +230,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
         catch(JaxenException e)
         {
-            e.printStackTrace();
+            throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }
-        return null;
     }
 
     private List getMatches(Object doc, String xpath)
@@ -244,8 +244,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
         catch(JaxenException e)
         {
-            e.printStackTrace();
+            throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }
-        return Collections.EMPTY_LIST;
     }
 }
