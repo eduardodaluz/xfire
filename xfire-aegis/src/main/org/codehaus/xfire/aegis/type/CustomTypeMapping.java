@@ -43,9 +43,6 @@ public class CustomTypeMapping
         xml2Type = new HashMap();
     }
 
-	/**
-	 * @see org.codehaus.xfire.aegis.type.TypeMapping#isRegistered(java.lang.Class, javax.xml.namespace.QName)
-	 */
 	public boolean isRegistered(Class javaType)
 	{
         boolean registered = class2Type.containsKey(javaType);
@@ -66,9 +63,6 @@ public class CustomTypeMapping
         return registered;
     }
 
-    /**
-	 * @see org.codehaus.xfire.aegis.type.TypeMapping#register(java.lang.Class, javax.xml.namespace.QName, org.codehaus.xfire.java.encoding.SerializerFactory, org.codehaus.xfire.java.encoding.DeserializerFactory)
-	 */
 	public void register(Class javaType, QName xmlType, Type type)
     {
         type.setSchemaType(xmlType);
@@ -92,9 +86,6 @@ public class CustomTypeMapping
         class2xml.put( type.getTypeClass(), type.getSchemaType() );
     }
 
-	/**
-	 * @see org.codehaus.xfire.aegis.type.TypeMapping#removeSerializer(java.lang.Class, javax.xml.namespace.QName)
-	 */
 	public void removeType(Type type)
 	{
         if (!xml2Type.containsKey(type.getSchemaType()))
