@@ -13,7 +13,8 @@ public class XFireRuntimeException
         extends RuntimeException
 {
     private Throwable cause;
-
+    private String message;
+    
     /**
      * Constructs a new xfire runtime exception with the specified detail message.
      *
@@ -22,6 +23,7 @@ public class XFireRuntimeException
     public XFireRuntimeException(String message)
     {
         super(message);
+        this.message = message;
     }
 
     /**
@@ -33,6 +35,7 @@ public class XFireRuntimeException
     public XFireRuntimeException(String message, Throwable cause)
     {
         super(message);
+        this.message = message;
         this.cause = cause;
     }
 
@@ -56,15 +59,20 @@ public class XFireRuntimeException
     {
         if (this.cause == null || this.cause == this)
         {
-            return super.getMessage();
+            return message;
         }
         else
         {
-            return super.getMessage() + "; nested exception is " + this.cause.getClass().getName() +
+            return message + ". Nested exception is " + this.cause.getClass().getName() +
                     ": " + this.cause.getMessage();
         }
     }
 
+    public String getActualMessage()
+    {
+        return message;
+    }
+    
     /**
      * Prints this throwable and its backtrace to the specified print stream.
      *
@@ -99,5 +107,22 @@ public class XFireRuntimeException
             w.println(this);
             this.cause.printStackTrace(w);
         }
+    }
+
+    public void prepend(String message)
+    {
+        if(this.message != null)
+        {
+            this.message = message + ": " + this.message;
+        }
+        else
+        {
+            this.message = message;
+        }
+    }
+    
+    public void setMessage(String s)
+    {
+        message = s;
     }
 }

@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -74,9 +75,24 @@ public class AegisBindingProvider
         for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo opInfo = (OperationInfo) itr.next();
-            System.out.println("initializing " + opInfo.getMethod());
-            initializeMessage(endpoint, opInfo.getInputMessage());
-            initializeMessage(endpoint, opInfo.getOutputMessage());
+            try
+            {
+                initializeMessage(endpoint, opInfo.getInputMessage());
+            }
+            catch(XFireRuntimeException e)
+            {
+                e.prepend("Error initializing parameters for method " + opInfo.getMethod());
+                throw e;
+            }
+            try
+            {
+                initializeMessage(endpoint, opInfo.getOutputMessage());
+            }
+            catch(XFireRuntimeException e)
+            {
+                e.prepend("Error initializing return value for method " + opInfo.getMethod());
+                throw e;
+            }
         }
     }
 
