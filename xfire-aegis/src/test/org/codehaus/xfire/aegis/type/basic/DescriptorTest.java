@@ -138,6 +138,7 @@ public class DescriptorTest
     public void testBestMatch() throws Exception
     {
         XMLTypeCreator creator = new XMLTypeCreator();
+        creator.setNextCreator(new DefaultTypeCreator());
         tm = new CustomTypeMapping(new DefaultTypeMappingRegistry().createDefaultMappings());
         creator.setTypeMapping(tm);
         Method method = MyService1.class.getDeclaredMethod("getCollection", new Class[0]);
@@ -163,7 +164,7 @@ public class DescriptorTest
             creator.createType(method, 2);
             fail("Expected exception when requesting type for non-existent parameter index");
         }
-        catch(XFireRuntimeException ex)
+        catch(Exception ex)
         {}
     }
 }
