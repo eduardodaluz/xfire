@@ -105,6 +105,10 @@ public class XMLTypeCreator extends AbstractTypeCreator
         TypeClassInfo info = new TypeClassInfo();
         if(index >= 0)
         {
+            if(index >= m.getParameterTypes().length)
+            {
+                throw new XFireRuntimeException("Method " + m + " does not have a parameter at index " + index);
+            }
             //we don't want nodes for which the specified index is not specified
             List nodes = getMatches(doc, "//mappings/mapping/method[@name='" + m.getName() + "']/parameter[@index='" + index + "']/parent::*");
             if(nodes.size() == 0)
