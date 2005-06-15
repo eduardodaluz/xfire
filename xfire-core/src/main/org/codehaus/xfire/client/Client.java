@@ -7,6 +7,8 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.AbstractBinding;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.SoapServiceEndpoint;
 import org.codehaus.xfire.transport.Transport;
@@ -17,10 +19,20 @@ public class Client
     private Object[] response;
     private Transport transport;
     private Service service;
+    private ObjectBinding clientBinding;
     private String url;
     private int timeout = 10*1000;
     private MessageContext context;
     private XFireFault fault;
+    
+    public Client(Transport transport, ObjectBinding binding, String url)
+    {
+        this.transport = transport;
+        this.url = url;
+        
+        clientBinding = binding;
+        clientBinding.setClientModeOn(true);
+    }
     
     public Client(Transport transport, Service service, String url)
     {
@@ -28,7 +40,8 @@ public class Client
         this.service = service;
         this.url = url;
         
-        service.getBinding().setClientModeOn(true);
+        clientBinding = (ObjectBinding) ((AbstractBinding) service.getBinding()).clone();
+        clientBinding.setClientModeOn(true);
     }
 
     public Object[] invoke(OperationInfo op, Object[] params) throws XFireException, XFireFault

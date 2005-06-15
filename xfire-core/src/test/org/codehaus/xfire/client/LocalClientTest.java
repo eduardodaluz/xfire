@@ -20,17 +20,13 @@ public class LocalClientTest
         extends AbstractXFireTest
 {
     private Service service;
-    private Service clientService;
-    
+
     public void setUp() throws Exception
     {
         super.setUp();
 
         service = getServiceFactory().create(Echo.class);
         service.getBinding().setBindingProvider(new MessageBindingProvider());
-
-        clientService = getServiceFactory().create(Echo.class);
-        clientService.getBinding().setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);
     }
@@ -46,9 +42,9 @@ public class LocalClientTest
         LocalTransport transport = new LocalTransport();
         Channel channel = transport.createChannel(service);
         
-        Client client = new Client(transport, clientService, channel.getUri());
+        Client client = new Client(transport, service, channel.getUri());
         
-        OperationInfo op = clientService.getServiceInfo().getOperation("echo");
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});
         assertNotNull(response);
         assertEquals(1, response.length);
@@ -68,9 +64,9 @@ public class LocalClientTest
         LocalTransport transport = new LocalTransport();
         Channel channel = transport.createChannel(service);
         
-        Client client = new Client(transport, clientService, channel.getUri());
+        Client client = new Client(transport, service, channel.getUri());
         
-        OperationInfo op = clientService.getServiceInfo().getOperation("echo");
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
         try
         {
             Object[] response = client.invoke(op, new Object[] {root});

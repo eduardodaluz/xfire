@@ -248,4 +248,9 @@ public class WrappedBinding
         complex.appendChild(sequence);
         return sequence;
     }
+
+    public Object clone()
+    {
+        return new WrappedBinding();
+    }    
 }

@@ -15,7 +15,7 @@ import org.codehaus.xfire.util.DepthXMLStreamReader;
 
 public abstract class AbstractBinding
     extends AbstractHandler
-    implements ObjectBinding
+    implements ObjectBinding, Cloneable
 {
     private static final Log logger = LogFactory.getLog(AbstractBinding.class.getName());
 
@@ -160,4 +160,6 @@ public abstract class AbstractBinding
     {
         this.clientModeOn = clientModeOn;
     }
+    
+    public abstract Object clone();
 }

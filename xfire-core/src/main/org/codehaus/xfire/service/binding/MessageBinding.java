@@ -103,4 +103,9 @@ public class MessageBinding
             i++;
         }
     }
+
+    public Object clone()
+    {
+        return new MessageBinding();
+    }    
 }

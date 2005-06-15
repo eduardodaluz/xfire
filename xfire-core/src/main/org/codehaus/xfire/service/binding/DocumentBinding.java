@@ -28,7 +28,7 @@ import org.codehaus.yom.Element;
 
 public class DocumentBinding
     extends AbstractBinding
-    implements WSDL11ParameterBinding
+    implements WSDL11ParameterBinding, Cloneable
 {
     public DocumentBinding()
     {
@@ -162,4 +162,9 @@ public class DocumentBinding
             message.addPart(part);
         }
     }
+
+    public Object clone()
+    {
+        return new DocumentBinding();
+    }    
 }

@@ -145,4 +145,9 @@ public class RPCEncodedBinding
             message.addPart(part);
         }
     }
+
+    public Object clone()
+    {
+        return new RPCEncodedBinding();
+    }    
 }
