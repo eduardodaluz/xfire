@@ -25,23 +25,17 @@ public class Client
     private MessageContext context;
     private XFireFault fault;
     
-    public Client(Transport transport, ObjectBinding binding, String url)
-    {
-        this.transport = transport;
-        this.url = url;
-        
-        clientBinding = binding;
-        clientBinding.setClientModeOn(true);
-    }
-    
     public Client(Transport transport, Service service, String url)
     {
         this.transport = transport;
-        this.service = service;
+        this.service = new Service(service.getServiceInfo());
         this.url = url;
         
         clientBinding = (ObjectBinding) ((AbstractBinding) service.getBinding()).clone();
         clientBinding.setClientModeOn(true);
+        this.service.setBinding(clientBinding);
+        this.service.setFaultSerializer(service.getFaultSerializer());
+        this.service.setSoapVersion(service.getSoapVersion());
     }
 
     public Object[] invoke(OperationInfo op, Object[] params) throws XFireException, XFireFault

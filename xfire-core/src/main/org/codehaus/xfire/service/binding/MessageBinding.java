@@ -106,6 +106,9 @@ public class MessageBinding
 
     public Object clone()
     {
-        return new MessageBinding();
+        MessageBinding binding = new MessageBinding();
+        binding.setBindingProvider(getBindingProvider());
+        
+        return binding;
     }    
 }

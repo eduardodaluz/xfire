@@ -148,6 +148,9 @@ public class RPCEncodedBinding
 
     public Object clone()
     {
-        return new RPCEncodedBinding();
+        RPCEncodedBinding binding = new RPCEncodedBinding();
+        binding.setBindingProvider(getBindingProvider());
+        
+        return binding;
     }    
 }

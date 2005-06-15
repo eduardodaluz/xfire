@@ -165,6 +165,9 @@ public class DocumentBinding
 
     public Object clone()
     {
-        return new DocumentBinding();
+        DocumentBinding binding = new DocumentBinding();
+        binding.setBindingProvider(getBindingProvider());
+        
+        return binding;
     }    
 }

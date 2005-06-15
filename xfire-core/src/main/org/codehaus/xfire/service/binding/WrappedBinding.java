@@ -251,6 +251,9 @@ public class WrappedBinding
 
     public Object clone()
     {
-        return new WrappedBinding();
+        WrappedBinding binding = new WrappedBinding();
+        binding.setBindingProvider(getBindingProvider());
+        
+        return binding;
     }    
 }
