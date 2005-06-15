@@ -142,6 +142,10 @@ public abstract class AbstractTypeCreator implements TypeCreator
             throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName() + ", unspecified component type");
         }
         Type type = tm.getType(componentType);
+        if(type == null)
+        {
+            throw new XFireRuntimeException("No mapping found for type " + componentType);
+        }
         String ns;
 
         if(type.isComplex())

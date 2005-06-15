@@ -14,6 +14,7 @@ public interface MyService1
     String getUnmapped(List list);
     Collection getCollection();
     Collection getCollection(String id);
+    Collection getCollection(int id);
     String getCollection(String id, int value);
     Collection getCollectionForValues(int value, Collection c);
     Collection getCollectionForValues(String id, Collection c);

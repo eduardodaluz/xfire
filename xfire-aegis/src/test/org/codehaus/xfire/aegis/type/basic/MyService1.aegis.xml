@@ -1,10 +1,26 @@
 <mappings>
-  <mapping>
-    <method name="getCollection">
-      <return-type componentType="java.lang.Double" />
-    </method>
-    <method name="getCollection">
-      <parameter index="0" componentType="java.lang.String" />
-    </method>
-  </mapping>
+    <mapping>
+        <method name="getCollection">
+            <return-type componentType="java.lang.Double"/>
+        </method>
+        <method name="getCollection">
+            <parameter index="0" componentType="java.lang.String"/>
+        </method>
+        <method name="getCollection">
+            <return-type componentType="java.lang.Float"/>
+            <parameter index="0" type="int"/>
+        </method>
+        <method name="getCollectionForValues">
+            <return-type componentType="java.math.BigDecimal"/>
+        </method>
+        <method name="getCollectionForValues">
+            <parameter index="0" type="java.lang.String"/>
+            <parameter index="1" componentType="java.util.Date"/>
+        </method>
+        <method name="getCollectionForValues">
+            <return-type componentType="java.util.Calendar"/>
+            <parameter index="0" type="int"/>
+            <parameter index="1" componentType="java.lang.Bit"/>
+        </method>
+    </mapping>
 </mappings>

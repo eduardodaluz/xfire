@@ -2,6 +2,9 @@ package org.codehaus.xfire.aegis.type.basic;
 
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Calendar;
+import java.math.BigDecimal;
+import java.lang.reflect.Method;
 
 import javax.xml.namespace.QName;
 
@@ -136,8 +139,21 @@ public class DescriptorTest
         XMLTypeCreator creator = new XMLTypeCreator();
         tm = new CustomTypeMapping(new DefaultTypeMappingRegistry().createDefaultMappings());
         creator.setTypeMapping(tm);
-        Type type = creator.createType(MyService1.class.getDeclaredMethod("getCollection", new Class[0]), -1);
+        Method method = MyService1.class.getDeclaredMethod("getCollection", new Class[0]);
+        Type type = creator.createType(method, -1);
         assertTrue("type is not a collection", type instanceof CollectionType);
-        assertEquals("unexpected collection type", Double.class, ((CollectionType)type).getComponentType().getTypeClass());
+        assertEquals("unexpected collection type for method " + method, Double.class, ((CollectionType)type).getComponentType().getTypeClass());
+        
+        method = MyService1.class.getDeclaredMethod("getCollection", new Class[]{Integer.TYPE});
+        type = creator.createType(method, -1);
+        assertEquals("unexpected collection type for method " + method, Float.class, ((CollectionType)type).getComponentType().getTypeClass());
+        
+        method = MyService1.class.getDeclaredMethod("getCollectionForValues", new Class[]{Integer.TYPE, Collection.class});
+        type = creator.createType(method, -1);
+        assertEquals("unexpected collection type for method " + method, Calendar.class, ((CollectionType)type).getComponentType().getTypeClass());
+        
+        method = MyService1.class.getDeclaredMethod("getCollectionForValues", new Class[]{String.class, Collection.class});
+        type = creator.createType(method, -1);
+        assertEquals("unexpected collection type for method " + method, BigDecimal.class, ((CollectionType)type).getComponentType().getTypeClass());
     }
 }

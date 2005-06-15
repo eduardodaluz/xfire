@@ -136,11 +136,17 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
         else
         {
-            List nodes = getMatches(doc, "//mappings/mapping/method[@name='" + m.getName() + "']/return-type");
+            List nodes = getMatches(doc, "//mappings/mapping/method[@name='" + m.getName() + "']/return-type/parent::*");
             if(nodes.size() == 0) return nextCreator.createClassInfo(m, index);
+            Element bestMatch = getBestMatch(doc, m, nodes);
+            if(bestMatch == null)
+            {
+                //no mapping for this method
+                return nextCreator.createClassInfo(m, index);
+            }
             info.setTypeClass(m.getReturnType());
             //info.setAnnotations(m.getAnnotations());
-            String componentType = ((Element)nodes.get(0)).getAttributeValue("componentType");
+            String componentType = bestMatch.getFirstChildElement("return-type").getAttributeValue("componentType");
             if(componentType != null)
             {
                 try
@@ -180,7 +186,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             {
                 Element element = (Element)iterator.next();
                 //first we check if the parameter index is specified
-                Element match = getMatch(element, "/parameter[@index='" + i + "']");
+                Element match = getMatch(element, "parameter[@index='" + i + "']");
                 if(match != null)
                 {
                     //we check if the type is specified and matches
@@ -195,6 +201,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
                 }
             }
         }
+        //if we have just one node left, then it has to be the best match
+        if(nodes.size() == 1) return (Element)nodes.get(0);
         //all remaining definitions could apply, so we need to now pick the best one
         //the best one is the one with the most parameters specified
         Element bestCandidate = null;
