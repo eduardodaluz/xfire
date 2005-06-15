@@ -1,37 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default="build-all" name="xfire-master" basedir=".">
-  <target name="build-all">
-    <ant inheritall="false" antfile="xfire-core/build.xml" />
-    <ant inheritall="false" antfile="xfire-aegis/build.xml" />
-    <ant inheritall="false" antfile="xfire-annotations/build.xml" />
-    <ant inheritall="false" antfile="xfire-java5/build.xml" />
-    <ant inheritall="false" antfile="xfire-picocontainer/build.xml" />
-    <ant inheritall="false" antfile="xfire-loom/build.xml" />
-    <ant inheritall="false" antfile="xfire-xmpp/build.xml" />
-    <ant inheritall="false" antfile="xfire-xmlbeans/build.xml" />
-    <ant inheritall="false" antfile="xfire-spring/build.xml" />
-    <ant inheritall="false" antfile="xfire-plexus/build.xml" />
-  </target>
-  
-  <target name="test">
-    <ant inheritall="false" antfile="xfire-core/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-aegis/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-annotations/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-java5/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-picocontainer/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-loom/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-xmpp/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-xmlbeans/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-spring/build.xml" target="test"/>
-    <ant inheritall="false" antfile="xfire-plexus/build.xml" target="test"/>
-  </target>
+    <target name="build-all" description="build all module jar files">
+        <ant inheritall="false" antfile="xfire-core/build.xml"/>
+        <ant inheritall="false" antfile="xfire-aegis/build.xml"/>
+        <ant inheritall="false" antfile="xfire-annotations/build.xml"/>
+        <ant inheritall="false" antfile="xfire-java5/build.xml"/>
+        <ant inheritall="false" antfile="xfire-picocontainer/build.xml"/>
+        <ant inheritall="false" antfile="xfire-loom/build.xml"/>
+        <ant inheritall="false" antfile="xfire-xmpp/build.xml"/>
+        <ant inheritall="false" antfile="xfire-xmlbeans/build.xml"/>
+        <ant inheritall="false" antfile="xfire-spring/build.xml"/>
+        <ant inheritall="false" antfile="xfire-plexus/build.xml"/>
+    </target>
 
-  <target name="clean">
-    <delete>
-      <fileset dir=".">
-        <include name="**/target/" />
-      </fileset>
-    </delete>
-  </target>
+    <target name="test" description="Run all xfire tests">
+        <ant inheritall="false" antfile="xfire-core/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-aegis/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-annotations/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-java5/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-picocontainer/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-loom/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-xmpp/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-xmlbeans/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-spring/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-plexus/build.xml" target="test"/>
+    </target>
+
+    <target name="all" description="build xfire-all.jar" depends="build-all">
+        <mkdir dir="xfire-all/target"/>
+        <jar destfile="xfire-all/target/xfire-all.jar">
+            <fileset dir="xfire-core/target/classes"/>
+            <fileset dir="xfire-aegis/target/classes"/>
+            <fileset dir="xfire-annotations/target/classes"/>
+            <fileset dir="xfire-java5/target/classes"/>
+            <fileset dir="xfire-picocontainer/target/classes"/>
+            <fileset dir="xfire-loom/target/classes"/>
+            <fileset dir="xfire-xmpp/target/classes"/>
+            <fileset dir="xfire-xmlbeans/target/classes"/>
+            <fileset dir="xfire-spring/target/classes"/>
+            <fileset dir="xfire-plexus/target/classes"/>
+        </jar>
+    </target>
+    <target name="clean">
+        <delete>
+            <fileset dir=".">
+                <include name="**/target/"/>
+            </fileset>
+        </delete>
+    </target>
 </project>

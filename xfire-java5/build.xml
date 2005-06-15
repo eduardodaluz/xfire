@@ -3,6 +3,9 @@
 <project default="jar" name="xfire-java5" basedir=".">
   <import file="../build-common.xml"/>
 
+  <property name="java.source.version" value="1.5" />
+  <property name="java.target.version" value="1.5" />
+    
   <path id="module.classpath">
     <fileset dir="..">
       <include name="xfire-core/target/*.jar" />
