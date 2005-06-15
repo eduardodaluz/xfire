@@ -23,7 +23,6 @@ public class TypeInfo
     private List attributes = new ArrayList();
     private List elements = new ArrayList();
     private String defaultNamespace;
-    private QName schemaType;
     private PropertyDescriptor[] descriptors;
     private TypeMapping typeMapping;
     
@@ -62,6 +61,7 @@ public class TypeInfo
         }
         catch (Exception e)
         {
+            if(e instanceof XFireRuntimeException) throw (XFireRuntimeException)e;
             throw new XFireRuntimeException("Couldn't create TypeInfo.", e);
         }
     }
@@ -83,11 +83,6 @@ public class TypeInfo
 
     /**
      * Get the type class for the field with the specified QName.
-     * @param object
-     * @param name
-     * @param namespace
-     * @return
-     * @throws XFireFault
      */
     protected Type getType(QName name) 
     {
@@ -95,13 +90,14 @@ public class TypeInfo
         
         if (type == null)
         {
-            PropertyDescriptor desc = null;
+            PropertyDescriptor desc;
             try
             {
                 desc = getPropertyDescriptor(name);
             }
             catch (Exception e)
             {
+                if(e instanceof XFireRuntimeException) throw (XFireRuntimeException)e;
                 throw new XFireRuntimeException("Couldn't get properties.", e);
             }
             
@@ -154,7 +150,7 @@ public class TypeInfo
     
     private void initializeProperties()
     {
-        BeanInfo beanInfo = null;
+        BeanInfo beanInfo;
         try
         {
             if (typeClass.isInterface() || typeClass.isPrimitive())

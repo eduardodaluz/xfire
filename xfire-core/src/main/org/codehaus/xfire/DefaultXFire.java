@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.wsdl.WSDLException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -13,7 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
@@ -62,7 +60,6 @@ public class DefaultXFire
             throw new XFireRuntimeException("No such service: " + serviceName);
         }
         
-        Handler handler = null;
         try
         {
             final Transport transport = getTransportManager().getTransport(LocalTransport.NAME);
@@ -125,10 +122,6 @@ public class DefaultXFire
 
             wsdl.write(out);
         }
-        catch (WSDLException e)
-        {
-            throw new XFireRuntimeException("Couldn't generate WSDL.", e);
-        }
         catch (IOException e)
         {
             throw new XFireRuntimeException("Couldn't generate WSDL.", e);
@@ -136,10 +129,8 @@ public class DefaultXFire
     }
 
     private WSDLWriter getWSDL(final String serviceName)
-            throws WSDLException
     {
         final Service service = findService(serviceName);
-
         return service.getWSDLWriter();
     }
 

@@ -3,8 +3,6 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -46,8 +44,6 @@ public class XFireServletController
 
     protected SoapHttpTransport transport;
 
-    private Map channels = new HashMap();
-    
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;

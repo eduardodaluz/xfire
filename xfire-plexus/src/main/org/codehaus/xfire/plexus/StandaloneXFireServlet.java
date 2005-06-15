@@ -29,17 +29,8 @@ public class StandaloneXFireServlet
     }
 
     public XFire getXFire()
-            throws ServletException
     {
-        try
-        {
-            return factory.getXFire();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw new ServletException("Couldn't find XFire service.  Check configuration.", e);
-        }
+        return factory.getXFire();
     }
 
     public File getWebappBase()
@@ -53,7 +44,6 @@ public class StandaloneXFireServlet
     }
 
     public XFire createXFire()
-            throws ServletException
     {
         File config = new File(getWebappBase(), getInitParameter("config"));
 
@@ -66,45 +56,17 @@ public class StandaloneXFireServlet
             System.setProperty("xfire.plexusConfig", plexusConfig);
         }
 
-        try
-        {
-            return XFireFactory.newInstance().getXFire();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw new ServletException("Couldn't start XFire service.  Check configuration.", e);
-        }
+        return XFireFactory.newInstance().getXFire();
     }
 
-    /**
-     * @return
-     * @throws Exception
-     */
     protected TransportManager getTransportManager()
-            throws ServletException
     {
-        try
-        {
-            return factory.getXFire().getTransportManager();
-        }
-        catch (Exception e)
-        {
-            throw new ServletException("No transport service found!", e);
-        }
+        return factory.getXFire().getTransportManager();
     }
 
     public ServiceRegistry getServiceRegistry()
-            throws ServletException
     {
-        try
-        {
-            return factory.getXFire().getServiceRegistry();
-        }
-        catch (Exception e)
-        {
-            throw new ServletException("No service registry found!", e);
-        }
+        return factory.getXFire().getServiceRegistry();
     }
 
     public void destroy()

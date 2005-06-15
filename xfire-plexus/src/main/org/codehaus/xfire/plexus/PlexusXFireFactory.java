@@ -50,6 +50,7 @@ public class PlexusXFireFactory
         }
         catch (Exception e)
         {
+            if(e instanceof XFireRuntimeException) throw (XFireRuntimeException)e;
             throw new XFireRuntimeException("Couldn't load plexus embedder.", e);
         }
     }
