@@ -162,12 +162,11 @@ public class ObjectServiceFactory
      * Some parameters can be <code>null</code>, and will be replaced with sensible defaults if so. See the specific
      * parameters for more info.
      *
-     * @param clazz   The service class used to populate the operations and parameters.
-     * @param version The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be used.
-     * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
-     *                will be used.
-     * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
-     *                will be used.
+     * @param clazz            The service class used to populate the operations and parameters.
+     * @param name             The name of the service. If <code>null</code>, a name will be generated from the class
+     *                         name.
+     * @param namespace        The default namespace of the service. If <code>null</code>, a namespace will be generated
+     *                         from the class package.
      * @return The service.
      */
     public Service create(Class clazz, String name, String namespace, Map properties)
@@ -294,6 +293,7 @@ public class ObjectServiceFactory
         }
         catch (Exception e)
         {
+            if(e instanceof XFireRuntimeException) throw (XFireRuntimeException)e;
             throw new XFireRuntimeException("Couldn't load provider.", e);
         }
         
