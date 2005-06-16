@@ -29,6 +29,13 @@ public class ServiceUtils
         {
             name = name.substring(last + 1);
         }
+        
+        int inner = name.lastIndexOf("$");
+        if (inner != -1)
+        {
+            name = name.substring(inner + 1);
+        }
+        
         return name;
     }
 

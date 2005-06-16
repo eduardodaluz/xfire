@@ -1,0 +1,6 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <getInnerBean xmlns="http://aegis.xfire.codehaus.org"/>
+ </env:Body>
+</env:Envelope>

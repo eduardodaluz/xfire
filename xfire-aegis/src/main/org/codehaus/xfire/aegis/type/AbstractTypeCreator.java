@@ -10,6 +10,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.aegis.type.basic.ArrayType;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.XFireRuntimeException;
 
 /**
@@ -91,7 +92,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         String clsName = javaType.getName();
 
         String ns = NamespaceHelper.makeNamespaceFromClassName(clsName, "http");
-        String localName = clsName.substring(clsName.lastIndexOf(".") + 1);
+        String localName = ServiceUtils.makeServiceNameFromClassName(javaType);
 
         return new QName(ns, localName);
     }

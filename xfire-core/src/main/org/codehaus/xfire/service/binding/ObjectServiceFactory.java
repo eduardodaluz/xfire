@@ -196,13 +196,7 @@ public class ObjectServiceFactory
 
     protected String makeServiceNameFromClassName(Class clazz)
     {
-        String name = clazz.getName();
-        int last = name.lastIndexOf(".");
-        if (last != -1)
-        {
-            name = name.substring(last + 1);
-        }
-        return name;
+        return ServiceUtils.makeServiceNameFromClassName(clazz);
     }
 
     /**
