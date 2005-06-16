@@ -32,6 +32,13 @@ public class XFireServlet
         controller = createController();
     }
 
+    public XFire getXFire() throws ServletException
+    {
+        if (xfire == null) xfire = createXFire();
+        
+        return xfire;
+    }
+    
     public XFire createXFire() 
         throws ServletException
     {

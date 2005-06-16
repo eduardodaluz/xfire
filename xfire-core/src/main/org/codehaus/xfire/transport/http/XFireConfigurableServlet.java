@@ -46,8 +46,6 @@ public class XFireConfigurableServlet
 
     private Log log = LogFactory.getLog(XFireConfigurableServlet.class);
 
-    private XFire xfire;
-    
     /**
      * @see javax.servlet.Servlet#init()
      */
@@ -57,9 +55,7 @@ public class XFireConfigurableServlet
         super.init();
         try
         {
-            XFire xfire = XFireFactory.newInstance().getXFire();
-            
-            configureXFire(xfire);
+            configureXFire();
         }
         catch (Exception e)
         {
@@ -67,11 +63,9 @@ public class XFireConfigurableServlet
         }
     }
 
-    private void configureXFire(XFire xfire)
+    protected void configureXFire()
         throws Exception
     {
-        ServiceRegistry registry = xfire.getServiceRegistry();
-        
         log.info("Searching for META-INF/xfire/services.xml");
         
         // get services.xml
@@ -80,11 +74,11 @@ public class XFireConfigurableServlet
         {
             URL resource = (URL) en.nextElement();
             
-            loadServices( resource.openStream(), xfire.getTransportManager(), registry );
+            loadServices( resource.openStream() );
         }
     }
 
-    private void loadServices(InputStream stream, TransportManager tman, ServiceRegistry registry) 
+    protected void loadServices(InputStream stream) 
         throws Exception
     {
         try
@@ -104,7 +98,7 @@ public class XFireConfigurableServlet
                 {
                     Element service = services.get(n);
                     
-                    loadService(service, tman, registry);
+                    loadService(service);
                 }
             }
         }
@@ -114,9 +108,12 @@ public class XFireConfigurableServlet
         }
     }
 
-    private void loadService(Element service, TransportManager tman, ServiceRegistry registry) 
+    protected void loadService(Element service) 
         throws ServletException
     {
+        ServiceRegistry registry = getXFire().getServiceRegistry();
+        TransportManager tman = getXFire().getTransportManager();
+        
         String name = getElementValue(service, "name", "");
         String namespace = getElementValue(service, "namespace", "");
         String style = getElementValue(service, "style", "");
@@ -199,9 +196,9 @@ public class XFireConfigurableServlet
         registry.register(svc);
     }
 
-    private ObjectServiceFactory loadServiceFactory(TransportManager tman,
-                                                    BindingProvider bindingProvider,
-                                                    String serviceFactoryName)
+    protected ObjectServiceFactory loadServiceFactory(TransportManager tman,
+                                                      BindingProvider bindingProvider,
+                                                      String serviceFactoryName)
     {
         ObjectServiceFactory factory = null;
         if (serviceFactoryName.length() > 0)
@@ -223,7 +220,7 @@ public class XFireConfigurableServlet
         return factory;
     }
 
-    private BindingProvider loadBindingProvider(String bindingProviderName)
+    protected BindingProvider loadBindingProvider(String bindingProviderName)
     {
         BindingProvider bindingProvider = null;
         if (bindingProviderName.length() > 0)
@@ -261,7 +258,7 @@ public class XFireConfigurableServlet
      * @return The class.
      * @throws Exception
      */
-    private Class loadClass(String className)
+    protected Class loadClass(String className)
         throws Exception
     {
         // Handle array'd types.
