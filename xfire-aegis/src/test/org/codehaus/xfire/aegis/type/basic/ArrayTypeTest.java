@@ -7,8 +7,11 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
+import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.yom.Document;
+import org.codehaus.yom.Element;
 
 public class ArrayTypeTest
     extends AbstractXFireTest
@@ -19,8 +22,7 @@ public class ArrayTypeTest
     {
         super.setUp();
         
-        addNamespace("b", "urn:Bean");
-        addNamespace("a", "urn:anotherns");
+        addNamespace("t", "urn:test");
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("xsi", SoapConstants.XSI_NS);
         
@@ -43,14 +45,15 @@ public class ArrayTypeTest
         assertEquals(1, ints.length);
         
         reader.getXMLStreamReader().close();
-        /*
+        
         // Test writing
         Element element = new Element("t:ints", "urn:test");
         Document doc = new Document(element);
-        type.writeObject(ints, new YOMWriter(element), new MessageContext());
+        YOMWriter writer = new YOMWriter(element);
+        type.writeObject(ints, writer, new MessageContext());
+        writer.close();
 
         assertValid("/t:ints/t:int[text()='" + ints[0] +"']", element);
-        */
     }
     
     public class PrimitiveArrayService

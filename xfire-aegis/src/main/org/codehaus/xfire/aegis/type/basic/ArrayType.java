@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.MessageReader;
@@ -28,6 +30,7 @@ public class ArrayType
     extends Type
 {
     private QName componentName;
+    private static final Log logger = LogFactory.getLog(ArrayType.class);
     
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
@@ -128,41 +131,108 @@ public class ArrayType
                                                              values.size()) );
     }
 
-    public void writeObject(Object object, MessageWriter writer, MessageContext context)
+    public void writeObject(Object values, MessageWriter writer, MessageContext context)
         throws XFireFault
     {
-        if (object == null)
+        if (values == null)
             return;
 
-        try
-        {
-        	Object[] array = (Object[]) object;
-            
-            Type type = getComponentType();
-            
-            if ( type == null )
-                throw new XFireRuntimeException( "Couldn't find type for " + type.getTypeClass() + "." );
-            
-            for ( int i = 0; i < array.length; i++ )
-            {
-                String ns = null;
-                if (type.isAbstract())
-                    ns = getSchemaType().getNamespaceURI();
-                else
-                    ns = type.getSchemaType().getNamespaceURI();
+        Type type = getComponentType();
 
-                MessageWriter cwriter = writer.getElementWriter(type.getSchemaType().getLocalPart(),
-                                                                ns);
-                type.writeObject( array[i], writer, context );
-                cwriter.close();
+        String ns = null;
+        if (type.isAbstract())
+            ns = getSchemaType().getNamespaceURI();
+        else
+            ns = type.getSchemaType().getNamespaceURI();
+        
+        String name = type.getSchemaType().getLocalPart();
+        
+        if ( type == null )
+            throw new XFireRuntimeException( "Couldn't find type for " + type.getTypeClass() + "." );
+
+        Class arrayType = type.getTypeClass();
+        
+        if (Object.class.isAssignableFrom(arrayType))
+        {
+            Object[] objects = (Object[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(objects[i], writer, context, type, name, ns);
             }
         }
-        catch (IllegalArgumentException e)
+        else if (Integer.TYPE.equals(arrayType))
         {
-            throw new XFireRuntimeException("Illegal argument.", e);
+            int[] objects = (int[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Integer(objects[i]), writer, context, type, name, ns);
+            }
+        }
+        else if (Long.TYPE.equals(arrayType))
+        {
+            long[] objects = (long[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Long(objects[i]), writer, context, type, name, ns);
+            }
+        }
+        else if (Short.TYPE.equals(arrayType))
+        {
+            short[] objects = (short[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Short(objects[i]), writer, context, type, name, ns);
+            }
+        }
+        else if (Double.TYPE.equals(arrayType))
+        {
+            double[] objects = (double[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+            }
+        }
+        else if (Float.TYPE.equals(arrayType))
+        {
+            float[] objects = (float[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+            }
+        }
+        else if (Byte.TYPE.equals(arrayType))
+        {
+            double[] objects = (double[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+            }
+        }
+        else if (Boolean.TYPE.equals(arrayType))
+        {
+            double[] objects = (double[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+            }
         }
     }
 
+    protected void writeValue(Object value, 
+                              MessageWriter writer, 
+                              MessageContext context, 
+                              Type type,
+                              String name,
+                              String ns) 
+        throws XFireFault
+    {
+        MessageWriter cwriter = writer.getElementWriter(name, ns);
+        
+        type.writeObject( value, cwriter, context );
+        
+        cwriter.close();
+    }
+    
     public void writeSchema(Element root)
     {
         try
@@ -243,9 +313,29 @@ public class ArrayType
     {
         Class compType = getTypeClass().getComponentType();
         
+        Type type;
+        
         if (componentName == null)
-            return getTypeMapping().getType(compType);
+        {
+            type = getTypeMapping().getType(compType);
+        }
         else
-            return getTypeMapping().getType(componentName);
+        {
+            type = getTypeMapping().getType(componentName);
+            
+            // We couldn't find the type the user specified. One is created below instead.
+            if (type == null)
+            {
+                logger.debug("Couldn't find array component type " 
+                             + componentName + ". Creating one instead.");
+            }
+        }
+        
+        if (type == null)
+        {
+            type = getTypeMapping().getTypeCreator().createType(getTypeClass());
+        }
+        
+        return type;
     }
 }
