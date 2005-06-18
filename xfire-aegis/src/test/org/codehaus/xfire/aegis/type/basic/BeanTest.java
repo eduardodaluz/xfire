@@ -8,7 +8,7 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
-import org.codehaus.xfire.aegis.type.basic.TypeInfo;
+import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
 import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -69,7 +69,7 @@ public class BeanTest
     public void testUnmappedProperty()
         throws Exception
     {
-        TypeInfo info = new TypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
         info.mapElement("howdy", new QName("urn:Bean", "howdycustom"));
         info.setTypeMapping(mapping);
         
@@ -98,7 +98,7 @@ public class BeanTest
     public void testAttributeMap()
         throws Exception
     {
-        TypeInfo info = new TypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
         info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
         info.mapAttribute("bleh", new QName("urn:Bean", "bleh"));
         info.setTypeMapping(mapping);
@@ -139,7 +139,7 @@ public class BeanTest
     public void testNullProperties()
         throws Exception
     {
-        TypeInfo info = new TypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
         info.setTypeMapping(mapping);
         info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
         info.mapElement("bleh", new QName("urn:Bean", "bleh"));
@@ -174,7 +174,7 @@ public class BeanTest
     public void testNonDefaultNames()
         throws Exception
     {
-        TypeInfo info = new TypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
         info.setTypeMapping(mapping);
         info.mapElement("howdy", new QName("urn:anotherns", "howdy"));
         info.mapElement("bleh", new QName("urn:anotherns", "bleh"));

@@ -1,24 +1,27 @@
 package org.codehaus.xfire.aegis.type.basic;
 
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Calendar;
-import java.util.Date;
-import java.math.BigDecimal;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.type.*;
-import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.type.CustomTypeMapping;
+import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
+import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
+import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.XMLTypeCreator;
+import org.codehaus.xfire.aegis.type.collection.CollectionType;
 
 public class DescriptorTest
     extends AbstractXFireAegisTest
 {
     CustomTypeMapping tm;
-
 
     protected void setUp()
         throws Exception
@@ -26,7 +29,9 @@ public class DescriptorTest
         super.setUp();
 
         tm = new CustomTypeMapping();
-        tm.setTypeCreator(new DefaultTypeCreator());
+        XMLTypeCreator creator = new XMLTypeCreator();
+        creator.setNextCreator(new DefaultTypeCreator());
+        tm.setTypeCreator(creator);
     }
 
     public void testMapping() throws Exception
@@ -34,7 +39,7 @@ public class DescriptorTest
         tm.setEncodingStyleURI("urn:xfire:bean");
 
         Type type = tm.getTypeCreator().createType(MyBean.class);
-        TypeInfo info = ((BeanType) type).getTypeInfo();
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
@@ -54,7 +59,7 @@ public class DescriptorTest
         tm.setEncodingStyleURI("urn:xfire:bean2");
 
         Type type = tm.getTypeCreator().createType(MyBean.class);
-        TypeInfo info = ((BeanType) type).getTypeInfo();
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
@@ -73,7 +78,7 @@ public class DescriptorTest
         tm.setEncodingStyleURI("urn:xfire:bean");
 
         Type type = tm.getTypeCreator().createType(ListHolderBean.class);
-        TypeInfo info = ((BeanType) type).getTypeInfo();
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
@@ -90,7 +95,7 @@ public class DescriptorTest
         tm.setEncodingStyleURI("urn:xfire:bean2");
 
         Type type = tm.getTypeCreator().createType(ListHolderBean.class);
-        TypeInfo info = ((BeanType) type).getTypeInfo();
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
@@ -107,7 +112,7 @@ public class DescriptorTest
         tm.setEncodingStyleURI("urn:xfire:bean4");
 
         Type type = tm.getTypeCreator().createType(MyBean.class);
-        TypeInfo info = ((BeanType) type).getTypeInfo();
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
 
         Iterator attItr = info.getAttributes();
         assertTrue(attItr.hasNext());

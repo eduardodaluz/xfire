@@ -16,7 +16,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 
-public class TypeInfo
+public class BeanTypeInfo
 {
     private Map qname2name = new HashMap();
     private Class typeClass;
@@ -26,7 +26,7 @@ public class TypeInfo
     private PropertyDescriptor[] descriptors;
     private TypeMapping typeMapping;
     
-    public TypeInfo(Class typeClass, String defaultNamespace)
+    public BeanTypeInfo(Class typeClass, String defaultNamespace)
     {
         this.typeClass = typeClass;
         this.defaultNamespace = defaultNamespace;
@@ -34,7 +34,7 @@ public class TypeInfo
         initializeProperties();
     }
 
-    protected TypeInfo(Class typeClass)
+    protected BeanTypeInfo(Class typeClass)
     {
         this.typeClass = typeClass;
 

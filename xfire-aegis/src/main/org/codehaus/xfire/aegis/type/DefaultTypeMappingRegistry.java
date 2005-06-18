@@ -1,17 +1,31 @@
 package org.codehaus.xfire.aegis.type;
 
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.AbstractXFireComponent;
-import org.codehaus.xfire.util.ClassLoaderUtils;
-import org.codehaus.xfire.aegis.type.basic.*;
+import org.codehaus.xfire.aegis.type.basic.Base64Type;
+import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
+import org.codehaus.xfire.aegis.type.basic.BooleanType;
+import org.codehaus.xfire.aegis.type.basic.CalendarType;
+import org.codehaus.xfire.aegis.type.basic.DateTimeType;
+import org.codehaus.xfire.aegis.type.basic.DoubleType;
+import org.codehaus.xfire.aegis.type.basic.FloatType;
+import org.codehaus.xfire.aegis.type.basic.IntType;
+import org.codehaus.xfire.aegis.type.basic.LongType;
+import org.codehaus.xfire.aegis.type.basic.StringType;
+import org.codehaus.xfire.aegis.type.basic.TimeType;
+import org.codehaus.xfire.aegis.type.basic.TimestampType;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 
 /**
  * The default implementation of TypeMappingRegistry.
@@ -30,6 +44,7 @@ public class DefaultTypeMappingRegistry
     private static final QName XSD_INT = new QName(SoapConstants.XSD, "int");
     private static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean");
     private static final QName XSD_DATETIME = new QName(SoapConstants.XSD, "dateTime");
+    private static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime");
     private static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary");
     private static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal");
 
@@ -198,6 +213,8 @@ public class DefaultTypeMappingRegistry
         tm.register(Float.class, XSD_FLOAT, new FloatType());
         tm.register(Long.class, XSD_LONG, new LongType());
         tm.register(Date.class, XSD_DATETIME, new DateTimeType());
+        tm.register(Time.class, XSD_TIME, new TimeType());
+        tm.register(Timestamp.class, XSD_DATETIME, new TimestampType());
         tm.register(Calendar.class, XSD_DATETIME, new CalendarType());
         tm.register(byte[].class, XSD_BASE64, new Base64Type());
         tm.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
@@ -236,6 +253,8 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Float.class, XSD_FLOAT, new FloatType());
         soapTM.register(Long.class, XSD_LONG, new LongType());
         soapTM.register(Date.class, XSD_DATETIME, new DateTimeType());
+        soapTM.register(Time.class, XSD_TIME, new TimeType());
+        soapTM.register(Timestamp.class, XSD_DATETIME, new TimestampType());
         soapTM.register(Calendar.class, XSD_DATETIME, new CalendarType());
         soapTM.register(byte[].class, XSD_BASE64, new Base64Type());
         soapTM.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());

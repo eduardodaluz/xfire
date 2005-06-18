@@ -208,6 +208,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         Class typeClass;
         Object[] annotations;
         Object genericType;
+        QName name;
 
         public Object[] getAnnotations()
         {
@@ -237,6 +238,16 @@ public abstract class AbstractTypeCreator implements TypeCreator
         public void setTypeClass(Class typeClass)
         {
             this.typeClass = typeClass;
+        }
+
+        public QName getName()
+        {
+            return name;
+        }
+
+        public void setName(QName name)
+        {
+            this.name = name;
         }
     }
 }

@@ -1,15 +1,14 @@
-<mappings xmlns="urn:xfire:aegis:200504" 
-          xmlns:bean="urn:xfire:bean">
+<mappings xmlns:bean="urn:xfire:bean">
 
   <mapping uri="urn:xfire:bean">
-    <collection property="beans" 
-                name="bean:Beans" 
-                componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
+    <property name="beans" 
+              mappedName="bean:Beans" 
+              componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
   </mapping>
 
   <mapping uri="urn:xfire:bean2">
-    <collection property="beans" 
-                componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
+    <property name="beans" 
+              componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
   </mapping>
 
 </mappings>

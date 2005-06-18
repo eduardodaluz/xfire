@@ -112,13 +112,6 @@ public class CustomTypeMapping
             type = defaultTM.getType( javaType );
         }
         
-        if (type == null && getTypeCreator() != null)
-        {
-            type = getTypeCreator().createType(javaType);
-            
-            register(type);
-        }
-        
         return type;
     }
 

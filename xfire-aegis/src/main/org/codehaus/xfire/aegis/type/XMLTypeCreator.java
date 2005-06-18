@@ -1,22 +1,28 @@
 package org.codehaus.xfire.aegis.type;
 
+import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.xpath.YOMXPath;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.xfire.util.ClassLoaderUtils;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jaxen.XPath;
+import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.aegis.type.basic.XMLBeanTypeInfo;
+import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.yom.Document;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.yom.xpath.YOMXPath;
 import org.jaxen.JaxenException;
+import org.jaxen.XPath;
 
 /**
  * Deduce mapping information from an xml file.
@@ -88,19 +94,64 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
     public TypeClassInfo createClassInfo(PropertyDescriptor pd)
     {
-        Method m = pd.getReadMethod();
-        return createClassInfo(m, -1);
+        Element mapping = findMapping(pd.getReadMethod().getDeclaringClass());
+        if(mapping == null) return nextCreator.createClassInfo(pd);
+        
+        Element propertyEl = getMatch(mapping, "./property[@name='" + pd.getName() + "']");
+        if(propertyEl == null) return nextCreator.createClassInfo(pd);
+        
+        TypeClassInfo info = new TypeClassInfo();
+        info.setTypeClass(pd.getReadMethod().getReturnType());
+        setComponentType(info, propertyEl);
+        info.setName(createQName(propertyEl, propertyEl.getAttributeValue("mappedName")));
+        
+        return info;
+    }
+    
+    protected Element findMapping(Class clazz)
+    {
+        Document doc = getDocument(clazz);
+        if(doc == null) return null;
+        
+        Element mapping = getMatch(doc, "/mappings/mapping[@uri='" + getTypeMapping().getEncodingStyleURI() + "']");
+        if (mapping == null)
+        {
+            mapping = getMatch(doc, "/mappings/mapping");
+        }
+        
+        return mapping;
     }
 
     public Type createDefaultType(TypeClassInfo info)
     {
-        return nextCreator.createDefaultType(info);
+        Element mapping = findMapping(info.getTypeClass());
+        
+        if (mapping != null)
+        {
+            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(getTypeMapping().getEncodingStyleURI(), 
+                                                 info.getTypeClass(),
+                                                 mapping);
+            btinfo.setTypeMapping(getTypeMapping());
+            
+            BeanType type = new BeanType(btinfo);
+            type.setSchemaType(createQName(info.getTypeClass()));
+            type.setTypeClass(info.getTypeClass());
+            type.setTypeMapping(getTypeMapping());
+
+            return type;
+        }
+        else
+        {
+            return nextCreator.createDefaultType(info);
+        }
     }
 
     public TypeClassInfo createClassInfo(Method m, int index)
     {
-        Document doc = getDocument(m.getDeclaringClass());
-        if(doc == null) return nextCreator.createClassInfo(m, index);
+        Element mapping = findMapping(m.getDeclaringClass());
+        
+        if(mapping == null) return nextCreator.createClassInfo(m, index);
+        
         //find the elements that apply to the specified method
         TypeClassInfo info = new TypeClassInfo();
         if(index >= 0)
@@ -110,14 +161,14 @@ public class XMLTypeCreator extends AbstractTypeCreator
                 throw new XFireRuntimeException("Method " + m + " does not have a parameter at index " + index);
             }
             //we don't want nodes for which the specified index is not specified
-            List nodes = getMatches(doc, "//mappings/mapping/method[@name='" + m.getName() + "']/parameter[@index='" + index + "']/parent::*");
+            List nodes = getMatches(mapping, "./method[@name='" + m.getName() + "']/parameter[@index='" + index + "']/parent::*");
             if(nodes.size() == 0)
             {
                 //no mapping for this method
                 return nextCreator.createClassInfo(m, index);
             }
             //pick the best matching node
-            Element bestMatch = getBestMatch(doc, m, nodes);
+            Element bestMatch = getBestMatch(mapping, m, nodes);
             if(bestMatch == null)
             {
                 //no mapping for this method
@@ -126,24 +177,14 @@ public class XMLTypeCreator extends AbstractTypeCreator
             info.setTypeClass(m.getParameterTypes()[index]);
             //info.setAnnotations(m.getParameterAnnotations()[index]);
             Element parameter = getMatch(bestMatch, "parameter[@index='" + index + "']");
-            String componentType = parameter.getAttributeValue("componentType");
-            if(componentType != null)
-            {
-                try
-                {
-                    info.setGenericType(ClassLoaderUtils.loadClass(componentType, getClass()));
-                }
-                catch(ClassNotFoundException e)
-                {
-                    log.error("Unable to load mapping class " + componentType);
-                }
-            }
+            
+            setComponentType(info, parameter);
         }
         else
         {
-            List nodes = getMatches(doc, "//mappings/mapping/method[@name='" + m.getName() + "']/return-type/parent::*");
+            List nodes = getMatches(mapping, "./method[@name='" + m.getName() + "']/return-type/parent::*");
             if(nodes.size() == 0) return nextCreator.createClassInfo(m, index);
-            Element bestMatch = getBestMatch(doc, m, nodes);
+            Element bestMatch = getBestMatch(mapping, m, nodes);
             if(bestMatch == null)
             {
                 //no mapping for this method
@@ -168,10 +209,26 @@ public class XMLTypeCreator extends AbstractTypeCreator
         return info;
     }
 
-    private Element getBestMatch(Document doc, Method method, List availableNodes)
+    protected void setComponentType(TypeClassInfo info, Element parameter)
+    {
+        String componentType = parameter.getAttributeValue("componentType");
+        if(componentType != null)
+        {
+            try
+            {
+                info.setGenericType(ClassLoaderUtils.loadClass(componentType, getClass()));
+            }
+            catch(ClassNotFoundException e)
+            {
+                log.error("Unable to load mapping class " + componentType);
+            }
+        }
+    }
+
+    private Element getBestMatch(Element mapping, Method method, List availableNodes)
     {
         //first find all the matching method names
-        List nodes = getMatches(doc, "//mappings/mapping/method[@name='" + method.getName() + "']");
+        List nodes = getMatches(mapping, "./method[@name='" + method.getName() + "']");
         //remove the ones that aren't in our acceptable set, if one is specified
         if(availableNodes != null)
         {
@@ -250,5 +307,27 @@ public class XMLTypeCreator extends AbstractTypeCreator
         {
             throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }
+    }
+
+    /**
+     * Creates a QName from a string, such as "ns:Element".
+     */
+    protected QName createQName(Element e, String value)
+    {
+        if (value == null) return null;
+        
+        int index = value.indexOf(":");
+        
+        if (index == -1)
+            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        
+        String prefix = value.substring(0, index);
+        String localName = value.substring(index+1);
+        String ns = e.getNamespaceURI(prefix);
+        
+        if (ns == null || localName == null)
+            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        
+        return new QName(ns, localName, prefix);
     }
 }

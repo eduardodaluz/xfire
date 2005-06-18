@@ -3,8 +3,8 @@ package org.codehaus.xfire.aegis.type;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
-import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.type.basic.BeanType;
 
 public class DefaultTypeCreator extends AbstractTypeCreator
 {
@@ -25,15 +25,14 @@ public class DefaultTypeCreator extends AbstractTypeCreator
 
     public Type createCollectionType(TypeClassInfo info)
     {
-        if(info.getGenericType() == null) throw new XFireRuntimeException("Cannot create mapping for " + info.getTypeClass().getName() + ", unspecified component type");
-//        if(info.getGenericType() == null)
-//        {
-//            return createCollectionType(info, String.class);
-//        }
-//        else
+        if(info.getGenericType() == null)
         {
-            return createCollectionType(info, (Class)info.getGenericType());
+            throw new XFireRuntimeException("Cannot create mapping for " + 
+                                            info.getTypeClass().getName() + 
+                                            ", unspecified component type");
         }
+
+        return createCollectionType(info, (Class)info.getGenericType());
     }
 
     public Type createDefaultType(TypeClassInfo info)

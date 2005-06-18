@@ -1,7 +1,6 @@
 package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,13 +33,13 @@ public class BeanType
     
     private static Map objectProperties = null;
     
-    private TypeInfo _info;
+    private BeanTypeInfo _info;
     
     public BeanType()
     {
     }
     
-    public BeanType(TypeInfo info)
+    public BeanType(BeanTypeInfo info)
     {
         this._info = info;
         
@@ -50,7 +49,7 @@ public class BeanType
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
-        TypeInfo info = getTypeInfo();
+        BeanTypeInfo info = getTypeInfo();
         
         try
         {
@@ -141,7 +140,7 @@ public class BeanType
         if (object == null)
             return;
         
-        TypeInfo info = getTypeInfo();
+        BeanTypeInfo info = getTypeInfo();
         
     	for (Iterator itr = info.getAttributes(); itr.hasNext(); )
         {
@@ -208,7 +207,7 @@ public class BeanType
      */
     public void writeSchema(Element root)
     {
-        TypeInfo info = getTypeInfo();
+        BeanTypeInfo info = getTypeInfo();
         
         Element complex = new Element(SoapConstants.XSD_PREFIX + ":complexType",
                                       SoapConstants.XSD);
@@ -262,7 +261,7 @@ public class BeanType
         }
     }
 
-    private Type getType(TypeInfo info, QName name)
+    private Type getType(BeanTypeInfo info, QName name)
     {
         Type type = info.getType(name);
         
@@ -305,7 +304,7 @@ public class BeanType
     {
         Set deps = new HashSet();
 
-        TypeInfo info = getTypeInfo();
+        BeanTypeInfo info = getTypeInfo();
         
         for (Iterator itr = info.getAttributes(); itr.hasNext(); )
         {
@@ -324,7 +323,7 @@ public class BeanType
         return deps;
     }
 
-    public TypeInfo getTypeInfo()
+    public BeanTypeInfo getTypeInfo()
     {
         if (_info == null)
             _info = createTypeInfo();
@@ -332,24 +331,9 @@ public class BeanType
         return _info;
     }
 
-    public TypeInfo createTypeInfo()
+    public BeanTypeInfo createTypeInfo()
     {
-        String path = "/" + getTypeClass().getName().replace('.', '/') + ".aegis.xml";
-        InputStream is = getTypeClass().getResourceAsStream(path);
-        
-        TypeInfo info = null;
-        if (is == null)
-        {
-            logger.debug("Couldn't find type descriptor " + path);
-            
-            info = new TypeInfo(getTypeClass(), getSchemaType().getNamespaceURI());
-        }
-        else
-        {
-            info = new XMLTypeInfo(getTypeMapping().getEncodingStyleURI(),
-                                   getTypeClass(),
-                                   is);
-        }
+        BeanTypeInfo info = new BeanTypeInfo(getTypeClass(), getSchemaType().getNamespaceURI());
 
         info.setTypeMapping(getTypeMapping());
         info.initialize();

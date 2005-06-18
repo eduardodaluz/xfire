@@ -1,4 +1,4 @@
-package org.codehaus.xfire.message;
+package org.codehaus.xfire.aegis.stax;
 
 import java.io.File;
 import java.io.FileInputStream;

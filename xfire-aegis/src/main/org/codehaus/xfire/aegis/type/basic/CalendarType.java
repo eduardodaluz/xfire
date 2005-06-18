@@ -1,12 +1,13 @@
 package org.codehaus.xfire.aegis.type.basic;
 
-import java.util.Calendar;
+import java.text.ParseException;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
-import org.codehaus.xfire.util.DateUtils;
+import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.util.date.XsDateTimeFormat;
 
 /**
  * Type for the Calendar class.
@@ -16,25 +17,26 @@ import org.codehaus.xfire.util.DateUtils;
 public class CalendarType
     extends Type
 {
-    /**
-     * @see org.codehaus.xfire.aegis.type.Type#readObject(org.dom4j.Element, MessageContext)
-     */
-    public Object readObject(MessageReader reader, MessageContext context)
+    private static XsDateTimeFormat format = new XsDateTimeFormat();
+    
+    public Object readObject(MessageReader reader, MessageContext context) throws XFireFault
     {
         String value = reader.getValue();
+        
         if (value == null) return null;
         
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime( DateUtils.parseDateTime(value) );
-        return calendar;
+        try
+        {
+            return format.parseObject(value);
+        }
+        catch (ParseException e)
+        {
+            throw new XFireFault("Could not parse xs:dateTime: " + e.getMessage(), e, XFireFault.SENDER);
+        }
     }
 
-    /**
-     * @see org.codehaus.xfire.aegis.type.Type#writeObject(java.lang.Object)
-     */
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValue(DateUtils.formatDateTime(((Calendar)object).getTime()));
+        writer.writeValue(format.format(object));
     }
-
 }

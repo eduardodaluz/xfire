@@ -1,10 +1,5 @@
 package org.codehaus.xfire.aegis;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import org.codehaus.xfire.util.DateUtils;
-
 /**
  * Basic type conversion functionality for writing messages.
  *
