@@ -1,11 +1,10 @@
 package org.codehaus.xfire.aegis.stax;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.StringReader;
 
 import org.codehaus.xfire.aegis.MessageWriter;
-import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
@@ -41,16 +40,17 @@ public class WriterTest
     public void testLiteral()
         throws Exception
     {
-        FileOutputStream out = new FileOutputStream(output);
-        ElementWriter writer = new ElementWriter(out, "root", "urn:test");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ElementWriter writer = new ElementWriter(bos, "root", "urn:test");
 
         write(writer);
 
         writer.flush();
-        out.close();
+        bos.close();
         
+        System.out.println(bos.toString());
         StaxBuilder builder = new StaxBuilder();
-        Document doc = builder.build(new FileInputStream(output));
+        Document doc = builder.build(new StringReader(bos.toString()));
         
         testWrite(doc);
     }

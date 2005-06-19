@@ -94,23 +94,32 @@ public class ElementWriter
     {
         if (namespace != null)
         {
-            boolean declare = true;
+            boolean declare = false;
 
-            if (prefix == null)
+            String decPrefix = writer.getPrefix(namespace);
+                
+            // If the user didn't specify a prefix, create one
+            if (prefix == null && decPrefix == null)
             {
-                prefix = writer.getPrefix(namespace);
-                if (prefix == null)
-                {
-                    declare = true;
-                    prefix = NamespaceHelper.getUniquePrefix(writer);
-                }
+                declare = true;
+                prefix = NamespaceHelper.getUniquePrefix(writer);
             }
-            
-            writer.setPrefix(prefix, namespace);
+            else if (prefix == null)
+            {
+                prefix = decPrefix;
+            }
+            else if (!prefix.equals(decPrefix))
+            {
+                declare = true;
+            }
+
             writer.writeStartElement(prefix, name, namespace);
             
             if (declare)
+            {
+                writer.setPrefix(prefix, namespace);
                 writer.writeNamespace(prefix, namespace);
+            }
         }
         else
         {

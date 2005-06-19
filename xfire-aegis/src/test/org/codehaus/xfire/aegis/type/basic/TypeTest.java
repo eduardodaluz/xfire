@@ -49,7 +49,7 @@ public class TypeTest
         
         writer.close();
         
-        //System.out.println(bos.toString());
+        System.out.println(bos.toString());
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader reader = factory.createXMLStreamReader( new StringReader(bos.toString()) );
         while ( reader.getEventType() != XMLStreamReader.START_ELEMENT )
