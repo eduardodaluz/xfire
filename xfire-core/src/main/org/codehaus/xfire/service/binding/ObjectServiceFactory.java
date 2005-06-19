@@ -3,7 +3,6 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,9 +24,9 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
-import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
@@ -173,66 +172,10 @@ public class ObjectServiceFactory
     {
         return create(clazz, name, namespace, null, null, null, properties);
     }
-    
-    /**
-     * Creates a service from the specified class, soap version, style and use. The returned service will have a name
-     * based on the class name, and a namespace based on the class package.
-     * <p/>
-     * Some parameters can be <code>null</code>, and will be replaced with sensible defaults if so. See the specific
-     * parameters for more info.
-     *
-     * @param clazz   The service class used to populate the operations and parameters.
-     * @param version The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be used.
-     * @param style   The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
-     *                will be used.
-     * @param use     The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
-     *                will be used.
-     * @return The service.
-     */
-    public Service create(Class clazz, SoapVersion version, String style, String use)
-    {
-        return create(clazz, null, null, version, style, use, (Map) null);
-    }
 
     protected String makeServiceNameFromClassName(Class clazz)
     {
         return ServiceUtils.makeServiceNameFromClassName(clazz);
-    }
-
-    /**
-     * Creates a service from the specified class and parameters.
-     * <p/>
-     * Most parameters can be <code>null</code>, and will be replaced with sensible defaults if so. See the specific
-     * parameters for more info.
-     *
-     * @param clazz            The service class used to populate the operations and parameters.
-     * @param name             The name of the service. If <code>null</code>, a name will be generated from the class
-     *                         name.
-     * @param namespace        The default namespace of the service. If <code>null</code>, a namespace will be generated
-     *                         from the class package.
-     * @param version          The soap version. If <code>null</code>, {@link org.codehaus.xfire.soap.Soap11} will be
-     *                         used.
-     * @param style            The service style. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#STYLE_WRAPPED}
-     *                         will be used.
-     * @param use              The service use. If <code>null</code>, {@link org.codehaus.xfire.soap.SoapConstants#USE_LITERAL}
-     *                         will be used.
-     * @param encodingStyleURI The encoding style to use.
-     * @return The service.
-     */
-    public Service create(Class clazz,
-                          String name,
-                          String namespace,
-                          SoapVersion version,
-                          String style,
-                          String use,
-                          String encodingStyleURI)
-    {
-        Map properties = new HashMap();
-        
-        if (encodingStyleURI != null)
-            properties.put("type.encodingUri", encodingStyleURI);
-        
-        return create (clazz, name, namespace, version, style, use, properties);
     }
     
     public Service create(Class clazz,

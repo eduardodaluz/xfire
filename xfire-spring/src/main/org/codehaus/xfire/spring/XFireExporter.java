@@ -8,6 +8,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,12 +49,17 @@ public class XFireExporter
             theName = theName.substring(1);
         }
 
+        if (serviceFactory instanceof ObjectServiceFactory)
+        {
+            ObjectServiceFactory osf = (ObjectServiceFactory) serviceFactory;
+            if (style != null) osf.setStyle(style);
+            if (use != null) osf.setUse(use);
+            if (soapVersion != null) osf.setSoapVersion(soapVersion);
+        }
+        
         endpoint = serviceFactory.create(getServiceInterface(),
                                          theName,
                                          namespace,
-                                         soapVersion,
-                                         style,
-                                         use,
                                          null);
         
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();

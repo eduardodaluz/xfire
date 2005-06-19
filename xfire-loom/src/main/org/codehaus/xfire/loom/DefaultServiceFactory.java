@@ -13,7 +13,6 @@ import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
@@ -64,17 +63,6 @@ public class DefaultServiceFactory
         return m_factory.create(clazz);
     }
 
-    public Service create(final Class clazz,
-                                  final String name,
-                                  final String namespace,
-                                  final SoapVersion version,
-                                  final String style,
-                                  final String use,
-                                  final String encodingStyleURI)
-    {
-        return m_factory.create(clazz, name, namespace, version, style, use, encodingStyleURI);
-    }
-
     public void addIgnoredMethods(String className)
     {
         m_factory.addIgnoredMethods(className);
@@ -85,12 +73,7 @@ public class DefaultServiceFactory
     {
         return m_factory.create(clazz, wsdlUrl);
     }
-
-    public Service create(final Class clazz, final SoapVersion version, final String style, final String use)
-    {
-        return m_factory.create(clazz, version, style, use);
-    }
-
+    
     public Service create(Class clazz, Map properties)
     {
         return m_factory.create(clazz, properties);

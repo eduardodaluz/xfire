@@ -55,11 +55,6 @@ public class PicoObjectServiceFactory
         this.picoReference = picoReference;
     }
 
-    public Service create(Class clazz, SoapVersion version, String style, String use)
-    {
-        return prepare(super.create(clazz, version, style, use));
-    }
-
     public Service create(Class clazz, String name, String namespace, Map properties)
     {
         return prepare(super.create(clazz, name, namespace, properties));
@@ -74,17 +69,6 @@ public class PicoObjectServiceFactory
                           Map properties)
     {
         return prepare(super.create(clazz, name, namespace, version, style, use, properties));
-    }
-
-    public Service create(Class clazz,
-                          String name,
-                          String namespace,
-                          SoapVersion version,
-                          String style,
-                          String use,
-                          String encodingStyleURI)
-    {
-        return prepare(super.create(clazz, name, namespace, version, style, use, encodingStyleURI));
     }
 
     public Service create(Class clazz, URL wsdlUrl)

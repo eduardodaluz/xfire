@@ -1,6 +1,7 @@
 package org.codehaus.xfire.plexus.transport.xmpp;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
@@ -13,12 +14,13 @@ import org.codehaus.xfire.xmpp.XMPPTransport;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class DefaultXMPPTransportService
-    implements Initializable, Serviceable
+    implements Initializable, Serviceable, Disposable
 {
     private String username;
     private String password;
     private String server;
     private ServiceLocator locator;
+    private XMPPTransport transport;
     
     /**
      * @throws Exception
@@ -26,7 +28,7 @@ public class DefaultXMPPTransportService
     public void initialize()
         throws Exception
     {
-        XMPPTransport transport = new XMPPTransport(getServiceRegistry(), server, username, password);
+        transport = new XMPPTransport(getServiceRegistry(), server, username, password);
         getTransportManager().register(transport);
     }
 
@@ -61,5 +63,10 @@ public class DefaultXMPPTransportService
     public void service(ServiceLocator locator)
     {
         this.locator = locator;
+    }
+
+    public void dispose()
+    {
+        transport.dispose();
     }
 }

@@ -11,10 +11,12 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.avalon.framework.service.Serviceable;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.ObjectBinding;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -103,21 +105,34 @@ public class DefaultServiceDeployer
             throws ConfigurationException
     {
         final ServiceFactory factory = getServiceFactory(configuration.getChild("factory").getValue(null));
-        final Service service =
-                factory.create(loadClass(configuration.getChild("serviceClass")),
-                               configuration.getChild("name").getValue(),
-                               configuration.getChild("namespace").getValue(""),
-                               getSoapVersion(configuration.getChild("soapVersion")),
-                               configuration.getChild("style").getValue("wrapped"),
-                               configuration.getChild("use").getValue("literal"),
-                               configuration.getChild("encodingStyleURI").getValue(null));
+        String encodingUri = configuration.getChild("encodingStyleURI").getValue(null);
+        final Map propertiesMap = new HashMap();
+        
+        if (encodingUri != null)
+        {
+            propertiesMap.put(AegisBindingProvider.TYPE_MAPPING_KEY, encodingUri);
+        }
+
+        if (factory instanceof ObjectServiceFactory)
+        {
+            ObjectServiceFactory osf = (ObjectServiceFactory) factory;
+            osf.setStyle(configuration.getChild("style").getValue("wrapped"));
+            osf.setUse(configuration.getChild("use").getValue("wrapped"));
+            osf.setSoapVersion(getSoapVersion(configuration.getChild("soapVersion")));
+        }
 
         final Configuration[] properties = configuration.getChildren("property");
 
         for (int i = 0; i < properties.length; i++)
         {
-            service.setProperty(properties[i].getAttribute("name"), properties[i].getAttribute("value"));
+            propertiesMap.put(properties[i].getAttribute("name"), properties[i].getAttribute("value"));
         }
+        
+        final Service service =
+                factory.create(loadClass(configuration.getChild("serviceClass")),
+                               configuration.getChild("name").getValue(),
+                               configuration.getChild("namespace").getValue(""),
+                               propertiesMap);
 
         return service;
     }
