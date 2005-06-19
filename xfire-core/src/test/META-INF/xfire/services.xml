@@ -18,14 +18,13 @@
       <soapVersion>1.2</soapVersion>
       <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
       
-      <requestHandlers>
-        <handler>test</handler>
-        <handler>org.codehaus.xfire.plexus.config.TestHandler</handler>
-      </requestHandlers>
+      <inHandlers>
+        <handler>org.codehaus.xfire.transport.http.MockSessionHandler</handler>
+      </inHandlers>
       
-      <responseHandlers>
-        <handler>test</handler>
-      </responseHandlers>
+      <outHandlers>
+        <handler>org.codehaus.xfire.transport.http.MockSessionHandler</handler>
+      </outHandlers>
     </service>
 
   </services>
