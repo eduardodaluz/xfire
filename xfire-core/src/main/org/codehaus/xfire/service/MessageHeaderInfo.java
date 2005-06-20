@@ -6,14 +6,14 @@ import org.codehaus.xfire.wsdl.SchemaType;
 
 
 /**
- * Represents the description of a service operation message part.
+ * Represents the description of a service operation message header.
  * <p/>
- * Message parts are created using the {@link MessageInfo#addMessagePart} or {@link FaultInfo#addMessagePart}  method.
+ * Message parts are created using the {@link MessageInfo#addMessageHeader}.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class MessagePartInfo
+public class MessageHeaderInfo
         implements Visitable
 {
     private QName name;
@@ -22,7 +22,7 @@ public class MessagePartInfo
     private SchemaType schemaType;
     private int index;
     
-    MessagePartInfo(QName name, Class typeClass, MessagePartContainer container)
+    MessageHeaderInfo(QName name, Class typeClass, MessagePartContainer container)
     {
         this.name = name;
         this.typeClass = typeClass;
@@ -69,7 +69,7 @@ public class MessagePartInfo
     {
         this.index = index;
     }
-    
+
     public SchemaType getSchemaType()
     {
         return schemaType;
@@ -87,7 +87,7 @@ public class MessagePartInfo
      */
     public void accept(Visitor visitor)
     {
-        visitor.startMessagePart(this);
-        visitor.endMessagePart(this);
+        visitor.startMessageHeader(this);
+        visitor.endMessageHeader(this);
     }
 }

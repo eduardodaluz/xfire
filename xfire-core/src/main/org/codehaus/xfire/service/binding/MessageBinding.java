@@ -67,11 +67,11 @@ public class MessageBinding
         for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
-
             params.add( getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
+            nextEvent(message.getXMLStreamReader());
         }
 
-        message.setBody( params.toArray() );
+        message.setBody( params );
     }
 
     private void checkAndHandleFault(DepthXMLStreamReader dr)

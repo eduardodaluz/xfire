@@ -19,7 +19,9 @@ public abstract class MessagePartContainer
      * The operation that this <code>MessageInfo</code> is a part of.
      */
     private OperationInfo operation;
+    private Map messageHeaders = new HashMap();
     private Map messageParts = new HashMap();
+    private List messageHeaderList = new LinkedList();
     private List messagePartList = new LinkedList();
 
     /**
@@ -66,6 +68,29 @@ public abstract class MessagePartContainer
     }
 
     /**
+     * Adds an message part to this conainer.
+     *
+     * @param name  the qualified name of the message part.
+     * @param clazz the type of the message part.
+     */
+    public MessageHeaderInfo addMessageHeader(QName name, Class clazz)
+    {
+        if (name == null)
+        {
+            throw new IllegalArgumentException("Invalid name [" + name + "]");
+        }
+        if (messageParts.containsKey(name))
+        {
+            throw new IllegalArgumentException(
+                    "An message header with name [" + name + "] already exists in this container");
+        }
+
+        MessageHeaderInfo part = new MessageHeaderInfo(name, clazz, this);
+        addMessageHeader(part);
+        return part;
+    }
+    
+    /**
      * Adds an message part to this container.
      *
      * @param part the message part.
@@ -75,7 +100,18 @@ public abstract class MessagePartContainer
         messageParts.put(part.getName(), part);
         messagePartList.add(part);
     }
-
+    
+    /**
+     * Adds an message header to this container.
+     *
+     * @param header the message part.
+     */
+    public void addMessageHeader(MessageHeaderInfo header)
+    {
+        messageHeaders.put(header.getName(), header);
+        messageHeaderList.add(header);
+    }
+    
     public int getMessagePartIndex(MessagePartInfo part)
     {
         return messagePartList.indexOf(part);
@@ -97,6 +133,21 @@ public abstract class MessagePartContainer
     }
 
     /**
+     * Removes an message header from this container.
+     *
+     * @param name the qualified message header name.
+     */
+    public void removeMessageHeader(QName name)
+    {
+        MessageHeaderInfo messageHeader = getMessageHeader(name);
+        if (messageHeader != null)
+        {
+            messageHeaders.remove(name);
+            messageHeaderList.remove(messageHeader);
+        }
+    }
+    
+    /**
      * Returns the message part with the given name, if found.
      *
      * @param name the qualified name.
@@ -106,7 +157,18 @@ public abstract class MessagePartContainer
     {
         return (MessagePartInfo) messageParts.get(name);
     }
-
+    
+    /**
+     * Returns the message part with the given name, if found.
+     *
+     * @param name the qualified name.
+     * @return the message part; or <code>null</code> if not found.
+     */
+    public MessageHeaderInfo getMessageHeader(QName name)
+    {
+        return (MessageHeaderInfo) messageHeaders.get(name);
+    }
+    
     /**
      * Returns all message parts for this message.
      *
@@ -115,5 +177,15 @@ public abstract class MessagePartContainer
     public List getMessageParts()
     {
         return Collections.unmodifiableList(messagePartList);
+    }
+    
+    /**
+     * Returns all message headers for this message.
+     *
+     * @return all message parts.
+     */
+    public List getMessageHeaders()
+    {
+        return Collections.unmodifiableList(messageHeaderList);
     }
 }

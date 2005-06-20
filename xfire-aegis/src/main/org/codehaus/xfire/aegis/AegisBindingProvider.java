@@ -2,6 +2,7 @@ package org.codehaus.xfire.aegis;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -13,7 +14,10 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
+import org.codehaus.xfire.aegis.yom.YOMReader;
+import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -21,6 +25,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.yom.Element;
 
 /**
  * A BindingProvider for the Aegis type system.
@@ -98,6 +103,13 @@ public class AegisBindingProvider
 
     protected void initializeMessage(Service service, MessagePartContainer container)
     {
+        for (Iterator itr = container.getMessageHeaders().iterator(); itr.hasNext();)
+        {
+            MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
+            
+            header.setSchemaType(getParameterType(getTypeMapping(service), header));
+        }
+        
         for (Iterator itr = container.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
@@ -159,10 +171,65 @@ public class AegisBindingProvider
 
         return type;
     }
+
+    private Type getParameterType(TypeMapping tm, MessageHeaderInfo param)
+    {
+        Type type = tm.getType(param.getName());
+
+        if (type == null && tm.isRegistered(param.getTypeClass()))
+        {
+            type = tm.getType(param.getTypeClass());
+        }
+        
+        if (type == null)
+        {
+            OperationInfo op = param.getContainer().getOperation();
+            
+            int index = -1;
+            
+            if (op.getInputMessage().getMessageParts().contains(param))
+                index = op.getInputMessage().getMessageParts().indexOf(param);
+            
+            /* Note: we are not registering the type here, because it is an anonymous
+             * type. Potentially there could be many schema types with this name. For example,
+             * there could be many ns:in0 paramters.
+             */
+            type = tm.getTypeCreator().createType(op.getMethod(), index);
+            type.setTypeMapping(tm);
+        }
+
+        return type;
+    }
     
     public static TypeMapping getTypeMapping(Service service)
     {
         return (TypeMapping) service.getProperty(TYPE_MAPPING_KEY);
+    }
+
+    public Object readHeader(MessageHeaderInfo p, MessageContext context)
+        throws XFireFault
+    {
+        Type type = (Type) p.getSchemaType();
+
+        QName name = p.getName();
+        Element headers = context.getInMessage().getHeader();
+        Element header = headers.getFirstChildElement(name.getLocalPart(), name.getNamespaceURI());
+        
+        if (header == null) return null;
+        
+        return type.readObject(new YOMReader(header), context);
+    }
+
+    public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
+        throws XFireFault
+    {
+        Type type = (Type) p.getSchemaType();
+
+        MessageWriter mw = new YOMWriter(context.getOutMessage().getHeader());
+
+        type.writeObject(value, mw, context);
+    
+        mw.close();
     }
 
 }

@@ -88,7 +88,7 @@ public class WrappedBinding
             parameters.add( getBindingProvider().readParameter(p, inMessage.getXMLStreamReader(), context) );
         }
         
-        inMessage.setBody(parameters.toArray());
+        inMessage.setBody(parameters);
     }
     
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)

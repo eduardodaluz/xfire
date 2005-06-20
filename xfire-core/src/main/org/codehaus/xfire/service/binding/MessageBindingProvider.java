@@ -9,10 +9,12 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Element;
+import org.codehaus.yom.Node;
 import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.yom.stax.StaxSerializer;
 
@@ -82,5 +84,19 @@ public class MessageBindingProvider
     public SchemaType getSchemaType(Service service, MessagePartInfo param)
     {
         return null;
+    }
+
+    public Object readHeader(MessageHeaderInfo p, MessageContext context)
+        throws XFireFault
+    {
+        System.out.println("looking for " + p.getName());
+        return context.getInMessage().getHeader().getFirstChildElement(p.getName().getLocalPart(),
+                                                                       p.getName().getNamespaceURI());
+    }
+
+    public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
+        throws XFireFault
+    {
+        context.getOutMessage().getHeader().appendChild((Node) value);
     }
 }

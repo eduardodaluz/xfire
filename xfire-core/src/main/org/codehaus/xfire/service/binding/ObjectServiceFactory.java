@@ -309,8 +309,16 @@ public class ObjectServiceFactory
 
         for (int j = 0; j < paramClasses.length; j++)
         {
-            final QName q = getInParameterName(endpoint, method, j, isDoc);
-            inMsg.addMessagePart(q, paramClasses[j]);
+            if (isHeader(method, j))
+            {
+                final QName q = getInParameterName(endpoint, method, j, isDoc);
+                inMsg.addMessageHeader(q, paramClasses[j]).setIndex(j);
+            }
+            else
+            {
+                final QName q = getInParameterName(endpoint, method, j, isDoc);
+                inMsg.addMessagePart(q, paramClasses[j]).setIndex(j);
+            }
         }
 
         MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
@@ -319,12 +327,25 @@ public class ObjectServiceFactory
         final Class returnType = method.getReturnType();
         if (!returnType.isAssignableFrom(void.class))
         {
-            final QName q = getOutParameterName(endpoint, method, isDoc);
-            outMsg.addMessagePart(q, method.getReturnType());
+            if (isHeader(method, -1))
+            {
+                final QName q =  getOutParameterName(endpoint, method, isDoc);
+                outMsg.addMessageHeader(q, method.getReturnType()).setIndex(0);
+            }
+            else
+            {
+                final QName q = getOutParameterName(endpoint, method, isDoc);
+                outMsg.addMessagePart(q, method.getReturnType());
+            }
         }
 
         op.setMEP(getMEP(method));
         op.setAsync(isAsync(method));
+    }
+
+    protected boolean isHeader(Method method, int j)
+    {
+        return false;
     }
 
     /**

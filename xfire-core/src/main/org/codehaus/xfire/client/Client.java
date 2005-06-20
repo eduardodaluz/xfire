@@ -1,5 +1,7 @@
 package org.codehaus.xfire.client;
 
+import java.util.List;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
@@ -101,9 +103,9 @@ public class Client
         super.onReceive(context, msg);
     }
 
-    public void receive(Object[] response)
+    public void receive(Object response)
     {
-        this.response = response;
+        this.response = ((List) response).toArray();
     }
     
     public Service getService()

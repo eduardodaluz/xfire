@@ -31,6 +31,7 @@ public class VisitorTest
         MessageInfo outputMessage = operation.createMessage(new QName("output"));
         operation.setOutputMessage(outputMessage);
         FaultInfo faultInfo = operation.addFault("fault");
+        MessageHeaderInfo headerInfo = inputMessage.addMessageHeader(new QName("part1"), String.class);
         MessagePartInfo partInfo1 = inputMessage.addMessagePart(new QName("part1"), String.class);
         MessagePartInfo partInfo2 = inputMessage.addMessagePart(new QName("part2"), String.class);
 
@@ -43,6 +44,7 @@ public class VisitorTest
         assertTrue(visitor.started(inputMessage));
         assertTrue(visitor.started(outputMessage));
         assertTrue(visitor.started(faultInfo));
+        assertTrue(visitor.started(headerInfo));
         assertTrue(visitor.started(partInfo1));
         assertTrue(visitor.started(partInfo2));
 
@@ -52,6 +54,7 @@ public class VisitorTest
         assertTrue(visitor.ended(inputMessage));
         assertTrue(visitor.ended(outputMessage));
         assertTrue(visitor.ended(faultInfo));
+        assertTrue(visitor.ended(headerInfo));
         assertTrue(visitor.ended(partInfo1));
         assertTrue(visitor.ended(partInfo2));
     }
@@ -156,6 +159,18 @@ public class VisitorTest
         public boolean ended(Visitable visitable)
         {
             return ended.contains(visitable);
+        }
+
+        public void startMessageHeader(MessageHeaderInfo messageHeaderInfo)
+        {
+            assertNotNull(messageHeaderInfo);
+            started.add(messageHeaderInfo);
+        }
+
+        public void endMessageHeader(MessageHeaderInfo messageHeaderInfo)
+        {
+            assertNotNull(messageHeaderInfo);
+            ended.add(messageHeaderInfo);
         }
     }
 

@@ -1,6 +1,10 @@
 package org.codehaus.xfire.service.binding;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,8 +14,8 @@ import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.util.DepthXMLStreamReader;
 
 public abstract class AbstractBinding
     extends AbstractHandler
@@ -44,18 +48,29 @@ public abstract class AbstractBinding
         try
         {
             // Read in the parameters...
-            final Object[] params = (Object[]) context.getInMessage().getBody();
+            final List params = (List) context.getInMessage().getBody();
 
             // Don't read the operation in until after reading. Otherwise
             // it won't work for document style services.
             final OperationInfo operation = context.getExchange().getOperation();
+
+            // read in the headers
+            final List headerInfos = operation.getInputMessage().getMessageHeaders();
+            for (Iterator itr = headerInfos.iterator(); itr.hasNext();)
+            {
+                MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
+                BindingProvider provider = context.getService().getBinding().getBindingProvider();
+                params.add(header.getIndex(), provider.readHeader(header, context));
+            }
 
             final Invoker invoker = getInvoker();
             
             // invoke the service method...
             if (!operation.isAsync())
             {
-                final Object value = invoker.invoke(operation.getMethod(), params, context);
+                final Object value = invoker.invoke(operation.getMethod(),
+                                                    params.toArray(),
+                                                    context);
 
                 OutMessage outMsg = context.getOutMessage();
                 if (outMsg != null)
@@ -72,7 +87,9 @@ public abstract class AbstractBinding
                     {
                         try
                         {
-                            final Object value = invoker.invoke(operation.getMethod(), params, context);
+                            final Object value = invoker.invoke(operation.getMethod(), 
+                                                                params.toArray(), 
+                                                                context);
 
                             OutMessage outMsg = context.getOutMessage();
                             if (outMsg != null)
@@ -99,7 +116,7 @@ public abstract class AbstractBinding
         }
     }
 
-    protected void nextEvent(DepthXMLStreamReader dr)
+    protected void nextEvent(XMLStreamReader dr)
     {
         try
         {

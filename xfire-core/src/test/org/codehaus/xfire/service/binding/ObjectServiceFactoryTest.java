@@ -1,17 +1,20 @@
 package org.codehaus.xfire.service.binding;
 
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
+import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.yom.Element;
 
 public class ObjectServiceFactoryTest
         extends AbstractXFireTest
@@ -126,4 +129,29 @@ public class ObjectServiceFactoryTest
         public void doSomething(String bleh) {}
     }
 
+    public void testHeaders()
+            throws Exception
+    {
+        ObjectServiceFactory osf = new ObjectServiceFactory(getXFire().getTransportManager(), 
+                                                            new MessageBindingProvider())
+        {
+
+            protected boolean isHeader(Method method, int j)
+            {
+                return method.getParameterTypes()[j].equals(String.class);
+            }
+        };
+        
+        Service service = osf.create(HeaderService.class);
+        ServiceInfo info = service.getServiceInfo();
+        
+        MessagePartContainer inMsg =info.getOperation("doSomething").getInputMessage();
+        assertEquals(1, inMsg.getMessageHeaders().size());
+        assertNotNull(inMsg.getMessageHeader(new QName(info.getName().getNamespaceURI(), "in1")));
+    }
+    
+    public class HeaderService
+    {
+        public void doSomething(Element a, String header) {};
+    }
 }

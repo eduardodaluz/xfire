@@ -18,7 +18,7 @@ public class ClientInOutExchange
 
     public void doExchange()
     {
-        client.receive((Object[]) context.getInMessage().getBody());
+        client.receive(context.getInMessage().getBody());
     }
 
     public void handleFault(XFireFault fault)

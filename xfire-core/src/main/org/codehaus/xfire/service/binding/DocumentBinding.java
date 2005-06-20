@@ -59,7 +59,7 @@ public class DocumentBinding
 
         setOperation(findOperation(endpoint, parameters.size()), context);
         
-        context.getInMessage().setBody(parameters.toArray());
+        context.getInMessage().setBody(parameters);
     }
 
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)

@@ -67,6 +67,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(false);
 
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
 
@@ -134,6 +137,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(false);
 
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        webAnnotationsControl.setReturnValue(false);
+
         webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
         webAnnotations.hasOnewayAnnotation(echoMethod);
@@ -184,6 +190,12 @@ public class AnnotationServiceFactoryTest
         paramAnnotation.setName("input");
         webAnnotations.getWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(paramAnnotation);
+
+        webAnnotations.getWebParamAnnotation(echoMethod, 0);
+        webAnnotationsControl.setReturnValue(paramAnnotation);
+
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        webAnnotationsControl.setReturnValue(true);
 
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(true);

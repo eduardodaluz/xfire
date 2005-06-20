@@ -1,0 +1,10 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:HeaderService">
+ <env:Header>
+  <in1>two</in1>
+ </env:Header>
+ <env:Body>
+  <a>one</a>
+  
+  <b>three</b>
+ </env:Body>
+</env:Envelope>

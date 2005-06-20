@@ -100,6 +100,20 @@ public interface Visitor
     void endMessagePart(MessagePartInfo messagePartInfo);
 
     /**
+     * Receive notification at the beginning of a message header visit.
+     *
+     * @param messageHeaderInfo the message header info.
+     */
+    void startMessageHeader(MessageHeaderInfo messageHeaderInfo);
+
+    /**
+     * Receive notification at the end of a message header visit.
+     *
+     * @param messageHeaderInfo the message header info.
+     */
+    void endMessageHeader(MessageHeaderInfo messageHeaderInfo);
+
+    /**
      * Receive notification at the beginning of a binding visit.
      *
      * @param binding the binding.

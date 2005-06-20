@@ -58,6 +58,11 @@ public class MessageInfo
     public void accept(Visitor visitor)
     {
         visitor.startMessage(this);
+        for (Iterator iterator = getMessageHeaders().iterator(); iterator.hasNext();)
+        {
+            MessageHeaderInfo messageHeaderInfo = (MessageHeaderInfo) iterator.next();
+            messageHeaderInfo.accept(visitor);
+        }
         for (Iterator iterator = getMessageParts().iterator(); iterator.hasNext();)
         {
             MessagePartInfo messagePartInfo = (MessagePartInfo) iterator.next();

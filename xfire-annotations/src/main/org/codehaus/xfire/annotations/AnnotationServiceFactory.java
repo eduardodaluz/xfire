@@ -208,6 +208,22 @@ public class AnnotationServiceFactory
         return webAnnotations.hasWebMethodAnnotation(method);
     }
 
+    protected boolean isHeader(Method method, int paramNumber)
+    {
+        if (paramNumber != -1)
+        {
+            if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
+            {
+                final WebParamAnnotation webParamAnnotation = 
+                    webAnnotations.getWebParamAnnotation(method, paramNumber);
+                
+                return webParamAnnotation.isHeader();
+            }
+        }
+
+        return super.isHeader(method, paramNumber);
+    }
+
     protected QName getInParameterName(Service endpoint, Method method, int paramNumber, boolean doc)
     {
         if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
