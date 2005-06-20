@@ -143,7 +143,7 @@ public class DefaultTypeMappingRegistry
         return tm;
     }
 
-    private TypeCreator createTypeCreator()
+    protected TypeCreator createTypeCreator()
     {
         AbstractTypeCreator xmlCreator = new XMLTypeCreator();
         xmlCreator.setNextCreator(new DefaultTypeCreator());
