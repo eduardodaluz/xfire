@@ -11,6 +11,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -86,6 +87,18 @@ public class XMLBeansBindingProvider
         {
             throw new XFireFault("Could not write response.", e, XFireFault.SENDER);
         }
+    }
+
+    public Object readHeader(MessageHeaderInfo p, MessageContext context)
+        throws XFireFault
+    {
+        throw new UnsupportedOperationException("Headers are not yet supported with the XMLBeans binding.");
+    }
+
+    public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
+        throws XFireFault
+    {
+        throw new UnsupportedOperationException("Headers are not yet supported with the XMLBeans binding.");
     }
 
 }
