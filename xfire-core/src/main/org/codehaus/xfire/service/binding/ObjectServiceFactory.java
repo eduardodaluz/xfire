@@ -300,6 +300,8 @@ public class ObjectServiceFactory
         
         final OperationInfo op = service.addOperation(opName, method);
 
+        op.setAction(getAction(op));
+        
         final Class[] paramClasses = method.getParameterTypes();
 
         final boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
@@ -341,6 +343,11 @@ public class ObjectServiceFactory
 
         op.setMEP(getMEP(method));
         op.setAsync(isAsync(method));
+    }
+
+    protected String getAction(OperationInfo op)
+    {
+        return "";
     }
 
     protected boolean isHeader(Method method, int j)

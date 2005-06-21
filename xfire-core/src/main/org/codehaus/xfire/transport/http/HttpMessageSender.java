@@ -24,7 +24,8 @@ public class HttpMessageSender
     private String urlString;
     private HttpURLConnection urlConn;
     private InputStream is;
-  
+    private String action;
+
     public HttpMessageSender(String urlString, String encoding)
     {
         this.urlString = urlString;
@@ -47,6 +48,12 @@ public class HttpMessageSender
         urlConn.setRequestProperty("User-Agent", "XFire Client +http://xfire.codehaus.org");
         urlConn.setRequestProperty("Accept", "text/xml; text/html");
         urlConn.setRequestProperty("Content-type", "text/xml; charset=" + encoding);
+        
+        String action = getAction();
+        if (action == null)
+            action = "";
+        
+        urlConn.setRequestProperty( "SOAPAction", "\"" + action + "\"");
     }
 
     public OutputStream getOutputStream() throws IOException, XFireFault
@@ -144,4 +151,15 @@ public class HttpMessageSender
     {
         this.username = username;
     }
+
+    public String getAction()
+    {
+        return action;
+    }
+
+    public void setAction(String action)
+    {
+        this.action = action;
+    }
+    
 }

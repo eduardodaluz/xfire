@@ -17,6 +17,7 @@ public abstract class AbstractMessage
     private Element header;
     private String uri;
     private String encoding = "UTF-8";
+    private String action;
     private Object body;
     private Attachments attachments;
     private SoapVersion soapVersion = Soap11.getInstance();
@@ -66,6 +67,16 @@ public abstract class AbstractMessage
     public void setEncoding(String encoding)
     {
         this.encoding = encoding;
+    }
+
+    public String getAction()
+    {
+        return action;
+    }
+
+    public void setAction(String action)
+    {
+        this.action = action;
     }
 
     public Element getHeader()

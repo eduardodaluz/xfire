@@ -22,6 +22,7 @@ public class OperationInfo
         implements Visitable
 {
     private String name;
+    private String action;
     private ServiceInfo service;
     private String mep;
     private boolean async;
@@ -227,6 +228,16 @@ public class OperationInfo
     public Collection getFaults()
     {
         return Collections.unmodifiableCollection(faults.values());
+    }
+
+    public String getAction()
+    {
+        return action;
+    }
+
+    public void setAction(String action)
+    {
+        this.action = action;
     }
 
     /**

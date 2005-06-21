@@ -46,6 +46,7 @@ public class Client
         msg.setBody(params);
         msg.setUri(url);
         msg.setSerializer(service.getBinding());
+        msg.setAction(op.getAction());
         
         context = new MessageContext();
         context.setOutMessage(msg);
@@ -64,7 +65,7 @@ public class Client
         {
             throw new XFireException("Couldn't open channel.", e);
         }
-        
+
         channel.setEndpoint(this);
         channel.setService(service);
         channel.send(context, msg);

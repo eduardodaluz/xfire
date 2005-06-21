@@ -72,6 +72,7 @@ public class HttpSoapChannel
         HttpMessageSender sender = new HttpMessageSender(message.getUri(), message.getEncoding());
         try
         {
+            sender.setAction(message.getAction());
             sender.open();
             
             OutputStream out = sender.getOutputStream();

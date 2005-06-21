@@ -41,7 +41,7 @@ public class SoapServiceEndpoint
             XMLStreamReader reader = msg.getXMLStreamReader();
             seekToWhitespaceEnd(reader);
             
-            if (msg.getXMLStreamReader().getEventType() == XMLStreamReader.START_ELEMENT)
+            if (reader.getEventType() == XMLStreamReader.START_ELEMENT)
             {
                 if (reader.getName().equals(msg.getSoapVersion().getFault()))
                 {
@@ -93,7 +93,9 @@ public class SoapServiceEndpoint
     {
         int event = reader.next();
         
-        while (event == XMLStreamReader.SPACE)
+        while (event != XMLStreamReader.CHARACTERS 
+                && event != XMLStreamReader.CDATA
+                && event != XMLStreamReader.START_ELEMENT)
         {
             event = reader.next();
         }

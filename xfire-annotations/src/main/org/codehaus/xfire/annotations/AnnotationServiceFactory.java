@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -190,6 +191,18 @@ public class AnnotationServiceFactory
         return portType;
     }
 
+    protected String getAction(OperationInfo op)
+    {
+        if (webAnnotations.hasWebMethodAnnotation(op.getMethod()))
+        {
+            WebMethodAnnotation wma = webAnnotations.getWebMethodAnnotation(op.getMethod());
+            if (wma.getAction().length() > 0)
+                return wma.getAction();
+        }
+        
+        return super.getAction(op);
+    }
+
     /**
      * Returns <code>true</code> if the specified method is valid for a SOAP operation.
      *
@@ -259,7 +272,7 @@ public class AnnotationServiceFactory
             {
                 ns = endpoint.getServiceInfo().getName().getNamespaceURI();
             }
-
+System.out.println("webresult name: " + name);
             return new QName(ns, name);
         }
         else

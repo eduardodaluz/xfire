@@ -58,6 +58,14 @@ public class AnnotationServiceFactoryTest
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
+        
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
+
+        WebMethodAnnotation wma = new WebMethodAnnotation();
+        wma.setAction("test");
+        webAnnotations.getWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(wma);
 
         webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
@@ -133,7 +141,15 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(intfAnnotation);
 
         Method echoMethod = EchoService.class.getMethod("echo", new Class[]{String.class});
+        
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
 
+        WebMethodAnnotation wma = new WebMethodAnnotation();
+        wma.setAction("test");
+        webAnnotations.getWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(wma);
+        
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         webAnnotationsControl.setReturnValue(false);
 
@@ -180,7 +196,15 @@ public class AnnotationServiceFactoryTest
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
+        
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
 
+        WebMethodAnnotation wma = new WebMethodAnnotation();
+        wma.setAction("test");
+        webAnnotations.getWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(wma);
+        
         webAnnotations.hasOnewayAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
         webAnnotations.hasOnewayAnnotation(echoMethod);
