@@ -20,11 +20,8 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
-import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 public class DocumentBinding
     extends AbstractBinding
@@ -103,62 +100,30 @@ public class DocumentBinding
     }
     
     
-    public void createInputParts(Service endpoint, 
-                                 AbstractWSDL wsdl,
+    public void createInputParts(WSDLBuilder builder,
                                  Message req, 
                                  OperationInfo op)
     {
-        writeParameters(endpoint, wsdl, req, op.getInputMessage().getMessageParts());
+        writeParameters(builder, req, op.getInputMessage().getMessageParts());
     }
 
-    public void createOutputParts(Service endpoint, 
-                                  AbstractWSDL wsdl,
+    public void createOutputParts(WSDLBuilder builder,
                                   Message req, 
                                   OperationInfo op)
     {
-        writeParameters(endpoint, wsdl, req, op.getOutputMessage().getMessageParts());
+        writeParameters(builder, req, op.getOutputMessage().getMessageParts());
     }
 
-    private void writeParameters(Service service, 
-                                 AbstractWSDL wsdl,
+    private void writeParameters(WSDLBuilder builder,
                                  Message message, 
                                  Collection params)
     {
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
-            Class clazz = param.getTypeClass();
-            QName pName = param.getName();
-            SchemaType type = param.getSchemaType();
-
-            wsdl.addDependency(type);
             
-            QName schemaType = type.getSchemaType();
-
-            Part part = wsdl.getDefinition().createPart();
-            part.setName(pName.getLocalPart());
-
-            if (type.isComplex())
-            {
-                part.setElementName(pName);
-
-                Element schemaEl = wsdl.createSchemaType(wsdl.getInfo().getTargetNamespace());
-                Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-                schemaEl.appendChild(element);
-
-                element.addAttribute(new Attribute("name", pName.getLocalPart()));
-
-                String prefix = wsdl.getNamespacePrefix(schemaType.getNamespaceURI());
-                wsdl.addNamespace(prefix, schemaType.getNamespaceURI());
-
-                element.addAttribute(new Attribute("type", 
-                                                   prefix + ":" + schemaType.getLocalPart()));
-            }
-            else
-            {
-                part.setElementName(type.getSchemaType());
-            }
-
+            Part part = builder.createPart(param);
+            
             message.addPart(part);
         }
     }

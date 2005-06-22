@@ -151,7 +151,7 @@ public class AnnotationServiceFactory
     protected String createServiceNamespace(Class clazz, WebServiceAnnotation webServiceAnnotation)
     {
         String ns = null;
-        if (webServiceAnnotation.getTargetNamespace() != null)
+        if (webServiceAnnotation.getTargetNamespace().length() > 0)
         {
             ns = webServiceAnnotation.getTargetNamespace();
         }
@@ -165,7 +165,7 @@ public class AnnotationServiceFactory
     protected String createServiceName(Class clazz, WebServiceAnnotation webServiceAnnotation)
     {
         String name = null;
-        if (webServiceAnnotation.getServiceName() != null)
+        if (webServiceAnnotation.getServiceName().length() > 0)
         {
             name = webServiceAnnotation.getServiceName();
         }
@@ -179,7 +179,7 @@ public class AnnotationServiceFactory
     protected String createPortType(String serviceName, WebServiceAnnotation webServiceAnnotation)
     {
         String portType = null;
-        if (webServiceAnnotation.getName() != null)
+        if (webServiceAnnotation.getName().length() > 0)
         {
             portType = webServiceAnnotation.getName();
         }

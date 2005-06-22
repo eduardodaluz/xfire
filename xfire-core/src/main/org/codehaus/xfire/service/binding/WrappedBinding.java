@@ -27,6 +27,7 @@ import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
 
@@ -143,15 +144,13 @@ public class WrappedBinding
         writer.writeNamespace(prefix, namespace);
     }
 
-    public void createInputParts(Service endpoint, 
-                                 AbstractWSDL wsdl,
+    public void createInputParts(WSDLBuilder builder,
                                  Message req, 
                                  OperationInfo op)
     {
-        Part part = wsdl.getDefinition().createPart();
+        Part part = builder.getDefinition().createPart();
 
-        QName typeQName = createDocumentType(endpoint, 
-                                             wsdl, 
+        QName typeQName = createDocumentType(builder, 
                                              op.getInputMessage(), 
                                              part,
                                              op.getName());
@@ -161,17 +160,15 @@ public class WrappedBinding
         req.addPart(part);
     }
 
-    public void createOutputParts(Service endpoint, 
-                                  AbstractWSDL wsdl,
+    public void createOutputParts(WSDLBuilder builder,
                                   Message req, 
                                   OperationInfo op)
     {
         // response message part
-        Part part = wsdl.getDefinition().createPart();
+        Part part = builder.getDefinition().createPart();
 
         // Document style service
-        QName typeQName = createDocumentType(endpoint, 
-                                             wsdl, 
+        QName typeQName = createDocumentType(builder, 
                                              op.getOutputMessage(), 
                                              part,
                                              op.getName() + "Response");
@@ -181,13 +178,12 @@ public class WrappedBinding
         req.addPart(part);
     }
     
-    private QName createDocumentType(Service service, 
-                                     AbstractWSDL wsdl,
+    private QName createDocumentType(WSDLBuilder builder,
                                      MessageInfo message, 
                                      Part part,
                                      String opName)
     {
-        Element schemaEl = wsdl.createSchemaType(wsdl.getInfo().getTargetNamespace());
+        Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
         Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
         schemaEl.appendChild(element);
 
@@ -200,18 +196,17 @@ public class WrappedBinding
         {
             Element sequence = createSequence(complex);
 
-            writeParametersSchema(service, wsdl, message.getMessageParts(), sequence);
+            writeParametersSchema(builder, message.getMessageParts(), sequence);
         }
 
-        return new QName(wsdl.getInfo().getTargetNamespace(), opName);
+        return new QName(builder.getInfo().getTargetNamespace(), opName);
     }
 
     /**
      * @param op
      * @param sequence
      */
-    private void writeParametersSchema(Service service, 
-                                       AbstractWSDL wsdl,
+    private void writeParametersSchema(WSDLBuilder builder,
                                        Collection params, 
                                        Element sequence)
     {
@@ -223,12 +218,12 @@ public class WrappedBinding
             QName pName = param.getName();
             SchemaType type = param.getSchemaType();
 
-            wsdl.addDependency(type);
+            builder.addDependency(type);
             QName schemaType = type.getSchemaType();
 
             String uri = type.getSchemaType().getNamespaceURI();
-            String prefix = wsdl.getNamespacePrefix(uri);
-            wsdl.addNamespace(prefix, uri);
+            String prefix = builder.getNamespacePrefix(uri);
+            builder.addNamespace(prefix, uri);
 
             Element outElement = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
             sequence.appendChild(outElement);

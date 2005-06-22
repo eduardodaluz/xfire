@@ -3,8 +3,7 @@ package org.codehaus.xfire.wsdl11;
 import javax.wsdl.Message;
 
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 public interface WSDL11ParameterBinding
 {
@@ -12,13 +11,11 @@ public interface WSDL11ParameterBinding
     
     public String getUse();
 
-    public void createInputParts(Service service, 
-                                 AbstractWSDL wsdl,
+    public void createInputParts(WSDLBuilder builder,
                                  Message req, 
                                  OperationInfo op);
     
-    public void createOutputParts(Service service, 
-                                  AbstractWSDL wsdl,
+    public void createOutputParts(WSDLBuilder builder,
                                   Message req, 
                                   OperationInfo op);
 }

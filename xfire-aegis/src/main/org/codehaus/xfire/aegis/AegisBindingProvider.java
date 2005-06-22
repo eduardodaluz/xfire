@@ -159,7 +159,7 @@ public class AegisBindingProvider
             int index = -1;
             
             if (op.getInputMessage().getMessageParts().contains(param))
-                index = op.getInputMessage().getMessageParts().indexOf(param);
+                index = param.getIndex();
             
             /* Note: we are not registering the type here, because it is an anonymous
              * type. Potentially there could be many schema types with this name. For example,
@@ -187,8 +187,8 @@ public class AegisBindingProvider
             
             int index = -1;
             
-            if (op.getInputMessage().getMessageParts().contains(param))
-                index = op.getInputMessage().getMessageParts().indexOf(param);
+            if (op.getInputMessage().getMessageHeaders().contains(param))
+                index = param.getIndex();
             
             /* Note: we are not registering the type here, because it is an anonymous
              * type. Potentially there could be many schema types with this name. For example,

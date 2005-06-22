@@ -22,6 +22,7 @@ import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
 
@@ -85,24 +86,21 @@ public class RPCEncodedBinding
         context.getInMessage().setBody(parameters);
     }
 
-    public void createInputParts(Service endpoint, 
-                                 AbstractWSDL wsdl,
+    public void createInputParts(WSDLBuilder builder,
                                  Message req, 
                                  OperationInfo op)
     {
-        writeParametersSchema(endpoint, wsdl, req, op.getInputMessage());
+        writeParametersSchema(builder, req, op.getInputMessage());
     }
 
-    public void createOutputParts(Service endpoint, 
-                                  AbstractWSDL wsdl,
+    public void createOutputParts(WSDLBuilder builder,
                                   Message req, 
                                   OperationInfo op)
     {
-        writeParametersSchema(endpoint, wsdl, req, op.getOutputMessage());
+        writeParametersSchema(builder, req, op.getOutputMessage());
     }
     
-    protected void writeParametersSchema(Service service, 
-                                         AbstractWSDL wsdl,
+    protected void writeParametersSchema(WSDLBuilder builder,
                                          Message message, 
                                          MessageInfo xmsg)
     {
@@ -115,24 +113,24 @@ public class RPCEncodedBinding
             QName pName = param.getName();
 
             SchemaType type = param.getSchemaType();
-            wsdl.addDependency(type);
+            builder.addDependency(type);
             QName schemaType = type.getSchemaType();
 
-            Part part = wsdl.getDefinition().createPart();
+            Part part = builder.getDefinition().createPart();
             part.setName(pName.getLocalPart());
 
             if (type.isComplex())
             {
                 part.setElementName(pName);
 
-                Element schemaEl = wsdl.createSchemaType(wsdl.getInfo().getTargetNamespace());
+                Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
                 Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
                 schemaEl.appendChild(element);
 
                 element.addAttribute(new Attribute("name", pName.getLocalPart()));
 
-                String prefix = wsdl.getNamespacePrefix(schemaType.getNamespaceURI());
-                wsdl.addNamespace(prefix, schemaType.getNamespaceURI());
+                String prefix = builder.getNamespacePrefix(schemaType.getNamespaceURI());
+                builder.addNamespace(prefix, schemaType.getNamespaceURI());
 
                 element.addAttribute(new Attribute("type", 
                                                    prefix + ":" + schemaType.getLocalPart()));

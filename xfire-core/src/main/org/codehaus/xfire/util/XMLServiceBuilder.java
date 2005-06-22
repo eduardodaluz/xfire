@@ -1,6 +1,7 @@
 package org.codehaus.xfire.util;
 
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -121,8 +122,13 @@ public class XMLServiceBuilder
         }
 
         BindingProvider bindingProvider = loadBindingProvider(bindingProviderName);
-        ObjectServiceFactory factory =
-            loadServiceFactory(tman, bindingProvider, getElementValue(service, "serviceFactory", ""));
+        
+        String serviceFactory = getElementValue(service, "serviceFactory", "");
+        ObjectServiceFactory factory;
+        if (serviceFactory.equals("jsr181") || serviceFactory.equals("commons-attributes"))
+            factory = getAnnotationServiceFactory(serviceFactory, bindingProvider);
+        else
+            factory = loadServiceFactory(bindingProvider, serviceFactory);
         
         if (style.length() > 0) factory.setStyle(style);
         if (use.length() > 0) factory.setUse(use);
@@ -179,16 +185,22 @@ public class XMLServiceBuilder
         return svc;
     }
 
-    protected ObjectServiceFactory loadServiceFactory(TransportManager tman,
-                                                      BindingProvider bindingProvider,
+    protected ObjectServiceFactory loadServiceFactory(BindingProvider bindingProvider,
                                                       String serviceFactoryName)
     {
         ObjectServiceFactory factory = null;
         if (serviceFactoryName.length() > 0)
         {
+            // Attempt to load a ServiceFactory for the user.
             try
             {
-                factory = (ObjectServiceFactory) loadClass(serviceFactoryName).newInstance();
+                Class clz = loadClass(serviceFactoryName);
+                
+                Constructor con = 
+                    clz.getConstructor( new Class[] {TransportManager.class, BindingProvider.class} );
+                
+                return (ObjectServiceFactory) 
+                    con.newInstance(new Object[] { getXFire().getTransportManager(), bindingProvider });
             }
             catch (Exception e)
             {
@@ -197,12 +209,39 @@ public class XMLServiceBuilder
         }
         else
         {
-            factory = new ObjectServiceFactory(tman, bindingProvider);
+            factory = new ObjectServiceFactory(getXFire().getTransportManager(), bindingProvider);
         }
         
         return factory;
     }
 
+    protected ObjectServiceFactory getAnnotationServiceFactory(String annotationType,
+                                                               BindingProvider bindingProvider) 
+        throws Exception
+    {
+        Class annotsClz = null;
+        Class clz = loadClass("org.codehaus.xfire.annotations.AnnotationServiceFactory");
+        
+        if (annotationType.equals("jsr181"))
+        {
+            annotsClz = loadClass("org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations");
+        }
+        else if (annotationType.equals("commons-attributes"))
+        {
+            annotsClz = loadClass("org.codehaus.xfire.annotations.commons.CommonsWebAttributes");
+        }
+        
+        Class webAnnot = loadClass("org.codehaus.xfire.annotations.WebAnnotations");
+        
+        Constructor con = 
+            clz.getConstructor( new Class[] {webAnnot, TransportManager.class, BindingProvider.class} );
+        
+        return (ObjectServiceFactory) 
+            con.newInstance(new Object[] {annotsClz.newInstance(), 
+                    getXFire().getTransportManager(),
+                    bindingProvider });
+    }
+    
     protected BindingProvider loadBindingProvider(String bindingProviderName)
     {
         BindingProvider bindingProvider = null;

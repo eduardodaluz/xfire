@@ -109,6 +109,14 @@ public class CollectionType
     
     public Type getComponentType()
     {
-        return getTypeMapping().getType(componentType);
+        Type type = getTypeMapping().getType(componentType);
+        
+        if (type == null)
+        {
+            type = getTypeMapping().getTypeCreator().createType(componentType);
+            getTypeMapping().register(type);
+        }
+        
+        return type;
     }
 }

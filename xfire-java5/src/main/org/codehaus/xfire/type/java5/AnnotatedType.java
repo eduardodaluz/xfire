@@ -5,6 +5,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.ServiceUtils;
 
 public class AnnotatedType
     extends BeanType
@@ -25,7 +26,7 @@ public class AnnotatedType
             
             String clsName = getTypeClass().getName();
             if (name == null || name.length() == 0)
-                name = clsName.substring(clsName.lastIndexOf(".")+1);
+                name = ServiceUtils.makeServiceNameFromClassName(getTypeClass());
             
             if (ns == null || ns.length() == 0)
                 ns = NamespaceHelper.makeNamespaceFromClassName(clsName, "http");

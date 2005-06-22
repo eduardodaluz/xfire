@@ -3,26 +3,39 @@ package org.codehaus.xfire.wsdl11.builder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Output;
+import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.service.MessageHeaderInfo;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
+import org.codehaus.yom.Attribute;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.Elements;
+
+import com.ibm.wsdl.extensions.soap.SOAPHeaderImpl;
 
 /**
  * WSDL
@@ -39,7 +52,7 @@ public class WSDLBuilder
 
     private Collection transports;
 
-    private Map wsdlOps;
+    private Map wsdlOps = new HashMap();
 
     private WSDL11ParameterBinding paramBinding;
 
@@ -51,8 +64,6 @@ public class WSDLBuilder
 
         this.transports = transports;
         this.paramBinding = paramBinding;
-        
-        wsdlOps = new HashMap();
 
         PortType portType = createAbstractInterface();
 
@@ -78,13 +89,16 @@ public class WSDLBuilder
         for (Iterator itr = service.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo op = (OperationInfo) itr.next();
-            Message req = getInputMessage(op);
+            
+            // Create input message
+            Message req = createInputMessage(op);
             def.addMessage(req);
-
+            
+            // Create output message if we have an out MEP
             Message res = null;
             if (op.getMEP().equals(SoapConstants.MEP_IN_OUT))
             {
-                res = getOutputMessage(op);
+                res = createOutputMessage(op);
                 def.addMessage(res);
             }
 
@@ -120,7 +134,7 @@ public class WSDLBuilder
             
             WSDL11Transport transport = (WSDL11Transport) transportObj;
 
-            Binding transportBinding = transport.createBinding(portType, service, paramBinding);
+            Binding transportBinding = transport.createBinding(this, portType, paramBinding);
 
             for (Iterator oitr = service.getServiceInfo().getOperations().iterator(); oitr.hasNext();)
             {
@@ -130,11 +144,13 @@ public class WSDLBuilder
 
                 javax.wsdl.Operation wsdlOp = (javax.wsdl.Operation) wsdlOps.get(op.getName());
 
-                BindingOperation bop = transport.createBindingOperation(portType, wsdlOp, service, paramBinding);
+                BindingOperation bop = transport.createBindingOperation(this, portType, wsdlOp, paramBinding);
                 transportBinding.addBindingOperation(bop);
+                
+                createHeaders(op, bop);
             }
 
-            Port transportPort = transport.createPort(transportBinding, service);
+            Port transportPort = transport.createPort(this, transportBinding);
 
             def.addBinding(transportBinding);
             wsdlService.addPort(transportPort);
@@ -144,7 +160,33 @@ public class WSDLBuilder
 
     }
 
-    private Message getOutputMessage(OperationInfo op)
+    private void createHeaders(OperationInfo op, BindingOperation bop)
+    {
+        List inputHeaders = op.getInputMessage().getMessageHeaders();
+        if (inputHeaders.size() == 0)
+        {
+            return;
+        }
+        
+        BindingInput bindingInput = bop.getBindingInput();
+        
+        Message reqHeaders = createHeaderMessages(op.getInputMessage());
+        getDefinition().addMessage(reqHeaders);
+       
+        for (Iterator headerItr = reqHeaders.getParts().values().iterator(); headerItr.hasNext();)
+        {
+            Part headerInfo = (Part) headerItr.next();
+
+            SOAPHeader soapHeader = new SOAPHeaderImpl();
+            soapHeader.setMessage(reqHeaders.getQName());
+            soapHeader.setPart(headerInfo.getName());
+            soapHeader.setUse(paramBinding.getUse());
+            
+            bindingInput.addExtensibilityElement(soapHeader);
+        }
+    }
+
+    private Message createOutputMessage(OperationInfo op)
     {
         // response message
         Message res = getDefinition().createMessage();
@@ -152,20 +194,108 @@ public class WSDLBuilder
 
         res.setUndefined(false);
 
-        paramBinding.createOutputParts(getService(), this, res, op);
+        paramBinding.createOutputParts(this, res, op);
 
         return res;
     }
 
-    private Message getInputMessage(OperationInfo op)
+    private Message createInputMessage(OperationInfo op)
     {
         Message req = getDefinition().createMessage();
         req.setQName(new QName(getInfo().getTargetNamespace(), op.getName() + "Request"));
         req.setUndefined(false);
 
-        paramBinding.createInputParts(getService(), this, req, op);
+        paramBinding.createInputParts(this, req, op);
 
         return req;
+    }
+
+    private Message createHeaderMessages(MessageInfo msgInfo)
+    {
+        Message msg = getDefinition().createMessage();
+
+        msg.setQName(new QName(getInfo().getTargetNamespace(), msgInfo.getName().getLocalPart() + "Headers"));
+        msg.setUndefined(false);
+
+        for (Iterator itr = msgInfo.getMessageHeaders().iterator(); itr.hasNext();)
+        {
+            MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
+            
+            Part part = createPart(header);
+
+            msg.addPart(part);
+        }
+        
+        return msg;
+    }
+
+    public Part createPart(MessageHeaderInfo header)
+    {
+        return createPart(header.getName(), header.getTypeClass(), header.getSchemaType());
+    }
+
+    public Part createPart(MessagePartInfo header)
+    {
+        return createPart(header.getName(), header.getTypeClass(), header.getSchemaType());
+    }
+
+    
+    public Part createPart(QName pName, Class clazz, SchemaType type)
+    {
+        addDependency(type);
+
+        QName schemaTypeName = type.getSchemaType();
+
+        Part part = getDefinition().createPart();
+        part.setName(pName.getLocalPart());
+
+        if (type.isComplex())
+        {
+            Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
+            
+            if (isNotDeclared(schemaEl, pName))
+            {
+                Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
+                schemaEl.appendChild(element);
+    
+                element.addAttribute(new Attribute("name", pName.getLocalPart()));
+    
+                String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+                addNamespace(prefix, schemaTypeName.getNamespaceURI());
+    
+                element.addAttribute(new Attribute("type", 
+                                                   prefix + ":" + schemaTypeName.getLocalPart()));
+            }
+            
+            part.setElementName(pName);
+        }
+        else
+        {
+            part.setTypeName(type.getSchemaType());
+        }
+        return part;
+    }
+    
+    /**
+     * Makes sure that a particular element isn't already declared in the schema.
+     * 
+     * @param schemaEl
+     * @param name
+     * @return
+     */
+    private boolean isNotDeclared(Element schemaEl, QName name)
+    {
+        Elements elements = schemaEl.getChildElements("element", SoapConstants.XSD);
+
+        for (int i = 0; i < elements.size(); i++)
+        {
+            Element e = elements.get(i);
+
+            String elName = e.getAttributeValue("name");
+            if (name != null && elName.equals(name.getLocalPart()))
+                return false;
+        }
+        return true;
     }
 
     public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res)

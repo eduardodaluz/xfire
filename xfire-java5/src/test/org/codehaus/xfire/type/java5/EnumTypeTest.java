@@ -51,7 +51,7 @@ public class EnumTypeTest
     
     public void testAutoCreation() throws Exception
     {
-        Type type = (Type) tm.getType(testEnum.class);
+        Type type = (Type) tm.getTypeCreator().createType(testEnum.class);
         
         assertTrue( type instanceof EnumType );
     }

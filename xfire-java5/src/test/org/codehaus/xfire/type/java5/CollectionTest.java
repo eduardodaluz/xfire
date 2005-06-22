@@ -93,6 +93,14 @@ public class CollectionTest
         printNode(invokeService(service.getName(), "/org/codehaus/xfire/type/java5/dto/GetDTO.xml"));
     }
     
+    public void testCollectionServiceWSDL() throws Exception
+    {
+        Service service = getServiceFactory().create(DTOService.class);
+        getServiceRegistry().register(service);
+        
+        printNode(getWSDLDocument(service.getName()));
+    }
+    
     public class CollectionService
     {
         public Collection<String> getStrings() 

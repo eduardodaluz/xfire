@@ -2,10 +2,8 @@ package org.codehaus.xfire.wsdl11.builder;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +20,6 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
-import org.codehaus.yom.Node;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.converters.DOMConverter;
 
@@ -110,18 +107,21 @@ public abstract class AbstractWSDL
         for (Iterator nsItr = typeMap.keySet().iterator(); nsItr.hasNext();)
         {
             String schemaNs = (String) nsItr.next();
-            List schemaTypes = (List) typeMap.get(schemaNs);
+            Element schemaTypes = (Element) typeMap.get(schemaNs);
 
-            if (schemaTypes.size() > 0)
+            if (schemaTypes.getChildCount() > 0)
             {
-                Element schema = new Element(schemaQ, SoapConstants.XSD);
-                types.appendChild(schema);
+                schemaTypes.detach();
+                types.appendChild(schemaTypes);
 
-                schema.addAttribute(new Attribute("targetNamespace", schemaNs));
-                schema.addAttribute(new Attribute("elementFormDefault", "qualified"));
-                schema.addAttribute(new Attribute("attributeFormDefault", "qualified"));
-            
-                writeSchemaForNamespace(schema, schemaNs, schemaTypes);
+                schemaTypes.addAttribute(new Attribute("targetNamespace", schemaNs));
+                schemaTypes.addAttribute(new Attribute("elementFormDefault", "qualified"));
+                schemaTypes.addAttribute(new Attribute("attributeFormDefault", "qualified"));
+
+                String prefix = NamespaceHelper.getUniquePrefix(schemaTypes, schemaNs);
+                String declaredUri = getDocument().getRootElement().getNamespaceURI(prefix);
+                if (declaredUri == null)
+                    getDocument().getRootElement().addNamespaceDeclaration(prefix, schemaNs);
             }
         }
 
@@ -150,35 +150,6 @@ public abstract class AbstractWSDL
                     addDependency((SchemaType) itr.next());
                 }
             }
-        }
-    }
-
-    /**
-     * Write the schema types for a particular namespace.
-     * 
-     * @param schema
-     *            The schema definition for this namespace. Attach the types to
-     *            this.
-     * @param schemaNs
-     *            The namespace to write the types for.
-     */
-    protected void writeSchemaForNamespace(Element schema, String schemaNs, List types)
-    {       
-        for (Iterator itr = types.iterator(); itr.hasNext();)
-        {
-            Element el = (Element) itr.next();
-
-            for (int i = 0; i < el.getChildCount(); i++)
-            {
-                Node n = el.getChild(i);
-                n.detach();
-                schema.appendChild(n);
-            }
-
-            String prefix = NamespaceHelper.getUniquePrefix(el, schemaNs);
-            String declaredUri = getDocument().getRootElement().getNamespaceURI(prefix);
-            if (declaredUri == null)
-                getDocument().getRootElement().addNamespaceDeclaration(prefix, schemaNs);
         }
     }
 
@@ -256,17 +227,15 @@ public abstract class AbstractWSDL
      */
     public Element createSchemaType(String namespace)
     {
-        Element e = new Element("xfiretemp");
-        getSchemaTypes().appendChild(e);
+        Element e = (Element) typeMap.get(namespace);
 
-        List types = (List) typeMap.get(namespace);
-        if (types == null)
+        if (e == null)
         {
-            types = new ArrayList();
-            typeMap.put(namespace, types);
+            e = new Element(schemaQ, SoapConstants.XSD);
+            
+            typeMap.put(namespace, e);
+            getSchemaTypes().appendChild(e);
         }
-
-        types.add(e);
 
         return e;
     }
