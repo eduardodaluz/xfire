@@ -84,6 +84,18 @@ public class WrappedAutoTypeTest
                 doc);
     }
 
+    public void testGetArray()
+            throws Exception
+    {
+        Document response = invokeService("Array",
+                                          "/org/codehaus/xfire/message/wrapped/GetStringArray11.xml");
+
+        addNamespace("a", "urn:Array");
+        addNamespace("sb", "http://test.java.xfire.codehaus.org");
+        assertValid("//a:getStringArrayResponse", response);
+        assertValid("//a:getStringArrayResponse/a:out/a:string", response);
+    }
+    
     public void testArrayService()
             throws Exception
     {

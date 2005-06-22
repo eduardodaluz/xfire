@@ -333,7 +333,8 @@ public class ArrayType
         
         if (type == null)
         {
-            type = getTypeMapping().getTypeCreator().createType(getTypeClass());
+            type = getTypeMapping().getTypeCreator().createType(compType);
+            getTypeMapping().register(type);
         }
         
         return type;
