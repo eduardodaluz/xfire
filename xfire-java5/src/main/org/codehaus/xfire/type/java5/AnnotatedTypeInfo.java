@@ -37,17 +37,23 @@ public class AnnotatedTypeInfo
         String name = null;
         String ns = null;
         
+        XmlType xtype = (XmlType) getTypeClass().getAnnotation(XmlType.class);
+        if (xtype != null)
+        {
+            ns = xtype.namespace();
+        }
+
         if (isAttribute(desc))
         {
             XmlAttribute att = desc.getReadMethod().getAnnotation(XmlAttribute.class);
             name = att.name();
-            ns = att.namespace();
+            if (att.namespace().length() > 0) ns = att.namespace();
         }
         else if (isAnnotatedElement(desc))
         {
             XmlElement att = desc.getReadMethod().getAnnotation(XmlElement.class);
             name = att.name();
-            ns = att.namespace();
+            if (att.namespace().length() > 0) ns = att.namespace();
         }
         
         if (name == null || name.length() == 0)

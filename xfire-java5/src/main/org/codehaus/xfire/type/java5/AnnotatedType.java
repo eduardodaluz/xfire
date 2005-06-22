@@ -13,29 +13,30 @@ public class AnnotatedType
     public AnnotatedType(Class clazz)
     {
         super(new AnnotatedTypeInfo(clazz));
+        
+        setSchemaType(createSchemaType());
     }
 
-    public QName getSchemaType()
+    public QName createSchemaType()
     {
-        QName schemaType = super.getSchemaType();
+        String name = null;
+        String ns = null;
         
-        if (schemaType == null)
+        XmlType xtype = (XmlType) getTypeClass().getAnnotation(XmlType.class);
+        if (xtype != null)
         {
-            String name = null;
-            String ns = null;
-            
-            String clsName = getTypeClass().getName();
-            if (name == null || name.length() == 0)
-                name = ServiceUtils.makeServiceNameFromClassName(getTypeClass());
-            
-            if (ns == null || ns.length() == 0)
-                ns = NamespaceHelper.makeNamespaceFromClassName(clsName, "http");
-            
-            schemaType = new QName(ns, name);
-            setSchemaType(schemaType);
+            name = xtype.name();
+            ns = xtype.namespace();
         }
         
-        return schemaType;
+        String clsName = getTypeClass().getName();
+        if (name == null || name.length() == 0)
+            name = ServiceUtils.makeServiceNameFromClassName(getTypeClass());
+        
+        if (ns == null || ns.length() == 0)
+            ns = NamespaceHelper.makeNamespaceFromClassName(clsName, "http");
+        
+        return new QName(ns, name);
     }
 
     @Override

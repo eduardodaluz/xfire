@@ -6,8 +6,8 @@ import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.AbstractTypeCreator;
+import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.util.NamespaceHelper;
 
 public class Java5TypeCreator
