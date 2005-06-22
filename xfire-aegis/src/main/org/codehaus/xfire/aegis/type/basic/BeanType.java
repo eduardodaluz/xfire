@@ -198,7 +198,7 @@ public class BeanType
         }
         catch (Exception e)
         {
-            throw new XFireRuntimeException( "Couldn't get property " + name );
+            throw new XFireRuntimeException( "Couldn't get property " + name, e );
         }
     }
 
