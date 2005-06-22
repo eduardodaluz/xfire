@@ -13,6 +13,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 public class XMLBeansParameterBinding
     implements WSDL11ParameterBinding
@@ -27,18 +28,17 @@ public class XMLBeansParameterBinding
         return SoapConstants.USE_LITERAL;
     }
 
-    public void createInputParts(Service service, AbstractWSDL wsdl, Message req, OperationInfo op)
+    public void createInputParts(WSDLBuilder builder, Message req, OperationInfo op)
     {
-        writeParameters(service, wsdl, req, op.getInputMessage().getMessageParts());
+        writeParameters(builder, req, op.getInputMessage().getMessageParts());
     }
 
-    public void createOutputParts(Service service, AbstractWSDL wsdl, Message req, OperationInfo op)
+    public void createOutputParts(WSDLBuilder builder, Message req, OperationInfo op)
     {
-        writeParameters(service, wsdl, req, op.getOutputMessage().getMessageParts());
+        writeParameters(builder, req, op.getOutputMessage().getMessageParts());
     }
     
-    private void writeParameters(Service service, 
-                                 AbstractWSDL wsdl,
+    private void writeParameters(WSDLBuilder builder,
                                  Message message, 
                                  Collection params)
     {
@@ -48,12 +48,12 @@ public class XMLBeansParameterBinding
             Class clazz = param.getTypeClass();
             QName pName = param.getName();
 
-            Part part = wsdl.getDefinition().createPart();
+            Part part = builder.getDefinition().createPart();
             part.setName(pName.getLocalPart());
             part.setElementName(pName);
 
-            String prefix = wsdl.getNamespacePrefix(pName.getNamespaceURI());
-            wsdl.addNamespace(prefix, pName.getNamespaceURI());
+            String prefix = builder.getNamespacePrefix(pName.getNamespaceURI());
+            builder.addNamespace(prefix, pName.getNamespaceURI());
 
             message.addPart(part);
         }
