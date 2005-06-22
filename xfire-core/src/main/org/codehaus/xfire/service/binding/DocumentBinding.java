@@ -14,6 +14,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -54,7 +55,10 @@ public class DocumentBinding
             parameters.add( getBindingProvider().readParameter(p, dr, context) );
         }
 
-        setOperation(findOperation(endpoint, parameters.size()), context);
+        if (!isClientModeOn())
+        {
+            setOperation(findOperation(endpoint, parameters.size()), context);
+        }
         
         context.getInMessage().setBody(parameters);
     }
@@ -65,7 +69,18 @@ public class DocumentBinding
         OperationInfo op = context.getExchange().getOperation();
         Object[] values = (Object[]) message.getBody();
         int i = 0;
-        for(Iterator itr = op.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
+        
+        MessageInfo msgInfo = null;
+        if (isClientModeOn())
+        {
+            msgInfo = op.getInputMessage();
+        }
+        else
+        {
+            msgInfo = op.getOutputMessage();
+        }
+        
+        for(Iterator itr = msgInfo.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo outParam = (MessagePartInfo) itr.next();
             
@@ -88,10 +103,21 @@ public class DocumentBinding
     
     protected MessagePartInfo findMessagePart(Service endpoint, QName name)
     {
+        
         for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo op = (OperationInfo) itr.next();
-            MessagePartInfo p = op.getInputMessage().getMessagePart(name);
+            MessageInfo msgInfo = null;
+            if (isClientModeOn())
+            {
+                msgInfo = op.getOutputMessage();
+            }
+            else
+            {
+                msgInfo = op.getInputMessage();
+            }
+
+            MessagePartInfo p = msgInfo.getMessagePart(name);
             
             if ( p != null )
                 return p;
