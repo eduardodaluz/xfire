@@ -1,4 +1,4 @@
-package org.codehaus.xfire.type.collection;
+package org.codehaus.xfire.aegis.type.collection;
 
 import java.util.ArrayList;
 import java.util.List;

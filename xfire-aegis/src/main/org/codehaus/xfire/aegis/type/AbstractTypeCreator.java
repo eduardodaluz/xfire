@@ -1,17 +1,19 @@
 package org.codehaus.xfire.aegis.type;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Field;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.aegis.type.collection.CollectionType;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.basic.ArrayType;
+import org.codehaus.xfire.aegis.type.collection.CollectionType;
+import org.codehaus.xfire.aegis.type.collection.MapType;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
-import org.codehaus.xfire.XFireRuntimeException;
 
 /**
  * @author Hani Suleiman
@@ -55,9 +57,14 @@ public abstract class AbstractTypeCreator implements TypeCreator
     protected Type createTypeForClass(TypeClassInfo info)
     {
         Class javaType = info.getTypeClass();
+
         if(javaType.isArray())
         {
             return createArrayType(info);
+        }
+        else if(isMap(javaType))
+        {
+            return createMapType(info);
         }
         else if(isCollection(javaType))
         {
@@ -112,6 +119,23 @@ public abstract class AbstractTypeCreator implements TypeCreator
         return type;
     }
 
+    protected Type createMapType(TypeClassInfo info)
+    {
+        QName schemaType = new QName(getTypeMapping().getEncodingStyleURI(), "map");
+        MapType type = new MapType(schemaType, 
+                                   (Class) info.getKeyType(), 
+                                   (Class) info.getGenericType());
+        type.setTypeMapping(getTypeMapping());
+        type.setTypeClass(info.getTypeClass());
+
+        return type;
+    }
+
+    protected boolean isMap(Class javaType)
+    {
+        return Map.class.isAssignableFrom(javaType);
+    }
+    
     public abstract TypeClassInfo createClassInfo(PropertyDescriptor pd);
 
     protected boolean isEnum(Class javaType)
@@ -208,8 +232,9 @@ public abstract class AbstractTypeCreator implements TypeCreator
         Class typeClass;
         Object[] annotations;
         Object genericType;
+        Object keyType;
         QName name;
-
+        
         public Object[] getAnnotations()
         {
             return annotations;
@@ -228,6 +253,16 @@ public abstract class AbstractTypeCreator implements TypeCreator
         public void setGenericType(Object genericType)
         {
             this.genericType = genericType;
+        }
+
+        public Object getKeyType()
+        {
+            return keyType;
+        }
+
+        public void setKeyType(Object keyType)
+        {
+            this.keyType = keyType;
         }
 
         public Class getTypeClass()

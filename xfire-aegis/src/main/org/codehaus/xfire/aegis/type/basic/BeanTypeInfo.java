@@ -84,7 +84,7 @@ public class BeanTypeInfo
     /**
      * Get the type class for the field with the specified QName.
      */
-    protected Type getType(QName name) 
+    public Type getType(QName name) 
     {
         Type type = getTypeMapping().getType(name);
         
@@ -113,9 +113,9 @@ public class BeanTypeInfo
             else
             {
                 type = getTypeMapping().getTypeCreator().createType(desc);
+                
+                getTypeMapping().register(type);
             }
-            
-            getTypeMapping().register(type);
         }
         
         if ( type == null )

@@ -1,0 +1,10 @@
+<map xmlns="urn:test">
+  <entry>
+    <key>key1</key>
+    <value>value1</value>
+  </entry>
+  <entry>
+    <key>key2</key>
+    <value>value2</value>
+  </entry>
+</map>

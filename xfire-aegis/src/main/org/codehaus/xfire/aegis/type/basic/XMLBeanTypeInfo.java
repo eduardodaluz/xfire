@@ -96,37 +96,4 @@ public class XMLBeanTypeInfo
         
         return new QName(ns, localName, prefix);
     }
-    
-    protected Element getMapping(String uri, Elements mappings)
-    {
-        // Check for a mapping with the specified Uri
-        if (uri != null && uri.length() > 0)
-        {
-            for (int i = 0; i < mappings.size(); i++)
-            {
-                Element mapping = mappings.get(i);
-                if (!mapping.getLocalName().equals("mapping"))
-                    break;
-                
-                String uriValue = mapping.getAttributeValue("uri");
-                if (uriValue != null && uriValue.equals(uri))
-                    return mapping;
-            }
-            
-            logger.debug("No mapping for " + uri + ". Trying default mapping.");
-        }
-        
-        // Check for a mapping without a uri.
-        for (int i = 0; i < mappings.size(); i++)
-        {
-            Element mapping = mappings.get(i);
-            if (!mapping.getLocalName().equals("mapping"))
-                break;
-            
-            if (mapping.getAttribute("uri") == null)
-                return mapping;
-        }
-        
-        return null;
-    }
 }

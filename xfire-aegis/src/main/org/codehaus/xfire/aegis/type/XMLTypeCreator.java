@@ -99,10 +99,11 @@ public class XMLTypeCreator extends AbstractTypeCreator
         
         Element propertyEl = getMatch(mapping, "./property[@name='" + pd.getName() + "']");
         if(propertyEl == null) return nextCreator.createClassInfo(pd);
-        
+
         TypeClassInfo info = new TypeClassInfo();
         info.setTypeClass(pd.getReadMethod().getReturnType());
         setComponentType(info, propertyEl);
+        setKeyType(info, propertyEl);
         info.setName(createQName(propertyEl, propertyEl.getAttributeValue("mappedName")));
         
         return info;
@@ -179,6 +180,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             Element parameter = getMatch(bestMatch, "parameter[@index='" + index + "']");
             
             setComponentType(info, parameter);
+            setKeyType(info, parameter);
         }
         else
         {
@@ -225,6 +227,22 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
     }
 
+    protected void setKeyType(TypeClassInfo info, Element parameter)
+    {
+        String componentType = parameter.getAttributeValue("keyType");
+        if(componentType != null)
+        {
+            try
+            {
+                info.setKeyType(ClassLoaderUtils.loadClass(componentType, getClass()));
+            }
+            catch(ClassNotFoundException e)
+            {
+                log.error("Unable to load mapping class " + componentType);
+            }
+        }
+    }
+    
     private Element getBestMatch(Element mapping, Method method, List availableNodes)
     {
         //first find all the matching method names
