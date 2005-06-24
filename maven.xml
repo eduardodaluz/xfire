@@ -1,10 +1,11 @@
-<project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant">
+<project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant" xmlns:artifact="artifact">
 
 	<preGoal name="multiproject:projects-init">
 		<c:set var="x" value="${xfire.java5}"/>
 		<c:choose>
 			<c:when test="${x == true}">
-				<c:set var="maven.multiproject.excludes" value="project.xml"/>
+				<c:set var="maven.multiproject.includes" value="${maven.multiproject.includes},${maven.multiproject.excludes},xfire-all/project.xml"/>
+				<c:set var="maven.multiproject.excludes" value=""/>
 			</c:when>
 			<c:otherwise>
 				<ant:echo><![CDATA[
@@ -21,9 +22,40 @@
 		</c:choose>
 	</preGoal>
 	
-	<preGoal name="multiproject:site">
-		<attainGoal name="multiproject:javadoc"/>
-	</preGoal>
+	<goal name="dist" prereqs="site">
+		<attainGoal name="${maven.multiproject.type}:${maven.multiproject.type}"/>	
+		<mkdir dir="${maven.build.dir}/dist"/>
+		<ant:zip destfile="${maven.build.dir}/dist/${maven.final.name}.zip">
+			<fileset dir="${basedir}" includes="src/**/*,LICENSE*,READ*" excludes="src/main/**/*,src/test/**/*"/>
+			<fileset dir="${maven.build.dir}" includes="${maven.final.name}.${maven.multiproject.type}"/>
+			<zipfileset dir="${pom.build.sourceDirectory}" includes="**/*" prefix="src/main/"/>
+			<zipfileset dir="${pom.build.unitTestSourceDirectory}" includes="**/*" prefix="src/test"/>
+			<zipfileset dir="${maven.docs.dest}" includes="**/*" prefix="docs/"/>
+			<c:forEach items="${pom.artifacts}" var="dependency">
+				<c:if test="${dependency.groupId != 'xfire'}">
+					<zipfileset dir="${dependency.file.parent}" includes="${dependency.file.name}" fullpath="lib/${dependency.file.name}"/>
+				</c:if>
+			</c:forEach>
+		</ant:zip>
+	</goal>
+
+	<goal name="dist:deploy" description="Deploy a binary distribution" prereqs="dist">
+		<c:new var="distTypeHandler" className="org.apache.maven.dist.DistributionArtifactTypeHandler" />
+		<artifact:deploy
+			artifact="${maven.build.dir}/dist/${maven.final.name}.zip"
+			type="distribution-zip"
+			project="${pom}"
+			typeHandler="${distTypeHandler}"
+		/>
+	</goal>
+
+	<goal name="multiproject:dist">
+		<maven:reactor goals="dist" basedir="${basedir}" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}"/>
+	</goal>
+
+	<goal name="multiproject:dist-deploy">
+		<maven:reactor goals="dist:deploy" basedir="${basedir}" includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes}"/>
+	</goal>
 
 	<!-- Makes site:deploy not to run site goal. -->
 	<goal name="site:deploy">

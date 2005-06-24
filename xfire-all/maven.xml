@@ -3,28 +3,24 @@
 	<postGoal name="build:start">
 		<!-- In order to process dependencies -->
 		<maven:reactor goals="build:start" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
-		<!-- Collects data -->
+		<!-- Collect data -->
 		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
 		
 		<!-- Prepares -->
-		<ant:mkdir dir="${maven.build.dest}"/>
-		<ant:mkdir dir="${maven.test.dest}"/>
-		<ant:path id="maven.test.compile.src.set"/>
+		<ant:mkdir dir="${pom.build.sourceDirectory}"/>
+		<ant:mkdir dir="${pom.build.unitTestSourceDirectory}"/>
 		
 		<c:forEach items="${modules}" var="module" indexVar="i">
 			<!-- Adds source folders -->
-			<ant:path id="xfire.all.source.${i}" location="${module.build.sourceDirectory}"/>
-			<maven:addPath id="maven.compile.src.set" refid="xfire.all.source.${i}"/>
+			<ant:copy toDir="${pom.build.sourceDirectory}">
+				<fileset dir="${module.build.sourceDirectory}" includes="**/*" excludes="**/.*,**/CVS"/>
+			</ant:copy>
 
 			<!-- Adds tests source folders -->
-			<c:if test="${module.artifactId != 'xfire-xmlbeans'}">
-				<util:file var="testFolder" name="${module.build.unitTestSourceDirectory}"/>
-				<c:if test="${testFolder.exists()}">
-					<ant:path id="xfire.all.test.source.${i}" location="${module.build.unitTestSourceDirectory}"/>
-					<maven:addPath id="maven.test.compile.src.set" refid="xfire.all.test.source.${i}"/>
-				</c:if>
-			</c:if>
-			
+			<ant:copy toDir="${pom.build.unitTestSourceDirectory}">
+				<fileset dir="${module.build.unitTestSourceDirectory}" includes="**/*" excludes="**/.*,**/CVS"/>
+			</ant:copy>
+
 			<!-- Adds dependencies -->
 			<c:forEach items="${module.artifacts}" var="dependency" indexVar="j">
 				<c:if test="${dependency.groupId != 'xfire'}">
@@ -32,13 +28,9 @@
 					<maven:addPath id="maven.dependency.classpath" refid="xfire.all.dependency.${i}.${j}"/>
 				</c:if>
 			</c:forEach>
-			
-			<!-- Copy resources -->
-			<maven:copy-resources resources="${module.build.resources}" todir="${maven.build.dest}"/>
-			<maven:copy-resources resources="${module.build.unitTest.resources}" todir="${maven.test.dest}"/>
 		</c:forEach>
 		<c:set var="sourcesPresent" value="true"/>
-		<c:set var="unitTestSourcesPresent" value="true"/>
+		<c:set var="unitTestSourcesPresent" value="false"/>
 	</postGoal>
 
 	<goal name="eclipse:generate-project">
@@ -46,6 +38,40 @@
 	</goal>
 	<goal name="eclipse:generate-classpath">
 		<ant:echo>Its just a meta project. No Eclipse project for you.</ant:echo>
+	</goal>
+	
+	<goal name="java:compile">
+		<!-- Compile -->
+		<maven:reactor goals="java:compile" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+
+		<!-- Collect data -->
+		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+
+		<!-- Copies the classes -->
+		<ant:mkdir dir="${maven.build.dest}"/>
+		<c:forEach items="${modules}" var="module" indexVar="i">
+			<ant:copy toDir="${maven.build.dest}">
+				<fileset dir="${basedir}/../${module.artifactId}/target/classes" includes="**/*" excludes="**/.*,**/CVS"/>
+			</ant:copy>
+			<maven:copy-resources resources="${module.build.resources}" todir="${maven.build.dest}"/>
+		</c:forEach>
+	</goal>
+	
+	<goal name="test:compile" prereqs="java:compile">
+		<!-- Compile -->
+		<maven:reactor goals="test:compile" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+
+		<!-- Collect data -->
+		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+
+		<!-- Copies the classes -->
+		<ant:mkdir dir="${maven.test.dest}"/>
+		<c:forEach items="${modules}" var="module" indexVar="i">
+			<ant:copy toDir="${maven.test.dest}">
+				<fileset dir="${basedir}/../${module.artifactId}/target/test-classes" includes="**/*" excludes="**/.*,**/CVS"/>
+			</ant:copy>
+			<maven:copy-resources resources="${module.build.unitTest.resources}" todir="${maven.test.dest}"/>
+		</c:forEach>
 	</goal>
 
 </project>

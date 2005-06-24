@@ -6,4 +6,44 @@
     <shortDescription/>
     <description/>
     <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}</siteDirectory>
+    <build>
+        <sourceDirectory>${basedir}/target/src/main</sourceDirectory>
+        <unitTestSourceDirectory>${basedir}/target/src/test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+                <include>**/*TestCase.java</include>
+                <include>**/*Test.class</include>
+                <include>**/*TestCase.class</include>
+            </includes>
+            <excludes>
+                <exclude>**/*Abstract*</exclude>
+            </excludes>
+            <resources>
+                <resource>
+                    <directory>${basedir}/src/test</directory>
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                    </excludes>
+                    <filtering>false</filtering>
+                </resource>
+            </resources>
+        </unitTest>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+	</build>
+    <reports>
+		<report>maven-tasklist-plugin</report>
+        <report>maven-checkstyle-plugin</report>
+        <report>maven-jdepend-plugin</report>
+        <report>maven-javadoc-plugin</report>
+        <report>maven-jxr-plugin</report>
+        <report>maven-javadoc-plugin</report>
+    </reports>
 </project>
