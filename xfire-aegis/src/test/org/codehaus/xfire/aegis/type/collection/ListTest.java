@@ -64,9 +64,9 @@ public class ListTest
             throws Exception
     {
         Document response = invokeService("ListService",
-                                          "/org/codehaus/xfire/type/collection/GetStrings.xml");
+                                          "/org/codehaus/xfire/aegis/type/collection/GetStrings.xml");
 
-        addNamespace("l", "http://collection.type.xfire.codehaus.org");
+        addNamespace("l", "http://collection.type.aegis.xfire.codehaus.org");
         addNamespace("s", "urn:string");
         assertValid("//l:out/s:string[text()='bleh']", response);
     }
@@ -75,9 +75,9 @@ public class ListTest
             throws Exception
     {
         Document response = invokeService("ListService",
-                                          "/org/codehaus/xfire/type/collection/GetDoubles.xml");
+                                          "/org/codehaus/xfire/aegis/type/collection/GetDoubles.xml");
 
-        addNamespace("l", "http://collection.type.xfire.codehaus.org");
+        addNamespace("l", "http://collection.type.aegis.xfire.codehaus.org");
         addNamespace("s", "urn:double");
         assertValid("//l:out/s:double[text()='1.0']", response);
     }
@@ -86,9 +86,9 @@ public class ListTest
             throws Exception
     {
         Document response = invokeService("ListService",
-                                          "/org/codehaus/xfire/type/collection/ReceiveStrings.xml");
+                                          "/org/codehaus/xfire/aegis/type/collection/ReceiveStrings.xml");
 
-        addNamespace("l", "http://collection.type.xfire.codehaus.org");
+        addNamespace("l", "http://collection.type.aegis.xfire.codehaus.org");
         addNamespace("s", "urn:string");
         assertValid("//l:receiveStringsResponse", response);
     }
@@ -97,9 +97,9 @@ public class ListTest
             throws Exception
     {
         Document response = invokeService("ListService",
-                                          "/org/codehaus/xfire/type/collection/ReceiveDoubles.xml");
+                                          "/org/codehaus/xfire/aegis/type/collection/ReceiveDoubles.xml");
 
-        addNamespace("l", "http://collection.type.xfire.codehaus.org");
+        addNamespace("l", "http://collection.type.aegis.xfire.codehaus.org");
         addNamespace("s", "urn:double");
         assertValid("//l:receiveDoublesResponse", response);
     }

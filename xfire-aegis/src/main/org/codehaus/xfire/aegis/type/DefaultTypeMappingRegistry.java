@@ -152,7 +152,7 @@ public class DefaultTypeMappingRegistry
         xmlCreator.setNextCreator(new DefaultTypeCreator());
         try
         {
-            String j5TC = "org.codehaus.xfire.type.java5.Java5TypeCreator";
+            String j5TC = "org.codehaus.xfire.aegis.type.java5.Java5TypeCreator";
 
             Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
             

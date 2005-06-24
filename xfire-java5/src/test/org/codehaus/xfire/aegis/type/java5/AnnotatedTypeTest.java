@@ -1,4 +1,4 @@
-package org.codehaus.xfire.type.java5;
+package org.codehaus.xfire.aegis.type.java5;
 
 import java.util.Iterator;
 
@@ -7,6 +7,8 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.java5.AnnotatedTypeInfo;
+import org.codehaus.xfire.aegis.type.java5.Java5TypeCreator;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;

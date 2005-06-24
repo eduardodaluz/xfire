@@ -1,4 +1,4 @@
-package org.codehaus.xfire.type.java5;
+package org.codehaus.xfire.aegis.type.java5;
 
 import javax.xml.namespace.QName;
 
@@ -6,6 +6,8 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.java5.EnumType;
+import org.codehaus.xfire.aegis.type.java5.Java5TypeCreator;
 import org.codehaus.xfire.aegis.yom.YOMReader;
 import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;

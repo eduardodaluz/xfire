@@ -1,4 +1,4 @@
-package org.codehaus.xfire.type.java5;
+package org.codehaus.xfire.aegis.type.java5;
 
 public class CurrencyService
 {

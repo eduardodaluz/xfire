@@ -1,6 +1,6 @@
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
  <env:Header/>
  <env:Body>
-  <getStrings xmlns="http://collection.type.xfire.codehaus.org"/>
+  <getStrings xmlns="http://collection.type.aegis.xfire.codehaus.org"/>
  </env:Body>
 </env:Envelope>
