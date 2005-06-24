@@ -129,12 +129,6 @@
             <url>http://java.sun.com/products/javamail/</url>
         </dependency>
         <dependency>
-            <groupId>servletapi</groupId>
-            <artifactId>servletapi</artifactId>
-            <version>2.3</version>
-            <url>http://java.sun.com/products/servlet/</url>
-        </dependency>
-        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.0.4</version>
@@ -170,6 +164,15 @@
             <version>1.0-SNAPSHOT</version>
             <url>http://yom.codehaus.org</url>
         </dependency>
+        <dependency>
+            <groupId>servletapi</groupId>
+            <artifactId>servletapi</artifactId>
+            <version>2.3</version>
+            <url>http://java.sun.com/products/servlet/</url>
+			<properties>
+				<scope>build</scope>
+			</properties>
+        </dependency>
         <!--
         
         Test only dependencies
@@ -180,36 +183,54 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
 			<url>http://www.junit.org</url>
+			<properties>
+				<scope>test</scope>
+			</properties>
         </dependency>
         <dependency>
             <groupId>httpunit</groupId>
             <artifactId>httpunit</artifactId>
             <version>1.5.1</version>
             <url>http://httpunit.sourceforge.net/</url>
+			<properties>
+				<scope>test</scope>
+			</properties>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.1-beta-5</version>
             <url>http://www.jaxen.org/</url>
+			<properties>
+				<scope>test</scope>
+			</properties>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.8</version>
             <url>http://logging.apache.org/log4j</url>
+			<properties>
+				<scope>test</scope>
+			</properties>
         </dependency>
         <dependency>
             <groupId>easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>1.1</version>
             <url>http://www.easymock.org/</url>
+			<properties>
+				<scope>test</scope>
+			</properties>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <version>1.0</version>
             <url>http://xmlunit.sourceforge.net/</url>
+			<properties>
+				<scope>test</scope>
+			</properties>
         </dependency>
         <!--
         
@@ -217,18 +238,14 @@
         
         -->
         <dependency>
-            <groupId>statcvs</groupId>
-            <artifactId>maven-statcvs-plugin</artifactId>
-            <version>2.6</version>
-            <url>http://statcvs-xml.berlios.de/</url>
-			<type>plugin</type>
-        </dependency>
-        <dependency>
             <groupId>maven</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <version>2.5</version>
             <url>http://maven.apache.org/references/checkstyle</url>
 			<type>plugin</type>
+			<properties>
+				<scope>build</scope>
+			</properties>
         </dependency>
     </dependencies>
     <build>
@@ -273,6 +290,5 @@
         <report>maven-jxr-plugin</report>
         <report>maven-junit-report-plugin</report>
         <report>maven-javadoc-plugin</report>
-		<!--report>maven-multiproject-plugin</report-->
     </reports>
 </project>

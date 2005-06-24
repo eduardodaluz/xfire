@@ -1,6 +1,9 @@
 <project default="multiproject:install" xmlns:c="jelly:core" xmlns:maven="jelly:maven" xmlns:ant="jelly:ant" xmlns:util="jelly:util">
 
 	<postGoal name="build:start">
+		<c:set var="maven.multiproject.includes" value="${maven.multiproject.includes},${maven.multiproject.excludes}"/>
+		<c:set var="maven.multiproject.excludes" value=""/>
+
 		<!-- In order to process dependencies -->
 		<maven:reactor goals="build:start" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
 		<!-- Collect data -->
@@ -31,6 +34,10 @@
 		</c:forEach>
 		<c:set var="sourcesPresent" value="true"/>
 		<c:set var="unitTestSourcesPresent" value="false"/>
+	</postGoal>
+	
+	<postGoal name="clean:clean">
+		<attainGoal name="build:start"/>
 	</postGoal>
 
 	<goal name="eclipse:generate-project">
@@ -71,6 +78,24 @@
 				<fileset dir="${basedir}/../${module.artifactId}/target/test-classes" includes="**/*" excludes="**/.*,**/CVS"/>
 			</ant:copy>
 			<maven:copy-resources resources="${module.build.unitTest.resources}" todir="${maven.test.dest}"/>
+		</c:forEach>
+	</goal>
+
+	<goal name="dist:prepare-libs">
+		<!-- Collect data -->
+		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+		<c:forEach items="${modules}" var="module">
+			<c:forEach items="${module.artifacts}" var="dependency">
+				<c:if test="${dependency.dependency.groupId != 'xfire'}">
+					<c:if test="${dependency.dependency.type != 'plugin'}">
+						<c:set var="scope" value="${dependency.dependency.getProperty('scope')} "/>
+						<c:if test="${scope == ' '}">
+							<c:set var="scope" value="runtime"/>
+						</c:if>
+						<copy toDir="${maven.build.dir}/libs/${scope.trim()}" file="${dependency.path}"/>
+					</c:if>
+				</c:if>
+			</c:forEach>
 		</c:forEach>
 	</goal>
 

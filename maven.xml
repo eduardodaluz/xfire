@@ -22,27 +22,37 @@
 		</c:choose>
 	</preGoal>
 	
-	<goal name="dist" prereqs="site">
+	<goal name="dist:prepare-libs">
+		<mkdir dir="${maven.build.dir}/libs"/>
+		<c:forEach items="${pom.artifacts}" var="dependency">
+			<c:if test="${dependency.groupId != 'xfire'}">
+				<c:if test="${dependency.dependency.type != 'plugin'}">
+					<c:set var="scope" value="${dependency.dependency.getProperty('scope')} "/>
+					<c:if test="${scope == ' '}">
+						<c:set var="scope" value="runtime"/>
+					</c:if>
+					<copy toDir="${maven.build.dir}/libs/${scope.trim()}" file="${dependency.path}"/>
+				</c:if>
+			</c:if>
+		</c:forEach>
+	</goal>
+	
+	<goal name="dist" prereqs="site,dist:prepare-libs">
 		<attainGoal name="${maven.multiproject.type}:${maven.multiproject.type}"/>	
-		<mkdir dir="${maven.build.dir}/dist"/>
-		<ant:zip destfile="${maven.build.dir}/dist/${maven.final.name}.zip">
+		<ant:zip destfile="${maven.build.dir}/${maven.final.name}.zip">
 			<fileset dir="${basedir}" includes="src/**/*,LICENSE*,READ*" excludes="src/main/**/*,src/test/**/*"/>
 			<fileset dir="${maven.build.dir}" includes="${maven.final.name}.${maven.multiproject.type}"/>
 			<zipfileset dir="${pom.build.sourceDirectory}" includes="**/*" prefix="src/main/"/>
 			<zipfileset dir="${pom.build.unitTestSourceDirectory}" includes="**/*" prefix="src/test"/>
 			<zipfileset dir="${maven.docs.dest}" includes="**/*" prefix="docs/"/>
-			<c:forEach items="${pom.artifacts}" var="dependency">
-				<c:if test="${dependency.groupId != 'xfire'}">
-					<zipfileset dir="${dependency.file.parent}" includes="${dependency.file.name}" fullpath="lib/${dependency.file.name}"/>
-				</c:if>
-			</c:forEach>
+			<zipfileset dir="${maven.build.dir}/libs" includes="**/*" prefix="libs/"/>
 		</ant:zip>
 	</goal>
 
 	<goal name="dist:deploy" description="Deploy a binary distribution" prereqs="dist">
 		<c:new var="distTypeHandler" className="org.apache.maven.dist.DistributionArtifactTypeHandler" />
 		<artifact:deploy
-			artifact="${maven.build.dir}/dist/${maven.final.name}.zip"
+			artifact="${maven.build.dir}/${maven.final.name}.zip"
 			type="distribution-zip"
 			project="${pom}"
 			typeHandler="${distTypeHandler}"
