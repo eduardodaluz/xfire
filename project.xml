@@ -106,6 +106,14 @@
             <url>http://docs.codehaus.org/display/~juzepeleteiro</url>
             <timezone>-3</timezone>
         </developer>
+        <developer>
+            <name>Hani Suleiman</name>
+            <id>fate</id>
+            <email>fate@codehaus.org</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
     <contributors>
         <contributor>
