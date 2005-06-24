@@ -1,0 +1,10 @@
+<xfire>
+  <services>
+
+    <service>
+      <serviceClass>org.codehaus.xfire.demo.CustomerService</serviceClass>
+      <serviceFactory>jsr181</serviceFactory>
+    </service>
+    
+  </services>
+</xfire>

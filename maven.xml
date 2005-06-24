@@ -22,8 +22,8 @@
 		</c:choose>
 	</preGoal>
 	
-	<goal name="dist:prepare-libs">
-		<mkdir dir="${maven.build.dir}/libs"/>
+	<goal name="dist:prepare">
+		<mkdir dir="${maven.build.dir}/dist/libs"/>
 		<c:forEach items="${pom.artifacts}" var="dependency">
 			<c:if test="${dependency.groupId != 'xfire'}">
 				<c:if test="${dependency.dependency.type != 'plugin'}">
@@ -31,13 +31,13 @@
 					<c:if test="${scope == ' '}">
 						<c:set var="scope" value="runtime"/>
 					</c:if>
-					<copy toDir="${maven.build.dir}/libs/${scope.trim()}" file="${dependency.path}"/>
+					<copy toDir="${maven.build.dir}/dist/libs/${scope.trim()}" file="${dependency.path}"/>
 				</c:if>
 			</c:if>
 		</c:forEach>
 	</goal>
 	
-	<goal name="dist" prereqs="site,dist:prepare-libs">
+	<goal name="dist" prereqs="site,dist:prepare">
 		<attainGoal name="${maven.multiproject.type}:${maven.multiproject.type}"/>	
 		<ant:zip destfile="${maven.build.dir}/${maven.final.name}.zip">
 			<fileset dir="${basedir}" includes="src/**/*,LICENSE*,READ*" excludes="src/main/**/*,src/test/**/*"/>
@@ -45,7 +45,7 @@
 			<zipfileset dir="${pom.build.sourceDirectory}" includes="**/*" prefix="src/main/"/>
 			<zipfileset dir="${pom.build.unitTestSourceDirectory}" includes="**/*" prefix="src/test"/>
 			<zipfileset dir="${maven.docs.dest}" includes="**/*" prefix="docs/"/>
-			<zipfileset dir="${maven.build.dir}/libs" includes="**/*" prefix="libs/"/>
+			<zipfileset dir="${maven.build.dir}/dist" includes="**/*" prefix=""/>
 		</ant:zip>
 	</goal>
 

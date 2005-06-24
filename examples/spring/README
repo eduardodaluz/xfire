@@ -1,0 +1,13 @@
+This example shows how to use XFire with Spring in a servlet container. 
+You must have maven installed to build this example.  To build type:
+
+$ maven war
+
+The resultant war should work in any web application. The WSDL files
+for the services should be viewable at:
+
+http://yourhost:port/CONTEXT/Echo11Service?wsdl
+http://yourhost:port/CONTEXT/Echo12Service?wsdl
+
+where CONTEXT is the name of the context you deployed the war into 
+(most likely "spring).

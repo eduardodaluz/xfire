@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<classpath>
+  <classpathentry excluding="" kind="src" path="src/main">
+  </classpathentry>
+  <classpathentry output="target/test-classes" kind="src" path="src/test">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar">
+  </classpathentry>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/yom/jars/yom-1.0-alpha-1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/xfire/jars/xfire-core-1.0-M4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/xfire/jars/xfire-plexus-1.0-M4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/xfire/jars/xfire-java-1.0-M4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/xfire/jars/xfire-xmlbeans-1.0-M4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-api-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-1.1.1-dev.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-1.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-qname-1.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/classworlds/jars/classworlds-1.1-alpha-1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/plexus/jars/plexus-container-default-1.0-alpha-2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/plexus/jars/plexus-servlet-1.0-beta-2-SNAPSHOT.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/plexus/jars/plexus-utils-1.0-alpha-2.jar">
+  </classpathentry>
+  <classpathentry kind="output" path="target/classes">
+  </classpathentry>
+</classpath>
