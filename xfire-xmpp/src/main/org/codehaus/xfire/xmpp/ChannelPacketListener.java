@@ -1,5 +1,7 @@
 package org.codehaus.xfire.xmpp;
 
+import java.io.StringReader;
+
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
@@ -40,9 +42,9 @@ public class ChannelPacketListener
             return;
         
         SoapEnvelopePacket soapPacket = (SoapEnvelopePacket) packet;
-        
+
         String to = packet.getTo();
-        XMLStreamReader reader = STAXUtils.createXMLStreamReader(soapPacket.getDocumentInputStream(), "UTF-8");
+        XMLStreamReader reader = STAXUtils.createXMLStreamReader(new StringReader(soapPacket.getChildElementXML()));
         InMessage message = new InMessage(reader, to);
         
         MessageContext context = new MessageContext();

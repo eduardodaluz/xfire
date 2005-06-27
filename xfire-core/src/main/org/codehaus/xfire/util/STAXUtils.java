@@ -2,6 +2,7 @@ package org.codehaus.xfire.util;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -395,6 +396,20 @@ public class STAXUtils
         try
         {
             return factory.createXMLStreamReader(in, encoding);
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Couldn't parse stream.", e);
+        }
+    }
+
+    public static XMLStreamReader createXMLStreamReader(Reader reader)
+    {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+ 
+        try
+        {
+            return factory.createXMLStreamReader(reader);
         }
         catch (XMLStreamException e)
         {

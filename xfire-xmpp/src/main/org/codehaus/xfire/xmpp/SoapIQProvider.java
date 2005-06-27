@@ -47,7 +47,7 @@ public class SoapIQProvider
     {
         try
         {
-            return new SoapEnvelopePacket(parseDocument(parser));
+            return new SoapEnvelopePacket(parseDocument(parser).asXML());
         }
         catch(Exception e)
         {

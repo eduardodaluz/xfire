@@ -77,8 +77,6 @@ public class TransportTest
         msg.setBody(doc);
 
         channel1.send(context, msg);
-        Thread.sleep(1000);
-        
         channel1.send(context, msg);
         Thread.sleep(1000);
     }
@@ -87,7 +85,6 @@ public class TransportTest
             throws Exception
     {
         String peer1 = "Peer1";
-        String peer2 = "Peer2";
         
         Channel channel1 = transport1.createChannel(peer1);
 
@@ -96,26 +93,23 @@ public class TransportTest
         
         Channel channel2 = transport2.createChannel(echo);
 
-
         // Document to send
         StaxBuilder builder = new StaxBuilder();
         Document doc = builder.build(getResourceAsStream("/org/codehaus/xfire/xmpp/echo.xml"));
         
         MessageContext context = new MessageContext();
 
-        OutMessage msg = new OutMessage(id + "/" + peer2);
+        OutMessage msg = new OutMessage(id + "/Echo");
         msg.setSerializer(new YOMSerializer());
         msg.setBody(doc);
 
         channel1.send(context, msg);
-        Thread.sleep(1000);
-        
         channel1.send(context, msg);
         Thread.sleep(1000); 
         
         assertEquals(2, peer.getCount());
     }
- 
+
     public void testWSDL()
             throws Exception
     {
@@ -132,7 +126,7 @@ public class TransportTest
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +
                     "/swsdl:address[@location='xfireTestServer@bloodyxml.com/Echo']", wsdl);
     }
-    
+
     public class YOMEndpoint
         implements ChannelEndpoint
     {

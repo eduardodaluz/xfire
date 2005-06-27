@@ -28,13 +28,13 @@
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smack</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <url>http://www.jivesoftware.org/smack/</url>
         </dependency>
         <dependency>
             <groupId>jivesoftware</groupId>
             <artifactId>smackx</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <url>http://www.jivesoftware.org/smack/</url>
         </dependency>
         <dependency>
@@ -44,23 +44,4 @@
             <url>http://www.dom4j.org</url>
         </dependency>
     </dependencies>
-    <build>
-        <unitTest>
-            <excludes>
-                <exclude>**/**.java</exclude>
-            </excludes>
-            <resources>
-                <resource>
-                    <directory>${basedir}/src/test</directory>
-                    <includes>
-                        <include>**/*</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                    </excludes>
-                    <filtering>false</filtering>
-                </resource>
-            </resources>
-        </unitTest>
-    </build>
 </project>

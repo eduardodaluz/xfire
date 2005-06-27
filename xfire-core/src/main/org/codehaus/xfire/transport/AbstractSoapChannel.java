@@ -15,6 +15,18 @@ import org.codehaus.yom.stax.StaxSerializer;
 public abstract class AbstractSoapChannel
     extends AbstractChannel
 {   
+    private boolean serializePreamble = true;
+    
+    public boolean isSerializePreamble()
+    {
+        return serializePreamble;
+    }
+
+    public void setSerializePreamble(boolean serializePreamble)
+    {
+        this.serializePreamble = serializePreamble;
+    }
+
     /**
      * Sends a message wrapped in a SOAP Envelope and Body.
      * 
@@ -29,7 +41,10 @@ public abstract class AbstractSoapChannel
         try
         {
             QName env = message.getSoapVersion().getEnvelope();
-            writer.writeStartDocument(message.getEncoding(), "1.0");
+            
+            if (serializePreamble)
+                writer.writeStartDocument(message.getEncoding(), "1.0");
+            
             writer.setPrefix(env.getPrefix(), env.getNamespaceURI());
             writer.writeStartElement(env.getPrefix(),
                                      env.getLocalPart(),
@@ -58,7 +73,8 @@ public abstract class AbstractSoapChannel
             writer.writeEndElement();
             writer.writeEndElement();
             
-            writer.writeEndDocument();
+            if (serializePreamble)
+                writer.writeEndDocument();
     
             writer.close();
         }

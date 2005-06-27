@@ -1,8 +1,5 @@
 package org.codehaus.xfire.xmpp;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import org.dom4j.Document;
 import org.jivesoftware.smack.packet.IQ;
 
@@ -27,19 +24,6 @@ public class SoapEnvelopePacket
 
     public String getChildElementXML()
     {
-        if (document != null)
-            return document.getRootElement().asXML();
-        else
-            return body;
-    }
-   
-    public Document getDocument()
-    {
-        return document;
-    }
-    
-    public InputStream getDocumentInputStream()
-    {
-        return new ByteArrayInputStream( document.getRootElement().asXML().getBytes() );
+        return body;
     }
 }

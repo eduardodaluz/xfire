@@ -31,6 +31,7 @@ public class XMPPChannel
     {
         setUri(uri);
         setTransport(transport);
+        setSerializePreamble(false);
     }
 
     public void open() throws XFireException
@@ -44,7 +45,7 @@ public class XMPPChannel
         {
             conn = new XMPPConnection(transport.getServer());
             conn.login(transport.getUsername(), transport.getPassword(), getUri());
-            
+
             conn.addPacketListener(new ChannelPacketListener(this),
                                    new ToContainsFilter(transport.getUsername()));
         }
@@ -76,8 +77,7 @@ public class XMPPChannel
             throw new XFireRuntimeException("Couldn't write stream.", e);
         }
 
-        String body = out.toString();
-        SoapEnvelopePacket response = new SoapEnvelopePacket(body);
+        SoapEnvelopePacket response = new SoapEnvelopePacket(out.toString()); 
         response.setFrom(conn.getUser());
         
         if (message.getUri().equals(Channel.BACKCHANNEL_URI))
