@@ -4,7 +4,7 @@
 		<c:set var="x" value="${xfire.java5}"/>
 		<c:choose>
 			<c:when test="${x == true}">
-				<c:set var="maven.multiproject.includes" value="${maven.multiproject.includes},${maven.multiproject.excludes},xfire-all/project.xml"/>
+				<c:set var="maven.multiproject.includes" value="${maven.multiproject.includes},${maven.multiproject.excludes}"/>
 				<c:set var="maven.multiproject.excludes" value=""/>
 			</c:when>
 			<c:otherwise>
@@ -21,6 +21,14 @@
 			</c:otherwise>
 		</c:choose>
 	</preGoal>
+	
+	<preGoal name="build:end">
+		<c:set var="reactorProject.id" value="xfire"/>
+	</preGoal>
+	
+	<postGoal name="build:end">
+		<c:set var="reactorProject.id" value="xfire"/>
+	</postGoal>
 	
 	<goal name="dist:prepare">
 		<mkdir dir="${maven.build.dir}/dist/libs"/>
