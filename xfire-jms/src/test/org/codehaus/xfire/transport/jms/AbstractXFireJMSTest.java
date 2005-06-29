@@ -33,7 +33,7 @@ public class AbstractXFireJMSTest
 
         factory = (QueueConnectionFactory) context.lookup("QueueConnectionFactory");
 
-        transport = new JMSTransport(getXFire().getServiceRegistry(), getConnectionFactory());
+        transport = new JMSTransport(getConnectionFactory());
         getXFire().getTransportManager().register(transport);
     }
 

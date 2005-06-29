@@ -6,7 +6,6 @@ import javax.jms.Destination;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.SoapServiceEndpoint;
@@ -23,23 +22,17 @@ public class JMSTransport
     
     private static final String URI_PREFIX = "";
     
-    private ServiceRegistry registry;
     private Destination source;
     private Destination destination;
     private Destination errors;
     private ConnectionFactory connectionFactory;
 
   /**
-   * @param factory The JMS connection factory to create a channel for.
-   * @param source The JMS destination to listen to for incoming soap requests.
-   * @param destination The JMS destination to publish soap responses to.
-   * @param errors The JMS destination to publish errors to.
+   * @param factory The JMS ConnectionFactory
    */
-    public JMSTransport(ServiceRegistry registry, 
-                        ConnectionFactory factory)
+    public JMSTransport(ConnectionFactory factory)
     {
         this.connectionFactory = factory;
-        this.registry = registry;
     }
 
     public String getName()
@@ -74,11 +67,6 @@ public class JMSTransport
     protected String getUriPrefix()
     {
         return URI_PREFIX;
-    }
-
-    public ServiceRegistry getRegistry()
-    {
-        return registry;
     }
 
     public ConnectionFactory getConnectionFactory()
