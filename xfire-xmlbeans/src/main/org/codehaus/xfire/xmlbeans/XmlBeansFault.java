@@ -12,7 +12,7 @@ import org.codehaus.yom.stax.StaxBuilder;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Nov 17, 2004
  */
-public class XMLBeansFault
+public class XmlBeansFault
     extends XFireFault
 {
     private static final long serialVersionUID = 1L;
@@ -22,7 +22,7 @@ public class XMLBeansFault
     /**
      * @param fault The XmlObject representing the fault.
      */
-    public XMLBeansFault(XmlObject fault)
+    public XmlBeansFault(XmlObject fault)
     {
         super();
         this.fault = fault;

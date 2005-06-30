@@ -16,7 +16,7 @@ public class XMLBeansFaultTest
         
         assertNotNull(faultPart);
         
-        XMLBeansFault fault = new XMLBeansFault(faultPart);
+        XmlBeansFault fault = new XmlBeansFault(faultPart);
         assertEquals("SOAP-ENV:Server", fault.getFaultCode());
         assertEquals("Server Error", fault.getReason());
         assertNotNull(fault.getDetail());

@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -15,17 +16,21 @@ import org.codehaus.xfire.transport.TransportManager;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class XMLBeansServiceFactory
+public class XmlBeansServiceFactory
         extends ObjectServiceFactory
 {
-    public XMLBeansServiceFactory()
+    public XmlBeansServiceFactory()
     {
         setStyle(SoapConstants.STYLE_DOCUMENT);
     }
 
-    public XMLBeansServiceFactory(TransportManager transportManager)
+    public XmlBeansServiceFactory(TransportManager transportManager)
     {
-        super(transportManager, new XMLBeansBindingProvider());
+        super(transportManager);
+        
+        AegisBindingProvider provider = new AegisBindingProvider(new XmlBeansTypeRegistry());
+        setBindingProvider(provider);
+        
         setStyle(SoapConstants.STYLE_DOCUMENT);
     }
 
@@ -57,7 +62,7 @@ public class XMLBeansServiceFactory
     /**
      * Introspect to find the SchemaType for a particular XMLBeans class.
      */
-    protected SchemaType getSchemaType(Class clazz)
+    public static SchemaType getSchemaType(Class clazz)
     {
         try
         {

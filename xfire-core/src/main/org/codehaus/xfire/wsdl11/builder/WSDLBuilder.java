@@ -234,9 +234,9 @@ public class WSDLBuilder
         return createPart(header.getName(), header.getTypeClass(), header.getSchemaType());
     }
 
-    public Part createPart(MessagePartInfo header)
+    public Part createPart(MessagePartInfo part)
     {
-        return createPart(header.getName(), header.getTypeClass(), header.getSchemaType());
+        return createPart(part.getName(), part.getTypeClass(), part.getSchemaType());
     }
 
     
@@ -258,15 +258,21 @@ public class WSDLBuilder
                 Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
                 schemaEl.appendChild(element);
     
-                element.addAttribute(new Attribute("name", pName.getLocalPart()));
-    
                 String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
                 addNamespace(prefix, schemaTypeName.getNamespaceURI());
     
-                element.addAttribute(new Attribute("type", 
-                                                   prefix + ":" + schemaTypeName.getLocalPart()));
+                if (type.isAbstract())
+                {
+                    element.addAttribute(new Attribute("name", pName.getLocalPart()));
+                    element.addAttribute(new Attribute("type", 
+                                                       prefix + ":" + schemaTypeName.getLocalPart()));
+                }
+                else
+                {
+                    element.addAttribute(new Attribute("ref",  prefix + ":" + schemaTypeName.getLocalPart()));
+                }
             }
-            
+     
             part.setElementName(pName);
         }
         else
@@ -292,7 +298,7 @@ public class WSDLBuilder
             Element e = elements.get(i);
 
             String elName = e.getAttributeValue("name");
-            if (name != null && elName.equals(name.getLocalPart()))
+            if (elName != null && elName.equals(name.getLocalPart()))
                 return false;
         }
         return true;

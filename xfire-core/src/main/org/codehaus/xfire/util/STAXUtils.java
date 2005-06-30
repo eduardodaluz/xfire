@@ -324,9 +324,14 @@ public class STAXUtils
     public static void readElements(Element root, XMLStreamReader reader)
     	throws XMLStreamException
     {
+        readElements(root.getOwnerDocument(), root, reader);
+    }
+    
+    public static void readElements(Document doc, Element root, XMLStreamReader reader)
+        throws XMLStreamException
+    {
         int read = 0; // number of elements read in
         
-        Document doc = root.getOwnerDocument();
         Element e;
         
         StringBuffer text = new StringBuffer();
@@ -352,10 +357,12 @@ public class STAXUtils
                     readElements(e, reader);
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    DOMUtils.setText(root, text.toString());  
+                    if (text.length() > 0)
+                        DOMUtils.setText(root, text.toString());  
                     return;
                 case XMLStreamConstants.CHARACTERS:
-                    text.append(reader.getText());
+                    if (root != null)
+                        text.append(reader.getText());
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
                     return;
