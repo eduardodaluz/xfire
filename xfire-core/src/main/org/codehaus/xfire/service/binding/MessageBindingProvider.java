@@ -1,5 +1,7 @@
 package org.codehaus.xfire.service.binding;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -12,11 +14,13 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Node;
 import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.yom.stax.StaxSerializer;
+import org.w3c.dom.Document;
 
 public class MessageBindingProvider
     implements BindingProvider
@@ -44,6 +48,23 @@ public class MessageBindingProvider
             catch (XMLStreamException e)
             {
                 throw new XFireFault("Couldn't parse stream.", e, XFireFault.SENDER);
+            }
+        }
+        else if (Document.class.isAssignableFrom(p.getTypeClass()))
+        {
+            try
+            {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                org.w3c.dom.Document doc = builder.newDocument();
+                
+                STAXUtils.readElements(doc, null, reader);
+                
+                return doc;
+            }
+            catch(Exception e)
+            {
+                throw new XFireFault("Couldn't read message.", e, XFireFault.SENDER);
             }
         }
         else if (p.getTypeClass().isAssignableFrom(MessageContext.class))

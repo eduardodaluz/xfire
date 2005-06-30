@@ -225,15 +225,23 @@ public class WrappedBinding
             String prefix = builder.getNamespacePrefix(uri);
             builder.addNamespace(prefix, uri);
 
-            Element outElement = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-            sequence.appendChild(outElement);
+            Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
+            sequence.appendChild(element);
 
-            outElement.addAttribute(new Attribute("name", pName.getLocalPart()));
-            outElement.addAttribute(new Attribute("type", prefix + ":"
-                    + type.getSchemaType().getLocalPart()));
+            if (type.isAbstract())
+            {
+                element.addAttribute(new Attribute("name", pName.getLocalPart()));
+                
+                element.addAttribute(new Attribute("type", 
+                                                   prefix + ":" + schemaType.getLocalPart()));
+            }
+            else
+            {
+                element.addAttribute(new Attribute("ref",  prefix + ":" + schemaType.getLocalPart()));
+            }
 
-            outElement.addAttribute(new Attribute("minOccurs", "1"));
-            outElement.addAttribute(new Attribute("maxOccurs", "1"));
+            element.addAttribute(new Attribute("minOccurs", "1"));
+            element.addAttribute(new Attribute("maxOccurs", "1"));
         }
     }
 

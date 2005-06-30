@@ -26,12 +26,19 @@ public class Client
     private int timeout = 10*1000;
     private MessageContext context;
     private XFireFault fault;
+    private String endpointUri;
     
     public Client(Transport transport, Service service, String url)
+    {
+        this(transport, service, url, null);
+    }
+    
+    public Client(Transport transport, Service service, String url, String endpointUri)
     {
         this.transport = transport;
         this.service = new Service(service.getServiceInfo());
         this.url = url;
+        this.endpointUri = endpointUri;
         
         clientBinding = (ObjectBinding) ((AbstractBinding) service.getBinding()).clone();
         clientBinding.setClientModeOn(true);
@@ -59,7 +66,10 @@ public class Client
         Channel channel = null;
         try
         {
-            channel = transport.createChannel();
+            if (endpointUri == null)
+                channel = transport.createChannel();
+            else
+                channel = transport.createChannel(endpointUri);
         }
         catch (Exception e)
         {

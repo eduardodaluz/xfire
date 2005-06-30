@@ -51,10 +51,7 @@ public class InExchange
 
     public void handleFault(XFireFault fault)
     {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Fault occurred.", fault);
-        }
+        logger.error("Fault occurred.", fault);
 
         handleFault(fault, context);
         invokeFaultPipeline(fault, context);

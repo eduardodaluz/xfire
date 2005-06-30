@@ -186,7 +186,6 @@ public class XFireServletController
         
         response.setStatus(200);
         // response.setBufferSize(1024 * 8);
-        response.setContentType("text/xml; charset=UTF-8");
 
         XFireHttpSession session = new XFireHttpSession(request);
         MessageContext context = new MessageContext(service, null, session);
@@ -205,15 +204,17 @@ public class XFireServletController
         String contentType = request.getContentType();
         if (null == contentType)
         {
+            response.setContentType("text/htmll; charset=UTF-8");
             // TODO: generate service description here
             
-            response.getWriter().write("Invalid request.");
+            response.getWriter().write("<html><body>Invalid SOAP request.</body></html>");
             response.getWriter().close();
         }
         else if (contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
             try
             {
+                response.setContentType("text/xml; charset=UTF-8");
                 InputStream stream = createMIMERequest(request, context);
                 
                 XMLStreamReader reader = 
@@ -228,6 +229,7 @@ public class XFireServletController
         }
         else
         {
+            response.setContentType("text/xml; charset=UTF-8");
             XMLStreamReader reader = 
                 STAXUtils.createXMLStreamReader(request.getInputStream(), 
                                                 request.getCharacterEncoding());

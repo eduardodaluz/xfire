@@ -84,7 +84,7 @@ public class SoapServiceEndpoint
             context.getExchange().handleFault(fault);
             return;
         }
-        
+
         context.getExchange().doExchange();
     }
 

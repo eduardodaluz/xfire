@@ -76,6 +76,13 @@ public class ObjectServiceFactory
         this.transportManager = transportManager;
     }
 
+    public ObjectServiceFactory(TransportManager transportManager)
+    {
+        this();
+        
+        this.transportManager = transportManager;
+    }
+
     public BindingProvider getBindingProvider()
     {
         if (bindingProvider == null)
