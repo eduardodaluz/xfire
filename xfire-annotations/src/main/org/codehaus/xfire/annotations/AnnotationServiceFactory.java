@@ -272,7 +272,7 @@ public class AnnotationServiceFactory
             {
                 ns = endpoint.getServiceInfo().getName().getNamespaceURI();
             }
-System.out.println("webresult name: " + name);
+
             return new QName(ns, name);
         }
         else
