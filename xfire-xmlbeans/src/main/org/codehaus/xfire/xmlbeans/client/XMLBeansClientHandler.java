@@ -13,7 +13,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.client.AbstractClientHandler;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.xmlbeans.XMLBeansFault;
+import org.codehaus.xfire.xmlbeans.XmlBeansFault;
 
 
 /**
@@ -128,7 +128,7 @@ public class XMLBeansClientHandler
                  && 
                  cursor.getName().getLocalPart().equals("Fault") )
             {
-                throw new XMLBeansFault(response[0]);
+                throw new XmlBeansFault(response[0]);
             }
         }
         catch (XmlException e)
