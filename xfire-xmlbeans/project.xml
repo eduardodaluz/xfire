@@ -17,6 +17,15 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-aegis</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.dependency>true</eclipse.dependency>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.7.0</version>
