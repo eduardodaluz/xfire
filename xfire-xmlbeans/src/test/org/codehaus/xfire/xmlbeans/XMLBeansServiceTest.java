@@ -44,7 +44,7 @@ public class XMLBeansServiceTest
 		throws Exception
 	{
 	    Document wsdl = getWSDLDocument("WeatherService");
-        printNode(wsdl);
+        //printNode(wsdl);
         addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
         addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
         addNamespace( "xsd", SoapConstants.XSD );
@@ -52,5 +52,11 @@ public class XMLBeansServiceTest
 	    assertValid("//wsdl:types/xsd:schema[@targetNamespace='http://www.webservicex.net']", wsdl);
         assertValid("//xsd:schema[@targetNamespace='urn:WeatherService']" +
                 "/xsd:element[@ref='ns1:GetWeatherByZipCode']", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net']" +
+                "/xsd:element[@name='WeatherForecasts']", wsdl);
+        assertValid("count(//xsd:schema[@targetNamespace='http://www.webservicex.net']" +
+                    "/xsd:element[@name='WeatherForecasts'])=1", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net']" +
+                "/xsd:complexType[@name='WeatherForecasts']", wsdl);
 	}
 }

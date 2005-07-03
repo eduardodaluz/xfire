@@ -1,5 +1,6 @@
 package org.codehaus.xfire.xmlbeans;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -24,7 +26,7 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
-import org.codehaus.yom.Node;
+import org.codehaus.yom.Elements;
 import org.codehaus.yom.stax.StaxBuilder;
 import org.codehaus.yom.xpath.YOMXPath;
 import org.jaxen.JaxenException;
@@ -66,12 +68,7 @@ public class XmlBeansType
             
             String ns = getSchemaType().getNamespaceURI();
             String expr = "//xsd:schema[@targetNamespace='" + ns + "']";
-            
-            if (schemaType.isAbstract())
-                expr += "/xsd:complexType[@name=" + getSchemaType().getLocalPart() + "]";
-            else
-                expr += "/xsd:element[@name='" + getSchemaType().getLocalPart() + "']";
-            
+
             List nodes = getMatches(schema, expr);
             if (nodes.size() == 0)
             {
@@ -79,14 +76,36 @@ public class XmlBeansType
                 return;
             }
             
-            Node node = (Node) nodes.get(0);
-            node.detach();
-            root.appendChild(node);
+            Element node = (Element) nodes.get(0);
+            Elements children = node.getChildElements();
+            
+            for (int i = 0; i < children.size(); i++)
+            {
+                Element child = children.get(i);
+                
+                if (hasChild(root, child)) return;
+                
+                child.detach();
+                root.appendChild(child);
+            }
         }
         catch (XMLStreamException e)
         {
             throw new XFireRuntimeException("Couldn't parse schema.", e);
         }
+    }
+
+    private boolean hasChild(Element root, Element child)
+    {
+        String expr = "//xsd:" + child.getLocalName() + 
+        "[@name='" + child.getAttributeValue("name") + "']";
+        
+        System.out.println("expr " + expr);
+        List children = getMatches(root, expr);
+        
+        if (children.size() > 0) return true;
+        
+        return false;
     }
 
     private List getMatches(Object doc, String xpath)
@@ -130,12 +149,31 @@ public class XmlBeansType
 
     public Set getDependencies()
     {
-        return null;
+        SchemaProperty[] properties = schemaType.getProperties();
+        HashSet deps = new HashSet();
+        for (int i = 0; i < properties.length; i++)
+        {
+            SchemaType etype = properties[i].getType();
+            SchemaProperty[] iprops = etype.getElementProperties();
+            for (int j = 0; j < iprops.length; j++)
+            {
+                SchemaType itype = iprops[j].getType();
+                
+                if (!itype.isPrimitiveType())
+                {
+                    deps.add(new XmlBeansType(itype));
+                }
+            }
+        }
+        return deps;
     }
 
     public QName getSchemaType()
     {
-        return schemaType.getDocumentElementName();
+        if (schemaType.isDocumentType())
+            return schemaType.getDocumentElementName();
+        else
+            return schemaType.getName();
     }
 
     public Object readObject(MessageReader reader, MessageContext context)
