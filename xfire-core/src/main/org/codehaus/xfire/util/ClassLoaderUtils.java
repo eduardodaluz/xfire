@@ -1,7 +1,7 @@
 package org.codehaus.xfire.util;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 /**

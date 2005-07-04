@@ -44,5 +44,8 @@ public interface Channel
     
     Transport getTransport();
 
+    /**
+     * @return The URI which represents this Channel's endpoint.
+     */
     String getUri();
 }

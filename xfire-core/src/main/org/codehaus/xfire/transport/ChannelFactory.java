@@ -21,7 +21,7 @@ public interface ChannelFactory
     /**
      * Create a channel with a specified URI.
      * 
-     * @param uri The uri for the channel.
+     * @param uri The URI which represents this Channel's endpoint.
      * @return The channel.
      * @throws Exception Occurs if there was an exception creating or opening the channel.
      */

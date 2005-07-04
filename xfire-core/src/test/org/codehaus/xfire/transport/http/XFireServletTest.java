@@ -17,6 +17,7 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
+import com.meterware.servletunit.ServletUnitClient;
 
 /**
  * XFireServletTest
@@ -95,7 +96,30 @@ public class XFireServletTest
 
         expectErrorCode(req, 500, "Response code 500 required for faults.");
     }
+    
+    public void testInvalidServiceUrl()
+        throws Exception
+    {
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        
+        WebResponse res = client.getResponse("http://localhost/services/NoSuchService");
+        assertEquals(404, res.getResponseCode());
+        assertTrue(res.isHTML());
+    }
+    
+    public void testServiceUrlNoSOAPMessage()
+        throws Exception
+    {
+        ServletUnitClient client = newClient();
+        client.setExceptionsThrownOnErrorStatus(false);
+        
+        WebResponse res = client.getResponse("http://localhost/services/EchoImpl");
 
+        assertTrue(res.isHTML());
+        assertEquals("<html><body>Invalid SOAP request.</body></html>", res.getText());
+    }
+     
     public void testServiceWsdlNotFound()
             throws Exception
     {

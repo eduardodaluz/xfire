@@ -204,7 +204,7 @@ public class XFireServletController
         String contentType = request.getContentType();
         if (null == contentType)
         {
-            response.setContentType("text/htmll; charset=UTF-8");
+            response.setContentType("text/html; charset=UTF-8");
             // TODO: generate service description here
             
             response.getWriter().write("<html><body>Invalid SOAP request.</body></html>");
