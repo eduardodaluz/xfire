@@ -37,7 +37,11 @@ public class XMLBeanTypeInfo
         {
             Element e = elements.get(i);
             
-            mapElement(e);
+            String ignore = e.getAttributeValue("ignore");
+            if (ignore == null || !ignore.equals("true"))
+            {
+                mapElement(e);
+            }
         }
     }
 

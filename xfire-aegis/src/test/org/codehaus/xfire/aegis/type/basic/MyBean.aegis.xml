@@ -22,4 +22,9 @@
     <property name="prop2" style="attribute"/>
   </mapping>
 
+  <mapping uri="urn:xfire:bean5" 
+           xmlns:bean="urn:xfire:bean3">
+    <property name="prop1" ignore="true"/>
+    <property name="prop2" ignore="true"/>
+  </mapping>
 </mappings>

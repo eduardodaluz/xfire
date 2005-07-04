@@ -172,4 +172,18 @@ public class DescriptorTest
         catch(Exception ex)
         {}
     }
+    
+    public void testMapping5() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:bean5");
+
+        Type type = tm.getTypeCreator().createType(MyBean.class);
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
+
+        Iterator elItr = info.getElements();
+        assertFalse(elItr.hasNext());
+
+        Iterator attItr = info.getAttributes();
+        assertFalse(attItr.hasNext());
+    }
 }
