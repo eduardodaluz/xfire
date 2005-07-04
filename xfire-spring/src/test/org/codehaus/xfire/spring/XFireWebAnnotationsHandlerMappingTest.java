@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
 import org.codehaus.xfire.test.EchoImpl;
 import org.easymock.MockControl;
@@ -52,9 +53,21 @@ public class XFireWebAnnotationsHandlerMappingTest
         serviceAnnotation.setServiceName("EchoService");
         webAnnotations.getWebServiceAnnotation(EchoImpl.class);
         control.setReturnValue(serviceAnnotation);
+        
         Method echoMethod = EchoImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         control.setReturnValue(true);
+        
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        control.setReturnValue(true);
+        
+        WebMethodAnnotation wma = new WebMethodAnnotation();
+        wma.setOperationName("echo");
+        webAnnotations.getWebMethodAnnotation(echoMethod);
+        control.setReturnValue(wma);
+        
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        control.setReturnValue(false);
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
         control.setReturnValue(false);
         webAnnotations.hasWebResultAnnotation(echoMethod);
