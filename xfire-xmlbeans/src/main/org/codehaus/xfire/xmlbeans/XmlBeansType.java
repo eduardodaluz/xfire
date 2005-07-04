@@ -98,9 +98,8 @@ public class XmlBeansType
     private boolean hasChild(Element root, Element child)
     {
         String expr = "//xsd:" + child.getLocalName() + 
-        "[@name='" + child.getAttributeValue("name") + "']";
+            "[@name='" + child.getAttributeValue("name") + "']";
         
-        System.out.println("expr " + expr);
         List children = getMatches(root, expr);
         
         if (children.size() > 0) return true;

@@ -55,8 +55,6 @@
       <arg value="-d"/>
       <arg value="${maven.test.dest}"/>
       <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
-      <arg value="${basedir}/src/test-schemas/Parent.xsd"/>
-      <arg value="${basedir}/src/test-schemas/Child.xsd"/>
     </java>
     
     <ant:path id="generate.path">
@@ -103,8 +101,6 @@
       <arg value="-out"/>
       <arg value="${basedir}/target/weather.jar"/>
       <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
-      <arg value="${basedir}/src/test-schemas/Parent.xsd"/>
-      <arg value="${basedir}/src/test-schemas/Child.xsd"/>
     </java>
   </goal>
   
