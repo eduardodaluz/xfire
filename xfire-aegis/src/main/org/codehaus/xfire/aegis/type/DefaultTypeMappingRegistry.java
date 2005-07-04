@@ -160,7 +160,7 @@ public class DefaultTypeMappingRegistry
             j5Creator.setNextCreator(xmlCreator);
             return j5Creator;
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
             return xmlCreator;
         }
