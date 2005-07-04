@@ -43,7 +43,7 @@ public class XMPPTransport
         
         // Make sure the SoapIQProvider class has been loaded so
         // our IQ provider is registered.
-        SoapIQProvider.class.getName();
+        new SoapIQProvider();
         
         FaultHandlerPipeline pipeline = new FaultHandlerPipeline();
         pipeline.addHandler(new XMPPFaultHandler());
