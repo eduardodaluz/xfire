@@ -113,9 +113,9 @@ public abstract class AbstractTransport
         {
             c = createNewChannel(uri, service);
 
-            channels.put(c.getUri(), c);
-
             c.open();
+            
+            channels.put(c.getUri(), c);            
         }
 
         return c;
