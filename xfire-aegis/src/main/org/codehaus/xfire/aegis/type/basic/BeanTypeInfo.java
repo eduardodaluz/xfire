@@ -112,7 +112,17 @@ public class BeanTypeInfo
             }
             else
             {
-                type = getTypeMapping().getTypeCreator().createType(desc);
+                try
+                {
+                    type = getTypeMapping().getTypeCreator().createType(desc);
+                }
+                catch(XFireRuntimeException e)
+                {
+                    e.prepend("Couldn't create type for property " + desc.getName() 
+                              + " on " + getTypeClass());
+                    
+                    throw e;
+                }
                 
                 getTypeMapping().register(type);
             }
