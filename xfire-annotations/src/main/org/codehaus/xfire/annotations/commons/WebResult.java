@@ -29,4 +29,16 @@ public class WebResult
         setName(name);
     }
 
+    /**
+     * Initializes a new instance of the <code>WebResult</code> attribute with the specified name
+     * and namespace.
+     *
+     * @param name the name.
+     * @param targetNamespace the target namespace.
+     */
+    public WebResult(String name, String targetNamespace)
+    {
+        setName(name);
+        setTargetNamespace(targetNamespace);
+    }
 }

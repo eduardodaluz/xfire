@@ -20,4 +20,17 @@ public class WebParam
     {
         setName(name);
     }
+
+    /**
+     * Initializes a new instance of the <code>WebParam</code> attribute with the specified name
+     * and namespace.
+     *
+     * @param name the name.
+     * @param targetNamespace the target namespace.
+     */
+    public WebParam(String name, String targetNamespace)
+    {
+        setName(name);
+        setTargetNamespace(targetNamespace);
+    }
 }
