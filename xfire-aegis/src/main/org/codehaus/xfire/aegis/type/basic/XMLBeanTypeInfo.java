@@ -7,6 +7,8 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
@@ -17,18 +19,30 @@ public class XMLBeanTypeInfo
     private static final Log logger = LogFactory.getLog(XMLBeanTypeInfo.class);
     private String encodingUri;
     private Element mapping;
-
-    public XMLBeanTypeInfo(String encodingUri, 
-                       Class typeClass,
-                       Element mapping)
+    private QName name;
+    
+    public XMLBeanTypeInfo(TypeMapping tm, 
+                           Class typeClass,
+                           Element mapping)
     {
-        super(typeClass, encodingUri);
+        super(typeClass, tm.getEncodingStyleURI());
 
         this.mapping = mapping;
-
+        setTypeMapping(tm);
+        
         buildMapping(mapping);
     }
 
+    public QName getSchemaType()
+    {
+        if (name == null)
+        {
+            name = createQName(mapping, mapping.getAttributeValue("name"));
+        }
+        
+        return name;
+    }
+    
     protected void buildMapping(Element mapping)
     {
         Elements elements = mapping.getChildElements();
@@ -51,23 +65,33 @@ public class XMLBeanTypeInfo
         logger.debug("Mapping element for property " + property);
         
         PropertyDescriptor pd = getPropertyDescriptor(property);
-        if (pd == null)
-            throw new XFireRuntimeException("Invalid property: " + property);
         
-        QName name = createQName(e, e.getAttributeValue("mappedName"));
-        
-        if (name == null)
-            name = createQName(pd);
-        
-        String style = e.getAttributeValue("style");
-        if (style == null) style = "element";
-        
-        if (style.equals("element"))
-            mapElement(property, name);
-        else if (style.equals("attribute"))
-            mapAttribute(property, name);
-        else
-            throw new XFireRuntimeException("Invalid style: " + style);
+        try
+        {
+            Type type = getTypeMapping().getTypeCreator().createType(pd);
+
+            getTypeMapping().register(type);
+
+            String style = e.getAttributeValue("style");
+            if (style == null) style = "element";
+            
+            QName name = createQName(e, e.getAttributeValue("mappedName"));
+            if (name == null) name = createQName(pd);
+            
+            if (style.equals("element"))
+                mapElement(property, name);
+            else if (style.equals("attribute"))
+                mapAttribute(property, name);
+            else
+                throw new XFireRuntimeException("Invalid style: " + style);
+        }
+        catch(XFireRuntimeException ex)
+        {
+            ex.prepend("Couldn't create type for property " + pd.getName() 
+                      + " on " + getTypeClass());
+            
+            throw ex;
+        }
     }
 
     private Class loadClass(String componentType)

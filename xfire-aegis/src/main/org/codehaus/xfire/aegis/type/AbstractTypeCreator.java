@@ -76,7 +76,12 @@ public abstract class AbstractTypeCreator implements TypeCreator
         }
         else
         {
-            return createDefaultType(info);
+            Type type = getTypeMapping().getType(javaType);
+            if (type == null)
+            {
+                type = createDefaultType(info);
+            }
+            return type;
         }
     }
 
@@ -113,7 +118,11 @@ public abstract class AbstractTypeCreator implements TypeCreator
     {
         CollectionType type = new CollectionType(component);
         type.setTypeMapping(getTypeMapping());
-        type.setSchemaType(createCollectionQName(info.getTypeClass(), component));
+        
+        QName name = info.getName();
+        if (name == null) name = createCollectionQName(info.getTypeClass(), component);
+        type.setSchemaType(name);
+        
         type.setTypeClass(info.getTypeClass());
 
         return type;
@@ -162,6 +171,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         if(type == null)
         {
             type = createType(componentType);
+            getTypeMapping().register(type);
         }
         String ns;
 

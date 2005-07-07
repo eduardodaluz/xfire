@@ -95,17 +95,23 @@ public class XMLTypeCreator extends AbstractTypeCreator
     public TypeClassInfo createClassInfo(PropertyDescriptor pd)
     {
         Element mapping = findMapping(pd.getReadMethod().getDeclaringClass());
-        if(mapping == null) return nextCreator.createClassInfo(pd);
+        if(mapping == null)
+        {
+            return nextCreator.createClassInfo(pd);
+        }
         
         Element propertyEl = getMatch(mapping, "./property[@name='" + pd.getName() + "']");
-        if(propertyEl == null) return nextCreator.createClassInfo(pd);
+        if(propertyEl == null) 
+        {
+            return nextCreator.createClassInfo(pd);
+        }
 
         TypeClassInfo info = new TypeClassInfo();
         info.setTypeClass(pd.getReadMethod().getReturnType());
         setComponentType(info, propertyEl);
         setKeyType(info, propertyEl);
         info.setName(createQName(propertyEl, propertyEl.getAttributeValue("mappedName")));
-        
+
         return info;
     }
     
@@ -129,13 +135,18 @@ public class XMLTypeCreator extends AbstractTypeCreator
         
         if (mapping != null)
         {
-            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(getTypeMapping().getEncodingStyleURI(), 
+            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(getTypeMapping(), 
                                                  info.getTypeClass(),
                                                  mapping);
             btinfo.setTypeMapping(getTypeMapping());
             
             BeanType type = new BeanType(btinfo);
-            type.setSchemaType(createQName(info.getTypeClass()));
+            
+            QName name = btinfo.getSchemaType();
+            if (name == null) name = createQName(info.getTypeClass());
+            
+            type.setSchemaType(name);
+            
             type.setTypeClass(info.getTypeClass());
             type.setTypeMapping(getTypeMapping());
 
