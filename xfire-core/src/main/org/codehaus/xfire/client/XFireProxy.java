@@ -63,7 +63,12 @@ public class XFireProxy
     {
         OperationInfo op = client.getService().getServiceInfo().getOperation(methodName);
         
-        return ((Object[]) client.invoke(op, args))[0];
+        Object[] response = (Object[]) client.invoke(op, args);
+        
+        if (response.length > 0) 
+            return response[0];
+        else
+            return null;
     }
 
     /**
