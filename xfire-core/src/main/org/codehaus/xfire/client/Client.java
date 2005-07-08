@@ -103,9 +103,15 @@ public class Client
         }
 
         if (fault != null)
-            throw fault;
+        {
+            XFireFault localFault = fault;
+            fault = null;
+            throw localFault;
+        }
         
-        return response;
+        Object[] localResponse = response;
+        response = null;
+        return localResponse;
     }
 
     
