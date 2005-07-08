@@ -148,7 +148,7 @@ public class DefaultTypeMappingRegistry
 
     protected TypeCreator createTypeCreator()
     {
-        AbstractTypeCreator xmlCreator = new XMLTypeCreator();
+        AbstractTypeCreator xmlCreator = createRootTypeCreator();
         xmlCreator.setNextCreator(new DefaultTypeCreator());
         try
         {
@@ -166,6 +166,11 @@ public class DefaultTypeMappingRegistry
         }
     }
 
+    protected AbstractTypeCreator createRootTypeCreator()
+    {
+        return new XMLTypeCreator();
+    }
+    
     /**
      * @see org.codehaus.xfire.aegis.type.TypeMappingRegistry#unregisterTypeMapping(java.lang.String)
      */
