@@ -16,7 +16,7 @@
     <get-dep artifact="commons-attributes-api" group="commons-attributes" version="2.1" />
     <get-dep artifact="commons-attributes-compiler" group="commons-attributes" version="2.1" />
     <get-dep artifact="backport175" version="1.0.RC1" />
-    <get-dep artifact="xjavadoc" version="1.0.2" />
+    <get-dep artifact="xjavadoc" version="1.1" />
   </target>
 
   <target name="init" depends="xfire.init">
