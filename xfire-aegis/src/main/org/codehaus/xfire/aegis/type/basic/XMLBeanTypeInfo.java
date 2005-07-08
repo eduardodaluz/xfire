@@ -30,7 +30,7 @@ public class XMLBeanTypeInfo
         this.mapping = mapping;
         setTypeMapping(tm);
         
-        buildMapping(mapping);
+        buildMapping();
     }
 
     public QName getSchemaType()
@@ -43,28 +43,36 @@ public class XMLBeanTypeInfo
         return name;
     }
     
-    protected void buildMapping(Element mapping)
+    protected void buildMapping()
     {
-        Elements elements = mapping.getChildElements();
+        PropertyDescriptor[] pds = getPropertyDescriptors();
 
-        for (int i = 0; i < elements.size(); i++)
+        for (int i = 0; i < pds.length; i++)
         {
-            Element e = elements.get(i);
-            
-            String ignore = e.getAttributeValue("ignore");
-            if (ignore == null || !ignore.equals("true"))
-            {
-                mapElement(e);
-            }
+            mapProperty(pds[i]);
         }
     }
 
-    protected void mapElement(Element e)
+    protected void mapProperty(PropertyDescriptor pd)
     {
-        String property = e.getAttributeValue("name");
-        logger.debug("Mapping element for property " + property);
+        Element e = getPropertyElement(mapping, pd.getName());
+        String style = null;
+        QName name = null;
         
-        PropertyDescriptor pd = getPropertyDescriptor(property);
+        if (e != null)
+        {
+            String ignore = e.getAttributeValue("ignore");
+            if (ignore != null && ignore.equals("true"))
+                return;
+            
+            logger.debug("Found mapping for property " + pd.getName());
+
+            style = e.getAttributeValue("style");
+            name = createQName(e, e.getAttributeValue("mappedName"));
+        }
+        
+        if (style == null) style = "element";
+        if (name == null) name = createQName(pd);
         
         try
         {
@@ -72,16 +80,10 @@ public class XMLBeanTypeInfo
 
             getTypeMapping().register(type);
 
-            String style = e.getAttributeValue("style");
-            if (style == null) style = "element";
-            
-            QName name = createQName(e, e.getAttributeValue("mappedName"));
-            if (name == null) name = createQName(pd);
-            
             if (style.equals("element"))
-                mapElement(property, name);
+                mapElement(pd.getName(), name);
             else if (style.equals("attribute"))
-                mapAttribute(property, name);
+                mapAttribute(pd.getName(), name);
             else
                 throw new XFireRuntimeException("Invalid style: " + style);
         }
@@ -92,6 +94,23 @@ public class XMLBeanTypeInfo
             
             throw ex;
         }
+    }
+
+    private Element getPropertyElement(Element mapping2, String name2)
+    {
+        Elements elements = mapping2.getChildElements("property");
+        for (int i = 0; i < elements.size(); i++)
+        {
+            Element e = elements.get(i);
+            String name = e.getAttributeValue("name");
+            
+            if (name != null && name.equals(name2))
+            {
+                return e;
+            }
+        }
+        
+        return null;
     }
 
     private Class loadClass(String componentType)
