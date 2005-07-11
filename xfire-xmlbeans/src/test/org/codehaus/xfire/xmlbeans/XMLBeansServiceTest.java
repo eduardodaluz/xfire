@@ -59,4 +59,25 @@ public class XMLBeansServiceTest
         assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net']" +
                 "/xsd:complexType[@name='WeatherForecasts']", wsdl);
 	}
+    
+    public void testAnyWSDL()
+		throws Exception
+	{
+        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
+
+        endpoint = builder.create(TestService.class,
+                                  "TestService",
+                                  "urn:TestService",
+                                  null);
+        getServiceRegistry().register(endpoint);
+        
+	    Document wsdl = getWSDLDocument("TestService");
+
+        addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
+        addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
+        addNamespace( "xsd", SoapConstants.XSD );
+
+	    assertValid("//wsdl:types/xsd:schema[@targetNamespace='http://codehaus.org/xfire/xmlbeans']" +
+                    "/xsd:element[@name='request']", wsdl);
+	}
 }

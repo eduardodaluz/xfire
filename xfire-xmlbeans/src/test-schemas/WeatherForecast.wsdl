@@ -41,7 +41,9 @@
           <s:element minOccurs="0" maxOccurs="1" name="MinTemperatureF" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="MaxTemperatureC" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="MinTemperatureC" type="s:string" />
+					<s:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </s:sequence>
+	      <s:anyAttribute namespace="##other" processContents="lax"/>
       </s:complexType>
       <s:element name="GetWeatherByPlaceName">
         <s:complexType>

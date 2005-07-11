@@ -128,7 +128,7 @@ public class XmlBeansType
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try
         {
-            return XmlObject.Factory.parse(classLoader.getResourceAsStream("schema/src/" + name));
+            return XmlObject.Factory.parse(classLoader.getResourceAsStream("schemaorg_apache_xmlbeans/src/" + name));
         }
         catch (Exception e)
         {
@@ -158,7 +158,7 @@ public class XmlBeansType
             {
                 SchemaType itype = iprops[j].getType();
                 
-                if (!itype.isPrimitiveType())
+                if (!itype.isPrimitiveType() && itype.getSourceName() != null)
                 {
                     deps.add(new XmlBeansType(itype));
                 }

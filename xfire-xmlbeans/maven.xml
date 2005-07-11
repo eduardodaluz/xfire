@@ -102,6 +102,14 @@
       <arg value="${basedir}/target/weather.jar"/>
       <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
     </java>
+
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="xmlbeans.path"
+          fork="true">
+      <arg value="-out"/>
+      <arg value="${basedir}/target/anyschema.jar"/>
+      <arg value="${basedir}/src/test-schemas/anyschema.xsd"/>
+    </java>
   </goal>
   
   <preGoal name="java:compile">
