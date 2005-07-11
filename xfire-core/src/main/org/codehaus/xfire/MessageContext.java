@@ -27,8 +27,6 @@ import org.codehaus.xfire.transport.Session;
  */
 public class MessageContext
 {
-    private static ThreadLocal messageContexts = new ThreadLocal();
-	
     private Session session;
     private String serviceName;
     private String action;
@@ -45,7 +43,6 @@ public class MessageContext
     public MessageContext()
     {
         properties = new HashMap();
-        messageContexts.set(this);
         handlerStack = new Stack();
     }
 
@@ -119,16 +116,6 @@ public class MessageContext
         this.inMessage = inMessage;
     }
 
-    /**
-     * Get the message context for the current thread.
-     *
-     * @return The current MessageContext or null if there is none.
-     */
-    public static MessageContext getCurrentMessageContext()
-    {
-        return (MessageContext) messageContexts.get();
-    }
-
     public Object getProperty(Object key)
     {
         return properties.get(key);
@@ -156,8 +143,6 @@ public class MessageContext
 
     /**
      * The session that this request is a part of.
-     *
-     * @return
      */
     public Session getSession()
     {
@@ -191,8 +176,6 @@ public class MessageContext
 
     /**
      * The service being invoked.
-     *
-     * @return
      */
     public Service getService()
     {

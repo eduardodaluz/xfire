@@ -68,9 +68,6 @@ public class XFireServletController
         return (HttpServletResponse) responses.get();
     }
 
-    /**
-     * @return
-     */
     protected TransportManager getTransportManager()
     {
         return getXFire().getTransportManager();
@@ -127,6 +124,11 @@ public class XFireServletController
             {
                 throw new ServletException(e);
             }
+        }
+        finally
+        {
+            requests.set(null);
+            responses.set(null);
         }
     }
 
@@ -280,8 +282,7 @@ public class XFireServletController
     }
 
     /**
-     * @param request
-     * @return
+     * Get the service that is mapped to the specified request.
      */
     protected String getService(HttpServletRequest request)
     {
@@ -309,9 +310,6 @@ public class XFireServletController
         return getXFire().getServiceRegistry().getService(name);
     }
 
-    /**
-     * @return
-     */
     public XFire getXFire()
     {
         return xfire;

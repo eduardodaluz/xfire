@@ -32,6 +32,9 @@ public class XFireServlet
         controller = createController();
     }
 
+    /**
+     * Get the xfire instance. if it hasn't been created, then {@link #createXFire()} will be called.
+     */
     public XFire getXFire() throws ServletException
     {
         if (xfire == null) xfire = createXFire();
@@ -39,6 +42,9 @@ public class XFireServlet
         return xfire;
     }
 
+    /**
+     * Get the xfire controller. if it hasn't been created, then {@link #createController()} will be called.
+     */
     public XFireServletController getController() throws ServletException
     {
         if(controller == null) controller = createController();
@@ -66,8 +72,7 @@ public class XFireServlet
     }
 
     /**
-     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
+     * Delegates to {@link XFireServletController#doService(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
      */
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) 
@@ -77,12 +82,11 @@ public class XFireServlet
     }
 
     /**
-     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
+     * Delegates to {@link XFireServletController#doService(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException
     {
-        doGet(req, res);
+        controller.doService(req, res);
     }
 }
