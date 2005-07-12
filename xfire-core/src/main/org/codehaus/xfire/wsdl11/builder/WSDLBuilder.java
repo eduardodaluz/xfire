@@ -1,5 +1,6 @@
 package org.codehaus.xfire.wsdl11.builder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,6 +57,8 @@ public class WSDLBuilder
 
     private WSDL11ParameterBinding paramBinding;
 
+    private List declaredParameters = new ArrayList();
+    
     public WSDLBuilder(Service service, 
                        Collection transports,
                        WSDL11ParameterBinding paramBinding) throws WSDLException
@@ -239,7 +242,6 @@ public class WSDLBuilder
         return createPart(part.getName(), part.getTypeClass(), part.getSchemaType());
     }
 
-    
     public Part createPart(QName pName, Class clazz, SchemaType type)
     {
         addDependency(type);
@@ -251,10 +253,10 @@ public class WSDLBuilder
 
         if (type.isComplex())
         {
-            Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
-            
-            if (isNotDeclared(schemaEl, pName))
+            if (!declaredParameters.contains(pName))
             {
+                Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
+                
                 Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
                 schemaEl.appendChild(element);
     
@@ -271,6 +273,8 @@ public class WSDLBuilder
                 {
                     element.addAttribute(new Attribute("ref",  prefix + ":" + schemaTypeName.getLocalPart()));
                 }
+                
+                declaredParameters.add(pName);
             }
      
             part.setElementName(pName);
@@ -280,28 +284,6 @@ public class WSDLBuilder
             part.setTypeName(type.getSchemaType());
         }
         return part;
-    }
-    
-    /**
-     * Makes sure that a particular element isn't already declared in the schema.
-     * 
-     * @param schemaEl
-     * @param name
-     * @return
-     */
-    private boolean isNotDeclared(Element schemaEl, QName name)
-    {
-        Elements elements = schemaEl.getChildElements("element", SoapConstants.XSD);
-
-        for (int i = 0; i < elements.size(); i++)
-        {
-            Element e = elements.get(i);
-
-            String elName = e.getAttributeValue("name");
-            if (elName != null && elName.equals(name.getLocalPart()))
-                return false;
-        }
-        return true;
     }
 
     public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res)
