@@ -23,11 +23,11 @@ public class ServiceRouterHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-        Element header = context.getInMessage().getHeader();
-        if (header == null) setVersion(DEFAULT_VERSION, context);
+       Element header = context.getInMessage().getHeader();
+        if (header == null) return;
         
         Element versionEl = header.getFirstChildElement(VERSION_NAME, VERSION_NS);
-        if (versionEl == null) setVersion(DEFAULT_VERSION, context);
+        if (versionEl == null) return;
         
         String version = versionEl.getValue();
         if (version == null || version.length() == 0)
@@ -49,6 +49,6 @@ public class ServiceRouterHandler
         }
         
         context.setService(service);
-    }
+   }
 
 }
