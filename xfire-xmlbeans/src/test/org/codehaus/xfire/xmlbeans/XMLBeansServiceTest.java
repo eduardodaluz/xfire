@@ -5,8 +5,6 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
-import org.codehaus.yom.xpath.YOMXPath;
-import org.jaxen.XPath;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -113,13 +111,13 @@ public class XMLBeansServiceTest
 	    Document wsdl = getWSDLDocument("TestService");
 
         String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@ref='ns1:trouble']";
-        XPath xpath = new YOMXPath( xpath_string );
-        xpath.addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
-        xpath.addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
-        xpath.addNamespace( "xsd", SoapConstants.XSD );
-        xpath.addNamespace( "s", SoapConstants.XSD );
+        
+        addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
+        addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
+        addNamespace( "xsd", SoapConstants.XSD );
+        addNamespace( "s", SoapConstants.XSD );
 
-        assertEquals(1, xpath.selectNodes(wsdl).size());
+        assertEquals(1, assertValid(xpath_string, wsdl).size());
 	}
 
     public void testAnyWSDLNoDupRootElementNameElements()
@@ -135,12 +133,13 @@ public class XMLBeansServiceTest
 	    Document wsdl = getWSDLDocument("TestService");
 
         String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@name='trouble']";
-        XPath xpath = new YOMXPath( xpath_string );
-        xpath.addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
-        xpath.addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
-        xpath.addNamespace( "xsd", SoapConstants.XSD );
+        
+        addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
+        addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
+        addNamespace( "xsd", SoapConstants.XSD );
+        addNamespace( "s", SoapConstants.XSD );
 
-        assertEquals(1, xpath.selectNodes(wsdl).size());
+        assertEquals(1, assertValid(xpath_string, wsdl).size());
 	}
 
 }

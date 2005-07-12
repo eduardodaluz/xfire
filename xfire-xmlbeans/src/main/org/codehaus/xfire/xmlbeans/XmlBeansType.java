@@ -63,7 +63,6 @@ public class XmlBeansType
     {
         try
         {
-            Set added_parts = new HashSet();
             Element schema = builder.buildElement(null, getSchema().newXMLStreamReader());
             Document schemaDoc = new Document(schema);
             
