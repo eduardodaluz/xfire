@@ -1,6 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.AsyncService;
 import org.codehaus.xfire.service.BadEcho;
 import org.codehaus.xfire.service.EchoImpl;
@@ -36,8 +35,7 @@ public class XFireServletTest
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
-        service.setInPipeline(new HandlerPipeline());
-        service.getInPipeline().addHandler(new MockSessionHandler());
+        service.addInHandler(new MockSessionHandler());
         getServiceRegistry().register(service);
 
         Service faultService = getServiceFactory().create(BadEcho.class);
@@ -92,7 +90,7 @@ public class XFireServletTest
                                                   "text/xml");
 
         Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
-        assertNotNull(transport.getFaultPipeline());
+        assertNotNull(transport.getFaultHandlers());
 
         expectErrorCode(req, 500, "Response code 500 required for faults.");
     }

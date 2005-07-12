@@ -1,25 +1,21 @@
 package org.codehaus.xfire;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.exchange.InMessage;
-import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.handler.AbstractHandlerSupport;
+import org.codehaus.xfire.handler.DispatchServiceHandler;
+import org.codehaus.xfire.handler.ParseMessageHandler;
+import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultTransportManager;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -27,7 +23,7 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
  * @since Feb 13, 2004
  */
 public class DefaultXFire
-        extends AbstractXFireComponent
+        extends AbstractHandlerSupport
         implements XFire
 {
     private ServiceRegistry registry;
@@ -36,10 +32,17 @@ public class DefaultXFire
 
     private static final Log logger = LogFactory.getLog(DefaultXFire.class);
 
+    private List inPhases;
+    private List outPhases;
+    private List faultPhases;
+    
     public DefaultXFire()
     {
         registry = new DefaultServiceRegistry();
         transportManager = new DefaultTransportManager(registry);
+        
+        createPhases();
+        createHandlers();
     }
 
     public DefaultXFire(final ServiceRegistry registry,
@@ -47,43 +50,44 @@ public class DefaultXFire
     {
         this.registry = registry;
         this.transportManager = transportManager;
+
+        createPhases();
+        createHandlers();
     }
 
-    public void invoke(final XMLStreamReader reader,
-                       final MessageContext context)
+    protected void createHandlers()
     {
-        final String serviceName = context.getServiceName();
-        final Service endpoint = findService(serviceName);
-        
-        if (endpoint == null)
-        {
-            throw new XFireRuntimeException("No such service: " + serviceName);
-        }
-        
-        try
-        {
-            final Transport transport = getTransportManager().getTransport(LocalTransport.NAME);
-            Channel channel = transport.createChannel(endpoint);
-            
-            // Verify that the transport can be used for this service.
-            if (transport != null
-                    &&
-                    !getTransportManager().isEnabled(context.getServiceName(), transport.getName()))
-            {
-                throw new XFireFault("Service " + serviceName +
-                                     " is unavailable for current transport.",
-                                     XFireFault.SENDER);
-            }
+        addInHandler(new ParseMessageHandler());
+        addInHandler(new DispatchServiceHandler());
+    }
 
-            context.setService(endpoint);
-            
-            InMessage inMessage = new InMessage(reader, channel.getUri());
-            channel.receive(context, inMessage);
-        }
-        catch (Exception e)
-        {
-            logger.error("Could not initiate service operation.", e);
-        }
+    /**
+     * Creates a default list of phases for this XFire instance.
+     */
+    protected void createPhases()
+    {
+        inPhases = new ArrayList();
+        inPhases.add(new Phase(Phase.TRANSPORT, 1000));
+        inPhases.add(new Phase(Phase.PARSE, 2000));
+        inPhases.add(new Phase(Phase.PRE_DISPATCH, 3000));
+        inPhases.add(new Phase(Phase.DISPATCH, 4000));
+        inPhases.add(new Phase(Phase.POLICY, 5000));
+        inPhases.add(new Phase(Phase.USER, 6000));
+        inPhases.add(new Phase(Phase.PRE_INVOKE, 7000));
+        inPhases.add(new Phase(Phase.SERVICE, 8000));
+
+        outPhases = new ArrayList();
+        outPhases.add(new Phase(Phase.POST_INVOKE, 1000));
+        outPhases.add(new Phase(Phase.POLICY, 2000));
+        outPhases.add(new Phase(Phase.USER, 3000));
+        outPhases.add(new Phase(Phase.TRANSPORT, 4000));
+        outPhases.add(new Phase(Phase.SEND, 5000));
+        
+        faultPhases = new ArrayList();
+        faultPhases.add(new Phase(Phase.POLICY, 1000));
+        faultPhases.add(new Phase(Phase.USER, 2000));
+        faultPhases.add(new Phase(Phase.TRANSPORT, 3000));
+        faultPhases.add(new Phase(Phase.SEND, 4000));
     }
 
     protected Service findService(final String serviceName)
@@ -96,22 +100,6 @@ public class DefaultXFire
         }
         
         return service;
-    }
-
-    public void invoke(final InputStream stream,
-                       final MessageContext context)
-    {
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-
-        try
-        {
-            invoke(factory.createXMLStreamReader(stream),
-                   context);
-        }
-        catch (XMLStreamException e)
-        {
-            throw new XFireRuntimeException("Couldn't parse stream.", e);
-        }
     }
 
     public void generateWSDL(final String serviceName, final OutputStream out)
@@ -142,5 +130,35 @@ public class DefaultXFire
     public TransportManager getTransportManager()
     {
         return transportManager;
+    }
+
+    public List getInPhases()
+    {
+        return inPhases;
+    }
+
+    public void setInPhases(List inPhases)
+    {
+        this.inPhases = inPhases;
+    }
+
+    public List getOutPhases()
+    {
+        return outPhases;
+    }
+
+    public void setOutPhases(List outPhases)
+    {
+        this.outPhases = outPhases;
+    }
+
+    public List getFaultPhases()
+    {
+        return faultPhases;
+    }
+
+    public void setFaultPhases(List faultPhases)
+    {
+        this.faultPhases = faultPhases;
     }
 }

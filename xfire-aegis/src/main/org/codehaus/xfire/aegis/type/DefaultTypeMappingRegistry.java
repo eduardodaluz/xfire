@@ -10,7 +10,6 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.aegis.type.basic.Base64Type;
 import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
 import org.codehaus.xfire.aegis.type.basic.BooleanType;
@@ -35,7 +34,6 @@ import org.codehaus.xfire.util.ClassLoaderUtils;
  * @since Feb 22, 2004
  */
 public class DefaultTypeMappingRegistry
-        extends AbstractXFireComponent
         implements TypeMappingRegistry
 {
     private static final QName XSD_STRING = new QName(SoapConstants.XSD, "string");

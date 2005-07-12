@@ -25,13 +25,15 @@ public class ConfigurationTest
     {
         Service service = getServiceRegistry().getService("Echo");
         assertNotNull(service);
-        assertNotNull(service.getInPipeline());
-        assertEquals(2, service.getInPipeline().size());
-        assertNotNull(service.getOutPipeline());
-        assertEquals(1, service.getOutPipeline().size());
+        assertNotNull(service.getInHandlers());
+        assertEquals(3, service.getInHandlers().size());
+        assertNotNull(service.getOutHandlers());
+        assertEquals(2, service.getOutHandlers().size());
 
         service = getServiceRegistry().getService("EchoXMLBeans");
         assertNotNull(service);
+        
+        assertTrue(getXFire().getInPhases().size() > 0);
         
         //service = (ObjectService) getServiceRegistry().getService("EchoWSDL");
         //assertNotNull( service ); 

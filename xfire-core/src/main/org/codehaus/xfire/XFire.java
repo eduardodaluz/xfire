@@ -1,10 +1,9 @@
 package org.codehaus.xfire;
 
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
-import javax.xml.stream.XMLStreamReader;
-
+import org.codehaus.xfire.handler.HandlerSupport;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 
@@ -18,33 +17,9 @@ import org.codehaus.xfire.transport.TransportManager;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 18, 2004
  */
-public interface XFire
+public interface XFire extends HandlerSupport
 {
     final public static String ROLE = XFire.class.getName();
-
-    /**
-     * Processes a new SOAP Message request. Faults are handled according to the message contract of the particular
-     * service. A <code>XFireRuntimeException</code>s may still be thrown if something fatal goes wrong in the
-     * pipeline.
-     *
-     * @param in      An InputStream to the SOAP document.
-     * @param context The MessageContext.
-     * @deprecated
-     */
-    void invoke(InputStream in, MessageContext context)
-            throws XFireRuntimeException;
-
-    /**
-     * Processes a new SOAP Message request. Faults are handled according to the message contract of the particular
-     * service. A <code>XFireRuntimeException</code>s may still be thrown if something fatal goes wrong in the
-     * pipeline.
-     *
-     * @param in      An InputStream to the SOAP document.
-     * @param context The MessageContext.
-     * @deprecated
-     */
-    void invoke(XMLStreamReader reader, MessageContext context)
-            throws XFireRuntimeException;
 
     /**
      * Generate WSDL for a service.
@@ -63,4 +38,11 @@ public interface XFire
      * Get the <code>TransportManager</code>.
      */
     TransportManager getTransportManager();
+
+    List getInPhases();
+    
+    List getOutPhases();
+
+    List getFaultPhases();
+    
 }

@@ -1,17 +1,24 @@
 <project>
-    <extend>${basedir}/../project.xml</extend>
-    <artifactId>xfire-core</artifactId>
-    <name>XFire</name>
-    <package>org.codehaus.xfire</package>
-    <shortDescription/>
-    <description/>
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}</siteDirectory>
-    <dependencies>
-        <dependency>
-            <groupId>jetty</groupId>
-            <artifactId>org.mortbay.jetty</artifactId>
-            <version>5.1.3</version>
-            <url>http://jetty.mortbay.org</url>
-        </dependency>
-    </dependencies>
+	<extend>${basedir}/../project.xml</extend>
+	<artifactId>xfire-core</artifactId>
+	<name>XFire</name>
+	<package>org.codehaus.xfire</package>
+	<shortDescription />
+	<description />
+	<siteDirectory>
+		/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}
+	</siteDirectory>
+	<dependencies>
+		<dependency>
+			<groupId>jetty</groupId>
+			<artifactId>org.mortbay.jetty</artifactId>
+			<version>5.1.3</version>
+			<url>http://jetty.mortbay.org</url>
+		</dependency>
+		<dependency>
+			<id>commons-httpclient</id>
+			<version>3.0-rc3</version>
+			<url>http://jakarta.apache.org/commons/httpclient/3.0/</url>
+		</dependency>
+	</dependencies>
 </project>

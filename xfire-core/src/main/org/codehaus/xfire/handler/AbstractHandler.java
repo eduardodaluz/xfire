@@ -2,7 +2,6 @@ package org.codehaus.xfire.handler;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.AbstractXFireComponent;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 
@@ -11,7 +10,6 @@ import org.codehaus.xfire.fault.XFireFault;
  * @since Feb 18, 2004
  */
 public abstract class AbstractHandler
-    extends AbstractXFireComponent
     implements Handler
 {
 	/**
@@ -28,6 +26,11 @@ public abstract class AbstractHandler
     public String[] getRoles()
     {
         return null;
+    }
+    
+    public String getPhase()
+    {
+        return Phase.USER;
     }
     
     /**

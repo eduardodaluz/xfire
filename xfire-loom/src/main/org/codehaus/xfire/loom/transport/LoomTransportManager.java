@@ -13,15 +13,13 @@ import org.codehaus.xfire.transport.DefaultTransportManager;
  */
 public class LoomTransportManager extends DefaultTransportManager implements Initializable, Serviceable
 {
-    private ServiceRegistry m_registry;
-
     public void service( final ServiceManager manager ) throws ServiceException
     {
-        m_registry = (ServiceRegistry)manager.lookup(ServiceRegistry.class.getName());
+        setServiceRegistry( (ServiceRegistry)manager.lookup(ServiceRegistry.class.getName()) );
     }
 
-    public void initialize() throws Exception
+    public void initialize()
     {
-        initializeTransports(m_registry);
+        super.initialize();
     }
 }

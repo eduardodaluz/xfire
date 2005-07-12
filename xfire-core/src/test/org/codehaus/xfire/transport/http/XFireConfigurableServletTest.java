@@ -40,9 +40,9 @@ public class XFireConfigurableServletTest
         Service echo1 = reg.getService("Echo1");
         assertTrue(echo1.getSoapVersion() instanceof Soap12);
 
-        assertNotNull(echo1.getInPipeline());
-        assertEquals(1, echo1.getInPipeline().size());
-        assertNotNull(echo1.getOutPipeline());
-        assertEquals(1, echo1.getOutPipeline().size());
+        assertEquals(1, echo1.getInHandlers().size());
+        assertTrue(echo1.getInHandlers().get(0) instanceof MockSessionHandler);
+        assertEquals(1, echo1.getOutHandlers().size());
+        assertTrue(echo1.getOutHandlers().get(0) instanceof MockSessionHandler);        
     }
 }

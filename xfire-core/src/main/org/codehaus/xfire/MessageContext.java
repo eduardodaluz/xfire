@@ -1,19 +1,14 @@
 package org.codehaus.xfire;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.exchange.InExchange;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.exchange.RobustInOutExchange;
+import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -28,36 +23,29 @@ import org.codehaus.xfire.transport.Session;
 public class MessageContext
 {
     private Session session;
-    private String serviceName;
-    private String action;
     private Map properties;
 
     private Service service;
 
     private MessageExchange exchange;
-    private InMessage inMessage;
-    private OutMessage replyMessage;
-    
-    private Stack handlerStack;
+
+    private HandlerPipeline inPipeline;
+    private HandlerPipeline outPipeline;
+    private XFire xfire;
     
     public MessageContext()
     {
         properties = new HashMap();
-        handlerStack = new Stack();
+    }
+    
+    public XFire getXFire()
+    {
+        return xfire;
     }
 
-    /**
-     * Create a MessageContext to invoke a service with the specified document as the request.
-     */
-    public MessageContext(String service,
-                          String action,
-                          Session session)
+    public void setXFire(XFire xfire)
     {
-        this();
-
-        this.serviceName = service;
-        this.action = action;
-        this.session = session;
+        this.xfire = xfire;
     }
 
     public MessageExchange createMessageExchange(OperationInfo operation)
@@ -72,7 +60,7 @@ public class MessageContext
     {
         MessageExchange ex = null;
         
-        if (mepUri.equals(SoapConstants.MEP_IN_OUT))
+        if (mepUri.equals(SoapConstants.MEP_ROBUST_IN_OUT))
         {
             ex = new RobustInOutExchange(this);
         }
@@ -98,22 +86,12 @@ public class MessageContext
 
     public OutMessage getOutMessage()
     {
-        return replyMessage;
-    }
-
-    public void setOutMessage(OutMessage replyDestination)
-    {
-        this.replyMessage = replyDestination;
+        return exchange.getOutMessage();
     }
 
     public InMessage getInMessage()
     {
-        return inMessage;
-    }
-
-    public void setInMessage(InMessage inMessage)
-    {
-        this.inMessage = inMessage;
+        return exchange.getInMessage();
     }
 
     public Object getProperty(Object key)
@@ -126,23 +104,10 @@ public class MessageContext
         properties.put(key, value);
     }
 
-    public void setRequestStream(InputStream requestStream, String uri)
-    {
-        try
-        {
-            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-            XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(requestStream);
-            
-            setInMessage(new InMessage(xmlStreamReader, uri));
-        }
-        catch (XMLStreamException e)
-        {
-            throw new IllegalArgumentException("Invalid xml request stream: " + e);
-        }
-    }
-
     /**
      * The session that this request is a part of.
+     *
+     * @return
      */
     public Session getSession()
     {
@@ -154,28 +119,10 @@ public class MessageContext
         this.session = session;
     }
 
-    public String getAction()
-    {
-        return action;
-    }
-
-    public void setAction(String action)
-    {
-        this.action = action;
-    }
-
-    public String getServiceName()
-    {
-        return serviceName;
-    }
-
-    public void setServiceName(String service)
-    {
-        this.serviceName = service;
-    }
-
     /**
      * The service being invoked.
+     *
+     * @return
      */
     public Service getService()
     {
@@ -187,14 +134,23 @@ public class MessageContext
         this.service = service;
     }
 
-    public Stack getHandlerStack()
+    public HandlerPipeline getInPipeline()
     {
-        return handlerStack;
+        return inPipeline;
     }
 
-    public void setHandlerStack(Stack handlerStack)
+    public void setInPipeline(HandlerPipeline messagePipeline)
     {
-        this.handlerStack = handlerStack;
+        this.inPipeline = messagePipeline;
     }
-    
+
+    public HandlerPipeline getOutPipeline()
+    {
+        return outPipeline;
+    }
+
+    public void setOutPipeline(HandlerPipeline outPipeline)
+    {
+        this.outPipeline = outPipeline;
+    }
 }

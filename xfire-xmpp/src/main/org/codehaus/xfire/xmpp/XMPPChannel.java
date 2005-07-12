@@ -10,7 +10,8 @@ import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.transport.AbstractSoapChannel;
+import org.codehaus.xfire.soap.SoapSerializer;
+import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 import org.dom4j.Document;
@@ -23,7 +24,7 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.XMPPError;
 
 public class XMPPChannel
-    extends AbstractSoapChannel
+    extends AbstractChannel
 {
     private XMPPConnection conn;
 
@@ -31,7 +32,6 @@ public class XMPPChannel
     {
         setUri(uri);
         setTransport(transport);
-        setSerializePreamble(false);
     }
 
     public void open() throws XFireException
@@ -46,7 +46,7 @@ public class XMPPChannel
             conn = new XMPPConnection(transport.getServer());
             conn.login(transport.getUsername(), transport.getPassword(), getUri());
 
-            conn.addPacketListener(new ChannelPacketListener(this),
+            conn.addPacketListener(new ChannelPacketListener(transport.getXFire(), this),
                                    new ToContainsFilter(transport.getUsername()));
         }
         catch (XMPPException e)
@@ -63,8 +63,10 @@ public class XMPPChannel
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try
         {
+            context.setProperty(SoapSerializer.SERIALIZE_PROLOG, Boolean.FALSE);
             final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
-            sendSoapMessage(message, writer, context);
+            
+            message.getSerializer().writeMessage(message, writer, context);
             
             writer.flush();
             writer.close();

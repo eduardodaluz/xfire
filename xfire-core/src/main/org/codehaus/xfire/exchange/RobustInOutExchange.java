@@ -1,13 +1,8 @@
 package org.codehaus.xfire.exchange;
 
-import java.util.Stack;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFireException;
-import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.transport.Channel;
 
 /**
@@ -20,126 +15,73 @@ public class RobustInOutExchange
     extends AbstractMessageExchange
 {
     private static final Log logger = LogFactory.getLog(RobustInOutExchange.class);
-    
-    private MessageContext context;
-    private InMessage inMessage;
-    private OutMessage outMessage;
+
     public RobustInOutExchange(MessageContext context)
     {
-        this.context = context;
-        this.inMessage = context.getInMessage();
+        super(context);
+
+        if (context.getExchange() != null)
+        {
+            setInMessage(context.getExchange().getInMessage());
+        }
         
         context.setExchange(this);
     }
 
-    public InMessage createInMessage()
+    public OutMessage getOutMessage()
     {
-        throw new IllegalStateException("In messages can't be created from this MEP.");
-    }
+        if (super.getOutMessage() == null)
+        {
+            OutMessage outMessage = new OutMessage(Channel.BACKCHANNEL_URI);
+            outMessage.setChannel(getOutChannel());
+            outMessage.setSoapVersion(getInMessage().getSoapVersion());
     
-    public OutMessage createOutMessage()
-    {
-        OutMessage outMessage = new OutMessage(Channel.BACKCHANNEL_URI);
-        outMessage.setChannel(getOutChannel());
-        outMessage.setSoapVersion(getInMessage().getSoapVersion());
-
-        return outMessage;
+            setOutMessage(outMessage);
+        }
+        return super.getOutMessage();
     }
 
-    public OutMessage createOutFault()
+    public AbstractMessage getFaultMessage()
+        throws UnsupportedOperationException
     {
-        return createOutMessage();
+        if (super.getFaultMessage() == null)
+        {
+            OutMessage outMessage = new OutMessage(Channel.BACKCHANNEL_URI);
+            outMessage.setChannel(getFaultChannel());
+            outMessage.setSoapVersion(getInMessage().getSoapVersion());
+    
+            setFaultMessage(outMessage);
+        }
+        return super.getFaultMessage();
+    }
+
+    public boolean hasFaultMessage()
+    {
+        return true;
+    }
+
+    public boolean hasInMessage()
+    {
+        return true;
+    }
+
+    public boolean hasOutMessage()
+    {
+        return true;
+    }
+
+    public Channel getFaultChannel()
+    {
+        return getInChannel();
+    }
+
+    public Channel getInChannel()
+    {
+        return getContext().getInMessage().getChannel();
     }
 
     public Channel getOutChannel()
     {
-        return getInMessage().getChannel();
-    }
-
-    public Channel getOutFaultChannel()
-    {
-        return getOutChannel();
-    }
-    
-    public InMessage getInMessage()
-    {
-        return inMessage;
-    }
-
-    public OutMessage getOutMessage()
-    {
-        return outMessage;
-    }
-
-    public void setOutMessage(OutMessage outMessage)
-    {
-        this.outMessage = outMessage;
-    }
-
-    public void doExchange()
-    {
-        try
-        {
-            // In pipeline
-            invokeInPipeline(context);
-
-            OutMessage outMsg = createOutMessage();
-            context.setOutMessage(outMsg);
-            
-            Handler binding = context.getService().getBinding();
-            binding.invoke(context);
-
-            // The out pipeline
-            invokeOutPipeline(context);
-
-            MessageSerializer serializer = context.getService().getBinding();
-            outMsg.setSerializer(serializer);
-            
-            Channel channel = getOutChannel();
-            channel.send(context, outMsg);
-        }
-        catch (Exception e)
-        {
-            XFireFault fault = XFireFault.createFault(e);
-            
-            handleFault(fault);
-        }
-    }
-
-    public void handleFault(XFireFault fault)
-    {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Fault occurred.", fault);
-        }
-        
-        OutMessage outMsg = createOutFault();
-        outMsg.setBody(fault);
-        outMsg.setSerializer(context.getService().getFaultSerializer());
-        context.setOutMessage(outMsg);
-
-        handleFault(fault, context);
-        invokeFaultPipeline(fault, context);
-        
-        Channel channel = getOutChannel();
-        try
-        {
-            channel.send(context, outMsg);
-        }
-        catch (XFireException e)
-        {
-            logger.error("Exception occurred while sending fault.", e);
-        }
-    }
-
-    public void handleFault(XFireFault fault, MessageContext context)
-    {
-        Stack handlerStack = context.getHandlerStack();
-
-        while (!handlerStack.empty())
-        {
-            Handler handler = (Handler) handlerStack.pop();
-            handler.handleFault(fault, context);
-        }
+        return getInChannel();
     }
 }

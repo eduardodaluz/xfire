@@ -15,7 +15,7 @@
         
     <component>
       <role>org.codehaus.xfire.service.ServiceRegistry</role>
-      <implementation>org.codehaus.xfire.plexus.ServiceRegistry</implementation>
+      <implementation>org.codehaus.xfire.service.DefaultServiceRegistry</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
       <configuration/>
     </component>

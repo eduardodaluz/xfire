@@ -49,6 +49,9 @@ public class STAXUtils
         if (dr.getEventType() == XMLStreamReader.START_ELEMENT)
             return true;
         
+        if (dr.getEventType() == XMLStreamReader.END_ELEMENT)
+            return false;
+        
         try
         {
             int depth = dr.getDepth();
@@ -58,6 +61,10 @@ public class STAXUtils
                 if (event == XMLStreamReader.START_ELEMENT && dr.getDepth() == depth + 1)
                 {
                     return true;
+                }
+                else if (event == XMLStreamReader.END_ELEMENT)
+                {
+                    depth--;
                 }
             }
             

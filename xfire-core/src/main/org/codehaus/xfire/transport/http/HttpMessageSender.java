@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
@@ -71,7 +72,6 @@ public class HttpMessageSender
         {
             if (urlConn.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR)
             {
-                System.out.println("WARNING: error");
                 is = urlConn.getErrorStream();
             }
         }
@@ -79,7 +79,7 @@ public class HttpMessageSender
         return new InMessage(STAXUtils.createXMLStreamReader(is, encoding), urlString);
     }
 
-    public void close()
+    public void close() throws XFireException
     {
         
         try
@@ -89,12 +89,12 @@ public class HttpMessageSender
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new XFireException("Couldn't close stream.", e);
         }
         finally
         {
-            urlConn.disconnect();
+            if (urlConn != null)
+                urlConn.disconnect();
         }
     }
 

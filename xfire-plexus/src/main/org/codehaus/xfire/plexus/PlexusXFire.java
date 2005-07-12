@@ -20,12 +20,16 @@ public class PlexusXFire
 {
     private ServiceLocator locator;
 
+    public PlexusXFire()
+    {
+        super();
+    }
+    
     public ServiceRegistry getServiceRegistry()
     {
         try
         {
-            return (org.codehaus.xfire.plexus.ServiceRegistry) locator.lookup(
-                    org.codehaus.xfire.plexus.ServiceRegistry.ROLE);
+            return (ServiceRegistry) locator.lookup(ServiceRegistry.ROLE);
         }
         catch (ComponentLookupException e)
         {

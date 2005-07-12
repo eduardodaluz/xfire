@@ -270,7 +270,6 @@ public class DepthXMLStreamReader
 
     public int nextTag() throws XMLStreamException
     {
-        System.out.println("next tag.");
         return reader.nextTag();
     }
 

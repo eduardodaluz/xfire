@@ -5,10 +5,11 @@ import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.SoapServiceEndpoint;
+import org.codehaus.xfire.transport.DefaultEndpoint;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 
@@ -26,12 +27,14 @@ public class JMSTransport
     private Destination destination;
     private Destination errors;
     private ConnectionFactory connectionFactory;
-
+    private XFire xfire;
+    
   /**
    * @param factory The JMS ConnectionFactory
    */
-    public JMSTransport(ConnectionFactory factory)
+    public JMSTransport(XFire xfire, ConnectionFactory factory)
     {
+        this.xfire = xfire;
         this.connectionFactory = factory;
     }
 
@@ -42,7 +45,7 @@ public class JMSTransport
 
     public String getServiceURL(Service service)
     {
-        return "jms/" + service.getName();
+        return "jms://" + service.getName();
     }
 
     public String getTransportURI(Service service)
@@ -50,17 +53,13 @@ public class JMSTransport
         return "jms://soap";
     }
 
-    protected Channel createNewChannel(String uri, Service service)
+    protected Channel createNewChannel(String uri)
     {
         log.debug("Creating new channel for uri: " + uri);
         
         Channel c = new JMSChannel(uri, this);
-        
-        if (service != null)
-        {
-            c.setService(service);
-            c.setEndpoint(new SoapServiceEndpoint());
-        }
+        c.setEndpoint(new DefaultEndpoint());
+
         return c;
     }
 
@@ -77,5 +76,15 @@ public class JMSTransport
     public void setConnectionFactory(ConnectionFactory connectionFactory)
     {
         this.connectionFactory = connectionFactory;
+    }
+
+    public XFire getXFire()
+    {
+        return xfire;
+    }
+
+    public String[] getKnownUriSchemes()
+    {
+        return new String[] { "jms://" };
     }
 }

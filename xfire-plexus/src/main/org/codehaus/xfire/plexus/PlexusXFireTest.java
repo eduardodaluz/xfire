@@ -12,18 +12,21 @@ import javax.xml.stream.XMLStreamException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.XPathAssert;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.local.LocalTransport;
+import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Node;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.stax.StaxBuilder;
-
 
 /**
  * Contains helpful methods to test SOAP services.
@@ -63,12 +66,21 @@ public class PlexusXFireTest
             throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = new MessageContext(service, null, null);
+        MessageContext context = new MessageContext();
+        context.setXFire(getXFire());
         context.setProperty(Channel.BACKCHANNEL_URI, out);
+
+        if (service != null)
+            context.setService(getServiceRegistry().getService(service));
         
         InputStream stream = getResourceAsStream(document); 
-        getXFire().invoke(stream, context);
+        InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(stream, "UTF-8"));
 
+        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
+        Channel c = t.createChannel();
+
+        c.receive(context, msg);
+        
         String response = out.toString();
         if (response == null || response.length() == 0)
             return null;
@@ -101,7 +113,6 @@ public class PlexusXFireTest
 
         return readDocument(out.toString());
     }
-
 
     /**
      * @see junit.framework.TestCase#setUp()

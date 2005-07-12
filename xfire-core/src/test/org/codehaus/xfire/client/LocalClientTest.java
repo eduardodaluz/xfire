@@ -9,7 +9,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.yom.Element;
 
@@ -20,7 +20,8 @@ public class LocalClientTest
         extends AbstractXFireTest
 {
     private Service service;
-
+    private Transport transport;
+    
     public void setUp() throws Exception
     {
         super.setUp();
@@ -29,6 +30,7 @@ public class LocalClientTest
         service.getBinding().setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);
+        transport = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
     }
 
     public void testInvoke()
@@ -39,13 +41,13 @@ public class LocalClientTest
         Element root = new Element("a:root", "urn:a");
         root.appendChild("hello");
         
-        LocalTransport transport = new LocalTransport();
-        Channel channel = transport.createChannel(service);
         
-        Client client = new Client(transport, service, channel.getUri());
+        Client client = new Client(transport, service, "xfire.local://Echo", "xfire.local://Client");
+        client.setXFire(getXFire());
         
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});
+
         assertNotNull(response);
         assertEquals(1, response.length);
         
@@ -60,21 +62,19 @@ public class LocalClientTest
 
         Element root = new Element("a:root", "urn:a");
         root.appendChild("hello");
-        
-        LocalTransport transport = new LocalTransport();
-        Channel channel = transport.createChannel(service);
-        
-        Client client = new Client(transport, service, channel.getUri());
+
+        Client client = new Client(transport, service, "xfire.local://Echo");
+        client.setXFire(getXFire());
         
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         try
         {
             Object[] response = client.invoke(op, new Object[] {root});
+
             fail("Fault was not thrown!");
         }
         catch (XFireFault fault)
         {
         }
     }
-
 }

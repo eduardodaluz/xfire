@@ -1,7 +1,6 @@
 package org.codehaus.xfire.transport;
 
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.handler.HandlerSupport;
 
 /**
  * Transport
@@ -9,15 +8,11 @@ import org.codehaus.xfire.handler.HandlerPipeline;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public interface Transport
-    extends ChannelFactory
+    extends ChannelFactory, HandlerSupport
 {
     String getName();
 
-    HandlerPipeline getRequestPipeline();
-    
-    HandlerPipeline getResponsePipeline();
-    
-    FaultHandlerPipeline getFaultPipeline();
+    String[] getKnownUriSchemes();
     
     void dispose();
 }

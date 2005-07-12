@@ -36,6 +36,14 @@ public interface Handler
     String[] getRoles();
 
     /**
+     * The phase which this handler would like to be in.
+     * 
+     * @return
+     * @see Phase
+     */
+    String getPhase();
+    
+    /**
      * Invoke a handler. If a fault occurs it will be handled via the
      * <code>handleFault</code> method.
      * 

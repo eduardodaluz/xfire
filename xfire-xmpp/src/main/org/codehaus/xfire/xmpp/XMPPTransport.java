@@ -2,13 +2,12 @@ package org.codehaus.xfire.xmpp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.SoapServiceEndpoint;
+import org.codehaus.xfire.transport.DefaultEndpoint;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 
@@ -23,21 +22,19 @@ public class XMPPTransport
     
     public final static String NAME = "XMPP";
     public final static String XMPP_TRANSPORT_NS = "http://jabber.org/protocol/soap";
-    
-    private static final String URI_PREFIX = "";
-    
-    private ServiceRegistry registry;
+
+    private XFire xfire;
     private String username;
     private String password;
     private String server;
     private String id;
     
-    public XMPPTransport(ServiceRegistry registry, String server, String username, String password)
+    public XMPPTransport(XFire xfire, String server, String username, String password)
     {
         this.username = username;
         this.password = password;
         this.server = server;
-        this.registry = registry;
+        this.xfire = xfire;
         
         this.id = username + "@" + server;
         
@@ -45,10 +42,7 @@ public class XMPPTransport
         // our IQ provider is registered.
         new SoapIQProvider();
         
-        FaultHandlerPipeline pipeline = new FaultHandlerPipeline();
-        pipeline.addHandler(new XMPPFaultHandler());
-        
-        setFaultPipeline(pipeline);
+        addFaultHandler(new XMPPFaultHandler());
     }
 
     /**
@@ -67,7 +61,7 @@ public class XMPPTransport
     {
         try
         {
-            return id + "/" + createChannel(service).getUri();
+            return id + "/" + service.getName();
         }
         catch (Exception e)
         {
@@ -84,24 +78,19 @@ public class XMPPTransport
         return XMPP_TRANSPORT_NS;
     }
 
-    protected Channel createNewChannel(String uri, Service service)
+    protected Channel createNewChannel(String uri)
     {
         log.debug("Creating new channel for uri: " + uri);
         
         XMPPChannel c = new XMPPChannel(uri, this);
-        
-        if (service != null)
-        {
-            c.setService(service);
-            c.setEndpoint(new SoapServiceEndpoint());
-        }
+        c.setEndpoint(new DefaultEndpoint());
 
         return c;
     }
 
     protected String getUriPrefix()
     {
-        return URI_PREFIX;
+        return id;
     }
 
     public String getPassword()
@@ -109,9 +98,9 @@ public class XMPPTransport
         return password;
     }
     
-    public ServiceRegistry getRegistry()
+    public XFire getXFire()
     {
-        return registry;
+        return xfire;
     }
 
     public String getServer()
@@ -122,6 +111,11 @@ public class XMPPTransport
     public String getUsername()
     {
         return username;
+    }
+
+    public String[] getKnownUriSchemes()
+    {
+        return new String[] { "xmpp://" };
     }
 
 }

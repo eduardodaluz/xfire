@@ -212,7 +212,7 @@ public class AegisBindingProvider
         Type type = (Type) p.getSchemaType();
 
         QName name = p.getName();
-        Element headers = context.getInMessage().getHeader();
+        Element headers = context.getExchange().getInMessage().getHeader();
         Element header = headers.getFirstChildElement(name.getLocalPart(), name.getNamespaceURI());
         
         if (header == null) return null;

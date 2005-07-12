@@ -7,7 +7,6 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
-import org.codehaus.xfire.transport.Channel;
 
 /**
  * XFireTest
@@ -34,9 +33,10 @@ public class ClientTest
     public void testInvoke()
             throws Exception
     {
-        Channel serverChannel = getTransport().createChannel(service);
-
-        Client client = new Client(getTransport(), service, "Echo", "Peer1");
+        JMSChannel serverChannel = (JMSChannel) getTransport().createChannel("jms://Echo");
+        serverChannel.setService(service);
+        
+        Client client = new Client(getTransport(), service, "jms://Echo", "jms://Peer1");
 
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});

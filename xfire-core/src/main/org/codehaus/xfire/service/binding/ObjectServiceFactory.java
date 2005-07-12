@@ -13,8 +13,10 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
 import org.codehaus.xfire.fault.Soap12FaultSerializer;
+import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -241,7 +243,16 @@ public class ObjectServiceFactory
             throw new XFireRuntimeException("Couldn't load provider.", e);
         }
         
+        registerHandlers(endpoint);
+        
         return endpoint;
+    }
+
+    protected void registerHandlers(Service service)
+    {
+        service.addOutHandler(new OutMessageSender());
+        service.addInHandler(service.getBinding());
+        service.addFaultHandler(new FaultSender());
     }
 
     private void setProperties(Service service, Map properties)
@@ -396,7 +407,7 @@ public class ObjectServiceFactory
 
     protected String getMEP(final Method method)
     {
-        return SoapConstants.MEP_IN_OUT;
+        return SoapConstants.MEP_ROBUST_IN_OUT;
     }
 
     protected boolean isAsync(final Method method)

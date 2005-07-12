@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.xfire.exchange.MessageSerializer;
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -26,7 +25,8 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
  * @see org.codehaus.xfire.service.binding.SOAPBinding
  */
 public class Service
-        implements Visitable
+    extends AbstractHandlerSupport
+    implements Visitable
 {
     public final static String ROLE = Service.class.getName();
 
@@ -36,9 +36,6 @@ public class Service
     private ObjectBinding binding;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
-    private HandlerPipeline inPipeline;
-    private HandlerPipeline outPipeline;
-    private FaultHandlerPipeline faultPipeline;
     private SoapVersion soapVersion;
     
     /**
@@ -54,7 +51,7 @@ public class Service
 
 
     /**
-     * Acceps the given visitor. Iterates over all the contained service.
+     * Accepts the given visitor. Iterates over all the contained service.
      *
      * @param visitor the visitor.
      */
@@ -112,22 +109,6 @@ public class Service
     }
 
     /**
-     * @return Returns the faultPipeline.
-     */
-    public FaultHandlerPipeline getFaultPipeline()
-    {
-        return faultPipeline;
-    }
-
-    /**
-     * @param faultPipeline The faultPipeline to set.
-     */
-    public void setFaultPipeline(FaultHandlerPipeline faultPipeline)
-    {
-        this.faultPipeline = faultPipeline;
-    }
-
-    /**
      * Returns the name of this endpoint. This method simply returns the local part of the qualified name of the
      * <code>ServiceInfo</code>.
      *
@@ -138,38 +119,6 @@ public class Service
     public String getName()
     {
         return service.getName().getLocalPart();
-    }
-
-    /**
-     * @return Returns the requestPipeline.
-     */
-    public HandlerPipeline getInPipeline()
-    {
-        return inPipeline;
-    }
-
-    /**
-     * @param requestPipeline The requestPipeline to set.
-     */
-    public void setInPipeline(HandlerPipeline requestPipeline)
-    {
-        this.inPipeline = requestPipeline;
-    }
-
-    /**
-     * @return Returns the responsePipeline.
-     */
-    public HandlerPipeline getOutPipeline()
-    {
-        return outPipeline;
-    }
-
-    /**
-     * @param responsePipeline The responsePipeline to set.
-     */
-    public void setOutPipeline(HandlerPipeline responsePipeline)
-    {
-        this.outPipeline = responsePipeline;
     }
 
     /**

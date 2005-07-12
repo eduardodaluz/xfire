@@ -17,8 +17,8 @@ public class SendReceiveTest
     public void testSend()
         throws Exception
     {
-        String peer1 = "Peer1";
-        String peer2 = "Peer2";
+        String peer1 = "jms://Peer1";
+        String peer2 = "jms://Peer2";
 
         Channel channel1 = getTransport().createChannel(peer1);
         Channel channel2 = getTransport().createChannel(peer2);

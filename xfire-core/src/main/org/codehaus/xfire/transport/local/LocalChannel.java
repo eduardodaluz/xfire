@@ -9,16 +9,18 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.transport.AbstractSoapChannel;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 
 public class LocalChannel
-    extends AbstractSoapChannel
+    extends AbstractChannel
 {
     private String uri;
     protected static final String SENDER_URI = "senderUri";
@@ -39,12 +41,11 @@ public class LocalChannel
         if (message.getUri().equals(Channel.BACKCHANNEL_URI))
         {
             final OutputStream out = (OutputStream) context.getProperty(Channel.BACKCHANNEL_URI);
-            
             if (out != null)
             {
                 final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
-                
-                sendSoapMessage(message, writer, context);
+
+                message.getSerializer().writeMessage(message, writer, context);
             }
             else
             {
@@ -56,12 +57,22 @@ public class LocalChannel
         else
         {
             MessageContext receivingContext = new MessageContext();
-            receivingContext.setService(getService());
+            receivingContext.setXFire(context.getXFire());
+            receivingContext.setService(getService(context.getXFire(), message.getUri()));
             receivingContext.setProperty(OLD_CONTEXT, context);
             receivingContext.setProperty(SENDER_URI, getUri());
             
             sendViaNewChannel(context, receivingContext, message, message.getUri());
         }
+    }
+
+    protected Service getService(XFire xfire, String uri)
+    {
+        int i = uri.indexOf("//");
+        
+        if (i == -1 || xfire == null) return null;
+        
+        return xfire.getServiceRegistry().getService(uri.substring(i+2));
     }
 
     private void sendViaNewChannel(final MessageContext context,
@@ -83,7 +94,30 @@ public class LocalChannel
             {
                 throw new XFireException("Couldn't create channel.", e);
             }
-
+            
+            Thread writeThread = new Thread(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        final XMLStreamWriter writer = 
+                            STAXUtils.createXMLStreamWriter(outStream, message.getEncoding());
+                        message.getSerializer().writeMessage(message, writer, context);
+                        
+                        writer.flush();
+                        writer.close();
+                        
+                        outStream.flush();
+                        outStream.close();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new XFireRuntimeException("Couldn't write stream.", e);
+                    }
+                };
+            });
+            
             Thread readThread = new Thread(new Runnable() 
             {
                 public void run() 
@@ -105,28 +139,7 @@ public class LocalChannel
                     }
                 };
             });
-            
-            Thread writeThread = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(outStream, message.getEncoding());
-                        sendSoapMessage(message, writer, context);
-                        
-                        writer.flush();
-                        writer.close();
-                        
-                        outStream.flush();
-                        outStream.close();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new XFireRuntimeException("Couldn't write stream.", e);
-                    }
-                };
-            });
+
             
             writeThread.start();
             readThread.start();
@@ -135,13 +148,6 @@ public class LocalChannel
         {
             throw new XFireRuntimeException("Couldn't create stream.", e);
         }
-    }
-
-    public void receive(MessageContext context, InMessage message)
-    {
-        context.setService(getService());
-        
-        super.receive(context, message);
     }
 
     public void close()

@@ -61,21 +61,24 @@ public class WrappedBinding
         }
         else
         {
-            OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
-            
-            if (op == null)
+            if (context.getExchange().getOperation() == null)
             {
-                throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
+                OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
+                
+                if (op == null)
+                {
+                    throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
+                }
+        
+                setOperation(op, context);
             }
-    
-            setOperation(op, context);
             
-            msgInfo = op.getInputMessage();
+            msgInfo = context.getExchange().getOperation().getInputMessage();
         }
         
         // Move from Operation element to whitespace or start element
         nextEvent(dr);
-        
+
         while(STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p = msgInfo.getMessagePart(dr.getName());

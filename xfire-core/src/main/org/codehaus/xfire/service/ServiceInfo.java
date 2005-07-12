@@ -21,6 +21,7 @@ public class ServiceInfo
 {
     private QName name;
     private Map operations = new HashMap();
+    private Map opsByAction = new HashMap();
     private Class serviceClass;
 
     /**
@@ -115,6 +116,31 @@ public class ServiceInfo
         return (OperationInfo) operations.get(name);
     }
 
+    /**
+     * Returns the operation info with the given action, if found.
+     *
+     * @param name the name.
+     * @return the operation; or <code>null</code> if not found.
+     */
+    public OperationInfo getOperationByAction(String name)
+    {
+        for (Iterator itr = operations.values().iterator(); itr.hasNext();)
+        {
+            OperationInfo op = (OperationInfo) itr.next();
+            if (op.getAction() != null && op.getAction().equals(name))
+            {
+                return op;
+            }
+        }
+        
+        if (!name.equals("*"))
+        {
+            return getOperationByAction("*");
+        }
+
+        return null;
+    }
+    
     /**
      * Returns all operations for this service.
      *

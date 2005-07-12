@@ -19,14 +19,16 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.transport.AbstractSoapChannel;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.util.STAXUtils;
 
 public class JMSChannel 
-    extends AbstractSoapChannel implements MessageListener
+    extends AbstractChannel implements MessageListener
 {
     public static final String REPLY_TO = "jms.replyTo";
     public static final String JMS_URI = "urn:codehaus:xfire:jms";
@@ -36,7 +38,8 @@ public class JMSChannel
     private Connection connection;
     private Queue queue;
     private MessageConsumer consumer;
-
+    private Service service;
+    
     public JMSChannel(String uri, JMSTransport transport)
     {
         setUri(uri);
@@ -53,10 +56,21 @@ public class JMSChannel
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         
-        queue = session.createQueue(getUri());
+        String queueName = getQueueName(getUri());
+
+        queue = session.createQueue(queueName);
 
         consumer = session.createConsumer(queue);
         consumer.setMessageListener(this);
+    }
+
+    private String getQueueName(String uri)
+    {
+        int i = uri.indexOf("://");
+        if (i == -1) throw new XFireRuntimeException("Invalid JMS URI: " + getUri());
+        
+        String queueName = uri.substring(i+3);
+        return queueName;
     }
 
     public void send(MessageContext context, OutMessage message)
@@ -65,7 +79,7 @@ public class JMSChannel
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
 
-        sendSoapMessage(message, writer, context);
+        message.getSerializer().writeMessage(message, writer, context);
         
         try
         {
@@ -92,7 +106,7 @@ public class JMSChannel
 
             if (dest == null)
             {
-                dest = session.createQueue(responseUri);
+                dest = session.createQueue(getQueueName(responseUri));
             }
 
             session.createProducer(null).send(dest, jmsMessage);
@@ -114,7 +128,8 @@ public class JMSChannel
             MessageContext context = new MessageContext(); 
             context.setService(getService());
             context.setProperty(REPLY_TO, message.getJMSReplyTo());
-    
+            context.setXFire(((JMSTransport) getTransport()).getXFire());
+            
             receive(context, in);
         }
         catch(JMSException e)
@@ -134,5 +149,15 @@ public class JMSChannel
         {
             log.error("Error closing jms", e);
         }
+    }
+
+    public Service getService()
+    {
+        return service;
+    }
+
+    public void setService(Service service)
+    {
+        this.service = service;
     }
 }

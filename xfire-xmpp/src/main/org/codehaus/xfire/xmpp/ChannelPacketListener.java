@@ -7,7 +7,9 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.util.STAXUtils;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
@@ -24,8 +26,11 @@ public class ChannelPacketListener
 
     public static final String PACKET = "xmpp.packet";
 
-    public ChannelPacketListener(XMPPChannel channel)
+    private XFire xfire;
+    
+    public ChannelPacketListener(XFire xfire, XMPPChannel channel)
     {
+        this.xfire = xfire;
         this.channel = channel;
     }
 
@@ -44,12 +49,16 @@ public class ChannelPacketListener
         SoapEnvelopePacket soapPacket = (SoapEnvelopePacket) packet;
 
         String to = packet.getTo();
+        String serviceName = to.substring(to.indexOf('/')+1);
+        Service service = xfire.getServiceRegistry().getService(serviceName);
+        
         XMLStreamReader reader = STAXUtils.createXMLStreamReader(new StringReader(soapPacket.getChildElementXML()));
         InMessage message = new InMessage(reader, to);
         
         MessageContext context = new MessageContext();
-        context.setService(channel.getService());
         context.setProperty(PACKET, packet);
+        context.setXFire(xfire);
+        context.setService(service);
         
         channel.receive(context, message);
     }

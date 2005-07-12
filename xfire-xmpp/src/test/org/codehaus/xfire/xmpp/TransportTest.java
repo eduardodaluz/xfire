@@ -7,8 +7,11 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapSerializer;
+import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.util.YOMSerializer;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
@@ -22,8 +25,8 @@ public class TransportTest
 {
     private Service echo;
 
-    private XMPPTransport transport1;
-    private XMPPTransport transport2;
+    private Transport transport1;
+    private Transport transport2;
 
     String username = "xfireTestServer";
     String password = "password1";
@@ -39,8 +42,8 @@ public class TransportTest
 
         getServiceRegistry().register(echo);
 
-        transport2 = new XMPPTransport(getServiceRegistry(), server, username, password);
-        transport1 = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
+        transport2 = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, username, password));
+        transport1 = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, "xfireTestClient", "password2"));
         
         getXFire().getTransportManager().register(transport2);
         // XMPPConnection.DEBUG_ENABLED = true;
@@ -73,7 +76,7 @@ public class TransportTest
         MessageContext context = new MessageContext();
 
         OutMessage msg = new OutMessage(id + "/" + peer2);
-        msg.setSerializer(new YOMSerializer());
+        msg.setSerializer(new SoapSerializer(new YOMSerializer()));
         msg.setBody(doc);
 
         channel1.send(context, msg);
@@ -91,7 +94,7 @@ public class TransportTest
         YOMEndpoint peer = new YOMEndpoint();
         channel1.setEndpoint(peer);
         
-        Channel channel2 = transport2.createChannel(echo);
+        Channel channel2 = transport2.createChannel("Echo");
 
         // Document to send
         StaxBuilder builder = new StaxBuilder();
@@ -100,7 +103,7 @@ public class TransportTest
         MessageContext context = new MessageContext();
 
         OutMessage msg = new OutMessage(id + "/Echo");
-        msg.setSerializer(new YOMSerializer());
+        msg.setSerializer(new SoapSerializer(new YOMSerializer()));
         msg.setBody(doc);
 
         channel1.send(context, msg);

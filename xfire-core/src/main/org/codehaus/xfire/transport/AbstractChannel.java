@@ -2,7 +2,6 @@ package org.codehaus.xfire.transport;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
-import org.codehaus.xfire.service.Service;
 
 public abstract class AbstractChannel
     implements Channel
@@ -10,8 +9,7 @@ public abstract class AbstractChannel
     private ChannelEndpoint receiver;
     private Transport transport;
     private String uri;
-    private Service service;
-    
+
     public String getUri()
     {
         return uri;
@@ -47,15 +45,5 @@ public abstract class AbstractChannel
     public void setTransport(Transport transport)
     {
         this.transport = transport;
-    }
-
-    public Service getService()
-    {
-        return service;
-    }
-
-    public void setService(Service service)
-    {
-        this.service = service;
     }
 }

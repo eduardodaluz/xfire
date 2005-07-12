@@ -9,37 +9,35 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.yom.Element;
 
 public class XFireServerTest
     extends AbstractXFireTest
 {
     private Service service;
-    private Service clientService;
     private XFireHttpServer server;
     
     public void setUp() throws Exception
     {
         super.setUp();
         
-        XFireFactory factory = XFireFactory.newInstance();
-        XFire xfire = factory.getXFire();
-        
         service = getServiceFactory().create(EchoImpl.class);
         service.getBinding().setBindingProvider(new MessageBindingProvider());
 
-        clientService = getServiceFactory().create(EchoImpl.class);
-        clientService.getBinding().setBindingProvider(new MessageBindingProvider());
-
-        xfire.getServiceRegistry().register(service);
+        getServiceRegistry().register(service);
 
         server = new XFireHttpServer();
         server.setPort(8191);
         server.start();        
     }
 
-    
+    protected XFire getXFire()
+    {
+        XFireFactory factory = XFireFactory.newInstance();
+        return factory.getXFire();
+    }
+
     protected void tearDown()
         throws Exception
     {
@@ -55,18 +53,17 @@ public class XFireServerTest
         Element root = new Element("a:root", "urn:a");
         root.appendChild("hello");
         
-        SoapHttpTransport transport =
-            (SoapHttpTransport) getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
-        Channel channel = transport.createChannel(service);
+        Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
 
-        Client client = new Client(transport, clientService, "http://localhost:8191/EchoImpl");
-        
-        OperationInfo op = clientService.getServiceInfo().getOperation("echo");
+        Client client = new Client(transport, service, "http://localhost:8191/EchoImpl");
+
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});
         assertNotNull(response);
         assertEquals(1, response.length);
         
         Element e = (Element) response[0];
+        System.out.println(e.toXML());
         assertEquals(root.getLocalName(), e.getLocalName());
     }
 }

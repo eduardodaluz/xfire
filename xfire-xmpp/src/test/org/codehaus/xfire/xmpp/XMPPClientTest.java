@@ -6,9 +6,11 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
 
 /**
  * XFireTest
@@ -19,10 +21,9 @@ public class XMPPClientTest
         extends AbstractXFireAegisTest
 {
     private Service service;
-    private Service clientService;
 
-    private XMPPTransport clientTrans;
-    private XMPPTransport serverTrans;
+    private Transport clientTrans;
+    private Transport serverTrans;
 
     String username = "xfireTestServer";
     String password = "password1";
@@ -40,22 +41,30 @@ public class XMPPClientTest
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         getServiceRegistry().register(service);
         // XMPPConnection.DEBUG_ENABLED = true;       
-        clientService = factory.create(Echo.class);
 
-        clientTrans = new XMPPTransport(getServiceRegistry(), server, "xfireTestClient", "password2");
-        serverTrans = new XMPPTransport(getServiceRegistry(), server, username, password);
+        clientTrans = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, "xfireTestClient", "password2"));
+        serverTrans = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, username, password));
         
         getXFire().getTransportManager().register(serverTrans);
+    }
+    
+    protected void tearDown()
+        throws Exception
+    {
+        clientTrans.dispose();
+        serverTrans.dispose();
+        
+        super.tearDown();
     }
 
     public void testInvoke()
             throws Exception
     {
-        Channel serverChannel = serverTrans.createChannel(service);
+        Channel serverChannel = serverTrans.createChannel("Echo");
 
-        Client client = new Client(clientTrans, clientService, id + "/Echo");
+        Client client = new Client(clientTrans, service, id + "/Echo");
 
-        OperationInfo op = clientService.getServiceInfo().getOperation("echo");
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
 
         assertNotNull(response);

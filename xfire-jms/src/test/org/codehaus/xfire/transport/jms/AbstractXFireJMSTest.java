@@ -8,6 +8,7 @@ import org.activemq.broker.BrokerContainer;
 import org.activemq.broker.impl.BrokerContainerImpl;
 import org.activemq.store.vm.VMPersistenceAdapter;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.soap.SoapTransport;
 
 public class AbstractXFireJMSTest
     extends AbstractXFireAegisTest
@@ -33,7 +34,9 @@ public class AbstractXFireJMSTest
 
         factory = (QueueConnectionFactory) context.lookup("QueueConnectionFactory");
 
-        transport = new JMSTransport(getConnectionFactory());
+        transport = (JMSTransport)
+            SoapTransport.createSoapTransport(new JMSTransport(getXFire(), getConnectionFactory()));
+        
         getXFire().getTransportManager().register(transport);
     }
 

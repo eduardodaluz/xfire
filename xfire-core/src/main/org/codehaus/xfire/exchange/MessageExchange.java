@@ -1,6 +1,5 @@
 package org.codehaus.xfire.exchange;
 
-import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.OperationInfo;
 
 /**
@@ -15,8 +14,20 @@ public interface MessageExchange
     void setOperation(OperationInfo operation);
     
     OperationInfo getOperation();
-    
-    void doExchange();
 
-    void handleFault(XFireFault fault);
+    InMessage getInMessage();
+    void setInMessage(InMessage inMessage);
+    boolean hasInMessage();
+    
+    OutMessage getOutMessage();
+    void setOutMessage(OutMessage outMessage);
+    boolean hasOutMessage();
+    
+    AbstractMessage getFaultMessage();
+    void setFaultMessage(AbstractMessage faultMessage);
+    boolean hasFaultMessage();
+    
+    AbstractMessage getMessage(String type);
+    void setMessage(String type, AbstractMessage faultMessage);
+    boolean hasMessage(String type);
 }

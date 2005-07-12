@@ -14,10 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.fault.FaultHandler;
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
 import org.codehaus.xfire.handler.Handler;
-import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -176,9 +173,9 @@ public class XMLServiceBuilder
             }
         }
         
-        svc.setInPipeline(createHandlerPipeline(service.getFirstChildElement("inHandlers")));
-        svc.setOutPipeline(createHandlerPipeline(service.getFirstChildElement("outHandlers")));
-        svc.setFaultPipeline(createFaultPipeline(service.getFirstChildElement("faultHandlers")));
+        svc.setInHandlers(createHandlerPipeline(service.getFirstChildElement("inHandlers")));
+        svc.setOutHandlers(createHandlerPipeline(service.getFirstChildElement("outHandlers")));
+        svc.setFaultHandlers(createHandlerPipeline(service.getFirstChildElement("faultHandlers")));
         
         registry.register(svc);
         
@@ -259,7 +256,7 @@ public class XMLServiceBuilder
         return bindingProvider;
     }
 
-    private HandlerPipeline createHandlerPipeline(Element child)
+    private List createHandlerPipeline(Element child)
         throws Exception
     {
         if (child == null)
@@ -269,31 +266,11 @@ public class XMLServiceBuilder
         if (handlers.size() == 0)
             return null;
         
-        HandlerPipeline pipe = new HandlerPipeline();
+        List pipe = new ArrayList();
         
         for (int i = 0; i < handlers.size(); i++)
         {
-            pipe.addHandler(getHandler(handlers.get(i).getValue()));
-        }
-        
-        return pipe;
-    }
-    
-    private FaultHandlerPipeline createFaultPipeline(Element child)
-        throws Exception
-    {
-        if (child == null)
-            return null;
-        
-        Elements handlers = child.getChildElements("handler");
-        if (handlers.size() == 0)
-            return null;
-        
-        FaultHandlerPipeline pipe = new FaultHandlerPipeline();
-        
-        for (int i = 0; i < handlers.size(); i++)
-        {
-            pipe.addHandler(getFaultHandler(handlers.get(i).getValue()));
+            pipe.add(getHandler(handlers.get(i).getValue()));
         }
         
         return pipe;
@@ -303,12 +280,6 @@ public class XMLServiceBuilder
         throws Exception
     {
         return (Handler) loadClass(name).newInstance();
-    }   
-
-    protected FaultHandler getFaultHandler(String name)
-        throws Exception
-    {
-        return (FaultHandler) loadClass(name).newInstance();
     }   
     
     public String getElementValue(Element root, String name, String def)

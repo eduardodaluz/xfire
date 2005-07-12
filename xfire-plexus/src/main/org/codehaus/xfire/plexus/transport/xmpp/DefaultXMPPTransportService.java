@@ -5,8 +5,8 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.ServiceLocator;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Serviceable;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.xmpp.XMPPTransport;
 
@@ -28,16 +28,15 @@ public class DefaultXMPPTransportService
     public void initialize()
         throws Exception
     {
-        transport = new XMPPTransport(getServiceRegistry(), server, username, password);
+        transport = new XMPPTransport(getXFire(), server, username, password);
         getTransportManager().register(transport);
     }
 
-    public ServiceRegistry getServiceRegistry()
+    public XFire getXFire()
     {
         try
         {
-            return (org.codehaus.xfire.plexus.ServiceRegistry) locator.lookup(
-                    org.codehaus.xfire.plexus.ServiceRegistry.ROLE);
+            return (XFire) locator.lookup(XFire.ROLE);
         }
         catch (ComponentLookupException e)
         {

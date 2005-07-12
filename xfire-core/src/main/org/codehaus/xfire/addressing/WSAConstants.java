@@ -33,6 +33,5 @@ public interface WSAConstants
     String WSA_POLICIES = "Policies";
     String WSA_POLICIES_QNAME = WSA_PREFIX + ":" + WSA_POLICIES;
 
-    String WSA_NAMESPACE = WSA_NAMESPACE_200412;   
-    
+    String WSA_NAMESPACE = WSA_NAMESPACE_200412;
 }

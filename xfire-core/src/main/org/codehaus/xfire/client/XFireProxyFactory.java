@@ -3,6 +3,7 @@ package org.codehaus.xfire.client;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
 
@@ -20,6 +21,17 @@ import org.codehaus.xfire.transport.Transport;
  */
 public class XFireProxyFactory
 {
+    private XFire xfire;
+    
+    public XFireProxyFactory()
+    {
+    }
+    
+    public XFireProxyFactory(XFire xfire)
+    {
+        this.xfire = xfire;
+    }
+    
     /**
      * Creates a new proxy with the specified URL. The returned object is a proxy with the interface specified by the
      * given service interface.
@@ -36,6 +48,7 @@ public class XFireProxyFactory
             throws MalformedURLException
     {
         Client client = new Client(transport, service, url);
+        client.setXFire(xfire);
         
         XFireProxy handler = new XFireProxy(client);
         Class serviceClass = service.getServiceInfo().getServiceClass();

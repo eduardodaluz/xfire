@@ -27,17 +27,15 @@ public class MustUnderstandTest
     {
         Document response = invokeService("EchoImpl",
                                           "/org/codehaus/xfire/handler/mustUnderstand.xml");
-
+        assertNotNull(response);
         assertValid("//s:Fault", response);
     }
 
     public void testRequestUnderstand()
             throws Exception
     {
-        HandlerPipeline reqPipeline = new HandlerPipeline();
         UnderstandingHandler handler = new UnderstandingHandler();
-        reqPipeline.addHandler(handler);
-        endpoint.setInPipeline(reqPipeline);
+        endpoint.addInHandler(handler);
 
         Document response = invokeService("EchoImpl",
                                           "/org/codehaus/xfire/handler/mustUnderstand.xml");

@@ -1,7 +1,5 @@
 package org.codehaus.xfire.transport.local;
 
-import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 
@@ -21,14 +19,7 @@ public class LocalTransportTest
         c2 = transport.createChannel(c1.getUri());
 
         assertEquals(c1, c2);
-        
-        Service service = getServiceFactory().create(Echo.class);
-        
-        c1 = transport.createChannel(service);
-        c2 = transport.createChannel(service);
-        
-        assertEquals(c1, c2);
-        
+
         transport.dispose();
     }
 }

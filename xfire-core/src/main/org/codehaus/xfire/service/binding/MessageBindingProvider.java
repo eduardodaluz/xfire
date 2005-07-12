@@ -110,7 +110,6 @@ public class MessageBindingProvider
     public Object readHeader(MessageHeaderInfo p, MessageContext context)
         throws XFireFault
     {
-        System.out.println("looking for " + p.getName());
         return context.getInMessage().getHeader().getFirstChildElement(p.getName().getLocalPart(),
                                                                        p.getName().getNamespaceURI());
     }

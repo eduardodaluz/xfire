@@ -14,6 +14,7 @@ import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.OperationInfo;
 
@@ -34,7 +35,12 @@ public abstract class AbstractBinding
     private Invoker invoker;
     private BindingProvider bindingProvider;
     private boolean clientModeOn = false;
-    
+
+    public String getPhase()
+    {
+        return Phase.SERVICE;
+    }
+
     public void setOperation(OperationInfo operation, MessageContext context)
     {
         MessageExchange exchange = context.createMessageExchange(operation);
@@ -68,16 +74,7 @@ public abstract class AbstractBinding
             // invoke the service method...
             if (!operation.isAsync())
             {
-                final Object value = invoker.invoke(operation.getMethod(),
-                                                    params.toArray(),
-                                                    context);
-
-                OutMessage outMsg = context.getOutMessage();
-                if (outMsg != null)
-                {
-                    outMsg.setBody(new Object[] {value});
-                    context.setOutMessage(outMsg);
-                }
+                sendMessage(context, params, operation, invoker);
             }
             else
             {
@@ -87,20 +84,13 @@ public abstract class AbstractBinding
                     {
                         try
                         {
-                            final Object value = invoker.invoke(operation.getMethod(), 
-                                                                params.toArray(), 
-                                                                context);
-
-                            OutMessage outMsg = context.getOutMessage();
-                            if (outMsg != null)
-                            {
-                                outMsg.setBody(new Object[] {value});
-                                context.setOutMessage(outMsg);
-                            }
+                            sendMessage(context, params, operation, invoker);
                         }
-                        catch (XFireFault e)
+                        catch (Exception e)
                         {
-                            context.getExchange().handleFault(e);
+                            XFireFault fault = XFireFault.createFault(e);
+                            
+                            context.getInPipeline().handleFault(fault, context);
                         }
                     }
                 };
@@ -113,6 +103,25 @@ public abstract class AbstractBinding
         {
             logger.warn("Error invoking service.", e);
             throw new XFireFault("Error invoking service.", e, XFireFault.SENDER);
+        }
+    }
+
+    protected void sendMessage(final MessageContext context,
+                               final List params,
+                               final OperationInfo operation,
+                               final Invoker invoker)
+        throws Exception
+    {
+        final Object value = invoker.invoke(operation.getMethod(),
+                                            params.toArray(),
+                                            context);
+
+        if (context.getExchange().hasOutMessage())
+        {
+            OutMessage outMsg = (OutMessage) context.getExchange().getOutMessage();
+            outMsg.setBody(new Object[] {value});
+            outMsg.setSerializer(context.getService().getBinding());
+            context.getOutPipeline().invoke(context);
         }
     }
 

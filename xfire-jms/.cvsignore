@@ -2,3 +2,4 @@ ActiveMQ
 .classpath
 .project
 target
+.settings

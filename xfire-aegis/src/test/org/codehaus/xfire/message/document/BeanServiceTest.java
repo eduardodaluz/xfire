@@ -1,6 +1,5 @@
 package org.codehaus.xfire.message.document;
 
-
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;

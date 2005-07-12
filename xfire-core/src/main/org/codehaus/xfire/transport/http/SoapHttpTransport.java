@@ -6,13 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.fault.FaultHandler;
-import org.codehaus.xfire.fault.FaultHandlerPipeline;
-import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.SoapServiceEndpoint;
+import org.codehaus.xfire.transport.DefaultEndpoint;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -27,12 +26,10 @@ public class SoapHttpTransport
     public final static String HTTP_TRANSPORT_NS = "http://schemas.xmlsoap.org/soap/http";
 
     private final static String URI_PREFIX = "urn:xfire:transport:http:";
-    
+
     public SoapHttpTransport()
     {
-        FaultHandlerPipeline faultPipe = new FaultHandlerPipeline();
-        faultPipe.addHandler(new FaultResponseCodeHandler());
-        setFaultPipeline(faultPipe);
+        addFaultHandler(new FaultResponseCodeHandler());
     }
     
     /**
@@ -43,16 +40,12 @@ public class SoapHttpTransport
         return NAME;
     }
 
-    protected Channel createNewChannel(String uri, Service service)
+    protected Channel createNewChannel(String uri)
     {
         log.debug("Creating new channel for uri: " + uri);
         
         HttpSoapChannel c = new HttpSoapChannel(uri, this);
-        
-        if (service != null)
-        {
-            c.setEndpoint(new SoapServiceEndpoint());
-        }
+        c.setEndpoint(new DefaultEndpoint());
 
         return c;
     }
@@ -67,6 +60,11 @@ public class SoapHttpTransport
 	public String getServiceURL( Service service )
 	{
 		HttpServletRequest req = XFireServletController.getRequest();
+        
+        if (req == null)
+        {
+            return "http://localhost/services/" + service.getName();
+        }
         
         StringBuffer output = new StringBuffer( 128 );
 
@@ -106,16 +104,26 @@ public class SoapHttpTransport
 		baseURL.append(request.getContextPath());
 		return baseURL.toString();
 	}
+
+    public String[] getKnownUriSchemes()
+    {
+        return new String[] { "http://", "https://" };
+    }
     
     public class FaultResponseCodeHandler
-         implements FaultHandler
-    {
+         extends AbstractHandler
+     {        
+        public String getPhase()
+        {
+            return Phase.TRANSPORT;
+        }
+
         /**
          * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
          * @param context
          * @throws Exception
          */
-        public void handleFault(XFireFault fault, MessageContext context)
+        public void invoke(MessageContext context)
         {
             HttpServletResponse response = XFireServletController.getResponse();
             if ( response != null )

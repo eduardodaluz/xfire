@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
@@ -26,8 +27,13 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.transport.local.LocalTransport;
+import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Node;
@@ -82,12 +88,21 @@ public abstract class AbstractXFireTest
             throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = new MessageContext(service, null, null);
+        MessageContext context = new MessageContext();
+        context.setXFire(getXFire());
         context.setProperty(Channel.BACKCHANNEL_URI, out);
+
+        if (service != null)
+            context.setService(getServiceRegistry().getService(service));
         
         InputStream stream = getResourceAsStream(document); 
-        getXFire().invoke(stream, context);
+        InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(stream, "UTF-8"));
 
+        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
+        Channel c = t.createChannel();
+        
+        c.receive(context, msg);
+        
         String response = out.toString();
         if (response == null || response.length() == 0)
             return null;
@@ -142,7 +157,7 @@ public abstract class AbstractXFireTest
         addNamespace("soap12", Soap12.getInstance().getNamespace());
 
         TransportManager trans = getXFire().getTransportManager();
-        trans.register(new TestHttpTransport());
+        trans.register(SoapTransport.createSoapTransport(new SoapHttpTransport()));
     }
 
     /**

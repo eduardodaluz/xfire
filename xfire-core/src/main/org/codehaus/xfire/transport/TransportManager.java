@@ -28,6 +28,13 @@ public interface TransportManager
 
     Collection getTransports();
 
+    /**
+     * Find the best transport for a particular URI.
+     * @param uri
+     * @return
+     */
+    Transport getTransportForUri(String uri);
+    
     void enableAll(String serviceName);
 
     void disableAll(String serviceName);

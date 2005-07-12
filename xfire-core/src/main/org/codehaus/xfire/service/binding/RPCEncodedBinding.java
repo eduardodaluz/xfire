@@ -82,7 +82,7 @@ public class RPCEncodedBinding
 
             parameters.add( getBindingProvider().readParameter(p, dr, context) );
         }
-
+        
         context.getInMessage().setBody(parameters);
     }
 

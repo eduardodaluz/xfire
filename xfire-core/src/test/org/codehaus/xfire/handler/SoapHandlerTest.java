@@ -22,16 +22,12 @@ public class SoapHandlerTest
         
         Service endpoint = getServiceFactory().create(EchoImpl.class);
 
-        HandlerPipeline reqPipeline = new HandlerPipeline();
         reqHandler = new CheckpointHandler();
-        reqPipeline.addHandler(reqHandler);
-        endpoint.setInPipeline(reqPipeline);
+        endpoint.addInHandler(reqHandler);
 
-        HandlerPipeline resPipeline = new HandlerPipeline();
         resHandler = new CheckpointHandler();
-        resPipeline.addHandler(resHandler);
-        resPipeline.addHandler(new EchoHeaderHandler());
-        endpoint.setOutPipeline(resPipeline);
+        endpoint.addOutHandler(resHandler);
+        endpoint.addOutHandler(new EchoHeaderHandler());
 
         getServiceRegistry().register(endpoint);
     }

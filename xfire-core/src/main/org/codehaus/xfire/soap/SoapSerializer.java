@@ -1,4 +1,4 @@
-package org.codehaus.xfire.transport;
+package org.codehaus.xfire.soap;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -6,25 +6,23 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.AbstractMessage;
+import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 import org.codehaus.yom.stax.StaxSerializer;
 
-public abstract class AbstractSoapChannel
-    extends AbstractChannel
-{   
-    private boolean serializePreamble = true;
-    
-    public boolean isSerializePreamble()
-    {
-        return serializePreamble;
-    }
+public class SoapSerializer
+    implements MessageSerializer
+{
+    public static final String SERIALIZE_PROLOG = "xfire.serializeProlog";
+    private MessageSerializer serializer;
 
-    public void setSerializePreamble(boolean serializePreamble)
+    public SoapSerializer(MessageSerializer serializer)
     {
-        this.serializePreamble = serializePreamble;
+        this.serializer = serializer;
     }
 
     /**
@@ -35,14 +33,17 @@ public abstract class AbstractSoapChannel
      * @param context
      * @throws XFireFault
      */
-    protected void sendSoapMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
+
+    public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {
         try
         {
             QName env = message.getSoapVersion().getEnvelope();
-            
-            if (serializePreamble)
+
+            Boolean serializeObj = (Boolean) context.getProperty(SERIALIZE_PROLOG);
+            boolean serializeProlog = (serializeObj != null) ? serializeObj.booleanValue() : true;
+            if (serializeProlog)
                 writer.writeStartDocument(message.getEncoding(), "1.0");
             
             writer.setPrefix(env.getPrefix(), env.getNamespaceURI());
@@ -68,12 +69,12 @@ public abstract class AbstractSoapChannel
                                      body.getLocalPart(),
                                      body.getNamespaceURI());
     
-            message.getSerializer().writeMessage(message, writer, context);
+            serializer.writeMessage(message, writer, context);
     
             writer.writeEndElement();
             writer.writeEndElement();
             
-            if (serializePreamble)
+            if (serializeProlog)
                 writer.writeEndDocument();
     
             writer.close();
@@ -96,5 +97,11 @@ public abstract class AbstractSoapChannel
             
             ser.writeElement(e, writer);
         }
+    }
+
+    public void readMessage(InMessage message, MessageContext context)
+        throws XFireFault
+    {
+        throw new UnsupportedOperationException();
     }
 }

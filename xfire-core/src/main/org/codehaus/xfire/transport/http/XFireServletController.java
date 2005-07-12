@@ -24,7 +24,9 @@ import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -42,12 +44,12 @@ public class XFireServletController
     
     protected XFire xfire;
 
-    protected SoapHttpTransport transport;
+    protected Transport transport;
 
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
-        this.transport = new SoapHttpTransport();
+        this.transport = SoapTransport.createSoapTransport(new SoapHttpTransport());
 
         registerTransport();
     }
@@ -190,13 +192,15 @@ public class XFireServletController
         // response.setBufferSize(1024 * 8);
 
         XFireHttpSession session = new XFireHttpSession(request);
-        MessageContext context = new MessageContext(service, null, session);
+        MessageContext context = new MessageContext();
+        context.setXFire(getXFire());
+        context.setSession(session);
         context.setService(getService(service));
         
         Channel channel;
         try
         {
-            channel = transport.createChannel(getService(service));
+            channel = transport.createChannel(request.getRequestURI());
         }
         catch (Exception e)
         {

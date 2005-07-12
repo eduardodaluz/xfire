@@ -7,16 +7,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.transport.AbstractSoapChannel;
+import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 
 public class HttpSoapChannel
-    extends AbstractSoapChannel
+    extends AbstractChannel
 {
     public HttpSoapChannel(String uri, SoapHttpTransport transport)
     {
@@ -28,7 +28,7 @@ public class HttpSoapChannel
     {
     }
 
-    public void send(MessageContext context, OutMessage message) throws XFireFault
+    public void send(MessageContext context, OutMessage message) throws XFireException
     {
         if (message.getUri().equals(Channel.BACKCHANNEL_URI))
         {
@@ -50,14 +50,17 @@ public class HttpSoapChannel
                 OutputStream out = response.getOutputStream();
                 XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
                 
-                sendSoapMessage(message, writer, context);
-
+                message.getSerializer().writeMessage(message, writer, context);
+                
                 out.flush();
                 out.close();
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                if (e instanceof XFireException)
+                    throw (XFireException) e;
+                
+                throw new XFireException("Couldn't send message.", e);
             }
         }
         else
@@ -67,7 +70,7 @@ public class HttpSoapChannel
     }
 
     private void sendViaClient(MessageContext context, OutMessage message)
-        throws XFireFault
+        throws XFireException
     {
         HttpMessageSender sender = new HttpMessageSender(message.getUri(), message.getEncoding());
         try
@@ -78,17 +81,16 @@ public class HttpSoapChannel
             OutputStream out = sender.getOutputStream();
             XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
 
-            sendSoapMessage(message, writer, context);
+            message.getSerializer().writeMessage(message, writer, context);
             
             out.flush();
             out.close();
-            
+
             getReceiver().onReceive(context, sender.getInMessage());
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new XFireException("Couldn't send message.", e);
         }
         finally
         {

@@ -1,8 +1,8 @@
 package org.codehaus.xfire.xmpp;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.fault.FaultHandler;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.handler.AbstractHandler;
 import org.jivesoftware.smack.packet.XMPPError;
 
 /**
@@ -11,7 +11,7 @@ import org.jivesoftware.smack.packet.XMPPError;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class XMPPFaultHandler
-    implements FaultHandler
+    extends AbstractHandler
 {
     public static final String XMPP_ERROR = "xfire.xmppError";
 
@@ -20,7 +20,7 @@ public class XMPPFaultHandler
      * @param context
      * @throws Exception
      */
-    public void handleFault(XFireFault fault, MessageContext context)
+    public void invoke(MessageContext context)
     {
         /**
          * From the JEP-0076 spec:
@@ -32,6 +32,7 @@ public class XMPPFaultHandler
          * env:DataEncodingUnknown  500          <internal-server-error/>
          */
 
+        XFireFault fault = (XFireFault) context.getExchange().getFaultMessage().getBody();
         XMPPError error = null;
         if (fault.getFaultCode().equals(XFireFault.SENDER))
         {

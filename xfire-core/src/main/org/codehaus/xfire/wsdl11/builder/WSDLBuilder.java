@@ -96,7 +96,7 @@ public class WSDLBuilder
             
             // Create output message if we have an out MEP
             Message res = null;
-            if (op.getMEP().equals(SoapConstants.MEP_IN_OUT))
+            if (op.getMEP().equals(SoapConstants.MEP_ROBUST_IN_OUT))
             {
                 res = createOutputMessage(op);
                 def.addMessage(res);
