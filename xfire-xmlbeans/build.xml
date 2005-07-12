@@ -73,6 +73,14 @@
       <arg value="${target.dir}/weather.jar"/>
       <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
     </java>
+
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="build.classpath"
+          fork="true">
+      <arg value="-out"/>
+      <arg value="${target.dir}/anyschema.jar"/>
+      <arg value="${basedir}/src/test-schemas/anyschema.xsd"/>
+    </java>
   </target>
   
 </project>
