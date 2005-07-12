@@ -63,6 +63,7 @@ public class XmlBeansType
     {
         try
         {
+            Set added_parts = new HashSet();
             Element schema = builder.buildElement(null, getSchema().newXMLStreamReader());
             Document schemaDoc = new Document(schema);
             
@@ -82,7 +83,7 @@ public class XmlBeansType
             for (int i = 0; i < children.size(); i++)
             {
                 Element child = children.get(i);
-                
+
                 if (hasChild(root, child)) return;
                 
                 child.detach();
@@ -97,13 +98,23 @@ public class XmlBeansType
 
     private boolean hasChild(Element root, Element child)
     {
-        String expr = "//xsd:" + child.getLocalName() + 
-            "[@name='" + child.getAttributeValue("name") + "']";
-        
-        List children = getMatches(root, expr);
-        
-        if (children.size() > 0) return true;
-        
+
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("//");
+        buffer.append(child.getQualifiedName());
+        if (child.getAttributeCount() > 0)
+        {
+            buffer.append("[");
+            for (int i = 0; i < child.getAttributeCount(); ++i)
+            {
+                org.codehaus.yom.Attribute attr = child.getAttribute(i);
+                buffer.append("@").append(attr.getQualifiedName()).append("='");
+                buffer.append(attr.getValue()).append("']");
+                if (i != child.getAttributeCount() - 1) buffer.append("[");
+            }
+        }
+
+        if (getMatches(root, buffer.toString()).size() > 0 ) return true;
         return false;
     }
 
@@ -113,6 +124,7 @@ public class XmlBeansType
         {
             XPath path = new YOMXPath(xpath);
             path.addNamespace("xsd", SoapConstants.XSD);
+            path.addNamespace("s", SoapConstants.XSD);
             List result = path.selectNodes(doc);
             return result;
         }
@@ -171,8 +183,27 @@ public class XmlBeansType
     {
         if (schemaType.isDocumentType())
             return schemaType.getDocumentElementName();
-        else
+        else if (schemaType.getName() != null)
             return schemaType.getName();
+        else
+        {
+            // No name for this type, use outer type (and recur up if same)
+            SchemaType outer = schemaType.getOuterType();
+            while (outer != null)
+            {
+                if (outer.isDocumentType())
+                    return outer.getDocumentElementName();
+                else if (outer.getName() != null)
+                    return outer.getName();
+                else
+                    outer = outer.getOuterType();
+            }
+            
+            // No outer type, no type on this, should not be possible, so explode
+            throw new XFireRuntimeException("No type name is defined for <" + schemaType + "> " +
+                                            "and no outer type containing the inline type -- this " +
+                                            "should not be possible to be a legally defined schema");
+        }
     }
 
     public Object readObject(MessageReader reader, MessageContext context)

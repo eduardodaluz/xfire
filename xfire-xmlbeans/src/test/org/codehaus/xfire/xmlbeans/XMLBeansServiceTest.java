@@ -5,6 +5,8 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
+import org.codehaus.yom.xpath.YOMXPath;
+import org.jaxen.XPath;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -27,6 +29,22 @@ public class XMLBeansServiceTest
                                   "urn:WeatherService",
                                   null);
         getServiceRegistry().register(endpoint);
+    }
+
+    public void testAnyService() throws Exception
+    {
+        Service any = builder.create(TestService.class, "TestService", "urn:TestService", null);
+        getServiceRegistry().register(any);
+
+        try
+        {
+            getWSDLDocument("TestService");
+            assertTrue("Generating WSDL above should not throw an NPE", true);
+        }
+        catch (NullPointerException e)
+        {
+            fail("Shouldn't be throwing an NPE here");
+        }
     }
 
     public void testService()
@@ -80,4 +98,49 @@ public class XMLBeansServiceTest
 	    assertValid("//wsdl:types/xsd:schema[@targetNamespace='http://codehaus.org/xfire/xmlbeans']" +
                     "/xsd:element[@name='request']", wsdl);
 	}
+
+    public void testAnyWSDLNoDupRootRefElements()
+		throws Exception
+	{
+        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
+
+        endpoint = builder.create(TestService.class,
+                                  "TestService",
+                                  "urn:TestService",
+                                  null);
+        getServiceRegistry().register(endpoint);
+
+	    Document wsdl = getWSDLDocument("TestService");
+
+        String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@ref='ns1:trouble']";
+        XPath xpath = new YOMXPath( xpath_string );
+        xpath.addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
+        xpath.addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
+        xpath.addNamespace( "xsd", SoapConstants.XSD );
+        xpath.addNamespace( "s", SoapConstants.XSD );
+
+        assertEquals(1, xpath.selectNodes(wsdl).size());
+	}
+
+    public void testAnyWSDLNoDupRootElementNameElements()
+		throws Exception
+	{
+        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
+
+        endpoint = builder.create(TestService.class,
+                                  "TestService",
+                                  "urn:TestService",
+                                  null);
+        getServiceRegistry().register(endpoint);
+	    Document wsdl = getWSDLDocument("TestService");
+
+        String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@name='trouble']";
+        XPath xpath = new YOMXPath( xpath_string );
+        xpath.addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
+        xpath.addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );
+        xpath.addNamespace( "xsd", SoapConstants.XSD );
+
+        assertEquals(1, xpath.selectNodes(wsdl).size());
+	}
+
 }
