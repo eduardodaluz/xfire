@@ -48,6 +48,7 @@ public class ObjectServiceFactory
     private String use;
     private Set ignoredClasses = new HashSet();
     private SoapVersion soapVersion = Soap11.getInstance();
+    private boolean voidOneWay;
     
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
@@ -407,6 +408,10 @@ public class ObjectServiceFactory
 
     protected String getMEP(final Method method)
     {
+        if (isVoidOneWay() && method.getReturnType().equals(void.class))
+        {
+            return SoapConstants.MEP_IN;
+        }
         return SoapConstants.MEP_ROBUST_IN_OUT;
     }
 
@@ -479,5 +484,15 @@ public class ObjectServiceFactory
     public void setSoapVersion(SoapVersion soapVersion)
     {
         this.soapVersion = soapVersion;
+    }
+
+    public boolean isVoidOneWay()
+    {
+        return voidOneWay;
+    }
+
+    public void setVoidOneWay(boolean voidOneWay)
+    {
+        this.voidOneWay = voidOneWay;
     }
 }
