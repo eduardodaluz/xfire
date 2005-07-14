@@ -3,13 +3,10 @@
 
 <beans>
   <bean id="xfire.xmlbeansServiceFactory" 
-        class="org.codehaus.xfire.xmlbeans.XMLBeansServiceFactory"
+        class="org.codehaus.xfire.xmlbeans.XmlBeansServiceFactory"
         singleton="true">
         <constructor-arg index="0">
             <ref bean="xfire.transportManager"/>
-        </constructor-arg>
-        <constructor-arg index="1">
-            <ref bean="xfire.typeMappingRegistry"/>
         </constructor-arg>
   </bean>
 </beans>
