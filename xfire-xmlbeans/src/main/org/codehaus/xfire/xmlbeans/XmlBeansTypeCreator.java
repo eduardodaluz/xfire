@@ -59,8 +59,15 @@ public class XmlBeansTypeCreator
 
     public Type createType(PropertyDescriptor pd)
     {
-        // TODO Auto-generated method stub
-        return null;
+        Class clazz = pd.getPropertyType();
+        if (isXmlBean(clazz))
+        {
+            return createXmlBeanType(clazz);
+        }
+        else
+        {
+            return nextCreator.createType(pd);
+        }
     }
 
     public Type createType(Field f)
