@@ -26,6 +26,7 @@ public class XMLBeansServiceTest
                                   "WeatherService",
                                   "urn:WeatherService",
                                   null);
+        
         getServiceRegistry().register(endpoint);
     }
 

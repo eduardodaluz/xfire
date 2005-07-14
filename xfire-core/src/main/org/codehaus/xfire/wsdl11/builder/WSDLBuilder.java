@@ -1,7 +1,6 @@
 package org.codehaus.xfire.wsdl11.builder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,13 +27,13 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
 
 import com.ibm.wsdl.extensions.soap.SOAPHeaderImpl;
 
@@ -51,7 +50,7 @@ public class WSDLBuilder
 
     private Binding binding;
 
-    private Collection transports;
+    private TransportManager transportManager;
 
     private Map wsdlOps = new HashMap();
 
@@ -60,12 +59,12 @@ public class WSDLBuilder
     private List declaredParameters = new ArrayList();
     
     public WSDLBuilder(Service service, 
-                       Collection transports,
+                       TransportManager transportManager,
                        WSDL11ParameterBinding paramBinding) throws WSDLException
     {
         super(service);
 
-        this.transports = transports;
+        this.transportManager = transportManager;
         this.paramBinding = paramBinding;
 
         PortType portType = createAbstractInterface();
@@ -126,7 +125,7 @@ public class WSDLBuilder
         javax.wsdl.Service wsdlService = def.createService();
         wsdlService.setQName(name);
 
-        for (Iterator itr = transports.iterator(); itr.hasNext();)
+        for (Iterator itr = transportManager.getTransports(service.getName()).iterator(); itr.hasNext();)
         {
             Object transportObj = (Transport) itr.next();
 

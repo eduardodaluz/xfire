@@ -127,7 +127,7 @@ public abstract class AbstractXFireTest
         catch (XMLStreamException e)
         {
             System.err.println("Could not read the document!");
-            System.out.println(text);
+            System.err.println(text);
             throw e;
         }
     }

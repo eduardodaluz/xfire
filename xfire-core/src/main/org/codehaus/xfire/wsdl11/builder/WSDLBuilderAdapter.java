@@ -2,8 +2,7 @@ package org.codehaus.xfire.wsdl11.builder;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import javax.wsdl.WSDLException;
+import java.lang.reflect.Constructor;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
@@ -22,14 +21,17 @@ public class WSDLBuilderAdapter
     private Service service;
     private TransportManager transportManager;
     private WSDL11ParameterBinding paramBinding;
+    private Class wsdlBuilder;
     
-    public WSDLBuilderAdapter(Service service, 
+    public WSDLBuilderAdapter(Class wsdlBuilder,
+                              Service service, 
                               TransportManager transports,
                               WSDL11ParameterBinding paramBinding)
     {
         this.service = service;
         this.transportManager = transports;
         this.paramBinding = paramBinding;
+        this.wsdlBuilder = wsdlBuilder;
     }
 
     /**
@@ -41,15 +43,23 @@ public class WSDLBuilderAdapter
     public void write(OutputStream out)
         throws IOException
     {
+        createWSDLBuilder().write(out);
+    }
+    
+    public WSDLBuilder createWSDLBuilder()
+    {
         try
         {
-            new WSDLBuilder(service, 
-                            transportManager.getTransports(service.getName()),
-                            paramBinding).write(out);
+            System.out.println("creating " + wsdlBuilder);
+            Constructor c = wsdlBuilder.getConstructor(new Class[] { Service.class,
+                    TransportManager.class, WSDL11ParameterBinding.class });
+
+            return (WSDLBuilder) c.newInstance(new Object[] { service, transportManager,
+                    paramBinding });
         }
-        catch (WSDLException e)
+        catch (Exception e)
         {
-            throw new XFireRuntimeException("Couldn't build wsdl document.", e);
+            throw new XFireRuntimeException("Could not create wsdl builder", e);
         }
     }
 }

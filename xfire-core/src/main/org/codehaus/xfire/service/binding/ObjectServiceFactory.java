@@ -31,6 +31,7 @@ import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 
 /**
@@ -49,6 +50,7 @@ public class ObjectServiceFactory
     private Set ignoredClasses = new HashSet();
     private SoapVersion soapVersion = Soap11.getInstance();
     private boolean voidOneWay;
+    private Class wsdlBuilder = WSDLBuilder.class;
     
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
@@ -225,7 +227,8 @@ public class ObjectServiceFactory
 
         if (transportManager != null && binding instanceof WSDL11ParameterBinding)
         {
-            endpoint.setWSDLWriter(new WSDLBuilderAdapter(endpoint, 
+            endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilder(),
+                                                          endpoint, 
                                                           transportManager, 
                                                           (WSDL11ParameterBinding) binding));
         }
@@ -494,5 +497,15 @@ public class ObjectServiceFactory
     public void setVoidOneWay(boolean voidOneWay)
     {
         this.voidOneWay = voidOneWay;
+    }
+
+    public Class getWsdlBuilder()
+    {
+        return wsdlBuilder;
+    }
+
+    public void setWsdlBuilder(Class wsdlBuilder)
+    {
+        this.wsdlBuilder = wsdlBuilder;
     }
 }

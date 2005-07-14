@@ -114,10 +114,6 @@ public abstract class AbstractWSDL
                 schemaTypes.detach();
                 types.appendChild(schemaTypes);
 
-                schemaTypes.addAttribute(new Attribute("targetNamespace", schemaNs));
-                schemaTypes.addAttribute(new Attribute("elementFormDefault", "qualified"));
-                schemaTypes.addAttribute(new Attribute("attributeFormDefault", "qualified"));
-
                 String prefix = NamespaceHelper.getUniquePrefix(schemaTypes, schemaNs);
                 String declaredUri = getDocument().getRootElement().getNamespaceURI(prefix);
                 if (declaredUri == null)
@@ -134,7 +130,7 @@ public abstract class AbstractWSDL
             return;
         }
         
-        if (!dependencies.containsKey(type.getSchemaType()))
+        if (!hasDependency(type))
         {
             dependencies.put(type.getSchemaType(), type);
 
@@ -153,6 +149,11 @@ public abstract class AbstractWSDL
         }
     }
 
+    protected boolean hasDependency(SchemaType type)
+    {
+        return dependencies.containsKey(type.getSchemaType());
+    }
+    
     /**
      * @see org.codehaus.xfire.wsdl.WSDLWriter#write(java.io.OutputStream)
      */
@@ -232,12 +233,21 @@ public abstract class AbstractWSDL
         if (e == null)
         {
             e = new Element(schemaQ, SoapConstants.XSD);
-            
-            typeMap.put(namespace, e);
-            getSchemaTypes().appendChild(e);
+
+            e.addAttribute(new Attribute("targetNamespace", namespace));
+            e.addAttribute(new Attribute("elementFormDefault", "qualified"));
+            e.addAttribute(new Attribute("attributeFormDefault", "qualified"));
+
+            setSchema(namespace, e);
         }
 
         return e;
+    }
+
+    protected void setSchema(String namespace, Element schema)
+    {
+        typeMap.put(namespace, schema);
+        getSchemaTypes().appendChild(schema);
     }
 
     protected Element getSchemaTypes()

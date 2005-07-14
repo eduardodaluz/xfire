@@ -1,12 +1,11 @@
 package org.codehaus.xfire.xmlbeans;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import javax.xml.namespace.QName;
 
-import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlObject;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -22,6 +21,7 @@ public class XmlBeansServiceFactory
     public XmlBeansServiceFactory()
     {
         setStyle(SoapConstants.STYLE_DOCUMENT);
+        setWsdlBuilder(XmlBeansWSDLBuilder.class);
     }
 
     public XmlBeansServiceFactory(TransportManager transportManager)
@@ -32,6 +32,7 @@ public class XmlBeansServiceFactory
         setBindingProvider(provider);
         
         setStyle(SoapConstants.STYLE_DOCUMENT);
+        setWsdlBuilder(XmlBeansWSDLBuilder.class);
     }
 
     protected QName getInParameterName(Service service, Method method, int paramNumber, boolean doc)
@@ -39,7 +40,7 @@ public class XmlBeansServiceFactory
         Class[] paramClasses = method.getParameterTypes();
         if (XmlObject.class.isAssignableFrom(paramClasses[paramNumber]))
         {
-            return getSchemaType(paramClasses[paramNumber]).getDocumentElementName();
+            return XmlBeans.typeForClass(paramClasses[paramNumber]).getDocumentElementName();
         }
         else
         {
@@ -51,36 +52,11 @@ public class XmlBeansServiceFactory
     {
         if (XmlObject.class.isAssignableFrom(method.getReturnType()))
         {
-            return getSchemaType(method.getReturnType()).getDocumentElementName();
+            return XmlBeans.typeForClass(method.getReturnType()).getDocumentElementName();
         }
         else
         {
             return super.getOutParameterName(service, method, doc);
-        }
-    }
-
-    /**
-     * Introspect to find the SchemaType for a particular XMLBeans class.
-     */
-    public static SchemaType getSchemaType(Class clazz)
-    {
-        try
-        {
-            Field f = clazz.getDeclaredField("type");
-
-            return (SchemaType) f.get(null);
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new XFireRuntimeException("Couldn't find type field!", e);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new XFireRuntimeException("Couldn't get type field!", e);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new XFireRuntimeException("Couldn't get type field!", e);
         }
     }
 }

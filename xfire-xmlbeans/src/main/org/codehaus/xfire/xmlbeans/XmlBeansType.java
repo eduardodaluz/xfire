@@ -1,7 +1,6 @@
 package org.codehaus.xfire.xmlbeans;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -11,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -22,15 +22,8 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.xpath.YOMXPath;
-import org.jaxen.JaxenException;
-import org.jaxen.XPath;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -41,7 +34,6 @@ public class XmlBeansType
 {
     private SchemaType schemaType;
 
-    private final static StaxBuilder builder = new StaxBuilder();
     private final static Log logger = LogFactory.getLog(XmlBeansType.class); 
     
     public XmlBeansType()
@@ -51,100 +43,17 @@ public class XmlBeansType
     public XmlBeansType(SchemaType schemaType)
     {
         this.schemaType = schemaType;
+        setTypeClass(schemaType.getJavaClass());
     }
 
     public XmlBeansType(Class clazz)
     {
-        this.schemaType = XmlBeansServiceFactory.getSchemaType(clazz);
+        this.schemaType = XmlBeans.typeForClass(clazz);
         setTypeClass(clazz);
     }
 
     public void writeSchema(Element root)
     {
-        try
-        {
-            Element schema = builder.buildElement(null, getSchema().newXMLStreamReader());
-            Document schemaDoc = new Document(schema);
-            
-            String ns = getSchemaType().getNamespaceURI();
-            String expr = "//xsd:schema[@targetNamespace='" + ns + "']";
-
-            List nodes = getMatches(schema, expr);
-            if (nodes.size() == 0)
-            {
-                logger.warn("No schema found for " + expr);
-                return;
-            }
-            
-            Element node = (Element) nodes.get(0);
-            Elements children = node.getChildElements();
-            
-            for (int i = 0; i < children.size(); i++)
-            {
-                Element child = children.get(i);
-
-                if (hasChild(root, child)) return;
-                
-                child.detach();
-                root.appendChild(child);
-            }
-        }
-        catch (XMLStreamException e)
-        {
-            throw new XFireRuntimeException("Couldn't parse schema.", e);
-        }
-    }
-
-    private boolean hasChild(Element root, Element child)
-    {
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("//");
-        buffer.append(child.getQualifiedName());
-        if (child.getAttributeCount() > 0)
-        {
-            buffer.append("[");
-            for (int i = 0; i < child.getAttributeCount(); ++i)
-            {
-                org.codehaus.yom.Attribute attr = child.getAttribute(i);
-                buffer.append("@").append(attr.getQualifiedName()).append("='");
-                buffer.append(attr.getValue()).append("']");
-                if (i != child.getAttributeCount() - 1) buffer.append("[");
-            }
-        }
-
-        if (getMatches(root, buffer.toString()).size() > 0 ) return true;
-        return false;
-    }
-
-    private List getMatches(Object doc, String xpath)
-    {
-        try
-        {
-            XPath path = new YOMXPath(xpath);
-            path.addNamespace("xsd", SoapConstants.XSD);
-            path.addNamespace("s", SoapConstants.XSD);
-            List result = path.selectNodes(doc);
-            return result;
-        }
-        catch(JaxenException e)
-        {
-            throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
-        }
-    }
-
-    public XmlObject getSchema()
-    {
-        String name = schemaType.getSourceName();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            return XmlObject.Factory.parse(classLoader.getResourceAsStream("schemaorg_apache_xmlbeans/src/" + name));
-        }
-        catch (Exception e)
-        {
-            throw new XFireRuntimeException("Couldn't load schema.", e);
-        }
     }
     
     public boolean isComplex()
