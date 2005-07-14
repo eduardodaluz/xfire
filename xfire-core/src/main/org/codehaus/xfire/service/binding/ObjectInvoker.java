@@ -62,7 +62,32 @@ public class ObjectInvoker
         {
             final Object serviceObject = getServiceObject(context);
 
-            return method.invoke(serviceObject, params);
+            Object[] newParams = params;
+            for (int i = 0; i < method.getParameterTypes().length; i++)
+            {
+                if (method.getParameterTypes()[i].equals(MessageContext.class))
+                {
+                    newParams = new Object[params.length+1];
+                    
+                    for (int j = 0; j < newParams.length; j++)
+                    {
+                        if (j == i)
+                        {
+                            newParams[j] = context;
+                        }
+                        else if (j > i)
+                        {
+                            newParams[j] = params[j-1];
+                        }
+                        else
+                        {
+                            newParams[j] = params[j];
+                        }
+                    }
+                }
+            }
+            
+            return method.invoke(serviceObject, newParams);
         }
         catch (IllegalArgumentException e)
         {

@@ -12,6 +12,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
@@ -338,7 +339,7 @@ public class ObjectServiceFactory
                 final QName q = getInParameterName(endpoint, method, j, isDoc);
                 inMsg.addMessageHeader(q, paramClasses[j]).setIndex(j);
             }
-            else
+            else if (!paramClasses[j].equals(MessageContext.class))
             {
                 final QName q = getInParameterName(endpoint, method, j, isDoc);
                 inMsg.addMessagePart(q, paramClasses[j]).setIndex(j);

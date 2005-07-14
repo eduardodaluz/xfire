@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
 
@@ -22,5 +23,8 @@ public class MessengerTest
 
         assertNotNull(service.getBinding());
         assertNotNull(((ObjectBinding) service.getBinding()).getBindingProvider());
+        
+        OperationInfo info = service.getServiceInfo().getOperation("receive");
+        assertEquals(1, info.getInputMessage().getMessageParts().size());
     }
 }
