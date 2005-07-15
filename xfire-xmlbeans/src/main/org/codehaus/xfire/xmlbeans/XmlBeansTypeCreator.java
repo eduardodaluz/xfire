@@ -98,5 +98,7 @@ public class XmlBeansTypeCreator
     public void setTypeMapping(TypeMapping typeMapping)
     {
         this.typeMapping = typeMapping;
+        
+        nextCreator.setTypeMapping(typeMapping);
     }
 }
