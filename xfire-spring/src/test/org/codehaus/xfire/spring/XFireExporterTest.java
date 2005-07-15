@@ -6,6 +6,7 @@ package org.codehaus.xfire.spring;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.wsdl.Binding;
@@ -19,7 +20,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
@@ -83,8 +83,6 @@ public class XFireExporterTest
         exporter.setBeanName(beanName);
         String namespace = "http://tempuri.org";
         exporter.setNamespace(namespace);
-        exporter.setStyle(SoapConstants.STYLE_DOCUMENT);
-        exporter.setSoapVersion(new Soap11());
         exporter.afterPropertiesSet();
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "Echo") 
