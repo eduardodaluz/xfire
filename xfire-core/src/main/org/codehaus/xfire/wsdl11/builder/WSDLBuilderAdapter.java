@@ -50,7 +50,6 @@ public class WSDLBuilderAdapter
     {
         try
         {
-            System.out.println("creating " + wsdlBuilder);
             Constructor c = wsdlBuilder.getConstructor(new Class[] { Service.class,
                     TransportManager.class, WSDL11ParameterBinding.class });
 

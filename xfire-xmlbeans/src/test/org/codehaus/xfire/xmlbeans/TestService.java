@@ -15,4 +15,9 @@ public class TestService
     {
         return trouble;
     }
+    
+    public TroubleDocument GetTroubleAgain(String string, TroubleDocument trouble)
+    {
+        return trouble;
+    }
 }
