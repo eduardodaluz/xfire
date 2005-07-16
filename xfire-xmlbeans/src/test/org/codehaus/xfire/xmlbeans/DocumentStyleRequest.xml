@@ -1,0 +1,9 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body xmlns="urn:TestService">
+    <mixedRequestin0>foo</mixedRequestin0>
+    <request xmlns="http://codehaus.org/xfire/xmlbeans">
+      <sessionId>foo</sessionId>
+    </request>
+ </env:Body>
+</env:Envelope>

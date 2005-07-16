@@ -67,8 +67,6 @@ public class XMLBeansServiceTest
         addNamespace( "xsd", SoapConstants.XSD );
 
 	    assertValid("//wsdl:types/xsd:schema[@targetNamespace='http://www.webservicex.net']", wsdl);
-        assertValid("//xsd:schema[@targetNamespace='urn:WeatherService']" +
-                "/xsd:element[@ref='ns1:GetWeatherByZipCode']", wsdl);
         assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net']" +
                 "/xsd:element[@name='WeatherForecasts']", wsdl);
         assertValid("count(//xsd:schema[@targetNamespace='http://www.webservicex.net']" +
@@ -111,7 +109,7 @@ public class XMLBeansServiceTest
 
 	    Document wsdl = getWSDLDocument("TestService");
 
-        String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@ref='ns1:trouble']";
+        String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@name='trouble']";
         
         addNamespace( "wsdl", WSDLWriter.WSDL11_NS );
         addNamespace( "wsdlsoap", WSDLWriter.WSDL11_SOAP_NS );

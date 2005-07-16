@@ -1,5 +1,7 @@
 package org.codehaus.xfire.xmlbeans;
 
+import junit.framework.Assert;
+
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
@@ -16,8 +18,13 @@ public class TestService
         return trouble;
     }
     
-    public TroubleDocument GetTroubleAgain(String string, TroubleDocument trouble)
+    public ResponseDocument mixedRequest(String string, RequestDocument req)
     {
-        return trouble;
+        Assert.assertEquals("foo", string);
+        Assert.assertEquals("foo", req.getRequest().getSessionId());
+        
+        ResponseDocument response = ResponseDocument.Factory.newInstance();
+        response.addNewResponse().addNewForm();
+        return response;
     }
 }

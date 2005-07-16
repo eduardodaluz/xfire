@@ -1,6 +1,8 @@
 package org.codehaus.xfire.xmlbeans;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.WSDLException;
 
@@ -24,6 +26,7 @@ public class XmlBeansWSDLBuilder
     extends WSDLBuilder
 {
     private final static StaxBuilder builder = new StaxBuilder();
+    private static Map schemas = new HashMap();
     
     public XmlBeansWSDLBuilder(Service service, TransportManager tman, WSDL11ParameterBinding paramBinding) throws WSDLException
     {
@@ -53,12 +56,15 @@ public class XmlBeansWSDLBuilder
         String name = type.getSourceName();
         if (name == null) return null;
 
+        Element schema = (Element) schemas.get(name); 
+        if (schema != null) return schema;
+        
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try
         {
             XmlObject obj = XmlObject.Factory.parse(classLoader.getResourceAsStream("schemaorg_apache_xmlbeans/src/" + name));
             
-            Element schema = builder.buildElement(null, obj.newXMLStreamReader());
+            schema = builder.buildElement(null, obj.newXMLStreamReader());
             Document schemaDoc = new Document(schema);
             
             String ns = xbeanType.getSchemaType().getNamespaceURI();
@@ -71,6 +77,18 @@ public class XmlBeansWSDLBuilder
             }
             
             Element node = (Element) nodes.get(0);
+            
+            nodes = getMatches(schema, "//xsd:import");
+            for (int i = 0; i < nodes.size(); i++)
+            {
+                Element imp = (Element) nodes.get(i);
+                
+                String importedNs = imp.getAttributeValue("namespace");
+                
+                // TODO: How do we make sure this is imported???
+                
+                imp.detach();
+            }
             
             return node;
         }
