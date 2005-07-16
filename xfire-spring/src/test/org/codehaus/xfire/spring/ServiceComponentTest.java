@@ -41,4 +41,16 @@ public class ServiceComponentTest
         
         assertNotNull(service.getInHandlers());
     }
+
+    public void testNoIntf()
+            throws Exception
+    {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext(new String[]{
+            "/org/codehaus/xfire/spring/xfire.xml",
+            "/org/codehaus/xfire/spring/serviceComponentNoIntf.xml"});
+
+        ServiceComponent service = (ServiceComponent) appContext.getBean("echoService");
+        assertNotNull(service);
+        assertEquals("echoService", service.getXFireService().getName());
+    }
 }

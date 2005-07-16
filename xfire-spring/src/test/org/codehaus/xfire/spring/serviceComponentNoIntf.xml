@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean name="echoService" class="org.codehaus.xfire.spring.ServiceComponent">
+        <property name="service" ref="echo"/>
+        <property name="serviceFactory" ref="xfire.serviceFactory"/>
+        <property name="xfire" ref="xfire"/>
+        <property name="inHandlers">
+          <list>
+            <ref bean="addressingHandler"/>
+          </list>
+        </property>
+    </bean>
+
+    <bean id="echo" class="org.codehaus.xfire.test.EchoImpl"/>
+    
+    <bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingHandler"/>
+</beans>
+

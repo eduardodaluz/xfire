@@ -47,7 +47,10 @@ public class ServiceComponent
             theName = theName.substring(1);
         }
         
-        xfireService = serviceFactory.create(getServiceInterface(),
+        Class intf = getServiceInterface();
+        if (intf == null) intf = getService().getClass();
+        
+        xfireService = serviceFactory.create(intf,
                                          theName,
                                          namespace,
                                          null);
@@ -62,7 +65,10 @@ public class ServiceComponent
 
         xFire.getServiceRegistry().register(xfireService);
 
-        binding.setInvoker(new BeanInvoker(getProxyForService()));
+        if (serviceInterface != null)
+            binding.setInvoker(new BeanInvoker(getProxyForService()));
+        else
+            binding.setInvoker(new BeanInvoker(getService()));
         
         // set up in handlers
         if (xfireService.getInHandlers() == null) 
