@@ -250,38 +250,38 @@ public class WSDLBuilder
         Part part = getDefinition().createPart();
         part.setName(pName.getLocalPart());
 
-        if (type.isComplex())
+        if (!type.isAbstract())
         {
-            if (!declaredParameters.contains(pName))
+            String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+            addNamespace(prefix, schemaTypeName.getNamespaceURI());
+            
+            part.setElementName(schemaTypeName);
+            
+            return part;
+        }
+
+        if (!declaredParameters.contains(pName))
+        {
+            Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
+            
+            Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
+            schemaEl.appendChild(element);
+
+            String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+            addNamespace(prefix, schemaTypeName.getNamespaceURI());
+
+            if (type.isAbstract())
             {
-                Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
-                
-                Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-                schemaEl.appendChild(element);
-    
-                String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
-                addNamespace(prefix, schemaTypeName.getNamespaceURI());
-    
-                if (type.isAbstract())
-                {
-                    element.addAttribute(new Attribute("name", pName.getLocalPart()));
-                    element.addAttribute(new Attribute("type", 
-                                                       prefix + ":" + schemaTypeName.getLocalPart()));
-                }
-                else
-                {
-                    element.addAttribute(new Attribute("ref",  prefix + ":" + schemaTypeName.getLocalPart()));
-                }
-                
-                declaredParameters.add(pName);
+                element.addAttribute(new Attribute("name", pName.getLocalPart()));
+                element.addAttribute(new Attribute("type", 
+                                                   prefix + ":" + schemaTypeName.getLocalPart()));
             }
-     
-            part.setElementName(pName);
+            
+            declaredParameters.add(pName);
         }
-        else
-        {
-            part.setTypeName(type.getSchemaType());
-        }
+ 
+        part.setElementName(pName);
+        
         return part;
     }
 
