@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -173,9 +174,13 @@ public class XMLServiceBuilder
             }
         }
         
-        svc.setInHandlers(createHandlerPipeline(service.getFirstChildElement("inHandlers")));
-        svc.setOutHandlers(createHandlerPipeline(service.getFirstChildElement("outHandlers")));
-        svc.setFaultHandlers(createHandlerPipeline(service.getFirstChildElement("faultHandlers")));
+        if (svc.getInHandlers() == null) svc.setInHandlers(new ArrayList());
+        if (svc.getOutHandlers() == null) svc.setOutHandlers(new ArrayList());
+        if (svc.getFaultHandlers() == null) svc.setFaultHandlers(new ArrayList());
+        
+        svc.getInHandlers().addAll(createHandlerPipeline(service.getFirstChildElement("inHandlers")));
+        svc.getOutHandlers().addAll(createHandlerPipeline(service.getFirstChildElement("outHandlers")));
+        svc.getFaultHandlers().addAll(createHandlerPipeline(service.getFirstChildElement("faultHandlers")));
         
         registry.register(svc);
         
@@ -260,11 +265,11 @@ public class XMLServiceBuilder
         throws Exception
     {
         if (child == null)
-            return null;
+            return Collections.EMPTY_LIST;
         
         Elements handlers = child.getChildElements("handler");
         if (handlers.size() == 0)
-            return null;
+            return Collections.EMPTY_LIST;
         
         List pipe = new ArrayList();
         
