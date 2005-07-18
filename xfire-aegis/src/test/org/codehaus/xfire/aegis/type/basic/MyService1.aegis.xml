@@ -1,14 +1,14 @@
-<mappings>
+<mappings xmlns:foo="urn:foo:bar">
     <mapping>
         <method name="getCollection">
-            <return-type componentType="java.lang.Double"/>
+            <return-type componentType="java.lang.Double" mappedName="doubles"/>
         </method>
         <method name="getCollection">
             <parameter index="0" componentType="java.lang.String"/>
         </method>
         <method name="getCollection">
             <return-type componentType="java.lang.Float"/>
-            <parameter index="0" type="int"/>
+            <parameter index="0" type="int" mappedName="foo:int"/>
         </method>
         <method name="getCollectionForValues">
             <return-type componentType="java.math.BigDecimal"/>

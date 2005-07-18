@@ -138,6 +138,8 @@ public class DescriptorTest
         catch(XFireRuntimeException ex)
         {
         }
+        
+        assertEquals(new QName(tm.getEncodingStyleURI(), "doubles"), type.getSchemaType());
     }
 
     public void testBestMatch() throws Exception
@@ -154,6 +156,9 @@ public class DescriptorTest
         method = MyService1.class.getDeclaredMethod("getCollection", new Class[]{Integer.TYPE});
         type = creator.createType(method, -1);
         assertEquals("unexpected collection return type for method " + method, Float.class, ((CollectionType)type).getComponentType().getTypeClass());
+        
+        type = creator.createType(method, 0);
+        // assertEquals(new QName("urn:foo:bar", "int"), type.getSchemaType());
         
         method = MyService1.class.getDeclaredMethod("getCollectionForValues", new Class[]{Integer.TYPE, Collection.class});
         type = creator.createType(method, -1);

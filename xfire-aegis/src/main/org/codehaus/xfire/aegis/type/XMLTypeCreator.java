@@ -192,6 +192,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
             
             setComponentType(info, parameter);
             setKeyType(info, parameter);
+            
+            info.setName(createQName(parameter, parameter.getAttributeValue("mappedName")));
         }
         else
         {
@@ -205,7 +207,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
             }
             info.setTypeClass(m.getReturnType());
             //info.setAnnotations(m.getAnnotations());
-            String componentType = bestMatch.getFirstChildElement("return-type").getAttributeValue("componentType");
+            Element rtElement = bestMatch.getFirstChildElement("return-type");
+            String componentType = rtElement.getAttributeValue("componentType");
             if(componentType != null)
             {
                 try
@@ -217,6 +220,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
                     log.error("Unable to load mapping class " + componentType);
                 }
             }
+            
+            info.setName(createQName(rtElement, rtElement.getAttributeValue("mappedName")));
         }
 
         return info;
@@ -343,12 +348,14 @@ public class XMLTypeCreator extends AbstractTypeCreator
      */
     protected QName createQName(Element e, String value)
     {
-        if (value == null) return null;
+        if (value == null || value.length() == 0) return null;
         
         int index = value.indexOf(":");
         
         if (index == -1)
-            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        {
+            return new QName(getTypeMapping().getEncodingStyleURI(), value);
+        }
         
         String prefix = value.substring(0, index);
         String localName = value.substring(index+1);

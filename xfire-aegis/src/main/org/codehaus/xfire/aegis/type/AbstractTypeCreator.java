@@ -81,6 +81,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
             {
                 type = createDefaultType(info);
             }
+            
             return type;
         }
     }
