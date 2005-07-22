@@ -12,6 +12,7 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Configurable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
 import org.codehaus.xfire.service.Service;
@@ -29,7 +30,7 @@ public class DefaultConfigurationService
     
     private PlexusConfiguration services;
     
-	public void initialize() throws Exception
+	public void initialize() throws InitializationException
 	{
 	    try
 	    {	        
@@ -49,7 +50,7 @@ public class DefaultConfigurationService
 	    catch( Exception e )
 	    {
 	        getLogger().error("Could not start the configuration service.", e);
-	        throw e;
+	        throw new InitializationException("Could not start configuration service.", e);
 	    }
 	}
     

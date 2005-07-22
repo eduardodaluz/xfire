@@ -26,7 +26,6 @@ public class DefaultXMPPTransportService
      * @throws Exception
      */
     public void initialize()
-        throws Exception
     {
         transport = new XMPPTransport(getXFire(), server, username, password);
         getTransportManager().register(transport);

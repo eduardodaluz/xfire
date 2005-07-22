@@ -87,7 +87,6 @@ public class TypeMappingRegistry
     }
 
     public void initialize()
-        throws Exception
     {
         createDefaultMappings();
     }
