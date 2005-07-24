@@ -33,6 +33,7 @@ public class AddressingHandler
     public void createFactories()
     {
         factories.add(new AddressingHeadersFactory200502());
+        factories.add(new AddressingHeadersFactory200408());
     }
     
     public String getPhase()
