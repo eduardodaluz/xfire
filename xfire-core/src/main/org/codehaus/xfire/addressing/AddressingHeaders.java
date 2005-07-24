@@ -1,5 +1,7 @@
 package org.codehaus.xfire.addressing;
 
+import javax.xml.namespace.QName;
+
 /**
  * WS-Addressing Headers from a SOAP message.
  * 
@@ -9,6 +11,10 @@ public class AddressingHeaders
 {
     private String messageID;
 
+    private String relatesTo;
+    
+    private QName relationshipType;
+    
     private String action;
 
     private String to;
@@ -77,5 +83,25 @@ public class AddressingHeaders
     public void setTo(String to)
     {
         this.to = to;
+    }
+
+    public String getRelatesTo()
+    {
+        return relatesTo;
+    }
+
+    public void setRelatesTo(String relatesTo)
+    {
+        this.relatesTo = relatesTo;
+    }
+
+    public QName getRelationshipType()
+    {
+        return relationshipType;
+    }
+
+    public void setRelationshipType(QName relationshipType)
+    {
+        this.relationshipType = relationshipType;
     }
 }

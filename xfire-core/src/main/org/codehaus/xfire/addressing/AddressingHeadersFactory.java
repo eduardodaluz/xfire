@@ -9,4 +9,8 @@ public interface AddressingHeadersFactory
     EndpointReference createEPR(Element root);
     
     boolean hasHeaders(Element root);
+    
+    void writeHeaders(Element root, AddressingHeaders headers);
+    
+    void writeEPR(Element root, EndpointReference epr);
 }

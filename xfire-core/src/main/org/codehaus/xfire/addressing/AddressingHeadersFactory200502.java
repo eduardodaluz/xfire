@@ -3,9 +3,6 @@ package org.codehaus.xfire.addressing;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 
@@ -15,6 +12,7 @@ import org.codehaus.yom.Elements;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class AddressingHeadersFactory200502
+    extends AbstactAddressingHeadersFactory
     implements WSAConstants, AddressingHeadersFactory
 {
     public AddressingHeaders createHeaders(Element root)
@@ -85,7 +83,7 @@ public class AddressingHeadersFactory200502
                 {
                     List policies = new ArrayList();
                     
-                    Elements polEls = e.getChildElements(WSA_POLICIES);
+                    Elements polEls = e.getChildElements();
                     for (int j = 0; j < polEls.size(); j++)
                     {
                         policies.add(polEls.get(j));
@@ -110,55 +108,22 @@ public class AddressingHeadersFactory200502
         
         return epr;
     }
-    
-    protected static QName elementToQName(Element el)
-    {
-        String value = el.getValue();
-        int colon = value.indexOf(":");
-        if (colon > -1)
-        {
-            String prefix = value.substring(0, colon);
-            String local = value.substring(colon+1);
-            String uri = el.getNamespaceURI(prefix);
-            return new QName(uri, local, prefix);
-        }
-        else
-        {
-            String uri = el.getNamespaceURI();
-            return new QName(value, uri);
-        }
-    }
-/*
-    public void writeToElement(Element root)
-    {
-        Element addEl = new Element(WSA_ADDRESS_QNAME, getVersion());
-        addEl.appendChild(address);
-        root.appendChild(addEl);
-        
-        if (interfaceName != null)
-        {
-            Element intfEl = new Element(WSA_INTERFACE_NAME_QNAME, getVersion());
-            intfEl.appendChild(qnameToString(root, getInterfaceName()));
-            root.appendChild(intfEl);
-        }
-        
-        if (serviceName != null)
-        {
-            Element svcEl = new Element(WSA_SERVICE_NAME_QNAME, getVersion());
-            svcEl.appendChild(qnameToString(root, getServiceName()));
-            root.appendChild(svcEl);
-        }
-//    }*/
-
-    private static String qnameToString(Element root, QName qname)
-    {
-        String prefix = NamespaceHelper.getUniquePrefix(root, qname.getNamespaceURI());
-        
-        return prefix + ":" + qname.getLocalPart();
-    }
 
     public boolean hasHeaders(Element root)
     {
         return root.getFirstChildElement(WSA_ACTION, WSA_NAMESPACE_200502) != null;
     }
+
+    public void writeEPR(Element root, EndpointReference epr)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void writeHeaders(Element root, AddressingHeaders headers)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

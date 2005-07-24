@@ -18,6 +18,10 @@ public class EndpointReference
 
     private List any;
 
+    private List referenceProperties;
+    
+    private List referenceParameters;
+    
     public String getAddress()
     {
         return address;
@@ -76,6 +80,26 @@ public class EndpointReference
     public void setServiceName(QName serviceName)
     {
         this.serviceName = serviceName;
+    }
+
+    public List getReferenceParameters()
+    {
+        return referenceParameters;
+    }
+
+    public void setReferenceParameters(List referenceParameters)
+    {
+        this.referenceParameters = referenceParameters;
+    }
+
+    public List getReferenceProperties()
+    {
+        return referenceProperties;
+    }
+
+    public void setReferenceProperties(List referenceProperties)
+    {
+        this.referenceProperties = referenceProperties;
     }
 
 }
