@@ -7,11 +7,15 @@ public class NoServiceFaultTest
     extends AbstractXFireTest
 {
 
+    /**
+     * Tests to see what happens when there is no service and we invoke.
+     * @throws Exception
+     */
     public void testInvoke()
         throws Exception
     {
         Document response = invokeService(null, "/org/codehaus/xfire/echo11.xml");
 
-        assertValid("//s:Fault", response);
+        assertNull(response);
     }
 }
