@@ -31,6 +31,12 @@ public class AddressingHeadersFactory200502
             headers.setReplyTo(createEPR(replyTo));
         }
         
+        Element faultTo = root.getFirstChildElement(WSA_FAULT_TO, WSA_NAMESPACE_200502);
+        if (faultTo != null)
+        {
+            headers.setFaultTo(createEPR(faultTo));
+        }
+        
         Element messageId = root.getFirstChildElement(WSA_MESSAGE_ID, WSA_NAMESPACE_200502);
         if (messageId != null)
         {

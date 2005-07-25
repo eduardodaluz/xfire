@@ -74,28 +74,41 @@ public class AddressingHandler
                 MessageExchange exchange = context.createMessageExchange(op);
                 context.setExchange(exchange);
                 
+                EndpointReference faultTo = headers.getFaultTo();
+                if (faultTo != null)
+                {
+                    OutMessage outMessage = processEPR(context, faultTo);
+                    exchange.setFaultMessage(outMessage);
+                }
+                
                 EndpointReference replyTo = headers.getReplyTo();
                 if (replyTo != null)
                 {
-                    String addr = replyTo.getAddress();
-                    if (addr != null)
-                    {
-                        OutMessage outMessage = new OutMessage(addr);
-                        outMessage.setSoapVersion(exchange.getInMessage().getSoapVersion());
-                        
-                        // Find the correct transport for the reply message.
-                        Transport t = context.getXFire().getTransportManager().getTransportForUri(addr);
-                        if (t == null)
-                        {
-                            throw new XFireFault("URL was not recognized: " + addr, XFireFault.SENDER);
-                        }
-
-                        outMessage.setChannel(t.createChannel());
-                        exchange.setOutMessage(outMessage);
-                    }
+                    OutMessage outMessage = processEPR(context, replyTo);
+                    exchange.setOutMessage(outMessage);
                 }
             }
         }
+    }
+
+    protected OutMessage processEPR(MessageContext context, EndpointReference epr)
+        throws XFireFault, Exception
+    {
+        String addr = epr.getAddress();
+        if (addr == null) throw new XFireFault("Invalid ReplyTo address.", XFireFault.SENDER);
+            
+        OutMessage outMessage = new OutMessage(addr);
+        outMessage.setSoapVersion(context.getExchange().getInMessage().getSoapVersion());
+        
+        // Find the correct transport for the reply message.
+        Transport t = context.getXFire().getTransportManager().getTransportForUri(addr);
+        if (t == null)
+        {
+            throw new XFireFault("URL was not recognized: " + addr, XFireFault.SENDER);
+        }
+
+        outMessage.setChannel(t.createChannel());
+        return outMessage;
     }
     
     protected Service getService(AddressingHeaders headers, MessageContext context)

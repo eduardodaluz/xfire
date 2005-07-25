@@ -52,7 +52,7 @@ public class DefaultEndpoint
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.debug("Fault occurred!", e);
             XFireFault fault = XFireFault.createFault(e);
 
             // Give the previously invoked pipeline a chance to clean up.
@@ -60,7 +60,7 @@ public class DefaultEndpoint
             
             // Create the outgoing fault message
             OutMessage outMsg = (OutMessage) context.getExchange().getFaultMessage();
-            
+            System.out.println("Destination: " + outMsg.getUri());
             outMsg.setSerializer(context.getService().getFaultSerializer());
             outMsg.setBody(fault);
             
