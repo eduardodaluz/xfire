@@ -6,12 +6,13 @@
     <package>org.codehaus.xfire.spring.example</package>
     <shortDescription>XFire Spring Example</shortDescription>
     <description>An example that shows how to use XFire in Spring</description>
+    <currentVersion>@xfire.version@</currentVersion>
     <dependencies>
 
         <dependency>
             <groupId>xfire</groupId>
             <artifactId>xfire-core</artifactId>
-            <version>1.0-M4</version>
+            <version>@xfire.version@</version>
             <properties>
                 <war.bundle>true</war.bundle>
             </properties>
@@ -19,7 +20,7 @@
         <dependency>
             <groupId>xfire</groupId>
             <artifactId>xfire-java</artifactId>
-            <version>1.0-M4</version>
+            <version>@xfire.version@</version>
             <properties>
                 <war.bundle>true</war.bundle>
             </properties>
@@ -27,7 +28,7 @@
         <dependency>
             <groupId>xfire</groupId>
             <artifactId>xfire-spring</artifactId>
-            <version>1.0-M4</version>
+            <version>@xfire.version@</version>
             <properties>
                 <war.bundle>true</war.bundle>
             </properties>
@@ -66,18 +67,9 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j-qname</artifactId>
-            <version>1.4</version>
-            <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
-            <properties>
-                <war.bundle>true</war.bundle>
-            </properties>
-        </dependency>
-        <dependency>
             <groupId>yom</groupId>
             <artifactId>yom</artifactId>
-            <version>1.0-alpha-1</version>
+            <version>1.0-SNAPSHOT</version>
             <properties>
                 <war.bundle>true</war.bundle>
             </properties>
@@ -103,7 +95,7 @@
         <dependency>
             <groupId>springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>1.1.5</version>
+            <version>1.2.1</version>
             <properties>
                 <war.bundle>true</war.bundle>
             </properties>

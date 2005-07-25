@@ -94,6 +94,9 @@
 
 		<ant:copy toDir="${maven.build.dir}/dist/examples">
 			<fileset dir="${basedir}/../examples" includes="**/*" excludes="**/.*,**/CVS"/>
+			<filterset>
+			  <filter token="xfire.version" value="${pom.currentVersion}"/>
+		  </filterset>
 		</ant:copy>
 		
 		<!-- Make jars -->
