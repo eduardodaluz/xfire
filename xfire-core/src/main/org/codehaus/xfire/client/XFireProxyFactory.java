@@ -37,10 +37,31 @@ public class XFireProxyFactory
      * given service interface.
      * <pre>
      * String url = "http://localhost:8080/services/Echo");
-     * Echo echo = (Echo) factory.create(HelloHome.class, url);
+     * Echo echo = (Echo) factory.create(myService, url);
      * </pre>
      *
-     * @param serviceInterface the interface the proxy class needs to implement.
+     * @param service the service to create a client for.
+     * @param url              the URL where the client object is located.
+     * @return a proxy to the object with the specified interface.
+     */
+    public Object create(Service service, String url)
+            throws MalformedURLException
+    {
+        Transport transport = xfire.getTransportManager().getTransportForUri(url);
+
+        return create(transport, service, url);
+    }
+    
+    /**
+     * Creates a new proxy with the specified URL. The returned object is a proxy with the interface specified by the
+     * given service interface.
+     * <pre>
+     * String url = "http://localhost:8080/services/Echo");
+     * Echo echo = (Echo) factory.create(transport, myService, url);
+     * </pre>
+     *
+     * @param transport        The transport to use.
+     * @param serviceInterface the service to create a client for.
      * @param url              the URL where the client object is located.
      * @return a proxy to the object with the specified interface.
      */

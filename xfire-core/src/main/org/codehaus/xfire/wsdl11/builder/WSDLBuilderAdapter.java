@@ -3,6 +3,7 @@ package org.codehaus.xfire.wsdl11.builder;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
@@ -55,6 +56,14 @@ public class WSDLBuilderAdapter
 
             return (WSDLBuilder) c.newInstance(new Object[] { service, transportManager,
                     paramBinding });
+        }
+        catch (XFireRuntimeException e)
+        {
+            throw (XFireRuntimeException) e;
+        }
+        catch (InvocationTargetException e)
+        {
+            throw new XFireRuntimeException("Could not create wsdl builder", e.getCause());
         }
         catch (Exception e)
         {
