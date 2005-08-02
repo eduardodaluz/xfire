@@ -65,7 +65,7 @@ public class XMPPClientTest
         Object[] response = client.invoke(op, new Object[] {"hello"});
 
         assertNotNull(response);
-        assertEquals(1, response.ljength);
+        assertEquals(1, response.length);
         
         String resString = (String) response[0];
         assertEquals("hello", resString);
