@@ -9,7 +9,6 @@ import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
-import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 
 /**
@@ -60,19 +59,15 @@ public class XMPPClientTest
     public void testInvoke()
             throws Exception
     {
-        Channel serverChannel = serverTrans.createChannel("Echo");
-
         Client client = new Client(clientTrans, service, id + "/Echo");
 
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
 
         assertNotNull(response);
-        assertEquals(1, response.length);
+        assertEquals(1, response.ljength);
         
         String resString = (String) response[0];
         assertEquals("hello", resString);
-
-        serverChannel.close();
     }
 }
