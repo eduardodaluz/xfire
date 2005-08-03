@@ -56,7 +56,7 @@ public class HeaderServiceTest
         addNamespace("xsd", SoapConstants.XSD);
        
         assertValid("//wsdl:message[@name='doSomethingRequestHeaders']", wsdl);
-        assertValid("//wsdl:message[@name='doSomethingRequestHeaders']/wsdl:part[@name='header'][@type='xsd:string']", wsdl);
+        assertValid("//wsdl:message[@name='doSomethingRequestHeaders']/wsdl:part[@element='tns:header'][@name='header']", wsdl);
         assertValid("//wsdlsoap:header[@message='tns:doSomethingRequestHeaders'][@part='header'][@use='literal']", wsdl);
         assertValid("//xsd:element[@name='header']", wsdl);
         assertInvalid("//xsd:element[@name='header'][2]", wsdl);
