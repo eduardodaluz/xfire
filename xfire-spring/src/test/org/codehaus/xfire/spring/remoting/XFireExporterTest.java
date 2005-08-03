@@ -1,4 +1,4 @@
-package org.codehaus.xfire.spring;
+package org.codehaus.xfire.spring.remoting;
 
 /**
  * @author Arjen Poutsma
@@ -21,6 +21,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.spring.remoting.XFireExporter;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.springframework.context.ApplicationContext;
@@ -137,7 +138,7 @@ public class XFireExporterTest
     {
         ApplicationContext appContext = new ClassPathXmlApplicationContext(new String[]{
             "/org/codehaus/xfire/spring/xfire.xml",
-            "/org/codehaus/xfire/spring/applicationContext.xml"});
+            "/org/codehaus/xfire/spring/remoting/exporterTest.xml"});
 
         assertNotNull(appContext.getBean("xfire.serviceFactory"));
         assertNotNull(appContext.getBean("echo"));

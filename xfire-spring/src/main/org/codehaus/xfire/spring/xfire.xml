@@ -51,4 +51,11 @@
         </constructor-arg>
     </bean>
 
+    <bean id="xfire.servletController" 
+          class="org.codehaus.xfire.transport.http.XFireServletController"
+          singleton="true">
+         <constructor-arg>
+           <ref bean="xfire"/>
+         </constructor-arg>
+    </bean>
 </beans>

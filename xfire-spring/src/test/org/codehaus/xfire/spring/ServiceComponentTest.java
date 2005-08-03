@@ -5,6 +5,7 @@ package org.codehaus.xfire.spring;
  */
 
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.spring.remoting.XFireExporter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -21,7 +22,7 @@ public class ServiceComponentTest
         assertNotNull(appContext.getBean("xfire.serviceFactory"));
         assertNotNull(appContext.getBean("echo"));
         
-        ServiceComponent service = (ServiceComponent) appContext.getBean("echoService");
+        ServiceBean service = (ServiceBean) appContext.getBean("echoService");
         assertNotNull(service);
         
         assertNotNull(service.getXFireService());
@@ -35,7 +36,7 @@ public class ServiceComponentTest
     public void testNoIntf()
             throws Exception
     {
-        ServiceComponent service = (ServiceComponent) getContext().getBean("echoService");
+        ServiceBean service = (ServiceBean) getContext().getBean("echoService");
         assertNotNull(service);
         assertEquals("echoService", service.getXFireService().getName());
     }
@@ -44,6 +45,6 @@ public class ServiceComponentTest
     {
         return new ClassPathXmlApplicationContext(new String[]{
                 "/org/codehaus/xfire/spring/xfire.xml",
-                "/org/codehaus/xfire/spring/serviceComponent.xml"});
+                "/org/codehaus/xfire/spring/serviceBean.xml"});
     }
 }

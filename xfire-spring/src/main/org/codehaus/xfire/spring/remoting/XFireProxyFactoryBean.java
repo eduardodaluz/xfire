@@ -1,4 +1,4 @@
-package org.codehaus.xfire.spring;
+package org.codehaus.xfire.spring.remoting;
 
 import java.net.MalformedURLException;
 
@@ -26,7 +26,8 @@ public class XFireProxyFactoryBean
             throws MalformedURLException
     {
         super.afterPropertiesSet();
-        this.serviceProxy = ProxyFactory.getProxy(getServiceInterface(), this);
+
+        this.serviceProxy = ProxyFactory.getProxy(getService().getServiceInterface(), this);
     }
 
     public Object getObject()
@@ -36,7 +37,7 @@ public class XFireProxyFactoryBean
 
     public Class getObjectType()
     {
-        return (this.serviceProxy != null) ? this.serviceProxy.getClass() : getServiceInterface();
+        return (this.serviceProxy != null) ? this.serviceProxy.getClass() : getService().getServiceInterface();
     }
 
     public boolean isSingleton()

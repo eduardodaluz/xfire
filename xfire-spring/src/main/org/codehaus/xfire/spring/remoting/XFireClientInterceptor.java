@@ -1,4 +1,4 @@
-package org.codehaus.xfire.spring;
+package org.codehaus.xfire.spring.remoting;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -8,11 +8,12 @@ import java.net.MalformedURLException;
 import org.aopalliance.aop.AspectException;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.client.XFireProxyFactory;
+import org.codehaus.xfire.spring.ServiceBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.remoting.RemoteConnectFailureException;
-import org.springframework.remoting.support.UrlBasedRemoteAccessor;
 
 /**
  * Interceptor for accessing a XFire SOAP service.
@@ -22,12 +23,15 @@ import org.springframework.remoting.support.UrlBasedRemoteAccessor;
  * @see XFireProxyFactory
  */
 public class XFireClientInterceptor
-        extends UrlBasedRemoteAccessor
         implements MethodInterceptor, InitializingBean
 {
     private XFireProxyFactory proxyFactory;
     private Object xFireProxy;
-
+    
+    private String serviceUrl;
+    private ServiceBean service;
+    private XFire xfire;
+    
     public void afterPropertiesSet()
             throws MalformedURLException
     {
@@ -40,9 +44,9 @@ public class XFireClientInterceptor
     public void prepare()
             throws MalformedURLException
     {
-        if (getServiceInterface() == null)
+        if (getXfire() == null)
         {
-            throw new IllegalArgumentException("serviceInterface is required");
+            throw new IllegalArgumentException("xFire is required");
         }
         if (getServiceUrl() == null)
         {
@@ -50,11 +54,10 @@ public class XFireClientInterceptor
         }
         if (this.proxyFactory == null)
         {
-            this.proxyFactory = new XFireProxyFactory();
+            this.proxyFactory = new XFireProxyFactory(getXfire());
         }
         this.xFireProxy = createXFireProxy(this.proxyFactory);
     }
-
 
     /**
      * Create the XFire proxy that is wrapped by this interceptor.
@@ -67,7 +70,7 @@ public class XFireClientInterceptor
     protected Object createXFireProxy(XFireProxyFactory proxyFactory)
             throws MalformedURLException
     {
-        return null; //proxyFactory.create(getServiceInterface(), getServiceUrl());
+        return proxyFactory.create(getService().getXFireService(), getServiceUrl());
     }
 
 
@@ -117,7 +120,6 @@ public class XFireClientInterceptor
         }
     }
 
-
     /**
      * Set the <code>XFireProxyFactory</code> instance to use. If not specified, a default
      * <code>XFireProxyFactory</code> will be created.
@@ -127,6 +129,36 @@ public class XFireClientInterceptor
     public void setProxyFactory(XFireProxyFactory proxyFactory)
     {
         this.proxyFactory = proxyFactory;
+    }
+
+    public String getServiceUrl()
+    {
+        return serviceUrl;
+    }
+
+    public void setServiceUrl(String serviceUrl)
+    {
+        this.serviceUrl = serviceUrl;
+    }
+
+    public ServiceBean getService()
+    {
+        return service;
+    }
+
+    public void setService(ServiceBean serviceBean)
+    {
+        this.service = serviceBean;
+    }
+
+    public XFire getXfire()
+    {
+        return xfire;
+    }
+
+    public void setXfire(XFire fire)
+    {
+        xfire = fire;
     }
 }
 

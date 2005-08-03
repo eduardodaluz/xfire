@@ -15,15 +15,18 @@ import org.springframework.beans.factory.InitializingBean;
 
 
 /**
- * Creates a service from a ServiceFactory instance.
+ * A convenience bean which creates a Service from a ServiceFactory instance. Alternatively, the
+ * Jsr181BeanPostProcessor may be used.
  *
+ * @see org.codehaus.xfire.service.Service
+ * @see org.codehaus.xfire.spring.Jsr181BeanPostProcessor
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class ServiceComponent
+public class ServiceBean
     implements InitializingBean, BeanNameAware
 {
-    private final static Log logger = LogFactory.getLog(ServiceComponent.class);
+    private final static Log logger = LogFactory.getLog(ServiceBean.class);
     
     private Service xfireService;
     private ServiceFactory serviceFactory;
@@ -87,9 +90,6 @@ public class ServiceComponent
             xfireService.setFaultHandlers(getFaultHandlers());
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
-        
-        
-        
     }
 
     protected Object getProxyForService()

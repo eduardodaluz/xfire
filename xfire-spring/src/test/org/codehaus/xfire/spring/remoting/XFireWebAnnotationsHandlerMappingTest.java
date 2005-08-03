@@ -1,4 +1,4 @@
-package org.codehaus.xfire.spring;
+package org.codehaus.xfire.spring.remoting;
 
 /**
  * @author Arjen Poutsma
@@ -11,6 +11,7 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.spring.remoting.Jsr181HandlerMapping;
 import org.codehaus.xfire.test.EchoImpl;
 import org.easymock.MockControl;
 import org.springframework.beans.MutablePropertyValues;
@@ -20,7 +21,7 @@ import org.springframework.web.context.support.StaticWebApplicationContext;
 public class XFireWebAnnotationsHandlerMappingTest
         extends AbstractXFireAegisTest
 {
-    private XFireWebAnnotationsHandlerMapping handlerMapping;
+    private Jsr181HandlerMapping handlerMapping;
     private MockControl control;
     private WebAnnotations webAnnotations;
 
@@ -29,7 +30,7 @@ public class XFireWebAnnotationsHandlerMappingTest
             throws Exception
     {
         super.setUp();
-        handlerMapping = new XFireWebAnnotationsHandlerMapping();
+        handlerMapping = new Jsr181HandlerMapping();
         control = MockControl.createControl(WebAnnotations.class);
         webAnnotations = (WebAnnotations) control.getMock();
         handlerMapping.setWebAnnotations(webAnnotations);

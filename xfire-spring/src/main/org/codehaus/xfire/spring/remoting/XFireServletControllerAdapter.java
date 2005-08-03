@@ -1,4 +1,4 @@
-package org.codehaus.xfire.spring;
+package org.codehaus.xfire.spring.remoting;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

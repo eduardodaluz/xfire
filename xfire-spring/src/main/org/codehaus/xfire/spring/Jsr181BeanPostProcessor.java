@@ -9,11 +9,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * XfireAnnotationsBeanPostProcessor
+ * This BeanPostProcessor will create an XFire service from a service class if and only if
+ * it is marked with the JSR 181 @WebService attribute. This replaces the need for using the
+ * ServiceComponent class.
  * 
+ * @see org.codehaus.xfire.spring.ServiceBean
  * @author Jason Carreira <jcarreira@eplus.com>
  */
-public class XFireAnnotationsBeanPostProcessor
+public class Jsr181BeanPostProcessor
     implements BeanPostProcessor
 {
     private WebAnnotations annotations;
@@ -22,7 +25,7 @@ public class XFireAnnotationsBeanPostProcessor
 
     private ServiceRegistry registry;
 
-    public XFireAnnotationsBeanPostProcessor(WebAnnotations annotations,
+    public Jsr181BeanPostProcessor(WebAnnotations annotations,
             AnnotationServiceFactory serviceFactory, ServiceRegistry registry)
     {
         this.annotations = annotations;

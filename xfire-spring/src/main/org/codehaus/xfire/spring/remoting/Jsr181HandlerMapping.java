@@ -1,4 +1,4 @@
-package org.codehaus.xfire.spring;
+package org.codehaus.xfire.spring.remoting;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * @see WebAnnotations
  * @see org.codehaus.xfire.annotations.WebServiceAnnotation
  */
-public class XFireWebAnnotationsHandlerMapping
+public class Jsr181HandlerMapping
         extends AbstractUrlHandlerMapping
 {
     private WebAnnotations webAnnotations;

@@ -2,13 +2,11 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-    <bean name="/Echo" class="org.codehaus.xfire.spring.XFireExporter">
+    <bean name="/Echo" class="org.codehaus.xfire.spring.remoting.XFireExporter">
         <property name="service">
             <ref bean="echo"/>
         </property>
-        <property name="serviceInterface">
-            <value>org.codehaus.xfire.test.Echo</value>
-        </property>
+        <property name="serviceInterface" value="org.codehaus.xfire.test.Echo"/>
         <property name="serviceFactory">
             <ref bean="xfire.serviceFactory"/>
         </property>
@@ -19,4 +17,3 @@
 
     <bean id="echo" class="org.codehaus.xfire.test.EchoImpl"/>
 </beans>
-

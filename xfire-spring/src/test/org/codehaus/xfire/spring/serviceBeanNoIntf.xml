@@ -2,9 +2,8 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-    <bean name="echoService" class="org.codehaus.xfire.spring.ServiceComponent">
+    <bean name="echoService" class="org.codehaus.xfire.spring.ServiceBean">
         <property name="service" ref="echo"/>
-        <property name="serviceInterface" value="org.codehaus.xfire.test.Echo"/>
         <property name="serviceFactory" ref="xfire.serviceFactory"/>
         <property name="xfire" ref="xfire"/>
         <property name="inHandlers">

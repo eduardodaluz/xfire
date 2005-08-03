@@ -5,6 +5,12 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.springframework.context.ApplicationContext;
 
+/**
+ * Provides test support for XFire spring web services. Simply supply your ApplicationContext by
+ * implementing the <code>createContext</code> method.
+ * 
+ * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ */
 public abstract class AbstractXFireSpringTest
     extends AbstractXFireAegisTest
 {
