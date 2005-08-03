@@ -55,22 +55,14 @@
             <version>1.2.2</version>
             <url>http://www.springframework.org</url>
         </dependency>
-        <!-- 
-        
-        Testing time
-        
-        -->
-        <dependency>
-            <groupId>httpunit</groupId>
-            <artifactId>httpunit</artifactId>
-            <version>1.5.1</version>
-            <url>http://httpunit.sf.net</url>
-        </dependency>
-        <dependency>
-            <groupId>easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>1.1</version>
-            <url>http://www.easymock.org/</url>
-        </dependency>
+        <dependency> 
+            <groupId>springframework</groupId> 
+            <artifactId>spring-mock</artifactId> 
+            <version>1.2.1</version> 
+            <url>http://www.springframework.org</url> 
+            <properties>
+              <scope>test</scope>
+            </properties>
+        </dependency> 
     </dependencies>
 </project>
