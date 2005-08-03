@@ -81,16 +81,8 @@
 		</c:forEach>
 	</goal>
 
-	<goal name="dist:prepare">
-		<mkdir dir="${maven.build.dir}/dist/libs"/>
+	<goal name="dist:prepare-examples">
 		<mkdir dir="${maven.build.dir}/dist/examples"/>
-		<mkdir dir="${maven.build.dir}/dist/manual"/>
-		
-		<ant:get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}-manual.zip"/>
-		<ant:unzip src="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}-manual.zip" dest="${maven.build.dir}/manual"/>
-		<ant:copy toDir="${maven.build.dir}/dist/manual">
-			<fileset dir="${maven.build.dir}/manual/XFIRE" includes="**/*" excludes="**/.*,**/CVS"/>
-		</ant:copy>
 
 		<ant:copy toDir="${maven.build.dir}/dist/examples">
 			<fileset dir="${basedir}/../examples" includes="**/*" excludes="**/.*,**/CVS"/>
@@ -98,6 +90,19 @@
 			  <filter token="xfire.version" value="${pom.currentVersion}"/>
 		  </filterset>
 		</ant:copy>
+  </goal>
+		
+	<goal name="dist:prepare">
+		<mkdir dir="${maven.build.dir}/dist/libs"/>
+		<mkdir dir="${maven.build.dir}/dist/manual"/>
+		
+		<ant:get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}-manual.zip"/>
+		<ant:unzip src="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}-manual.zip" dest="${maven.build.dir}/manual"/>
+		<ant:copy toDir="${maven.build.dir}/dist/manual">
+			<fileset dir="${maven.build.dir}/manual/XFIRE" includes="**/*" excludes="**/.*,**/CVS"/>
+		</ant:copy>
+		
+		<attainGoal name="dist:prepare-examples"/>
 		
 		<!-- Make jars -->
 		<maven:reactor goals="jar:jar" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
