@@ -3,59 +3,61 @@
 
 <beans>
 
-    <bean id="xfire.serviceRegistry"
-        class="org.codehaus.xfire.service.DefaultServiceRegistry"
-        singleton="true"/>
+  <bean id="xfire.serviceRegistry" class="org.codehaus.xfire.service.DefaultServiceRegistry"
+    singleton="true" />
 
-    <bean id="xfire.transportManager"
-        class="org.codehaus.xfire.transport.DefaultTransportManager"
-        singleton="true">
-        <constructor-arg index="0">
-            <ref bean="xfire.serviceRegistry"/>
-        </constructor-arg>
-    </bean>
+  <bean id="xfire.transportManager" class="org.codehaus.xfire.transport.DefaultTransportManager"
+    singleton="true">
+    <constructor-arg index="0">
+      <ref bean="xfire.serviceRegistry" />
+    </constructor-arg>
+  </bean>
 
-    <bean id="xfire"
-        class="org.codehaus.xfire.DefaultXFire"
-        singleton="true">
-        <constructor-arg index="0">
-            <ref bean="xfire.serviceRegistry"/>
-        </constructor-arg>
-        <constructor-arg index="1">
-            <ref bean="xfire.transportManager"/>
-        </constructor-arg>
-    </bean>
+  <bean id="xfire" class="org.codehaus.xfire.DefaultXFire" singleton="true">
+    <constructor-arg index="0">
+      <ref bean="xfire.serviceRegistry" />
+    </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="xfire.transportManager" />
+    </constructor-arg>
+  </bean>
 
-    <bean id="xfire.typeMappingRegistry"
-        class="org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry"
-        init-method="createDefaultMappings"
-        singleton="true">
-    </bean>
+  <bean id="xfire.typeMappingRegistry"
+    class="org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry"
+    init-method="createDefaultMappings" singleton="true">
+  </bean>
 
-    <bean id="xfire.aegisBindingProvider"
-        class="org.codehaus.xfire.aegis.AegisBindingProvider"
-        singleton="true">
-        <constructor-arg index="0">
-          <ref bean="xfire.typeMappingRegistry"/>
-        </constructor-arg>
-    </bean>
+  <bean id="xfire.aegisBindingProvider" class="org.codehaus.xfire.aegis.AegisBindingProvider"
+    singleton="true">
+    <constructor-arg index="0">
+      <ref bean="xfire.typeMappingRegistry" />
+    </constructor-arg>
+  </bean>
 
-    <bean id="xfire.serviceFactory"
-        class="org.codehaus.xfire.service.binding.ObjectServiceFactory"
-        singleton="true">
-        <constructor-arg index="0">
-            <ref bean="xfire.transportManager"/>
-        </constructor-arg>
-        <constructor-arg index="1">
-            <ref bean="xfire.aegisBindingProvider"/>
-        </constructor-arg>
-    </bean>
+  <bean id="xfire.serviceFactory" class="org.codehaus.xfire.service.binding.ObjectServiceFactory"
+    singleton="true">
+    <constructor-arg index="0">
+      <ref bean="xfire.transportManager" />
+    </constructor-arg>
+    <constructor-arg index="1">
+      <ref bean="xfire.aegisBindingProvider" />
+    </constructor-arg>
+  </bean>
 
-    <bean id="xfire.servletController" 
-          class="org.codehaus.xfire.transport.http.XFireServletController"
-          singleton="true">
-         <constructor-arg>
-           <ref bean="xfire"/>
-         </constructor-arg>
-    </bean>
+  <bean id="xfire.servletController"
+    class="org.codehaus.xfire.transport.http.XFireServletController" singleton="true">
+    <constructor-arg>
+      <ref bean="xfire" />
+    </constructor-arg>
+  </bean>
+
+  <bean id="xfire.messageServiceFactory"
+    class="org.codehaus.xfire.service.binding.ObjectServiceFactory">
+    <constructor-arg index="0" ref="xfire.transportManager" />
+    <constructor-arg index="1" ref="xfire.messageBindingProvider" />
+    <property name="style" value="message" />
+  </bean>
+
+  <bean id="xfire.messageBindingProvider"
+    class="org.codehaus.xfire.service.binding.MessageBindingProvider" />
 </beans>
