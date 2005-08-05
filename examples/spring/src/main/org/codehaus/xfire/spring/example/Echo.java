@@ -1,3 +1,4 @@
+// START SNIPPET: echo
 package org.codehaus.xfire.spring.example;
 
 /**
@@ -9,3 +10,4 @@ public interface Echo
 {
     String echo(String in);
 }
+// END SNIPPET: echo
