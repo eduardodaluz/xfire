@@ -159,14 +159,14 @@ public class STAXUtils
         {
             if (prefix.length() == 0)
             {
+                writer.writeStartElement(local);
                 writer.setDefaultNamespace(uri);
-                writer.writeStartElement(uri, local);
             }
             else
             {
-                writer.setPrefix(prefix, uri);
                 writer.writeStartElement(prefix, local, uri);
-            } 
+                writer.setPrefix(prefix, uri);
+            }
         }
         else
         {
