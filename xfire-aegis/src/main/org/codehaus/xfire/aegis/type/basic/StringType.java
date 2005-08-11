@@ -13,6 +13,11 @@ import org.codehaus.xfire.aegis.type.Type;
 public class StringType
     extends Type
 {
+    public StringType()
+    {
+        setNillable(true);
+    }
+    
     public Object readObject(MessageReader reader, MessageContext context)
     {
         return reader.getValue();

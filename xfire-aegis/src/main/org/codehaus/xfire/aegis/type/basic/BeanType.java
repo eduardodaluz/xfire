@@ -37,11 +37,13 @@ public class BeanType
     
     public BeanType()
     {
+        setNillable(true);
     }
     
     public BeanType(BeanTypeInfo info)
     {
         this._info = info;
+        setNillable(true);
         
         this.setTypeClass(info.getTypeClass());
     }
@@ -281,8 +283,10 @@ public class BeanType
             element.addAttribute(new Attribute("name", name.getLocalPart()));
             element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
             
-            if (getTypeInfo().isNillable(name))
+            if (type.isNillable())
+            {
                 element.addAttribute(new Attribute("nillable", "true"));
+            }
         }
         else
         {

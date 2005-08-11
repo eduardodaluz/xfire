@@ -32,6 +32,11 @@ public class ArrayType
     private QName componentName;
     private static final Log logger = LogFactory.getLog(ArrayType.class);
     
+    public ArrayType()
+    {
+        setNillable(true);
+    }
+    
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
@@ -259,7 +264,11 @@ public class ArrayType
 
             element.addAttribute(new Attribute("name", componentType.getSchemaType().getLocalPart()));
             element.addAttribute(new Attribute("type", typeName));
-            element.addAttribute(new Attribute("nillable", "true"));
+            
+            if (componentType.isNillable())
+            {
+                element.addAttribute(new Attribute("nillable", "true"));
+            }
 
             element.addAttribute(new Attribute("minOccurs", "0"));
             element.addAttribute(new Attribute("maxOccurs", "unbounded"));
@@ -286,7 +295,6 @@ public class ArrayType
         return componentName;
     }
     
-
     public void setComponentName(QName componentName)
     {
         this.componentName = componentName;

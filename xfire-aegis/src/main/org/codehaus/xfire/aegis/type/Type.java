@@ -23,6 +23,7 @@ public abstract class Type
     private TypeMapping typeMapping;
     private Class typeClass;
     private boolean abstrct = true;
+    private boolean nillable = false;
     
     public Type()
     {
@@ -86,6 +87,16 @@ public abstract class Type
     public void setAbstract(boolean abstrct)
     {
         this.abstrct = abstrct;
+    }
+    
+    public boolean isNillable()
+    {
+        return nillable;
+    }
+    
+    public void setNillable(boolean nillable)
+    {
+        this.nillable = nillable;
     }
 
     /**
