@@ -344,6 +344,8 @@ public class STAXUtils
 
                 doc.appendChild(rootEl);
 
+                declareNamespaces(reader, rootEl);
+                
                 for ( int i = 0; i < reader.getAttributeCount(); i++ )
                 {
                     Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
@@ -354,14 +356,16 @@ public class STAXUtils
                 
                 reader.next();
                 
-                readElement(rootEl, reader);
+                readElements(rootEl, reader);
                 
                 break;
             case XMLStreamConstants.END_ELEMENT:
-                reader.next();
                 return doc;
             case XMLStreamConstants.CHARACTERS:
-                if (rootEl != null) rootEl.appendChild(doc.createTextNode(reader.getText()));
+                if (rootEl != null) 
+                {
+                    rootEl.appendChild(doc.createTextNode(reader.getText()));
+                }
                 break;
             case XMLStreamConstants.END_DOCUMENT:
                 return doc;
@@ -379,7 +383,7 @@ public class STAXUtils
         return doc;
     }
         
-    public static void readElement(Element parent, XMLStreamReader reader) 
+    public static void readElements(Element parent, XMLStreamReader reader) 
         throws XMLStreamException
     {
         Element e = null;
@@ -392,7 +396,9 @@ public class STAXUtils
             {
             case XMLStreamConstants.START_ELEMENT:
                 e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
-
+    
+                declareNamespaces(reader, e);
+                
                 for ( int i = 0; i < reader.getAttributeCount(); i++ )
                 {
                     Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
@@ -405,7 +411,8 @@ public class STAXUtils
     
                 reader.next();
                 
-                readElement(e, reader);
+                readElements(e, reader);
+                break;
             case XMLStreamConstants.END_ELEMENT:
                 return;
             case XMLStreamConstants.CHARACTERS:
@@ -424,6 +431,20 @@ public class STAXUtils
         }
     }
     
+    private static void declareNamespaces(XMLStreamReader reader, Element node)
+    {
+        for (int i = 0; i < reader.getNamespaceCount(); i++)
+        {
+            String uri = reader.getNamespaceURI(i);
+            String prefix = reader.getNamespacePrefix(i);
+            
+            if (prefix != null && !uri.equals(node.getNamespaceURI()))
+            {
+                node.setAttribute("xmlns:" + prefix, uri);
+            }
+        }
+    }
+
     public static XMLStreamWriter createXMLStreamWriter(OutputStream out, String encoding)
     {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
