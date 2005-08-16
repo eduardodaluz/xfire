@@ -1,0 +1,12 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Body>
+  <transform xmlns="http://basic.type.aegis.xfire.codehaus.org">
+    <in0>
+      <foo>bleh</foo>
+    </in0>
+    <in1>
+      <foo>bleh</foo>
+    </in1>
+  </transform>
+ </env:Body>
+</env:Envelope>

@@ -56,11 +56,8 @@ public class MessageBindingProvider
             {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                org.w3c.dom.Document doc = builder.newDocument();
-                
-                STAXUtils.readElements(doc, null, reader);
-                
-                return doc;
+
+                return STAXUtils.read(builder, reader);
             }
             catch(Exception e)
             {

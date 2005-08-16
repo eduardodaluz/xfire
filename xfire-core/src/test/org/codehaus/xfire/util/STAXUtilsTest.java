@@ -13,7 +13,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
-import org.w3c.dom.Element;
 
 import com.bea.xml.stream.MXParserFactory;
 import com.bea.xml.stream.XMLOutputFactoryBase;
@@ -153,12 +152,10 @@ public class STAXUtilsTest
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        org.w3c.dom.Document doc = builder.newDocument();
-        Element root = doc.createElement("root");
-        doc.appendChild(root);
         
-        STAXUtils.readElements(root, reader);
+        org.w3c.dom.Document doc = STAXUtils.read(builder, reader);
         
+        DOMUtils.writeXml(doc, System.out);
         /*DOMReader domReader = new DOMReader();
         Document testDoc = domReader.read(doc);
 

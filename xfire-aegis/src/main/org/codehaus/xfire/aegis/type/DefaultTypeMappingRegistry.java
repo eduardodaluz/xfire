@@ -15,6 +15,7 @@ import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
 import org.codehaus.xfire.aegis.type.basic.BooleanType;
 import org.codehaus.xfire.aegis.type.basic.CalendarType;
 import org.codehaus.xfire.aegis.type.basic.DateTimeType;
+import org.codehaus.xfire.aegis.type.basic.DocumentType;
 import org.codehaus.xfire.aegis.type.basic.DoubleType;
 import org.codehaus.xfire.aegis.type.basic.FloatType;
 import org.codehaus.xfire.aegis.type.basic.IntType;
@@ -26,6 +27,7 @@ import org.codehaus.xfire.aegis.type.basic.TimestampType;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.w3c.dom.Document;
 
 /**
  * The default implementation of TypeMappingRegistry.
@@ -47,6 +49,8 @@ public class DefaultTypeMappingRegistry
     private static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime");
     private static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary");
     private static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal");
+
+    private static final QName XSD_ANY = new QName(SoapConstants.XSD, "any");
 
     private static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
     private static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
@@ -226,6 +230,7 @@ public class DefaultTypeMappingRegistry
         tm.register(Calendar.class, XSD_DATETIME, new CalendarType());
         tm.register(byte[].class, XSD_BASE64, new Base64Type());
         tm.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        tm.register(Document.class, XSD_ANY, new DocumentType());
 
         register(SoapConstants.XSD, tm);
         registerDefault(tm);
@@ -270,6 +275,7 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Calendar.class, XSD_DATETIME, new CalendarType());
         soapTM.register(byte[].class, XSD_BASE64, new Base64Type());
         soapTM.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        soapTM.register(Document.class, XSD_ANY, new DocumentType());
 
         register(ENCODED_NS, tm);
 

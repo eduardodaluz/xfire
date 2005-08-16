@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -273,7 +274,6 @@ public class STAXUtils
             String curUri = writer.getNamespaceContext().getNamespaceURI(prefix);
             if ( curUri == null || curUri.length() != ns.length() || !curUri.equals(ns) )
             {
-                System.out.println("writing namespace: " + ns);
                 writer.writeNamespace(prefix, ns);
             }
         }
@@ -328,58 +328,99 @@ public class STAXUtils
         }
     }
 
-    public static void readElements(Element root, XMLStreamReader reader)
-    	throws XMLStreamException
-    {
-        readElements(root.getOwnerDocument(), root, reader);
-    }
-    
-    public static void readElements(Document doc, Element root, XMLStreamReader reader)
+    public static Document read(DocumentBuilder builder, XMLStreamReader reader) 
         throws XMLStreamException
     {
-        int read = 0; // number of elements read in
-        
-        Element e;
-        
-        StringBuffer text = new StringBuffer();
-        
-        while ( true )
+        Element rootEl = null;
+        Document doc = builder.newDocument();
+
+        int event = reader.getEventType();
+        while ( reader.hasNext() )
         {
-            int event = reader.next();
             switch( event )
             {
-                case XMLStreamConstants.START_ELEMENT:
-                    read++;
-                    e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
-                    root.appendChild(e);
+            case XMLStreamConstants.START_ELEMENT:
+                rootEl = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
 
-                    for ( int i = 0; i < reader.getAttributeCount(); i++ )
-                    {
-                        Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
-                                                          reader.getAttributeLocalName(i));
-                        attr.setValue(reader.getAttributeValue(i));
-                        e.setAttributeNode(attr);
-                    }
-                    
-                    readElements(e, reader);
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    if (text.length() > 0)
-                        DOMUtils.setText(root, text.toString());  
-                    return;
-                case XMLStreamConstants.CHARACTERS:
-                    if (root != null)
-                        text.append(reader.getText());
-                    break;
-                case XMLStreamConstants.END_DOCUMENT:
-                    return;
-                case XMLStreamConstants.CDATA:
-                case XMLStreamConstants.START_DOCUMENT:
-                case XMLStreamConstants.ATTRIBUTE:
-                case XMLStreamConstants.NAMESPACE:
-                default:
-                    break;
+                doc.appendChild(rootEl);
+
+                for ( int i = 0; i < reader.getAttributeCount(); i++ )
+                {
+                    Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
+                                                      reader.getAttributeLocalName(i));
+                    attr.setValue(reader.getAttributeValue(i));
+                    rootEl.setAttributeNode(attr);
+                }
+                
+                reader.next();
+                
+                readElement(rootEl, reader);
+                
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                reader.next();
+                return doc;
+            case XMLStreamConstants.CHARACTERS:
+                if (rootEl != null) rootEl.appendChild(doc.createTextNode(reader.getText()));
+                break;
+            case XMLStreamConstants.END_DOCUMENT:
+                return doc;
+            case XMLStreamConstants.START_DOCUMENT:
+            case XMLStreamConstants.CDATA:
+            case XMLStreamConstants.ATTRIBUTE:
+            case XMLStreamConstants.NAMESPACE:
+            default:
+                break;
             }
+            
+            event = reader.next();
+        }
+        
+        return doc;
+    }
+        
+    public static void readElement(Element parent, XMLStreamReader reader) 
+        throws XMLStreamException
+    {
+        Element e = null;
+        Document doc = parent.getOwnerDocument();
+        
+        int event = reader.getEventType();
+        while ( reader.hasNext() )
+        {
+            switch( event )
+            {
+            case XMLStreamConstants.START_ELEMENT:
+                e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
+
+                for ( int i = 0; i < reader.getAttributeCount(); i++ )
+                {
+                    Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
+                                                      reader.getAttributeLocalName(i));
+                    attr.setValue(reader.getAttributeValue(i));
+                    e.setAttributeNode(attr);
+                }
+                
+                parent.appendChild(e);
+    
+                reader.next();
+                
+                readElement(e, reader);
+            case XMLStreamConstants.END_ELEMENT:
+                return;
+            case XMLStreamConstants.CHARACTERS:
+                parent.appendChild(doc.createTextNode(reader.getText()));
+                
+                break;
+            case XMLStreamConstants.NAMESPACE:
+            case XMLStreamConstants.END_DOCUMENT:
+            case XMLStreamConstants.CDATA:
+            case XMLStreamConstants.START_DOCUMENT:
+            case XMLStreamConstants.ATTRIBUTE:
+            default:
+                break;
+            }
+            event = reader.next();
         }
     }
     
