@@ -43,5 +43,4 @@ public class WeatherServiceTest
         addNamespace("w", "http://www.webservicex.net");
         assertValid("//s:Body/w:GetWeatherByZipCodeResponse/w:GetWeatherByZipCodeResult", response);
     }
-    
 }

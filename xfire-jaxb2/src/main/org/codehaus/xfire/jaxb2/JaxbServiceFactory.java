@@ -7,7 +7,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
