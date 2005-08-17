@@ -18,8 +18,6 @@ public class JaxbServiceFactory
 {
     public JaxbServiceFactory()
     {
-        setStyle(SoapConstants.STYLE_DOCUMENT);
-        
         AegisBindingProvider provider = new AegisBindingProvider(new JaxbTypeRegistry());
         provider.setWriteOuter(false);
         setBindingProvider(provider);
@@ -34,8 +32,6 @@ public class JaxbServiceFactory
         AegisBindingProvider provider = new AegisBindingProvider(new JaxbTypeRegistry());
         provider.setWriteOuter(false);
         setBindingProvider(provider);
-        
-        setStyle(SoapConstants.STYLE_DOCUMENT);
         // setWsdlBuilder(XmlBeansWSDLBuilder.class);
     }
 
