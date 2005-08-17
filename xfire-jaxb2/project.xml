@@ -1,0 +1,46 @@
+<project>
+  <extend>${basedir}/../project.xml</extend>
+  <artifactId>xfire-jaxb2</artifactId>
+  <name>JAXB 2.0 XFire Module</name>
+  <package>org.codehaus.xfire.jaxb</package>
+  <shortDescription>A JAXB binding for XFire.</shortDescription>
+  <description>A JAXB binding for XFire.</description>
+  <siteDirectory>
+    /home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}
+  </siteDirectory>
+  <dependencies>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-core</artifactId>
+      <version>${pom.currentVersion}</version>
+      <url>${pom.url}</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-aegis</artifactId>
+      <version>${pom.currentVersion}</version>
+      <url>${pom.url}</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>jaxb</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>20050622</version>
+    </dependency>
+    <dependency>
+      <groupId>jaxb</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>20050622</version>
+    </dependency>
+    <dependency>
+      <groupId>jaxb</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>20050622</version>
+    </dependency>
+  </dependencies>
+</project>
