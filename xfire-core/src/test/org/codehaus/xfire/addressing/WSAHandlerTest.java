@@ -29,7 +29,7 @@ public class WSAHandlerTest
         };
         factory.setStyle(SoapConstants.STYLE_MESSAGE);
         
-        ((DefaultXFire)getXFire()).addInHandler(new AddressingHandler());
+        ((DefaultXFire)getXFire()).addInHandler(new AddressingInHandler());
         service = factory.create(EchoImpl.class, "Echo", "urn:Echo", null);
         getServiceRegistry().register(service);
     }

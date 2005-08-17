@@ -33,7 +33,8 @@ public class ReplyToTest
         };
         factory.setStyle(SoapConstants.STYLE_MESSAGE);
         
-        ((DefaultXFire)getXFire()).addInHandler(new AddressingHandler());
+        ((DefaultXFire)getXFire()).addInHandler(new AddressingInHandler());
+        ((DefaultXFire)getXFire()).addOutHandler(new AddressingOutHandler());
         
         service = factory.create(EchoImpl.class, "Echo", "urn:Echo", null);
         getServiceRegistry().register(service);
@@ -54,5 +55,8 @@ public class ReplyToTest
         assertEquals(1, endpoint.getCount());
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", endpoint.getMessage());
+        
+        addNamespace("wsa", WSAConstants.WSA_NAMESPACE_200502);
+        assertXPathEquals("//s:Header/wsa:To", "xfire.local://EchoReceiver", endpoint.getMessage());
     }
 }

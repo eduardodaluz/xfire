@@ -13,4 +13,6 @@ public interface AddressingHeadersFactory
     void writeHeaders(Element root, AddressingHeaders headers);
     
     void writeEPR(Element root, EndpointReference epr);
+
+    String getAnonymousUri();
 }

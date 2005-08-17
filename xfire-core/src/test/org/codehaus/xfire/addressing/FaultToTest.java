@@ -33,7 +33,7 @@ public class FaultToTest
         };
         factory.setStyle(SoapConstants.STYLE_MESSAGE);
         
-        ((DefaultXFire)getXFire()).addInHandler(new AddressingHandler());
+        ((DefaultXFire)getXFire()).addInHandler(new AddressingInHandler());
         
         service = factory.create(BadEcho.class, "Echo", "urn:Echo", null);
         getServiceRegistry().register(service);

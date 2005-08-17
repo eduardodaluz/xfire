@@ -3,6 +3,7 @@ package org.codehaus.xfire.addressing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 
@@ -120,16 +121,94 @@ public class AddressingHeadersFactory200502
         return root.getFirstChildElement(WSA_ACTION, WSA_NAMESPACE_200502) != null;
     }
 
-    public void writeEPR(Element root, EndpointReference epr)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
     public void writeHeaders(Element root, AddressingHeaders headers)
     {
-        // TODO Auto-generated method stub
+        final String ns = WSA_NAMESPACE_200502;
+        root.addNamespaceDeclaration(WSA_PREFIX, WSA_NAMESPACE_200502);
         
+        if (headers.getTo() != null)
+        {
+            Element to = new Element(WSA_TO_QNAME, ns);
+            to.appendChild(headers.getTo());
+            root.appendChild(to);
+        }
+        
+        if (headers.getAction() != null)
+        {
+            Element action = new Element(WSA_ACTION_QNAME, ns);
+            action.appendChild(headers.getAction());
+            root.appendChild(action);
+        }
+        
+        if (headers.getFaultTo() != null)
+        {
+            Element faultTo = new Element(WSA_FAULT_TO_QNAME, ns);
+            root.appendChild(faultTo);
+            
+            writeEPR(faultTo, headers.getFaultTo());
+        }
+
+        if (headers.getFrom() != null)
+        {
+            Element from = new Element(WSA_FROM_QNAME, ns);
+            root.appendChild(from);
+            
+            writeEPR(from, headers.getFrom());
+        }
+
+        if (headers.getMessageID() != null)
+        {
+            Element messageId = new Element(WSA_MESSAGE_ID_QNAME, ns);
+            messageId.appendChild(headers.getMessageID());
+            root.appendChild(messageId);
+        }
+
+        if (headers.getRelatesTo() != null)
+        {
+            Element relatesTo = new Element(WSA_RELATES_TO_QNAME, ns);
+            relatesTo.appendChild(headers.getRelatesTo());
+            root.appendChild(relatesTo);
+            
+            if (headers.getRelationshipType() != null)
+            {
+                String value = qnameToString(root, headers.getRelationshipType());
+                relatesTo.addAttribute(new Attribute(WSA_RELATIONSHIP_TYPE, value));
+            }
+        }
+        
+        if (headers.getReplyTo() != null)
+        {
+            Element replyTo = new Element(WSA_REPLY_TO_QNAME, ns);
+            root.appendChild(replyTo);
+            
+            writeEPR(replyTo, headers.getReplyTo());
+        }
     }
 
+    public void writeEPR(Element root, EndpointReference epr)
+    {
+        final String ns = WSA_NAMESPACE_200502;
+        
+        Element address = new Element(WSA_ADDRESS_QNAME, ns);
+        address.appendChild(epr.getAddress());
+        root.appendChild(address);
+        
+        if (epr.getServiceName() != null)
+        {
+            Element serviceName = new Element(WSA_SERVICE_NAME_QNAME, ns);
+            serviceName.appendChild(qnameToString((Element) root.getParent(), epr.getServiceName()));
+            root.appendChild(serviceName);
+            
+            if (epr.getInterfaceName() != null)
+            {
+                String value = qnameToString((Element) root.getParent(), epr.getInterfaceName());
+                serviceName.addAttribute(new Attribute(WSA_INTERFACE_NAME_QNAME, value));
+            }
+        }
+    }
+
+    public String getAnonymousUri()
+    {
+        return "http://www.w3.org/2005/02/addressing/role/anonymous";
+    }
 }

@@ -256,4 +256,9 @@ public class AddressingHeadersFactory200408
             }
         }
     }
+
+    public String getAnonymousUri()
+    {
+        return WSA_200408_ANONYMOUS_URI;
+    }
 }

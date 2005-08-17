@@ -75,7 +75,7 @@ public class WSATest
         doc = new Document(header);
         
         factory.writeHeaders(header, headers);
-        System.out.println(header.toXML());
+
         addNamespace("wsa", WSAConstants.WSA_NAMESPACE_200408);
         assertValid("//wsa:Action[text()='" + headers.getAction() + "']", header);
         assertValid("//wsa:MessageID[text()='" + headers.getMessageID() + "']", header);
