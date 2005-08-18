@@ -35,6 +35,8 @@ public interface Channel
 
     void setEndpoint(ChannelEndpoint receiver);
 
+    ChannelEndpoint getEndpoint();
+    
     void close();
     
     Transport getTransport();

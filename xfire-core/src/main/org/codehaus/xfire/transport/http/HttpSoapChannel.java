@@ -86,7 +86,7 @@ public class HttpSoapChannel
             out.flush();
             out.close();
 
-            getReceiver().onReceive(context, sender.getInMessage());
+            getEndpoint().onReceive(context, sender.getInMessage());
         }
         catch (IOException e)
         {

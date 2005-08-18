@@ -25,7 +25,7 @@ public abstract class AbstractChannel
         this.receiver = receiver; 
     }
 
-    public ChannelEndpoint getReceiver()
+    public ChannelEndpoint getEndpoint()
     {
         return receiver;
     }
@@ -35,7 +35,7 @@ public abstract class AbstractChannel
         if (message.getChannel() == null)
             message.setChannel(this);
         
-        getReceiver().onReceive(context, message);
+        getEndpoint().onReceive(context, message);
     }
 
     public Transport getTransport()
