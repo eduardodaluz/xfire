@@ -32,7 +32,8 @@ public abstract class AbstractChannel
 
     public void receive(MessageContext context, InMessage message)
     {
-        message.setChannel(this);
+        if (message.getChannel() == null)
+            message.setChannel(this);
         
         getReceiver().onReceive(context, message);
     }
