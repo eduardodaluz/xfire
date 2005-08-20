@@ -79,6 +79,11 @@ public abstract class AbstractMessage
         this.action = action;
     }
 
+    public boolean hasHeader()
+    {
+        return header != null;
+    }
+    
     public Element getHeader()
     {
         if (header == null)

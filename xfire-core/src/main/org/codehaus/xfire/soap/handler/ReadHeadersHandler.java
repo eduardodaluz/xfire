@@ -24,7 +24,7 @@ public class ReadHeadersHandler
         throws Exception
     {
         InMessage message = context.getInMessage();
-        if (message.getHeader() != null) return;
+        if (message.hasHeader()) return;
         
         XMLStreamReader reader = message.getXMLStreamReader();
 
