@@ -58,4 +58,9 @@ public class DelegatedChannel
     {
         return channel.getUri();
     }
+
+    public ChannelEndpoint getEndpoint()
+    {
+        return channel.getEndpoint();
+    }
 }
