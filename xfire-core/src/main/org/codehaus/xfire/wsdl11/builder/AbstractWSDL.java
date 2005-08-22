@@ -39,8 +39,6 @@ import org.codehaus.yom.stax.StaxBuilder;
 public abstract class AbstractWSDL
     implements WSDLWriter
 {
-    private static StaxBuilder builder = new StaxBuilder();
-    
     private Definition def;
 
     private String targetNamespace;
@@ -69,14 +67,7 @@ public abstract class AbstractWSDL
 
     public final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
 
-    private Document[] schemas;
-
     public AbstractWSDL(Service service) throws WSDLException
-    {
-        this(service, null);
-    }
-    
-    public AbstractWSDL(Service service, Document[] schemas) throws WSDLException
     {
         dependencies = new HashMap();
         this.service = service;
