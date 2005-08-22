@@ -2,10 +2,7 @@ package org.codehaus.xfire.wsdl11.builder;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -19,20 +16,20 @@ import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 public class WSDLBuilderAdapter
         implements WSDLWriter
 {
+    private WSDLBuilderFactory wsdlBuilderFactory;
     private Service service;
     private TransportManager transportManager;
     private WSDL11ParameterBinding paramBinding;
-    private Class wsdlBuilder;
     
-    public WSDLBuilderAdapter(Class wsdlBuilder,
+    public WSDLBuilderAdapter(WSDLBuilderFactory wsdlBuilderFactory,
                               Service service, 
                               TransportManager transports,
                               WSDL11ParameterBinding paramBinding)
     {
+        this.wsdlBuilderFactory = wsdlBuilderFactory;
         this.service = service;
         this.transportManager = transports;
         this.paramBinding = paramBinding;
-        this.wsdlBuilder = wsdlBuilder;
     }
 
     /**
@@ -44,30 +41,7 @@ public class WSDLBuilderAdapter
     public void write(OutputStream out)
         throws IOException
     {
-        createWSDLBuilder().write(out);
+        wsdlBuilderFactory.createWSDLBuilder(service, paramBinding, transportManager).write(out);
     }
-    
-    public WSDLBuilder createWSDLBuilder()
-    {
-        try
-        {
-            Constructor c = wsdlBuilder.getConstructor(new Class[] { Service.class,
-                    TransportManager.class, WSDL11ParameterBinding.class });
 
-            return (WSDLBuilder) c.newInstance(new Object[] { service, transportManager,
-                    paramBinding });
-        }
-        catch (XFireRuntimeException e)
-        {
-            throw (XFireRuntimeException) e;
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new XFireRuntimeException("Could not create wsdl builder", e.getCause());
-        }
-        catch (Exception e)
-        {
-            throw new XFireRuntimeException("Could not create wsdl builder", e);
-        }
-    }
 }

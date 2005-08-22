@@ -32,8 +32,9 @@ import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
+import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
 
 /**
  * Java objects-specific implementation of the {@link ServiceFactory} interface.
@@ -51,8 +52,8 @@ public class ObjectServiceFactory
     private Set ignoredClasses = new HashSet();
     private SoapVersion soapVersion = Soap11.getInstance();
     private boolean voidOneWay;
-    private Class wsdlBuilder = WSDLBuilder.class;
-    
+    private WSDLBuilderFactory wsdlBuilderFactory = new DefaultWSDLBuilderFactory();
+
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      */
@@ -77,7 +78,7 @@ public class ObjectServiceFactory
     public ObjectServiceFactory(TransportManager transportManager, BindingProvider provider)
     {
         this();
-        
+
         this.bindingProvider = provider;
         this.transportManager = transportManager;
     }
@@ -85,7 +86,7 @@ public class ObjectServiceFactory
     public ObjectServiceFactory(TransportManager transportManager)
     {
         this();
-        
+
         this.transportManager = transportManager;
     }
 
@@ -126,7 +127,7 @@ public class ObjectServiceFactory
         // TODO: Bring wsdl configuration functionality back!
 
         throw new UnsupportedOperationException("create() isn't working yet.");
-        
+
         // return endpoint;
     }
 
@@ -190,7 +191,7 @@ public class ObjectServiceFactory
     {
         return ServiceUtils.makeServiceNameFromClassName(clazz);
     }
-    
+
     public Service create(Class clazz,
                           String name,
                           String namespace,
@@ -208,11 +209,11 @@ public class ObjectServiceFactory
         String theUse = (use != null) ? use : this.use;
 
         ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
-        
+
         Service endpoint = new Service(serviceInfo);
         setProperties(endpoint, properties);
         endpoint.setSoapVersion(theVersion);
-        
+
         ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
         binding.setInvoker(new ObjectInvoker());
         endpoint.setBinding(binding);
@@ -228,9 +229,9 @@ public class ObjectServiceFactory
 
         if (transportManager != null && binding instanceof WSDL11ParameterBinding)
         {
-            endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilder(),
-                                                          endpoint, 
-                                                          transportManager, 
+            endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilderFactory(),
+                                                          endpoint,
+                                                          transportManager,
                                                           (WSDL11ParameterBinding) binding));
         }
 
@@ -247,9 +248,9 @@ public class ObjectServiceFactory
             if(e instanceof XFireRuntimeException) throw (XFireRuntimeException)e;
             throw new XFireRuntimeException("Couldn't load provider.", e);
         }
-        
+
         registerHandlers(endpoint);
-        
+
         return endpoint;
     }
 
@@ -263,11 +264,11 @@ public class ObjectServiceFactory
     private void setProperties(Service service, Map properties)
     {
         if (properties == null) return;
-        
+
         for (Iterator itr = properties.entrySet().iterator(); itr.hasNext();)
         {
             Map.Entry entry = (Map.Entry) itr.next();
-            
+
             service.setProperty((String) entry.getKey(), entry.getValue());
         }
     }
@@ -304,11 +305,11 @@ public class ObjectServiceFactory
     {
         ignoredClasses.add(className);
     }
-  
+
     protected boolean isValidMethod(final Method method)
     {
         if(ignoredClasses.contains(method.getDeclaringClass().getName())) return false;
-      
+
         final int modifiers = method.getModifiers();
 
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
@@ -320,11 +321,11 @@ public class ObjectServiceFactory
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
 
         final String opName = getOperationName(service, method);
-        
+
         final OperationInfo op = service.addOperation(opName, method);
 
         op.setAction(getAction(op));
-        
+
         final Class[] paramClasses = method.getParameterTypes();
 
         final boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
@@ -394,7 +395,7 @@ public class ObjectServiceFactory
         {
             return method.getName();
         }
-        
+
         int i = 1;
         while (true)
         {
@@ -500,13 +501,13 @@ public class ObjectServiceFactory
         this.voidOneWay = voidOneWay;
     }
 
-    public Class getWsdlBuilder()
+    public WSDLBuilderFactory getWsdlBuilderFactory()
     {
-        return wsdlBuilder;
+        return wsdlBuilderFactory;
     }
 
-    public void setWsdlBuilder(Class wsdlBuilder)
+    public void setWsdlBuilderFactory(WSDLBuilderFactory wsdlBuilderFactory)
     {
-        this.wsdlBuilder = wsdlBuilder;
+        this.wsdlBuilderFactory = wsdlBuilderFactory;
     }
 }

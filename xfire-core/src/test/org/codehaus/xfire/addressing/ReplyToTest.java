@@ -49,7 +49,7 @@ public class ReplyToTest
         channel.setEndpoint(endpoint);
         
         Document response = invokeService(null, "/org/codehaus/xfire/addressing/ReplyTo.xml");
-        
+        printNode(response);
         assertNull(response);
         Thread.sleep(1000);
         assertEquals(1, endpoint.getCount());

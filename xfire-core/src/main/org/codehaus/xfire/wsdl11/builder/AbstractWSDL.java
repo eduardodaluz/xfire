@@ -1,27 +1,35 @@
 package org.codehaus.xfire.wsdl11.builder;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
+import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
+import org.codehaus.xfire.wsdl.WSDLBuildingException;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.converters.DOMConverter;
+import org.codehaus.yom.stax.StaxBuilder;
 
 /**
  * AbstractWSDL
@@ -31,6 +39,8 @@ import org.codehaus.yom.converters.DOMConverter;
 public abstract class AbstractWSDL
     implements WSDLWriter
 {
+    private static StaxBuilder builder = new StaxBuilder();
+    
     private Definition def;
 
     private String targetNamespace;
@@ -59,7 +69,14 @@ public abstract class AbstractWSDL
 
     public final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
 
+    private Document[] schemas;
+
     public AbstractWSDL(Service service) throws WSDLException
+    {
+        this(service, null);
+    }
+    
+    public AbstractWSDL(Service service, Document[] schemas) throws WSDLException
     {
         dependencies = new HashMap();
         this.service = service;

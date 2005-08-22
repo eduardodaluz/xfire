@@ -21,7 +21,7 @@ public class XmlBeansServiceFactory
     public XmlBeansServiceFactory()
     {
         setStyle(SoapConstants.STYLE_DOCUMENT);
-        setWsdlBuilder(XmlBeansWSDLBuilder.class);
+        setWsdlBuilderFactory(new XmlBeansWSDLBuilderFactory());
     }
 
     public XmlBeansServiceFactory(TransportManager transportManager)
@@ -32,7 +32,7 @@ public class XmlBeansServiceFactory
         setBindingProvider(provider);
         
         setStyle(SoapConstants.STYLE_DOCUMENT);
-        setWsdlBuilder(XmlBeansWSDLBuilder.class);
+        setWsdlBuilderFactory(new XmlBeansWSDLBuilderFactory());
     }
 
     protected QName getInParameterName(Service service, Method method, int paramNumber, boolean doc)
