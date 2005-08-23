@@ -57,7 +57,7 @@ public class DocumentBinding
 
         if (!isClientModeOn())
         {
-            setOperation(findOperation(endpoint, parameters.size()), context);
+            setOperation(findOperation(endpoint, parameters), context);
         }
         
         context.getInMessage().setBody(parameters);
@@ -89,21 +89,38 @@ public class DocumentBinding
         }
     }
 
-    protected OperationInfo findOperation(Service endpoint, int i)
+    protected OperationInfo findOperation(Service endpoint, List parameters)
     {
         for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo o = (OperationInfo) itr.next();
-            if ( o.getInputMessage().getMessageParts().size() == i )
-                return o;
+            List messageParts = o.getInputMessage().getMessageParts();
+            if ( messageParts.size() == parameters.size() )
+            {
+                if (checkParameters(messageParts, parameters))
+                    return o;
+            }
         }
         
         return null;
     }
-    
+
+    private boolean checkParameters(List messageParts, List parameters)
+    {
+        Iterator messagePartIterator = messageParts.iterator();
+        for (Iterator parameterIterator = parameters.iterator(); parameterIterator.hasNext();)
+        {
+            Object param = parameterIterator.next();
+            MessagePartInfo mpi = (MessagePartInfo) messagePartIterator.next();
+            if (!mpi.getTypeClass().isAssignableFrom(param.getClass()))
+                return false;
+        }
+        return true;
+    }
+
     protected MessagePartInfo findMessagePart(Service endpoint, QName name)
     {
-        
+
         for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
         {
             OperationInfo op = (OperationInfo) itr.next();
@@ -118,7 +135,7 @@ public class DocumentBinding
             }
 
             MessagePartInfo p = msgInfo.getMessagePart(name);
-            
+
             if ( p != null )
                 return p;
         }
