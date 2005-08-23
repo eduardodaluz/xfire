@@ -358,7 +358,9 @@ public class STAXUtils
                 
                 readElements(rootEl, reader);
                 
-                break;
+                reader.next();
+                
+                return doc;
             case XMLStreamConstants.END_ELEMENT:
                 return doc;
             case XMLStreamConstants.CHARACTERS:
@@ -367,12 +369,6 @@ public class STAXUtils
                     rootEl.appendChild(doc.createTextNode(reader.getText()));
                 }
                 break;
-            case XMLStreamConstants.END_DOCUMENT:
-                return doc;
-            case XMLStreamConstants.START_DOCUMENT:
-            case XMLStreamConstants.CDATA:
-            case XMLStreamConstants.ATTRIBUTE:
-            case XMLStreamConstants.NAMESPACE:
             default:
                 break;
             }
@@ -412,6 +408,8 @@ public class STAXUtils
                 reader.next();
                 
                 readElements(e, reader);
+                
+                reader.next();
                 break;
             case XMLStreamConstants.END_ELEMENT:
                 return;
