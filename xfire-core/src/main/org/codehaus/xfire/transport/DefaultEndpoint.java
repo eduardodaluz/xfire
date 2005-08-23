@@ -60,7 +60,7 @@ public class DefaultEndpoint
             pipeline.handleFault(fault, context);
             
             Service service = context.getService();
-            if (service == null)
+            if (service == null || service.getFaultSerializer() == null)
             {
                 sendToDeadLetter(fault, context);
             }
