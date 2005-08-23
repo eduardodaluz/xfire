@@ -5,6 +5,7 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.local.LocalTransport;
+import org.codehaus.xfire.util.YOMEndpoint;
 import org.codehaus.xfire.util.YOMSerializer;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;

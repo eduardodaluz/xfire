@@ -1,7 +1,6 @@
 package org.codehaus.xfire.addressing;
 
 import org.codehaus.xfire.DefaultXFire;
-import org.codehaus.xfire.YOMEndpoint;
 import org.codehaus.xfire.service.BadEcho;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -12,6 +11,7 @@ import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
+import org.codehaus.xfire.util.YOMEndpoint;
 import org.codehaus.yom.Document;
 
 public class FaultToTest

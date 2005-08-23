@@ -1,7 +1,8 @@
-package org.codehaus.xfire;
+package org.codehaus.xfire.util;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.yom.Document;
@@ -19,7 +20,7 @@ public class YOMEndpoint
         StaxBuilder builder = new StaxBuilder();
         try
         {
-            message = builder.build(msg.getXMLStreamReader());
+            message = new Document(builder.buildElement(null, msg.getXMLStreamReader()));
         }
         catch (XMLStreamException e)
         {
