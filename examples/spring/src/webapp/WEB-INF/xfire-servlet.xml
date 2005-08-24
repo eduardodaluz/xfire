@@ -21,7 +21,7 @@
             <ref bean="xfire"/>
         </property>
         <property name="service">
-            <ref bean="echo"/>
+            <ref bean="echoBean"/>
         </property>
         <property name="serviceInterface">
             <value>org.codehaus.xfire.spring.example.Echo</value>
