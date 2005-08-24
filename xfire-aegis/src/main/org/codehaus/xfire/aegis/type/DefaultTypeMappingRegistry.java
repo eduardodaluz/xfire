@@ -50,7 +50,7 @@ public class DefaultTypeMappingRegistry
     private static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary");
     private static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal");
 
-    private static final QName XSD_ANY = new QName(SoapConstants.XSD, "any");
+    private static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType");
 
     private static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
     private static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
