@@ -127,4 +127,9 @@ public abstract class AbstractMessage
     {
         properties.put(key, value);
     }
+    
+    public String toString()
+    {
+        return super.toString() + "[uri=\"" + getUri() + "\"]"; 
+    }
 }
