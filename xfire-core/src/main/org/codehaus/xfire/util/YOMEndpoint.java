@@ -6,6 +6,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.yom.Document;
+import org.codehaus.yom.Element;
 import org.codehaus.yom.stax.StaxBuilder;
 
 public class YOMEndpoint
@@ -20,7 +21,15 @@ public class YOMEndpoint
         StaxBuilder builder = new StaxBuilder();
         try
         {
-            message = new Document(builder.buildElement(null, msg.getXMLStreamReader()));
+            Element root = builder.buildElement(null, msg.getXMLStreamReader());
+            if (root != null)
+            {
+                message = new Document(root);
+            }
+            else
+            {
+                message = null;
+            }
         }
         catch (XMLStreamException e)
         {
