@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
@@ -32,7 +33,7 @@ public class XPathAssert
 
         if (nodes.size() == 0)
         {
-            throw new Exception("Failed to select any nodes for expression:.\n" + xpath + "\n"
+            throw new AssertionFailedError("Failed to select any nodes for expression:.\n" + xpath + "\n"
                     + node.toXML());
         }
 
@@ -51,7 +52,7 @@ public class XPathAssert
 
         if (nodes.size() > 0)
         {
-            throw new Exception("Found multiple nodes for expression:\n" + xpath + "\n"
+            throw new AssertionFailedError("Found multiple nodes for expression:\n" + xpath + "\n"
                     + node.toXML());
         }
         
