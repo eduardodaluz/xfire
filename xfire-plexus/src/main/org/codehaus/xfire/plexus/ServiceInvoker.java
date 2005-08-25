@@ -24,6 +24,7 @@ public class ServiceInvoker
     
     public ServiceInvoker( String role, ServiceLocator locator )
     {
+        this.role = role;
         this.locator = locator;
     }
 
