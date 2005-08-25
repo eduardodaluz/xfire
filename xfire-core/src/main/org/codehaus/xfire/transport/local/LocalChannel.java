@@ -104,11 +104,8 @@ public class LocalChannel
                         final XMLStreamWriter writer = 
                             STAXUtils.createXMLStreamWriter(outStream, message.getEncoding());
                         message.getSerializer().writeMessage(message, writer, context);
-                        
-                        writer.flush();
+
                         writer.close();
-                        
-                        outStream.flush();
                         outStream.close();
                     }
                     catch (Exception e)
