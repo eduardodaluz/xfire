@@ -1,35 +1,27 @@
 package org.codehaus.xfire.wsdl11.builder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
-import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
-import org.codehaus.xfire.wsdl.WSDLBuildingException;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.converters.DOMConverter;
-import org.codehaus.yom.stax.StaxBuilder;
 
 /**
  * AbstractWSDL
@@ -79,7 +71,7 @@ public abstract class AbstractWSDL
         setDefinition(WSDLFactory.newInstance().newDefinition());
         getDefinition().setTargetNamespace(info.getTargetNamespace());
 
-        Element root = new Element("root");
+        Element root = new Element("wsdl:types", WSDL11_NS);
         Document paramDoc = new Document(root);
         setSchemaTypes(root);
         root.addNamespaceDeclaration(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
@@ -109,24 +101,10 @@ public abstract class AbstractWSDL
     {
         Element rootEl = getDocument().getRootElement();
 
-        Element types = new Element("wsdl:types", WSDL11_NS);
-        rootEl.insertChild(types, 0);
-
-        for (Iterator nsItr = typeMap.keySet().iterator(); nsItr.hasNext();)
+        if (schemaTypes.getChildCount() > 0)
         {
-            String schemaNs = (String) nsItr.next();
-            Element schemaTypes = (Element) typeMap.get(schemaNs);
-
-            if (schemaTypes.getChildCount() > 0)
-            {
-                schemaTypes.detach();
-                types.appendChild(schemaTypes);
-
-                String prefix = NamespaceHelper.getUniquePrefix(schemaTypes, schemaNs);
-                String declaredUri = getDocument().getRootElement().getNamespaceURI(prefix);
-                if (declaredUri == null)
-                    getDocument().getRootElement().addNamespaceDeclaration(prefix, schemaNs);
-            }
+            schemaTypes.detach();
+            rootEl.insertChild(schemaTypes, 0);
         }
 
     }
