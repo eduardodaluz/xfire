@@ -20,14 +20,14 @@
       <use>literal</use>
       <serviceClass>org.codehaus.xfire.plexus.config.Echo</serviceClass>
       
-      <requestHandlers>
+      <inHandlers>
         <handler>test</handler>
         <handler>org.codehaus.xfire.plexus.config.TestHandler</handler>
-      </requestHandlers>
+      </inHandlers>
       
-      <responseHandlers>
+      <outHandlers>
         <handler>test</handler>
-      </responseHandlers>
+      </outHandlers>
     </service>
 
     <service>

@@ -13,6 +13,7 @@ import org.codehaus.xfire.transport.TransportManager;
 public class AnnotationServiceConfigurator
     extends ObjectServiceConfigurator
 {
+
     public ObjectServiceFactory getServiceFactory(PlexusConfiguration config)
         throws Exception
     {

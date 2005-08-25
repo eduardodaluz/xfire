@@ -20,8 +20,9 @@ public class ServiceInvoker
     private static Log logger = LogFactory.getLog(ServiceInvoker.class.getName());
     
     private ServiceLocator locator;
-
-    public ServiceInvoker( ServiceLocator locator )
+    private String role;
+    
+    public ServiceInvoker( String role, ServiceLocator locator )
     {
         this.locator = locator;
     }
@@ -31,7 +32,7 @@ public class ServiceInvoker
     {
         try
         {
-            return locator.lookup(service.getServiceInfo().getServiceClass().getName());
+            return locator.lookup(role);
         }
         catch (ComponentLookupException e)
         {

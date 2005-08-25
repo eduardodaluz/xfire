@@ -9,10 +9,10 @@ import org.codehaus.yom.Document;
  * @since Sep 20, 2004
  */
 public class ConfigurationTest
-        extends PlexusXFireTest
+    extends PlexusXFireTest
 {
     public void setUp()
-            throws Exception
+        throws Exception
     {
         System.setProperty("xfire.config", "/org/codehaus/xfire/plexus/config/services.xml");
         super.setUp();
@@ -21,7 +21,7 @@ public class ConfigurationTest
     }
 
     public void testRegister()
-            throws Exception
+        throws Exception
     {
         Service service = getServiceRegistry().getService("Echo");
         assertNotNull(service);
@@ -32,16 +32,17 @@ public class ConfigurationTest
 
         service = getServiceRegistry().getService("EchoXMLBeans");
         assertNotNull(service);
-        
+
         assertTrue(getXFire().getInPhases().size() > 0);
-        
-        //service = (ObjectService) getServiceRegistry().getService("EchoWSDL");
-        //assertNotNull( service ); 
-        //assertEquals(1, service.getOperations().size());
+
+        // service = (ObjectService)
+        // getServiceRegistry().getService("EchoWSDL");
+        // assertNotNull( service );
+        // assertEquals(1, service.getOperations().size());
     }
 
     public void testInvoke()
-            throws Exception
+        throws Exception
     {
         Document response = invokeService("Echo", "/org/codehaus/xfire/plexus/config/echo11.xml");
 

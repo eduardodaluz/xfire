@@ -147,7 +147,7 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz)
     {
-        return create(clazz, null, null, (Map) null);
+        return create(clazz, (Map) null);
     }
 
     /**

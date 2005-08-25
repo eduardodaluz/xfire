@@ -50,11 +50,12 @@ public class ObjectServiceConfigurator
     {
         ObjectServiceFactory builder = getServiceFactory(config);
 
-        String name = config.getChild("name").getValue();
+        String name = config.getChild("name").getValue("");
         String namespace = config.getChild("namespace").getValue("");
         String use = config.getChild("use").getValue("literal");
         String style = config.getChild("style").getValue("wrapped");
         String serviceClass = config.getChild("serviceClass").getValue();
+        String role = config.getChild("role").getValue(serviceClass);
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
 
@@ -80,7 +81,6 @@ public class ObjectServiceConfigurator
                     url = new File(wsdlUrl).toURL();
                 }
 
-                getLogger().info("Creating service with " + url.toString());
                 service = builder.create(loadClass(serviceClass), url);
             }
             catch (WSDLException e)
@@ -90,8 +90,6 @@ public class ObjectServiceConfigurator
         }
         else
         {
-            getLogger().info("Creating service " + name);
-
             Class clazz = getClass().getClassLoader().loadClass(serviceClass);
 
             SoapVersion version = null;
@@ -127,9 +125,9 @@ public class ObjectServiceConfigurator
 
         ObjectBinding binding = ((ObjectBinding) service.getBinding());
         // Setup the Invoker
-        if (getServiceLocator().hasComponent(serviceClass))
+        if (getServiceLocator().hasComponent(role))
         {
-            Invoker invoker = new ServiceInvoker(getServiceLocator());
+            Invoker invoker = new ServiceInvoker(role, getServiceLocator());
             
             binding.setInvoker(invoker);
         }
@@ -160,9 +158,11 @@ public class ObjectServiceConfigurator
         if (service.getOutHandlers() == null) service.setOutHandlers(new ArrayList());
         if (service.getFaultHandlers() == null) service.setFaultHandlers(new ArrayList());
         
-        createHandlers(config.getChild("requestHandlers"), service.getInHandlers());
-        createHandlers(config.getChild("responseHandlers"), service.getOutHandlers());
+        createHandlers(config.getChild("inHandlers"), service.getInHandlers());
+        createHandlers(config.getChild("outHandlers"), service.getOutHandlers());
         createHandlers(config.getChild("faultHandlers"), service.getFaultHandlers());
+
+        getLogger().info("Registered service " + service.getName());
 
         getServiceRegistry().register(service);
 

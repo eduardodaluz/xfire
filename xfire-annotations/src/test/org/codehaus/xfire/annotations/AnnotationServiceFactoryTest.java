@@ -122,7 +122,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
-        implAnnotation.setServiceName("EchoService");
+        implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("not used");
         implAnnotation.setEndpointInterface(EchoService.class.getName());
 
@@ -133,7 +133,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation intfAnnotation = new WebServiceAnnotation();
-        intfAnnotation.setName("Echo");
+        intfAnnotation.setName("EchoPortType");
         intfAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
         intfAnnotation.setEndpointInterface(EchoService.class.getName());
 
@@ -167,11 +167,11 @@ public class AnnotationServiceFactoryTest
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoService"), service.getName());
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), service.getName());
 
         WSDLBuilderInfo info = (WSDLBuilderInfo) endpoint.getProperty(WSDLBuilderInfo.KEY);
-        assertEquals("Echo", info.getPortType());
-        assertEquals("EchoService", info.getServiceName());
+        assertEquals("EchoPortType", info.getPortType());
+        assertEquals("Echo", info.getServiceName());
         assertEquals("http://xfire.codehaus.org/EchoService", info.getTargetNamespace());
 
         webAnnotationsControl.verify();
@@ -187,7 +187,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(true);
 
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
-        implAnnotation.setServiceName("EchoService");
+        implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
@@ -235,7 +235,7 @@ public class AnnotationServiceFactoryTest
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoService"), service.getName());
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), service.getName());
 
         final OperationInfo operation = service.getOperation("echo");
         assertNotNull(operation);

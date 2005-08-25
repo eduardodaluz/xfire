@@ -59,10 +59,11 @@ public class AnnotationServiceFactory
      *            parameters.
      * @return The service.
      */
-    public Service create(final Class clazz)
+    public Service create(final Class clazz, final Map properties)
     {
         String style = null;
         String use = null;
+        
         if (webAnnotations.hasSOAPBindingAnnotation(clazz))
         {
             SOAPBindingAnnotation soapBindingAnnotation = webAnnotations.getSOAPBindingAnnotation(clazz);
@@ -76,7 +77,7 @@ public class AnnotationServiceFactory
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
 
             String serviceName = createServiceName(clazz, webServiceAnnotation);
-
+         
             /* Attempt to load the endpoint interface if there is one. If there is an endpoint
              * interface the attribute WebService.serviceName is the only valid one for the
              * implementing bean class.
@@ -113,7 +114,7 @@ public class AnnotationServiceFactory
                 portType = createPortType(serviceName, webServiceAnnotation);
             }
 
-            Service service = create(endpointInterface, serviceName, tns, null, style, use, (Map) null);
+            Service service = create(endpointInterface, serviceName, tns, null, style, use, properties);
 
             // Fill in WSDL Builder metadata from annotations.
             WSDLBuilderInfo info = new WSDLBuilderInfo(service);
