@@ -230,6 +230,11 @@ public abstract class AbstractWSDL
         return e;
     }
 
+    protected boolean hasSchema(String namespace)
+    {
+        return typeMap.containsKey(namespace);
+    }
+    
     protected void setSchema(String namespace, Element schema)
     {
         typeMap.put(namespace, schema);

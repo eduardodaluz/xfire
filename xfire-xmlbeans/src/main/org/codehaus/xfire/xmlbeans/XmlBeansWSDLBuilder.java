@@ -41,9 +41,13 @@ public class XmlBeansWSDLBuilder
             {
                 XmlBeansType xbeanType = (XmlBeansType) type;
 
-                Element schema = getSchema(xbeanType);
-                schema.detach();
-                setSchema(xbeanType.getSchemaType().getNamespaceURI(), schema);
+                String ns = xbeanType.getSchemaType().getNamespaceURI();
+                if (!hasSchema(ns))
+                {
+                    Element schema = getSchema(xbeanType);
+                    schema.detach();
+                    setSchema(ns, schema);
+                }
             }
         }
         
