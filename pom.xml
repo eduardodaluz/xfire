@@ -3,7 +3,7 @@
   <groupId>org.codehaus.xfire</groupId>
   <artifactId>xfire-parent</artifactId>
   <name>XFire</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-M5</version>
   <inceptionYear>2004</inceptionYear>
   <description>A Java SOAP framework. </description>
   <distributionManagement>
@@ -18,27 +18,27 @@
 	    <dependency>
 	      <groupId>org.codehaus.xfire</groupId>
 	      <artifactId>xfire-core</artifactId>
-	      <version>1.0-SNAPSHOT</version>
+	      <version>1.0-M5</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.codehaus.xfire</groupId>
 	      <artifactId>xfire-annotations</artifactId>
-	      <version>1.0-SNAPSHOT</version>
+	      <version>1.0-M5</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.codehaus.xfire</groupId>
 	      <artifactId>xfire-aegis</artifactId>
-	      <version>1.0-SNAPSHOT</version>
+	      <version>1.0-M5</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.codehaus.xfire</groupId>
 	      <artifactId>xfire-plexus</artifactId>
-	      <version>1.0-SNAPSHOT</version>
+	      <version>1.0-M5</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.codehaus.xfire</groupId>
 	      <artifactId>xfire-xmpp</artifactId>
-	      <version>1.0-SNAPSHOT</version>
+	      <version>1.0-M5</version>
 	      <scope>compile</scope>
 	    </dependency>
     </dependencies>
@@ -83,12 +83,12 @@
     <dependency>
       <groupId>woodstox</groupId>
       <artifactId>wstx-asl</artifactId>
-      <version>1.9</version>
+      <version>2.0</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>yom</artifactId>
-      <version>1.0-20050711.181737-2</version>
+      <version>1.0-alpha-2</version>
     </dependency>
     <!--
         

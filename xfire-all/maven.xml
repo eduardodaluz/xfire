@@ -85,7 +85,7 @@
 		<mkdir dir="${maven.build.dir}/dist/examples"/>
 
 		<ant:copy toDir="${maven.build.dir}/dist/examples">
-			<fileset dir="${basedir}/../examples" includes="**/*" excludes="**/.*,**/CVS"/>
+			<fileset dir="${basedir}/../examples" includes="**/*" excludes="${basedir}/../examples/geoip-client,**/.*,**/CVS"/>
 			<filterset>
 			  <filter token="xfire.version" value="${pom.currentVersion}"/>
 		  </filterset>
