@@ -25,6 +25,11 @@ public class SoapSerializer
         this.serializer = serializer;
     }
 
+    public MessageSerializer getSerializer()
+    {
+        return serializer;
+    }
+
     /**
      * Sends a message wrapped in a SOAP Envelope and Body.
      * 
