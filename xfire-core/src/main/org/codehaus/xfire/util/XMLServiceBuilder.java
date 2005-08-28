@@ -90,8 +90,8 @@ public class XMLServiceBuilder
         ServiceRegistry registry = getXFire().getServiceRegistry();
         TransportManager tman = getXFire().getTransportManager();
         
-        String name = getElementValue(service, "name", "");
-        String namespace = getElementValue(service, "namespace", "");
+        String name = getElementValue(service, "name", null);
+        String namespace = getElementValue(service, "namespace", null);
         String style = getElementValue(service, "style", "");
         String use = getElementValue(service, "use", "");
         String serviceClass = getElementValue(service, "serviceClass", "");        
@@ -134,7 +134,7 @@ public class XMLServiceBuilder
         factory.setSoapVersion(soapVersion);
         
         Service svc = null;
-        if (name.length() > 0 || namespace.length() > 0)
+        if (name != null || namespace != null)
         {
             svc = factory.create(clazz, name, namespace, null);
         }

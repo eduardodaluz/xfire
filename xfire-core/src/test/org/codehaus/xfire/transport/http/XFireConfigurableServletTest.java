@@ -35,6 +35,8 @@ public class XFireConfigurableServletTest
         
         assertTrue(reg.hasService("Echo"));
         Service echo = reg.getService("Echo");
+        assertNotNull(echo.getServiceInfo().getName().getNamespaceURI());
+        assertNotSame("", echo.getServiceInfo().getName().getNamespaceURI());
         
         assertTrue(reg.hasService("Echo1"));
         Service echo1 = reg.getService("Echo1");

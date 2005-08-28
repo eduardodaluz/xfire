@@ -8,7 +8,6 @@
       <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
     </service>
 
-
     <service>
       <name>Echo1</name>
       <namespace>urn:Echo</namespace>
