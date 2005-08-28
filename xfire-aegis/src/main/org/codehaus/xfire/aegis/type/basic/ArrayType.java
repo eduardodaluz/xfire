@@ -202,23 +202,23 @@ public class ArrayType
             float[] objects = (float[]) values;
             for (int i = 0, n = objects.length; i < n; i++)
             {
-                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+                writeValue(new Float(objects[i]), writer, context, type, name, ns);
             }
         }
         else if (Byte.TYPE.equals(arrayType))
         {
-            double[] objects = (double[]) values;
+            byte[] objects = (byte[]) values;
             for (int i = 0, n = objects.length; i < n; i++)
             {
-                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+                writeValue(new Byte(objects[i]), writer, context, type, name, ns);
             }
         }
         else if (Boolean.TYPE.equals(arrayType))
         {
-            double[] objects = (double[]) values;
+            boolean[] objects = (boolean[]) values;
             for (int i = 0, n = objects.length; i < n; i++)
             {
-                writeValue(new Double(objects[i]), writer, context, type, name, ns);
+                writeValue(new Boolean(objects[i]), writer, context, type, name, ns);
             }
         }
     }
