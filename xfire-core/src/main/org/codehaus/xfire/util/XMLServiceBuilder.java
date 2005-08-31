@@ -197,12 +197,31 @@ public class XMLServiceBuilder
             try
             {
                 Class clz = loadClass(serviceFactoryName);
+                TransportManager tman = getXFire().getTransportManager();
                 
-                Constructor con = 
-                    clz.getConstructor( new Class[] {TransportManager.class, BindingProvider.class} );
+                Constructor con = null;
+                Object[] arguments = null;
                 
-                return (ObjectServiceFactory) 
-                    con.newInstance(new Object[] { getXFire().getTransportManager(), bindingProvider });
+                try
+                {
+                    con = clz.getConstructor( new Class[] {TransportManager.class, BindingProvider.class} );
+                    arguments = new Object[] { tman, bindingProvider };
+                }
+                catch (NoSuchMethodException e)
+                {
+                    try
+                    {
+                        con = clz.getConstructor( new Class[] {TransportManager.class} );
+                        arguments = new Object[] { tman };
+                    }
+                    catch (NoSuchMethodException e1)
+                    {
+                        con = clz.getConstructor( new Class[0] );
+                        arguments = new Object[0];
+                    }
+                }
+                
+                return (ObjectServiceFactory) con.newInstance(arguments);
             }
             catch (Exception e)
             {

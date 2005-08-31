@@ -1,0 +1,10 @@
+<xfire>
+  
+  <services>
+    <service>
+      <serviceClass>org.codehaus.xfire.xmlbeans.WeatherService</serviceClass>
+      <serviceFactory>org.codehaus.xfire.xmlbeans.XmlBeansServiceFactory</serviceFactory>
+    </service>
+  </services>
+  
+</xfire>
