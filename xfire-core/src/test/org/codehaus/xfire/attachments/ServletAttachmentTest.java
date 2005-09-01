@@ -73,7 +73,7 @@ public class ServletAttachmentTest
     private DataHandler createDataHandler(String name)
             throws MessagingException
     {
-        File f = new File(name);
+        File f = getTestFile(name);
         FileDataSource fs = new FileDataSource(f);
 
         return new DataHandler(fs);
