@@ -39,7 +39,12 @@ public class DuplexTest
         
         channel1.send(context, msg);
         channel1.send(context, msg);
-        Thread.sleep(1000);
+        
+        for (int i = 0; i < 100; i++)
+        {
+            Thread.sleep(50);
+            if (endpoint.getCount() == 2) break;
+        }
         
         channel1.close();
         channel2.close();
