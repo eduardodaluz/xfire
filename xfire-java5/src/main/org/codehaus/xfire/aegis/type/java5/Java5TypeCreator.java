@@ -8,7 +8,9 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.type.AbstractTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.ServiceUtils;
 
 public class Java5TypeCreator
     extends AbstractTypeCreator
@@ -86,8 +88,9 @@ public class Java5TypeCreator
     @Override
     public Type createDefaultType(TypeClassInfo info)
     {
-        AnnotatedType type = new AnnotatedType(info.getTypeClass());
+        BeanType type = new BeanType(new AnnotatedTypeInfo(getTypeMapping(), info.getTypeClass()));
         type.setTypeMapping(getTypeMapping());
+        type.setSchemaType(createQName(info.getTypeClass()));
         
         return type;
     }
@@ -96,17 +99,37 @@ public class Java5TypeCreator
     public Type createEnumType(TypeClassInfo info)
     {
         EnumType type = new EnumType();
-        
-        String name = info.getTypeClass().getSimpleName();
-        String ns = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
-        
-        type.setSchemaType(new QName(ns, name));
+
+        type.setSchemaType(createQName(info.getTypeClass()));
         type.setTypeClass(info.getTypeClass());
         type.setTypeMapping(getTypeMapping());
         
         return type;
     }
 
+    @Override
+    public QName createQName(Class typeClass)
+    {
+        String name = null;
+        String ns = null;
+        
+        XmlType xtype = (XmlType) typeClass.getAnnotation(XmlType.class);
+        if (xtype != null)
+        {
+            name = xtype.name();
+            ns = xtype.namespace();
+        }
+        
+        String clsName = typeClass.getName();
+        if (name == null || name.length() == 0)
+            name = ServiceUtils.makeServiceNameFromClassName(typeClass);
+        
+        if (ns == null || ns.length() == 0)
+            ns = NamespaceHelper.makeNamespaceFromClassName(clsName, "http");
+        
+        return new QName(ns, name);
+    }
+    
     @Override
     protected boolean isEnum(Class javaType)
     {

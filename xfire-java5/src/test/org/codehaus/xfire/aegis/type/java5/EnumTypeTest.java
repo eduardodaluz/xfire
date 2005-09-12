@@ -19,7 +19,7 @@ public class EnumTypeTest
 {
     private CustomTypeMapping tm;
     
-    private enum testEnum { VALUE1, VALUE2 };
+    private enum smallEnum { VALUE1, VALUE2 };
     
     public void setUp() throws Exception
     {
@@ -33,7 +33,7 @@ public class EnumTypeTest
     public void testType() throws Exception
     {
         EnumType type = new EnumType();
-        type.setTypeClass(testEnum.class);
+        type.setTypeClass(smallEnum.class);
         type.setSchemaType(new QName("urn:test", "test"));
 
         tm.register(type);
@@ -41,19 +41,28 @@ public class EnumTypeTest
         Element root = new Element("root");
         YOMWriter writer = new YOMWriter(root);
         
-        type.writeObject(testEnum.VALUE1, writer, new MessageContext());
+        type.writeObject(smallEnum.VALUE1, writer, new MessageContext());
         
         assertEquals("VALUE1", root.getValue());
         
         YOMReader reader = new YOMReader(root);
         Object value = type.readObject(reader, new MessageContext());
         
-        assertEquals(testEnum.VALUE1, value);
+        assertEquals(smallEnum.VALUE1, value);
     }
     
     public void testAutoCreation() throws Exception
     {
-        Type type = (Type) tm.getTypeCreator().createType(testEnum.class);
+        Type type = (Type) tm.getTypeCreator().createType(smallEnum.class);
+        
+        assertTrue( type instanceof EnumType );
+    }
+    
+    public void testTypeAttributeOnEnum() throws Exception
+    {
+        Type type = (Type) tm.getTypeCreator().createType(TestEnum.class);
+        
+        assertEquals("urn:xfire:foo", type.getSchemaType().getNamespaceURI());
         
         assertTrue( type instanceof EnumType );
     }
@@ -61,15 +70,13 @@ public class EnumTypeTest
     public void testWSDL() throws Exception
     {
         EnumType type = new EnumType();
-        type.setTypeClass(testEnum.class);
+        type.setTypeClass(smallEnum.class);
         type.setSchemaType(new QName("urn:test", "test"));
 
         Element root = new Element("root");
         Document wsdl = new Document(root);
         type.writeSchema(root);
-        
-        printNode(root);
-        
+
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:simpleType[@name='test']/xsd:restriction[@base='xsd:string']", wsdl);
         assertValid("//xsd:restriction[@base='xsd:string']/xsd:enumeration[@value='VALUE1']", wsdl);

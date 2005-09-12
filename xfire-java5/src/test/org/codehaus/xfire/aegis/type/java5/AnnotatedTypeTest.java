@@ -36,9 +36,8 @@ public class AnnotatedTypeTest
     
     public void testType()
     {
-        AnnotatedTypeInfo type = new AnnotatedTypeInfo(AnnotatedBean1.class);
-        type.setTypeMapping(tm);
-        
+        AnnotatedTypeInfo type = new AnnotatedTypeInfo(tm, AnnotatedBean1.class);
+ 
         Iterator elements = type.getElements();
         assertTrue(elements.hasNext());
         QName element = (QName) elements.next();

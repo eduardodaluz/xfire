@@ -4,15 +4,17 @@ import java.beans.PropertyDescriptor;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
 import org.codehaus.xfire.util.NamespaceHelper;
 
 public class AnnotatedTypeInfo
     extends BeanTypeInfo
 {
-    public AnnotatedTypeInfo(Class typeClass)
+    public AnnotatedTypeInfo(TypeMapping tm, Class typeClass)
     {
         super(typeClass);
+        setTypeMapping(tm);
         
         initialize();
     }
