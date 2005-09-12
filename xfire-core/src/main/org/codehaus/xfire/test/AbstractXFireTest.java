@@ -40,8 +40,6 @@ import org.codehaus.yom.Node;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.stax.StaxBuilder;
 
-import com.ctc.wstx.stax.WstxInputFactory;
-
 /**
  * Contains helpful methods to test SOAP services.
  *
@@ -56,8 +54,7 @@ public abstract class AbstractXFireTest
 
     private static String basedirPath;
 
-    private XMLInputFactory defaultInputFactory = XMLInputFactory.newInstance(WstxInputFactory.class.getName(),
-                                                                              getClass().getClassLoader());
+    private XMLInputFactory defaultInputFactory = XMLInputFactory.newInstance();
     /**
      * Namespaces for the XPath expressions.
      */
