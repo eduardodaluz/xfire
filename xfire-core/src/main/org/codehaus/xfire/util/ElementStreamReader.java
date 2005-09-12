@@ -2,6 +2,7 @@ package org.codehaus.xfire.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -13,8 +14,6 @@ import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Node;
 import org.codehaus.yom.Text;
-
-import com.bea.xml.stream.util.Stack;
 
 public class ElementStreamReader
     implements XMLStreamReader
