@@ -1,0 +1,5 @@
+<mappings>
+  <mapping>
+    <property name="bean1" componentType="org.codehaus.xfire.aegis.type.basic.recursive.Bean1"/>
+  </mapping>
+</mappings>

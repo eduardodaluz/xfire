@@ -1,0 +1,5 @@
+<mappings>
+  <mapping xmlns:x="urn:xfire:foo">
+    <property name="bean2" mappedName="x:Bean2"/>
+  </mapping>
+</mappings>

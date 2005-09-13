@@ -1,0 +1,5 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Body>
+  <getRecursiveBean xmlns="http://basic.type.aegis.xfire.codehaus.org"/>
+ </env:Body>
+</env:Envelope>

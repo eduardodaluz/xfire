@@ -330,7 +330,15 @@ public class BeanType
     public BeanTypeInfo getTypeInfo()
     {
         if (_info == null)
+        {
             _info = createTypeInfo();
+        }
+        
+        // Delay initialization so things work in recursive scenarios (XFIRE-117)
+        if (!_info.isInitialized())
+        {
+            _info.initialize();
+        }
         
         return _info;
     }
@@ -340,8 +348,7 @@ public class BeanType
         BeanTypeInfo info = new BeanTypeInfo(getTypeClass(), getSchemaType().getNamespaceURI());
 
         info.setTypeMapping(getTypeMapping());
-        info.initialize();
-        
+
         return info;
     }
 }

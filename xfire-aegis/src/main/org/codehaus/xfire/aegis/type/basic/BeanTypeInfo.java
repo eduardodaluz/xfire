@@ -25,6 +25,7 @@ public class BeanTypeInfo
     private String defaultNamespace;
     private PropertyDescriptor[] descriptors;
     private TypeMapping typeMapping;
+    private boolean initialized;
     
     public BeanTypeInfo(Class typeClass, String defaultNamespace)
     {
@@ -34,6 +35,22 @@ public class BeanTypeInfo
         initializeProperties();
     }
 
+    /**
+     * Create a BeanTypeInfo class.
+     * 
+     * @param typeClass
+     * @param defaultNamespace
+     * @param initiallize If true attempt default property/xml mappings.
+     */
+    public BeanTypeInfo(Class typeClass, String defaultNamespace, boolean initialize)
+    {
+        this.typeClass = typeClass;
+        this.defaultNamespace = defaultNamespace;
+        
+        initializeProperties();
+        setInitialized(!initialize);
+    }
+    
     protected BeanTypeInfo(Class typeClass)
     {
         this.typeClass = typeClass;
@@ -60,6 +77,18 @@ public class BeanTypeInfo
             if(e instanceof XFireRuntimeException) throw (XFireRuntimeException)e;
             throw new XFireRuntimeException("Couldn't create TypeInfo.", e);
         }
+        
+        setInitialized(true);
+    }
+
+    public boolean isInitialized()
+    {
+        return initialized;
+    }
+
+    private void setInitialized(boolean initialized)
+    {
+        this.initialized = initialized;
     }
 
     protected void mapProperty(PropertyDescriptor pd)

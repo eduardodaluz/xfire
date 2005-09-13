@@ -29,8 +29,6 @@ public class XMLBeanTypeInfo
 
         this.mapping = mapping;
         setTypeMapping(tm);
-        
-        initialize();
     }
 
     public QName getSchemaType()

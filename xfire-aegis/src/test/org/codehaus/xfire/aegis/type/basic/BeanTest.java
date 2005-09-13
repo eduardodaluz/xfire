@@ -69,7 +69,7 @@ public class BeanTest
     public void testUnmappedProperty()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean", false);
         info.mapElement("howdy", new QName("urn:Bean", "howdycustom"));
         info.setTypeMapping(mapping);
         
