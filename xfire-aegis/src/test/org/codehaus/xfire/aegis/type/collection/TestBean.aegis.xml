@@ -1,0 +1,6 @@
+<mappings>
+  <mapping>
+    <property name="strings" componentType="java.lang.String"/>
+    <property name="doubles" componentType="java.lang.Double"/>
+  </mapping>
+</mappings>
