@@ -47,15 +47,11 @@ public class BeanTypeInfo
         {
             for (int i = 0; i < descriptors.length; i++)
             {
-                String name = descriptors[i].getName();
-
-                if (isAttribute(descriptors[i]))
+                // Don't map the property unless there is both a read and write property
+                if (descriptors[i].getReadMethod() != null &&
+                        descriptors[i].getWriteMethod() != null)
                 {
-                    mapAttribute(name, createQName(descriptors[i]));
-                }
-                else if (isElement(descriptors[i]))
-                {
-                    mapElement(name, createQName(descriptors[i]));
+                    mapProperty(descriptors[i]);
                 }
             }
         }
@@ -65,6 +61,21 @@ public class BeanTypeInfo
             throw new XFireRuntimeException("Couldn't create TypeInfo.", e);
         }
     }
+
+    protected void mapProperty(PropertyDescriptor pd)
+    {
+        String name = pd.getName();
+   
+        if (isAttribute(pd))
+        {
+            mapAttribute(name, createQName(pd));
+        }
+        else if (isElement(pd))
+        {
+            mapElement(name, createQName(pd));
+        }
+    }
+    
     protected PropertyDescriptor[] getPropertyDescriptors()
     {
         return descriptors;

@@ -211,4 +211,25 @@ public class BeanTest
         //assertValid("//xsd:complexType[@name='bean']/xsd:element[@ref='ns1:howdy']", schema);
         //assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@ref='ns1:bleh']", schema);
     }
+    
+    public void testGetSetRequired() throws Exception
+    {
+        BeanType type = new BeanType();
+        type.setTypeClass(BadBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:foo", "BadBean"));
+        
+        assertFalse(type.getTypeInfo().getElements().hasNext());
+    }
+    
+    // This class only has a read property, no write
+    public static class BadBean
+    {
+        private String string;
+
+        public String getString()
+        {
+            return string;
+        }
+    }
 }

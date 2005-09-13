@@ -30,7 +30,7 @@ public class XMLBeanTypeInfo
         this.mapping = mapping;
         setTypeMapping(tm);
         
-        buildMapping();
+        initialize();
     }
 
     public QName getSchemaType()
@@ -41,16 +41,6 @@ public class XMLBeanTypeInfo
         }
         
         return name;
-    }
-    
-    protected void buildMapping()
-    {
-        PropertyDescriptor[] pds = getPropertyDescriptors();
-
-        for (int i = 0; i < pds.length; i++)
-        {
-            mapProperty(pds[i]);
-        }
     }
 
     protected void mapProperty(PropertyDescriptor pd)
