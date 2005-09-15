@@ -28,6 +28,11 @@ public class InMessage
         setUri(uri);
     }
 
+    public void setXMLStreamReader(XMLStreamReader xmlStreamReader)
+    {
+        this.xmlStreamReader = xmlStreamReader;
+    }
+
     public XMLStreamReader getXMLStreamReader()
     {
         return xmlStreamReader;
