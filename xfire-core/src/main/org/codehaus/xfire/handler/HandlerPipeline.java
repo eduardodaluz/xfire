@@ -88,7 +88,7 @@ public class HandlerPipeline
                 Handler h = (Handler) phaseHandlers.get(i);
                 try
                 {
-                    // log.debug("Invoking handler " + h.getClass().getName() + " in phase " + phase.getName());
+                    log.debug("Invoking handler " + h.getClass().getName() + " in phase " + phase.getName());
                     
                     h.invoke(context);
                 }

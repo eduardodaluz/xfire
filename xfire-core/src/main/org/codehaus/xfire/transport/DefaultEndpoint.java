@@ -23,6 +23,7 @@ public class DefaultEndpoint
     implements ChannelEndpoint
 {
     private static final Log log = LogFactory.getLog(DefaultEndpoint.class);
+    public static final String SERVICE_HANDLERS_REGISTERED = "service.handlers.registered";
 
     public DefaultEndpoint()
     {
@@ -43,6 +44,12 @@ public class DefaultEndpoint
         pipeline.addHandlers(context.getXFire().getInHandlers());
         pipeline.addHandlers(msg.getChannel().getTransport().getInHandlers());
 
+        if (context.getService() != null)
+        {
+            pipeline.addHandlers(context.getService().getInHandlers());
+            context.setProperty(SERVICE_HANDLERS_REGISTERED, Boolean.TRUE);
+        }
+        
         context.setInPipeline(pipeline);
         
         try
