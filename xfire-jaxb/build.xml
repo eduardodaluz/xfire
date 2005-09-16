@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-jaxb" basedir=".">
+    <import file="../build-common.xml"/>
+
+    <path id="module.classpath">
+        <fileset dir="..">
+            <include name="xfire-core/target/*.jar"/>
+            <include name="xfire-aegis/target/*.jar"/>
+            <include name="${basedir}/target/*.jar"/>
+        </fileset>
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+
+    </path>
+
+    <target name="get-deps" depends="xfire.get-deps">
+    </target>
+
+    <target name="init" depends="xfire.init">
+        <check-dep module="xfire-core"/>
+        <check-dep module="xfire-aegis"/>
+    </target>
+
+    <target name="compile" depends="get-deps,xfire.compile"/>
+
+    <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+        <classpath>
+            <fileset dir="lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </classpath>
+    </taskdef>
+
+    <target name="xjc" depends="init">
+        <mkdir dir="${target.dir}/xjc"/>
+        <xjc target="${target.dir}/xjc" extension="true">
+            <schema dir="src/test-schemas">
+                <include name="*.xsd"/>
+            </schema>
+        </xjc>
+    </target>
+
+    <target name="compile_jaxb" depends="xjc">
+        <mkdir dir="${target.dir}/jaxb_classes"/>
+        <javac srcdir="${target.dir}/xjc" destdir="${target.dir}/jaxb_classes">
+            <classpath>
+                <fileset dir="lib">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+    <target name="jaxb-jar" depends="compile_jaxb">
+        <jar destfile="target/jaxb_types.jar">
+            <fileset dir="target/xjc" includes="**/bgm.ser"/>
+            <!-- support validation -->
+            <!--<fileset dir="target/jaxb_classes" includes="**/*"/>-->
+            <fileset dir="src/test-schemas" includes="*"/>
+        </jar>
+    </target>
+
+    <target name="internal-test" depends="get-deps,support-jars,xfire.internal-test"/>
+
+    <target name="support-jars" depends="jaxb-jar"/>
+
+</project>
