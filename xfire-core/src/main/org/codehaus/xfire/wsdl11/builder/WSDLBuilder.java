@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.io.OutputStream;
+import java.io.IOException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -32,6 +34,7 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
 
@@ -39,7 +42,7 @@ import com.ibm.wsdl.extensions.soap.SOAPHeaderImpl;
 
 /**
  * WSDL
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class WSDLBuilder
@@ -57,8 +60,8 @@ public class WSDLBuilder
     private WSDL11ParameterBinding paramBinding;
 
     private List declaredParameters = new ArrayList();
-    
-    public WSDLBuilder(Service service, 
+
+    public WSDLBuilder(Service service,
                        TransportManager transportManager,
                        WSDL11ParameterBinding paramBinding) throws WSDLException
     {
@@ -67,11 +70,22 @@ public class WSDLBuilder
         this.transportManager = transportManager;
         this.paramBinding = paramBinding;
 
-        PortType portType = createAbstractInterface();
+    }
 
-        createConcreteInterface(portType);
+    public void write(OutputStream out) throws IOException
+    {
+        try
+        {
+            PortType portType = createAbstractInterface();
 
-        writeDocument();
+            createConcreteInterface(portType);
+
+            writeDocument();
+        } catch (WSDLException e)
+        {
+            throw new XFireRuntimeException("error creating wsdl", e);
+        }
+        super.write(out);
     }
 
     public PortType createAbstractInterface()
@@ -91,11 +105,11 @@ public class WSDLBuilder
         for (Iterator itr = service.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo op = (OperationInfo) itr.next();
-            
+
             // Create input message
             Message req = createInputMessage(op);
             def.addMessage(req);
-            
+
             // Create output message if we have an out MEP
             Message res = null;
             if (op.getMEP().equals(SoapConstants.MEP_ROBUST_IN_OUT))
@@ -133,7 +147,7 @@ public class WSDLBuilder
             {
                 continue;
             }
-            
+
             WSDL11Transport transport = (WSDL11Transport) transportObj;
 
             Binding transportBinding = transport.createBinding(this, portType, paramBinding);
@@ -148,7 +162,7 @@ public class WSDLBuilder
 
                 BindingOperation bop = transport.createBindingOperation(this, portType, wsdlOp, paramBinding);
                 transportBinding.addBindingOperation(bop);
-                
+
                 createHeaders(op, bop);
             }
 
@@ -169,12 +183,12 @@ public class WSDLBuilder
         {
             return;
         }
-        
+
         BindingInput bindingInput = bop.getBindingInput();
-        
+
         Message reqHeaders = createHeaderMessages(op.getInputMessage());
         getDefinition().addMessage(reqHeaders);
-       
+
         for (Iterator headerItr = reqHeaders.getParts().values().iterator(); headerItr.hasNext();)
         {
             Part headerInfo = (Part) headerItr.next();
@@ -183,7 +197,7 @@ public class WSDLBuilder
             soapHeader.setMessage(reqHeaders.getQName());
             soapHeader.setPart(headerInfo.getName());
             soapHeader.setUse(paramBinding.getUse());
-            
+
             bindingInput.addExtensibilityElement(soapHeader);
         }
     }
@@ -222,12 +236,12 @@ public class WSDLBuilder
         for (Iterator itr = msgInfo.getMessageHeaders().iterator(); itr.hasNext();)
         {
             MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
-            
+
             Part part = createPart(header);
 
             msg.addPart(part);
         }
-        
+
         return msg;
     }
 
@@ -254,16 +268,16 @@ public class WSDLBuilder
         {
             String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
             addNamespace(prefix, schemaTypeName.getNamespaceURI());
-            
+
             part.setElementName(schemaTypeName);
-            
+
             return part;
         }
 
         if (!declaredParameters.contains(pName))
         {
             Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
-            
+
             Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
             schemaEl.appendChild(element);
 
@@ -273,15 +287,15 @@ public class WSDLBuilder
             if (type.isAbstract())
             {
                 element.addAttribute(new Attribute("name", pName.getLocalPart()));
-                element.addAttribute(new Attribute("type", 
+                element.addAttribute(new Attribute("type",
                                                    prefix + ":" + schemaTypeName.getLocalPart()));
             }
-            
+
             declaredParameters.add(pName);
         }
- 
+
         part.setElementName(pName);
-        
+
         return part;
     }
 
