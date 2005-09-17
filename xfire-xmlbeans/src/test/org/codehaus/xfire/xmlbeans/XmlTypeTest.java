@@ -1,45 +1,34 @@
 package org.codehaus.xfire.xmlbeans;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import junit.framework.TestCase;
 import net.webservicex.WeatherData;
 
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
+import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
+import org.codehaus.xfire.test.AbstractXFireTest;
 
 public class XmlTypeTest
-    extends TestCase
+    extends AbstractXFireTest
 {
-    public void testExtraction() throws Exception
+    public void testNamespaces() throws Exception
     {
         XmlBeansType type = new XmlBeansType(WeatherData.class);
         
+        Map nsmap = new HashMap();
+        nsmap.put("xsd", SoapConstants.XSD);
         
+        MessageContext context = new MessageContext();
+        context.setProperty(ReadHeadersHandler.DECLARED_NAMESPACES, nsmap);
+        
+        type.readObject(new ElementReader(getResourceAsStream("/org/codehaus/xfire/xmlbeans/undeclaredns.xml")),
+                        context);
     }
-    
-    private void copy(final InputStream input,
-                      final OutputStream output,
-                      final int bufferSize)
-         throws IOException
-     {
-         try
-         {
-             final byte[] buffer = new byte[bufferSize];
 
-             int n = 0;
-             while (-1 != (n = input.read(buffer)))
-             {
-                 output.write(buffer, 0, n);
-             }
-         }
-         finally
-         {
-             input.close();
-         }
-     }
-    
     public void testTypeCreator() throws Exception
     {
         XmlBeansTypeCreator typeCreator = new XmlBeansTypeCreator(new DefaultTypeCreator());

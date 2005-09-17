@@ -1,5 +1,8 @@
 package org.codehaus.xfire.soap.handler;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -15,6 +18,8 @@ import org.codehaus.yom.stax.StaxBuilder;
 public class ReadHeadersHandler
     extends AbstractHandler
 {
+    public static final String DECLARED_NAMESPACES = "declared.namespaces";
+
     public String getPhase()
     {
         return Phase.PARSE;
@@ -28,6 +33,9 @@ public class ReadHeadersHandler
         
         XMLStreamReader reader = message.getXMLStreamReader();
 
+        Map namespaces = new HashMap();
+        context.setProperty(DECLARED_NAMESPACES, namespaces);
+        
         boolean end = !reader.hasNext();
         while (!end && reader.hasNext())
         {
@@ -50,6 +58,8 @@ public class ReadHeadersHandler
                     }
                     else if (reader.getLocalName().equals("Body"))
                     {
+                        readNamespaces(reader, namespaces);
+                        
                         seekToWhitespaceEnd(reader);
 
                         checkForFault(context, message, reader);
@@ -58,12 +68,23 @@ public class ReadHeadersHandler
                     }
                     else if (reader.getLocalName().equals("Envelope"))
                     {
+                        readNamespaces(reader, namespaces);
+                        
                         message.setSoapVersion(reader.getNamespaceURI());
                     }
                     break;
                 default:
                     break;
             }
+        }
+    }
+
+    private void readNamespaces(XMLStreamReader reader, Map namespaces)
+    {
+        for (int i = 0; i < reader.getNamespaceCount(); i++)
+        {
+            namespaces.put(reader.getNamespacePrefix(i),
+                           reader.getNamespaceURI(i));
         }
     }
 

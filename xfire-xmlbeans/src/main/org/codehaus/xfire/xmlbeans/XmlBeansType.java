@@ -1,10 +1,13 @@
 package org.codehaus.xfire.xmlbeans;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +25,7 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.yom.Element;
 
@@ -114,12 +118,36 @@ public class XmlBeansType
         }
     }
 
-    public Object readObject(MessageReader reader, MessageContext context)
+    public Object readObject(MessageReader mreader, MessageContext context)
         throws XFireFault
     {
         try
         {
-            return XmlObject.Factory.parse(((ElementReader)reader).getXMLStreamReader());
+            XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
+            XmlObject parsed = XmlObject.Factory.parse(reader);
+            
+            /* Add namespace declarations from the XMLStreamReader NamespaceContext.
+             * This is important when values reference QNames. For instance, 
+             * xsi:type="xsd:string". If the xsd namespace is declared on the SOAP
+             * envelope then XMLBeans won't pick up. 
+             */
+            XmlCursor cursor = parsed.newCursor();
+            try
+            {
+                cursor.toFirstContentToken();
+                Map namespaces = (Map) context.getProperty(ReadHeadersHandler.DECLARED_NAMESPACES);
+                for (Iterator itr = namespaces.entrySet().iterator(); itr.hasNext();)
+                {
+                    Map.Entry entry = (Map.Entry) itr.next();
+                    cursor.insertNamespace((String) entry.getKey(), (String) entry.getValue());
+                }
+            }
+            finally
+            {
+                cursor.dispose();
+            }
+
+            return parsed;
         }
         catch( XmlException e )
         {
