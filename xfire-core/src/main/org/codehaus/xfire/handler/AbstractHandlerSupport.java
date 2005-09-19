@@ -6,14 +6,12 @@ import java.util.List;
 public abstract class AbstractHandlerSupport
     implements HandlerSupport
 {
-    private List inHandlers;
-    private List outHandlers;
-    private List faultHandlers;
+    private List inHandlers = new ArrayList();
+    private List outHandlers = new ArrayList();
+    private List faultHandlers = new ArrayList();
 
     public void addFaultHandler(Handler handler)
     {
-        if (faultHandlers == null) faultHandlers = new ArrayList();
-        
         faultHandlers.add(handler);
     }
     
@@ -29,8 +27,6 @@ public abstract class AbstractHandlerSupport
 
     public void addInHandler(Handler handler)
     {
-        if (inHandlers == null) inHandlers = new ArrayList();
-        
         inHandlers.add(handler);
     }
     
@@ -46,8 +42,6 @@ public abstract class AbstractHandlerSupport
 
     public void addOutHandler(Handler handler)
     {
-        if (outHandlers == null) outHandlers = new ArrayList();
-        
         outHandlers.add(handler);
     }
     
