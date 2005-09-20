@@ -108,7 +108,7 @@ public class MapTypeTest
         Type type = beanType.getTypeInfo().getType(mapName);
         assertTrue(type instanceof MapType);
 
-        assertEquals(new QName(mapping.getEncodingStyleURI(), "StringStringPair"), type.getSchemaType());
+        assertEquals(new QName(mapping.getEncodingStyleURI(), "string2stringMap"), type.getSchemaType());
         
         MapType mapType = (MapType) type;
         assertEquals(String.class, mapType.getValueClass());

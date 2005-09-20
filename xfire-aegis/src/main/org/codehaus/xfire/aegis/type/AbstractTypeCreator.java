@@ -133,10 +133,8 @@ public abstract class AbstractTypeCreator implements TypeCreator
     {
         Class keyType = (Class) info.getKeyType();
         Class valueType = (Class) info.getGenericType();
-        
-        String lname = keyType.getSimpleName() + valueType.getSimpleName() + "Pair";
-        
-        QName schemaType = new QName(getTypeMapping().getEncodingStyleURI(), lname);
+
+        QName schemaType = createMapQName(keyType, valueType);
         MapType type = new MapType(schemaType, 
                                    keyType, 
                                    valueType);
@@ -146,6 +144,41 @@ public abstract class AbstractTypeCreator implements TypeCreator
         return type;
     }
 
+    protected QName createMapQName(Class keyClass, Class componentClass)
+    {
+        if(keyClass == null)
+        {
+           throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type");
+        }
+        
+        if(componentClass == null)
+        {
+            throw new XFireRuntimeException("Cannot create mapping for map, unspecified component type");
+        }
+        
+        Type keyType = tm.getType(keyClass);
+        if(keyType == null)
+        {
+            keyType = createType(keyClass);
+            getTypeMapping().register(keyType);
+        }
+        
+        Type componentType = tm.getType(componentClass);
+        if(componentType == null)
+        {
+            componentType = createType(componentClass);
+            getTypeMapping().register(componentType);
+        }
+        
+        String name = keyType.getSchemaType().getLocalPart()
+                      + "2"
+                      + componentType.getSchemaType().getLocalPart()
+                      + "Map";
+         
+        // TODO: Get namespace from XML?
+        return new QName(tm.getEncodingStyleURI(), name);
+    }
+    
     protected boolean isMap(Class javaType)
     {
         return Map.class.isAssignableFrom(javaType);
