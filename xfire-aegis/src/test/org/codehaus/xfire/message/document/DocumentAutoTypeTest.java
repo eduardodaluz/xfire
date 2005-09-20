@@ -73,5 +73,11 @@ public class DocumentAutoTypeTest
         assertValid(
                 "/wsdl:definitions/wsdl:service/wsdl:port/wsdlsoap:address[@location=\"http://localhost/services/Bean\"]",
                 doc);
+        
+        String services = "http://services.xfire.codehaus.org";
+        String sb = "urn:Bean";
+        
+        assertValid("//xsd:schema[@targetNamespace='" + sb
+                    + "']/xsd:import[@namespace='" + services + "']", doc);
     }
 }

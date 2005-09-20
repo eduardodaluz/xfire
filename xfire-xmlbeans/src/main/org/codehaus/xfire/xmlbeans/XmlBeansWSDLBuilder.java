@@ -15,6 +15,7 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
+import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.stax.StaxBuilder;
@@ -70,6 +71,7 @@ public class XmlBeansWSDLBuilder
             
             schema = builder.buildElement(null, obj.newXMLStreamReader());
             Document schemaDoc = new Document(schema);
+            schemas.put(name, schema);
             
             String ns = xbeanType.getSchemaType().getNamespaceURI();
             String expr = "//xsd:schema[@targetNamespace='" + ns + "']";
@@ -87,11 +89,12 @@ public class XmlBeansWSDLBuilder
             {
                 Element imp = (Element) nodes.get(i);
                 
-                String importedNs = imp.getAttributeValue("namespace");
+                Attribute schemaLoc = imp.getAttribute("schemaLocation");
                 
                 // TODO: How do we make sure this is imported???
                 
-                imp.detach();
+                if (schemaLoc != null)
+                    schemaLoc.detach();
             }
             
             return node;

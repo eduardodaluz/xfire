@@ -165,6 +165,9 @@ public class DocumentBinding
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
             
+            builder.addNamespaceImport(builder.getService().getServiceInfo().getName().getNamespaceURI(), 
+                                       param.getSchemaType().getSchemaType().getNamespaceURI());
+            
             Part part = builder.createPart(param);
             
             message.addPart(part);

@@ -64,5 +64,11 @@ public class WrappedComplexTest
                     + "']/xsd:element[@name='getComplex1Response']"
                     + "/xsd:complexType/xsd:sequence/xsd:element[@name='out'][@type='" + ns1p
                     + ":Complex1']", doc);
+        
+        assertValid("//xsd:schema[@targetNamespace='" + root
+                    + "']/xsd:import[@namespace='" + ns1 + "']", doc);
+        
+        assertValid("//xsd:schema[@targetNamespace='" + ns1
+                    + "']/xsd:import[@namespace='" + ns2 + "']", doc);
     }
 }

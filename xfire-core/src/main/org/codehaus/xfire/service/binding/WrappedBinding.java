@@ -217,13 +217,15 @@ public class WrappedBinding
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
 
-            Class clazz = param.getTypeClass();
             QName pName = param.getName();
             SchemaType type = param.getSchemaType();
 
             builder.addDependency(type);
             QName schemaType = type.getSchemaType();
 
+            builder.addNamespaceImport(builder.getService().getServiceInfo().getName().getNamespaceURI(), 
+                                       schemaType.getNamespaceURI());
+            
             String uri = type.getSchemaType().getNamespaceURI();
             String prefix = builder.getNamespacePrefix(uri);
             builder.addNamespace(prefix, uri);

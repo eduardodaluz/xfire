@@ -3,6 +3,7 @@ package org.codehaus.xfire.wsdl11.builder;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
+import org.codehaus.yom.Elements;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.converters.DOMConverter;
 
@@ -39,8 +41,10 @@ public abstract class AbstractWSDL
 
     private Document wsdlDocument;
 
-    private Map dependencies;
-
+    private Map dependencies = new HashMap();
+    
+    private Map namespaceImports = new HashMap();
+    
     private Element schemaTypes;
 
     private Map typeMap;
@@ -61,7 +65,6 @@ public abstract class AbstractWSDL
 
     public AbstractWSDL(Service service) throws WSDLException
     {
-        dependencies = new HashMap();
         this.service = service;
         this.info = (WSDLBuilderInfo) service.getProperty(WSDLBuilderInfo.KEY);
 
@@ -72,7 +75,6 @@ public abstract class AbstractWSDL
         getDefinition().setTargetNamespace(info.getTargetNamespace());
 
         Element root = new Element("wsdl:types", WSDL11_NS);
-        Document paramDoc = new Document(root);
         setSchemaTypes(root);
         root.addNamespaceDeclaration(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
 
@@ -89,11 +91,56 @@ public abstract class AbstractWSDL
     protected void writeDocument()
         throws WSDLException
     {
+        writeImports();
+        
         org.w3c.dom.Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
 
         wsdlDocument = DOMConverter.convert(doc);
 
         writeComplexTypes();
+    }
+
+    /**
+     * Write xs:import elements for each schema.
+     */
+    protected void writeImports()
+    {
+        for (Iterator itr = namespaceImports.entrySet().iterator(); itr.hasNext();)
+        {
+            Map.Entry entry = (Map.Entry) itr.next();
+            
+            String uri = (String) entry.getKey();
+            Set imports = (Set) entry.getValue();
+            
+            Element schema = createSchemaType(uri);
+            
+            for (Iterator importItr = imports.iterator(); importItr.hasNext();)
+            {
+                String ns = (String) importItr.next();
+                if (!ns.equals(SoapConstants.XSD) && !hasImport(schema, ns))
+                {
+                    Element importEl = new Element("xsd:import", SoapConstants.XSD);
+                    importEl.addAttribute(new Attribute("namespace", ns));
+                    
+                    schema.insertChild(importEl, 0);
+                }
+            }
+        }
+    }
+
+    public boolean hasImport(Element schema, String ns)
+    {
+        Elements children = schema.getChildElements("import", SoapConstants.XSD);
+        
+        for (int i = 0; i < children.size(); i++)
+        {
+            Element importEl = children.get(i);
+            String value = importEl.getAttributeValue("namespace");
+            
+            if (value != null && value.equals(ns)) return true;
+        }
+        
+        return false;
     }
 
     protected void writeComplexTypes()
@@ -129,7 +176,10 @@ public abstract class AbstractWSDL
             {
                 for (Iterator itr = deps.iterator(); itr.hasNext();)
                 {
-                    addDependency((SchemaType) itr.next());
+                    SchemaType child = (SchemaType) itr.next();
+                    addDependency(child);
+                    addNamespaceImport(type.getSchemaType().getNamespaceURI(), 
+                                       child.getSchemaType().getNamespaceURI());
                 }
             }
         }
@@ -138,6 +188,26 @@ public abstract class AbstractWSDL
     protected boolean hasDependency(SchemaType type)
     {
         return dependencies.containsKey(type.getSchemaType());
+    }
+
+    /**
+     * Adds an import to another namespace. 
+     * @param uri The namespace to import into.
+     * @param imported The namespace to import.
+     */
+    public void addNamespaceImport(String uri, String imported)
+    {
+        if (uri.equals(imported)) return;
+        
+        Set imports = (Set) namespaceImports.get(uri);
+        
+        if (imports == null)
+        {
+            imports = new HashSet();
+            namespaceImports.put(uri, imports);
+        }
+        
+        imports.add(imported);
     }
     
     /**
