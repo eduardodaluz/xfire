@@ -2,8 +2,10 @@ package org.codehaus.xfire.aegis.type.collection;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -236,13 +238,25 @@ public class MapType
         Type type = getTypeMapping().getType(clazz);
         if (type == null)
         {
-            System.out.println("Couldn't find type for " + clazz);
             type = getTypeMapping().getTypeCreator().createType(clazz);
             getTypeMapping().register(type);
         }
         return type;
     }
     
+    public Set getDependencies()
+    {
+        HashSet deps = new HashSet();
+        deps.add(getKeyType());
+        deps.add(getValueType());
+        return deps;
+    }
+
+    public boolean isComplex()
+    {
+        return true;
+    }
+
     public Type getValueType()
     {
         return getOrCreateType(valueClass);

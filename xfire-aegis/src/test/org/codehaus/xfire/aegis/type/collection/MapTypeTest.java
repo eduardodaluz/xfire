@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis.type.collection;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -12,6 +13,7 @@ import org.codehaus.xfire.aegis.type.TypeCreator;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.aegis.type.basic.StringType;
 import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -48,6 +50,13 @@ public class MapTypeTest
         assertEquals("key", type.getKeyName().getLocalPart());
         assertEquals("value", type.getValueName().getLocalPart());
 
+        assertTrue(type.isComplex());
+        
+        Set deps = type.getDependencies();
+        assertEquals(1, deps.size());
+        Type stype = (Type) deps.iterator().next();
+        assertTrue(stype instanceof StringType);
+        
         // Test reading
         ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/collection/Map.xml"));
         //MessageReader creader = reader.getNextElementReader();
@@ -91,7 +100,7 @@ public class MapTypeTest
     public void testTypeCreator()
     {
         TypeCreator creator = mapping.getTypeCreator();
-        
+
         BeanType beanType = (BeanType) creator.createType(MapBean.class);
         
         QName mapName = (QName) beanType.getTypeInfo().getElements().next();
@@ -99,6 +108,8 @@ public class MapTypeTest
         Type type = beanType.getTypeInfo().getType(mapName);
         assertTrue(type instanceof MapType);
 
+        assertEquals(new QName(mapping.getEncodingStyleURI(), "StringStringPair"), type.getSchemaType());
+        
         MapType mapType = (MapType) type;
         assertEquals(String.class, mapType.getValueClass());
         assertEquals(String.class, mapType.getKeyClass());
