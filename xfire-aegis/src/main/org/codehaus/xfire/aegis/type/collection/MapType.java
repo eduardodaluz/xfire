@@ -145,15 +145,6 @@ public class MapType
 
             Type keyType = getKeyType();
             Type valueType = getValueType();
-
-            if (keyType == null)
-                throw new XFireRuntimeException("Couldn't find type for key class " 
-                                                + keyType.getTypeClass() + ".");
-
-            if (valueType == null)
-                throw new XFireRuntimeException("Couldn't find type for value class " 
-                                                + keyType.getTypeClass() + ".");
-
             
             for (Iterator itr = map.entrySet().iterator(); itr.hasNext();)
             {
@@ -230,7 +221,13 @@ public class MapType
 
     public Type getKeyType()
     {
-        return getOrCreateType(keyClass);
+        Type keyType = getOrCreateType(keyClass);
+        
+        if (keyType == null)
+            throw new XFireRuntimeException("Couldn't find type for key class " 
+                                            + keyClass + ".");
+
+        return keyType;
     }
 
     private Type getOrCreateType(Class clazz)
@@ -259,7 +256,13 @@ public class MapType
 
     public Type getValueType()
     {
-        return getOrCreateType(valueClass);
+        Type valueType = getOrCreateType(valueClass);
+        
+        if (valueType == null)
+            throw new XFireRuntimeException("Couldn't find type for key class " 
+                                            + valueClass + ".");
+
+        return valueType;
     }
 
     public Class getKeyClass()
