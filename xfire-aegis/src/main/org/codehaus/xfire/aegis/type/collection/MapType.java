@@ -183,12 +183,6 @@ public class MapType
 
         Type keyType = getKeyType();
         Type valueType = getValueType();
-        
-        String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
-                                                        getSchemaType().getNamespaceURI());
-
-        String keyTypeName = prefix + ":" + keyType.getSchemaType().getLocalPart();
-        String valueTypeName = prefix + ":" + valueType.getSchemaType().getLocalPart();
 
         Element element = new Element(SoapConstants.XSD_PREFIX + ":element", SoapConstants.XSD);
         seq.appendChild(element);
@@ -203,17 +197,24 @@ public class MapType
         Element evseq = new Element(seqPref, SoapConstants.XSD);
         evComplex.appendChild(evseq);
         
-        createElement(evseq, getKeyName(), keyTypeName);
-        createElement(evseq, getValueName(), valueTypeName);
+        createElement(root, evseq, getKeyName(), keyType);
+        createElement(root, evseq, getValueName(), valueType);
     }
 
-    private void createElement(Element seq, QName name, String keyTypeName)
+    /**
+     * Creates a element in a sequence for the key type and the value type.
+     */
+    private void createElement(Element root, Element seq, QName name, Type type)
     {
         Element element = new Element(SoapConstants.XSD_PREFIX + ":element", SoapConstants.XSD);
         seq.appendChild(element);
 
+        String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
+                                                            type.getSchemaType().getNamespaceURI());
+        String typeName = prefix + ":" + type.getSchemaType().getLocalPart();
+                                                        
         element.addAttribute(new Attribute("name", name.getLocalPart()));
-        element.addAttribute(new Attribute("type", keyTypeName));
+        element.addAttribute(new Attribute("type", typeName));
 
         element.addAttribute(new Attribute("minOccurs", "0"));
         element.addAttribute(new Attribute("maxOccurs", "1"));

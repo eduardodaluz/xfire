@@ -88,13 +88,13 @@ public class MapTypeTest
         doc = new Document(types);
         
         type.writeSchema(schema);
-        
+        printNode(doc);
         assertValid("//xsd:complexType[@name='map']", doc);
         assertValid("//xsd:complexType[@name='map']/xsd:sequence/xsd:element[@name='entry']", doc);
         assertValid("//xsd:complexType[@name='map']/xsd:sequence/xsd:element[@name='entry']" +
-                    "/xsd:complexType/xsd:sequence/xsd:element[@name='key']", doc);
+                    "/xsd:complexType/xsd:sequence/xsd:element[@name='key'][@type='xsd:string']", doc);
         assertValid("//xsd:complexType[@name='map']/xsd:sequence/xsd:element[@name='entry']" +
-                    "/xsd:complexType/xsd:sequence/xsd:element[@name='value']", doc);
+                    "/xsd:complexType/xsd:sequence/xsd:element[@name='value'][@type='xsd:string']", doc);
     }
     
     public void testTypeCreator()
