@@ -131,10 +131,15 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     protected Type createMapType(TypeClassInfo info)
     {
-        QName schemaType = new QName(getTypeMapping().getEncodingStyleURI(), "map");
+        Class keyType = (Class) info.getKeyType();
+        Class valueType = (Class) info.getGenericType();
+        
+        String lname = keyType.getSimpleName() + valueType.getSimpleName() + "Pair";
+        
+        QName schemaType = new QName(getTypeMapping().getEncodingStyleURI(), lname);
         MapType type = new MapType(schemaType, 
-                                   (Class) info.getKeyType(), 
-                                   (Class) info.getGenericType());
+                                   keyType, 
+                                   valueType);
         type.setTypeMapping(getTypeMapping());
         type.setTypeClass(info.getTypeClass());
 
