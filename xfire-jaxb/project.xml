@@ -55,14 +55,9 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>xsdlib</groupId>
+            <groupId>msv</groupId>
             <artifactId>xsdlib</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>xsdlib</groupId>
-            <artifactId>xsdlib</artifactId>
-            <version>1.6</version>
+            <version>20050913</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
@@ -70,9 +65,9 @@
             <version>2.7.1</version>
         </dependency>
         <dependency>
-            <groupId>org.relaxng</groupId>
+            <groupId>msv</groupId>
             <artifactId>relaxngDatatype</artifactId>
-            <version>1.6</version>
+            <version>20050913</version>
         </dependency>
     </dependencies>
 
