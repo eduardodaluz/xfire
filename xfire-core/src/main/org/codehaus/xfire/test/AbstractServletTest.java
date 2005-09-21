@@ -56,8 +56,6 @@ public abstract class AbstractServletTest
     
     protected ServletUnitClient newClient()
     {
-        ServletUnitClient client = sr.newClient();
-
         return sr.newClient();
     }
     
