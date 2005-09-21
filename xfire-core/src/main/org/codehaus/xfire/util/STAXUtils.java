@@ -80,7 +80,6 @@ public class STAXUtils
     public static boolean skipToStartOfElement(DepthXMLStreamReader in)
         throws XMLStreamException
     {
-        int depth = in.getDepth();
         for (int code = in.getEventType(); code != XMLStreamReader.END_DOCUMENT; code = in.next())
         {
             if (code == XMLStreamReader.START_ELEMENT)
@@ -108,7 +107,7 @@ public class STAXUtils
         int read = 0; // number of elements read in
         int event = reader.getEventType();
         
-        while ( true )
+        while ( reader.hasNext() )
         {
             switch( event )
             {
@@ -155,19 +154,10 @@ public class STAXUtils
             writeElementNS = true;
         }
         
-        // Write out the element name and possible the default namespace
-        if (uri != null)
+        // Write out the element name
+        if (uri != null && prefix.length() > 0)
         {
-            if (prefix.length() == 0)
-            {
-                writer.writeStartElement(local);
-                writer.setDefaultNamespace(uri);
-            }
-            else
-            {
-                writer.writeStartElement(prefix, local, uri);
-                writer.setPrefix(prefix, uri);
-            }
+            writer.writeStartElement(prefix, local, uri);
         }
         else
         {
@@ -215,19 +205,29 @@ public class STAXUtils
         for ( int i = 0; i < reader.getAttributeCount(); i++ )
         {
             String ns = reader.getAttributeNamespace(i);
+            String nsPrefix = reader.getAttributePrefix(i);
             if ( ns == null || ns.length() == 0 )
             {
                 writer.writeAttribute(
                         reader.getAttributeLocalName(i),
                         reader.getAttributeValue(i));
             }
-            else
+            else if (nsPrefix == null || nsPrefix.length() == 0)
             {
                 writer.writeAttribute(
                     reader.getAttributeNamespace(i),
                     reader.getAttributeLocalName(i),
                     reader.getAttributeValue(i));
             }
+            else
+            {
+                writer.writeAttribute(reader.getAttributePrefix(i),
+                                      reader.getAttributeNamespace(i),
+                                      reader.getAttributeLocalName(i),
+                                      reader.getAttributeValue(i));
+            }
+            
+            
         }
     }
 

@@ -151,7 +151,7 @@
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax</artifactId>
-            <version>1.1.1-dev</version>
+            <version>1.1.2-dev</version>
             <url>http://jcp.org/en/jsr/detail?id=173</url>
         </dependency>
         <dependency>
@@ -163,7 +163,7 @@
         <dependency>
             <groupId>woodstox</groupId>
             <artifactId>wstx-asl</artifactId>
-            <version>2.0</version>
+            <version>2.0.2</version>
             <url>http://woodstox.codehaus.org/</url>
         </dependency>
         <dependency>

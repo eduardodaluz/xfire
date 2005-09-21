@@ -31,12 +31,11 @@ public class STAXUtilsTest
     
     public void testWSTX() throws Exception
     {
-        ifactory = XMLInputFactory.newInstance(WstxInputFactory.class.getName(),
-                                               getClass().getClassLoader());
-       
+        ifactory = new WstxInputFactory();
         ofactory = new WstxOutputFactory();
 
         doSkipTest();
+        doNameSpaceDoc();
         doAmazonDoc();
         doEbayDoc();
         doAmazonDoc2();
@@ -46,12 +45,11 @@ public class STAXUtilsTest
     
     public void testRI() throws Exception
     {
-        ifactory = XMLInputFactory.newInstance(MXParserFactory.class.getName(),
-                                               getClass().getClassLoader());
-
+        ifactory = new MXParserFactory();
         ofactory = new XMLOutputFactoryBase();
         
         doSkipTest();
+        doNameSpaceDoc();
         doAmazonDoc();
         doEbayDoc();
         doAmazonDoc2();
@@ -105,6 +103,19 @@ public class STAXUtilsTest
         assertValid("//a:ItemLookupResponse", doc);
         assertValid("//a:ItemLookupResponse/a:Items", doc);
     }
+    
+    public void doNameSpaceDoc() throws Exception {
+        String outS = doCopy("namespacedoc.xml");
+        
+        Document doc = readDocument(outS, ifactory);
+        
+        addNamespace("a", "http://www.paraware.com/2005/PriceAndAvailabilityCheckResponse");
+        addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        assertValid("//a:Header", doc);
+        assertValid("//a:Header/a:Reference/a:RefNum", doc);
+        assertValid("//a:Body/a:PartNumbers/a:UPC/@xsi:nil", doc);
+    }
+    
 
     /**
      * @return
@@ -128,7 +139,6 @@ public class STAXUtilsTest
         return outS;
     }
     
-
     public void doDOMWrite() throws Exception
     {
         org.w3c.dom.Document doc = DOMUtils.readXml(getResourceAsStream("amazon.xml"));
