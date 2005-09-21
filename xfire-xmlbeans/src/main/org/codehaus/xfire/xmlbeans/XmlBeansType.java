@@ -70,6 +70,11 @@ public class XmlBeansType
         return schemaType.isAbstract();
     }
 
+    public boolean isWriteOuter()
+    {
+        return false;
+    }
+
     public Set getDependencies()
     {
         SchemaProperty[] properties = schemaType.getProperties();
@@ -163,15 +168,9 @@ public class XmlBeansType
             XmlObject obj = (XmlObject) value; 
        
             XmlCursor cursor = obj.newCursor();
-            if (cursor.toFirstChild() && cursor.toFirstChild())
-            {
-                do
-                {
-                    STAXUtils.copy(cursor.newXMLStreamReader(), 
-                                   ((ElementWriter) writer).getXMLStreamWriter());
-                }
-                while(cursor.toNextSibling());
-            }
+            
+            STAXUtils.copy(cursor.newXMLStreamReader(), 
+                            ((ElementWriter) writer).getXMLStreamWriter());
         } 
         catch (XMLStreamException e)
         {
