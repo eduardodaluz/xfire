@@ -165,4 +165,9 @@ public abstract class Type
     {
         schemaType = name;
     }
+
+    public boolean isWriteOuter()
+    {
+        return true;
+    }
 }

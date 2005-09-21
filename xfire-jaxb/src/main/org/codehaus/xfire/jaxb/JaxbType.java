@@ -65,53 +65,12 @@ public class JaxbType extends Type
             System.out.println(xmlStreamReader.hasNext());
             StAXSource stAXSource = new StAXSource(xmlStreamReader);
             System.out.println(stAXSource.toString());
-            Object obj = unmarshaller.unmarshal(stAXSource);
-            return obj;
+            return unmarshaller.unmarshal(stAXSource);
         } catch (Exception e)
         {
             e.printStackTrace();
             throw new XFireFault("Could not unmarshall type.", e, XFireFault.SENDER);
         }
-    }
-
-    private static void dumpS(XMLStreamReader parser)
-    {
-
-
-        try
-        {
-
-
-            int inHeader = 0;
-            for (int event = parser.next();
-                 event != XMLStreamConstants.END_DOCUMENT;
-                 event = parser.next())
-            {
-                switch (event)
-                {
-                    case XMLStreamConstants.START_ELEMENT:
-                        System.out.println(parser.getLocalName());
-                        inHeader++;
-                        break;
-                    case XMLStreamConstants.END_ELEMENT:
-                        inHeader--;
-                        if (inHeader == 0) System.out.println();
-                        break;
-                    case XMLStreamConstants.CHARACTERS:
-                        if (inHeader > 0) System.out.print(parser.getText());
-                        break;
-                    case XMLStreamConstants.CDATA:
-                        if (inHeader > 0) System.out.print(parser.getText());
-                        break;
-                } // end switch
-            } // end while
-            parser.close();
-        }
-        catch (XMLStreamException ex)
-        {
-            System.out.println(ex);
-        }
-
     }
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context) throws XFireFault
@@ -130,5 +89,10 @@ public class JaxbType extends Type
     public QName getSchemaType()
     {
         return mySchemaType;
+    }
+
+    public boolean isWriteOuter()
+    {
+        return false;
     }
 }

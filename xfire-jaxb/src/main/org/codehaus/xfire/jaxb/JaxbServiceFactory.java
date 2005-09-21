@@ -21,7 +21,7 @@ public class JaxbServiceFactory
     {
         super(transportManager);
         jaxbIntrospector = new JaxbIntrospector(jaxbContext);
-        AegisBindingProvider provider = new JaxbBindingProvider(new JaxbTypeRegistry(jaxbContext));
+        AegisBindingProvider provider = new AegisBindingProvider(new JaxbTypeRegistry(jaxbContext));
         setBindingProvider(provider);
     }
 

@@ -39,8 +39,7 @@ public class AegisBindingProvider
     public static final String ENCODING_URI_KEY = "type.encodingUri";
     
     private TypeMappingRegistry registry;
-    private boolean writeOuter = true;
-    
+
     public AegisBindingProvider()
     {
         this(new DefaultTypeMappingRegistry(true));
@@ -51,16 +50,6 @@ public class AegisBindingProvider
         this.registry = registry;
     }
     
-    public boolean isWriteOuter()
-    {
-        return writeOuter;
-    }
-
-    public void setWriteOuter(boolean writeOuter)
-    {
-        this.writeOuter = writeOuter;
-    }
-
     /**
      * Creates a type mapping for this class and registers it with the TypeMappingRegistry. This needs to be called
      * before initializeOperations().
@@ -87,7 +76,7 @@ public class AegisBindingProvider
 
         endpoint.setProperty(TYPE_MAPPING_KEY, tm);
         registry.register(endpoint.getServiceInfo().getName().getNamespaceURI(), tm);
-        
+
         for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo opInfo = (OperationInfo) itr.next();
@@ -148,6 +137,7 @@ public class AegisBindingProvider
         Type type = (Type) p.getSchemaType();
 
         MessageWriter mw;
+        boolean writeOuter = type.isWriteOuter();
         if (writeOuter)
             mw = new ElementWriter(writer, p.getName());
         else
