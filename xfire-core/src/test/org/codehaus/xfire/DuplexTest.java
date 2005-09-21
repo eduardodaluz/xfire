@@ -15,9 +15,6 @@ public class DuplexTest
 {
     public void testPeer1() throws Exception
     {
-        String peer1 = "urn:xfire:local:Peer1";
-        String peer2 = "urn:xfire:local:Peer2";
-                
         LocalTransport transport = new LocalTransport();
         Channel channel1 = transport.createChannel("urn:xfire:local:Peer1");
         channel1.open();
