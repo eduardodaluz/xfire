@@ -65,7 +65,6 @@ public class Phase
     {
         Phase phase = (Phase) obj;
         
-        int result = 0;
         int p2 = phase.getPriority();
         if (p2 < priority) return 1;
         if (p2 > priority) return -1;

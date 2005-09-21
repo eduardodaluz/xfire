@@ -54,8 +54,6 @@ public class MessageBinding
 
         STAXUtils.toNextElement(dr);
 
-        final Invoker invoker = getInvoker();
-
         final List params = new ArrayList();
         
         for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)

@@ -109,7 +109,6 @@ public class RPCEncodedBinding
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
-            Class clazz = param.getTypeClass();
             QName pName = param.getName();
 
             SchemaType type = param.getSchemaType();

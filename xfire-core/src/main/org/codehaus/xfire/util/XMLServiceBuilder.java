@@ -88,8 +88,7 @@ public class XMLServiceBuilder
         throws Exception
     {
         ServiceRegistry registry = getXFire().getServiceRegistry();
-        TransportManager tman = getXFire().getTransportManager();
-        
+
         String name = getElementValue(service, "name", null);
         String namespace = getElementValue(service, "namespace", null);
         String style = getElementValue(service, "style", "");
