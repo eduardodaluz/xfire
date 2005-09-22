@@ -29,6 +29,21 @@
             <artifactId>jaxb-impl</artifactId>
             <version>1.0.5</version>
         </dependency>
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>stax-utils</groupId>
+            <artifactId>stax-utils</artifactId>
+            <version>snapshot-20040917</version>
+        </dependency>
     </dependencies>
+    <build>
+        <testSourceDirectory>
+            src/test/dont_work_yet_in_m2
+        </testSourceDirectory>
+    </build>
 </project>
 
