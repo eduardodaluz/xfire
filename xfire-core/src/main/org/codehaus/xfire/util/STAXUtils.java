@@ -28,6 +28,8 @@ import org.w3c.dom.NodeList;
  */
 public class STAXUtils
 {
+    private static final String XML_NS = "http://www.w3.org/2000/xmlns/";
+
     /**
      * Returns true if currently at the start of an element, otherwise move forwards to the next
      * element start and return true, otherwise false is returned if the end of the stream is reached.
@@ -337,117 +339,107 @@ public class STAXUtils
         }
     }
 
-    public static Document read(DocumentBuilder builder, XMLStreamReader reader) 
+    public static Document read(DocumentBuilder builder, XMLStreamReader reader)
         throws XMLStreamException
     {
-        Element rootEl = null;
         Document doc = builder.newDocument();
-
-        int event = reader.getEventType();
-        while ( reader.hasNext() )
-        {
-            switch( event )
-            {
-            case XMLStreamConstants.START_ELEMENT:
-                rootEl = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
-
-                doc.appendChild(rootEl);
-
-                declareNamespaces(reader, rootEl);
-                
-                for ( int i = 0; i < reader.getAttributeCount(); i++ )
-                {
-                    Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
-                                                      reader.getAttributeLocalName(i));
-                    attr.setValue(reader.getAttributeValue(i));
-                    rootEl.setAttributeNode(attr);
-                }
-                
-                reader.next();
-                
-                readElements(rootEl, reader);
-                
-                reader.next();
-                
-                return doc;
-            case XMLStreamConstants.END_ELEMENT:
-                return doc;
-            case XMLStreamConstants.CHARACTERS:
-                if (rootEl != null) 
-                {
-                    rootEl.appendChild(doc.createTextNode(reader.getText()));
-                }
-                break;
-            default:
-                break;
-            }
-            
-            event = reader.next();
-        }
-        
+        readDocElements(doc, reader);
         return doc;
     }
-        
-    public static void readElements(Element parent, XMLStreamReader reader) 
+
+    /**
+     * @param parent
+     * @return
+     */
+    private static Document getDocument(Node parent)
+    {
+        return (parent instanceof Document) ? (Document) parent : parent.getOwnerDocument();
+    }
+
+    /**
+     * @param parent
+     * @param reader
+     * @return
+     * @throws XMLStreamException
+     */
+    private static Element startElement(Node parent, XMLStreamReader reader)
         throws XMLStreamException
     {
-        Element e = null;
-        Document doc = parent.getOwnerDocument();
+        Document doc = getDocument(parent);
         
-        int event = reader.getEventType();
-        while ( reader.hasNext() )
+        Element e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
+        e.setPrefix(reader.getPrefix());
+        
+        declareNamespaces(reader, e);
+        
+        for (int i = 0; i < reader.getAttributeCount(); i++)
         {
-            switch( event )
+            Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i), reader
+                    .getAttributeLocalName(i));
+            attr.setValue(reader.getAttributeValue(i));
+            e.setAttributeNode(attr);
+        }
+
+        parent.appendChild(e);
+        
+        reader.next();
+        
+        readDocElements(e, reader);
+        
+        return e;
+    }
+
+    /**
+     * @param parent
+     * @param reader
+     * @throws XMLStreamException
+     */
+    public static void readDocElements(Node parent, XMLStreamReader reader)
+        throws XMLStreamException
+    {
+        Document doc = getDocument(parent);
+
+        int event = reader.getEventType();
+        while (reader.hasNext())
+        {
+            switch (event)
             {
             case XMLStreamConstants.START_ELEMENT:
-                e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
-    
-                declareNamespaces(reader, e);
-                
-                for ( int i = 0; i < reader.getAttributeCount(); i++ )
-                {
-                    Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i),
-                                                      reader.getAttributeLocalName(i));
-                    attr.setValue(reader.getAttributeValue(i));
-                    e.setAttributeNode(attr);
-                }
-                
-                parent.appendChild(e);
-    
-                reader.next();
-                
-                readElements(e, reader);
-                
-                reader.next();
+                startElement(parent, reader);
                 break;
             case XMLStreamConstants.END_ELEMENT:
                 return;
             case XMLStreamConstants.CHARACTERS:
-                parent.appendChild(doc.createTextNode(reader.getText()));
-                
+                if (parent != null)
+                {
+                    parent.appendChild(doc.createTextNode(reader.getText()));
+                }
+
                 break;
-            case XMLStreamConstants.NAMESPACE:
-            case XMLStreamConstants.END_DOCUMENT:
-            case XMLStreamConstants.CDATA:
-            case XMLStreamConstants.START_DOCUMENT:
-            case XMLStreamConstants.ATTRIBUTE:
             default:
                 break;
             }
-            event = reader.next();
+            if (reader.hasNext())
+            {
+                event = reader.next();
+            }
         }
     }
-    
+
     private static void declareNamespaces(XMLStreamReader reader, Element node)
     {
         for (int i = 0; i < reader.getNamespaceCount(); i++)
         {
             String uri = reader.getNamespaceURI(i);
             String prefix = reader.getNamespacePrefix(i);
-            
-            if (prefix != null && !uri.equals(node.getNamespaceURI()))
+            // TODO : i'm not sure about skiping parent namespaces, so i comment it for a while
+            if (prefix != null && prefix.length()>0 /* && !uri.equals(node.getNamespaceURI()) */)
             {
-                node.setAttribute("xmlns:" + prefix, uri);
+                node.setAttributeNS(XML_NS,"xmlns:"+prefix, uri);
+            }else{
+                if( uri != null && uri.length()>0){
+                    node.setAttribute("xmlns",uri);
+                }
             }
         }
     }
