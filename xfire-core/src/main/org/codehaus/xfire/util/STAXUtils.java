@@ -155,9 +155,18 @@ public class STAXUtils
         }
         
         // Write out the element name
-        if (uri != null && prefix.length() > 0)
+        if (uri != null)
         {
-            writer.writeStartElement(prefix, local, uri);
+            if (prefix.length() == 0) 
+            { 
+                writer.writeStartElement(local); 
+                writer.setDefaultNamespace(uri); 
+            } 
+            else 
+            { 
+                writer.writeStartElement(prefix, local, uri); 
+                writer.setPrefix(prefix, uri); 
+            } 
         }
         else
         {
