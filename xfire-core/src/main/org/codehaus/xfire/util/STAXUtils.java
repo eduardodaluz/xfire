@@ -408,7 +408,6 @@ public class STAXUtils
             switch (event)
             {
             case XMLStreamConstants.START_ELEMENT:
-                System.out.println("start " + reader.getName());
                 startElement(parent, reader);
 
                 if (parent instanceof Document) 
@@ -419,7 +418,6 @@ public class STAXUtils
                 
                 break;
             case XMLStreamConstants.END_ELEMENT:
-                System.out.println("end " + reader.getName());
                 return;
             case XMLStreamConstants.CHARACTERS:
                 if (parent != null)
