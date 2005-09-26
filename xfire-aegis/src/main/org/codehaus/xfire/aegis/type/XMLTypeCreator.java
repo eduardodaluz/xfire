@@ -108,10 +108,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
         TypeClassInfo info = new TypeClassInfo();
         info.setTypeClass(pd.getReadMethod().getReturnType());
-        setComponentType(info, propertyEl);
-        setKeyType(info, propertyEl);
-        info.setName(createQName(propertyEl, propertyEl.getAttributeValue("mappedName")));
-
+        readMetadata(info, propertyEl);
+        
         return info;
     }
     
@@ -189,11 +187,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             info.setTypeClass(m.getParameterTypes()[index]);
             //info.setAnnotations(m.getParameterAnnotations()[index]);
             Element parameter = getMatch(bestMatch, "parameter[@index='" + index + "']");
-            
-            setComponentType(info, parameter);
-            setKeyType(info, parameter);
-            
-            info.setName(createQName(parameter, parameter.getAttributeValue("mappedName")));
+            readMetadata(info, parameter);
         }
         else
         {
@@ -208,18 +202,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             info.setTypeClass(m.getReturnType());
             //info.setAnnotations(m.getAnnotations());
             Element rtElement = bestMatch.getFirstChildElement("return-type");
-            String componentType = rtElement.getAttributeValue("componentType");
-            if(componentType != null)
-            {
-                try
-                {
-                    info.setGenericType(ClassLoaderUtils.loadClass(componentType, getClass()));
-                }
-                catch(ClassNotFoundException e)
-                {
-                    log.error("Unable to load mapping class " + componentType);
-                }
-            }
+            readMetadata(info, rtElement);
             
             info.setName(createQName(rtElement, rtElement.getAttributeValue("mappedName")));
         }
@@ -227,6 +210,14 @@ public class XMLTypeCreator extends AbstractTypeCreator
         return info;
     }
 
+    protected void readMetadata(TypeClassInfo info, Element parameter)
+    {        
+        info.setName(createQName(parameter, parameter.getAttributeValue("mappedName")));
+        setComponentType(info, parameter);
+        setKeyType(info, parameter);
+        setType(info, parameter);
+    }
+    
     protected void setComponentType(TypeClassInfo info, Element parameter)
     {
         String componentType = parameter.getAttributeValue("componentType");
@@ -238,7 +229,23 @@ public class XMLTypeCreator extends AbstractTypeCreator
             }
             catch(ClassNotFoundException e)
             {
-                log.error("Unable to load mapping class " + componentType);
+                throw new XFireRuntimeException("Unable to load component type class " + componentType, e);
+            }
+        }
+    }
+
+    protected void setType(TypeClassInfo info, Element parameter)
+    {
+        String type = parameter.getAttributeValue("type");
+        if(type != null)
+        {
+            try
+            {
+                info.setType(ClassLoaderUtils.loadClass(type, getClass()));
+            }
+            catch(ClassNotFoundException e)
+            {
+                throw new XFireRuntimeException("Unable to load type class " + type, e);
             }
         }
     }

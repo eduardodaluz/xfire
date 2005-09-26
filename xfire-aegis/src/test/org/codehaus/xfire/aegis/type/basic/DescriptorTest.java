@@ -121,6 +121,19 @@ public class DescriptorTest
         assertEquals("prop2", el.getLocalPart());
     }
 
+    public void testCustomType() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:custom-type");
+
+        BeanType type = (BeanType) tm.getTypeCreator().createType(MyBean.class);
+        BeanTypeInfo info = type.getTypeInfo();
+
+        QName name = (QName) info.getElements().next();
+        //name = (QName) info.getElements().next();
+        Type custom = info.getType(name);
+        assertTrue(custom instanceof MyStringType);
+    }
+
     public void testSimpleXMLMapping() throws Exception
     {
         XMLTypeCreator creator = new XMLTypeCreator();

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface XmlType
 {
-    String type() default "";
+    Class type();
     String name() default "";
     String namespace() default "";
 }

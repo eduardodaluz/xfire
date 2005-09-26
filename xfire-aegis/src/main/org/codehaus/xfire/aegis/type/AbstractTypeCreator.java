@@ -58,6 +58,10 @@ public abstract class AbstractTypeCreator implements TypeCreator
     {
         Class javaType = info.getTypeClass();
 
+        if (info.getType() != null)
+        {
+            return createUserType(info);
+        }
         if(javaType.isArray())
         {
             return createArrayType(info);
@@ -86,6 +90,30 @@ public abstract class AbstractTypeCreator implements TypeCreator
         }
     }
 
+    protected Type createUserType(TypeClassInfo info)
+    {
+        try
+        {
+            Type type = (Type) info.getType().newInstance();
+            
+            type.setSchemaType(createQName(info.getTypeClass()));
+            type.setTypeClass(info.getTypeClass());
+            type.setTypeMapping(getTypeMapping());
+            
+            return type;
+        }
+        catch (InstantiationException e)
+        {
+            throw new XFireRuntimeException("Couldn't instantiate type classs " + 
+                                            info.getType().getName(), e);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new XFireRuntimeException("Couldn't access type classs " + 
+                                            info.getType().getName(), e);
+        }
+    }
+    
     protected QName createArrayQName(Class javaType)
     {
         return createCollectionQName(javaType, javaType.getComponentType());
@@ -283,6 +311,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         Object genericType;
         Object keyType;
         QName name;
+        Class type;
         
         public Object[] getAnnotations()
         {
@@ -332,6 +361,16 @@ public abstract class AbstractTypeCreator implements TypeCreator
         public void setName(QName name)
         {
             this.name = name;
+        }
+
+        public Class getType()
+        {
+            return type;
+        }
+
+        public void setType(Class type)
+        {
+            this.type = type;
         }
     }
 }

@@ -27,4 +27,8 @@
     <property name="prop1" ignore="true"/>
     <property name="prop2" ignore="true"/>
   </mapping>
+  
+  <mapping uri="urn:xfire:custom-type">
+    <property name="prop1" type="org.codehaus.xfire.aegis.type.basic.MyStringType"/>
+  </mapping>
 </mappings>

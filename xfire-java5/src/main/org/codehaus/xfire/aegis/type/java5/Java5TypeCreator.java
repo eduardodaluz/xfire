@@ -64,6 +64,18 @@ public class Java5TypeCreator
         info.setGenericType(pd.getReadMethod().getGenericReturnType());
         info.setAnnotations(pd.getReadMethod().getAnnotations());
         
+        XmlElement el = pd.getReadMethod().getAnnotation(XmlElement.class);
+        if (el != null)
+        {
+            info.setType(el.type());    
+        }
+        
+        XmlAttribute att = pd.getReadMethod().getAnnotation(XmlAttribute.class);
+        if (att != null)
+        {
+            info.setType(att.type());    
+        }
+        
         return info;
     }
 
