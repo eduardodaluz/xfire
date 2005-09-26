@@ -343,7 +343,9 @@ public class STAXUtils
         throws XMLStreamException
     {
         Document doc = builder.newDocument();
+
         readDocElements(doc, reader);
+        
         return doc;
     }
 
@@ -398,7 +400,7 @@ public class STAXUtils
         throws XMLStreamException
     {
         Document doc = getDocument(parent);
-
+        System.out.println("read doc elements");
         int event = reader.getEventType();
         while (reader.hasNext())
         {
@@ -406,6 +408,13 @@ public class STAXUtils
             {
             case XMLStreamConstants.START_ELEMENT:
                 startElement(parent, reader);
+                
+                if (parent instanceof Document) 
+                {
+                    if (reader.hasNext()) reader.next();
+                    return;
+                }
+                
                 break;
             case XMLStreamConstants.END_ELEMENT:
                 return;
@@ -419,6 +428,7 @@ public class STAXUtils
             default:
                 break;
             }
+            
             if (reader.hasNext())
             {
                 event = reader.next();
