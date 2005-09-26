@@ -6,9 +6,8 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.aegis.type.java5.AnnotatedTypeInfo;
-import org.codehaus.xfire.aegis.type.java5.Java5TypeCreator;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.yom.Document;
@@ -36,16 +35,20 @@ public class AnnotatedTypeTest
     
     public void testType()
     {
-        AnnotatedTypeInfo type = new AnnotatedTypeInfo(tm, AnnotatedBean1.class);
- 
-        Iterator elements = type.getElements();
+        AnnotatedTypeInfo info = new AnnotatedTypeInfo(tm, AnnotatedBean1.class);
+        
+        Iterator elements = info.getElements();
         assertTrue(elements.hasNext());
         QName element = (QName) elements.next();
         assertTrue(elements.hasNext());
+        
         element = (QName) elements.next();
         assertFalse(elements.hasNext());
         
-        Iterator atts = type.getAttributes();
+        Type custom = info.getType(element);
+        assertTrue(custom instanceof CustomStringType);
+        
+        Iterator atts = info.getAttributes();
         assertTrue(atts.hasNext());
         QName att = (QName) atts.next();
         assertFalse(atts.hasNext());
@@ -54,8 +57,7 @@ public class AnnotatedTypeTest
     public void testWSDL() throws Exception
     {
         Document wsdl = getWSDLDocument("AnnotatedService");
-        printNode(wsdl);
-        
+
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:complexType[@name='AnnotatedBean1']/xsd:sequence/xsd:element[@name='elementProperty']", wsdl);
         assertValid("//xsd:complexType[@name='AnnotatedBean1']/xsd:attribute[@name='attributeProperty']", wsdl);

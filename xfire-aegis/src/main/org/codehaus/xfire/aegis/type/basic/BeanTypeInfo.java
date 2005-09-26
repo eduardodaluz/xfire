@@ -5,7 +5,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -147,27 +146,19 @@ public class BeanTypeInfo
                 return null;
             }
 
-            if (getTypeMapping().isRegistered(desc.getPropertyType()) 
-                    && !Collection.class.isAssignableFrom(desc.getPropertyType()))
+            try
             {
-                type = getTypeMapping().getType(desc.getPropertyType());
+                type = getTypeMapping().getTypeCreator().createType(desc);
             }
-            else
+            catch(XFireRuntimeException e)
             {
-                try
-                {
-                    type = getTypeMapping().getTypeCreator().createType(desc);
-                }
-                catch(XFireRuntimeException e)
-                {
-                    e.prepend("Couldn't create type for property " + desc.getName() 
-                              + " on " + getTypeClass());
-                    
-                    throw e;
-                }
+                e.prepend("Couldn't create type for property " + desc.getName() 
+                          + " on " + getTypeClass());
                 
-                getTypeMapping().register(type);
+                throw e;
             }
+            
+            getTypeMapping().register(type);
         }
         
         if ( type == null )

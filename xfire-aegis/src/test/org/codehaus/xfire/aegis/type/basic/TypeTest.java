@@ -12,9 +12,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
+import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.aegis.type.basic.ArrayType;
-import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 import org.codehaus.yom.Element;
@@ -34,14 +33,15 @@ public class TypeTest
         XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
 
         TypeMappingRegistry tmr = new DefaultTypeMappingRegistry(true);
+        TypeMapping tm = tmr.createTypeMapping(true);
         
         SimpleBean bean = new SimpleBean();
         bean.setBleh("bleh");
         bean.setHowdy("howdy");
         
-        registerSimpleBeanType(tmr);
+        registerSimpleBeanType(tm);
         
-        BeanType bt = (BeanType) tmr.getDefaultTypeMapping().getType( SimpleBean.class );
+        BeanType bt = (BeanType) tm.getType( SimpleBean.class );
 
         ElementWriter lwriter = new ElementWriter(writer, "SimpleBean", "urn:Bean");
         bt.writeObject( bean, lwriter, null );
@@ -75,18 +75,18 @@ public class TypeTest
      * @param tmr
      * @return
      */
-    private void registerSimpleBeanType(TypeMappingRegistry tmr)
+    private void registerSimpleBeanType(TypeMapping tmr)
     {
-        tmr.getDefaultTypeMapping().register( SimpleBean.class, 
-                                              new QName("urn:SimpleBean","SimpleBean"),
-                                              new BeanType() );
+        tmr.register( SimpleBean.class, 
+                      new QName("urn:SimpleBean","SimpleBean"),
+                      new BeanType() );
     }
 
-    private void registerArrayType(TypeMappingRegistry tmr)
+    private void registerArrayType(TypeMapping tmr)
     {
-        tmr.getDefaultTypeMapping().register( SimpleBean[].class, 
-                                              new QName("urn:SomeBean" , "ArrayOfSimpleBean"),
-                                              new ArrayType() );
+        tmr.register(SimpleBean[].class,
+                     new QName("urn:SomeBean", "ArrayOfSimpleBean"),
+                     new ArrayType());
     }
     
     public void testArrayType() throws Exception
@@ -96,9 +96,10 @@ public class TypeTest
         XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
 
         TypeMappingRegistry tmr = new DefaultTypeMappingRegistry(true);
+        TypeMapping tm = tmr.createTypeMapping(true);
         
-        registerSimpleBeanType(tmr);
-        registerArrayType( tmr );
+        registerSimpleBeanType(tm);
+        registerArrayType(tm);
         
         SimpleBean bean = new SimpleBean();
         bean.setBleh("bleh");
@@ -106,7 +107,7 @@ public class TypeTest
        
         SimpleBean[] beanArray = new SimpleBean[] { bean, bean };
 
-        ArrayType at = (ArrayType) tmr.getDefaultTypeMapping().getType( SimpleBean[].class );
+        ArrayType at = (ArrayType) tm.getType( SimpleBean[].class );
 
         at.writeObject( beanArray, new ElementWriter( writer, "SimpleBean", "urn:Bean" ), null );
         writer.close();

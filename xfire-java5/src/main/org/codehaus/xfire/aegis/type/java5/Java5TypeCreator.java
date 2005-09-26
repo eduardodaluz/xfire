@@ -65,13 +65,13 @@ public class Java5TypeCreator
         info.setAnnotations(pd.getReadMethod().getAnnotations());
         
         XmlElement el = pd.getReadMethod().getAnnotation(XmlElement.class);
-        if (el != null)
+        if (el != null && !el.type().equals(Type.class))
         {
             info.setType(el.type());    
         }
         
         XmlAttribute att = pd.getReadMethod().getAnnotation(XmlAttribute.class);
-        if (att != null)
+        if (att != null && !att.type().equals(Type.class))
         {
             info.setType(att.type());    
         }

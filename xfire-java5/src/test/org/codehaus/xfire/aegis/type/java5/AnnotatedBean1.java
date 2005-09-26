@@ -27,7 +27,7 @@ public class AnnotatedBean1
         this.bogusProperty = bogusProperty;
     }
     
-    @XmlElement
+    @XmlElement(type=CustomStringType.class)
     public String getElementProperty()
     {
         return elementProperty;
