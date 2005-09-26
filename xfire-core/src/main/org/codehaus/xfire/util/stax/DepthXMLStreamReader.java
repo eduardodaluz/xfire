@@ -1,8 +1,9 @@
-package org.codehaus.xfire.util;
+package org.codehaus.xfire.util.stax;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -268,9 +269,25 @@ public class DepthXMLStreamReader
         return next;
     }
 
-    public int nextTag() throws XMLStreamException
+    public int nextTag()
+        throws XMLStreamException
     {
-        return reader.nextTag();
+        int eventType = next();
+        while ((eventType == XMLStreamConstants.CHARACTERS && isWhiteSpace())
+                || (eventType == XMLStreamConstants.CDATA && isWhiteSpace())
+                // skip whitespace
+                || eventType == XMLStreamConstants.SPACE
+                || eventType == XMLStreamConstants.PROCESSING_INSTRUCTION
+                || eventType == XMLStreamConstants.COMMENT)
+        {
+            eventType = next();
+        }
+        if (eventType != XMLStreamConstants.START_ELEMENT
+                && eventType != XMLStreamConstants.END_ELEMENT)
+        {
+            throw new XMLStreamException("expected start or end tag", getLocation());
+        }
+        return eventType;
     }
 
     public void require(int arg0, String arg1, String arg2)

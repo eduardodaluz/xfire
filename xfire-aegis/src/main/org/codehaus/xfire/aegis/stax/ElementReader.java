@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AbstractMessageReader;
 import org.codehaus.xfire.aegis.MessageReader;
-import org.codehaus.xfire.util.DepthXMLStreamReader;
+import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
 /**
  * Reads literal encoded messages.

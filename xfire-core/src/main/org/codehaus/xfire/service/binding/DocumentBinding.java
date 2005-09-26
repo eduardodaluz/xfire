@@ -19,8 +19,8 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.DepthXMLStreamReader;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 

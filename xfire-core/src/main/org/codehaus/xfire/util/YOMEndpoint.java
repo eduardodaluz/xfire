@@ -17,7 +17,6 @@ public class YOMEndpoint
     
     public void onReceive(MessageContext context, InMessage msg)
     {
-        count++;
         StaxBuilder builder = new StaxBuilder();
         try
         {
@@ -35,6 +34,7 @@ public class YOMEndpoint
         {
             e.printStackTrace();
         }
+        count++;
     }
 
     public int getCount()

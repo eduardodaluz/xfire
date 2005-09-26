@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -400,15 +401,16 @@ public class STAXUtils
         throws XMLStreamException
     {
         Document doc = getDocument(parent);
-        System.out.println("read doc elements");
+
         int event = reader.getEventType();
         while (reader.hasNext())
         {
             switch (event)
             {
             case XMLStreamConstants.START_ELEMENT:
+                System.out.println("start " + reader.getName());
                 startElement(parent, reader);
-                
+
                 if (parent instanceof Document) 
                 {
                     if (reader.hasNext()) reader.next();
@@ -417,6 +419,7 @@ public class STAXUtils
                 
                 break;
             case XMLStreamConstants.END_ELEMENT:
+                System.out.println("end " + reader.getName());
                 return;
             case XMLStreamConstants.CHARACTERS:
                 if (parent != null)

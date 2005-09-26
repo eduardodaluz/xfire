@@ -4,6 +4,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -14,6 +15,7 @@ import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.w3c.dom.Document;
 
 /**
@@ -44,12 +46,13 @@ public class DocumentType
         this.builder = builder;
     }
 
-    public Object readObject(MessageReader reader, MessageContext context)
+    public Object readObject(MessageReader mreader, MessageContext context)
         throws XFireFault
     {
         try
         {
-            return STAXUtils.read(builder, ((ElementReader) reader).getXMLStreamReader()) ;
+            XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
+            return STAXUtils.read(builder, new FragmentStreamReader(reader));
         }
         catch (XMLStreamException e)
         {
