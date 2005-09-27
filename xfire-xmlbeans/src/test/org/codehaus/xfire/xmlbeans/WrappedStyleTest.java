@@ -1,33 +1,44 @@
 package org.codehaus.xfire.xmlbeans;
 
+import javax.xml.namespace.QName;
+
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class WrappedStyleTest
-        extends AbstractXFireTest
+        extends AbstractXmlBeansTest
 {
     private Service endpoint;
-    private XmlBeansServiceFactory builder;
+    private ObjectServiceFactory factory;
 
     public void setUp()
             throws Exception
     {
         super.setUp();
 
-        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
-        builder.setStyle(SoapConstants.STYLE_WRAPPED);
+        factory = (ObjectServiceFactory) getServiceFactory();
+        factory.setStyle(SoapConstants.STYLE_WRAPPED);
         
-        endpoint = builder.create(TestService.class,
+        endpoint = factory.create(TestService.class,
                                   "TestService",
                                   "urn:TestService",
                                   null);
         
         getServiceRegistry().register(endpoint);
+    }
+    
+    public void testParams() throws Exception
+    {
+        MessagePartInfo info = (MessagePartInfo)
+            endpoint.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
+
+        assertEquals(new QName("http://codehaus.org/xfire/xmlbeans", "request"), info.getName());
     }
 
     public void testInvoke() throws Exception

@@ -7,8 +7,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.aegis.type.Type;
-import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
@@ -21,14 +19,12 @@ public class XMLBeanTypeInfo
     private Element mapping;
     private QName name;
     
-    public XMLBeanTypeInfo(TypeMapping tm, 
-                           Class typeClass,
+    public XMLBeanTypeInfo(Class typeClass,
                            Element mapping)
     {
-        super(typeClass, tm.getEncodingStyleURI());
+        super(typeClass);
 
         this.mapping = mapping;
-        setTypeMapping(tm);
     }
 
     public QName getSchemaType()
@@ -45,7 +41,7 @@ public class XMLBeanTypeInfo
     {
         Element e = getPropertyElement(mapping, pd.getName());
         String style = null;
-        QName name = null;
+        String mappedName = null;
         
         if (e != null)
         {
@@ -56,22 +52,25 @@ public class XMLBeanTypeInfo
             logger.debug("Found mapping for property " + pd.getName());
 
             style = e.getAttributeValue("style");
-            name = createQName(e, e.getAttributeValue("mappedName"));
+            mappedName = e.getAttributeValue("mappedName");
         }
         
         if (style == null) style = "element";
-        if (name == null) name = createQName(pd);
+        if (mappedName == null) mappedName = createMappedName(pd);
+        
+        if (e != null)
+        {
+            QName mappedType = createQName(e, e.getAttributeValue("typeName"));
+            if (mappedType != null) mapTypeName(mappedName, mappedType);
+        }
         
         try
         {
-            Type type = getTypeMapping().getTypeCreator().createType(pd);
-
-            getTypeMapping().register(type);
-
+            //logger.debug("Mapped " + pd.getName() + " as " + style + " with name " + mappedName);
             if (style.equals("element"))
-                mapElement(pd.getName(), name);
+                mapElement(pd.getName(), mappedName);
             else if (style.equals("attribute"))
-                mapAttribute(pd.getName(), name);
+                mapAttribute(pd.getName(), mappedName);
             else
                 throw new XFireRuntimeException("Invalid style: " + style);
         }

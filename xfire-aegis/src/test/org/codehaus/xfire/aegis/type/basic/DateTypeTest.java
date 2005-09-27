@@ -46,6 +46,9 @@ public class DateTypeTest
 
         mapping.register(type);
         
+        Type tsType = mapping.getType(Timestamp.class);
+        assertTrue(tsType instanceof TimestampType);
+        
         Type dtoType = mapping.getTypeCreator().createType(DateDTO.class);
         mapping.register(dtoType);
         
@@ -72,7 +75,7 @@ public class DateTypeTest
         assertNotNull(dto.getTime1());
         
         Element element = new Element("dates", ns);
-        Document doc = new Document(element);
+        new Document(element);
         YOMWriter writer = new YOMWriter(element);
         dtoType.writeObject(dto, writer, new MessageContext());
         writer.close();

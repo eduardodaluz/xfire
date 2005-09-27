@@ -1,8 +1,11 @@
 package org.codehaus.xfire.jaxb;
 
 import net.webservicex.ObjectFactory;
+
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
@@ -16,7 +19,7 @@ public class WeatherServiceTest
         extends AbstractXFireTest
 {
     private Service endpoint;
-    private JaxbServiceFactory builder;
+    private ObjectServiceFactory builder;
 
     public void setUp()
             throws Exception
@@ -24,9 +27,10 @@ public class WeatherServiceTest
         super.setUp();
 
         ObjectFactory objectFactory = new ObjectFactory();
-        builder = new JaxbServiceFactory(getXFire().getTransportManager(), objectFactory);
+        builder = new ObjectServiceFactory(getXFire().getTransportManager(), 
+                                           new AegisBindingProvider(new JaxbTypeRegistry(objectFactory)));
         ArrayList schemas = new ArrayList();
-        schemas.add("WeatherForecast.xsd");
+        schemas.add("src/test-schemas/WeatherForecast.xsd");
         builder.setWsdlBuilderFactory(new JaxbWSDLBuilderFactory(schemas));
         builder.setStyle(SoapConstants.STYLE_DOCUMENT);
 

@@ -88,7 +88,7 @@ public class MapTypeTest
         doc = new Document(types);
         
         type.writeSchema(schema);
-        printNode(doc);
+
         assertValid("//xsd:complexType[@name='map']", doc);
         assertValid("//xsd:complexType[@name='map']/xsd:sequence/xsd:element[@name='entry']", doc);
         assertValid("//xsd:complexType[@name='map']/xsd:sequence/xsd:element[@name='entry']" +
@@ -103,7 +103,7 @@ public class MapTypeTest
 
         BeanType beanType = (BeanType) creator.createType(MapBean.class);
         
-        QName mapName = (QName) beanType.getTypeInfo().getElements().next();
+        String mapName = (String) beanType.getTypeInfo().getElements().next();
         
         Type type = beanType.getTypeInfo().getType(mapName);
         assertTrue(type instanceof MapType);

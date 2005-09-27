@@ -8,7 +8,7 @@
         </method>
         <method name="getCollection">
             <return-type componentType="java.lang.Float"/>
-            <parameter index="0" type="int" mappedName="foo:int"/>
+            <parameter index="0" type="int" mappedName="myint"/>
         </method>
         <method name="getCollectionForValues">
             <return-type componentType="java.math.BigDecimal"/>

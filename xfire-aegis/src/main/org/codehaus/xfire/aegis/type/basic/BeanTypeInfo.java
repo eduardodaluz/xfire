@@ -18,20 +18,21 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 
 public class BeanTypeInfo
 {
-    private Map qname2name = new HashMap();
-    private Class typeClass;
+    private Map mappedName2typeName = new HashMap();
+    private Map mappedName2pdName = new HashMap();
+    private Map mappedName2type = new HashMap();
+
+    private Class beanClass;
     private List attributes = new ArrayList();
     private List elements = new ArrayList();
-    private String defaultNamespace;
     private PropertyDescriptor[] descriptors;
     private TypeMapping typeMapping;
     private boolean initialized;
     
-    public BeanTypeInfo(Class typeClass, String defaultNamespace)
+    public BeanTypeInfo(Class typeClass)
     {
-        this.typeClass = typeClass;
-        this.defaultNamespace = defaultNamespace;
-        
+        this.beanClass = typeClass;
+
         initializeProperties();
     }
 
@@ -42,22 +43,14 @@ public class BeanTypeInfo
      * @param defaultNamespace
      * @param initiallize If true attempt default property/xml mappings.
      */
-    public BeanTypeInfo(Class typeClass, String defaultNamespace, boolean initialize)
+    public BeanTypeInfo(Class typeClass, boolean initialize)
     {
-        this.typeClass = typeClass;
-        this.defaultNamespace = defaultNamespace;
-        
+        this.beanClass = typeClass;
+
         initializeProperties();
         setInitialized(!initialize);
     }
-    
-    protected BeanTypeInfo(Class typeClass)
-    {
-        this.typeClass = typeClass;
 
-        initializeProperties();
-    }
-    
     public void initialize()
     {
         try
@@ -97,11 +90,11 @@ public class BeanTypeInfo
    
         if (isAttribute(pd))
         {
-            mapAttribute(name, createQName(pd));
+            mapAttribute(name, createMappedName(pd));
         }
         else if (isElement(pd))
         {
-            mapElement(name, createQName(pd));
+            mapElement(name, createMappedName(pd));
         }
     }
     
@@ -124,16 +117,30 @@ public class BeanTypeInfo
     /**
      * Get the type class for the field with the specified QName.
      */
-    public Type getType(QName name) 
+    public Type getType(String name) 
     {
-        Type type = getTypeMapping().getType(name);
+        // 1. Try a prexisting mapped type
+        Type type = (Type) mappedName2type.get(name);
+
+        // 2. Try to get the type by its name, if there is one
+        if (type == null)
+        {
+            QName typeName = getMappedTypeName(name);
+            if (typeName != null)
+            {
+                type = getTypeMapping().getType(typeName);
+                
+                if (type != null) mapType(name, type);
+            }
+        }
         
+        // 3. Create the type from the property descriptor and map it
         if (type == null)
         {
             PropertyDescriptor desc;
             try
             {
-                desc = getPropertyDescriptor(name);
+                desc = getPropertyDescriptorFromMappedName(name);
             }
             catch (Exception e)
             {
@@ -159,12 +166,24 @@ public class BeanTypeInfo
             }
             
             getTypeMapping().register(type);
+            mapType(name, type);
         }
         
         if ( type == null )
             throw new XFireRuntimeException( "Couldn't find type for property " + name );
         
         return type;
+    }
+
+    public void mapType(String name, Type type)
+    {
+        System.out.println("mapping type " + type + " to " + name);
+        mappedName2type.put(name, type);
+    }
+
+    private QName getMappedTypeName(String name)
+    {
+        return (QName) mappedName2typeName.get(name);
     }
 
     public TypeMapping getTypeMapping()
@@ -177,21 +196,37 @@ public class BeanTypeInfo
         this.typeMapping = typeMapping;
     }
 
-    protected QName createQName(PropertyDescriptor desc)
+    /**
+     * Specifies the name of the property as it shows up in the xml schema.
+     * This method just returns <code>propertyDescriptor.getName();</code>
+     * @param desc
+     * @return
+     */
+    protected String createMappedName(PropertyDescriptor desc)
     {
-        return new QName(defaultNamespace, desc.getName());
+        return desc.getName();
     }
 
-    public void mapAttribute(String property, QName type)
+    public void mapAttribute(String property, String mappedName)
     {
-        qname2name.put(type, property);
-        attributes.add(type);
+        mappedName2pdName.put(mappedName, property);
+        attributes.add(mappedName);
     }
 
-    public void mapElement(String property, QName type)
+    public void mapElement(String property, String mappedName)
     {
-        qname2name.put(type, property);
-        elements.add(type);
+        mappedName2pdName.put(mappedName, property);
+        elements.add(mappedName);
+    }
+    
+    /**
+     * Specifies the SchemaType for a particular class.
+     * @param mappedName
+     * @param type
+     */
+    public void mapTypeName(String mappedName, QName type)
+    {
+        mappedName2typeName.put(mappedName, type);
     }
     
     private void initializeProperties()
@@ -199,16 +234,16 @@ public class BeanTypeInfo
         BeanInfo beanInfo = null;
         try
         {
-            if (typeClass.isInterface() || typeClass.isPrimitive())
+            if (beanClass.isInterface() || beanClass.isPrimitive())
             {
-                beanInfo = Introspector.getBeanInfo(typeClass);
+                beanInfo = Introspector.getBeanInfo(beanClass);
             }
-            else if (typeClass == Object.class)
+            else if (beanClass == Object.class)
             {
             }
             else
             {
-                beanInfo = Introspector.getBeanInfo(typeClass, Object.class);
+                beanInfo = Introspector.getBeanInfo(beanClass, Object.class);
             }
         }
         catch (IntrospectionException e)
@@ -225,9 +260,9 @@ public class BeanTypeInfo
         }
     }
 
-    public PropertyDescriptor getPropertyDescriptor(QName name)
+    public PropertyDescriptor getPropertyDescriptorFromMappedName(String name)
     {
-        return getPropertyDescriptor( getPropertyName(name) );
+        return getPropertyDescriptor( getPropertyNameFromMappedName(name) );
     }
     
     protected boolean isAttribute(PropertyDescriptor desc)
@@ -247,17 +282,17 @@ public class BeanTypeInfo
 
     protected Class getTypeClass()
     {
-        return typeClass;
+        return beanClass;
     }
 
-    public boolean isNillable(QName name)
+    public boolean isNillable(String name)
     {
         return true;
     }
     
-    private String getPropertyName(QName name)
+    private String getPropertyNameFromMappedName(String name)
     {
-        return (String) qname2name.get(name);
+        return (String) mappedName2pdName.get(name);
     }
     
     public Iterator getAttributes()

@@ -67,7 +67,7 @@ public class Java5TypeCreator
         XmlElement el = pd.getReadMethod().getAnnotation(XmlElement.class);
         if (el != null && !el.type().equals(Type.class))
         {
-            info.setType(el.type());    
+            info.setType(el.type()); 
         }
         
         XmlAttribute att = pd.getReadMethod().getAnnotation(XmlAttribute.class);

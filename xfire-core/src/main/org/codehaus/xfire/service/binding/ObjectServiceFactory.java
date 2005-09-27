@@ -337,12 +337,12 @@ public class ObjectServiceFactory
         {
             if (isHeader(method, j))
             {
-                final QName q = getInParameterName(endpoint, method, j, isDoc);
+                final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 inMsg.addMessageHeader(q, paramClasses[j]).setIndex(j);
             }
             else if (!paramClasses[j].equals(MessageContext.class))
             {
-                final QName q = getInParameterName(endpoint, method, j, isDoc);
+                final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 inMsg.addMessagePart(q, paramClasses[j]).setIndex(j);
             }
         }
@@ -355,12 +355,12 @@ public class ObjectServiceFactory
         {
             if (isHeader(method, -1))
             {
-                final QName q =  getOutParameterName(endpoint, method, isDoc);
+                final QName q =  getOutParameterName(endpoint, op, method, isDoc);
                 outMsg.addMessageHeader(q, method.getReturnType()).setIndex(0);
             }
             else
             {
-                final QName q = getOutParameterName(endpoint, method, isDoc);
+                final QName q = getOutParameterName(endpoint, op, method, isDoc);
                 outMsg.addMessagePart(q, method.getReturnType());
             }
         }
@@ -425,11 +425,16 @@ public class ObjectServiceFactory
         return false;
     }
 
-    protected QName getInParameterName(Service endpoint,
+    protected QName getInParameterName(final Service endpoint,
+                                       final OperationInfo op,
                                        final Method method,
                                        final int paramNumber,
                                        final boolean doc)
     {
+        QName suggestion = getBindingProvider().getSuggestedName(endpoint, op, paramNumber);
+        
+        if (suggestion != null) return suggestion;
+        
         String paramName = "";
         if (doc)
             paramName = method.getName();
@@ -437,8 +442,15 @@ public class ObjectServiceFactory
         return new QName(endpoint.getServiceInfo().getName().getNamespaceURI(), paramName + "in" + paramNumber);
     }
 
-    protected QName getOutParameterName(Service endpoint, final Method method, final boolean doc)
+    protected QName getOutParameterName(final Service endpoint, 
+                                        final OperationInfo op, 
+                                        final Method method, 
+                                        final boolean doc)
     {
+        QName suggestion = getBindingProvider().getSuggestedName(endpoint, op, -1);
+        
+        if (suggestion != null) return suggestion;
+        
         String outName = "";
         if (doc)
             outName = method.getName();

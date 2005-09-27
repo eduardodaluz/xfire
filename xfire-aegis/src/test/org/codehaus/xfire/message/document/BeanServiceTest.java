@@ -30,13 +30,14 @@ public class BeanServiceTest
     {
         super.setUp();
 
-        ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_DOCUMENT);
+        ObjectServiceFactory osf = (ObjectServiceFactory) getServiceFactory();
+        osf.setStyle(SoapConstants.STYLE_DOCUMENT);
         Service service = getServiceFactory().create(BeanService.class, "Bean", "urn:Bean", null);
 
         getServiceRegistry().register(service);
 
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
-
+        TypeMapping tm = ((AegisBindingProvider) osf.getBindingProvider()).getTypeMapping(service);
+        
         BeanType type = new BeanType();
         tm.register(SimpleBean.class, new QName("urn:Bean", "SimpleBean"), type);
         

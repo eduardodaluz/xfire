@@ -2,30 +2,26 @@ package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.yom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class DocumentStyleTest
-        extends AbstractXFireTest
+        extends AbstractXmlBeansTest
 {
     private Service endpoint;
-    private XmlBeansServiceFactory factory;
 
     public void setUp()
             throws Exception
     {
         super.setUp();
 
-        factory = new XmlBeansServiceFactory(getXFire().getTransportManager());
-        
-        endpoint = factory.create(TestService.class,
-                                  "TestService",
-                                  "urn:TestService",
-                                  null);
-        
+        endpoint = getServiceFactory().create(TestService.class,
+                                              "TestService",
+                                              "urn:TestService",
+                                              null);
+                    
         getServiceRegistry().register(endpoint);
     }
 

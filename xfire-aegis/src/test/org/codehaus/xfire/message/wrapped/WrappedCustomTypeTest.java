@@ -11,6 +11,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -34,7 +35,8 @@ public class WrappedCustomTypeTest
 
         getServiceRegistry().register(service);
 
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
+        ObjectServiceFactory osf = (ObjectServiceFactory) getServiceFactory();
+        TypeMapping tm = ((AegisBindingProvider) osf.getBindingProvider()).getTypeMapping(service);
         
         BeanType type = new BeanType();
         type.setTypeClass(SimpleBean.class);

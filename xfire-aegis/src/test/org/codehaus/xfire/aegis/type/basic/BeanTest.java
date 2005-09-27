@@ -69,9 +69,11 @@ public class BeanTest
     public void testUnmappedProperty()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean", false);
-        info.mapElement("howdy", new QName("urn:Bean", "howdycustom"));
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, false);
+        info.mapElement("howdy", "howdycustom");
         info.setTypeMapping(mapping);
+        
+        assertEquals("howdy", info.getPropertyDescriptorFromMappedName("howdycustom").getName());
         
         BeanType type = new BeanType(info);
         type.setTypeClass(SimpleBean.class);
@@ -98,9 +100,9 @@ public class BeanTest
     public void testAttributeMap()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
-        info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
-        info.mapAttribute("bleh", new QName("urn:Bean", "bleh"));
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class);
+        info.mapAttribute("howdy", "howdy");
+        info.mapAttribute("bleh", "bleh");
         info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
@@ -139,10 +141,10 @@ public class BeanTest
     public void testNullProperties()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class);
         info.setTypeMapping(mapping);
-        info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
-        info.mapElement("bleh", new QName("urn:Bean", "bleh"));
+        info.mapAttribute("howdy", "howdy");
+        info.mapElement("bleh", "bleh");
         
         BeanType type = new BeanType(info);
         type.setTypeClass(SimpleBean.class);
@@ -170,11 +172,11 @@ public class BeanTest
         assertValid("//xsd:complexType[@name='bean']/xsd:attribute[@name='howdy']", schema);
         assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='bleh']", schema);
     }
-    
+    /*
     public void testNonDefaultNames()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class);
         info.setTypeMapping(mapping);
         info.mapElement("howdy", new QName("urn:anotherns", "howdy"));
         info.mapElement("bleh", new QName("urn:anotherns", "bleh"));
@@ -211,7 +213,7 @@ public class BeanTest
         //assertValid("//xsd:complexType[@name='bean']/xsd:element[@ref='ns1:howdy']", schema);
         //assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@ref='ns1:bleh']", schema);
     }
-    
+    */
     public void testGetSetRequired() throws Exception
     {
         BeanType type = new BeanType();

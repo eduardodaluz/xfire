@@ -119,7 +119,7 @@ public class ObjectServiceConfigurator
             for (int i = 0; i < types.length; i++)
             {
                 initializeType(types[i],
-                               AegisBindingProvider.getTypeMapping(service));
+                               ((AegisBindingProvider) builder.getBindingProvider()).getTypeMapping(service));
             }
         }
 

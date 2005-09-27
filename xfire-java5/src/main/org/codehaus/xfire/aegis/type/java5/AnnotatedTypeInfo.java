@@ -33,7 +33,13 @@ public class AnnotatedTypeInfo
     {
         return desc.getReadMethod().isAnnotationPresent(XmlElement.class);
     }
-    
+        
+    @Override
+    protected String createMappedName(PropertyDescriptor desc)
+    {
+        return createQName(desc).getLocalPart();
+    }
+
     protected QName createQName(PropertyDescriptor desc)
     {
         String name = null;
@@ -67,8 +73,18 @@ public class AnnotatedTypeInfo
         return new QName(ns, name);
     }
 
-    public boolean isNillable(QName name)
+    public boolean isNillable(String name)
     {
-        return super.isNillable(name);
+        PropertyDescriptor desc = getPropertyDescriptorFromMappedName(name);
+        
+        if (isAnnotatedElement(desc))
+        {
+            XmlElement att = desc.getReadMethod().getAnnotation(XmlElement.class);
+            return att.nillable();
+        }
+        else
+        {
+            return super.isNillable(name);
+        }
     }
 }

@@ -1,9 +1,6 @@
 package org.codehaus.xfire.message.rpcenc;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.aegis.type.Type;
-import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.Echo;
@@ -37,9 +34,6 @@ public class RPCEncodedTest
     public void testBeanService()
             throws Exception
     {
-        TypeMapping tm = AegisBindingProvider.getTypeMapping(service);
-        Type type = tm.getType(String.class);
-
         Document response =
                 invokeService("Echo", "/org/codehaus/xfire/message/rpcenc/echo11.xml");
 

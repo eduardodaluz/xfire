@@ -2,7 +2,7 @@
 
   <mapping uri="urn:xfire:bean">
     <property name="beans" 
-              mappedName="bean:Beans" 
+              mappedName="Beans" 
               componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
   </mapping>
 

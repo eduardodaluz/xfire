@@ -16,9 +16,6 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.yom.Element;
 
-import com.sun.tools.jxc.XmlSchemaGenerator;
-import com.sun.xml.bind.v2.model.nav.ReflectionNavigator;
-
 public class JaxbType
     extends Type
 {

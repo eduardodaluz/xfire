@@ -43,15 +43,13 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        QName el = (QName) elItr.next();
-        assertEquals("urn:xfire:bean", el.getNamespaceURI());
-        assertEquals("Prop1", el.getLocalPart());
+        String el = (String) elItr.next();
+        assertEquals("Prop1", el);
 
         Iterator attItr = info.getAttributes();
         assertTrue(attItr.hasNext());
-        QName att = (QName) attItr.next();
-        assertEquals("urn:xfire:bean", att.getNamespaceURI());
-        assertEquals("Prop2", att.getLocalPart());
+        String att = (String) attItr.next();
+        assertEquals("Prop2", att);
     }
 
     public void testMapping2() throws Exception
@@ -63,14 +61,12 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        QName el = (QName) elItr.next();
-        assertEquals("urn:xfire:bean2", el.getNamespaceURI());
-        assertEquals("Prop1", el.getLocalPart());
+        String el = (String) elItr.next();
+        assertEquals("Prop1", el);
 
         assertTrue(elItr.hasNext());
-        QName el2 = (QName) elItr.next();
-        assertEquals("urn:xfire:bean2", el2.getNamespaceURI());
-        assertEquals("Prop2", el2.getLocalPart());
+        String el2 = (String) elItr.next();
+        assertEquals("Prop2", el2);
     }
 
     public void testListHolder() throws Exception
@@ -82,9 +78,8 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        QName el = (QName) elItr.next();
-        assertEquals("urn:xfire:bean", el.getNamespaceURI());
-        assertEquals("Beans", el.getLocalPart());
+        String el = (String) elItr.next();
+        assertEquals("Beans", el);
 
         Type beanList = info.getType(el);
         assertTrue( beanList instanceof CollectionType );
@@ -99,9 +94,8 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        QName el = (QName) elItr.next();
-        assertEquals("urn:xfire:bean2", el.getNamespaceURI());
-        assertEquals("beans", el.getLocalPart());
+        String el = (String) elItr.next();
+        assertEquals("beans", el);
 
         Type beanList = info.getType(el);
         assertTrue( beanList instanceof CollectionType );
@@ -116,9 +110,8 @@ public class DescriptorTest
 
         Iterator attItr = info.getAttributes();
         assertTrue(attItr.hasNext());
-        QName el = (QName) attItr.next();
-        assertEquals("urn:xfire:bean4", el.getNamespaceURI());
-        assertEquals("prop2", el.getLocalPart());
+        String el = (String) attItr.next();
+        assertEquals("prop2", el);
     }
 
     public void testCustomType() throws Exception
@@ -128,8 +121,7 @@ public class DescriptorTest
         BeanType type = (BeanType) tm.getTypeCreator().createType(MyBean.class);
         BeanTypeInfo info = type.getTypeInfo();
 
-        QName name = (QName) info.getElements().next();
-        //name = (QName) info.getElements().next();
+        String name = (String) info.getElements().next();
         Type custom = info.getType(name);
         assertTrue(custom instanceof MyStringType);
     }
@@ -152,7 +144,7 @@ public class DescriptorTest
         {
         }
         
-        assertEquals(new QName(tm.getEncodingStyleURI(), "doubles"), type.getSchemaType());
+        // assertEquals(new QName(tm.getEncodingStyleURI(), "doubles"), type.getSchemaType());
     }
 
     public void testBestMatch() throws Exception

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.jaxb2;
 
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -21,9 +22,10 @@ public class WeatherServiceTest
     {
         super.setUp();
 
-        builder = new JaxbServiceFactory(getXFire().getTransportManager());
+        builder = new ObjectServiceFactory(getXFire().getTransportManager(),
+                                           new AegisBindingProvider(new JaxbTypeRegistry()));
         builder.setStyle(SoapConstants.STYLE_DOCUMENT);
-
+        
         endpoint = builder.create(WeatherService.class,
                                   "WeatherService",
                                   "urn:WeatherService",
@@ -38,6 +40,8 @@ public class WeatherServiceTest
         MessagePartInfo info = (MessagePartInfo)
             endpoint.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
 
+        assertNotNull(info);
+        
         Document response = invokeService("WeatherService", "GetWeatherByZip.xml");
 
         addNamespace("w", "http://www.webservicex.net");

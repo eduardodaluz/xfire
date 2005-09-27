@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
@@ -13,6 +14,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -97,6 +99,11 @@ public class MessageBindingProvider
         {
             logger.warn("Unknown type for serialization: " + p.getTypeClass());
         }
+    }
+
+    public QName getSuggestedName(Service service, OperationInfo op, int param)
+    {
+        return null;
     }
 
     public SchemaType getSchemaType(Service service, MessagePartInfo param)

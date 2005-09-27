@@ -148,7 +148,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         CollectionType type = new CollectionType(component);
         type.setTypeMapping(getTypeMapping());
         
-        QName name = info.getName();
+        QName name = info.getTypeName();
         if (name == null) name = createCollectionQName(info.getTypeClass(), component);
         type.setSchemaType(name);
         
@@ -310,7 +310,8 @@ public abstract class AbstractTypeCreator implements TypeCreator
         Object[] annotations;
         Object genericType;
         Object keyType;
-        QName name;
+        String mappedName;
+        QName typeName;
         Class type;
         
         public Object[] getAnnotations()
@@ -353,14 +354,24 @@ public abstract class AbstractTypeCreator implements TypeCreator
             this.typeClass = typeClass;
         }
 
-        public QName getName()
+        public QName getTypeName()
         {
-            return name;
+            return typeName;
         }
 
-        public void setName(QName name)
+        public void setTypeName(QName name)
         {
-            this.name = name;
+            this.typeName = name;
+        }
+
+        public String getMappedName()
+        {
+            return mappedName;
+        }
+
+        public void setMappedName(String mappedName)
+        {
+            this.mappedName = mappedName;
         }
 
         public Class getType()

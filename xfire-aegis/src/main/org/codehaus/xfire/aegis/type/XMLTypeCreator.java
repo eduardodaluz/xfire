@@ -133,9 +133,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         
         if (mapping != null)
         {
-            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(getTypeMapping(), 
-                                                 info.getTypeClass(),
-                                                 mapping);
+            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(info.getTypeClass(), mapping);
             btinfo.setTypeMapping(getTypeMapping());
             
             BeanType type = new BeanType(btinfo);
@@ -203,8 +201,6 @@ public class XMLTypeCreator extends AbstractTypeCreator
             //info.setAnnotations(m.getAnnotations());
             Element rtElement = bestMatch.getFirstChildElement("return-type");
             readMetadata(info, rtElement);
-            
-            info.setName(createQName(rtElement, rtElement.getAttributeValue("mappedName")));
         }
 
         return info;
@@ -212,7 +208,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
     protected void readMetadata(TypeClassInfo info, Element parameter)
     {        
-        info.setName(createQName(parameter, parameter.getAttributeValue("mappedName")));
+        info.setTypeName(createQName(parameter, parameter.getAttributeValue("typeName")));
         setComponentType(info, parameter);
         setKeyType(info, parameter);
         setType(info, parameter);

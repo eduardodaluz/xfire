@@ -12,11 +12,12 @@
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
-
     </path>
 
-    <target name="get-deps" depends="xfire.get-deps">
-    </target>
+
+	  <target name="get-deps" depends="xfire.get-deps">
+	    <get-dep artifact="xsdlib" group="xsdlib" version="1.6" />
+	  </target>
 
     <target name="init" depends="xfire.init">
         <check-dep module="xfire-core"/>

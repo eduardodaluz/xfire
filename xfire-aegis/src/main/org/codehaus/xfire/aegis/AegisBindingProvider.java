@@ -1,6 +1,8 @@
 package org.codehaus.xfire.aegis;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -40,6 +42,8 @@ public class AegisBindingProvider
     
     private TypeMappingRegistry registry;
 
+    private Map part2type = new HashMap();
+    
     public AegisBindingProvider()
     {
         this(new DefaultTypeMappingRegistry(true));
@@ -56,27 +60,6 @@ public class AegisBindingProvider
      */
     public void initialize(Service endpoint)
     {
-        String encodingStyle = (String) endpoint.getProperty(ENCODING_URI_KEY);
-
-        if (encodingStyle == null)
-        {
-            AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
-            if (binding.getUse().equals(SoapConstants.USE_ENCODED))
-            {
-                encodingStyle = endpoint.getSoapVersion().getSoapEncodingStyle();
-            }
-            else
-            {
-                encodingStyle = SoapConstants.XSD;
-            }
-        }
-
-        endpoint.setProperty(ENCODING_URI_KEY, encodingStyle);
-        final TypeMapping tm = registry.createTypeMapping(encodingStyle, true);
-
-        endpoint.setProperty(TYPE_MAPPING_KEY, tm);
-        registry.register(endpoint.getServiceInfo().getName().getNamespaceURI(), tm);
-
         for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo opInfo = (OperationInfo) itr.next();
@@ -149,6 +132,17 @@ public class AegisBindingProvider
             mw.close();
     }
 
+    public QName getSuggestedName(Service service, OperationInfo op, int param)
+    {
+        TypeMapping tm = getTypeMapping(service);
+        Type type = tm.getTypeCreator().createType(op.getMethod(), param);
+        
+        if (type.isComplex() && !type.isAbstract()) 
+            return type.getSchemaType();
+        
+        return null;
+    }
+
     private Type getParameterType(TypeMapping tm, MessagePartInfo param)
     {
         Type type = tm.getType(param.getName());
@@ -156,6 +150,11 @@ public class AegisBindingProvider
         if (type == null && tm.isRegistered(param.getTypeClass()))
         {
             type = tm.getType(param.getTypeClass());
+        }
+        
+        if (type == null)
+        {
+            type = (Type) part2type.get(param);
         }
         
         if (type == null)
@@ -173,6 +172,8 @@ public class AegisBindingProvider
              */
             type = tm.getTypeCreator().createType(op.getMethod(), index);
             type.setTypeMapping(tm);
+            
+            part2type.put(param, type);
         }
 
         return type;
@@ -207,9 +208,39 @@ public class AegisBindingProvider
         return type;
     }
     
-    public static TypeMapping getTypeMapping(Service service)
+    public TypeMapping getTypeMapping(Service service)
     {
-        return (TypeMapping) service.getProperty(TYPE_MAPPING_KEY);
+        TypeMapping tm = (TypeMapping) service.getProperty(TYPE_MAPPING_KEY);
+        
+        if (tm == null) tm = createTypeMapping(service);
+        
+        return tm;
+    }
+
+    protected TypeMapping createTypeMapping(Service endpoint)
+    {
+        String encodingStyle = (String) endpoint.getProperty(ENCODING_URI_KEY);
+
+        if (encodingStyle == null)
+        {
+            AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
+            if (binding.getUse().equals(SoapConstants.USE_ENCODED))
+            {
+                encodingStyle = endpoint.getSoapVersion().getSoapEncodingStyle();
+            }
+            else
+            {
+                encodingStyle = SoapConstants.XSD;
+            }
+        }
+
+        endpoint.setProperty(ENCODING_URI_KEY, encodingStyle);
+        final TypeMapping tm = registry.createTypeMapping(encodingStyle, true);
+
+        endpoint.setProperty(TYPE_MAPPING_KEY, tm);
+        registry.register(endpoint.getServiceInfo().getName().getNamespaceURI(), tm);
+        
+        return tm;
     }
 
     public Object readHeader(MessageHeaderInfo p, MessageContext context)

@@ -238,7 +238,7 @@ public class AnnotationServiceFactory
         return super.isHeader(method, paramNumber);
     }
 
-    protected QName getInParameterName(Service endpoint, Method method, int paramNumber, boolean doc)
+    protected QName getInParameterName(Service endpoint, OperationInfo op, Method method, int paramNumber, boolean doc)
     {
         if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
         {
@@ -256,11 +256,11 @@ public class AnnotationServiceFactory
         }
         else
         {
-            return super.getInParameterName(endpoint, method, paramNumber, doc);
+            return super.getInParameterName(endpoint, op, method, paramNumber, doc);
         }
     }
 
-    protected QName getOutParameterName(Service endpoint, Method method, boolean doc)
+    protected QName getOutParameterName(Service endpoint, OperationInfo op, Method method, boolean doc)
     {
         if (webAnnotations.hasWebResultAnnotation(method))
         {
@@ -278,7 +278,7 @@ public class AnnotationServiceFactory
         }
         else
         {
-            return super.getOutParameterName(endpoint, method, doc);
+            return super.getOutParameterName(endpoint, op, method, doc);
         }
     }
 

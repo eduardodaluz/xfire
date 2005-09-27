@@ -1,8 +1,8 @@
 package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.yom.Document;
 
@@ -10,29 +10,29 @@ import org.codehaus.yom.Document;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class XMLBeansServiceTest
-        extends AbstractXFireTest
+        extends AbstractXmlBeansTest
 {
-    private Service endpoint;
-    private XmlBeansServiceFactory builder;
+    private Service service;
+    private ObjectServiceFactory factory;
 
     public void setUp()
             throws Exception
     {
         super.setUp();
 
-        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
+        factory = (ObjectServiceFactory) getServiceFactory();
 
-        endpoint = builder.create(WeatherService.class,
+        service = factory.create(WeatherService.class,
                                   "WeatherService",
                                   "urn:WeatherService",
                                   null);
         
-        getServiceRegistry().register(endpoint);
+        getServiceRegistry().register(service);
     }
 
     public void testAnyService() throws Exception
     {
-        Service any = builder.create(TestService.class, "TestService", "urn:TestService", null);
+        Service any = factory.create(TestService.class, "TestService", "urn:TestService", null);
         getServiceRegistry().register(any);
 
         try
@@ -49,7 +49,7 @@ public class XMLBeansServiceTest
     public void testService()
             throws Exception
     {
-        assertEquals(1, endpoint.getServiceInfo().getOperations().size());
+        assertEquals(1, service.getServiceInfo().getOperations().size());
 
         Document response = invokeService("WeatherService", "GetWeatherByZip.xml");
 
@@ -78,13 +78,11 @@ public class XMLBeansServiceTest
     public void testAnyWSDL()
 		throws Exception
 	{
-        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
-
-        endpoint = builder.create(TestService.class,
+        service = factory.create(TestService.class,
                                   "TestService",
                                   "urn:TestService",
                                   null);
-        getServiceRegistry().register(endpoint);
+        getServiceRegistry().register(service);
         
 	    Document wsdl = getWSDLDocument("TestService");
 
@@ -99,13 +97,11 @@ public class XMLBeansServiceTest
     public void testAnyWSDLNoDupRootRefElements()
 		throws Exception
 	{
-        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
-
-        endpoint = builder.create(TestService.class,
+        service = factory.create(TestService.class,
                                   "TestService",
                                   "urn:TestService",
                                   null);
-        getServiceRegistry().register(endpoint);
+        getServiceRegistry().register(service);
 
 	    Document wsdl = getWSDLDocument("TestService");
 
@@ -122,13 +118,11 @@ public class XMLBeansServiceTest
     public void testAnyWSDLNoDupRootElementNameElements()
 		throws Exception
 	{
-        builder = new XmlBeansServiceFactory(getXFire().getTransportManager());
-
-        endpoint = builder.create(TestService.class,
+        service = factory.create(TestService.class,
                                   "TestService",
                                   "urn:TestService",
                                   null);
-        getServiceRegistry().register(endpoint);
+        getServiceRegistry().register(service);
 	    Document wsdl = getWSDLDocument("TestService");
 
         String xpath_string="/wsdl:definitions/wsdl:types//xsd:schema/xsd:element[@name='trouble']";

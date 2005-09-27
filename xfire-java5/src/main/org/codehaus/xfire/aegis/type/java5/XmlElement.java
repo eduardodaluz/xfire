@@ -14,5 +14,5 @@ public @interface XmlElement
     Class type() default Type.class;
     String name() default "";
     String namespace() default "";
-    boolean isNillable() default true;
+    boolean nillable() default true;
 }
