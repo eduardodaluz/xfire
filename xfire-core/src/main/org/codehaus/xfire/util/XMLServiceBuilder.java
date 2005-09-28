@@ -2,10 +2,13 @@ package org.codehaus.xfire.util;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -38,12 +41,35 @@ import org.codehaus.yom.stax.StaxBuilder;
 public class XMLServiceBuilder
 {
     private static final Log log = LogFactory.getLog(XMLServiceBuilder.class);
+
+    private static final Object DEFAULT_FACTORY_INSTANCE = new DefaultFactory();
+
+    private static Method DEFAULT_FACTORY_METHOD = null;
+
+    /**
+     * It's likely that the same factory object will be used for creation for more then only 1 object, so cache it. 
+     */
+    private Map factoryCache = new HashMap();
     
     private XFire xfire;
-    
+
     public XMLServiceBuilder(XFire xfire)
     {
         this.xfire = xfire;
+        try
+        {
+            DEFAULT_FACTORY_METHOD = DefaultFactory.class.getMethod("create",new Class[]{String.class});
+        }
+        catch (SecurityException e)
+        {
+            //  Imposible :)
+            log.error(e);
+        }
+        catch (NoSuchMethodException e)
+        {
+            // Imposible :)
+            log.error(e);       
+        }
     }
     
     protected XFire getXFire()
@@ -51,7 +77,19 @@ public class XMLServiceBuilder
         return xfire;
     }
 
-    public Collection buildServices(InputStream stream) 
+    /**
+     * Returns a collection of SOAP services.
+     * <p> 
+     * This method takes an input stream and for each service element 
+     * builds a SOAP service.  The stream is interrogated for the following
+     * element values:  name, namespace, style, use, serviceClass, 
+     * implementationClass, bindingProvider, and 
+     * property (a repeatable element) using attribute 'key'
+     * <p>
+     * @param  stream      A xml-based resource bundle
+     * @return Collection  A collection of services prescribed in the bundle
+     */   
+    public Collection buildServices(InputStream stream)
         throws Exception
     {
         try
@@ -61,9 +99,9 @@ public class XMLServiceBuilder
             StaxBuilder builder = new StaxBuilder();
             Document doc = builder.build(reader);
             Element root = doc.getRootElement();
-            
+
             List serviceList = new ArrayList();
-            Elements contents = root.getChildElements();
+            Elements contents = root.getChildElements("services");
             for (int i = 0; i < contents.size(); i++)
             {
                 Element element = contents.get(i);
@@ -71,7 +109,7 @@ public class XMLServiceBuilder
                 for (int n = 0; n < services.size(); n++)
                 {
                     Element service = services.get(n);
-                    
+
                     serviceList.add(loadService(service));
                 }
             }
@@ -84,7 +122,94 @@ public class XMLServiceBuilder
         }
     }
 
-    protected Service loadService(Element service) 
+    /**
+     * Keeps data about object factory. 
+     * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+     *
+     */
+    private class ObjectFactory
+    {
+        /**
+         * Instance of object declared as factory.
+         */
+        private Object factoryInstance;
+
+        /**
+         * Method declared as factory method.
+         */
+        private Method factoryMethod;
+
+        /**
+         * @param factory
+         * @param method
+         */
+        public ObjectFactory(final Object factory,final Method method){
+            factoryInstance = factory;
+            factoryMethod = method;
+        }
+        
+        /**
+         * Creates object given by className param using factory object instance @see factoryInstance.
+         * @param className
+         * @return created object.
+         * @throws Exception
+         */
+        public Object createObject(String className)
+            throws Exception
+        {
+            try{
+            return factoryMethod.invoke(factoryInstance, new Object[] { className });
+            }catch(Exception e){
+                throw new XFireRuntimeException("Coundn't create instance of object :"+className,e);
+            }
+        }
+        
+        
+    }
+
+    /**
+     * Returns ObjectFactory object created from values defined as attribues for given Element or null if no required
+     * attributes are not present.
+     * @param element
+     * @return
+     * @throws Exception
+     */
+    private ObjectFactory getObjectFactory(Element element)
+        throws Exception
+    {
+        
+        Method factoryMethod  = null;
+        Object factoryInstance = null;
+        
+        String factoryClassName = element.getAttributeValue("factory-class");
+        String factoryMethodName = element.getAttributeValue("factory-method");
+        
+        // Both factoryClassName and factoryNethodName must be provided.
+        if (factoryClassName != null && factoryClassName.length() > 0 && factoryMethodName != null
+                && factoryMethodName.length() > 0)
+        {
+
+            // Check if factory instance was created before..
+            factoryInstance = factoryCache.get(factoryClassName);
+            if (factoryInstance == null)
+            {
+                factoryInstance = loadClass(factoryClassName).newInstance();
+                factoryCache.put(factoryClassName, factoryInstance);
+            }
+         
+         factoryMethod  = factoryInstance.getClass().getMethod(factoryMethodName,new Class[]{String.class});
+        
+        }else{
+            
+            // No data for factory is provied so use default to avoid if(factory == null ) new MyClass() code
+            factoryInstance = DEFAULT_FACTORY_INSTANCE;
+            factoryMethod = DEFAULT_FACTORY_METHOD;
+        }
+        
+        return new ObjectFactory(factoryInstance, factoryMethod);
+    }
+
+    protected Service loadService(Element service)
         throws Exception
     {
         ServiceRegistry registry = getXFire().getServiceRegistry();
@@ -93,10 +218,10 @@ public class XMLServiceBuilder
         String namespace = getElementValue(service, "namespace", null);
         String style = getElementValue(service, "style", "");
         String use = getElementValue(service, "use", "");
-        String serviceClass = getElementValue(service, "serviceClass", "");        
+        String serviceClass = getElementValue(service, "serviceClass", "");
         String implClassName = getElementValue(service, "implementationClass", "");
         String bindingProviderName = getElementValue(service, "bindingProvider", "");
-        
+
         String soapVersionValue = getElementValue(service, "soapVersion", "1.1");
         SoapVersion soapVersion;
         if (soapVersionValue.equals("1.2"))
@@ -107,7 +232,7 @@ public class XMLServiceBuilder
         {
             soapVersion = Soap11.getInstance();
         }
-        
+
         Class clazz = null;
         try
         {
@@ -119,19 +244,21 @@ public class XMLServiceBuilder
         }
 
         BindingProvider bindingProvider = loadBindingProvider(bindingProviderName);
-        
+
         String serviceFactory = getElementValue(service, "serviceFactory", "");
         ObjectServiceFactory factory;
         if (serviceFactory.equals("jsr181") || serviceFactory.equals("commons-attributes"))
             factory = getAnnotationServiceFactory(serviceFactory, bindingProvider);
         else
             factory = loadServiceFactory(bindingProvider, serviceFactory);
-        
-        if (style.length() > 0) factory.setStyle(style);
-        if (use.length() > 0) factory.setUse(use);
-        
+
+        if (style.length() > 0)
+            factory.setStyle(style);
+        if (use.length() > 0)
+            factory.setUse(use);
+
         factory.setSoapVersion(soapVersion);
-        
+
         Service svc = null;
         if (name != null || namespace != null)
         {
@@ -141,7 +268,7 @@ public class XMLServiceBuilder
         {
             svc = factory.create(clazz);
         }
-        
+
         if (implClassName.length() > 0)
         {
             Class implClazz = null;
@@ -151,38 +278,37 @@ public class XMLServiceBuilder
             }
             catch (Exception e)
             {
-                throw new XFireRuntimeException("Could not load implementation class: " + serviceClass, e);
+                throw new XFireRuntimeException("Could not load implementation class: "
+                        + serviceClass, e);
             }
-            
+
             svc.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, implClazz);
-            
+
             if (log.isInfoEnabled())
             {
-                log.info("Created Service " + name + " with impl " + implClazz
-                         + ", soap version: " + soapVersionValue + ", style: " + style + ", use: "
-                         + use + ", namespace " + svc.getServiceInfo().getName().getNamespaceURI());
+                log.info("Created Service " + name + " with impl " + implClazz + ", soap version: "
+                        + soapVersionValue + ", style: " + style + ", use: " + use + ", namespace "
+                        + svc.getServiceInfo().getName().getNamespaceURI());
             }
         }
         else
         {
             if (log.isInfoEnabled())
             {
-                log.info("Created Service " + name + " with impl " + clazz
-                         + ", soap version: " + soapVersionValue + ", style: " + style + ", use: "
-                         + use + ", namespace " + svc.getServiceInfo().getName().getNamespaceURI());
+                log.info("Created Service " + name + " with impl " + clazz + ", soap version: "
+                        + soapVersionValue + ", style: " + style + ", use: " + use + ", namespace "
+                        + svc.getServiceInfo().getName().getNamespaceURI());
             }
         }
-        
-        if (svc.getInHandlers() == null) svc.setInHandlers(new ArrayList());
-        if (svc.getOutHandlers() == null) svc.setOutHandlers(new ArrayList());
-        if (svc.getFaultHandlers() == null) svc.setFaultHandlers(new ArrayList());
-        
-        svc.getInHandlers().addAll(createHandlerPipeline(service.getFirstChildElement("inHandlers")));
-        svc.getOutHandlers().addAll(createHandlerPipeline(service.getFirstChildElement("outHandlers")));
-        svc.getFaultHandlers().addAll(createHandlerPipeline(service.getFirstChildElement("faultHandlers")));
-        
+
+        loadServiceProperties(svc,service);
+
+        svc.getInHandlers().addAll(createHanlers(service.getFirstChildElement("inHandlers")));
+        svc.getOutHandlers().addAll(createHanlers(service.getFirstChildElement("outHandlers")));
+        svc.getFaultHandlers().addAll(createHanlers(service.getFirstChildElement("faultHandlers")));
+
         registry.register(svc);
-        
+
         return svc;
     }
 
@@ -197,51 +323,53 @@ public class XMLServiceBuilder
             {
                 Class clz = loadClass(serviceFactoryName);
                 TransportManager tman = getXFire().getTransportManager();
-                
+
                 Constructor con = null;
                 Object[] arguments = null;
-                
+
                 try
                 {
-                    con = clz.getConstructor( new Class[] {TransportManager.class, BindingProvider.class} );
+                    con = clz.getConstructor(new Class[] { TransportManager.class,
+                            BindingProvider.class });
                     arguments = new Object[] { tman, bindingProvider };
                 }
                 catch (NoSuchMethodException e)
                 {
                     try
                     {
-                        con = clz.getConstructor( new Class[] {TransportManager.class} );
+                        con = clz.getConstructor(new Class[] { TransportManager.class });
                         arguments = new Object[] { tman };
                     }
                     catch (NoSuchMethodException e1)
                     {
-                        con = clz.getConstructor( new Class[0] );
+                        con = clz.getConstructor(new Class[0]);
                         arguments = new Object[0];
                     }
                 }
-                
+
                 return (ObjectServiceFactory) con.newInstance(arguments);
             }
             catch (Exception e)
             {
-                throw new XFireRuntimeException("Could not load service factory: " + serviceFactoryName, e);
+                throw new XFireRuntimeException("Could not load service factory: "
+                        + serviceFactoryName, e);
             }
         }
         else
         {
             factory = new ObjectServiceFactory(getXFire().getTransportManager(), bindingProvider);
         }
-        
+
         return factory;
     }
 
     protected ObjectServiceFactory getAnnotationServiceFactory(String annotationType,
-                                                               BindingProvider bindingProvider) 
+                                                               BindingProvider bindingProvider)
         throws Exception
     {
         Class annotsClz = null;
         Class clz = loadClass("org.codehaus.xfire.annotations.AnnotationServiceFactory");
-        
+
         if (annotationType.equals("jsr181"))
         {
             annotsClz = loadClass("org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations");
@@ -250,18 +378,16 @@ public class XMLServiceBuilder
         {
             annotsClz = loadClass("org.codehaus.xfire.annotations.commons.CommonsWebAttributes");
         }
-        
+
         Class webAnnot = loadClass("org.codehaus.xfire.annotations.WebAnnotations");
-        
-        Constructor con = 
-            clz.getConstructor( new Class[] {webAnnot, TransportManager.class, BindingProvider.class} );
-        
-        return (ObjectServiceFactory) 
-            con.newInstance(new Object[] {annotsClz.newInstance(), 
-                    getXFire().getTransportManager(),
-                    bindingProvider });
+
+        Constructor con = clz.getConstructor(new Class[] { webAnnot, TransportManager.class,
+                BindingProvider.class });
+
+        return (ObjectServiceFactory) con.newInstance(new Object[] { annotsClz.newInstance(),
+                getXFire().getTransportManager(), bindingProvider });
     }
-    
+
     protected BindingProvider loadBindingProvider(String bindingProviderName)
     {
         BindingProvider bindingProvider = null;
@@ -273,38 +399,45 @@ public class XMLServiceBuilder
             }
             catch (Exception e)
             {
-                throw new XFireRuntimeException("Could not load binding provider: " + bindingProvider, e);
+                throw new XFireRuntimeException("Could not load binding provider: "
+                        + bindingProvider, e);
             }
         }
         return bindingProvider;
     }
 
-    private List createHandlerPipeline(Element child)
+    private List createHanlers(Element child)
         throws Exception
     {
         if (child == null)
             return Collections.EMPTY_LIST;
-        
+
         Elements handlers = child.getChildElements("handler");
         if (handlers.size() == 0)
             return Collections.EMPTY_LIST;
-        
+
         List pipe = new ArrayList();
-        
+
         for (int i = 0; i < handlers.size(); i++)
         {
-            pipe.add(getHandler(handlers.get(i).getValue()));
+            pipe.add(getHandler(handlers.get(i)));
         }
-        
+
         return pipe;
     }
 
-    protected Handler getHandler(String name)
+    /**
+     * @param element
+     * @return
+     * @throws Exception
+     */
+    protected Handler getHandler(Element element)
         throws Exception
     {
-        return (Handler) loadClass(name).newInstance();
-    }   
-    
+        String handlerClassName = element.getValue();
+        return (Handler) getObjectFactory(element).createObject(handlerClassName);
+    }
+
     public String getElementValue(Element root, String name, String def)
     {
         Element child = root.getFirstChildElement(name);
@@ -314,8 +447,23 @@ public class XMLServiceBuilder
             if (value != null && value.length() > 0)
                 return value;
         }
-        
+
         return def;
+    }
+    
+    private void loadServiceProperties(Service svc, Element child)
+    {
+        Elements elements = child.getChildElements("property");
+        if (elements.size() == 0)
+            return;
+        for (int i = 0; i < elements.size(); i++)
+        {
+            Element element = (Element) elements.get(i);
+            String key = element.getAttributeValue("key");
+            String value = element.getValue();
+            if (key.length() > 1 && value.length() > 1)
+                svc.setProperty(key, value);
+        }
     }
     
     /**
@@ -337,4 +485,21 @@ public class XMLServiceBuilder
 
         return ClassLoaderUtils.loadClass(className, getClass());
     }
+    
+    private static class DefaultFactory
+    {
+        public Object create(String className)
+            throws Exception
+        {
+            // Handle array'd types.
+            if (className.endsWith("[]"))
+            {
+                className = "[L" + className.substring(0, className.length() - 2) + ";";
+            }
+
+            return ClassLoaderUtils.loadClass(className, getClass()).newInstance();
+
+        }
+    }
 }
+
