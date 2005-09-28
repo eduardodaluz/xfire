@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;

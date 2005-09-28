@@ -278,11 +278,6 @@ public class BeanType
             
             element.addAttribute(new Attribute("name", name));
             element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
-            
-            if (info.isNillable(name))
-            {
-                element.addAttribute(new Attribute("nillable", "true"));
-            }
         }
     }
 
@@ -306,7 +301,7 @@ public class BeanType
             element.addAttribute(new Attribute("name", name));
             element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
             
-            if (type.isNillable())
+            if (getTypeInfo().isNillable(name))
             {
                 element.addAttribute(new Attribute("nillable", "true"));
             }

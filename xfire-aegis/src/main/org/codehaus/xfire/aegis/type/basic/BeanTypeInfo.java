@@ -177,7 +177,6 @@ public class BeanTypeInfo
 
     public void mapType(String name, Type type)
     {
-        System.out.println("mapping type " + type + " to " + name);
         mappedName2type.put(name, type);
     }
 
@@ -287,7 +286,7 @@ public class BeanTypeInfo
 
     public boolean isNillable(String name)
     {
-        return true;
+        return getType(name).isNillable();
     }
     
     private String getPropertyNameFromMappedName(String name)

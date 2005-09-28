@@ -61,7 +61,6 @@ public class XMLBeanTypeInfo
         if (style == null) style = "element";
         if (mappedName == null) mappedName = createMappedName(pd);
         
-        Boolean nillable = Boolean.TRUE;
         if (e != null)
         {
             QName mappedType = createQName(e, e.getAttributeValue("typeName"));
@@ -70,12 +69,10 @@ public class XMLBeanTypeInfo
             String nillableVal = e.getAttributeValue("nillable");
             if (nillableVal != null && nillableVal.length() > 0)
             {
-                 nillable = Boolean.valueOf(nillableVal);
+                 name2Nillable.put(mappedName, Boolean.valueOf(nillableVal));
             }
         }
-        
-        name2Nillable.put(mappedName, nillable);
-        
+
         try
         {
             //logger.debug("Mapped " + pd.getName() + " as " + style + " with name " + mappedName);
@@ -145,6 +142,10 @@ public class XMLBeanTypeInfo
 
     public boolean isNillable(String name)
     {
-        return ((Boolean) name2Nillable.get(name)).booleanValue();
+        Boolean nillable = (Boolean) name2Nillable.get(name);
+        
+        if (nillable != null) return nillable.booleanValue();
+        
+        return super.isNillable(name);
     } 
 }
