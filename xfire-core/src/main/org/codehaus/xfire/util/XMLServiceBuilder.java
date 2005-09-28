@@ -303,9 +303,9 @@ public class XMLServiceBuilder
 
         loadServiceProperties(svc,service);
 
-        svc.getInHandlers().addAll(createHanlers(service.getFirstChildElement("inHandlers")));
-        svc.getOutHandlers().addAll(createHanlers(service.getFirstChildElement("outHandlers")));
-        svc.getFaultHandlers().addAll(createHanlers(service.getFirstChildElement("faultHandlers")));
+        svc.getInHandlers().addAll(createHandlers(service.getFirstChildElement("inHandlers")));
+        svc.getOutHandlers().addAll(createHandlers(service.getFirstChildElement("outHandlers")));
+        svc.getFaultHandlers().addAll(createHandlers(service.getFirstChildElement("faultHandlers")));
 
         registry.register(svc);
 
@@ -406,7 +406,7 @@ public class XMLServiceBuilder
         return bindingProvider;
     }
 
-    private List createHanlers(Element child)
+    private List createHandlers(Element child)
         throws Exception
     {
         if (child == null)
