@@ -40,4 +40,9 @@ public abstract class AbstractXFireSpringTest
     {
         return (XFire) context.getBean("xfire");
     }
+    
+    protected Object getBean(String id)
+    {
+        return context.getBean(id);
+    }
 }

@@ -3,7 +3,7 @@
 
 <beans>
     <bean name="echoClient" class="org.codehaus.xfire.spring.remoting.XFireProxyFactoryBean">
-        <property name="service" ref="/Echo"/>
+        <property name="service" ref="Echo"/>
         <property name="serviceUrl" value="xfire.local://Echo"/>
         <property name="xfire" ref="xfire"/>
     </bean>

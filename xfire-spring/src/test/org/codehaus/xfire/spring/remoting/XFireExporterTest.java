@@ -127,7 +127,7 @@ public class XFireExporterTest
     {
         Resource resource = new ClassPathResource("/org/codehaus/xfire/spring/echoRequest.xml");
         byte[] bytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/Echo");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "Echo");
         request.setContentType("text/xml");
         request.setContent(bytes);
         return request;
@@ -142,7 +142,7 @@ public class XFireExporterTest
 
         assertNotNull(appContext.getBean("xfire.serviceFactory"));
         assertNotNull(appContext.getBean("echo"));
-        XFireExporter exporter = (XFireExporter) appContext.getBean("/Echo");
+        XFireExporter exporter = (XFireExporter) appContext.getBean("Echo");
         assertNotNull(exporter);
         BeanNameUrlHandlerMapping handlerMapping = new BeanNameUrlHandlerMapping();
         handlerMapping.setApplicationContext(appContext);
