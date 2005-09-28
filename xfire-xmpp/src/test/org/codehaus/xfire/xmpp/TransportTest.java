@@ -108,8 +108,11 @@ public class TransportTest
 
         channel1.send(context, msg);
         channel1.send(context, msg);
-        Thread.sleep(1000); 
-        
+        Thread.sleep(1000);
+        if (peer.getCount() < 2) Thread.sleep(1000);
+        if (peer.getCount() < 2) Thread.sleep(1000);
+        if (peer.getCount() < 2) Thread.sleep(1000);
+
         assertEquals(2, peer.getCount());
     }
 
