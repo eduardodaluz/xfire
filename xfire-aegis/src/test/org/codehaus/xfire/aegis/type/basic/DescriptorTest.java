@@ -114,6 +114,17 @@ public class DescriptorTest
         assertEquals("prop2", el);
     }
 
+    public void testNillable() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:bean-nillable");
+
+        Type type = tm.getTypeCreator().createType(MyBean.class);
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
+
+        assertFalse(info.isNillable("prop1"));
+        assertTrue(info.isNillable("prop2"));
+    }
+
     public void testCustomType() throws Exception
     {
         tm.setEncodingStyleURI("urn:xfire:custom-type");

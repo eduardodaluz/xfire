@@ -1,6 +1,8 @@
 package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -18,6 +20,7 @@ public class XMLBeanTypeInfo
     private String encodingUri;
     private Element mapping;
     private QName name;
+    private Map name2Nillable = new HashMap();
     
     public XMLBeanTypeInfo(Class typeClass,
                            Element mapping)
@@ -58,11 +61,20 @@ public class XMLBeanTypeInfo
         if (style == null) style = "element";
         if (mappedName == null) mappedName = createMappedName(pd);
         
+        Boolean nillable = Boolean.TRUE;
         if (e != null)
         {
             QName mappedType = createQName(e, e.getAttributeValue("typeName"));
             if (mappedType != null) mapTypeName(mappedName, mappedType);
+            
+            String nillableVal = e.getAttributeValue("nillable");
+            if (nillableVal != null && nillableVal.length() > 0)
+            {
+                 nillable = Boolean.valueOf(nillableVal);
+            }
         }
+        
+        name2Nillable.put(mappedName, nillable);
         
         try
         {
@@ -130,4 +142,9 @@ public class XMLBeanTypeInfo
         
         return new QName(ns, localName, prefix);
     }
+
+    public boolean isNillable(String name)
+    {
+        return ((Boolean) name2Nillable.get(name)).booleanValue();
+    } 
 }
