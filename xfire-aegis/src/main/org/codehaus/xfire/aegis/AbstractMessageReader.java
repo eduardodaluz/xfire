@@ -13,12 +13,19 @@ public abstract class AbstractMessageReader
     public AbstractMessageReader()
     {
     }
+
+    public boolean hasValue()
+    {
+        return getValue() != null;
+    }
     
     /**
      * @see org.codehaus.xfire.aegis.MessageReader#getValueAsInt()
      */
     public int getValueAsInt()
     {
+        if (getValue() == null) return 0;
+        
         return Integer.parseInt( getValue() );
     }
 
@@ -27,6 +34,8 @@ public abstract class AbstractMessageReader
 	 */
 	public long getValueAsLong()
 	{
+        if (getValue() == null) return 0l;
+        
         return Long.parseLong( getValue() );
 	}
     
@@ -35,7 +44,9 @@ public abstract class AbstractMessageReader
 	 */
 	public double getValueAsDouble()
 	{
-		return Double.parseDouble( getValue() );
+        if (getValue() == null) return 0d;
+        
+        return Double.parseDouble( getValue() );
 	}
 
 	/**
@@ -43,7 +54,9 @@ public abstract class AbstractMessageReader
 	 */
 	public float getValueAsFloat()
 	{
-		return Float.parseFloat( getValue() );
+        if (getValue() == null) return 0f;
+        
+        return Float.parseFloat( getValue() );
 	}
 
 	/**
@@ -52,6 +65,8 @@ public abstract class AbstractMessageReader
 	public boolean getValueAsBoolean()
 	{
         String value = getValue();
+        if (value == null) return false;
+        
         if ("true".equalsIgnoreCase(value) || "1".equalsIgnoreCase(value))
             return true;
 
