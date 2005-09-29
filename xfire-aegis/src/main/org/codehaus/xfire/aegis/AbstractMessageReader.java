@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis;
 
+import org.codehaus.xfire.XFireRuntimeException;
+
 /**
  * Basic type conversions for reading messages.
  * 
@@ -49,6 +51,13 @@ public abstract class AbstractMessageReader
 	 */
 	public boolean getValueAsBoolean()
 	{
-		return Boolean.valueOf( getValue() ).booleanValue();
+        String value = getValue();
+        if ("true".equalsIgnoreCase(value) || "1".equalsIgnoreCase(value))
+            return true;
+
+        if ("false".equalsIgnoreCase(value) || "0".equalsIgnoreCase(value))
+            return false;
+        
+        throw new XFireRuntimeException("Invalid boolean value: " + value);
 	}
 }
