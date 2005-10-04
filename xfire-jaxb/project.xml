@@ -51,8 +51,8 @@
         </dependency>
         <dependency>
             <groupId>stax-utils</groupId>
-            <artifactId>staxutils</artifactId>
-            <version>1.0</version>
+            <artifactId>stax-utils</artifactId>
+            <version>snapshot-20040917</version>
         </dependency>
         <dependency>
             <groupId>msv</groupId>

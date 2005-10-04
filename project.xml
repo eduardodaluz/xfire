@@ -163,7 +163,7 @@
         <dependency>
             <groupId>woodstox</groupId>
             <artifactId>wstx-asl</artifactId>
-            <version>2.0.2</version>
+            <version>2.0.3</version>
             <url>http://woodstox.codehaus.org/</url>
         </dependency>
         <dependency>
