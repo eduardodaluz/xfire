@@ -186,9 +186,7 @@ public class WrappedBinding
                                      Part part,
                                      String opName)
     {
-        Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
         Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-        schemaEl.appendChild(element);
 
         element.addAttribute(new Attribute("name", opName));
 
@@ -202,6 +200,9 @@ public class WrappedBinding
             writeParametersSchema(builder, message.getMessageParts(), sequence);
         }
 
+        Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
+        schemaEl.appendChild(element);
+        
         return new QName(builder.getInfo().getTargetNamespace(), opName);
     }
 
