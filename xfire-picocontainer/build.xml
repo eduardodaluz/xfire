@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project default="jar" name="xfire-loom" basedir=".">
+<project default="jar" name="xfire-picocontainer" basedir=".">
   <import file="../build-common.xml"/>
 
   <path id="module.classpath">

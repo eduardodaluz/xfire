@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default="jar" name="xfire-jaxb2" basedir=".">
+
+    <property name="java.source.version" value="1.5"/>
+    <property name="java.target.version" value="1.5"/>
+
+    <import file="../build-common.xml"/>
+
+    <path id="module.classpath">
+        <fileset dir="..">
+            <include name="xfire-core/target/*.jar"/>
+            <include name="xfire-aegis/target/*.jar"/>
+        </fileset>
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init" depends="xfire.init">
+        <check-dep module="xfire-core"/>
+        <check-dep module="xfire-aegis"/>
+    </target>
+</project>

@@ -6,6 +6,7 @@
         <ant inheritall="false" antfile="xfire-aegis/build.xml"/>
         <ant inheritall="false" antfile="xfire-annotations/build.xml"/>
         <ant inheritall="false" antfile="xfire-java5/build.xml"/>
+        <ant inheritall="false" antfile="xfire-jaxb2/build.xml"/>
         <ant inheritall="false" antfile="xfire-picocontainer/build.xml"/>
         <ant inheritall="false" antfile="xfire-loom/build.xml"/>
         <ant inheritall="false" antfile="xfire-xmpp/build.xml"/>
@@ -19,6 +20,7 @@
         <ant inheritall="false" antfile="xfire-aegis/build.xml" target="test"/>
         <ant inheritall="false" antfile="xfire-annotations/build.xml" target="test"/>
         <ant inheritall="false" antfile="xfire-java5/build.xml" target="test"/>
+        <ant inheritall="false" antfile="xfire-jaxb2/build.xml" target="test"/>
         <ant inheritall="false" antfile="xfire-picocontainer/build.xml" target="test"/>
         <ant inheritall="false" antfile="xfire-loom/build.xml" target="test"/>
         <ant inheritall="false" antfile="xfire-xmpp/build.xml" target="test"/>
@@ -34,6 +36,7 @@
             <fileset dir="xfire-aegis/target/classes"/>
             <fileset dir="xfire-annotations/target/classes"/>
             <fileset dir="xfire-java5/target/classes"/>
+            <fileset dir="xfire-jaxb2/target/classes"/>
             <fileset dir="xfire-picocontainer/target/classes"/>
             <fileset dir="xfire-loom/target/classes"/>
             <fileset dir="xfire-xmpp/target/classes"/>
