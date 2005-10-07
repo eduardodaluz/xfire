@@ -21,7 +21,6 @@ public class WrappedClientTest
         extends AbstractXFireAegisTest
 {
     private Service service;
-    private Service clientService;
     
     public void setUp()
             throws Exception
@@ -33,8 +32,6 @@ public class WrappedClientTest
         service = factory.create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
 
-        clientService = factory.create(Echo.class);
-
         getServiceRegistry().register(service);
     }
 
@@ -42,10 +39,10 @@ public class WrappedClientTest
             throws Exception
     {
         Transport transport =  SoapTransport.createSoapTransport(new LocalTransport());
-        Client client = new Client(transport, clientService, "xfire.local://Echo");
+        Client client = new Client(transport, service, "xfire.local://Echo");
         client.setXFire(getXFire());
         
-        OperationInfo op = clientService.getServiceInfo().getOperation("echo");
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
         assertNotNull("response from client invoke is null", response);
         assertEquals("unexpected array size in invoke response", 1, response.length);
