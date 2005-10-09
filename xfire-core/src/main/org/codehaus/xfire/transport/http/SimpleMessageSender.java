@@ -6,36 +6,35 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.xml.stream.XMLStreamWriter;
+
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
 
 /**
- * Http Sender
+ * Sends a message via the JDK HTTP URLConnection. This is very buggy. Drop
+ * commons-httpclient on your classpath and XFire will use CommonsHttpMessageSender instead.
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 26, 2004
  */
-public class HttpMessageSender
+public class SimpleMessageSender extends AbstractMessageSender
 {
-    private String username;
-    private String password;
-    private String encoding;
-    private String urlString;
     private HttpURLConnection urlConn;
     private InputStream is;
-    private String action;
 
-    public HttpMessageSender(String urlString, String encoding)
+    public SimpleMessageSender(OutMessage message, MessageContext context)
     {
-        this.urlString = urlString;
-        this.encoding = encoding;
+        super(message, context);
     }
     
     public void open() throws IOException, XFireFault
     {
-        URL url = new URL(urlString);
+        URL url = new URL(getUri());
         urlConn = createConnection(url);
         
         urlConn.setDoInput(true);
@@ -48,9 +47,9 @@ public class HttpMessageSender
         
         urlConn.setRequestProperty("User-Agent", "XFire Client +http://xfire.codehaus.org");
         urlConn.setRequestProperty("Accept", "text/xml; text/html");
-        urlConn.setRequestProperty("Content-type", "text/xml; charset=" + encoding);
+        urlConn.setRequestProperty("Content-type", "text/xml; charset=" + getEncoding());
         
-        String action = getAction();
+        String action = getSoapAction();
         if (action == null)
             action = "";
         
@@ -76,7 +75,7 @@ public class HttpMessageSender
             }
         }
 
-        return new InMessage(STAXUtils.createXMLStreamReader(is, encoding), urlString);
+        return new InMessage(STAXUtils.createXMLStreamReader(is, getEncoding()), getUri());
     }
 
     public void close() throws XFireException
@@ -104,62 +103,16 @@ public class HttpMessageSender
         return (HttpURLConnection) url.openConnection();
     }
 
-    /**
-     * @return Returns the url.
-     */
-    public String getUrl()
+    public void send()
+        throws IOException, XFireFault
     {
-        return urlString;
-    }
+        OutputStream out = getOutputStream();
+        OutMessage message = getMessage();
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
 
-    /**
-     * @param url The url to set.
-     */
-    public void setUrl(String url)
-    {
-        this.urlString = url;
+        message.getSerializer().writeMessage(message, writer, getMessageContext());
+        
+        out.flush();
+        out.close();
     }
-
-    /**
-     * @return Returns the password.
-     */
-    public String getPassword()
-    {
-        return password;
-    }
-
-    /**
-     * @param password The password to set.
-     */
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
-    /**
-     * @return Returns the username.
-     */
-    public String getUsername()
-    {
-        return username;
-    }
-
-    /**
-     * @param username The username to set.
-     */
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-
-    public String getAction()
-    {
-        return action;
-    }
-
-    public void setAction(String action)
-    {
-        this.action = action;
-    }
-    
 }

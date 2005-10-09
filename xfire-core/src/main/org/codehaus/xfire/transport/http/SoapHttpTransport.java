@@ -44,7 +44,7 @@ public class SoapHttpTransport
     {
         log.debug("Creating new channel for uri: " + uri);
         
-        HttpSoapChannel c = new HttpSoapChannel(uri, this);
+        HttpChannel c = new HttpChannel(uri, this);
         c.setEndpoint(new DefaultEndpoint());
 
         return c;

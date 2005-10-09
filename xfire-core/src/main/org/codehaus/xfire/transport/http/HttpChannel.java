@@ -2,10 +2,13 @@ package org.codehaus.xfire.transport.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -13,12 +16,15 @@ import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.STAXUtils;
 
-public class HttpSoapChannel
+public class HttpChannel
     extends AbstractChannel
 {
-    public HttpSoapChannel(String uri, SoapHttpTransport transport)
+    private static final Log log = LogFactory.getLog(HttpChannel.class);
+    
+    public HttpChannel(String uri, SoapHttpTransport transport)
     {
         setTransport(transport);
         setUri(uri);
@@ -72,19 +78,27 @@ public class HttpSoapChannel
     private void sendViaClient(MessageContext context, OutMessage message)
         throws XFireException
     {
-        HttpMessageSender sender = new HttpMessageSender(message.getUri(), message.getEncoding());
+        AbstractMessageSender sender;
+        
         try
         {
-            sender.setAction(message.getAction());
+            Class chms = ClassLoaderUtils.loadClass("org.codehaus.xfire.transport.http.CommonsHttpMessageSender", getClass());
+            Constructor constructor = chms.getConstructor(new Class[] {OutMessage.class, MessageContext.class});
+            sender = (AbstractMessageSender) constructor.newInstance(new Object[] { message, context });
+        }
+        catch (Exception e)
+        {
+            if (log.isDebugEnabled())
+                log.debug("Could not load commons http client. Using buggy SimpleMessageSender instead.");
+                
+            sender = new SimpleMessageSender(message, context);
+        }
+        
+        try
+        {
             sender.open();
             
-            OutputStream out = sender.getOutputStream();
-            XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
-
-            message.getSerializer().writeMessage(message, writer, context);
-            
-            out.flush();
-            out.close();
+            sender.send();
 
             getEndpoint().onReceive(context, sender.getInMessage());
         }
