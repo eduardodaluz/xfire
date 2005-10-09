@@ -1,4 +1,0 @@
-<m:echo xmlns:m="urn:Echo">
-  <m:in0>Yo Yo</m:in0>
-  <bleh xmlns="urn:bleh"><hello>hello</hello></bleh>
-</m:echo>

@@ -1,4 +1,0 @@
-Requirements:
-* Transform XMLBeans to SOAP request via an XQuery
-* Generate XMLBeans for input/response
-* Generate Velocity template for client classes
