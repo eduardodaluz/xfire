@@ -4,7 +4,7 @@ public class AnnotatedBean2
 {
     private String elementProperty;
     private String attributeProperty;
-    private String bogusProperty;
+    private String ignoredProperty;
     
     @XmlAttribute(name="attribute")
     public String getAttributeProperty()
@@ -26,5 +26,16 @@ public class AnnotatedBean2
     public void setElementProperty(String elementProperty)
     {
         this.elementProperty = elementProperty;
+    }
+
+    @IgnoreProperty
+    public String getIgnoredProperty()
+    {
+        return ignoredProperty;
+    }
+
+    public void setIgnoredProperty(String ignoredProperty)
+    {
+        this.ignoredProperty = ignoredProperty;
     }
 }

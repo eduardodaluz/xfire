@@ -18,7 +18,30 @@ public class AnnotatedTypeInfo
         
         initialize();
     }
-
+    
+    /**
+     * Override from parent in order to check for IgnoreProperty annotation.
+     */
+     protected void mapProperty(PropertyDescriptor pd)
+     {
+         if ( isIgnored(pd) ) return; // do not map ignored properties
+         
+         String name = pd.getName();   
+         if (isAttribute(pd))
+         {
+             mapAttribute(name, createMappedName(pd));
+         }
+         else if (isElement(pd))
+        {
+             mapElement(name, createMappedName(pd));
+         }
+     }
+     
+     protected boolean isIgnored(PropertyDescriptor desc)
+     {
+         return desc.getReadMethod().isAnnotationPresent(IgnoreProperty.class);
+     }
+         
     protected boolean isAttribute(PropertyDescriptor desc)
     {
         return desc.getReadMethod().isAnnotationPresent(XmlAttribute.class);
