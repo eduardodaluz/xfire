@@ -47,6 +47,11 @@
         <artifactId>xfire-spring</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
+        <dependency>
+          <groupId>org.codehaus.xfire</groupId>
+          <artifactId>xfire-xmlbeans</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -94,7 +99,7 @@
     <dependency>
       <groupId>org.codehaus.yom</groupId>
       <artifactId>yom</artifactId>
-      <version>1.0-alpha-2</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
     <!--
       
@@ -177,10 +182,12 @@
     <module>xfire-aegis</module>
     <module>xfire-plexus</module>
     <module>xfire-spring</module>
-    <module>xfire-annotations</module>
     <module>xfire-xmpp</module>
+    <module>xfire-jaxb</module>
+    <module>xfire-annotations</module>
+      <module>xfire-xmlbeans</module>
     <!-- module>xfire-java5</module>
-      <module>xfire-loom</module>
+      <module>xfire-xmlbeans</module>
       <module>xfire-picocontainer</module>
       <module>xfire-xmlbeans</module  -->
   </modules>
