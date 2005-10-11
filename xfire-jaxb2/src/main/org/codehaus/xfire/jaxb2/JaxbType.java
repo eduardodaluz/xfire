@@ -76,9 +76,24 @@ public class JaxbType
     }
 
     @Override
+    public boolean isComplex()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isWriteOuter()
+    {
+        return false;
+    }
+
+    @Override
     public QName getSchemaType()
     {
-        return getSchemaType(getTypeClass());
+        if (super.getSchemaType() == null)
+            setSchemaType(getSchemaType(getTypeClass()));
+        
+        return super.getSchemaType();
     }
 
     public static QName getSchemaType(Class clazz)

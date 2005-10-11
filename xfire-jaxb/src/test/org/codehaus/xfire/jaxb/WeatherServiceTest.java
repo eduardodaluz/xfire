@@ -1,5 +1,7 @@
 package org.codehaus.xfire.jaxb;
 
+import java.util.ArrayList;
+
 import net.webservicex.ObjectFactory;
 
 import org.codehaus.xfire.aegis.AegisBindingProvider;
@@ -8,9 +10,8 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.codehaus.yom.Document;
-
-import java.util.ArrayList;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -31,7 +32,8 @@ public class WeatherServiceTest
                                            new AegisBindingProvider(new JaxbTypeRegistry(objectFactory)));
         ArrayList schemas = new ArrayList();
         schemas.add("src/test-schemas/WeatherForecast.xsd");
-        builder.setWsdlBuilderFactory(new JaxbWSDLBuilderFactory(schemas));
+
+        builder.setWsdlBuilderFactory(new DefaultWSDLBuilderFactory(schemas));
         builder.setStyle(SoapConstants.STYLE_DOCUMENT);
 
         endpoint = builder.create(WeatherServiceImpl.class,
@@ -56,7 +58,11 @@ public class WeatherServiceTest
 
     public void testWsdl() throws Exception
     {
-        getWSDLDocument("WeatherService").toXML();
+        Document doc = getWSDLDocument("WeatherService");
+        
+        addNamespace("xsd", SoapConstants.XSD);
+        
+        assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net']", doc);
     }
 
 }

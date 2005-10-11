@@ -1,20 +1,26 @@
 package org.codehaus.xfire.wsdl11.builder;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
+import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -24,15 +30,21 @@ import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 import org.codehaus.yom.Serializer;
 import org.codehaus.yom.converters.DOMConverter;
+import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.yom.xpath.YOMXPath;
+import org.jaxen.JaxenException;
+import org.jaxen.XPath;
 
 /**
- * AbstractWSDL
+ * Provides schema functionality for a WSDLBuilder.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public abstract class AbstractWSDL
     implements WSDLWriter
 {
+    private static final StaxBuilder builder = new StaxBuilder();
+    
     private Definition def;
 
     private String targetNamespace;
@@ -51,6 +63,8 @@ public abstract class AbstractWSDL
     
     private WSDLBuilderInfo info;
 
+    private boolean schemaLocationRemoved = true;
+    
     /*-------------------------------------------------
      * Namespace and QName definitions for easy access.
      *-------------------------------------------------*/
@@ -275,6 +289,109 @@ public abstract class AbstractWSDL
         this.service = service;
     }
 
+    public void addSchemas(List schemaLocations)
+    {
+        for (Iterator itr = schemaLocations.iterator(); itr.hasNext();)
+        {
+            addSchema((String) itr.next());
+        }
+    }
+    
+    /**
+     * Loads a schema off the filesystem or the classpath and adds it to the WSDL types section.
+     * 
+     * @param location
+     */
+    public void addSchema(String location)
+    {
+        // Try loading the file as a file, then on the classpath
+        InputStream fileInputStream = null;
+        try
+        {
+            fileInputStream = new FileInputStream(location);
+        } 
+        catch (FileNotFoundException e)
+        {
+            fileInputStream = ClassLoaderUtils.getResourceAsStream(location, getClass());
+        }
+        
+        if (fileInputStream == null)
+            throw new XFireRuntimeException("Couldnt load schema file: " + location);
+        
+        // Load in the schema
+        Document schema = null;
+        try
+        {
+            schema = builder.build(fileInputStream);
+        } 
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Error parsing schema file: " + location, e);
+        }
+        
+        // Remove the schemaLocation elements
+        if (isSchemaLocationRemoved())
+            cleanImports(schema);
+        
+        String targetNamespace = schema.getRootElement().getAttributeValue("targetNamespace");
+        if (targetNamespace != null)
+        {
+            Element root = schema.getRootElement();
+            root.detach();
+            setSchema(targetNamespace, root);
+        }
+        else
+        {
+            throw new XFireRuntimeException("Could not find target namespace in schema: " + location);
+        }
+    }
+
+    public boolean isSchemaLocationRemoved()
+    {
+        return schemaLocationRemoved;
+    }
+
+    public void setSchemaLocationRemoved(boolean schemaLocationRemoved)
+    {
+        this.schemaLocationRemoved = schemaLocationRemoved;
+    }
+
+    /**
+     * Removes the schemaLocation attribute from an &lt;xsd:import&gt; statement.
+     * @param schema
+     */
+    protected void cleanImports(Document schema)
+    {
+        List nodes = getMatches(schema, "//xsd:import");
+        for (int i = 0; i < nodes.size(); i++)
+        {
+            Element imp = (Element) nodes.get(i);
+
+            Attribute loc = imp.getAttribute("schemaLocation");
+
+            if (loc != null)
+            {
+                loc.detach();
+            }
+        }
+    }
+    
+    private List getMatches(Object doc, String xpath)
+    {
+        try
+        {
+            XPath path = new YOMXPath(xpath);
+            path.addNamespace("xsd", SoapConstants.XSD);
+            path.addNamespace("s", SoapConstants.XSD);
+            List result = path.selectNodes(doc);
+            return result;
+        }
+        catch (JaxenException e)
+        {
+            throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
+        }
+    }
+    
     /**
      * Create a shcema type element and store it to be written later on.
      * 

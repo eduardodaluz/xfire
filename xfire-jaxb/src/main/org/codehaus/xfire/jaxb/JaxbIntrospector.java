@@ -30,11 +30,12 @@ public class JaxbIntrospector
             creator = jaxbContext.getClass().getMethod("create" + typeName, null);
             instance = (RIElement) creator.invoke(jaxbContext, null);
 
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             throw new XFireRuntimeException("error getting qname of jaxb type", e);
         }
-        return new QName(instance.____jaxb_ri____getNamespaceURI(), instance.____jaxb_ri____getLocalName());
-
+        return new QName(instance.____jaxb_ri____getNamespaceURI(), 
+                         instance.____jaxb_ri____getLocalName());
     }
 }
