@@ -17,7 +17,6 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.exchange.RobustInOutExchange;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.fault.XFireFaultInfo;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.OutMessageSender;
