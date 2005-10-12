@@ -1,8 +1,10 @@
 package org.codehaus.xfire.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -10,24 +12,30 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.exchange.RobustInOutExchange;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.fault.XFireFaultInfo;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.handler.ParseMessageHandler;
 import org.codehaus.xfire.handler.Phase;
+import org.codehaus.xfire.service.FaultInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.AbstractBinding;
+import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.util.ElementStreamReader;
+import org.codehaus.yom.Element;
+import org.codehaus.yom.Elements;
 
 public class Client
     extends AbstractHandlerSupport
@@ -42,7 +50,7 @@ public class Client
     private String url;
     private int timeout = 10*1000;
     private MessageContext context;
-    private XFireFault fault;
+    private Exception fault;
     private String endpointUri;
     private List inPhases;
     private List outPhases;
@@ -78,7 +86,7 @@ public class Client
         addInHandler(new ParseMessageHandler());
     }
 
-    public Object[] invoke(OperationInfo op, Object[] params) throws XFireException, XFireFault
+    public Object[] invoke(OperationInfo op, Object[] params) throws Exception
     {
         try
         {
@@ -133,7 +141,7 @@ public class Client
 
         if (fault != null)
         {
-            XFireFault localFault = fault;
+            Exception localFault = fault;
             fault = null;
             throw localFault;
         }
@@ -171,11 +179,65 @@ public class Client
         {
             XFireFault fault = XFireFault.createFault(e1);
             pipeline.handleFault(fault, context);
-            
             this.fault = fault;
+            
+            Element detail = fault.getDetail();
+            if (detail != null)
+            {
+                processFaultDetail(detail);
+            }
         }
     }
     
+    protected void processFaultDetail(Element detail)
+    {
+        Elements elements = detail.getChildElements();
+        if (elements.size() > 0)
+        {
+            Element exDetail = elements.get(0);
+            
+            MessagePartInfo faultPart = getFaultPart(context.getExchange().getOperation(),
+                                                     exDetail);
+
+            if (faultPart == null)
+                return;
+            
+            try
+            {
+                BindingProvider provider = context.getService().getBinding()
+                        .getBindingProvider();
+                ElementStreamReader reader = new ElementStreamReader(exDetail);
+                reader.nextTag();
+                
+                this.fault = (Exception) provider.readParameter(faultPart, reader, context);
+            }
+            catch (XFireFault e)
+            {
+                this.fault = e;
+            }
+            catch (XMLStreamException e)
+            {
+                this.fault = e;
+            }
+        }
+    }
+    
+    protected MessagePartInfo getFaultPart(OperationInfo operation, Element exDetail)
+    {
+        QName qname = new QName(exDetail.getNamespaceURI(), exDetail.getLocalName());
+        
+        for (Iterator itr = operation.getFaults().iterator(); itr.hasNext();)
+        {
+            FaultInfo faultInfo = (FaultInfo) itr.next();
+            
+            MessagePartInfo part = faultInfo.getMessagePart(qname);
+            
+            if (part != null) return part;
+        }
+        
+        return null;
+    }
+
     public void finishReadingMessage(InMessage message, MessageContext context)
         throws XFireFault
     {

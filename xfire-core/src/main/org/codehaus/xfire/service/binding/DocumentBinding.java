@@ -180,5 +180,5 @@ public class DocumentBinding
         binding.setBindingProvider(getBindingProvider());
         
         return binding;
-    }    
+    }
 }

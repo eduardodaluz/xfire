@@ -7,7 +7,10 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
+import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
@@ -150,8 +153,26 @@ public class ObjectServiceFactoryTest
         assertNotNull(inMsg.getMessageHeader(new QName(info.getName().getNamespaceURI(), "in1")));
     }
     
-    public class HeaderService
+    public static class HeaderService
     {
         public void doSomething(Element a, String header) {};
+    }
+    
+    public void testFaultInfo()
+        throws Exception
+    {
+        Service service = objectServiceFactory.create(EchoWithFault.class);
+        
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
+        
+        assertEquals(1, op.getFaults().size());
+        
+        FaultInfo info = op.getFault("EchoFault");
+        assertNotNull(info);
+        
+        assertEquals(1, info.getMessageParts().size());
+        MessagePartInfo mp = info.getMessagePart(new QName(service.getServiceInfo().getName().getNamespaceURI(),
+                                                           "EchoFault"));
+        assertEquals(EchoFault.class, mp.getTypeClass());
     }
 }

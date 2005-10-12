@@ -1,17 +1,18 @@
 package org.codehaus.xfire.wsdl11.builder;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.io.OutputStream;
-import java.io.IOException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Output;
@@ -22,6 +23,8 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
@@ -34,7 +37,6 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.yom.Attribute;
 import org.codehaus.yom.Element;
 
@@ -69,7 +71,6 @@ public class WSDLBuilder
 
         this.transportManager = transportManager;
         this.paramBinding = paramBinding;
-
     }
 
     public void write(OutputStream out) throws IOException
@@ -118,7 +119,16 @@ public class WSDLBuilder
                 def.addMessage(res);
             }
 
-            javax.wsdl.Operation wsdlOp = createOperation(op, req, res);
+            // Create the fault messages
+            List faultMessages = new ArrayList();
+            for (Iterator faultItr = op.getFaults().iterator(); faultItr.hasNext();)
+            {
+                FaultInfo fault = (FaultInfo) faultItr.next();
+                Fault faultMsg = createFault(op, fault);
+                faultMessages.add(faultMsg);
+            }
+            
+            javax.wsdl.Operation wsdlOp = createOperation(op, req, res, faultMessages);
             wsdlOp.setUndefined(false);
             portType.addOperation(wsdlOp);
 
@@ -226,6 +236,28 @@ public class WSDLBuilder
         return req;
     }
 
+    private Fault createFault(OperationInfo op, FaultInfo faultInfo)
+    {
+        Message faultMsg = getDefinition().createMessage();
+        faultMsg.setQName(new QName(getTargetNamespace(), faultInfo.getName()));
+        faultMsg.setUndefined(false);
+        getDefinition().addMessage(faultMsg);
+        
+        Fault fault = getDefinition().createFault();
+        fault.setName(faultInfo.getName());
+        fault.setMessage(faultMsg);
+
+        for (Iterator itr = faultInfo.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo info = (MessagePartInfo) itr.next();
+            
+            Part part = createPart(info);
+            faultMsg.addPart(part);
+        }
+        
+        return fault;
+    }
+
     private Message createHeaderMessages(MessageInfo msgInfo)
     {
         Message msg = getDefinition().createMessage();
@@ -299,7 +331,7 @@ public class WSDLBuilder
         return part;
     }
 
-    public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res)
+    public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res, List faultMessages)
     {
         Definition def = getDefinition();
         javax.wsdl.Operation wsdlOp = def.createOperation();
@@ -317,6 +349,11 @@ public class WSDLBuilder
             wsdlOp.setOutput(output);
         }
 
+        for (Iterator itr = faultMessages.iterator(); itr.hasNext();)
+        {
+            wsdlOp.addFault((Fault) itr.next());
+        }
+        
         wsdlOp.setName(op.getName());
 
         return wsdlOp;

@@ -180,14 +180,13 @@ public class WrappedBinding
 
         req.addPart(part);
     }
-    
+
     private QName createDocumentType(WSDLBuilder builder,
                                      MessageInfo message, 
                                      Part part,
                                      String opName)
     {
         Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-
         element.addAttribute(new Attribute("name", opName));
 
         Element complex = new Element(AbstractWSDL.complexQ, SoapConstants.XSD);
@@ -200,9 +199,13 @@ public class WrappedBinding
             writeParametersSchema(builder, message.getMessageParts(), sequence);
         }
 
+        /**
+         * Don't create the schema until after we add the types in
+         * (via WSDLBuilder.addDependency()) writeParametersSchema. 
+         */
         Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
         schemaEl.appendChild(element);
-        
+
         return new QName(builder.getInfo().getTargetNamespace(), opName);
     }
 

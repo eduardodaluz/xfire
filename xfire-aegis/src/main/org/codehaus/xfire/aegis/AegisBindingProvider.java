@@ -19,6 +19,7 @@ import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.yom.YOMReader;
 import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
@@ -39,6 +40,10 @@ public class AegisBindingProvider
 {
     public static final String TYPE_MAPPING_KEY = "type.mapping";
     public static final String ENCODING_URI_KEY = "type.encodingUri";
+    
+    private static final int IN_PARAM = 0;
+    private static final int OUT_PARAM = 1;
+    private static final int FAULT_PARAM = 2;
     
     private TypeMappingRegistry registry;
 
@@ -65,16 +70,31 @@ public class AegisBindingProvider
             OperationInfo opInfo = (OperationInfo) itr.next();
             try
             {
-                initializeMessage(endpoint, opInfo.getInputMessage());
+                initializeMessage(endpoint, opInfo.getInputMessage(), IN_PARAM);
             }
             catch(XFireRuntimeException e)
             {
                 e.prepend("Error initializing parameters for method " + opInfo.getMethod());
                 throw e;
             }
+            
             try
             {
-                initializeMessage(endpoint, opInfo.getOutputMessage());
+                initializeMessage(endpoint, opInfo.getOutputMessage(), OUT_PARAM);
+            }
+            catch(XFireRuntimeException e)
+            {
+                e.prepend("Error initializing return value for method " + opInfo.getMethod());
+                throw e;
+            }
+            
+            try
+            {
+                for (Iterator faultItr = opInfo.getFaults().iterator(); faultItr.hasNext();)
+                {
+                    FaultInfo info = (FaultInfo) faultItr.next();
+                    initializeMessage(endpoint, info, FAULT_PARAM);
+                }
             }
             catch(XFireRuntimeException e)
             {
@@ -84,20 +104,20 @@ public class AegisBindingProvider
         }
     }
 
-    protected void initializeMessage(Service service, MessagePartContainer container)
+    protected void initializeMessage(Service service, MessagePartContainer container, int type)
     {
         for (Iterator itr = container.getMessageHeaders().iterator(); itr.hasNext();)
         {
             MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
             
-            header.setSchemaType(getParameterType(getTypeMapping(service), header));
+            header.setSchemaType(getParameterType(getTypeMapping(service), header, type));
         }
         
         for (Iterator itr = container.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
             
-            part.setSchemaType(getParameterType(getTypeMapping(service), part));
+            part.setSchemaType(getParameterType(getTypeMapping(service), part, type));
         }
     }
 
@@ -143,43 +163,56 @@ public class AegisBindingProvider
         return null;
     }
 
-    private Type getParameterType(TypeMapping tm, MessagePartInfo param)
+    private Type getParameterType(TypeMapping tm, MessagePartInfo param, int paramtype)
     {
         Type type = tm.getType(param.getName());
-
-        if (type == null && tm.isRegistered(param.getTypeClass()))
-        {
-            type = tm.getType(param.getTypeClass());
-        }
         
         if (type == null)
         {
             type = (Type) part2type.get(param);
         }
-        
+
+        /*if (type == null && tm.isRegistered(param.getTypeClass()))
+        {
+            type = tm.getType(param.getTypeClass());
+            part2type.put(param, type);
+        }*/
+
         if (type == null)
         {
             OperationInfo op = param.getContainer().getOperation();
             
-            int index = -1;
+            if (paramtype != FAULT_PARAM)
+            {
+                int index;
+                if (paramtype == IN_PARAM)
+                {
+                    index = param.getIndex();
+                }
+                else
+                {
+                    index = -1 - param.getIndex();
+                }
+                
+                /* Note: we are not registering the type here, because it is an anonymous
+                 * type. Potentially there could be many schema types with this name. For example,
+                 * there could be many ns:in0 paramters.
+                 */
+                type = tm.getTypeCreator().createType(op.getMethod(), index);
+            }
+            else
+            {
+                type = tm.getTypeCreator().createType(param.getTypeClass());
+            }
             
-            if (op.getInputMessage().getMessageParts().contains(param))
-                index = param.getIndex();
-            
-            /* Note: we are not registering the type here, because it is an anonymous
-             * type. Potentially there could be many schema types with this name. For example,
-             * there could be many ns:in0 paramters.
-             */
-            type = tm.getTypeCreator().createType(op.getMethod(), index);
             type.setTypeMapping(tm);
-            
             part2type.put(param, type);
         }
 
         return type;
     }
 
-    private Type getParameterType(TypeMapping tm, MessageHeaderInfo param)
+    private Type getParameterType(TypeMapping tm, MessageHeaderInfo param, int paramtype)
     {
         Type type = tm.getType(param.getName());
 

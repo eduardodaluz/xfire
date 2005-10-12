@@ -112,7 +112,7 @@ public class ElementReader
         try
         {
             int event = root.getEventType();
-            while ( true )
+            while ( root.hasNext() )
             {
                 switch( event )
                 {
@@ -129,7 +129,8 @@ public class ElementReader
                     {
                         hasCheckedChildren = true;
                         hasChildren = false;
-                        root.next();
+                        
+                        if (root.hasNext()) root.next();
                         return false;
                     }
                     break;
@@ -148,8 +149,14 @@ public class ElementReader
                 default:
                     break;
                 }
-                event = root.next();
+                
+                if (root.hasNext())
+                    event = root.next();
             }
+            
+            hasCheckedChildren = true;
+            hasChildren = false;
+            return false;
         }
         catch (XMLStreamException e)
         {

@@ -131,7 +131,7 @@ public class ElementStreamReader
     public boolean hasNext()
         throws XMLStreamException
     {
-        return !(frames.size() == 0 && currentEvent == -1);
+        return !(frames.size() == 0 || currentEvent == -1);
     }
 
     public void close()
@@ -294,7 +294,6 @@ public class ElementStreamReader
 
     public boolean hasText()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 

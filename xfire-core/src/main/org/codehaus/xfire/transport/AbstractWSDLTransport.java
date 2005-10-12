@@ -1,18 +1,23 @@
 package org.codehaus.xfire.transport;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
 import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.xml.namespace.QName;
 
@@ -26,6 +31,7 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPFaultImpl;
 import com.ibm.wsdl.extensions.soap.SOAPHeaderImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
@@ -113,6 +119,7 @@ public abstract class AbstractWSDLTransport
         BindingInput bindIn = def.createBindingInput();
         bindIn.setName( wsdlOp.getInput().getName() );
         bindIn.addExtensibilityElement( body );
+        bindOp.setBindingInput( bindIn );
         
         if (wsdlOp.getOutput() != null)
         {
@@ -122,9 +129,26 @@ public abstract class AbstractWSDLTransport
             bindOp.setBindingOutput( bindOut );
         }
         
+        Map faults = wsdlOp.getFaults();
+        if (faults != null)
+        {
+            for (Iterator itr = faults.values().iterator(); itr.hasNext();)
+            {
+                Fault fault = (Fault) itr.next();
+                
+                BindingFault bindingFault = def.createBindingFault();
+                bindingFault.setName(fault.getName());
+                
+                SOAPFault soapFault = createSoapFault(builder.getService(), binding);
+                soapFault.setName(fault.getName());
+
+                bindingFault.addExtensibilityElement(soapFault);
+                bindOp.addBindingFault(bindingFault);
+            }
+        }
+        
         bindOp.setName( wsdlOp.getName() );
         bindOp.setOperation( wsdlOp );
-        bindOp.setBindingInput( bindIn );
         bindOp.addExtensibilityElement( soapOp );
         
         return bindOp;
@@ -149,6 +173,27 @@ public abstract class AbstractWSDLTransport
         }
         
         return body;
+    }
+    
+    public SOAPFault createSoapFault( Service endpoint, WSDL11ParameterBinding binding )
+    {
+        SOAPFault fault = new SOAPFaultImpl();
+        fault.setUse( binding.getUse() ); 
+
+        if ( binding.getStyle().equals( SoapConstants.STYLE_RPC ) )
+        {
+            fault.setNamespaceURI( endpoint.getServiceInfo().getName().getNamespaceURI() );
+        }
+        
+        if ( binding.getUse().equals( SoapConstants.USE_ENCODED ) )
+        {
+            List encodingStyles = new ArrayList();
+            encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
+            
+            fault.setEncodingStyles(encodingStyles);
+        }
+        
+        return fault;
     }
     
     public SOAPHeader createSoapHeader( Service endpoint, WSDL11ParameterBinding binding )

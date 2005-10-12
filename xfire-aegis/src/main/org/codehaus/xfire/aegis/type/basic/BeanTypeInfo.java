@@ -240,6 +240,10 @@ public class BeanTypeInfo
             else if (beanClass == Object.class)
             {
             }
+            else if (Exception.class.isAssignableFrom(beanClass))
+            {
+                beanInfo = Introspector.getBeanInfo(beanClass, Exception.class);
+            }
             else
             {
                 beanInfo = Introspector.getBeanInfo(beanClass, Object.class);

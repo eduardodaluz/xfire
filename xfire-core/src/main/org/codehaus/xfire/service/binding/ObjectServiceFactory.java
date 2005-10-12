@@ -17,7 +17,9 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
 import org.codehaus.xfire.fault.Soap12FaultSerializer;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.OutMessageSender;
+import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -32,8 +34,8 @@ import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
 
 /**
@@ -53,7 +55,8 @@ public class ObjectServiceFactory
     private SoapVersion soapVersion = Soap11.getInstance();
     private boolean voidOneWay;
     private WSDLBuilderFactory wsdlBuilderFactory = new DefaultWSDLBuilderFactory();
-
+    private boolean customFaultsEnabled = true;
+    
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      */
@@ -330,6 +333,7 @@ public class ObjectServiceFactory
 
         final boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
 
+        // Setup the input message
         MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
         op.setInputMessage(inMsg);
 
@@ -347,6 +351,7 @@ public class ObjectServiceFactory
             }
         }
 
+        // Setup the output message
         MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
         op.setOutputMessage(outMsg);
 
@@ -365,8 +370,36 @@ public class ObjectServiceFactory
             }
         }
 
+        if (isCustomFaultsEnabled())
+            initializeFaults(method, service, op);
+        
         op.setMEP(getMEP(method));
         op.setAsync(isAsync(method));
+    }
+
+    protected void initializeFaults(final Method method, 
+                                    final ServiceInfo service, 
+                                    final OperationInfo op)
+    {
+        // Set up the fault messages
+        final Class[] exceptionClasses = method.getExceptionTypes();
+        for (int i = 0; i < exceptionClasses.length; i++)
+        {
+            Class exClazz = exceptionClasses[i];
+            
+            // Ignore XFireFaults because they don't need to be declared
+            if (exClazz.equals(XFireFault.class) ||
+                    exClazz.equals(Exception.class) ||
+                    exClazz.equals(RuntimeException.class))
+            {
+                continue;
+            }
+            
+            String name = ServiceUtils.makeServiceNameFromClassName(exClazz);
+            
+            FaultInfo info = op.addFault(name);
+            info.addMessagePart(new QName(service.getName().getNamespaceURI(), name), exClazz);
+        }
     }
 
     protected String getAction(OperationInfo op)
@@ -521,5 +554,15 @@ public class ObjectServiceFactory
     public void setWsdlBuilderFactory(WSDLBuilderFactory wsdlBuilderFactory)
     {
         this.wsdlBuilderFactory = wsdlBuilderFactory;
+    }
+
+    public boolean isCustomFaultsEnabled()
+    {
+        return customFaultsEnabled;
+    }
+
+    public void setCustomFaultsEnabled(boolean customFaultsEnabled)
+    {
+        this.customFaultsEnabled = customFaultsEnabled;
     }
 }

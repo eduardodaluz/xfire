@@ -12,6 +12,10 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.service.FaultInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.yom.Element;
 import org.codehaus.yom.Elements;
 import org.codehaus.yom.stax.StaxBuilder;
@@ -115,12 +119,26 @@ public class Soap11FaultSerializer
             writer.writeCharacters(fault.getMessage());
             writer.writeEndElement();
 
-            if (fault.hasDetails())
+            Throwable cause = fault.getCause();
+            OperationInfo op = context.getExchange().getOperation();
+            MessagePartInfo faultPart = null;
+            if (op != null)
+            {
+                faultPart = getFaultForClass(op, cause.getClass());
+            }
+            
+            if (fault.hasDetails() || faultPart != null)
             {
                 Element detail = fault.getDetail();
 
                 writer.writeStartElement("detail");
 
+                ObjectBinding binding = context.getService().getBinding();
+                if (faultPart != null && binding != null)
+                {
+                    binding.getBindingProvider().writeParameter(faultPart, writer, context, cause);
+                }
+                
                 StaxSerializer serializer = new StaxSerializer();
                 Elements details = detail.getChildElements();
                 for (int i = 0; i < details.size(); i++)
@@ -144,5 +162,21 @@ public class Soap11FaultSerializer
         {
             throw new XFireRuntimeException("Couldn't create fault.", xe);
         }
+    }
+    
+
+    public MessagePartInfo getFaultForClass(OperationInfo op, Class class1)
+    {
+        for (Iterator itr = op.getFaults().iterator(); itr.hasNext();)
+        {
+            FaultInfo faultInfo = (FaultInfo) itr.next();
+            
+            MessagePartInfo info = (MessagePartInfo) faultInfo.getMessageParts().get(0);
+            
+            if (info.getTypeClass().equals(class1))
+                return info;
+        }
+        
+        return null;
     }
 }

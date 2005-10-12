@@ -289,6 +289,11 @@ public abstract class AbstractWSDL
         this.service = service;
     }
 
+    public String getTargetNamespace()
+    {
+        return service.getServiceInfo().getName().getNamespaceURI();
+    }
+
     public void addSchemas(List schemaLocations)
     {
         for (Iterator itr = schemaLocations.iterator(); itr.hasNext();)
