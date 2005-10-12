@@ -47,7 +47,6 @@ public class EchoFaultTest
         catch (EchoFault fault)
         {
             assertEquals("yo", fault.getCustomMessage());
-            assertNotNull(fault.getXFireFault());
         }
     }
     
