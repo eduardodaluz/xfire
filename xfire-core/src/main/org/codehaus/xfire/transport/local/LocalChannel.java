@@ -94,8 +94,6 @@ public class LocalChannel
             {
                 throw new XFireException("Couldn't create channel.", e);
             }
-            
-            final Object readNotify = new Object();
 
             Thread writeThread = new Thread(new Runnable()
             {
@@ -137,25 +135,18 @@ public class LocalChannel
                     {
                         throw new XFireRuntimeException("Couldn't read stream.", e);
                     }
-                    finally
-                    {
-                        synchronized (readNotify) { readNotify.notifyAll(); }
-                    }
                 };
             });
 
             writeThread.start();
             readThread.start();
             
-            synchronized (readNotify)
+            try
             {
-                try
-                {
-                    readNotify.wait();
-                }
-                catch (InterruptedException e)
-                {
-                }
+                writeThread.join();
+            }
+            catch (InterruptedException e)
+            {
             }
         }
         catch (IOException e)
