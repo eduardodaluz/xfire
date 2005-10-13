@@ -18,6 +18,7 @@ import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.Soap11FaultSerializer;
 import org.codehaus.xfire.fault.Soap12FaultSerializer;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.handler.CustomFaultHandler;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
@@ -262,6 +263,7 @@ public class ObjectServiceFactory
         service.addOutHandler(new OutMessageSender());
         service.addInHandler(service.getBinding());
         service.addFaultHandler(new FaultSender());
+        service.addFaultHandler(new CustomFaultHandler());
     }
 
     private void setProperties(Service service, Map properties)

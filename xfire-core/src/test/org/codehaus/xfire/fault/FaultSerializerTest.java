@@ -149,7 +149,6 @@ public class FaultSerializerTest
         assertNotNull(fault.getDetail().getFirstChildElement("bah2", "urn:test2"));
     }
 
-
     private XMLStreamReader readerForString(String string) throws XMLStreamException
     {
         XMLInputFactory factory = XMLInputFactory.newInstance();

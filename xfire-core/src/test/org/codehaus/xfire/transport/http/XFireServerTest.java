@@ -46,7 +46,6 @@ public class XFireServerTest
         super.tearDown();
     }
 
-
     public void testInvoke()
             throws Exception
     {
@@ -63,7 +62,7 @@ public class XFireServerTest
         assertEquals(1, response.length);
         
         Element e = (Element) response[0];
-        System.out.println(e.toXML());
+
         assertEquals(root.getLocalName(), e.getLocalName());
     }
 }
