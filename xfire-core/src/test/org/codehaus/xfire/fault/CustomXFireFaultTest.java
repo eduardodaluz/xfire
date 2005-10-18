@@ -1,6 +1,7 @@
 package org.codehaus.xfire.fault;
 
 import org.codehaus.xfire.service.Echo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -34,5 +35,6 @@ public class CustomXFireFaultTest
         addNamespace("s", Soap11.getInstance().getNamespace());
         assertValid("//s:Fault/faultcode[text()='MustUnderstand']", response);
         assertValid("//s:Fault/faultstring[text()='CustomFault']", response);
+        assertValid("//s:Fault/detail/test", response);
     }
 }
