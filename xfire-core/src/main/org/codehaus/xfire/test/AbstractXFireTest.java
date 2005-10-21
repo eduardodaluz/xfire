@@ -31,7 +31,9 @@ import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.transport.http.XFireHttpSession;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -86,7 +88,18 @@ public abstract class AbstractXFireTest
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         MessageContext context = new MessageContext();
-        context.setXFire(getXFire());
+		context.setSession( new Session() {
+			Map values = new HashMap();
+
+			public Object get( Object key ) {
+				return values.get( key );
+			}
+
+			public void put( Object key, Object value ) {
+				values.put( key, value );
+			}
+		} );
+		context.setXFire(getXFire());
         context.setProperty(Channel.BACKCHANNEL_URI, out);
 
         if (service != null)
