@@ -61,6 +61,7 @@ public abstract class AbstractXFireTest
      * Namespaces for the XPath expressions.
      */
     private Map namespaces = new HashMap();
+    private SimpleSession session;
 
     protected void printNode(Node node)
             throws Exception
@@ -88,17 +89,7 @@ public abstract class AbstractXFireTest
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         MessageContext context = new MessageContext();
-		context.setSession( new Session() {
-			Map values = new HashMap();
-
-			public Object get( Object key ) {
-				return values.get( key );
-			}
-
-			public void put( Object key, Object value ) {
-				values.put( key, value );
-			}
-		} );
+		context.setSession( session );
 		context.setXFire(getXFire());
         context.setProperty(Channel.BACKCHANNEL_URI, out);
 
@@ -160,14 +151,20 @@ public abstract class AbstractXFireTest
     {
         super.setUp();
 
-        if (xfire == null)
+        if( xfire == null )
             xfire = new DefaultXFire();
 
-        addNamespace("s", Soap11.getInstance().getNamespace());
-        addNamespace("soap12", Soap12.getInstance().getNamespace());
+        addNamespace( "s", Soap11.getInstance().getNamespace() );
+        addNamespace( "soap12", Soap12.getInstance().getNamespace() );
 
         TransportManager trans = getXFire().getTransportManager();
-        trans.register(SoapTransport.createSoapTransport(new SoapHttpTransport()));
+        trans.register( SoapTransport.createSoapTransport( new SoapHttpTransport() ) );
+        createSession();
+    }
+
+    protected void createSession()
+    {
+        session = new SimpleSession();
     }
 
     /**
@@ -297,5 +294,18 @@ public abstract class AbstractXFireTest
         }
 
         return basedirPath;
+    }
+
+    private static class SimpleSession implements Session
+    {
+        Map values = new HashMap();
+
+        public Object get( Object key ) {
+            return values.get( key );
+        }
+
+        public void put( Object key, Object value ) {
+            values.put( key, value );
+        }
     }
 }
