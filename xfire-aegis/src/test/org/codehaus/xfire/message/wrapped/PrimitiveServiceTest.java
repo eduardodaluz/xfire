@@ -15,7 +15,6 @@ public class PrimitiveServiceTest
             throws Exception
     {
         super.setUp();
-        ((ObjectServiceFactory) getServiceFactory()).setStyle("document");
         getServiceRegistry().register(getServiceFactory().create(AddNumbers.class));
     }
 
