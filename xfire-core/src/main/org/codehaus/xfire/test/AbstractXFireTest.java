@@ -233,6 +233,11 @@ public abstract class AbstractXFireTest
         return hello.getWSDLWriter();
     }
 
+    protected Session getSession()
+    {
+        return session;
+    }
+
     protected XFire getXFire()
     {
         return xfire;
