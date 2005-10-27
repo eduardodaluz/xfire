@@ -10,8 +10,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.aegis.jdom.YOMReader;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMReader;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -289,7 +289,7 @@ public class AegisBindingProvider
         
         if (header == null) return null;
         
-        return type.readObject(new YOMReader(header), context);
+        return type.readObject(new JDOMReader(header), context);
     }
 
     public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
@@ -297,7 +297,7 @@ public class AegisBindingProvider
     {
         Type type = (Type) p.getSchemaType();
 
-        MessageWriter mw = new YOMWriter(context.getOutMessage().getHeader());
+        MessageWriter mw = new JDOMWriter(context.getOutMessage().getHeader());
 
         type.writeObject(value, mw, context);
     

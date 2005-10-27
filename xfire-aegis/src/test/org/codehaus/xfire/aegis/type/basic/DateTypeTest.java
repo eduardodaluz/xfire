@@ -9,7 +9,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
@@ -76,7 +76,7 @@ public class DateTypeTest
         
         Element element = new Element("dates", ns);
         new Document(element);
-        YOMWriter writer = new YOMWriter(element);
+        JDOMWriter writer = new JDOMWriter(element);
         dtoType.writeObject(dto, writer, new MessageContext());
         writer.close();
         

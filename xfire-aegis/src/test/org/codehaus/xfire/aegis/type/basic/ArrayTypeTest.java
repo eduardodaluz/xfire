@@ -3,7 +3,7 @@ package org.codehaus.xfire.aegis.type.basic;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
@@ -49,7 +49,7 @@ public class ArrayTypeTest
         // Test writing
         Element element = new Element("ints", "t", "urn:test");
         Document doc = new Document(element);
-        YOMWriter writer = new YOMWriter(element);
+        JDOMWriter writer = new JDOMWriter(element);
         type.writeObject(ints, writer, new MessageContext());
         writer.close();
 

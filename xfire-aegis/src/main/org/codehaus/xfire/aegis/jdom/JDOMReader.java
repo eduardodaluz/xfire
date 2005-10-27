@@ -11,7 +11,7 @@ import org.codehaus.xfire.aegis.stax.AttributeReader;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
-public class YOMReader
+public class JDOMReader
     extends AbstractMessageReader
     implements MessageReader
 {
@@ -21,7 +21,7 @@ public class YOMReader
     private List elements;
     private QName qname;
     
-    public YOMReader(Element element)
+    public JDOMReader(Element element)
     {
         this.element = element;
         this.elements = element.getChildren();
@@ -45,7 +45,7 @@ public class YOMReader
     public MessageReader getNextElementReader()
     {
         currentChild++;
-        return new YOMReader((Element) elements.get(currentChild-1));
+        return new JDOMReader((Element) elements.get(currentChild-1));
     }
 
     public QName getName()
@@ -71,7 +71,7 @@ public class YOMReader
 
     public XMLStreamReader getXMLStreamReader()
     {
-        throw new UnsupportedOperationException("Stream reading not supported from a YOMWriter.");
+        throw new UnsupportedOperationException("Stream reading not supported from a JDOMWriter.");
     }
 
     public boolean hasMoreAttributeReaders()

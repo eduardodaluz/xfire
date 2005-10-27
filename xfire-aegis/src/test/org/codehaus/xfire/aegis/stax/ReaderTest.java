@@ -6,7 +6,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.aegis.MessageReader;
-import org.codehaus.xfire.aegis.jdom.YOMReader;
+import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
@@ -48,7 +48,7 @@ public class ReaderTest
         StaxBuilder builder = new StaxBuilder();
         Document doc = builder.build(getResourceAsReader("/org/codehaus/xfire/message/document/bean11.xml"));
 
-        testReading(new YOMReader(doc.getRootElement()));
+        testReading(new JDOMReader(doc.getRootElement()));
     }
     
     public void testReading(MessageReader reader)

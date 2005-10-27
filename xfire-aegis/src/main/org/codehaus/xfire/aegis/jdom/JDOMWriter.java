@@ -10,12 +10,12 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-public class YOMWriter
+public class JDOMWriter
     extends AbstractMessageWriter
 {
     private Element element;
     
-    public YOMWriter(Element element)
+    public JDOMWriter(Element element)
     {
         this.element = element;
     }
@@ -42,7 +42,7 @@ public class YOMWriter
         Element child = new Element(name, Namespace.getNamespace(prefix, namespace));
         element.addContent(child);
         
-        return new YOMWriter(child);
+        return new JDOMWriter(child);
     }
 
     public MessageWriter getElementWriter(QName qname)
@@ -52,12 +52,12 @@ public class YOMWriter
                                                            qname.getNamespaceURI()));
         element.addContent(child);
         
-        return new YOMWriter(child);
+        return new JDOMWriter(child);
     }
 
     public XMLStreamWriter getXMLStreamWriter()
     {
-        throw new UnsupportedOperationException("Stream writing not supported from a YOMWriter.");
+        throw new UnsupportedOperationException("Stream writing not supported from a JDOMWriter.");
     }
 
     public MessageWriter getAttributeWriter(String name)

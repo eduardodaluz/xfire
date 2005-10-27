@@ -3,7 +3,7 @@ package org.codehaus.xfire.aegis.type.basic;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
@@ -60,7 +60,7 @@ public class BeanTest
         // Test writing
         Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
-        type.writeObject(bean, new YOMWriter(element), new MessageContext());
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
 
         assertValid("/b:root/b:bleh[text()='bleh']", element);
         assertValid("/b:root/b:howdy[text()='howdy']", element);
@@ -91,7 +91,7 @@ public class BeanTest
         // Test writing
         Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
-        type.writeObject(bean, new YOMWriter(element), new MessageContext());
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
 
         assertInvalid("/b:root/b:bleh", element);
         assertValid("/b:root/b:howdycustom[text()='howdy']", element);
@@ -121,7 +121,7 @@ public class BeanTest
         // Test writing
         Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
-        type.writeObject(bean, new YOMWriter(element), new MessageContext());
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
 
         assertValid("/b:root[@b:bleh='bleh']", element);
         assertValid("/b:root[@b:howdy='howdy']", element);
@@ -156,7 +156,7 @@ public class BeanTest
         // Test writing
         Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
-        type.writeObject(bean, new YOMWriter(element), new MessageContext());
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
     
         assertInvalid("/b:root[@b:howdy]", element);
         assertValid("/b:root/b:bleh[@xsi:nil='true']", element);
@@ -196,7 +196,7 @@ public class BeanTest
         // Test writing
         Element element = new Element("b:root", "urn:Bean");
         Document doc = new Document(element);
-        type.writeObject(bean, new YOMWriter(element), new MessageContext());
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
     
         assertValid("/b:root/a:bleh[text()='bleh']", element);
         assertValid("/b:root/a:howdy[text()='howdy']", element);

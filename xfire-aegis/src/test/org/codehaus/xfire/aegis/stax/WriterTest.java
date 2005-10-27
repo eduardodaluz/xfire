@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.StringReader;
 
 import org.codehaus.xfire.aegis.MessageWriter;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.jdom.Document;
@@ -60,7 +60,7 @@ public class WriterTest
     {
         Document doc = new Document(new Element("root", "urn:test"));
         
-        write(new YOMWriter(doc.getRootElement()));
+        write(new JDOMWriter(doc.getRootElement()));
         
         testWrite(doc);
     }

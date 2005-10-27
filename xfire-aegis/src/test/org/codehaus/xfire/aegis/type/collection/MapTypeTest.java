@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
@@ -72,7 +72,7 @@ public class MapTypeTest
         // Test writing
         Element element = new Element("map", "urn:test");
         Document doc = new Document(element);
-        YOMWriter writer = new YOMWriter(element);
+        JDOMWriter writer = new JDOMWriter(element);
         type.writeObject(m, writer, new MessageContext());
         writer.close();
 
