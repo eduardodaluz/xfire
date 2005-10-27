@@ -30,7 +30,7 @@ public class XFireTest
         getServiceRegistry().register(service);
     }
 
-    public void testInvoke()
+    public void testSoap11()
             throws Exception
     {
         Document response = invokeService("EchoImpl", "/org/codehaus/xfire/echo11.xml");
@@ -39,6 +39,15 @@ public class XFireTest
         assertValid("//m:echo", response);
     }
 
+    public void testSoap12()
+        throws Exception
+    {
+        Document response = invokeService("EchoImpl", "/org/codehaus/xfire/echo12.xml");
+        
+        addNamespace("m", "urn:Echo");
+        assertValid("//soap12:Body/m:echo", response);
+    }
+    
     public void testWSDL()
             throws Exception
     {
