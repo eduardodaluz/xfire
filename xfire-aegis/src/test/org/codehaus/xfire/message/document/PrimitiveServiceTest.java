@@ -1,7 +1,9 @@
-package org.codehaus.xfire.message.wrapped;
+package org.codehaus.xfire.message.document;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.AddNumbers;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.jdom.Document;
 
 /**
@@ -15,6 +17,9 @@ public class PrimitiveServiceTest
             throws Exception
     {
         super.setUp();
+        
+        ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_DOCUMENT);
+        
         getServiceRegistry().register(getServiceFactory().create(AddNumbers.class));
     }
 
@@ -23,9 +28,9 @@ public class PrimitiveServiceTest
     {
         Document response =
                 invokeService("AddNumbers",
-                              "/org/codehaus/xfire/message/wrapped/add.xml");
+                              "/org/codehaus/xfire/message/document/add.xml");
 
         addNamespace("a", "http://services.xfire.codehaus.org");
-        assertValid("//a:addResponse/a:out[text()='2']", response);
+        assertValid("//a:addout[text()='2']", response);
     }
 }

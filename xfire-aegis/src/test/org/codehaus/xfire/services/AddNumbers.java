@@ -1,4 +1,4 @@
-package org.codehaus.xfire.message.wrapped;
+package org.codehaus.xfire.services;
 
 public class AddNumbers
 {

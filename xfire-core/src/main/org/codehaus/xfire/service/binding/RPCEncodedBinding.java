@@ -60,6 +60,9 @@ public class RPCEncodedBinding
             }
         }
         
+        if (operation == null)
+            throw new XFireFault("Could not find appropriate operation!", XFireFault.SENDER);
+        
         // Move from operation element to whitespace or start element
         nextEvent(dr);
         

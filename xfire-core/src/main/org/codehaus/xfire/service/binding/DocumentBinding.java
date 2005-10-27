@@ -57,7 +57,12 @@ public class DocumentBinding
 
         if (!isClientModeOn())
         {
-            setOperation(findOperation(endpoint, parameters), context);
+            OperationInfo info = findOperation(endpoint, parameters);
+
+            if (info == null)
+                throw new XFireFault("Could not find appropriate operation!", XFireFault.SENDER);
+            
+            setOperation(info, context);
         }
         
         context.getInMessage().setBody(parameters);
@@ -112,10 +117,34 @@ public class DocumentBinding
         {
             Object param = parameterIterator.next();
             MessagePartInfo mpi = (MessagePartInfo) messagePartIterator.next();
-            if (!mpi.getTypeClass().isAssignableFrom(param.getClass()))
-                return false;
+            
+            if (!param.getClass().isAssignableFrom(mpi.getTypeClass()))
+            {
+                if (!param.getClass().isPrimitive() && mpi.getTypeClass().isPrimitive())
+                {
+                    return checkPrimitiveMatch(mpi.getTypeClass(), param.getClass());
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
         return true;
+    }
+
+    private boolean checkPrimitiveMatch(Class clazz, Class typeClass)
+    {
+        if ((typeClass == Integer.class && clazz == int.class) ||
+                (typeClass == Double.class && clazz == double.class) ||
+                (typeClass == Long.class && clazz == long.class) ||
+                (typeClass == Float.class && clazz == float.class) ||
+                (typeClass == Short.class && clazz == short.class) ||
+                (typeClass == Boolean.class && clazz == boolean.class) ||
+                (typeClass == Byte.class && clazz == byte.class))
+            return true;
+        
+        return false;
     }
 
     protected MessagePartInfo findMessagePart(Service endpoint, QName name)
