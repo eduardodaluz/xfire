@@ -2,7 +2,7 @@ package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.XMLServiceBuilder;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 public class XmlBeansConfigTest
     extends AbstractXFireTest

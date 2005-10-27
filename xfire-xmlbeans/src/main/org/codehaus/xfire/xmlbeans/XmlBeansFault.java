@@ -6,7 +6,8 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -63,7 +64,7 @@ public class XmlBeansFault
                 StaxBuilder builder = new StaxBuilder();
                 try
                 {
-                    setDetail( builder.buildElement(null, cursor.newXMLStreamReader()) );
+                    setDetail( builder.build(new FragmentStreamReader(cursor.newXMLStreamReader())).getRootElement() );
                 }
                 catch (XMLStreamException e)
                 {

@@ -1,11 +1,12 @@
-package org.codehaus.xfire.util;
+package org.codehaus.xfire.util.stax;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -17,13 +18,13 @@ public class ElementStreamReaderTest
     public void testSingleElement() throws Exception
     {
         Element e = new Element("root", "urn:test");
-        /*System.out.println("start: " + XMLStreamReader.START_ELEMENT);
+        System.out.println("start: " + XMLStreamReader.START_ELEMENT);
         System.out.println("attr: " + XMLStreamReader.ATTRIBUTE);
         System.out.println("ns: " + XMLStreamReader.NAMESPACE);
         System.out.println("chars: " + XMLStreamReader.CHARACTERS);
-        System.out.println("end: " + XMLStreamReader.END_ELEMENT);*/
+        System.out.println("end: " + XMLStreamReader.END_ELEMENT);
         
-        ElementStreamReader reader = new ElementStreamReader(e);
+        JDOMStreamReader reader = new JDOMStreamReader(e);
         assertTrue(reader.hasNext());
         assertEquals(XMLStreamReader.START_ELEMENT, reader.next());
         assertTrue(reader.hasNext());
@@ -40,9 +41,9 @@ public class ElementStreamReaderTest
     public void testTextChild() throws Exception
     {
         Element e = new Element("root", "urn:test");
-        e.appendChild("Hello World");
+        e.addContent("Hello World");
         
-        ElementStreamReader reader = new ElementStreamReader(e);
+        JDOMStreamReader reader = new JDOMStreamReader(e);
         assertTrue(reader.hasNext());
         assertEquals(XMLStreamReader.START_ELEMENT, reader.next());
         assertTrue(reader.hasNext());
@@ -64,10 +65,10 @@ public class ElementStreamReaderTest
     public void testAttributes() throws Exception
     {
         Element e = new Element("root", "urn:test");
-        e.addAttribute(new Attribute("att1", "value1"));
-        e.addAttribute(new Attribute("p:att2", "urn:test2", "value2"));
+        e.setAttribute(new Attribute("att1", "value1"));
+        e.setAttribute(new Attribute("att2",  "value2", Namespace.getNamespace("p", "urn:test2")));
         
-        ElementStreamReader reader = new ElementStreamReader(e);
+        JDOMStreamReader reader = new JDOMStreamReader(e);
         assertTrue(reader.hasNext());
         assertEquals(XMLStreamReader.START_ELEMENT, reader.next());
         
@@ -121,10 +122,10 @@ public class ElementStreamReaderTest
     public void testElementChild() throws Exception
     {
         Element e = new Element("root", "urn:test");
-        Element child = new Element("a:child", "urn:test2");
-        e.appendChild(child);
+        Element child = new Element("child", "a", "urn:test2");
+        e.addContent(child);
         
-        ElementStreamReader reader = new ElementStreamReader(e);
+        JDOMStreamReader reader = new JDOMStreamReader(e);
         assertTrue(reader.hasNext());
         assertEquals(XMLStreamReader.START_ELEMENT, reader.next());
         

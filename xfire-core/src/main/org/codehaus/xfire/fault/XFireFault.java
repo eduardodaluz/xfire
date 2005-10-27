@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.xfire.XFireException;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 /**
  * In XFire, applications throw their own declared exceptions which are then turned into faults.  The

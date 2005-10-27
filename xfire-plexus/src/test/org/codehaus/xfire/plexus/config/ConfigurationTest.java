@@ -2,7 +2,7 @@ package org.codehaus.xfire.plexus.config;
 
 import org.codehaus.xfire.plexus.PlexusXFireTest;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

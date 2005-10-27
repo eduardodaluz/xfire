@@ -13,15 +13,14 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.xpath.YOMXPath;
-import org.jaxen.JaxenException;
-import org.jaxen.XPath;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.xpath.XPath;
 
 public class XmlBeansWSDLBuilder
     extends WSDLBuilder
@@ -69,8 +68,8 @@ public class XmlBeansWSDLBuilder
         {
             XmlObject obj = XmlObject.Factory.parse(classLoader.getResourceAsStream("schemaorg_apache_xmlbeans/src/" + name));
             
-            schema = builder.buildElement(null, obj.newXMLStreamReader());
-            Document schemaDoc = new Document(schema);
+            schema = builder.build(new FragmentStreamReader(obj.newXMLStreamReader())).getRootElement();
+            
             schemas.put(name, schema);
             
             String ns = xbeanType.getSchemaType().getNamespaceURI();
@@ -109,13 +108,13 @@ public class XmlBeansWSDLBuilder
     {
         try
         {
-            XPath path = new YOMXPath(xpath);
+            XPath path = XPath.newInstance(xpath);
             path.addNamespace("xsd", SoapConstants.XSD);
             path.addNamespace("s", SoapConstants.XSD);
             List result = path.selectNodes(doc);
             return result;
         }
-        catch(JaxenException e)
+        catch(JDOMException e)
         {
             throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }

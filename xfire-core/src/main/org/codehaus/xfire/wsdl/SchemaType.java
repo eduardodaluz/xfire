@@ -4,7 +4,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 
 /**

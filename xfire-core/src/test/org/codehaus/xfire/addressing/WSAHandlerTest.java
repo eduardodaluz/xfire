@@ -8,7 +8,7 @@ import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 public class WSAHandlerTest
     extends AbstractXFireTest

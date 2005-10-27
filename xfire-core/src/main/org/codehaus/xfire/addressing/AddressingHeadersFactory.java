@@ -1,6 +1,6 @@
 package org.codehaus.xfire.addressing;
 
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public interface AddressingHeadersFactory
 {

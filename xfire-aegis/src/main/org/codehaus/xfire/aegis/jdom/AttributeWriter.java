@@ -1,10 +1,10 @@
-package org.codehaus.xfire.aegis.yom;
+package org.codehaus.xfire.aegis.jdom;
 
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractMessageWriter;
 import org.codehaus.xfire.aegis.MessageWriter;
-import org.codehaus.yom.Attribute;
+import org.jdom.Attribute;
 
 public class AttributeWriter
     extends AbstractMessageWriter

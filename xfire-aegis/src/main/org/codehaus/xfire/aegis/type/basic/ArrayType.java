@@ -18,8 +18,8 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 /**
  * An ArrayType.
@@ -242,18 +242,21 @@ public class ArrayType
     {
         try
         {
-            Element complex = new Element(SoapConstants.XSD_PREFIX + ":complexType",
+            Element complex = new Element("complexType",
+                                          SoapConstants.XSD_PREFIX,
                                           SoapConstants.XSD);
-            complex.addAttribute(new Attribute("name", getSchemaType().getLocalPart()));
-            root.appendChild(complex);
+            complex.setAttribute(new Attribute("name", getSchemaType().getLocalPart()));
+            root.addContent(complex);
 
-            Element seq = new Element(SoapConstants.XSD_PREFIX + ":sequence",
+            Element seq = new Element("sequence",
+                                      SoapConstants.XSD_PREFIX,
                                       SoapConstants.XSD);
-            complex.appendChild(seq);
+            complex.addContent(seq);
             
-            Element element = new Element(SoapConstants.XSD_PREFIX + ":element",
-                                      SoapConstants.XSD);
-            seq.appendChild(element);
+            Element element = new Element("element",
+                                          SoapConstants.XSD_PREFIX,
+                                          SoapConstants.XSD);
+            seq.addContent(element);
 
             Type componentType = getComponentType();
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
@@ -262,16 +265,16 @@ public class ArrayType
             String typeName = prefix + ":"
                     + componentType.getSchemaType().getLocalPart();
 
-            element.addAttribute(new Attribute("name", componentType.getSchemaType().getLocalPart()));
-            element.addAttribute(new Attribute("type", typeName));
+            element.setAttribute(new Attribute("name", componentType.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("type", typeName));
             
             if (componentType.isNillable())
             {
-                element.addAttribute(new Attribute("nillable", "true"));
+                element.setAttribute(new Attribute("nillable", "true"));
             }
 
-            element.addAttribute(new Attribute("minOccurs", "0"));
-            element.addAttribute(new Attribute("maxOccurs", "unbounded"));
+            element.setAttribute(new Attribute("minOccurs", "0"));
+            element.setAttribute(new Attribute("maxOccurs", "unbounded"));
             
         }
         catch (IllegalArgumentException e)

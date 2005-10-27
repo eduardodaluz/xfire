@@ -3,14 +3,15 @@ package org.codehaus.xfire.addressing;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public abstract class AbstactAddressingHeadersFactory
     implements WSAConstants, AddressingHeadersFactory
 {
-    protected String getChildValue(Element element, String localName, String ns)
+    protected String getChildValue(Element element, String localName, Namespace ns)
     {
-        Element child = element.getFirstChildElement(localName, ns);
+        Element child = element.getChild(localName, ns);
         if (child == null) return null;
         
         return child.getValue();
@@ -37,7 +38,7 @@ public abstract class AbstactAddressingHeadersFactory
         {
             String prefix = value.substring(0, colon);
             String local = value.substring(colon+1);
-            String uri = el.getNamespaceURI(prefix);
+            String uri = el.getNamespace(prefix).getURI();
             return new QName(uri, local, prefix);
         }
         else

@@ -1,4 +1,4 @@
-package org.codehaus.xfire.util;
+package org.codehaus.xfire.util.stax;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +11,12 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Comment;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.codehaus.xfire.util.NamespaceHelper;
+import org.jdom.Attribute;
+import org.jdom.Comment;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class ElementStreamWriter
     implements XMLStreamWriter
@@ -45,10 +47,10 @@ public class ElementStreamWriter
         if (currentNode != null)
         {
             stack.push(currentNode);
-            currentNode.appendChild(element);
+            currentNode.addContent(element);
         }
         
-        YOMNamespaceContext context = new YOMNamespaceContext();
+        JDOMNamespaceContext context = new JDOMNamespaceContext();
         context.currentNode = element;
         this.context = context;
         
@@ -67,7 +69,7 @@ public class ElementStreamWriter
         if (prefix == null || prefix.equals(""))
             writeStartElement(namespace, local);
 
-        newChild(new Element(prefix + ":" + local, namespace));
+        newChild(new Element(local, prefix, namespace));
     }
 
     public void writeEmptyElement(String namespace, String local)
@@ -112,39 +114,40 @@ public class ElementStreamWriter
     public void writeAttribute(String local, String value)
         throws XMLStreamException
     {
-        currentNode.addAttribute(new Attribute(local, value));
+        currentNode.setAttribute(new Attribute(local, value));
     }
 
     public void writeAttribute(String prefix, String namespace, String local, String value)
         throws XMLStreamException
     {
-        currentNode.addAttribute(new Attribute(prefix + ":" + local, namespace, value));
+        currentNode.setAttribute(new Attribute(local, value, Namespace.getNamespace(prefix, namespace)));
     }
 
     public void writeAttribute(String namespace, String local, String value)
         throws XMLStreamException
     {
-        currentNode.addAttribute(new Attribute(local, namespace, value));
+        currentNode.setAttribute(new Attribute(local, value, Namespace.getNamespace(namespace)));
     }
 
     public void writeNamespace(String prefix, String namespace)
         throws XMLStreamException
     {
-        String decNS = currentNode.getNamespaceURI(prefix);
-        if (decNS != null && !decNS.equals(namespace))
-            currentNode.addNamespaceDeclaration(prefix, namespace);
+        Namespace decNS = currentNode.getNamespace(prefix);
+        
+        if (decNS != null && !decNS.getURI().equals(namespace))
+            currentNode.addNamespaceDeclaration(Namespace.getNamespace(prefix, namespace));
     }
 
     public void writeDefaultNamespace(String namespace)
         throws XMLStreamException
     {
-        currentNode.addNamespaceDeclaration("", namespace);
+        currentNode.addNamespaceDeclaration(Namespace.getNamespace("", namespace));
     }
 
     public void writeComment(String value)
         throws XMLStreamException
     {
-        currentNode.appendChild(new Comment(value));
+        currentNode.addContent(new Comment(value));
     }
 
     public void writeProcessingInstruction(String arg0)
@@ -206,20 +209,20 @@ public class ElementStreamWriter
     public void writeCharacters(String text)
         throws XMLStreamException
     {
-        currentNode.appendChild(text);
+        currentNode.addContent(text);
     }
 
     public void writeCharacters(char[] text, int start, int len)
         throws XMLStreamException
     {
         // TODO Auto-generated method stub
-        currentNode.appendChild(new String(text, start, len));
+        currentNode.addContent(new String(text, start, len));
     }
 
     public String getPrefix(String uri)
         throws XMLStreamException
     {
-        return currentNode.getNamespacePrefix(uri);
+        return NamespaceHelper.getPrefix(currentNode, uri);
     }
 
     public void setPrefix(String arg0, String arg1)
@@ -249,18 +252,19 @@ public class ElementStreamWriter
         return properties.get(prop);
     }
     
-    protected static class YOMNamespaceContext implements NamespaceContext
+    protected static class JDOMNamespaceContext implements NamespaceContext
     {
         public Element currentNode;
         
         public String getNamespaceURI(String prefix)
         {
-            return currentNode.getNamespaceURI(prefix);
+            Namespace ns = currentNode.getNamespace(prefix);
+            return ns != null ? ns.getURI() : null;
         }
 
         public String getPrefix(String uri)
         {
-            return currentNode.getNamespacePrefix(uri);
+            return NamespaceHelper.getPrefix(currentNode, uri);
         }
 
         public Iterator getPrefixes(String uri)

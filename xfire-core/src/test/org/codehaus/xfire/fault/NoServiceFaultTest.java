@@ -1,7 +1,7 @@
 package org.codehaus.xfire.fault;
 
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 public class NoServiceFaultTest
     extends AbstractXFireTest

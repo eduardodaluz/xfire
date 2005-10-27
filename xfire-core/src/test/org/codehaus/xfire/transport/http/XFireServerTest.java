@@ -10,7 +10,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public class XFireServerTest
     extends AbstractXFireTest
@@ -28,8 +28,8 @@ public class XFireServerTest
         getServiceRegistry().register(service);
 
         server = new XFireHttpServer();
-        server.setPort(8191);
-        server.start();        
+        server.setPort(8391);
+        server.start();
     }
 
     protected XFire getXFire()
@@ -49,12 +49,12 @@ public class XFireServerTest
     public void testInvoke()
             throws Exception
     {
-        Element root = new Element("a:root", "urn:a");
-        root.appendChild("hello");
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
         
         Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
 
-        Client client = new Client(transport, service, "http://localhost:8191/EchoImpl");
+        Client client = new Client(transport, service, "http://localhost:8391/EchoImpl");
 
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});
@@ -63,6 +63,6 @@ public class XFireServerTest
         
         Element e = (Element) response[0];
 
-        assertEquals(root.getLocalName(), e.getLocalName());
+        assertEquals(root.getName(), e.getName());
     }
 }

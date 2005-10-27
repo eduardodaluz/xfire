@@ -2,6 +2,7 @@ package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -10,8 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.util.ClassLoaderUtils;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
+import org.jdom.Element;
 
 public class XMLBeanTypeInfo
     extends BeanTypeInfo
@@ -94,10 +94,10 @@ public class XMLBeanTypeInfo
 
     private Element getPropertyElement(Element mapping2, String name2)
     {
-        Elements elements = mapping2.getChildElements("property");
+        List elements = mapping2.getChildren("property");
         for (int i = 0; i < elements.size(); i++)
         {
-            Element e = elements.get(i);
+            Element e = (Element) elements.get(i);
             String name = e.getAttributeValue("name");
             
             if (name != null && name.equals(name2))
@@ -132,7 +132,7 @@ public class XMLBeanTypeInfo
         
         String prefix = value.substring(0, index);
         String localName = value.substring(index+1);
-        String ns = e.getNamespaceURI(prefix);
+        String ns = e.getNamespace(prefix).getURI();
         
         if (ns == null || localName == null)
             throw new XFireRuntimeException("Invalid QName in mapping: " + value);

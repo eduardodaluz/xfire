@@ -23,8 +23,8 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class RPCEncodedBinding
     extends WrappedBinding
@@ -123,15 +123,15 @@ public class RPCEncodedBinding
                 part.setElementName(pName);
 
                 Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
-                Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-                schemaEl.appendChild(element);
+                Element element = new Element("element", AbstractWSDL.XSD_NS);
+                schemaEl.addContent(element);
 
-                element.addAttribute(new Attribute("name", pName.getLocalPart()));
+                element.setAttribute(new Attribute("name", pName.getLocalPart()));
 
                 String prefix = builder.getNamespacePrefix(schemaType.getNamespaceURI());
                 builder.addNamespace(prefix, schemaType.getNamespaceURI());
 
-                element.addAttribute(new Attribute("type", 
+                element.setAttribute(new Attribute("type", 
                                                    prefix + ":" + schemaType.getLocalPart()));
             }
             else

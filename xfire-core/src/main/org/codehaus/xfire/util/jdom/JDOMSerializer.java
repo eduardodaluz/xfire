@@ -1,4 +1,4 @@
-package org.codehaus.xfire.util;
+package org.codehaus.xfire.util.jdom;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -8,16 +8,14 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.stax.StaxSerializer;
+import org.jdom.Document;
 
 /**
- * Reads/writes YOM documents to the body of a message.
+ * Reads/writes JDOM documents to the body of a message.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class YOMSerializer 
+public class JDOMSerializer 
     implements MessageSerializer
 {
     public void readMessage(InMessage message, MessageContext context)

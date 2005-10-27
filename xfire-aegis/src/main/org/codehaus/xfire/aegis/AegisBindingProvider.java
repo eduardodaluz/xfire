@@ -10,14 +10,14 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.jdom.YOMReader;
+import org.codehaus.xfire.aegis.jdom.YOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.aegis.yom.YOMReader;
-import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageHeaderInfo;
@@ -28,7 +28,8 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * A BindingProvider for the Aegis type system.
@@ -283,7 +284,8 @@ public class AegisBindingProvider
 
         QName name = p.getName();
         Element headers = context.getExchange().getInMessage().getHeader();
-        Element header = headers.getFirstChildElement(name.getLocalPart(), name.getNamespaceURI());
+        Element header = headers.getChild(name.getLocalPart(), 
+                                          Namespace.getNamespace(name.getNamespaceURI()));
         
         if (header == null) return null;
         

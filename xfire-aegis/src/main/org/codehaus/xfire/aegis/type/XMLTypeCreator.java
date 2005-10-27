@@ -17,12 +17,12 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.XMLBeanTypeInfo;
 import org.codehaus.xfire.util.ClassLoaderUtils;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.xpath.YOMXPath;
-import org.jaxen.JaxenException;
-import org.jaxen.XPath;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.xpath.XPath;
 
 /**
  * Deduce mapping information from an xml file.
@@ -199,7 +199,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             }
             info.setTypeClass(m.getReturnType());
             //info.setAnnotations(m.getAnnotations());
-            Element rtElement = bestMatch.getFirstChildElement("return-type");
+            Element rtElement = bestMatch.getChild("return-type");
             readMetadata(info, rtElement);
         }
 
@@ -309,7 +309,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         for(Iterator iterator = nodes.iterator(); iterator.hasNext();)
         {
             Element element = (Element)iterator.next();
-            int availableParameters = element.getChildElements("parameter").size();
+            int availableParameters = element.getChildren("parameter").size();
             if(availableParameters > highestSpecified)
             {
                 bestCandidate = element;
@@ -323,10 +323,10 @@ public class XMLTypeCreator extends AbstractTypeCreator
     {
         try
         {
-            XPath path = new YOMXPath(xpath);
+            XPath path = XPath.newInstance(xpath);
             return (Element)path.selectSingleNode(doc);
         }
-        catch(JaxenException e)
+        catch(JDOMException e)
         {
             throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }
@@ -336,11 +336,11 @@ public class XMLTypeCreator extends AbstractTypeCreator
     {
         try
         {
-            XPath path = new YOMXPath(xpath);
+            XPath path = XPath.newInstance(xpath);
             List result = path.selectNodes(doc);
             return result;
         }
-        catch(JaxenException e)
+        catch(JDOMException e)
         {
             throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }
@@ -362,11 +362,11 @@ public class XMLTypeCreator extends AbstractTypeCreator
         
         String prefix = value.substring(0, index);
         String localName = value.substring(index+1);
-        String ns = e.getNamespaceURI(prefix);
+        Namespace ns = e.getNamespace(prefix);
         
         if (ns == null || localName == null)
             throw new XFireRuntimeException("Invalid QName in mapping: " + value);
         
-        return new QName(ns, localName, prefix);
+        return new QName(ns.getURI(), localName, prefix);
     }
 }

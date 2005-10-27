@@ -28,10 +28,9 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  * Builds services from an xml configuration file.
@@ -101,14 +100,14 @@ public class XMLServiceBuilder
             Element root = doc.getRootElement();
 
             List serviceList = new ArrayList();
-            Elements contents = root.getChildElements("services");
+            List contents = root.getChildren("services");
             for (int i = 0; i < contents.size(); i++)
             {
-                Element element = contents.get(i);
-                Elements services = element.getChildElements();
+                Element element = (Element) contents.get(i);
+                List services = element.getChildren();
                 for (int n = 0; n < services.size(); n++)
                 {
-                    Element service = services.get(n);
+                    Element service = (Element) services.get(n);
 
                     serviceList.add(loadService(service));
                 }
@@ -303,9 +302,9 @@ public class XMLServiceBuilder
 
         loadServiceProperties(svc,service);
 
-        svc.getInHandlers().addAll(createHandlers(service.getFirstChildElement("inHandlers")));
-        svc.getOutHandlers().addAll(createHandlers(service.getFirstChildElement("outHandlers")));
-        svc.getFaultHandlers().addAll(createHandlers(service.getFirstChildElement("faultHandlers")));
+        svc.getInHandlers().addAll(createHandlers(service.getChild("inHandlers")));
+        svc.getOutHandlers().addAll(createHandlers(service.getChild("outHandlers")));
+        svc.getFaultHandlers().addAll(createHandlers(service.getChild("faultHandlers")));
 
         registry.register(svc);
 
@@ -412,7 +411,7 @@ public class XMLServiceBuilder
         if (child == null)
             return Collections.EMPTY_LIST;
 
-        Elements handlers = child.getChildElements("handler");
+        List handlers = child.getChildren("handler");
         if (handlers.size() == 0)
             return Collections.EMPTY_LIST;
 
@@ -420,7 +419,7 @@ public class XMLServiceBuilder
 
         for (int i = 0; i < handlers.size(); i++)
         {
-            pipe.add(getHandler(handlers.get(i)));
+            pipe.add(getHandler((Element) handlers.get(i)));
         }
 
         return pipe;
@@ -440,7 +439,7 @@ public class XMLServiceBuilder
 
     public String getElementValue(Element root, String name, String def)
     {
-        Element child = root.getFirstChildElement(name);
+        Element child = root.getChild(name);
         if (child != null)
         {
             String value = child.getValue();
@@ -453,9 +452,10 @@ public class XMLServiceBuilder
     
     private void loadServiceProperties(Service svc, Element child)
     {
-        Elements elements = child.getChildElements("property");
+        List elements = child.getChildren("property");
         if (elements.size() == 0)
             return;
+        
         for (int i = 0; i < elements.size(); i++)
         {
             Element element = (Element) elements.get(i);
@@ -498,7 +498,6 @@ public class XMLServiceBuilder
             }
 
             return ClassLoaderUtils.loadClass(className, getClass()).newInstance();
-
         }
     }
 }

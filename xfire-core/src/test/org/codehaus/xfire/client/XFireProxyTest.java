@@ -9,7 +9,7 @@ import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public class XFireProxyTest
         extends AbstractXFireTest
@@ -51,13 +51,13 @@ public class XFireProxyTest
     
     public void testInvoke() throws Exception
     {
-        Element root = new Element("a:root", "urn:a");
-        root.appendChild("hello");
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
         
         XFireProxyFactory factory = new XFireProxyFactory(getXFire());
         Echo echo = (Echo) factory.create(transport, service, "xfire.local://Echo");
         
         Element e = echo.echo(root);
-        assertEquals(root.getLocalName(), e.getLocalName());
+        assertEquals(root.getName(), e.getName());
     }
 }

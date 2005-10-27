@@ -1,5 +1,7 @@
 package org.codehaus.xfire.soap.handler;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -7,8 +9,8 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * Validates that headers flagged as "mustUnderstand" are understood.
@@ -36,16 +38,16 @@ public class ValidateHeadersHandler
             return;
 
         SoapVersion version = context.getInMessage().getSoapVersion();
-        Elements elements = context.getInMessage().getHeader().getChildElements();
+        List elements = context.getInMessage().getHeader().getChildren();
         for (int i = 0; i < elements.size(); i++)
         {
-            Element e = elements.get(i);
+            Element e = (Element) elements.get(i);
             String mustUnderstand = e.getAttributeValue("mustUnderstand",
-                    version.getNamespace());
+                    Namespace.getNamespace(version.getNamespace()));
 
             if (mustUnderstand != null && mustUnderstand.equals("1"))
             {
-                assertUnderstandsHeader(context, new QName(e.getNamespaceURI(), e.getLocalName()));
+                assertUnderstandsHeader(context, new QName(e.getNamespaceURI(), e.getName()));
             }
         }
     }

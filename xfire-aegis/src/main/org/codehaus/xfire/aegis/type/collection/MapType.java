@@ -17,8 +17,8 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class MapType
     extends Type
@@ -171,31 +171,28 @@ public class MapType
 
     public void writeSchema(Element root)
     {
-        String ctPref = SoapConstants.XSD_PREFIX + ":complexType";
-        String seqPref = SoapConstants.XSD_PREFIX + ":sequence";
-        
-        Element complex = new Element(ctPref, SoapConstants.XSD);
-        complex.addAttribute(new Attribute("name", getSchemaType().getLocalPart()));
-        root.appendChild(complex);
+        Element complex = new Element("complexType", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        complex.setAttribute(new Attribute("name", getSchemaType().getLocalPart()));
+        root.addContent(complex);
 
-        Element seq = new Element(seqPref, SoapConstants.XSD);
-        complex.appendChild(seq);
+        Element seq = new Element("sequence", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        complex.addContent(seq);
 
         Type keyType = getKeyType();
         Type valueType = getValueType();
 
-        Element element = new Element(SoapConstants.XSD_PREFIX + ":element", SoapConstants.XSD);
-        seq.appendChild(element);
+        Element element = new Element("element", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        seq.addContent(element);
 
-        element.addAttribute(new Attribute("name", getEntryName().getLocalPart()));
-        element.addAttribute(new Attribute("minOccurs", "0"));
-        element.addAttribute(new Attribute("maxOccurs", "unbounded"));
+        element.setAttribute(new Attribute("name", getEntryName().getLocalPart()));
+        element.setAttribute(new Attribute("minOccurs", "0"));
+        element.setAttribute(new Attribute("maxOccurs", "unbounded"));
         
-        Element evComplex = new Element(ctPref, SoapConstants.XSD);
-        element.appendChild(evComplex);
+        Element evComplex = new Element("complexType", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        element.addContent(evComplex);
         
-        Element evseq = new Element(seqPref, SoapConstants.XSD);
-        evComplex.appendChild(evseq);
+        Element evseq = new Element("sequence", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        evComplex.addContent(evseq);
         
         createElement(root, evseq, getKeyName(), keyType);
         createElement(root, evseq, getValueName(), valueType);
@@ -206,18 +203,18 @@ public class MapType
      */
     private void createElement(Element root, Element seq, QName name, Type type)
     {
-        Element element = new Element(SoapConstants.XSD_PREFIX + ":element", SoapConstants.XSD);
-        seq.appendChild(element);
+        Element element = new Element("element", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        seq.addContent(element);
 
         String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI());
         String typeName = prefix + ":" + type.getSchemaType().getLocalPart();
                                                         
-        element.addAttribute(new Attribute("name", name.getLocalPart()));
-        element.addAttribute(new Attribute("type", typeName));
+        element.setAttribute(new Attribute("name", name.getLocalPart()));
+        element.setAttribute(new Attribute("type", typeName));
 
-        element.addAttribute(new Attribute("minOccurs", "0"));
-        element.addAttribute(new Attribute("maxOccurs", "1"));
+        element.setAttribute(new Attribute("minOccurs", "0"));
+        element.setAttribute(new Attribute("maxOccurs", "1"));
     }
 
     public Type getKeyType()

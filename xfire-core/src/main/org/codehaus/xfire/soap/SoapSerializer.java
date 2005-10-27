@@ -1,5 +1,7 @@
 package org.codehaus.xfire.soap;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -10,9 +12,8 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
-import org.codehaus.yom.stax.StaxSerializer;
+import org.codehaus.xfire.util.jdom.StaxSerializer;
+import org.jdom.Element;
 
 public class SoapSerializer
     implements MessageSerializer
@@ -57,7 +58,7 @@ public class SoapSerializer
                                      env.getNamespaceURI());
             writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
 
-            if (message.getHeader() != null && message.getHeader().getChildCount() > 0)
+            if (message.getHeader() != null && message.getHeader().getContentSize() > 0)
             {
                 QName header = message.getSoapVersion().getHeader();
                 writer.writeStartElement(header.getPrefix(),
@@ -95,10 +96,10 @@ public class SoapSerializer
     {
         StaxSerializer ser = new StaxSerializer();
 
-        Elements elements = msg.getHeader().getChildElements();
+        List elements = msg.getHeader().getChildren();
         for (int i = 0; i < elements.size(); i++)
         {
-            Element e = elements.get(i);
+            Element e = (Element) elements.get(i);
             
             ser.writeElement(e, writer);
         }

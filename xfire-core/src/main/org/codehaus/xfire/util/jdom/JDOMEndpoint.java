@@ -1,15 +1,14 @@
-package org.codehaus.xfire.util;
+package org.codehaus.xfire.util.jdom;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.transport.ChannelEndpoint;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
+import org.jdom.Document;
 
-public class YOMEndpoint
+public class JDOMEndpoint
     implements ChannelEndpoint
 {
     private int count = 0;
@@ -20,15 +19,7 @@ public class YOMEndpoint
         StaxBuilder builder = new StaxBuilder();
         try
         {
-            Element root = builder.buildElement(null, msg.getXMLStreamReader());
-            if (root != null)
-            {
-                message = new Document(root);
-            }
-            else
-            {
-                message = null;
-            }
+            message = builder.build(new FragmentStreamReader(msg.getXMLStreamReader()));
         }
         catch (XMLStreamException e)
         {

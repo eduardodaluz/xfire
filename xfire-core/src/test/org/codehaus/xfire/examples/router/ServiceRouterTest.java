@@ -4,7 +4,7 @@ import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 /**
  * XFireTest

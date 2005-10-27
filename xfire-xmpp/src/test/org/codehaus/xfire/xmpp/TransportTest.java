@@ -1,21 +1,18 @@
 package org.codehaus.xfire.xmpp;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapSerializer;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.util.YOMSerializer;
+import org.codehaus.xfire.util.jdom.JDOMEndpoint;
+import org.codehaus.xfire.util.jdom.JDOMSerializer;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.jdom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -46,7 +43,7 @@ public class TransportTest
         transport1 = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, "xfireTestClient", "password2"));
         
         getXFire().getTransportManager().register(transport2);
-        // XMPPConnection.DEBUG_ENABLED = true;
+        //XMPPConnection.DEBUG_ENABLED = true;
     }
 
     protected void tearDown()
@@ -65,9 +62,9 @@ public class TransportTest
         String peer2 = "Peer2";
         
         Channel channel1 = transport1.createChannel(peer1);
-
         Channel channel2 = transport2.createChannel(peer2);
-        channel2.setEndpoint(new YOMEndpoint());
+        JDOMEndpoint endpoint = new JDOMEndpoint();
+        channel2.setEndpoint(endpoint);
         
         // Document to send
         StaxBuilder builder = new StaxBuilder();
@@ -76,14 +73,20 @@ public class TransportTest
         MessageContext context = new MessageContext();
 
         OutMessage msg = new OutMessage(id + "/" + peer2);
-        msg.setSerializer(new SoapSerializer(new YOMSerializer()));
+        msg.setSerializer(new SoapSerializer(new JDOMSerializer()));
         msg.setBody(doc);
 
         channel1.send(context, msg);
-        channel1.send(context, msg);
-        Thread.sleep(1000);
-    }
+        
+        for (int i = 0; i < 100; i++)
+        {
+            Thread.sleep(50);
+            if (endpoint.getCount() == 1) break;
+        }
 
+        assertEquals(1, endpoint.getCount());
+    }
+    
     public void testService()
             throws Exception
     {
@@ -91,7 +94,7 @@ public class TransportTest
         
         Channel channel1 = transport1.createChannel(peer1);
 
-        YOMEndpoint peer = new YOMEndpoint();
+        JDOMEndpoint peer = new JDOMEndpoint();
         channel1.setEndpoint(peer);
         
         Channel channel2 = transport2.createChannel("Echo");
@@ -103,16 +106,13 @@ public class TransportTest
         MessageContext context = new MessageContext();
 
         OutMessage msg = new OutMessage(id + "/Echo");
-        msg.setSerializer(new SoapSerializer(new YOMSerializer()));
+        msg.setSerializer(new SoapSerializer(new JDOMSerializer()));
         msg.setBody(doc);
 
         channel1.send(context, msg);
         channel1.send(context, msg);
-        Thread.sleep(1000);
-        if (peer.getCount() < 2) Thread.sleep(1000);
-        if (peer.getCount() < 2) Thread.sleep(1000);
-        if (peer.getCount() < 2) Thread.sleep(1000);
-
+        Thread.sleep(6000); 
+        
         assertEquals(2, peer.getCount());
     }
 
@@ -131,32 +131,5 @@ public class TransportTest
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']", wsdl);
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +
                     "/swsdl:address[@location='xfireTestServer@bloodyxml.com/Echo']", wsdl);
-    }
-
-    public class YOMEndpoint
-        implements ChannelEndpoint
-    {
-        private int count = 0;
-        
-        public void onReceive(MessageContext context, InMessage msg)
-        {
-            count++;
-            
-            StaxBuilder builder = new StaxBuilder();
-            try
-            {
-                Document doc = builder.build(msg.getXMLStreamReader());
-                System.out.println("Received message.");
-            }
-            catch (XMLStreamException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        
-        public int getCount()
-        {
-            return count;
-        }
     }
 }

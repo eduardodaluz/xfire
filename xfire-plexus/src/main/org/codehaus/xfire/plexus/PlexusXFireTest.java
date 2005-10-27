@@ -2,11 +2,14 @@ package org.codehaus.xfire.plexus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.plexus.PlexusTestCase;
@@ -14,19 +17,23 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.service.binding.MessageBindingProvider;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.XPathAssert;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Node;
-import org.codehaus.yom.Serializer;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 
 /**
  * Contains helpful methods to test SOAP services.
@@ -36,24 +43,29 @@ import org.codehaus.yom.stax.StaxBuilder;
 public class PlexusXFireTest
         extends PlexusTestCase
 {
+    private ServiceFactory factory;
+    
+    private XMLInputFactory defaultInputFactory = XMLInputFactory.newInstance();
+    
     /**
      * Namespaces for the XPath expressions.
      */
     private Map namespaces = new HashMap();
 
-    protected void printNode(Node node)
+    protected void printNode(Document node)
+        throws Exception
+    {
+        XMLOutputter writer = new XMLOutputter();
+
+        writer.output(node, System.out);
+    }
+    
+    protected void printNode(Element node)
             throws Exception
     {
-        Serializer writer = new Serializer(System.out);
-        writer.setOutputStream(System.out);
+        XMLOutputter writer = new XMLOutputter();
 
-        if (node instanceof Document)
-            writer.write((Document) node);
-        else
-        {
-            writer.flush();
-            writer.writeChild(node);
-        }
+        writer.output(node, System.out);
     }
 
     /**
@@ -78,7 +90,7 @@ public class PlexusXFireTest
 
         Transport t = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
         Channel c = t.createChannel();
-
+        
         c.receive(context, msg);
         
         String response = out.toString();
@@ -91,19 +103,25 @@ public class PlexusXFireTest
     protected Document readDocument(String text)
             throws XMLStreamException
     {
+        return readDocument(text, defaultInputFactory);
+    }
+
+    protected Document readDocument(String text, XMLInputFactory ifactory)
+            throws XMLStreamException
+    {
         try
         {
-            StaxBuilder builder = new StaxBuilder();
+            StaxBuilder builder = new StaxBuilder(ifactory);
             return builder.build(new StringReader(text));
         }
         catch (XMLStreamException e)
         {
             System.err.println("Could not read the document!");
-            System.out.println(text);
+            System.err.println(text);
             throw e;
         }
     }
-
+    
     protected Document getWSDLDocument(String service)
             throws Exception
     {
@@ -121,7 +139,7 @@ public class PlexusXFireTest
             throws Exception
     {
         super.setUp();
-
+        
         addNamespace("s", Soap11.getInstance().getNamespace());
         addNamespace("soap12", Soap12.getInstance().getNamespace());
     }
@@ -130,9 +148,8 @@ public class PlexusXFireTest
      * Assert that the following XPath query selects one or more nodes.
      *
      * @param xpath
-     * @return
      */
-    public List assertValid(String xpath, Node node)
+    public List assertValid(String xpath, Object node)
             throws Exception
     {
         return XPathAssert.assertValid(xpath, node, namespaces);
@@ -142,9 +159,8 @@ public class PlexusXFireTest
      * Assert that the following XPath query selects no nodes.
      *
      * @param xpath
-     * @return
      */
-    public List assertInvalid(String xpath, Node node)
+    public List assertInvalid(String xpath, Object node)
             throws Exception
     {
         return XPathAssert.assertInvalid(xpath, node, namespaces);
@@ -157,13 +173,13 @@ public class PlexusXFireTest
      * @param value
      * @param node
      */
-    public void assertXPathEquals(String xpath, String value, Node node)
+    public void assertXPathEquals(String xpath, String value, Document node)
             throws Exception
     {
         XPathAssert.assertXPathEquals(xpath, value, node, namespaces);
     }
 
-    public void assertNoFault(Node node)
+    public void assertNoFault(Document node)
             throws Exception
     {
         XPathAssert.assertNoFault(node);
@@ -183,9 +199,7 @@ public class PlexusXFireTest
     /**
      * Get the WSDL for a service.
      *
-     * @param string The name of the service.
-     * @return
-     * @throws Exception
+     * @param service The name of the service.
      */
     protected WSDLWriter getWSDL(String service)
             throws Exception
@@ -194,6 +208,37 @@ public class PlexusXFireTest
         Service hello = reg.getService(service);
 
         return hello.getWSDLWriter();
+    }
+
+    public ServiceFactory getServiceFactory() throws Exception
+    {
+        if (factory == null)
+        {
+            ObjectServiceFactory ofactory = 
+                new ObjectServiceFactory(getXFire().getTransportManager(),
+                                         new MessageBindingProvider());
+            
+            ofactory.setStyle(SoapConstants.STYLE_MESSAGE);
+            
+            factory = ofactory;
+        }
+
+        return factory;
+    }
+
+    public void setServiceFactory(ServiceFactory factory)
+    {
+        this.factory = factory;
+    }
+
+    protected InputStream getResourceAsStream(String resource)
+    {
+        return getClass().getResourceAsStream(resource);
+    }
+
+    protected Reader getResourceAsReader(String resource)
+    {
+        return new InputStreamReader(getResourceAsStream(resource));
     }
 
     protected XFire getXFire()

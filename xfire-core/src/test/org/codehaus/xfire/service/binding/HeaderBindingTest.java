@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.jdom.Document;
+import org.jdom.Element;
 
 public class HeaderBindingTest
         extends AbstractXFireTest
@@ -36,11 +36,11 @@ public class HeaderBindingTest
         
         Document response = invokeService("HeaderService", "/org/codehaus/xfire/service/binding/header.xml");
         assertNotNull(HeaderService.a);
-        assertEquals("a", HeaderService.a.getLocalName());
+        assertEquals("a", HeaderService.a.getName());
         assertNotNull(HeaderService.b);
-        assertEquals("b", HeaderService.b.getLocalName());
+        assertEquals("b", HeaderService.b.getName());
         assertNotNull(HeaderService.header);
-        assertEquals("in1", HeaderService.header.getLocalName());
+        assertEquals("in1", HeaderService.header.getName());
     }
     
     public static class HeaderService

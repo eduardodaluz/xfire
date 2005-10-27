@@ -61,9 +61,9 @@ public class JaxbType extends Type
         try
         {
             XMLStreamReader xmlStreamReader = ((ElementReader) reader).getXMLStreamReader();
-            System.out.println(xmlStreamReader.hasNext());
+
             StAXSource stAXSource = new StAXSource(xmlStreamReader);
-            System.out.println(stAXSource.toString());
+
             return unmarshaller.unmarshal(stAXSource);
         } catch (Exception e)
         {

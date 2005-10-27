@@ -1,11 +1,14 @@
 package org.codehaus.xfire.util;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.codehaus.yom.Element;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * Namespace utilities.
@@ -23,15 +26,35 @@ public class NamespaceHelper
      */
     public static String getUniquePrefix(Element element, String namespaceURI)
     {
-        String prefix = element.getNamespacePrefix(namespaceURI);
+        String prefix = getPrefix(element, namespaceURI);
+        
         if (prefix == null)
         {
             prefix = getUniquePrefix(element);
-            element.addNamespaceDeclaration(prefix, namespaceURI);
+            element.addNamespaceDeclaration(Namespace.getNamespace(prefix, namespaceURI));
         }
         return prefix;
     }
 
+    public static String getPrefix(Element element, String namespaceURI)
+    {
+        if (element.getNamespaceURI().equals(namespaceURI)) return element.getNamespacePrefix();
+        
+        List namespaces = element.getAdditionalNamespaces();
+        
+        for (Iterator itr = namespaces.iterator(); itr.hasNext();)
+        {
+            Namespace ns = (Namespace) itr.next();
+            
+            if (ns.getURI().equals(namespaceURI)) return ns.getPrefix();
+        }
+        
+        if (element.getParentElement() != null)
+            return getPrefix(element.getParentElement(), namespaceURI);
+        else
+            return null;
+    }
+    
     private static String getUniquePrefix(Element el)
     {
         int n = 1;
@@ -40,7 +63,7 @@ public class NamespaceHelper
         {
             String nsPrefix = "ns" + n;
 
-            if (el.getNamespaceURI(nsPrefix) == null)
+            if (el.getNamespace(nsPrefix) == null)
                 return nsPrefix;
 
             n++;

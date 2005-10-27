@@ -1,15 +1,12 @@
 package org.codehaus.xfire.transport.jms;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.ChannelEndpoint;
-import org.codehaus.xfire.util.YOMSerializer;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.jdom.JDOMEndpoint;
+import org.codehaus.xfire.util.jdom.JDOMSerializer;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.jdom.Document;
 
 public class SendReceiveTest
     extends AbstractXFireJMSTest
@@ -22,7 +19,7 @@ public class SendReceiveTest
 
         Channel channel1 = getTransport().createChannel(peer1);
         Channel channel2 = getTransport().createChannel(peer2);
-        channel2.setEndpoint(new YOMEndpoint());
+        channel2.setEndpoint(new JDOMEndpoint());
 
         // Document to send
         StaxBuilder builder = new StaxBuilder();
@@ -31,7 +28,7 @@ public class SendReceiveTest
         MessageContext mc = new MessageContext();
 
         OutMessage msg = new OutMessage(peer2);
-        msg.setSerializer(new YOMSerializer());
+        msg.setSerializer(new JDOMSerializer());
         msg.setBody(doc);
 
         channel1.send(mc, msg);
@@ -58,31 +55,4 @@ public class SendReceiveTest
                             + "/swsdl:address[@location='xfireTestServer@bloodyxml.com/Echo']",
                     wsdl);
     }*/
-
-    public class YOMEndpoint
-        implements ChannelEndpoint
-    {
-        private int count = 0;
-
-        public void onReceive(MessageContext context, InMessage msg)
-        {
-            count++;
-
-            StaxBuilder builder = new StaxBuilder();
-            try
-            {
-                Document doc = builder.build(msg.getXMLStreamReader());
-                System.out.println("Received message.");
-            }
-            catch (XMLStreamException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        public int getCount()
-        {
-            return count;
-        }
-    }
 }

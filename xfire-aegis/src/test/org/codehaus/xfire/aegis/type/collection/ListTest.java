@@ -14,7 +14,7 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 public class ListTest
         extends AbstractXFireAegisTest

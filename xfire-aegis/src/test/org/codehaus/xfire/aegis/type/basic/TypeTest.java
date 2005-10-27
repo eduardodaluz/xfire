@@ -15,8 +15,8 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  * TypeTest
@@ -62,7 +62,7 @@ public class TypeTest
 
         Element root = new Element("root");
         Element schema = new Element("schema");
-        root.appendChild(schema);
+        root.addContent(schema);
         
         Document doc = new Document(root);
         

@@ -3,17 +3,17 @@ package org.codehaus.xfire.aegis.type.basic;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.jdom.YOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
-import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.jdom.Document;
+import org.jdom.Element;
 
 public class BeanTest
     extends AbstractXFireTest
@@ -58,7 +58,7 @@ public class BeanTest
         reader.getXMLStreamReader().close();
         
         // Test writing
-        Element element = new Element("b:root", "urn:Bean");
+        Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
         type.writeObject(bean, new YOMWriter(element), new MessageContext());
 
@@ -89,7 +89,7 @@ public class BeanTest
         reader.getXMLStreamReader().close();
         
         // Test writing
-        Element element = new Element("b:root", "urn:Bean");
+        Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
         type.writeObject(bean, new YOMWriter(element), new MessageContext());
 
@@ -119,16 +119,16 @@ public class BeanTest
         reader.getXMLStreamReader().close();
         
         // Test writing
-        Element element = new Element("b:root", "urn:Bean");
+        Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
         type.writeObject(bean, new YOMWriter(element), new MessageContext());
 
         assertValid("/b:root[@b:bleh='bleh']", element);
         assertValid("/b:root[@b:howdy='howdy']", element);
         
-        Element types = new Element("xsd:types", SoapConstants.XSD);
-        Element schema = new Element("xsd:schema", SoapConstants.XSD);
-        types.appendChild(schema);
+        Element types = new Element("types", "xsd", SoapConstants.XSD);
+        Element schema = new Element("schema", "xsd", SoapConstants.XSD);
+        types.addContent(schema);
         
         doc = new Document(types);
         
@@ -154,16 +154,16 @@ public class BeanTest
         SimpleBean bean = new SimpleBean();
         
         // Test writing
-        Element element = new Element("b:root", "urn:Bean");
+        Element element = new Element("root", "b", "urn:Bean");
         Document doc = new Document(element);
         type.writeObject(bean, new YOMWriter(element), new MessageContext());
     
         assertInvalid("/b:root[@b:howdy]", element);
         assertValid("/b:root/b:bleh[@xsi:nil='true']", element);
         
-        Element types = new Element("xsd:types", SoapConstants.XSD);
-        Element schema = new Element("xsd:schema", SoapConstants.XSD);
-        types.appendChild(schema);
+        Element types = new Element("types", "xsd", SoapConstants.XSD);
+        Element schema = new Element("schema", "xsd", SoapConstants.XSD);
+        types.addContent(schema);
         
         doc = new Document(types);
         
@@ -203,7 +203,7 @@ public class BeanTest
 
         Element types = new Element("xsd:types", SoapConstants.XSD);
         Element schema = new Element("xsd:schema", SoapConstants.XSD);
-        types.appendChild(schema);
+        types.addContent(schema);
         
         doc = new Document(types);
         

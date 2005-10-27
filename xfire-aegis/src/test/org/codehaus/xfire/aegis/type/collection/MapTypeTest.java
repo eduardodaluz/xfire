@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.jdom.YOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
@@ -14,11 +15,11 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.StringType;
-import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class MapTypeTest
     extends AbstractXFireTest
@@ -81,9 +82,9 @@ public class MapTypeTest
         assertValid("/t:map/t:entry[2]/t:key[text()='key2']", element);
         assertValid("/t:map/t:entry[2]/t:value[text()='value2']", element);
 
-        Element types = new Element("xsd:types", SoapConstants.XSD);
-        Element schema = new Element("xsd:schema", SoapConstants.XSD);
-        types.appendChild(schema);
+        Element types = new Element("types", Namespace.getNamespace("xsd", SoapConstants.XSD));
+        Element schema = new Element("schema", Namespace.getNamespace("xsd", SoapConstants.XSD));
+        types.addContent(schema);
         
         doc = new Document(types);
         

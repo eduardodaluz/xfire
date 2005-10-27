@@ -60,7 +60,7 @@ public class STAXUtils
         {
             int depth = dr.getDepth();
             
-            for (int event = dr.getEventType(); dr.getDepth() >= depth; event = dr.next())
+            for (int event = dr.getEventType(); dr.getDepth() >= depth && dr.hasNext(); event = dr.next())
             {
                 if (event == XMLStreamReader.START_ELEMENT && dr.getDepth() == depth + 1)
                 {

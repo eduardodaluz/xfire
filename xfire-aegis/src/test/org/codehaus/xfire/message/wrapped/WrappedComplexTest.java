@@ -4,9 +4,11 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.services.ComplexService;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * @author <a href="mailto:peter.royal@pobox.com">peter royal</a>
@@ -44,9 +46,9 @@ public class WrappedComplexTest
         String ns2 = "http://ns2.services.xfire.codehaus.org";
         String root = "http://services.xfire.codehaus.org";
 
-        Element types = doc.getRootElement().getChildElements("types", WSDLWriter.WSDL11_NS).get(0);
-        String ns1p = types.getNamespacePrefix(ns1);
-        String ns2p = types.getNamespacePrefix(ns2);
+        Element types = (Element) doc.getRootElement().getChildren("types", Namespace.getNamespace(WSDLWriter.WSDL11_NS)).get(0);
+        String ns1p = NamespaceHelper.getPrefix(types, ns1);
+        String ns2p = NamespaceHelper.getPrefix(types, ns2);
         String rootp = "r";
 
         addNamespace(ns1p, ns1);

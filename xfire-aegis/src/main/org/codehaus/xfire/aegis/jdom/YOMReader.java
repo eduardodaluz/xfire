@@ -1,4 +1,6 @@
-package org.codehaus.xfire.aegis.yom;
+package org.codehaus.xfire.aegis.jdom;
+
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -6,9 +8,8 @@ import javax.xml.stream.XMLStreamReader;
 import org.codehaus.xfire.aegis.AbstractMessageReader;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.stax.AttributeReader;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class YOMReader
     extends AbstractMessageReader
@@ -17,13 +18,13 @@ public class YOMReader
     private Element element;
     private int currentChild = 0;
     private int currentAttribute = 0;
-    private Elements elements;
+    private List elements;
     private QName qname;
     
     public YOMReader(Element element)
     {
         this.element = element;
-        this.elements = element.getChildElements();
+        this.elements = element.getChildren();
     }
     
     public String getValue()
@@ -44,7 +45,7 @@ public class YOMReader
     public MessageReader getNextElementReader()
     {
         currentChild++;
-        return new YOMReader(elements.get(currentChild-1));
+        return new YOMReader((Element) elements.get(currentChild-1));
     }
 
     public QName getName()
@@ -52,7 +53,7 @@ public class YOMReader
         if (qname == null)
         {
             qname = new QName(element.getNamespaceURI(), 
-                              element.getLocalName(), 
+                              element.getName(), 
                               element.getNamespacePrefix());
         }
         return qname;
@@ -60,7 +61,7 @@ public class YOMReader
 
     public String getLocalName()
     {
-        return element.getLocalName();
+        return element.getName();
     }
 
     public String getNamespace()
@@ -75,14 +76,14 @@ public class YOMReader
 
     public boolean hasMoreAttributeReaders()
     {
-        return (currentAttribute < element.getAttributeCount());
+        return (currentAttribute < element.getAttributes().size());
     }
 
     public MessageReader getNextAttributeReader()
     {
         currentAttribute++;
-        Attribute att = element.getAttribute(currentAttribute);
+        Attribute att = (Attribute) element.getAttributes().get(currentAttribute);
         
-        return new AttributeReader(new QName(att.getNamespaceURI(), att.getLocalName()), att.getValue());
+        return new AttributeReader(new QName(att.getNamespaceURI(), att.getName()), att.getValue());
     }
 }

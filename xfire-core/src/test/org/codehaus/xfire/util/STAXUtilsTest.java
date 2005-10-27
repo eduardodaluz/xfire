@@ -13,7 +13,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 import com.bea.xml.stream.MXParserFactory;
 import com.bea.xml.stream.XMLOutputFactoryBase;

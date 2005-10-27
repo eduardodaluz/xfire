@@ -27,7 +27,7 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

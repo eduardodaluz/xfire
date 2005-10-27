@@ -17,7 +17,7 @@
 
     <bean id="echo" class="org.codehaus.xfire.test.EchoImpl"/>
     
-    <bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingHandler"/>
+    <bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingInHandler"/>
     <!-- END SNIPPET: xfire -->
 </beans>
 

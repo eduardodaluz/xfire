@@ -17,11 +17,13 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxSerializer;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.codehaus.xfire.wsdl.SchemaType;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Node;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.stax.StaxSerializer;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.w3c.dom.Document;
 
 public class MessageBindingProvider
@@ -40,12 +42,17 @@ public class MessageBindingProvider
         {
             return context.getInMessage().getXMLStreamReader();
         }
-        else if (p.getTypeClass().isAssignableFrom(Element.class))
+        else if (Element.class.isAssignableFrom(p.getTypeClass()))
         {
             StaxBuilder builder = new StaxBuilder();
             try
             {
-                return builder.buildElement(null, context.getInMessage().getXMLStreamReader());
+                org.jdom.Document doc = builder.build(new FragmentStreamReader(context.getInMessage().getXMLStreamReader()));
+                
+                if (doc.hasRootElement())
+                    return doc.getRootElement();
+                else
+                    return null;
             }
             catch (XMLStreamException e)
             {
@@ -83,6 +90,8 @@ public class MessageBindingProvider
                                Object value)
         throws XFireFault
     {
+        if (value == null) return;
+        
         if (value instanceof Element)
         {
             StaxSerializer serializer = new StaxSerializer();
@@ -97,7 +106,7 @@ public class MessageBindingProvider
         }
         else
         {
-            logger.warn("Unknown type for serialization: " + p.getTypeClass());
+            logger.warn("Unknown type for serialization: " + value.getClass());
         }
     }
 
@@ -114,13 +123,13 @@ public class MessageBindingProvider
     public Object readHeader(MessageHeaderInfo p, MessageContext context)
         throws XFireFault
     {
-        return context.getInMessage().getHeader().getFirstChildElement(p.getName().getLocalPart(),
-                                                                       p.getName().getNamespaceURI());
+        return context.getInMessage().getHeader().getChild(p.getName().getLocalPart(),
+                                                           Namespace.getNamespace(p.getName().getNamespaceURI()));
     }
 
     public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
         throws XFireFault
     {
-        context.getOutMessage().getHeader().appendChild((Node) value);
+        context.getOutMessage().getHeader().addContent((Content) value);
     }
 }

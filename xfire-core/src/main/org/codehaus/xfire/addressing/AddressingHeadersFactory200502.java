@@ -3,9 +3,9 @@ package org.codehaus.xfire.addressing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * A WS-Addressing endpoint reference.
@@ -20,37 +20,39 @@ public class AddressingHeadersFactory200502
     {
         AddressingHeaders headers = new AddressingHeaders();
         
-        Element from = root.getFirstChildElement(WSA_FROM, WSA_NAMESPACE_200502);
+        Namespace wsa = Namespace.getNamespace(WSA_PREFIX, WSA_NAMESPACE_200502);
+        
+        Element from = root.getChild(WSA_FROM, wsa);
         if (from != null)
         {
             headers.setFrom(createEPR(from));
         }
         
-        Element replyTo = root.getFirstChildElement(WSA_REPLY_TO, WSA_NAMESPACE_200502);
+        Element replyTo = root.getChild(WSA_REPLY_TO, wsa);
         if (replyTo != null)
         {
             headers.setReplyTo(createEPR(replyTo));
         }
         
-        Element faultTo = root.getFirstChildElement(WSA_FAULT_TO, WSA_NAMESPACE_200502);
+        Element faultTo = root.getChild(WSA_FAULT_TO, wsa);
         if (faultTo != null)
         {
             headers.setFaultTo(createEPR(faultTo));
         }
         
-        Element messageId = root.getFirstChildElement(WSA_MESSAGE_ID, WSA_NAMESPACE_200502);
+        Element messageId = root.getChild(WSA_MESSAGE_ID, wsa);
         if (messageId != null)
         {
             headers.setMessageID(messageId.getValue());
         }
         
-        Element to = root.getFirstChildElement(WSA_TO, WSA_NAMESPACE_200502);
+        Element to = root.getChild(WSA_TO, wsa);
         if (to != null)
         {
             headers.setTo(to.getValue());
         }
         
-        Element action = root.getFirstChildElement(WSA_ACTION, WSA_NAMESPACE_200502);
+        Element action = root.getChild(WSA_ACTION, wsa);
         if (action != null)
         {
             headers.setAction(action.getValue());
@@ -65,32 +67,32 @@ public class AddressingHeadersFactory200502
         
         List anyContent = null;
         
-        Elements elements = eprElement.getChildElements();
+        List elements = eprElement.getChildren();
         String version = eprElement.getNamespaceURI();
         
         for (int i = 0; i < elements.size(); i++)
         {
-            Element e = elements.get(i);
+            Element e = (Element) elements.get(i);
             if (e.getNamespaceURI().equals(version))
             {
-                if (e.getLocalName().equals(WSA_ADDRESS))
+                if (e.getName().equals(WSA_ADDRESS))
                 {
                     epr.setAddress(e.getValue());
                 }
-                else if (e.getLocalName().equals(WSA_SERVICE_NAME))
+                else if (e.getName().equals(WSA_SERVICE_NAME))
                 {
                     epr.setServiceName(elementToQName(e));
                     epr.setEndpointName(e.getAttributeValue(WSA_ENDPOINT_NAME, version));
                 }
-                else if (e.getLocalName().equals(WSA_INTERFACE_NAME))
+                else if (e.getName().equals(WSA_INTERFACE_NAME))
                 {
                     epr.setInterfaceName(elementToQName(e));
                 }
-                else if (e.getLocalName().equals(WSA_POLICIES))
+                else if (e.getName().equals(WSA_POLICIES))
                 {
                     List policies = new ArrayList();
                     
-                    Elements polEls = e.getChildElements();
+                    List polEls = e.getChildren();
                     for (int j = 0; j < polEls.size(); j++)
                     {
                         policies.add(polEls.get(j));
@@ -118,68 +120,69 @@ public class AddressingHeadersFactory200502
 
     public boolean hasHeaders(Element root)
     {
-        return root.getFirstChildElement(WSA_ACTION, WSA_NAMESPACE_200502) != null;
+        return root.getChild(WSA_ACTION, Namespace.getNamespace(WSA_NAMESPACE_200502)) != null;
     }
 
     public void writeHeaders(Element root, AddressingHeaders headers)
     {
-        final String ns = WSA_NAMESPACE_200502;
-        root.addNamespaceDeclaration(WSA_PREFIX, WSA_NAMESPACE_200502);
+        final Namespace ns = Namespace.getNamespace(WSA_PREFIX, WSA_NAMESPACE_200502);
+        
+        root.addNamespaceDeclaration(ns);
         
         if (headers.getTo() != null)
         {
-            Element to = new Element(WSA_TO_QNAME, ns);
-            to.appendChild(headers.getTo());
-            root.appendChild(to);
+            Element to = new Element(WSA_TO, ns);
+            to.addContent(headers.getTo());
+            root.addContent(to);
         }
         
         if (headers.getAction() != null)
         {
-            Element action = new Element(WSA_ACTION_QNAME, ns);
-            action.appendChild(headers.getAction());
-            root.appendChild(action);
+            Element action = new Element(WSA_ACTION, ns);
+            action.addContent(headers.getAction());
+            root.addContent(action);
         }
         
         if (headers.getFaultTo() != null)
         {
-            Element faultTo = new Element(WSA_FAULT_TO_QNAME, ns);
-            root.appendChild(faultTo);
+            Element faultTo = new Element(WSA_FAULT_TO, ns);
+            root.addContent(faultTo);
             
             writeEPR(faultTo, headers.getFaultTo());
         }
 
         if (headers.getFrom() != null)
         {
-            Element from = new Element(WSA_FROM_QNAME, ns);
-            root.appendChild(from);
+            Element from = new Element(WSA_FROM, ns);
+            root.addContent(from);
             
             writeEPR(from, headers.getFrom());
         }
 
         if (headers.getMessageID() != null)
         {
-            Element messageId = new Element(WSA_MESSAGE_ID_QNAME, ns);
-            messageId.appendChild(headers.getMessageID());
-            root.appendChild(messageId);
+            Element messageId = new Element(WSA_MESSAGE_ID, ns);
+            messageId.addContent(headers.getMessageID());
+            root.addContent(messageId);
         }
 
         if (headers.getRelatesTo() != null)
         {
-            Element relatesTo = new Element(WSA_RELATES_TO_QNAME, ns);
-            relatesTo.appendChild(headers.getRelatesTo());
-            root.appendChild(relatesTo);
+            Element relatesTo = new Element(WSA_RELATES_TO, ns);
+            relatesTo.addContent(headers.getRelatesTo());
+            root.addContent(relatesTo);
             
             if (headers.getRelationshipType() != null)
             {
                 String value = qnameToString(root, headers.getRelationshipType());
-                relatesTo.addAttribute(new Attribute(WSA_RELATIONSHIP_TYPE, value));
+                relatesTo.setAttribute(new Attribute(WSA_RELATIONSHIP_TYPE, value));
             }
         }
         
         if (headers.getReplyTo() != null)
         {
-            Element replyTo = new Element(WSA_REPLY_TO_QNAME, ns);
-            root.appendChild(replyTo);
+            Element replyTo = new Element(WSA_REPLY_TO, ns);
+            root.addContent(replyTo);
             
             writeEPR(replyTo, headers.getReplyTo());
         }
@@ -187,22 +190,22 @@ public class AddressingHeadersFactory200502
 
     public void writeEPR(Element root, EndpointReference epr)
     {
-        final String ns = WSA_NAMESPACE_200502;
+final Namespace ns = Namespace.getNamespace(WSA_PREFIX, WSA_NAMESPACE_200502);
         
-        Element address = new Element(WSA_ADDRESS_QNAME, ns);
-        address.appendChild(epr.getAddress());
-        root.appendChild(address);
+        Element address = new Element(WSA_ADDRESS, ns);
+        address.addContent(epr.getAddress());
+        root.addContent(address);
         
         if (epr.getServiceName() != null)
         {
-            Element serviceName = new Element(WSA_SERVICE_NAME_QNAME, ns);
-            serviceName.appendChild(qnameToString((Element) root.getParent(), epr.getServiceName()));
-            root.appendChild(serviceName);
+            Element serviceName = new Element(WSA_SERVICE_NAME, ns);
+            serviceName.addContent(qnameToString((Element) root.getParent(), epr.getServiceName()));
+            root.addContent(serviceName);
             
             if (epr.getInterfaceName() != null)
             {
                 String value = qnameToString((Element) root.getParent(), epr.getInterfaceName());
-                serviceName.addAttribute(new Attribute(WSA_INTERFACE_NAME_QNAME, value));
+                serviceName.setAttribute(new Attribute(WSA_INTERFACE_NAME, value));
             }
         }
     }

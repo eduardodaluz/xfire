@@ -3,6 +3,7 @@ package org.codehaus.xfire.client;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 
+import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
@@ -25,6 +26,7 @@ public class XFireProxyFactory
     
     public XFireProxyFactory()
     {
+        this.xfire = new DefaultXFire();
     }
     
     public XFireProxyFactory(XFire xfire)

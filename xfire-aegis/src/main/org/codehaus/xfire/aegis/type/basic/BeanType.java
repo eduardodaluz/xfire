@@ -18,8 +18,8 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 /**
  * Serializes JavaBeans.
@@ -232,10 +232,11 @@ public class BeanType
     {
         BeanTypeInfo info = getTypeInfo();
         
-        Element complex = new Element(SoapConstants.XSD_PREFIX + ":complexType",
+        Element complex = new Element("complexType",
+                                      SoapConstants.XSD_PREFIX,
                                       SoapConstants.XSD);
-        complex.addAttribute(new Attribute("name", getSchemaType().getLocalPart()));
-        root.appendChild(complex);
+        complex.setAttribute(new Attribute("name", getSchemaType().getLocalPart()));
+        root.addContent(complex);
 
         Element seq = null;
         
@@ -244,15 +245,16 @@ public class BeanType
         {
             if (seq == null)
             {
-                seq = new Element(SoapConstants.XSD_PREFIX + ":sequence", SoapConstants.XSD);
-                complex.appendChild(seq);
+                seq = new Element("sequence", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+                complex.addContent(seq);
             }
                             
             String name = (String) itr.next();
             
-            Element element = new Element(SoapConstants.XSD_PREFIX + ":element",
+            Element element = new Element("element",
+                                          SoapConstants.XSD_PREFIX,
                                           SoapConstants.XSD);
-            seq.appendChild(element);
+            seq.addContent(element);
             
             Type type = getType(info, name);
             
@@ -267,17 +269,18 @@ public class BeanType
         {
             String name = (String) itr.next();
             
-            Element element = new Element(SoapConstants.XSD_PREFIX + ":attribute",
+            Element element = new Element("attribute",
+                                          SoapConstants.XSD_PREFIX,
                                           SoapConstants.XSD);
-            complex.appendChild(element);
+            complex.addContent(element);
             
             Type type = getType(info, name);
 
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
             
-            element.addAttribute(new Attribute("name", name));
-            element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("name", name));
+            element.setAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
         }
     }
 
@@ -298,17 +301,17 @@ public class BeanType
     {
         if (type.isAbstract())
         {
-            element.addAttribute(new Attribute("name", name));
-            element.addAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("name", name));
+            element.setAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
             
             if (getTypeInfo().isNillable(name))
             {
-                element.addAttribute(new Attribute("nillable", "true"));
+                element.setAttribute(new Attribute("nillable", "true"));
             }
         }
         else
         {
-            element.addAttribute(new Attribute("ref", prefix + ":" + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("ref", prefix + ":" + type.getSchemaType().getLocalPart()));
         }
     }
     

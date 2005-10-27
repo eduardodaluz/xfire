@@ -5,11 +5,11 @@ import java.io.File;
 import java.io.StringReader;
 
 import org.codehaus.xfire.aegis.MessageWriter;
-import org.codehaus.xfire.aegis.yom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.YOMWriter;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -62,7 +62,7 @@ public class WriterTest
         
         write(new YOMWriter(doc.getRootElement()));
         
-        testWrite(readDocument(doc.toXML()));
+        testWrite(doc);
     }
     
     public void write(MessageWriter writer)

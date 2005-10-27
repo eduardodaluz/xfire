@@ -17,7 +17,7 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public class ObjectServiceFactoryTest
         extends AbstractXFireTest

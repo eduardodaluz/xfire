@@ -5,10 +5,10 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.local.LocalTransport;
-import org.codehaus.xfire.util.YOMEndpoint;
-import org.codehaus.xfire.util.YOMSerializer;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.codehaus.xfire.util.jdom.JDOMEndpoint;
+import org.codehaus.xfire.util.jdom.JDOMSerializer;
+import org.jdom.Document;
+import org.jdom.Element;
 
 public class DuplexTest
     extends AbstractXFireTest
@@ -20,18 +20,18 @@ public class DuplexTest
         channel1.open();
         
         Channel channel2 = transport.createChannel("urn:xfire:local:Peer2");
-        YOMEndpoint endpoint = new YOMEndpoint();
+        JDOMEndpoint endpoint = new JDOMEndpoint();
         channel2.setEndpoint(endpoint);
         
         // Document to send
         Element root = new Element("root");
-        root.appendChild("hello");
+        root.addContent("hello");
         Document doc = new Document(root);
         
         MessageContext context = new MessageContext();
         
         OutMessage msg = new OutMessage("urn:xfire:local:Peer2");
-        msg.setSerializer(new YOMSerializer());
+        msg.setSerializer(new JDOMSerializer());
         msg.setBody(doc);
         
         channel1.send(context, msg);

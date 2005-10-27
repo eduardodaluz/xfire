@@ -3,7 +3,7 @@ package org.codehaus.xfire.aegis.type.collection;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 public class BeanCollectionTest
         extends AbstractXFireAegisTest

@@ -8,7 +8,7 @@ import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.binding.ObjectBinding;
-import org.codehaus.xfire.util.ElementStreamWriter;
+import org.codehaus.xfire.util.stax.ElementStreamWriter;
 
 /**
  * Builds up a custom detail element from an exception.

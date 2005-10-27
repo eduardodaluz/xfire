@@ -19,7 +19,7 @@ public class TransportManagerTest
         ServiceRegistry reg = new DefaultServiceRegistry();
         
         TransportManager tm = new DefaultTransportManager(reg);
-        assertEquals(2, tm.getTransports().size()); // the local transport should be there
+        assertEquals(3, tm.getTransports().size()); // the local transport should be there
         
         tm.register(new SoapHttpTransport());
         assertEquals(3, tm.getTransports().size());

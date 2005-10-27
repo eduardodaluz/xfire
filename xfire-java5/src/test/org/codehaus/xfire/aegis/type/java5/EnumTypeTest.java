@@ -4,15 +4,15 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.jdom.YOMReader;
+import org.codehaus.xfire.aegis.jdom.YOMWriter;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.java5.EnumType;
 import org.codehaus.xfire.aegis.type.java5.Java5TypeCreator;
-import org.codehaus.xfire.aegis.yom.YOMReader;
-import org.codehaus.xfire.aegis.yom.YOMWriter;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
+import org.jdom.Document;
+import org.jdom.Element;
 
 public class EnumTypeTest
     extends AbstractXFireAegisTest

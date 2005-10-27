@@ -28,8 +28,8 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 public class WrappedBinding
     extends AbstractBinding
@@ -186,11 +186,11 @@ public class WrappedBinding
                                      Part part,
                                      String opName)
     {
-        Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-        element.addAttribute(new Attribute("name", opName));
+        Element element = new Element("element", AbstractWSDL.XSD_NS);
+        element.setAttribute(new Attribute("name", opName));
 
-        Element complex = new Element(AbstractWSDL.complexQ, SoapConstants.XSD);
-        element.appendChild(complex);
+        Element complex = new Element("complexType", AbstractWSDL.XSD_NS);
+        element.addContent(complex);
 
         if (message.getMessageParts().size() > 0)
         {
@@ -204,7 +204,7 @@ public class WrappedBinding
          * (via WSDLBuilder.addDependency()) writeParametersSchema. 
          */
         Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
-        schemaEl.appendChild(element);
+        schemaEl.addContent(element);
 
         return new QName(builder.getInfo().getTargetNamespace(), opName);
     }
@@ -234,30 +234,30 @@ public class WrappedBinding
             String prefix = builder.getNamespacePrefix(uri);
             builder.addNamespace(prefix, uri);
 
-            Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-            sequence.appendChild(element);
+            Element element = new Element("element", AbstractWSDL.XSD_NS);
+            sequence.addContent(element);
 
             if (type.isAbstract())
             {
-                element.addAttribute(new Attribute("name", pName.getLocalPart()));
+                element.setAttribute(new Attribute("name", pName.getLocalPart()));
                 
-                element.addAttribute(new Attribute("type", 
+                element.setAttribute(new Attribute("type", 
                                                    prefix + ":" + schemaType.getLocalPart()));
             }
             else
             {
-                element.addAttribute(new Attribute("ref",  prefix + ":" + schemaType.getLocalPart()));
+                element.setAttribute(new Attribute("ref",  prefix + ":" + schemaType.getLocalPart()));
             }
 
-            element.addAttribute(new Attribute("minOccurs", "1"));
-            element.addAttribute(new Attribute("maxOccurs", "1"));
+            element.setAttribute(new Attribute("minOccurs", "1"));
+            element.setAttribute(new Attribute("maxOccurs", "1"));
         }
     }
 
     private Element createSequence(Element complex)
     {
-        Element sequence = new Element(AbstractWSDL.sequenceQ, SoapConstants.XSD);
-        complex.appendChild(sequence);
+        Element sequence = new Element("sequence", AbstractWSDL.XSD_NS);
+        complex.addContent(sequence);
         return sequence;
     }
 

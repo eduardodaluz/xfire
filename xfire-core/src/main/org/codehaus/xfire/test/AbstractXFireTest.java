@@ -36,11 +36,11 @@ import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.transport.http.XFireHttpSession;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Node;
-import org.codehaus.yom.Serializer;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 
 /**
  * Contains helpful methods to test SOAP services.
@@ -63,19 +63,20 @@ public abstract class AbstractXFireTest
     private Map namespaces = new HashMap();
     private SimpleSession session;
 
-    protected void printNode(Node node)
+    protected void printNode(Document node)
+        throws Exception
+    {
+        XMLOutputter writer = new XMLOutputter();
+
+        writer.output(node, System.out);
+    }
+    
+    protected void printNode(Element node)
             throws Exception
     {
-        Serializer writer = new Serializer(System.out);
-        writer.setOutputStream(System.out);
+        XMLOutputter writer = new XMLOutputter();
 
-        if (node instanceof Document)
-            writer.write((Document) node);
-        else
-        {
-            writer.flush();
-            writer.writeChild(node);
-        }
+        writer.output(node, System.out);
     }
 
     /**
@@ -172,7 +173,7 @@ public abstract class AbstractXFireTest
      *
      * @param xpath
      */
-    public List assertValid(String xpath, Node node)
+    public List assertValid(String xpath, Object node)
             throws Exception
     {
         return XPathAssert.assertValid(xpath, node, namespaces);
@@ -183,7 +184,7 @@ public abstract class AbstractXFireTest
      *
      * @param xpath
      */
-    public List assertInvalid(String xpath, Node node)
+    public List assertInvalid(String xpath, Object node)
             throws Exception
     {
         return XPathAssert.assertInvalid(xpath, node, namespaces);
@@ -196,13 +197,13 @@ public abstract class AbstractXFireTest
      * @param value
      * @param node
      */
-    public void assertXPathEquals(String xpath, String value, Node node)
+    public void assertXPathEquals(String xpath, String value, Document node)
             throws Exception
     {
         XPathAssert.assertXPathEquals(xpath, value, node, namespaces);
     }
 
-    public void assertNoFault(Node node)
+    public void assertNoFault(Document node)
             throws Exception
     {
         XPathAssert.assertNoFault(node);

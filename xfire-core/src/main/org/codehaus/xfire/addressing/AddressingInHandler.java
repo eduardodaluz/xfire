@@ -15,7 +15,7 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public class AddressingInHandler
     extends AbstractHandler

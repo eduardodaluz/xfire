@@ -11,7 +11,7 @@ import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -38,8 +38,8 @@ public class LocalClientTest
     {
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
 
-        Element root = new Element("a:root", "urn:a");
-        root.appendChild("hello");
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
         
         
         Client client = new Client(transport, service, "xfire.local://Echo", "xfire.local://Client");
@@ -52,7 +52,7 @@ public class LocalClientTest
         assertEquals(1, response.length);
         
         Element e = (Element) response[0];
-        assertEquals(root.getLocalName(), e.getLocalName());
+        assertEquals(root.getName(), e.getName());
     }
 
     public void testFault()
@@ -60,8 +60,8 @@ public class LocalClientTest
     {
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, BadEcho.class);
 
-        Element root = new Element("a:root", "urn:a");
-        root.appendChild("hello");
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
 
         Client client = new Client(transport, service, "xfire.local://Echo");
         client.setXFire(getXFire());

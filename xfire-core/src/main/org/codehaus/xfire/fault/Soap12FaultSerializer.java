@@ -1,6 +1,7 @@
 package org.codehaus.xfire.fault;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -14,11 +15,11 @@ import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxSerializer;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.stax.StaxSerializer;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
+import org.jdom.Element;
 
 public class Soap12FaultSerializer
     implements MessageSerializer
@@ -87,7 +88,7 @@ public class Soap12FaultSerializer
                         }
                         else if (reader.getLocalName().equals("Detail"))
                         {
-                            fault.setDetail(builder.buildElement(null, reader));
+                            fault.setDetail(builder.build(new FragmentStreamReader(reader)).getRootElement());
                         }
                         break;
                     default:
@@ -175,10 +176,10 @@ public class Soap12FaultSerializer
                 writer.writeStartElement("soap:Detail");
 
                 StaxSerializer serializer = new StaxSerializer();
-                Elements details = detail.getChildElements();
+                List details = detail.getContent();
                 for (int i = 0; i < details.size(); i++)
                 {
-                    serializer.writeElement(details.get(i), writer);
+                    serializer.writeElement((Element) details.get(i), writer);
                 }
 
                 writer.writeEndElement(); // Details

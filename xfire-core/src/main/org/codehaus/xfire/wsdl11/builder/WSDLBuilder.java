@@ -37,8 +37,8 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 import com.ibm.wsdl.extensions.soap.SOAPHeaderImpl;
 
@@ -310,16 +310,16 @@ public class WSDLBuilder
         {
             Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
 
-            Element element = new Element(AbstractWSDL.elementQ, SoapConstants.XSD);
-            schemaEl.appendChild(element);
+            Element element = new Element("element", XSD_NS);
+            schemaEl.addContent(element);
 
             String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
             addNamespace(prefix, schemaTypeName.getNamespaceURI());
 
             if (type.isAbstract())
             {
-                element.addAttribute(new Attribute("name", pName.getLocalPart()));
-                element.addAttribute(new Attribute("type",
+                element.setAttribute(new Attribute("name", pName.getLocalPart()));
+                element.setAttribute(new Attribute("type",
                                                    prefix + ":" + schemaTypeName.getLocalPart()));
             }
 

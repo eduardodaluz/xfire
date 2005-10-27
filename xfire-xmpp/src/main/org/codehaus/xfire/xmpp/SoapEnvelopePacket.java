@@ -1,6 +1,6 @@
 package org.codehaus.xfire.xmpp;
 
-import org.dom4j.Document;
+import org.jdom.Document;
 import org.jivesoftware.smack.packet.IQ;
 
 /**
@@ -9,21 +9,27 @@ import org.jivesoftware.smack.packet.IQ;
 public class SoapEnvelopePacket
     extends IQ
 {
-    private Document document;
     private String body;
+    private Document doc;
     
     public SoapEnvelopePacket(String body)
     {
         this.body = body;
     }
-    
-    public SoapEnvelopePacket(Document document)
-    {
-        this.document = document;
-    }
 
+    public SoapEnvelopePacket(Document doc)
+    {
+        this.doc = doc;
+    }
+    
     public String getChildElementXML()
     {
+        if (body == null) throw new RuntimeException();
         return body;
+    }
+    
+    public Document getDocument()
+    {
+        return doc;
     }
 }

@@ -12,8 +12,9 @@ import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
+import org.jdom.Element;
 
 public class ReadHeadersHandler
     extends AbstractHandler
@@ -130,7 +131,8 @@ public class ReadHeadersHandler
     {
         StaxBuilder builder = new StaxBuilder();
 
-        Element header = builder.buildElement(null, context.getInMessage().getXMLStreamReader());
+        InMessage msg = context.getInMessage();
+        Element header = builder.build(new FragmentStreamReader(msg.getXMLStreamReader())).getRootElement();
 
         context.getInMessage().setHeader(header);
     }

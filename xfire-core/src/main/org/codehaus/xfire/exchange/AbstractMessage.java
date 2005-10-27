@@ -8,7 +8,7 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public abstract class AbstractMessage
 {
@@ -88,7 +88,7 @@ public abstract class AbstractMessage
     {
         if (header == null)
         {
-            header = new Element(getSoapVersion().getPrefix() + ":Header", getSoapVersion().getNamespace());
+            header = new Element("Header", getSoapVersion().getPrefix(), getSoapVersion().getNamespace());
         }
         return header;
     }

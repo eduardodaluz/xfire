@@ -7,8 +7,9 @@ import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class EnumType
     extends Type
@@ -43,24 +44,23 @@ public class EnumType
     @Override
     public void writeSchema(Element root)
     {
-        Element simple = new Element(SoapConstants.XSD_PREFIX + ":simpleType",
-                                      SoapConstants.XSD);
-        simple.addAttribute(new Attribute("name", getSchemaType().getLocalPart()));
-        root.appendChild(simple);
+        Namespace xsd = Namespace.getNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
         
-        Element restriction = new Element(SoapConstants.XSD_PREFIX + ":restriction",
-                                     SoapConstants.XSD);
-        restriction.addAttribute(new Attribute("base", SoapConstants.XSD_PREFIX + ":string"));
-        simple.appendChild(restriction);
+        Element simple = new Element("simpleType",xsd );
+        simple.setAttribute(new Attribute("name", getSchemaType().getLocalPart()));
+        root.addContent(simple);
+        
+        Element restriction = new Element("restriction", xsd);
+        restriction.setAttribute(new Attribute("base", SoapConstants.XSD_PREFIX + ":string"));
+        simple.addContent(restriction);
         
         Object[] constants = getTypeClass().getEnumConstants();
 
         for (Object constant : constants)
         {
-            Element enumeration = new Element(SoapConstants.XSD_PREFIX + ":enumeration",
-                                          SoapConstants.XSD);
-            enumeration.addAttribute(new Attribute("value", ((Enum) constant).toString()));
-            restriction.appendChild(enumeration);
+            Element enumeration = new Element("enumeration", xsd);
+            enumeration.setAttribute(new Attribute("value", ((Enum) constant).toString()));
+            restriction.addContent(enumeration);
         }
     }
 

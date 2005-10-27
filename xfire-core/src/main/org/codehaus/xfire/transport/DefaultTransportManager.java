@@ -13,6 +13,7 @@ import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.dead.DeadLetterTransport;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 
 /**
@@ -67,6 +68,7 @@ public class DefaultTransportManager
         
         register(SoapTransport.createSoapTransport(new LocalTransport()));
         register(SoapTransport.createSoapTransport(new DeadLetterTransport()));
+        register(SoapTransport.createSoapTransport(new SoapHttpTransport()));
     }
 
     /**

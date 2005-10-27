@@ -32,9 +32,8 @@ import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.util.ElementStreamReader;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
+import org.codehaus.xfire.util.stax.JDOMStreamReader;
+import org.jdom.Element;
 
 public class Client
     extends AbstractHandlerSupport
@@ -190,10 +189,9 @@ public class Client
     
     protected void processFaultDetail(Element detail)
     {
-        Elements elements = detail.getChildElements();
-        if (elements.size() > 0)
+        if (detail.getContentSize() > 0)
         {
-            Element exDetail = elements.get(0);
+            Element exDetail = (Element) detail.getContent().get(0);
             
             MessagePartInfo faultPart = getFaultPart(context.getExchange().getOperation(),
                                                      exDetail);
@@ -205,7 +203,7 @@ public class Client
             {
                 BindingProvider provider = context.getService().getBinding()
                         .getBindingProvider();
-                ElementStreamReader reader = new ElementStreamReader(exDetail);
+                JDOMStreamReader reader = new JDOMStreamReader(exDetail);
                 reader.nextTag();
                 
                 this.fault = (Exception) provider.readParameter(faultPart, reader, context);
@@ -223,7 +221,7 @@ public class Client
     
     protected MessagePartInfo getFaultPart(OperationInfo operation, Element exDetail)
     {
-        QName qname = new QName(exDetail.getNamespaceURI(), exDetail.getLocalName());
+        QName qname = new QName(exDetail.getNamespaceURI(), exDetail.getName());
         
         for (Iterator itr = operation.getFaults().iterator(); itr.hasNext();)
         {

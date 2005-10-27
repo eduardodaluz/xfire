@@ -22,18 +22,19 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Elements;
-import org.codehaus.yom.Serializer;
-import org.codehaus.yom.converters.DOMConverter;
-import org.codehaus.yom.stax.StaxBuilder;
-import org.codehaus.yom.xpath.YOMXPath;
-import org.jaxen.JaxenException;
-import org.jaxen.XPath;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.input.DOMBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jdom.xpath.XPath;
+
 
 /**
  * Provides schema functionality for a WSDLBuilder.
@@ -69,13 +70,8 @@ public abstract class AbstractWSDL
      * Namespace and QName definitions for easy access.
      *-------------------------------------------------*/
 
-    public final static String schemaQ = SoapConstants.XSD_PREFIX + ":" + "schema";
-
-    public final static String elementQ = SoapConstants.XSD_PREFIX + ":" + "element";
-
-    public final static String complexQ = SoapConstants.XSD_PREFIX + ":" + "complexType";
-
-    public final static String sequenceQ = SoapConstants.XSD_PREFIX + ":" + "sequence";
+    public final static Namespace XSD_NS = Namespace.getNamespace(SoapConstants.XSD_PREFIX, 
+                                                                  SoapConstants.XSD);
 
     public AbstractWSDL(Service service) throws WSDLException
     {
@@ -88,9 +84,9 @@ public abstract class AbstractWSDL
         setDefinition(WSDLFactory.newInstance().newDefinition());
         getDefinition().setTargetNamespace(info.getTargetNamespace());
 
-        Element root = new Element("wsdl:types", WSDL11_NS);
+        Element root = new Element("types", "wsdl", WSDL11_NS);
         setSchemaTypes(root);
-        root.addNamespaceDeclaration(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+        root.addNamespaceDeclaration(Namespace.getNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD));
 
         addNamespace("soap", service.getSoapVersion().getNamespace());
         addNamespace("soapenc", service.getSoapVersion().getSoapEncodingStyle());
@@ -109,7 +105,7 @@ public abstract class AbstractWSDL
         
         org.w3c.dom.Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
 
-        wsdlDocument = DOMConverter.convert(doc);
+        wsdlDocument = new DOMBuilder().build(doc);
 
         writeComplexTypes();
     }
@@ -133,10 +129,10 @@ public abstract class AbstractWSDL
                 String ns = (String) importItr.next();
                 if (!ns.equals(SoapConstants.XSD) && !hasImport(schema, ns))
                 {
-                    Element importEl = new Element("xsd:import", SoapConstants.XSD);
-                    importEl.addAttribute(new Attribute("namespace", ns));
+                    Element importEl = new Element("import", XSD_NS);
+                    importEl.setAttribute(new Attribute("namespace", ns));
                     
-                    schema.insertChild(importEl, 0);
+                    schema.addContent(0, importEl);
                 }
             }
         }
@@ -144,11 +140,11 @@ public abstract class AbstractWSDL
 
     public boolean hasImport(Element schema, String ns)
     {
-        Elements children = schema.getChildElements("import", SoapConstants.XSD);
+        List children = schema.getChildren("import", Namespace.getNamespace(SoapConstants.XSD));
         
         for (int i = 0; i < children.size(); i++)
         {
-            Element importEl = children.get(i);
+            Element importEl = (Element) children.get(i);
             String value = importEl.getAttributeValue("namespace");
             
             if (value != null && value.equals(ns)) return true;
@@ -162,12 +158,11 @@ public abstract class AbstractWSDL
     {
         Element rootEl = getDocument().getRootElement();
 
-        if (schemaTypes.getChildCount() > 0)
+        if (schemaTypes.getContentSize() > 0)
         {
             schemaTypes.detach();
-            rootEl.insertChild(schemaTypes, 0);
+            rootEl.addContent(0, schemaTypes);
         }
-
     }
 
     public void addDependency(SchemaType type)
@@ -230,21 +225,21 @@ public abstract class AbstractWSDL
     public void write(OutputStream out)
         throws IOException
     {
-        Serializer writer = new Serializer(out);
-        writer.write(getDocument());
-        writer.flush();
+        XMLOutputter writer = new XMLOutputter();
+        writer.setFormat(Format.getPrettyFormat());
+        writer.output(getDocument(), out);
     }
 
     public void addNamespace(String prefix, String uri)
     {
         def.addNamespace(prefix, uri);
 
-        String declaredUri = schemaTypes.getNamespaceURI(prefix);
+        Namespace declaredUri = schemaTypes.getNamespace(prefix);
         if (declaredUri == null)
         {
-            schemaTypes.addNamespaceDeclaration(prefix, uri);
+            schemaTypes.addNamespaceDeclaration(Namespace.getNamespace(prefix, uri));
         }
-        else if (!declaredUri.equals(uri))
+        else if (!declaredUri.getURI().equals(uri))
         {
             throw new XFireRuntimeException("Namespace conflict: " + declaredUri
                     + " was declared but " + uri + " was attempted.");
@@ -385,13 +380,13 @@ public abstract class AbstractWSDL
     {
         try
         {
-            XPath path = new YOMXPath(xpath);
+            XPath path = XPath.newInstance(xpath);
             path.addNamespace("xsd", SoapConstants.XSD);
             path.addNamespace("s", SoapConstants.XSD);
             List result = path.selectNodes(doc);
             return result;
         }
-        catch (JaxenException e)
+        catch (JDOMException e)
         {
             throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
         }
@@ -410,11 +405,11 @@ public abstract class AbstractWSDL
 
         if (e == null)
         {
-            e = new Element(schemaQ, SoapConstants.XSD);
+            e = new Element("schema", XSD_NS);
 
-            e.addAttribute(new Attribute("targetNamespace", namespace));
-            e.addAttribute(new Attribute("elementFormDefault", "qualified"));
-            e.addAttribute(new Attribute("attributeFormDefault", "qualified"));
+            e.setAttribute(new Attribute("targetNamespace", namespace));
+            e.setAttribute(new Attribute("elementFormDefault", "qualified"));
+            e.setAttribute(new Attribute("attributeFormDefault", "qualified"));
 
             setSchema(namespace, e);
         }
@@ -430,7 +425,7 @@ public abstract class AbstractWSDL
     protected void setSchema(String namespace, Element schema)
     {
         typeMap.put(namespace, schema);
-        getSchemaTypes().appendChild(schema);
+        getSchemaTypes().addContent(schema);
     }
 
     protected Element getSchemaTypes()

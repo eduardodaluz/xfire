@@ -11,8 +11,8 @@ import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
-import org.codehaus.xfire.util.YOMEndpoint;
-import org.codehaus.yom.Document;
+import org.codehaus.xfire.util.jdom.JDOMEndpoint;
+import org.jdom.Document;
 
 public class FaultToTest
     extends AbstractXFireTest
@@ -44,7 +44,7 @@ public class FaultToTest
     {
         Transport t = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
         Channel channel = t.createChannel("xfire.local://FaultReceiver");
-        YOMEndpoint endpoint = new YOMEndpoint();
+        JDOMEndpoint endpoint = new JDOMEndpoint();
         channel.setEndpoint(endpoint);
         
         Document response = invokeService(null, "/org/codehaus/xfire/addressing/FaultTo.xml");

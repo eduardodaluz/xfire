@@ -15,9 +15,9 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.Node;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 /**
  * XFireTest
@@ -35,13 +35,13 @@ public class FaultSerializerTest
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
         fault.setSubCode("m:NotAvailable");
-        Element e = new Element("t:bah", "urn:test");
-        e.appendChild("bleh");
-        fault.getDetail().appendChild(e);
+        Element e = new Element("bah", "t", "urn:test");
+        e.addContent("bleh");
+        fault.getDetail().addContent(e);
 
-        e = new Element("t:bah2", "urn:test2");
-        e.appendChild("bleh");
-        fault.getDetail().appendChild(e);
+        e = new Element("bah2", "t", "urn:test2");
+        e.addContent("bleh");
+        fault.getDetail().addContent(e);
 
         fault.addNamespace("m", "urn:test");
 
@@ -90,7 +90,7 @@ public class FaultSerializerTest
         assertEquals(fault.getSubCode(), fault2.getSubCode());
         assertEquals(fault.getFaultCode(), fault2.getFaultCode());
         
-        assertNotNull(fault.getDetail().getFirstChildElement("bah2", "urn:test2"));
+        assertNotNull(fault.getDetail().getChild("bah2", Namespace.getNamespace("urn:test2")));
     }
 
 
@@ -102,14 +102,14 @@ public class FaultSerializerTest
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
 
-        Node details = fault.getDetail();
-        Element e = new Element("t:bah", "urn:test");
-        e.appendChild("bleh");
-        fault.getDetail().appendChild(e);
+        Element details = fault.getDetail();
+        Element e = new Element("bah", "t", "urn:test");
+        e.addContent("bleh");
+        fault.getDetail().addContent(e);
 
-        e = new Element("t:bah2", "urn:test2");
-        e.appendChild("bleh");
-        fault.getDetail().appendChild(e);
+        e = new Element("bah2", "t", "urn:test2");
+        e.addContent("bleh");
+        fault.getDetail().addContent(e);
 
         fault.addNamespace("m", "urn:test");
 
@@ -146,7 +146,7 @@ public class FaultSerializerTest
         assertEquals("Server", fault2.getFaultCode());
         assertEquals(fault.getMessage(), fault2.getMessage());
         
-        assertNotNull(fault.getDetail().getFirstChildElement("bah2", "urn:test2"));
+        assertNotNull(fault.getDetail().getChild("bah2", Namespace.getNamespace("urn:test2")));
     }
 
     private XMLStreamReader readerForString(String string) throws XMLStreamException

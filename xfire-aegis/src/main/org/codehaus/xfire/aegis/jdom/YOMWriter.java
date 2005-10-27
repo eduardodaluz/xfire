@@ -1,4 +1,4 @@
-package org.codehaus.xfire.aegis.yom;
+package org.codehaus.xfire.aegis.jdom;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
@@ -6,8 +6,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.aegis.AbstractMessageWriter;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.yom.Attribute;
-import org.codehaus.yom.Element;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class YOMWriter
     extends AbstractMessageWriter
@@ -21,12 +22,12 @@ public class YOMWriter
     
     public void writeValue(Object value)
     {
-        element.appendChild(value.toString());
+        element.addContent(value.toString());
     }
 
     public void writeValue(Object value, String ns, String attr)
     {
-        element.addAttribute(new Attribute(attr, ns, value.toString()));
+        element.setAttribute(new Attribute(attr, value.toString(), Namespace.getNamespace(ns)));
     }
 
     public MessageWriter getElementWriter(String name)
@@ -38,27 +39,18 @@ public class YOMWriter
     {
         String prefix = NamespaceHelper.getUniquePrefix(element, namespace);
         
-        Element child = new Element(prefix + ":" + name, namespace);
-        element.appendChild(child);
+        Element child = new Element(name, Namespace.getNamespace(prefix, namespace));
+        element.addContent(child);
         
         return new YOMWriter(child);
     }
 
     public MessageWriter getElementWriter(QName qname)
     {
-        String name = qname.getLocalPart();
-        if (qname.getPrefix().length() > 0)
-        {
-            name = qname.getPrefix() + ":" + name;
-        }
-        else
-        {
-            String prefix = NamespaceHelper.getUniquePrefix(element, qname.getNamespaceURI());
-            name = prefix + ":" + name;
-        }
-        
-        Element child = new Element(name, qname.getNamespaceURI());
-        element.appendChild(child);
+        Element child = new Element(qname.getLocalPart(), 
+                                    Namespace.getNamespace(qname.getPrefix(),
+                                                           qname.getNamespaceURI()));
+        element.addContent(child);
         
         return new YOMWriter(child);
     }
@@ -70,10 +62,11 @@ public class YOMWriter
 
     public MessageWriter getAttributeWriter(String name)
     {
-        Attribute att = new Attribute(element.getNamespacePrefix() + ":" + name,
-                                      element.getNamespaceURI(),
-                                      "");
-        element.addAttribute(att);
+        Attribute att = new Attribute(name,
+                                      "",
+                                      Namespace.getNamespace(element.getNamespacePrefix(), 
+                                                             element.getNamespaceURI()));
+        element.setAttribute(att);
         return new AttributeWriter(att);
     }
 
@@ -83,14 +76,14 @@ public class YOMWriter
         if (namespace != null && namespace.length() > 0)
         {
             String prefix = NamespaceHelper.getUniquePrefix(element, namespace);
-            att = new Attribute(prefix + ":" + name, namespace, "");
+            att = new Attribute(name, "", Namespace.getNamespace(prefix, namespace));
         }
         else
         {
             att = new Attribute(name, "");
         }
 
-        element.addAttribute(att);
+        element.setAttribute(att);
         return new AttributeWriter(att);
     }
 

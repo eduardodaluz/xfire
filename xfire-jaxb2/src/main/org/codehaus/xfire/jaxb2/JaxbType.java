@@ -14,7 +14,7 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public class JaxbType
     extends Type

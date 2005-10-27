@@ -7,7 +7,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl.WSDLWriter;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 /**
  * XFireTest

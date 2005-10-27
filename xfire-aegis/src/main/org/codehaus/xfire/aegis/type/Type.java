@@ -9,7 +9,7 @@ import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.wsdl.SchemaType;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 /**
  * Type

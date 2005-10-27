@@ -5,7 +5,8 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.yom.Element;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class ServiceRouterHandler
     extends AbstractHandler
@@ -26,7 +27,7 @@ public class ServiceRouterHandler
        Element header = context.getInMessage().getHeader();
         if (header == null) return;
         
-        Element versionEl = header.getFirstChildElement(VERSION_NAME, VERSION_NS);
+        Element versionEl = header.getChild(VERSION_NAME, Namespace.getNamespace(VERSION_NS));
         if (versionEl == null) return;
         
         String version = versionEl.getValue();

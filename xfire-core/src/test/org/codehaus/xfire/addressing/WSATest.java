@@ -4,9 +4,9 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.yom.Document;
-import org.codehaus.yom.Element;
-import org.codehaus.yom.stax.StaxBuilder;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
+import org.jdom.Document;
+import org.jdom.Element;
 
 public class WSATest
     extends AbstractXFireTest
@@ -71,7 +71,7 @@ public class WSATest
         assertNotNull(ref.getReferenceProperties());
         assertEquals(1, ref.getReferenceProperties().size());
         
-        Element header = new Element("s:Header", Soap11.getInstance().getNamespace());
+        Element header = new Element("Header", "s", Soap11.getInstance().getNamespace());
         doc = new Document(header);
         
         factory.writeHeaders(header, headers);

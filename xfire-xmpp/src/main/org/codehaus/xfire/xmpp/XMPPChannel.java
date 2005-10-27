@@ -1,7 +1,6 @@
 package org.codehaus.xfire.xmpp;
 
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
 
 import javax.xml.stream.XMLStreamWriter;
 
@@ -14,9 +13,6 @@ import org.codehaus.xfire.soap.SoapSerializer;
 import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.ToContainsFilter;
@@ -105,18 +101,5 @@ public class XMPPChannel
     public void close()
     {
         conn.close();
-    }
-    
-    protected Document readDocument(String text)
-    {
-        try
-        {
-            SAXReader reader = new SAXReader();
-            return reader.read(new StringReader(text));
-        }
-        catch (DocumentException e)
-        {
-            throw new XFireRuntimeException("Couldn't read response document: " + text, e);
-        }
     }
 }

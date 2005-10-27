@@ -1,16 +1,12 @@
 package org.codehaus.xfire.xmpp;
 
-import java.io.StringReader;
-
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Packet;
 
@@ -52,9 +48,8 @@ public class ChannelPacketListener
         String serviceName = to.substring(to.indexOf('/')+1);
         Service service = xfire.getServiceRegistry().getService(serviceName);
         
-        XMLStreamReader reader = STAXUtils.createXMLStreamReader(new StringReader(soapPacket.getChildElementXML()));
-        InMessage message = new InMessage(reader, to);
-        
+        InMessage message = new InMessage(new JDOMStreamReader(soapPacket.getDocument().getRootElement()), to);
+
         MessageContext context = new MessageContext();
         context.setProperty(PACKET, packet);
         context.setXFire(xfire);
