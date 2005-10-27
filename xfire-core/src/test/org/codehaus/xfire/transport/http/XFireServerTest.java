@@ -54,7 +54,7 @@ public class XFireServerTest
         
         Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
 
-        Client client = new Client(transport, service, "http://localhost:8391/EchoImpl");
+        Client client = new Client(transport, service, "http://localhost:8090/EchoImpl");
 
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});

@@ -48,12 +48,8 @@ public class SimpleMessageSender extends AbstractMessageSender
         urlConn.setRequestProperty("User-Agent", "XFire Client +http://xfire.codehaus.org");
         urlConn.setRequestProperty("Accept", "text/xml; text/html");
         urlConn.setRequestProperty("Content-type", "text/xml; charset=" + getEncoding());
-        
-        String action = getSoapAction();
-        if (action == null)
-            action = "";
-        
-        urlConn.setRequestProperty( "SOAPAction", "\"" + action + "\"");
+
+        urlConn.setRequestProperty( "SOAPAction", getQuotedSoapAction());
     }
 
     public OutputStream getOutputStream() throws IOException, XFireFault

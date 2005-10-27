@@ -38,15 +38,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         client = new HttpClient();
 
         client.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-        client.getParams()
-                .setParameter("http.useragent", "XFire Client +http://xfire.codehaus.org");
-        client.getParams().setParameter("http.protocol.content-charset", getEncoding());
+        client.getParams().setParameter("http.useragent", "XFire Client +http://xfire.codehaus.org");
 
         postMethod = new PostMethod(getUri());
         postMethod.setRequestHeader("Content-Type", "text/xml; charset="+getEncoding());
         if (getSoapAction() != null)
         {
-            postMethod.setRequestHeader("SOAPAction", getSoapAction());
+            postMethod.setRequestHeader("SOAPAction", getQuotedSoapAction());
         }
     }
 

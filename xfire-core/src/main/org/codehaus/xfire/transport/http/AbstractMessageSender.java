@@ -55,6 +55,16 @@ public abstract class AbstractMessageSender
         return message.getAction();
     }
     
+    public String getQuotedSoapAction()
+    {
+        String action = message.getAction();
+        
+        if (action == null)
+            action = "";
+        
+        return "\"" + action + "\"";
+    }
+    
     public String getUri()
     {
         return message.getUri();
