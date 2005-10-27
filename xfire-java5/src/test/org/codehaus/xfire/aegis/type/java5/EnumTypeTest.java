@@ -4,8 +4,8 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.jdom.YOMReader;
-import org.codehaus.xfire.aegis.jdom.YOMWriter;
+import org.codehaus.xfire.aegis.jdom.JDOMReader;
+import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.java5.EnumType;
@@ -39,13 +39,13 @@ public class EnumTypeTest
         tm.register(type);
         
         Element root = new Element("root");
-        YOMWriter writer = new YOMWriter(root);
+        JDOMWriter writer = new JDOMWriter(root);
         
         type.writeObject(smallEnum.VALUE1, writer, new MessageContext());
         
         assertEquals("VALUE1", root.getValue());
         
-        YOMReader reader = new YOMReader(root);
+        JDOMReader reader = new JDOMReader(root);
         Object value = type.readObject(reader, new MessageContext());
         
         assertEquals(smallEnum.VALUE1, value);
