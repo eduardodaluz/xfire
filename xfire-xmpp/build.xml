@@ -11,9 +11,8 @@
   </path>
 
   <target name="get-deps" depends="xfire.get-deps">
-    <get-dep artifact="dom4j" version="1.5.2" />
-    <get-dep artifact="smack" group="jivesoftware" version="1.4.1" />
-    <get-dep artifact="smackx" group="jivesoftware" version="1.4.1" />
+    <get-dep artifact="smack" group="jivesoftware" version="1.5.0" />
+    <get-dep artifact="smackx" group="jivesoftware" version="1.5.0" />
   </target>
 
   <target name="init" depends="xfire.init">
