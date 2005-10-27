@@ -1,8 +1,7 @@
 package org.codehaus.xfire.message.wrapped;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.yom.Document;
+import org.jdom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>

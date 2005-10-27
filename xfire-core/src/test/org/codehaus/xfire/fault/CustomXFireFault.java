@@ -1,6 +1,6 @@
 package org.codehaus.xfire.fault;
 
-import org.codehaus.yom.Element;
+import org.jdom.Element;
 
 public class CustomXFireFault
     extends XFireFault
@@ -9,6 +9,6 @@ public class CustomXFireFault
     {
         super("CustomFault", XFireFault.MUST_UNDERSTAND);
         
-        getDetail().appendChild(new Element("test"));
+        getDetail().addContent(new Element("test"));
     }
 }
