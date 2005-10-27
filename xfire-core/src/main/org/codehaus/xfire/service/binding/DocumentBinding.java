@@ -118,7 +118,7 @@ public class DocumentBinding
             Object param = parameterIterator.next();
             MessagePartInfo mpi = (MessagePartInfo) messagePartIterator.next();
             
-            if (!param.getClass().isAssignableFrom(mpi.getTypeClass()))
+            if (!mpi.getTypeClass().isAssignableFrom(param.getClass()))
             {
                 if (!param.getClass().isPrimitive() && mpi.getTypeClass().isPrimitive())
                 {
