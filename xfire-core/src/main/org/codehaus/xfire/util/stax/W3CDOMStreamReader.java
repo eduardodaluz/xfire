@@ -44,6 +44,17 @@ public class W3CDOMStreamReader
         NamedNodeMap nodes = element.getAttributes();
         List nodeToRemove = new ArrayList();
         
+        String baseURI = element.getBaseURI();
+        String nsURI = element.getNamespaceURI();
+        String ePrefix = element.getPrefix();
+        if(ePrefix == null ){
+            ePrefix = "";
+        }
+        if( nsURI != null ){
+            uris.add(nsURI);
+            prefixes.add(ePrefix);
+        }
+        
         for (int i = 0; i < nodes.getLength(); i++)
         {
             Node node = nodes.item(i);
@@ -51,6 +62,7 @@ public class W3CDOMStreamReader
             String localName = node.getLocalName();
             String value = node.getNodeValue();
             String name = node.getNodeName();
+            String uri = node.getNamespaceURI();
             // HACK!!! for xmlns="value" attribute
             // TODO: REIMPLEMENT THIS
             if (prefix == null && ("xmlns".equals(name) || "xmlns".equals(localName)))
@@ -60,9 +72,9 @@ public class W3CDOMStreamReader
             }
             if (prefix != null && !prefixes.contains(localName))
             {
-                uris.add(value);
-                prefixes.add(localName);
-                nodeToRemove.add(node);
+                uris.add(uri);
+                prefixes.add(prefix);
+                
             }
         }
 
@@ -79,6 +91,8 @@ public class W3CDOMStreamReader
             }
         }
 
+        
+        
     }
 
     /**
@@ -169,12 +183,21 @@ public class W3CDOMStreamReader
         return (Attr) getCurrentElement().getAttributes().item(i);
     }
     
+    private String getLocalName(Attr attr ){
+        
+        String name= attr.getLocalName();
+        if( name == null ){
+            name = attr.getNodeName();
+        }
+        return name;
+    }
     public QName getAttributeName(int i)
     {
         Attr at = getAttribute(i);
         
         String prefix = at.getPrefix();
-        String ln = at.getNodeName();
+        String ln = getLocalName(at); 
+            //at.getNodeName();
         String ns = at.getNamespaceURI();
         
         if (prefix == null)
@@ -194,7 +217,9 @@ public class W3CDOMStreamReader
 
     public String getAttributeLocalName(int i)
     {
-        return getAttribute(i).getNodeName();
+        Attr attr  = getAttribute(i);
+        String name = getLocalName(attr);
+        return name;
     }
 
     public String getAttributePrefix(int i)
@@ -299,7 +324,11 @@ public class W3CDOMStreamReader
 
     public String getPrefix()
     {
-        return getCurrentElement().getPrefix();
+        String prefix  = getCurrentElement().getPrefix();
+        if( prefix == null ){
+            prefix = "";
+        }
+        return prefix;
     }
 
     public String getPITarget()

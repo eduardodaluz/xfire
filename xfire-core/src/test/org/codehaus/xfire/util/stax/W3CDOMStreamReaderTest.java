@@ -1,12 +1,14 @@
 package org.codehaus.xfire.util.stax;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.DOMOutputter;
+import org.codehaus.xfire.util.DOMUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -15,12 +17,13 @@ import org.jdom.output.DOMOutputter;
 public class W3CDOMStreamReaderTest
     extends AbstractStreamReaderTest
 {
-    DOMOutputter dom = new DOMOutputter();
+    
     
     public void testSingleElement() throws Exception
     {
-        Element e = new Element("root", "urn:test");
-        Document doc = new Document(e);
+        Document doc = getDocument();
+        Element e = doc.createElementNS("urn:test","root");
+        doc.appendChild(e);
         
         System.out.println("start: " + XMLStreamReader.START_ELEMENT);
         System.out.println("attr: " + XMLStreamReader.ATTRIBUTE);
@@ -28,41 +31,63 @@ public class W3CDOMStreamReaderTest
         System.out.println("chars: " + XMLStreamReader.CHARACTERS);
         System.out.println("end: " + XMLStreamReader.END_ELEMENT);
         
-        W3CDOMStreamReader reader = new W3CDOMStreamReader(dom.output(doc).getDocumentElement());
+        DOMUtils.writeXml(doc,System.out);
+        W3CDOMStreamReader reader = new W3CDOMStreamReader(doc.getDocumentElement());
         testSingleElement(reader);
     }
     
+    private Document getDocument() throws Exception{
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        Document doc = factory.newDocumentBuilder().newDocument();
+        return doc;
+    }
+    
+    
     public void testTextChild() throws Exception
     {
-        Element e = new Element("root", "urn:test");
-        e.addContent("Hello World");
-        Document doc = new Document(e);
+        Document doc = getDocument();
+        Element e = doc.createElementNS( "urn:test","root");
+        doc.appendChild(e);
+        Node text = doc.createTextNode("Hello World");
+        e.appendChild(text);
         
-        W3CDOMStreamReader reader = new W3CDOMStreamReader(dom.output(doc).getDocumentElement());
+        DOMUtils.writeXml(doc,System.out);
+        
+        W3CDOMStreamReader reader = new W3CDOMStreamReader(e);
         testTextChild(reader);
     }
     
-    /*
+    
     public void testAttributes() throws Exception
     {
-        Element e = new Element("root", "urn:test");
-        e.setAttribute(new Attribute("att1", "value1"));
-        e.setAttribute(new Attribute("att2",  "value2", Namespace.getNamespace("p", "urn:test2")));
-        Document doc = new Document(e);
+        Document doc = getDocument();
         
-        W3CDOMStreamReader reader = new W3CDOMStreamReader(dom.output(doc).getDocumentElement());
+        Element e = doc.createElementNS("urn:test","root");
+        doc.appendChild(e);
+        e.setAttribute("att1", "value1");
+        Attr attr =doc.createAttributeNS("urn:test2","att2");
+        attr.setValue("value2");
+        attr.setPrefix("p");
+        e.setAttributeNode(attr);
+        DOMUtils.writeXml(doc,System.out);
+        
+        W3CDOMStreamReader reader = new W3CDOMStreamReader(doc.getDocumentElement());
         
         testAttributes(reader);
     }
     
     public void testElementChild() throws Exception
     {
-        Element e = new Element("root", "urn:test");
-        Element child = new Element("child", "a", "urn:test2");
-        e.addContent(child);
-        Document doc = new Document(e);
+        Document doc = getDocument();
+        Element e = doc.createElementNS("urn:test","root");
+        Element child =  doc.createElementNS("urn:test2","child");
+        child.setPrefix("a");
+        e.appendChild(child);
+        doc.appendChild(e);
+        DOMUtils.writeXml(doc,System.out);
         
-        W3CDOMStreamReader reader = new W3CDOMStreamReader(dom.output(doc).getDocumentElement());
+        W3CDOMStreamReader reader = new W3CDOMStreamReader(e);
         testElementChild(reader);
-    }*/
+    }
 }
