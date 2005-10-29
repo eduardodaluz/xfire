@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.fault.Soap11FaultSerializer;
+import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
@@ -49,7 +49,7 @@ public class ObjectServiceFactoryTest
         ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
         assertEquals(Soap11.getInstance(), endpoint.getSoapVersion());
-        assertTrue(endpoint.getFaultSerializer() instanceof Soap11FaultSerializer);
+        assertTrue(endpoint.getFaultSerializer() instanceof SoapFaultSerializer);
         
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertNotNull(binding);

@@ -15,8 +15,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.FaultSender;
-import org.codehaus.xfire.fault.Soap11FaultSerializer;
-import org.codehaus.xfire.fault.Soap12FaultSerializer;
+import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.CustomFaultHandler;
 import org.codehaus.xfire.handler.OutMessageSender;
@@ -221,15 +220,7 @@ public class ObjectServiceFactory
         ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
         binding.setInvoker(new ObjectInvoker());
         endpoint.setBinding(binding);
-
-        if (theVersion instanceof Soap11)
-        {
-            endpoint.setFaultSerializer(new Soap11FaultSerializer());
-        }
-        else
-        {
-            endpoint.setFaultSerializer(new Soap12FaultSerializer());
-        }
+        endpoint.setFaultSerializer(new SoapFaultSerializer());
 
         if (transportManager != null && binding instanceof WSDL11ParameterBinding)
         {
