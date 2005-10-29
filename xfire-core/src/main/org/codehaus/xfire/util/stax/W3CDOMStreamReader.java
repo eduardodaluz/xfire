@@ -44,7 +44,7 @@ public class W3CDOMStreamReader
         NamedNodeMap nodes = element.getAttributes();
         List nodeToRemove = new ArrayList();
         
-        String baseURI = element.getBaseURI();
+        
         String nsURI = element.getNamespaceURI();
         String ePrefix = element.getPrefix();
         if(ePrefix == null ){
