@@ -47,11 +47,11 @@
         <artifactId>xfire-spring</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
-        <dependency>
-          <groupId>org.codehaus.xfire</groupId>
-          <artifactId>xfire-xmlbeans</artifactId>
-          <version>1.0-SNAPSHOT</version>
-        </dependency>
+      <dependency>
+        <groupId>org.codehaus.xfire</groupId>
+        <artifactId>xfire-xmlbeans</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -73,7 +73,13 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>avalon-framework</groupId>
+          <artifactId>avalon-framework</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>stax</groupId>
@@ -84,7 +90,6 @@
       <groupId>stax</groupId>
       <artifactId>stax</artifactId>
       <version>1.1.2-dev</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>wsdl4j</groupId>
@@ -124,10 +129,6 @@
       <version>1.1-beta-5</version>
       <exclusions>
         <exclusion>
-          <groupId>jdom</groupId>
-          <artifactId>jdom</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>dom4j</groupId>
           <artifactId>dom4j</artifactId>
         </exclusion>
@@ -156,6 +157,19 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus</name>
+      <url>http://dist.codehaus.org</url>
+      <layout>legacy</layout>
+    </repository>
+    <repository>
+      <id>snapshot</id>
+      <name>Maven Snapshot Repository</name>
+      <url>http://snapshots.maven.codehaus.org/maven2/</url>
+    </repository>
+  </repositories>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
     <testSourceDirectory>src/test</testSourceDirectory>
@@ -185,7 +199,7 @@
     <module>xfire-xmpp</module>
     <module>xfire-jaxb</module>
     <module>xfire-annotations</module>
-      <module>xfire-xmlbeans</module>
+    <module>xfire-xmlbeans</module>
     <!-- module>xfire-java5</module>
       <module>xfire-xmlbeans</module>
       <module>xfire-picocontainer</module>
