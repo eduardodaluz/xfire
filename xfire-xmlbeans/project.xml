@@ -31,34 +31,5 @@
             <version>2.0.0</version>
             <url>http://xmlbeans.apache.org</url>
         </dependency>
-        <!-- 
-        
-        Generator Dependencies 
-        
-        -->
-        <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.6.2</version>
-            <url>http://ant.apache.org</url>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.8</version>
-            <url>http://logging.apache.org/log4j</url>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>2.1</version>
-            <url>http://jakarta.apache.org/commons/collections/</url>
-        </dependency>
-        <dependency>
-            <groupId>velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.4</version>
-            <url>http://jakarta.apache.org/velocity</url>
-        </dependency>
     </dependencies>
 </project>
