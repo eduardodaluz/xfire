@@ -157,19 +157,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>codehaus</id>
-      <name>Codehaus</name>
-      <url>http://dist.codehaus.org</url>
-      <layout>legacy</layout>
-    </repository>
-    <!-- repository>
-      <id>snapshot</id>
-      <name>Maven Snapshot Repository</name>
-      <url>http://snapshots.maven.codehaus.org/maven2/</url>
-    </repository -->
-  </repositories>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
     <testSourceDirectory>src/test</testSourceDirectory>
