@@ -31,7 +31,6 @@ public class Service
     public final static String ROLE = Service.class.getName();
 
     private ServiceInfo service;
-    private MessageSerializer serializer;
     private MessageSerializer faultSerializer;
     private ObjectBinding binding;
     private Map properties = new HashMap();

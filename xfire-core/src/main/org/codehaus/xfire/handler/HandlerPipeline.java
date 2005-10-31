@@ -76,7 +76,7 @@ public class HandlerPipeline
     	throws Exception
     {
         Stack invoked = new Stack();
-        context.setProperty(this, invoked);
+        context.setProperty(this.toString(), invoked);
         
         for (Iterator itr = phases.iterator(); itr.hasNext();)
         {
@@ -110,7 +110,7 @@ public class HandlerPipeline
      */
     public void handleFault(XFireFault fault, MessageContext context) 
     {
-        Stack invoked = (Stack) context.getProperty(this);
+        Stack invoked = (Stack) context.getProperty(this.toString());
         
         while (invoked.size() > 0)
         {

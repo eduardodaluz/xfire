@@ -1,8 +1,5 @@
 package org.codehaus.xfire;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.codehaus.xfire.exchange.InExchange;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
@@ -20,10 +17,9 @@ import org.codehaus.xfire.transport.Session;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 13, 2004
  */
-public class MessageContext
+public class MessageContext extends AbstractContext
 {
     private Session session;
-    private Map properties;
 
     private Service service;
 
@@ -35,7 +31,6 @@ public class MessageContext
     
     public MessageContext()
     {
-        properties = new HashMap();
     }
     
     public XFire getXFire()
@@ -92,16 +87,6 @@ public class MessageContext
     public InMessage getInMessage()
     {
         return exchange.getInMessage();
-    }
-
-    public Object getProperty(Object key)
-    {
-        return properties.get(key);
-    }
-
-    public void setProperty(Object key, Object value)
-    {
-        properties.put(key, value);
     }
 
     /**

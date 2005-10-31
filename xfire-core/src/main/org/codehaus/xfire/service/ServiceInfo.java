@@ -21,7 +21,6 @@ public class ServiceInfo
 {
     private QName name;
     private Map operations = new HashMap();
-    private Map opsByAction = new HashMap();
     private Class serviceClass;
 
     /**

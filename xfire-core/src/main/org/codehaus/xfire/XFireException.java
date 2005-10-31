@@ -10,8 +10,6 @@ package org.codehaus.xfire;
 public class XFireException
     extends Exception
 {
-    private Throwable cause;
-
     protected XFireException()
     {
     }
