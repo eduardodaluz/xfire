@@ -26,6 +26,9 @@ public class XFireFactory
 
     private XFire xfire;
 
+    public void setXFire(XFire xfire){
+        this.xfire = xfire;
+    }
     protected XFireFactory()
     {
         xfire = new DefaultXFire();
