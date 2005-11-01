@@ -3,6 +3,9 @@
 <project default="jar" name="xfire-spring" basedir=".">
   <import file="../build-common.xml"/>
 
+		
+
+	
   <path id="module.classpath">
     <fileset dir="..">
       <include name="xfire-core/target/*.jar" />
@@ -12,11 +15,26 @@
     </fileset>
   </path>
 
+  <taskdef name="xsdGenerate" classname="org.xbean.spring.task.SchemaGenerateTask">
+      <classpath refid="module.classpath" />
+  </taskdef>
+
+  <target name="config.gen" >
+	   <xsdGenerate destFile="src/main/org/codehaus/xfire/spring/service.xsd" namespace="http://xfire.codehaus.org/config/1.0"
+    classpathref="module.classpath" srcdir="src/main"  metaInfDir="src/main/"/>
+  </target>	
   <target name="get-deps" depends="xfire.get-deps">
     <get-dep artifact="commons-beanutils" version="1.7.0" />
-    <get-dep artifact="spring" group="springframework" version="1.1.5" />
+	<get-dep artifact="commons-logging" version="1.0.3" />
+    <get-dep artifact="spring" group="springframework" version="1.2.4" />
     <get-dep artifact="spring-mock" group="springframework" version="1.1.5" />
     <get-dep artifact="aopalliance" version="1.0" />
+    <get-dep artifact="annogen" version="0.1.0" />
+  	<get-dep artifact="servletapi" version="2.3" />
+    <get-dep artifact="xbean-spring" version="2.0-SNAPSHOT" />
+	
+
+	 
   </target>
 
   <target name="init" depends="xfire.init">
