@@ -1,2 +1,25 @@
-<project default="jar:install">
+<project default="jar:install" xmlns:ant="jelly:ant" xmlns:maven="jelly:maven">
+
+	<ant:taskdef name="mapping" classname="org.xbean.spring.generator.MappingGeneratorTask">
+      <ant:classpath>
+      	<ant:pathelement path="${maven.build.dest}"/>
+      	<ant:pathelement path="${maven.test.dest}"/>
+        <path refid="maven.dependency.classpath"/>
+      </ant:classpath>
+    </ant:taskdef>
+
+	                
+	<postGoal name="java:compile">
+		 
+		<mapping destFile="target/services.xsd"
+			     namespace="http://xfire.codehaus.org/config/1.0"
+                 srcdir="src/main"
+                 metaInfDir="${maven.build.dir}/generated/"/>
+		
+		<ant:path id="xfire.xbean.generated.main" 
+		              location="${maven.build.dir}/generated/"/>
+
+		<maven:addPath id="maven.compile.src.set"  
+		               refid="xfire.xbean.generated.main"/>
+	</postGoal>
 </project>
