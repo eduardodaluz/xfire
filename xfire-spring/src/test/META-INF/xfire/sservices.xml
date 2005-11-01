@@ -1,0 +1,37 @@
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+	<xfire>
+		<inHandlers>
+			<handler handlerClass="org.codehaus.xfire.spring.TestHandler"/>
+		</inHandlers>
+		<outHandlers>
+			<handler handlerClass="org.codehaus.xfire.spring.TestHandler"/>
+		</outHandlers>
+		<faultHandlers>
+			<handler handlerClass="org.codehaus.xfire.spring.TestHandler"/>
+		</faultHandlers>
+
+		<services>
+			<service>
+				<name>testservice</name>
+				<serviceClass>
+					org.codehaus.xfire.spring.TestService</serviceClass>
+				<implementationClass>org.codehaus.xfire.spring.TestServiceImpl</implementationClass>
+				<namespace>urn:my:namespace</namespace>
+				<serviceFactory>org.codehaus.xfire.spring.config.TestServiceFactory</serviceFactory>
+				<bindingProvider>org.codehaus.xfire.aegis.AegisBindingProvider</bindingProvider>
+				<style>wrapped</style>
+				<use>literal</use>
+				<soapVersion>1.2</soapVersion>
+				<scope>session</scope>
+				<properties>
+					<sproperty key="myKey" value="value"></sproperty>
+					<sproperty key="myKey1" value="value1"></sproperty>
+				</properties>
+				<inHandlers>
+					<handler
+						handlerClass="org.codehaus.xfire.spring.TestHandler" before="some" />
+				</inHandlers>
+			</service>
+		</services>
+	</xfire>
+</beans>

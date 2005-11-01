@@ -1,0 +1,33 @@
+<xfire>
+  
+  <services>
+    <service>
+      <name>Echo</name>
+      <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+      <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
+      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
+      <property key="foo">bar</property>
+      <property key="cheese">baz</property>
+    </service>
+
+    <service>
+      <name>Echo1</name>
+      <namespace>urn:Echo</namespace>
+      <style>wrapped</style>
+      <use>literal</use>
+      <serviceClass>org.codehaus.xfire.test.EchoImpl</serviceClass>
+      <soapVersion>1.2</soapVersion>
+      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
+      
+      <inHandlers>
+        <handler>org.codehaus.xfire.addressing.AddressingInHandler</handler>
+      </inHandlers>
+      
+      <outHandlers>
+        <handler>org.codehaus.xfire.addressing.AddressingInHandler</handler>
+      </outHandlers>
+    </service>
+
+  </services>
+  
+</xfire>

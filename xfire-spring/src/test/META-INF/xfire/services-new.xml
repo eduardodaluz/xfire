@@ -1,0 +1,39 @@
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+<xfire>
+  <services>
+    <service>
+      <name>Echo</name>
+      <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+      <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
+      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
+	  <properties>
+      <sproperty key="foo" value="bar"/>
+      <sproperty key="cheese" value="baz" />
+	  </properties>
+    </service>
+
+    <service>
+      <name>Echo1</name>
+      <namespace>urn:Echo</namespace>
+      <style>wrapped</style>
+      <use>literal</use>
+
+      <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
+		
+		
+      <soapVersion>1.2</soapVersion>
+      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
+      
+      <inHandlers>
+        <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler"></handler>
+      </inHandlers>
+      
+      <outHandlers>
+        <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler"/>
+      </outHandlers>
+    </service >
+
+  </services>
+  
+</xfire>
+</beans>
