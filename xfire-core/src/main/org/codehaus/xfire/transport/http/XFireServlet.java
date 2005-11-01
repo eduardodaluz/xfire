@@ -20,9 +20,9 @@ import org.codehaus.xfire.XFireFactory;
 public class XFireServlet 
     extends HttpServlet
 {
-    private XFire xfire;
+    protected XFire xfire;
 
-    private XFireServletController controller;
+    protected XFireServletController controller;
 
     public void init() 
         throws ServletException
