@@ -1,14 +1,20 @@
 <beans xmlns="http://xfire.codehaus.org/config/1.0">
 <xfire>
-  <services>
+	<inHandlers>
+		<handler
+			handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">
+			</handler>
+	</inHandlers>
+</xfire>
+	
     <service>
       <name>Echo</name>
       <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
       <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
       <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
 	  <properties>
-      <sproperty key="foo" value="bar"/>
-      <sproperty key="cheese" value="baz" />
+      <property key="foo" value="bar"/>
+      <property key="cheese" value="baz" />
 	  </properties>
     </service>
 
@@ -33,7 +39,6 @@
       </outHandlers>
     </service >
 
-  </services>
   
-</xfire>
+
 </beans>

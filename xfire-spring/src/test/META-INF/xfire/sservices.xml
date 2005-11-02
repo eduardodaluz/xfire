@@ -9,29 +9,29 @@
 		<faultHandlers>
 			<handler handlerClass="org.codehaus.xfire.spring.TestHandler"/>
 		</faultHandlers>
-
-		<services>
-			<service>
-				<name>testservice</name>
-				<serviceClass>
-					org.codehaus.xfire.spring.TestService</serviceClass>
-				<implementationClass>org.codehaus.xfire.spring.TestServiceImpl</implementationClass>
-				<namespace>urn:my:namespace</namespace>
-				<serviceFactory>org.codehaus.xfire.spring.config.TestServiceFactory</serviceFactory>
-				<bindingProvider>org.codehaus.xfire.aegis.AegisBindingProvider</bindingProvider>
-				<style>wrapped</style>
-				<use>literal</use>
-				<soapVersion>1.2</soapVersion>
-				<scope>session</scope>
-				<properties>
-					<sproperty key="myKey" value="value"></sproperty>
-					<sproperty key="myKey1" value="value1"></sproperty>
-				</properties>
-				<inHandlers>
-					<handler
-						handlerClass="org.codehaus.xfire.spring.TestHandler"/>
-				</inHandlers>
-			</service>
-		</services>
 	</xfire>
+	<service>
+		<name>testservice</name>
+		<serviceClass> org.codehaus.xfire.spring.TestService</serviceClass>
+		<implementationClass>
+			org.codehaus.xfire.spring.TestServiceImpl</implementationClass>
+		<namespace>urn:my:namespace</namespace>
+		<serviceFactory>org.codehaus.xfire.spring.config.TestServiceFactory</serviceFactory>
+		<!-- serviceFactory>#commons-attributes</serviceFactory -->
+
+		<bindingProvider>
+			org.codehaus.xfire.aegis.AegisBindingProvider</bindingProvider>
+		<style>wrapped</style>
+		<use>literal</use>
+		<soapVersion>1.2</soapVersion>
+		<scope>session</scope>
+		<properties>
+			<property key="myKey" value="value"></property>
+			<property key="myKey1" value="value1"></property>
+		</properties>
+		<inHandlers>
+			<handler handlerClass="org.codehaus.xfire.spring.TestHandler" />	
+		</inHandlers>
+	</service>
+	
 </beans>

@@ -16,8 +16,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class XFireBean implements InitializingBean, ApplicationContextAware
 {
-    private List services;
-
+    
     private List inHandlers = new ArrayList();
 
     private List outHandlers = new ArrayList();
@@ -56,16 +55,7 @@ public class XFireBean implements InitializingBean, ApplicationContextAware
         this.outHandlers = outHandlers;
     }
 
-    public List getServices()
-    {
-        return services;
-    }
-
-    public void setServices(List services)
-    {
-        this.services = services;
-    }
-
+    
     public void afterPropertiesSet()
         throws Exception
     {

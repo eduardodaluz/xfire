@@ -14,6 +14,7 @@ public class XFireConfigurableServletNewTest
     {
         // TODO Auto-generated method stub
         super.testServlet();
+        assertEquals(getXFire().getInHandlers().size(),3);
     }
 
     protected String getConfiguration()
@@ -30,4 +31,5 @@ public class XFireConfigurableServletNewTest
         sr = new ServletRunner( getResourceAsStream(getConfiguration()) );
     }
 
+    
 }

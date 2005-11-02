@@ -74,12 +74,12 @@
 	</map>
 </property>
 </bean>
- <!-- bean id="commons-attributes" class="org.codehaus.xfire.spring.config.ServiceFactoryBean" >
+ <bean id="commons-attributes" class="org.codehaus.xfire.spring.config.ServiceFactoryBean" >
      <constructor-arg index="0" value="commons-attributes" />	 
  </bean>	
   <bean id="jsr181" class="org.codehaus.xfire.spring.config.ServiceFactoryBean" >
      <constructor-arg index="0" value="jsr181" />	 
- </bean -->	
+ </bean>	
 
  
 	
