@@ -9,13 +9,9 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * A convenience bean which creates a Service from a ServiceFactory instance.

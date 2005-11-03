@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
-import org.codehaus.xfire.transport.http.XFireConfigurableServlet;
 import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
 /**

@@ -3,14 +3,12 @@ package org.codehaus.xfire.spring.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
 import org.springframework.beans.factory.FactoryBean;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * @org.xbean.XBean element="property" contentProperty="value"
+ * @org.xbean.XBean element="property"
  * 
  */
 public class ServicePropertyBean
@@ -19,7 +17,7 @@ public class ServicePropertyBean
 
     private String key;
 
-    private Object value;
+    private String value;
 
     public String getKey()
     {
@@ -31,16 +29,14 @@ public class ServicePropertyBean
         this.key = key;
     }
 
-    public Object getValue()
+    public String getValue()
     {
         return value;
     }
 
-    public void setValue(Object value)
+    public void setValue(String value)
     {
-        QName qname = (QName) value;
-        
-        this.value = qname.getLocalPart();
+        this.value = value;
     }
 
     /* (non-Javadoc)
