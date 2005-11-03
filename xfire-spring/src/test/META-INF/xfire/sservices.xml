@@ -26,8 +26,8 @@
 		<soapVersion>1.2</soapVersion>
 		<scope>session</scope>
 		<properties>
-			<property key="myKey" value="value"></property>
-			<property key="myKey1" value="value1"></property>
+			<property key="myKey" >value</property>
+			<property key="myKey1" >value1</property>
 		</properties>
 		<inHandlers>
 			<handler handlerClass="org.codehaus.xfire.spring.TestHandler" />	

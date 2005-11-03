@@ -8,7 +8,7 @@ import org.springframework.beans.factory.FactoryBean;
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * @org.xbean.XBean element="property"
+ * @org.xbean.XBean element="property" contentProperty="value" 
  * 
  */
 public class ServicePropertyBean
