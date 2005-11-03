@@ -23,12 +23,14 @@
   <element name="property">
     <complexType>
       <attributeGroup ref="tns:mappedType"/>
+      <anyAttribute namespace='##other' processContents='lax'/>
     </complexType>
   </element>
   
   <element name="return-type">
     <complexType>
       <attributeGroup ref="tns:mappedType"/>
+      <anyAttribute namespace='##other' processContents='lax'/>
     </complexType>
   </element>
   
@@ -36,6 +38,7 @@
     <complexType>
       <attribute name="index" type="int"/>
       <attributeGroup ref="tns:mappedType"/>
+      <anyAttribute namespace='##other' processContents='lax'/>
     </complexType>
   </element>
 
@@ -54,6 +57,7 @@
         </restriction>
       </simpleType>
     </attribute>
+    <anyAttribute namespace='##other' processContents='lax'/>
   </attributeGroup> 
 
 </schema>
