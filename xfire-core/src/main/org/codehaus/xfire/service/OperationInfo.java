@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.AbstractContext;
+
 /**
  * Represents the description of a service operation. An operation has a name, and consists of a number of in and out
  * parameters.
@@ -19,10 +21,10 @@ import javax.xml.namespace.QName;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
 public class OperationInfo
-        implements Visitable
+    extends AbstractContext
+    implements Visitable
 {
     private String name;
-    private String action;
     private ServiceInfo service;
     private String mep;
     private boolean async;
@@ -228,16 +230,6 @@ public class OperationInfo
     public Collection getFaults()
     {
         return Collections.unmodifiableCollection(faults.values());
-    }
-
-    public String getAction()
-    {
-        return action;
-    }
-
-    public void setAction(String action)
-    {
-        this.action = action;
     }
 
     /**

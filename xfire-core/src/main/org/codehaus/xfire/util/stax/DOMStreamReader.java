@@ -25,8 +25,6 @@ public abstract class DOMStreamReader
 
     private ElementFrame frame;
 
-    private String text;
-
     private int currentEvent = XMLStreamConstants.START_DOCUMENT;
 
     /**

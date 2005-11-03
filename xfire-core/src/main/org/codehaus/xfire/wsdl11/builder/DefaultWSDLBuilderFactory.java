@@ -53,7 +53,7 @@ public class DefaultWSDLBuilderFactory
         }
         catch (XFireRuntimeException e)
         {
-            throw (XFireRuntimeException) e;
+            throw e;
         }
         catch (Exception e)
         {

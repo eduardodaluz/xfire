@@ -70,7 +70,7 @@ public class Jsr181HandlerMapping
                     WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
                     logger.info("Exposing SOAP v." + endpoint.getSoapVersion().getVersion() + " service " +
                                 service.getName() + " to " + urlPrefix + endpoint.getName() +
-                                " as " + binding.getStyle() + "/" + binding.getUse());
+                                " as " + binding.getStyle());
                 }
                 
                 xFire.getServiceRegistry().register(endpoint);

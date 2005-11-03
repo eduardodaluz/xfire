@@ -11,7 +11,6 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
@@ -62,8 +61,9 @@ public class AddressingInHandler
                 if (service != null) context.setService(service);
                 
                 // Dispatch the Exchange and operation
-                OperationInfo op = 
-                    service.getServiceInfo().getOperationByAction(headers.getAction());
+                AddressingOperationInfo op = 
+                    AddressingOperationInfo.getOperationByInAction(service.getServiceInfo(),
+                                                                   headers.getAction());
 
                 if (op == null)
                 {
@@ -72,18 +72,18 @@ public class AddressingInHandler
                                          XFireFault.SENDER);
                 }
                 
-                MessageExchange exchange = context.createMessageExchange(op);
+                MessageExchange exchange = context.createMessageExchange(op.getOperationInfo());
                 context.setExchange(exchange);
                 
                 EndpointReference faultTo = headers.getFaultTo();
                 OutMessage faultMsg = null;
                 if (faultTo != null)
                 {
-                    faultMsg = processEPR(context, faultTo, headers, factory);
+                    faultMsg = processEPR(context, faultTo, op, headers, factory);
                 }
                 else
                 {
-                    faultMsg = createDefaultMessage(context, headers, factory);
+                    faultMsg = createDefaultMessage(context, op, headers, factory);
                 }
                 exchange.setFaultMessage(faultMsg);
                 
@@ -91,11 +91,11 @@ public class AddressingInHandler
                 OutMessage outMessage = null;
                 if (replyTo != null)
                 {
-                    outMessage = processEPR(context, replyTo, headers, factory);
+                    outMessage = processEPR(context, replyTo, op, headers, factory);
                 }
                 else
                 {
-                    outMessage = createDefaultMessage(context, headers, factory);
+                    outMessage = createDefaultMessage(context, op, headers, factory);
                 }
                 exchange.setOutMessage(outMessage);
             }
@@ -103,6 +103,7 @@ public class AddressingInHandler
     }
 
     private OutMessage createDefaultMessage(MessageContext context,
+                                            AddressingOperationInfo aoi,
                                             AddressingHeaders inHeaders,
                                             AddressingHeadersFactory factory)
     {
@@ -112,7 +113,7 @@ public class AddressingInHandler
         headers.setTo(factory.getAnonymousUri());
         
         // TODO: need way to set out action
-        headers.setAction(inHeaders.getAction() + "Ack");
+        headers.setAction(aoi.getOutAction());
         outMessage.setProperty(ADRESSING_HEADERS, headers);
         outMessage.setProperty(ADRESSING_FACTORY, factory);
         
@@ -120,7 +121,8 @@ public class AddressingInHandler
     }
 
     protected OutMessage processEPR(MessageContext context, 
-                                    EndpointReference epr, 
+                                    EndpointReference epr,
+                                    AddressingOperationInfo aoi,
                                     AddressingHeaders inHeaders,
                                     AddressingHeadersFactory factory)
         throws XFireFault, Exception
@@ -154,7 +156,7 @@ public class AddressingInHandler
         AddressingHeaders headers = new AddressingHeaders();
         headers.setTo(addr);
         
-        headers.setAction(inHeaders.getAction() + "Ack");
+        headers.setAction(aoi.getOutAction());
         outMessage.setProperty(ADRESSING_HEADERS, headers);
         outMessage.setProperty(ADRESSING_FACTORY, factory);
         

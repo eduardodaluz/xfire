@@ -6,6 +6,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 /**
@@ -28,13 +29,14 @@ public interface WSDL11Transport
     Port createPort(WSDLBuilder builder, Binding transportBinding);
 
     /**
+     * @param op TODO
      * @param portType
      * @param wsdlOp
      * @param service
      * @return
      */
     BindingOperation createBindingOperation(WSDLBuilder builder,
+                                            OperationInfo op,
                                             PortType portType,
-                                            Operation wsdlOp,
-                                            WSDL11ParameterBinding binding);
+                                            Operation wsdlOp, WSDL11ParameterBinding binding);
 }

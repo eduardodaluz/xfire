@@ -37,6 +37,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Types;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 
@@ -49,100 +50,105 @@ public class WSDLVisitor
         this.definition = definition;
     }
 
-    public void walkTree()
+    public Definition getDefinition()
     {
-        begin();
-        try
-        {
-            visit(definition);
-            Collection imports = definition.getImports().values();
-            for (Iterator iterator = imports.iterator(); iterator.hasNext();)
-            {
-                Import wsdlImport = (Import) iterator.next();
-                visit(wsdlImport);
-            }
-            visit(definition.getTypes());
-            
-            Collection messages = definition.getMessages().values();
-            for (Iterator iterator = messages.iterator(); iterator.hasNext();)
-            {
-                Message message = (Message) iterator.next();
-                visit(message);
-                Collection parts = message.getParts().values();
-                for (Iterator iterator2 = parts.iterator(); iterator2.hasNext();)
-                {
-                    Part part = (Part) iterator2.next();
-                    visit(part);
-                }
-            }
-            
-            Collection services = definition.getServices().values();
-            for (Iterator iterator = services.iterator(); iterator.hasNext();)
-            {
-                Service service = (Service) iterator.next();
-                visit(service);
-                
-                Collection ports = service.getPorts().values();
-                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
-                {
-                    Port port = (Port) iterator1.next();
-                    visit(port);
-                    
-                    Binding binding = port.getBinding();
-                    visit(binding);
-                    
-                    List bindingOperations = binding.getBindingOperations();
-                    for (int i = 0; i < bindingOperations.size(); i++)
-                    {
-                        BindingOperation bindingOperation = 
-                            (BindingOperation) bindingOperations.get(i);
-                        visit(bindingOperation);
-                        visit(bindingOperation.getBindingInput());
-                        visit(bindingOperation.getBindingOutput());
-                        
-                        Collection bindingFaults = bindingOperation.getBindingFaults().values();
-                        for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
-                        {
-                            BindingFault bindingFault = (BindingFault) iterator2.next();
-                            visit(bindingFault);
-                        }
+        return definition;
+    }
 
-                    }
-                    PortType portType = binding.getPortType();
-                    visit(portType);
+    public void walkTree() throws Exception
+    {
+        Exception e;
+        
+        begin();
+
+        visit(definition);
+        Collection imports = definition.getImports().values();
+        for (Iterator iterator = imports.iterator(); iterator.hasNext();)
+        {
+            Import wsdlImport = (Import) iterator.next();
+            visit(wsdlImport);
+        }
+        visit(definition.getTypes());
+        
+        Collection messages = definition.getMessages().values();
+        for (Iterator iterator = messages.iterator(); iterator.hasNext();)
+        {
+            Message message = (Message) iterator.next();
+            visit(message);
+            Collection parts = message.getParts().values();
+            for (Iterator iterator2 = parts.iterator(); iterator2.hasNext();)
+            {
+                Part part = (Part) iterator2.next();
+                visit(part);
+            }
+        }
+        
+        Collection services = definition.getServices().values();
+        for (Iterator iterator = services.iterator(); iterator.hasNext();)
+        {
+            Service service = (Service) iterator.next();
+            begin(service);
+            
+            Collection ports = service.getPorts().values();
+            for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
+            {
+                Port port = (Port) iterator1.next();
+                visit(port);
+                
+                Binding binding = port.getBinding();
+                PortType portType = binding.getPortType();
+                
+                visit(binding);
+                
+                List bindingOperations = binding.getBindingOperations();
+                for (int i = 0; i < bindingOperations.size(); i++)
+                {
+                    BindingOperation bindingOperation = 
+                        (BindingOperation) bindingOperations.get(i);
                     
-                    List operations = portType.getOperations();
-                    for (int i = 0; i < operations.size(); i++)
+                    visit(bindingOperation);
+                    visit(bindingOperation.getBindingInput(), bindingOperation.getOperation().getInput());
+                    visit(bindingOperation.getBindingOutput(), bindingOperation.getOperation().getOutput());
+                    
+                    Collection bindingFaults = bindingOperation.getBindingFaults().values();
+                    for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
                     {
-                        Operation operation = (Operation) operations.get(i);
-                        visit(operation);
-                        {
-                            Input input = operation.getInput();
-                            visit(input);
-                        }
-                        {
-                            Output output = operation.getOutput();
-                            visit(output);
-                        }
+                        BindingFault bindingFault = (BindingFault) iterator2.next();
+                        Fault fault = bindingOperation.getOperation().getFault(bindingFault.getName());
                         
-                        Collection faults = operation.getFaults().values();
-                        for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
-                        {
-                            Fault fault = (Fault) iterator2.next();
-                            visit(fault);
-                        }
+                        visit(bindingFault, fault);
+                    }
+
+                }
+                
+                visit(portType);
+                
+                List operations = portType.getOperations();
+                for (int i = 0; i < operations.size(); i++)
+                {
+                    Operation operation = (Operation) operations.get(i);
+                    visit(operation);
+                    {
+                        Input input = operation.getInput();
+                        visit(input);
+                    }
+                    {
+                        Output output = operation.getOutput();
+                        visit(output);
+                    }
+                    
+                    Collection faults = operation.getFaults().values();
+                    for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
+                    {
+                        Fault fault = (Fault) iterator2.next();
+                        visit(fault);
                     }
                 }
             }
+            end(service);
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            end();
-        }
+
+        end();
     }
 
     protected void begin()
@@ -169,15 +175,15 @@ public class WSDLVisitor
     {
     }
 
-    protected void visit(BindingFault bindingFault)
+    protected void visit(BindingFault bindingFault, Fault fault)
     {
     }
 
-    protected void visit(BindingOutput bindingOutput)
+    protected void visit(BindingOutput bindingOutput, Output output)
     {
     }
 
-    protected void visit(BindingInput bindingInput)
+    protected void visit(BindingInput bindingInput, Input input)
     {
     }
 
@@ -217,10 +223,14 @@ public class WSDLVisitor
     {
     }
 
-    protected void visit(Service service)
+    protected void begin(javax.wsdl.Service wservice)
     {
     }
 
+    protected void end(javax.wsdl.Service wservice)
+    {
+    }
+    
     protected SOAPBody getSOAPBody(List extensibilityElements)
     {
         SOAPBody body = null;
@@ -249,5 +259,32 @@ public class WSDLVisitor
             }
         }
         return soapBinding;
+    }
+
+    protected SOAPAddress getSOAPAddress(Port port)
+    {
+        SOAPAddress soapAddress = null;
+        List extensibilityElements = port.getExtensibilityElements();
+        for (int i = 0; i < extensibilityElements.size(); i++)
+        {
+            Object element = extensibilityElements.get(i);
+            if (element instanceof SOAPAddress)
+            {
+                soapAddress = (SOAPAddress) element;
+            }
+        }
+        return soapAddress;
+    }
+    
+    protected Output getOutput(BindingOutput bindingOutput)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    protected Input getInput(BindingInput bindingInput)
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

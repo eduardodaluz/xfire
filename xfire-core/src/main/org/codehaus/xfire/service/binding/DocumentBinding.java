@@ -31,7 +31,6 @@ public class DocumentBinding
     public DocumentBinding()
     {
         setStyle(SoapConstants.STYLE_DOCUMENT);
-        setUse(SoapConstants.USE_LITERAL);
     }
 
     public void readMessage(InMessage inMessage, MessageContext context)

@@ -13,7 +13,7 @@ import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.dead.DeadLetterTransport;
-import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 
 /**
@@ -28,7 +28,8 @@ public class DefaultTransportManager
 
     private Map services = new HashMap();
     private Map transports = new HashMap();
-    private Map transportUris = new HashMap();
+    private Map uri2Transport = new HashMap();
+    private Map binding2Transport = new HashMap();
 
     private ServiceRegistry serviceRegistry;
     
@@ -68,7 +69,7 @@ public class DefaultTransportManager
         
         register(SoapTransport.createSoapTransport(new LocalTransport()));
         register(SoapTransport.createSoapTransport(new DeadLetterTransport()));
-        register(SoapTransport.createSoapTransport(new SoapHttpTransport()));
+        register(SoapTransport.createSoapTransport(new HttpTransport()));
     }
 
     /**
@@ -91,8 +92,14 @@ public class DefaultTransportManager
         String[] schemes = transport.getKnownUriSchemes();
         for (int i = 0; i < schemes.length; i++)
         {
-            transportUris.put(schemes[i], transport);
+            uri2Transport.put(schemes[i], transport);
         }
+        
+        String[] bindingIds = transport.getSupportedBindings();
+        for (int i = 0; i < bindingIds.length; i++)
+        {
+            binding2Transport.put(bindingIds[i], transport);
+        } 
         
         for (Iterator itr = services.values().iterator(); itr.hasNext();)
         {
@@ -252,7 +259,7 @@ public class DefaultTransportManager
 
     public Transport getTransportForUri(String uri)
     {
-        for (Iterator itr = transportUris.entrySet().iterator(); itr.hasNext();)
+        for (Iterator itr = uri2Transport.entrySet().iterator(); itr.hasNext();)
         {
             Map.Entry entry = (Map.Entry) itr.next();
             
@@ -263,5 +270,10 @@ public class DefaultTransportManager
         }
         
         return null;
+    }
+    
+    public Transport getTransportByBindingId(String id)
+    {
+        return (Transport) binding2Transport.get(id);
     }
 }

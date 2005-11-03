@@ -17,7 +17,21 @@ public interface TransportManager
     void unregister(Transport transport);
 
     Transport getTransport(String id);
+    
+    /**
+     * Get a transport for a particular binding id.
+     * @param id
+     * @return
+     */
+    Transport getTransportByBindingId(String id);
 
+    /**
+     * Find the best transport for a particular URI.
+     * @param uri
+     * @return
+     */
+    Transport getTransportForUri(String uri);
+    
     /**
      * Get the transports applicable to a particular service.
      *
@@ -28,13 +42,6 @@ public interface TransportManager
 
     Collection getTransports();
 
-    /**
-     * Find the best transport for a particular URI.
-     * @param uri
-     * @return
-     */
-    Transport getTransportForUri(String uri);
-    
     void enableAll(String serviceName);
 
     void disableAll(String serviceName);

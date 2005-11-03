@@ -31,7 +31,6 @@ public abstract class AbstractBinding
     public static final String RESPONSE_PIPE = "xfire.java.responsePipe";
 
     private String style;
-    private String use;
     private Invoker invoker;
     private BindingProvider bindingProvider;
     private boolean clientModeOn = false;
@@ -155,16 +154,6 @@ public abstract class AbstractBinding
     protected void setStyle(String style)
     {
         this.style = style;
-    }
-    
-    public String getUse()
-    {
-        return use;
-    }
-    
-    protected void setUse(String use)
-    {
-        this.use = use;
     }
 
     public BindingProvider getBindingProvider()

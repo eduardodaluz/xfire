@@ -33,7 +33,6 @@ public class RPCEncodedBinding
     public RPCEncodedBinding()
     {
         setStyle(SoapConstants.STYLE_RPC);
-        setUse(SoapConstants.USE_ENCODED);
     }
 
     public void readMessage(InMessage inMessage, MessageContext context)

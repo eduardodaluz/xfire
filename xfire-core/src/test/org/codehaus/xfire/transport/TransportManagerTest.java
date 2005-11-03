@@ -9,7 +9,7 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.transport.http.HttpTransport;
 
 public class TransportManagerTest
     extends TestCase
@@ -21,7 +21,7 @@ public class TransportManagerTest
         TransportManager tm = new DefaultTransportManager(reg);
         assertEquals(3, tm.getTransports().size()); // the local transport should be there
         
-        tm.register(new SoapHttpTransport());
+        tm.register(new HttpTransport());
         assertEquals(3, tm.getTransports().size());
         
         ServiceFactory factory = new ObjectServiceFactory(tm, new MessageBindingProvider());

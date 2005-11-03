@@ -89,7 +89,7 @@ public class XFireServletTest
                                                   getClass().getResourceAsStream("/org/codehaus/xfire/echo11.xml"),
                                                   "text/xml");
 
-        Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
+        Transport transport = getXFire().getTransportManager().getTransport(HttpTransport.NAME);
         assertNotNull(transport.getFaultHandlers());
 
         expectErrorCode(req, 500, "Response code 500 required for faults.");

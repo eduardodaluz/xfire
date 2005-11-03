@@ -49,8 +49,6 @@ public abstract class AbstractWSDL
     
     private Definition def;
 
-    private String targetNamespace;
-
     private Service service;
 
     private Document wsdlDocument;

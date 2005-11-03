@@ -1,7 +1,11 @@
 package org.codehaus.xfire.service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
@@ -10,16 +14,14 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
- * Represents a service endpoint. A service endpoints sole job is to process xml messages. The
- * servicehandler is is the central processing point - responsible for invoking 
- * request/response/fault handlers as well reading in the xml message to the service.  
+ * Represents a service endpoint. A service's sole job is to process xml messages. The
+ * Binding is is the central processing point.  
  * <p>
  * The binding is then responsible for taking the SOAP Body and binding it to something - JavaBeans,
  * XMLBeans, W3C DOM tree, etc.
  * <p>
- * The <code>ServiceInfo</code> represents an optional contract for the service. This can be used
- * to generate WSDL and/or provide information on serialization.
- *
+ * The <code>ServiceInfo</code> represents all the metadata that goes along with the service.
+ * 
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see ServiceInfo
  * @see org.codehaus.xfire.service.binding.SOAPBinding
@@ -36,6 +38,7 @@ public class Service
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private SoapVersion soapVersion;
+    private Map endpoints = new HashMap();
     
     /**
      * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified 
@@ -159,6 +162,21 @@ public class Service
     public void setSoapVersion(SoapVersion soapVersion)
     {
         this.soapVersion = soapVersion;
+    }
+    
+    public Collection getEndpoints()
+    {
+        return Collections.unmodifiableCollection(endpoints.values());
+    }
+    
+    public void addEndpoint(Endpoint endpoint)
+    {
+        endpoints.put(endpoint.getName(), endpoint);
+    }
+    
+    public Endpoint getEndpoint(QName name)
+    {
+        return (Endpoint) endpoints.get(name);
     }
 }
 

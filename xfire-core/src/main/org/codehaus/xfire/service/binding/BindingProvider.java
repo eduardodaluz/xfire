@@ -29,7 +29,7 @@ public interface BindingProvider
      * @return The suggestion. null if there isn't a suggestion.
      */
     QName getSuggestedName(Service service, OperationInfo op, int param);
-    
+
     Object readParameter(MessagePartInfo p, XMLStreamReader reader, MessageContext context)
         throws XFireFault;
 

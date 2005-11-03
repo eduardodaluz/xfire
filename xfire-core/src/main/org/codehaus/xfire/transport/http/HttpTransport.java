@@ -16,10 +16,10 @@ import org.codehaus.xfire.transport.DefaultEndpoint;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class SoapHttpTransport
+public class HttpTransport
     extends AbstractWSDLTransport
 {
-    private static final Log log = LogFactory.getLog(SoapHttpTransport.class);
+    private static final Log log = LogFactory.getLog(HttpTransport.class);
     
     public final static String NAME = "Http";
 
@@ -27,7 +27,7 @@ public class SoapHttpTransport
 
     private final static String URI_PREFIX = "urn:xfire:transport:http:";
 
-    public SoapHttpTransport()
+    public HttpTransport()
     {
         addFaultHandler(new FaultResponseCodeHandler());
     }

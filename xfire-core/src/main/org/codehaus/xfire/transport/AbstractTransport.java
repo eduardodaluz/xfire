@@ -2,7 +2,6 @@ package org.codehaus.xfire.transport;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
@@ -16,10 +15,6 @@ public abstract class AbstractTransport
     extends AbstractHandlerSupport
     implements Transport
 {
-    private List inHandlers;
-    private List outHandlers;
-    private List faultHandlers;
-
     private Map/*<String uri,Channel c>*/ channels = new HashMap();
 
     /**
@@ -58,6 +53,11 @@ public abstract class AbstractTransport
     protected Map getChannelMap()
     {
         return channels;
+    }
+  
+    public String[] getSupportedBindings()
+    {
+        return new String[0];
     }
 
     protected abstract Channel createNewChannel(String uri);

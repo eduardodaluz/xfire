@@ -1,5 +1,7 @@
 package org.codehaus.xfire.addressing;
 
+import java.lang.reflect.Method;
+
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;
@@ -26,9 +28,13 @@ public class ReplyToTest
         ObjectServiceFactory factory = new ObjectServiceFactory(getXFire().getTransportManager(), 
                                                                 new MessageBindingProvider())
         {
-            protected String getAction(OperationInfo op)
+            protected OperationInfo addOperation(Service endpoint, Method method, String use)
             {
-                return "http://example.com/Echo";
+                OperationInfo op = super.addOperation(endpoint, method, use);
+                
+                new AddressingOperationInfo("http://example.com/Echo", op);
+                
+                return op;
             }
         };
         factory.setStyle(SoapConstants.STYLE_MESSAGE);

@@ -25,7 +25,6 @@ import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.jdom.Element;
@@ -257,15 +256,7 @@ public class AegisBindingProvider
 
         if (encodingStyle == null)
         {
-            AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
-            if (binding.getUse().equals(SoapConstants.USE_ENCODED))
-            {
-                encodingStyle = endpoint.getSoapVersion().getSoapEncodingStyle();
-            }
-            else
-            {
-                encodingStyle = SoapConstants.XSD;
-            }
+            encodingStyle = SoapConstants.XSD;
         }
 
         endpoint.setProperty(ENCODING_URI_KEY, encodingStyle);
@@ -304,4 +295,13 @@ public class AegisBindingProvider
         mw.close();
     }
 
+    public Class getTypeClass(QName name, Service service)
+    {
+        TypeMapping tm = getTypeMapping(service);
+        Type type = tm.getType(name);
+        
+        if (type == null) return null;
+        
+        return tm.getType(name).getTypeClass();
+    }
 }

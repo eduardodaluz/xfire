@@ -68,4 +68,9 @@ public class DelegatedTransport
     {
         return transport.getKnownUriSchemes();
     }
+
+    public String[] getSupportedBindings()
+    {
+        return transport.getSupportedBindings();
+    }
 }

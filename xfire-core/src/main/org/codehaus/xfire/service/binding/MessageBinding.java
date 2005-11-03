@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
@@ -28,12 +26,9 @@ import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 public class MessageBinding
     extends AbstractBinding
 {
-    private static final Log logger = LogFactory.getLog(MessageBinding.class.getName());
-
     public MessageBinding()
     {
         setStyle(SoapConstants.STYLE_MESSAGE);
-        setUse(SoapConstants.USE_LITERAL);
     }
 
     public void readMessage(InMessage message, MessageContext context)

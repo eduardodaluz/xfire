@@ -14,5 +14,7 @@ public interface Transport
 
     String[] getKnownUriSchemes();
     
+    String[] getSupportedBindings();
+    
     void dispose();
 }

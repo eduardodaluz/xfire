@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.AbstractContext;
+
 /**
  * Represents an description of a service. A service consists of a number of <code>OperationInfo</code> objects, a
  * qualified name, and a service class.
@@ -17,7 +19,8 @@ import javax.xml.namespace.QName;
  * @see OperationInfo
  */
 public class ServiceInfo
-        implements Visitable
+    extends AbstractContext
+    implements Visitable
 {
     private QName name;
     private Map operations = new HashMap();
@@ -115,31 +118,6 @@ public class ServiceInfo
         return (OperationInfo) operations.get(name);
     }
 
-    /**
-     * Returns the operation info with the given action, if found.
-     *
-     * @param name the name.
-     * @return the operation; or <code>null</code> if not found.
-     */
-    public OperationInfo getOperationByAction(String name)
-    {
-        for (Iterator itr = operations.values().iterator(); itr.hasNext();)
-        {
-            OperationInfo op = (OperationInfo) itr.next();
-            if (op.getAction() != null && op.getAction().equals(name))
-            {
-                return op;
-            }
-        }
-        
-        if (!name.equals("*"))
-        {
-            return getOperationByAction("*");
-        }
-
-        return null;
-    }
-    
     /**
      * Returns all operations for this service.
      *

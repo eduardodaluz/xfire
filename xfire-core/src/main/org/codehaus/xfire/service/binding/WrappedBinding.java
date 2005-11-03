@@ -38,7 +38,6 @@ public class WrappedBinding
     public WrappedBinding()
     {
         setStyle(SoapConstants.STYLE_WRAPPED);
-        setUse(SoapConstants.USE_LITERAL);
     }
     
     public void readMessage(InMessage inMessage, MessageContext context)

@@ -27,6 +27,7 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
@@ -230,7 +231,7 @@ public class ObjectServiceFactory
                                                           (WSDL11ParameterBinding) binding));
         }
 
-        initializeOperations(endpoint);
+        initializeOperations(endpoint, theUse);
 
         try
         {
@@ -269,7 +270,7 @@ public class ObjectServiceFactory
         }
     }
 
-    protected void initializeOperations(Service endpoint)
+    protected void initializeOperations(Service endpoint, String use)
     {
         final Method[] methods = endpoint.getServiceInfo().getServiceClass().getMethods();
 
@@ -279,7 +280,7 @@ public class ObjectServiceFactory
 
             if (isValidMethod(method))
             {
-                addOperation(endpoint, method);
+                addOperation(endpoint, method, use);
             }
         }
     }
@@ -311,7 +312,7 @@ public class ObjectServiceFactory
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
-    protected void addOperation(Service endpoint, final Method method)
+    protected OperationInfo addOperation(Service endpoint, final Method method, String use)
     {
         ServiceInfo service = endpoint.getServiceInfo();
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
@@ -320,7 +321,8 @@ public class ObjectServiceFactory
 
         final OperationInfo op = service.addOperation(opName, method);
 
-        op.setAction(getAction(op));
+        // Setup soap specific information
+        new SoapOperationInfo(getAction(op), use, op);
 
         final Class[] paramClasses = method.getParameterTypes();
 
@@ -368,6 +370,8 @@ public class ObjectServiceFactory
         
         op.setMEP(getMEP(method));
         op.setAsync(isAsync(method));
+        
+        return op;
     }
 
     protected void initializeFaults(final Method method, 

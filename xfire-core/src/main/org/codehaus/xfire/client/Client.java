@@ -1,5 +1,6 @@
 package org.codehaus.xfire.client;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectBinding;
+import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
@@ -84,6 +86,11 @@ public class Client
         addInHandler(new ParseMessageHandler());
     }
 
+    public Client(URL wsdlUrl)
+    {
+        // TODO Auto-generated constructor stub
+    }
+
     public Object[] invoke(OperationInfo op, Object[] params) throws Exception
     {
         try
@@ -92,7 +99,7 @@ public class Client
             msg.setBody(params);
             msg.setUri(url);
             msg.setSerializer(service.getBinding());
-            msg.setAction(op.getAction());
+            msg.setAction(SoapOperationInfo.getSoapAction(op));
             msg.setChannel(getOutChannel());
             
             context = new MessageContext();

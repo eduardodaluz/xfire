@@ -16,6 +16,7 @@ import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Element;
 
@@ -54,7 +55,10 @@ public class ObjectServiceFactoryTest
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertNotNull(binding);
         assertEquals(SoapConstants.STYLE_WRAPPED, binding.getStyle());
-        assertEquals(SoapConstants.USE_LITERAL, binding.getUse());
+        
+        SoapOperationInfo soapOp = 
+            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
+        assertEquals(SoapConstants.USE_LITERAL, soapOp.getUse());
     }
 
     public void testCreateVersionStyleUse()
@@ -73,9 +77,10 @@ public class ObjectServiceFactoryTest
         
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
-        assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
+        SoapOperationInfo soapOp = 
+            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
+        assertEquals(SoapConstants.USE_ENCODED, soapOp.getUse());
     }
-
 
     public void testCreateNameNamespaceVersionStyleUseEncodingStyle()
             throws Exception
@@ -94,7 +99,9 @@ public class ObjectServiceFactoryTest
         
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
-        assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
+        SoapOperationInfo soapOp = 
+            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
+        assertEquals(SoapConstants.USE_ENCODED, soapOp.getUse());
     }
 
     public void testCreateNameNamespaceNull()
@@ -114,7 +121,9 @@ public class ObjectServiceFactoryTest
 
         AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
-        assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
+        SoapOperationInfo soapOp = 
+            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
+        assertEquals(SoapConstants.USE_ENCODED, soapOp.getUse());
     }
     
     public void testOverridenNames()

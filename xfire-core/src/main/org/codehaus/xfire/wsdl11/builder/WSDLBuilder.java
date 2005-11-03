@@ -31,6 +31,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -52,8 +53,6 @@ public class WSDLBuilder
     implements WSDLWriter
 {
     private PortType portType;
-
-    private Binding binding;
 
     private TransportManager transportManager;
 
@@ -170,7 +169,7 @@ public class WSDLBuilder
 
                 javax.wsdl.Operation wsdlOp = (javax.wsdl.Operation) wsdlOps.get(op.getName());
 
-                BindingOperation bop = transport.createBindingOperation(this, portType, wsdlOp, paramBinding);
+                BindingOperation bop = transport.createBindingOperation(this, op, portType, wsdlOp, paramBinding);
                 transportBinding.addBindingOperation(bop);
 
                 createHeaders(op, bop);
@@ -206,7 +205,7 @@ public class WSDLBuilder
             SOAPHeader soapHeader = new SOAPHeaderImpl();
             soapHeader.setMessage(reqHeaders.getQName());
             soapHeader.setPart(headerInfo.getName());
-            soapHeader.setUse(paramBinding.getUse());
+            soapHeader.setUse(SoapOperationInfo.getSoapAction(op));
 
             bindingInput.addExtensibilityElement(soapHeader);
         }

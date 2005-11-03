@@ -24,7 +24,7 @@ public class HttpChannel
 {
     private static final Log log = LogFactory.getLog(HttpChannel.class);
     
-    public HttpChannel(String uri, SoapHttpTransport transport)
+    public HttpChannel(String uri, HttpTransport transport)
     {
         setTransport(transport);
         setUri(uri);

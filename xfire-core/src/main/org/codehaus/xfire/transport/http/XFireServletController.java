@@ -49,7 +49,7 @@ public class XFireServletController
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
-        this.transport = SoapTransport.createSoapTransport(new SoapHttpTransport());
+        this.transport = SoapTransport.createSoapTransport(new HttpTransport());
 
         registerTransport();
     }

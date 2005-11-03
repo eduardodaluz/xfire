@@ -52,7 +52,7 @@ public class XFireServerTest
         Element root = new Element("root", "a", "urn:a");
         root.addContent("hello");
         
-        Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.NAME);
+        Transport transport = getXFire().getTransportManager().getTransport(HttpTransport.NAME);
 
         Client client = new Client(transport, service, "http://localhost:8391/EchoImpl");
 

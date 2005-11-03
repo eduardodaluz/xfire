@@ -21,9 +21,11 @@ import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -103,6 +105,7 @@ public abstract class AbstractWSDLTransport
      * @see org.codehaus.xfire.transport.Transport#createBindingOperation(javax.wsdl.Message, javax.wsdl.Message, org.codehaus.xfire.java.JavaService)
      */
     public BindingOperation createBindingOperation(WSDLBuilder builder,
+                                                   OperationInfo op, 
                                                    PortType portType, 
                                                    Operation wsdlOp, 
                                                    WSDL11ParameterBinding binding)
@@ -111,7 +114,8 @@ public abstract class AbstractWSDLTransport
         BindingOperation bindOp = def.createBindingOperation();
         
         // Create bindings
-        SOAPBody body = createSoapBody(builder.getService(), binding);
+        String use = SoapOperationInfo.getSoapOperationInfo(op).getUse();
+        SOAPBody body = createSoapBody(builder.getService(), use, binding);
 
         SOAPOperationImpl soapOp = new SOAPOperationImpl();
         soapOp.setSoapActionURI("");
@@ -139,7 +143,7 @@ public abstract class AbstractWSDLTransport
                 BindingFault bindingFault = def.createBindingFault();
                 bindingFault.setName(fault.getName());
                 
-                SOAPFault soapFault = createSoapFault(builder.getService(), binding);
+                SOAPFault soapFault = createSoapFault(builder.getService(), use, binding);
                 soapFault.setName(fault.getName());
 
                 bindingFault.addExtensibilityElement(soapFault);
@@ -154,17 +158,18 @@ public abstract class AbstractWSDLTransport
         return bindOp;
     }
     
-    public SOAPBody createSoapBody( Service endpoint, WSDL11ParameterBinding binding )
+    public SOAPBody createSoapBody( Service endpoint, String use, WSDL11ParameterBinding binding )
     {
         SOAPBody body = new SOAPBodyImpl();
-        body.setUse( binding.getUse() ); 
+
+        body.setUse( use ); 
 
         if ( binding.getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
             body.setNamespaceURI( endpoint.getServiceInfo().getName().getNamespaceURI() );
         }
         
-        if ( binding.getUse().equals( SoapConstants.USE_ENCODED ) )
+        if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
             encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
@@ -175,17 +180,17 @@ public abstract class AbstractWSDLTransport
         return body;
     }
     
-    public SOAPFault createSoapFault( Service endpoint, WSDL11ParameterBinding binding )
+    public SOAPFault createSoapFault( Service endpoint, String use, WSDL11ParameterBinding binding )
     {
         SOAPFault fault = new SOAPFaultImpl();
-        fault.setUse( binding.getUse() ); 
+        fault.setUse( use ); 
 
         if ( binding.getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
             fault.setNamespaceURI( endpoint.getServiceInfo().getName().getNamespaceURI() );
         }
         
-        if ( binding.getUse().equals( SoapConstants.USE_ENCODED ) )
+        if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
             encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
@@ -196,17 +201,17 @@ public abstract class AbstractWSDLTransport
         return fault;
     }
     
-    public SOAPHeader createSoapHeader( Service endpoint, WSDL11ParameterBinding binding )
+    public SOAPHeader createSoapHeader( Service endpoint, String use, WSDL11ParameterBinding binding )
     {
         SOAPHeader header = new SOAPHeaderImpl();
-        header.setUse( binding.getUse() ); 
+        header.setUse( use ); 
 
         if ( binding.getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
             header.setNamespaceURI( endpoint.getServiceInfo().getName().getNamespaceURI() );
         }
         
-        if ( binding.getUse().equals( SoapConstants.USE_ENCODED ) )
+        if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
             encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
