@@ -173,7 +173,8 @@ public class DefaultTypeMappingRegistry
             {
                 logger.info("Couldn't find Java 5 module on classpath. Annotation mappings will not be supported.");
                 
-                logger.debug("Error loading Java 5 module", t);
+                if (!(t instanceof ClassNotFoundException))
+                    logger.debug("Error loading Java 5 module", t);
                 
                 return xmlCreator;
             }
