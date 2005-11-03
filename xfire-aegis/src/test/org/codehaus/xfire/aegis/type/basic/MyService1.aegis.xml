@@ -1,4 +1,6 @@
-<mappings xmlns:foo="urn:foo:bar">
+<mappings xmlns:foo="urn:foo:bar"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xfire.codehaus.org/schemas/1.0/mapping.xsd">
     <mapping>
         <method name="getCollection">
             <return-type componentType="java.lang.Double" mappedName="doubles"/>

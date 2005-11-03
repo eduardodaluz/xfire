@@ -1,5 +1,7 @@
-<mappings xmlns:bean="urn:xfire:bean">
-
+<mappings xmlns:bean="urn:xfire:bean"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xfire.codehaus.org/schemas/1.0/mapping.xsd">
+  
   <mapping uri="urn:xfire:bean">
     <property name="prop1" mappedName="Prop1"/>
     <property name="prop2" mappedName="Prop2" style="attribute"/>
