@@ -10,6 +10,8 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.aegis.type.basic.Base64Type;
 import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
 import org.codehaus.xfire.aegis.type.basic.BooleanType;
@@ -38,6 +40,8 @@ import org.w3c.dom.Document;
 public class DefaultTypeMappingRegistry
         implements TypeMappingRegistry
 {
+    private static final Log logger = LogFactory.getLog(DefaultTypeMappingRegistry.class);
+    
     private static final QName XSD_STRING = new QName(SoapConstants.XSD, "string");
     private static final QName XSD_LONG = new QName(SoapConstants.XSD, "long");
     private static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float");
@@ -152,22 +156,38 @@ public class DefaultTypeMappingRegistry
     {
         AbstractTypeCreator xmlCreator = createRootTypeCreator();
         xmlCreator.setNextCreator(new DefaultTypeCreator());
-        try
-        {
-            String j5TC = "org.codehaus.xfire.aegis.type.java5.Java5TypeCreator";
 
-            Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
-            
-            AbstractTypeCreator j5Creator = (AbstractTypeCreator) clazz.newInstance();
-            j5Creator.setNextCreator(xmlCreator);
-            return j5Creator;
-        }
-        catch (Throwable t)
+        if (isJDK5andAbove())
         {
-            return xmlCreator;
+            try
+            {
+                String j5TC = "org.codehaus.xfire.aegis.type.java5.Java5TypeCreator";
+    
+                Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
+                
+                AbstractTypeCreator j5Creator = (AbstractTypeCreator) clazz.newInstance();
+                j5Creator.setNextCreator(xmlCreator);
+                return j5Creator;
+            }
+            catch (Throwable t)
+            {
+                logger.info("Couldn't find Java 5 module on classpath. Annotation mappings will not be supported.");
+                
+                logger.debug("Error loading Java 5 module", t);
+                
+                return xmlCreator;
+            }
         }
+        
+        return xmlCreator;
     }
 
+    boolean isJDK5andAbove()
+    {
+      String v = System.getProperty("java.class.version","44.0");
+      return ("49.0".compareTo(v) <= 0);
+    }
+    
     protected AbstractTypeCreator createRootTypeCreator()
     {
         return new XMLTypeCreator();
