@@ -18,14 +18,21 @@ import org.codehaus.xfire.util.XMLServiceBuilder;
 public class XFireConfigurableServlet
     extends XFireServlet
 {
-    
+    private static Log log = LogFactory.getLog(XFireConfigurableServlet.class);    
     
     private final static String CONFIG_FILE = "META-INF/xfire/services.xml";
 
+    private final static String PARAM_CONFIG="config";
+    
+    private final static String PARAM_USE_NEW_CONFIG="useNewConfig";
+    /**
+     * Path to configuration file 
+     */
     private String configPath;
     
-    private Log log = LogFactory.getLog(XFireConfigurableServlet.class);
-
+    /**
+     * Determine if new xbean config should be used.
+     */
     private boolean useNewConfig;
 
     
@@ -44,15 +51,13 @@ public class XFireConfigurableServlet
     public void init()
         throws ServletException
     {
-
-        
-        String useNewConfigStr = getInitParameter("useNewConfig");
+        String useNewConfigStr = getInitParameter(PARAM_USE_NEW_CONFIG);
         useNewConfig = Boolean.valueOf(useNewConfigStr).booleanValue();
-        configPath = getInitParameter("config");
-        log.error("Initializing servlet - [config:"+configPath+"][useNewConig"+useNewConfig+"]");
+        configPath = getInitParameter(PARAM_CONFIG);
+        
         try
         {
-
+            log.debug("Searching for  "+getConfigPath());
             if (!useNewConfig)
             {
                 super.init();
@@ -64,6 +69,7 @@ public class XFireConfigurableServlet
                 controller = createController();
             }
 
+            log.debug("Loading configuration done.");
         }
         catch (Exception e)
         {
@@ -72,27 +78,32 @@ public class XFireConfigurableServlet
 
     }
 
+    /**
+     * @throws Exception
+     */
     protected void configureXFire()
         throws Exception
     {
-        log.error("configureXFire...");
+
         XMLServiceBuilder builder = new XMLServiceBuilder(getXFire());
         Enumeration en = getClass().getClassLoader().getResources(getConfigPath());
+        
         while (en.hasMoreElements())
         {
-            log.error("Loading config...");
             URL resource = (URL) en.nextElement();
-
             builder.buildServices(resource.openStream());
         }
+        
+        
 
     }
 
+    /**
+     * @throws Exception
+     */
     protected void configureXFireNew()
         throws Exception
     {
-        // 
-        log.info("Searching for " + getConfigPath());
         XFireConfigLoader loader = new XFireConfigLoader();
         xfire = loader.loadConfig(getConfigPath());
 
