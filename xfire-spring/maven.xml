@@ -10,7 +10,8 @@
 
 	                
 	<postGoal name="java:compile">
-		 
+		<ant:delete dir="${maven.build.dir}/generated/" />
+		
 		<mapping destFile="target/services.xsd"
 			     namespace="http://xfire.codehaus.org/config/1.0"
                  srcdir="src/main"
@@ -21,5 +22,8 @@
 
 		<maven:addPath id="maven.compile.src.set"  
 		               refid="xfire.xbean.generated.main"/>
+		
+		<maven:addPath id="maven.test.compile.src.set"  
+				       refid="xfire.xbean.generated.main"/>
 	</postGoal>
 </project>
