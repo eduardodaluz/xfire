@@ -1,10 +1,6 @@
-<xfire>
-  <services>
-
-    <service>
-      <serviceClass>org.codehaus.xfire.demo.CustomerService</serviceClass>
-      <serviceFactory>jsr181</serviceFactory>
-    </service>
-    
-  </services>
-</xfire>
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+  <service>
+    <serviceClass>org.codehaus.xfire.demo.CustomerService</serviceClass>
+    <serviceFactory>jsr181</serviceFactory>
+  </service>
+</beans>

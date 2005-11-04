@@ -2,5 +2,4 @@ This directory contains several different examples:
 
 book: An example POJO web service.
 jsr181: An example service which uses JSR 181 annotations.
-geoip-client: An XMLBeans web service client that is generated from a WSDL file.
 spring: An example showing how to use XFire with the Spring Framework
