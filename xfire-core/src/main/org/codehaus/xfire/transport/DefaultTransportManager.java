@@ -128,7 +128,7 @@ public class DefaultTransportManager
         }
     }
 
-    public void enable(String transport, String serviceName)
+    public void enable(Transport transport, String serviceName)
     {
         Set serviceTransports = (Set) services.get(serviceName);
         if (serviceTransports == null)
@@ -140,7 +140,7 @@ public class DefaultTransportManager
         serviceTransports.add(transport);
     }
 
-    public void disable(String transport, String serviceName)
+    public void disable(Transport transport, String serviceName)
     {
         Set serviceTransports = (Set) services.get(serviceName);
         if (serviceTransports == null)
@@ -215,15 +215,15 @@ public class DefaultTransportManager
      * @param transportName
      * @return
      */
-    public boolean isEnabled(String service, String transportName)
+    public boolean isEnabled(Transport transport, String service)
     {
-        Map serviceTransports = (Map) services.get(service);
+        Set serviceTransports = (HashSet) services.get(service);
         if (serviceTransports == null)
         {
             return false;
         }
 
-        if (serviceTransports.containsKey(transportName))
+        if (serviceTransports.contains(transport))
         {
             return true;
         }

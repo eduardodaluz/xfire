@@ -1,34 +1,38 @@
 package org.codehaus.xfire.transport;
 
-import junit.framework.TestCase;
-
 import org.codehaus.xfire.service.DefaultServiceRegistry;
-import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.binding.MessageBindingProvider;
-import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.transport.http.HttpTransport;
 
 public class TransportManagerTest
-    extends TestCase
+    extends AbstractXFireTest
 {
     public void testTM() throws Exception
     {
         ServiceRegistry reg = new DefaultServiceRegistry();
         
+        Service service = getServiceFactory().create(Echo.class);
+        
         TransportManager tm = new DefaultTransportManager(reg);
         assertEquals(4, tm.getTransports().size()); // the local transport should be there
         
-        tm.register(new HttpTransport());
+        HttpTransport transport = new HttpTransport();
+        tm.register(transport);
         assertEquals(5, tm.getTransports().size());
         
-        ServiceFactory factory = new ObjectServiceFactory(tm, new MessageBindingProvider());
-        Service service = factory.create(EchoImpl.class);
         reg.register(service);
-        
+        assertTrue(tm.isEnabled(transport, service.getName()));
+
         assertEquals(5, tm.getTransports(service.getName()).size());
+        
+        tm.disable(transport, service.getName());
+        assertFalse(tm.isEnabled(transport, service.getName()));
+        
+        tm.enable(transport, service.getName());
+        assertTrue(tm.isEnabled(transport, service.getName()));
         
         tm.disableAll(service.getName());
         assertEquals(0, tm.getTransports(service.getName()).size());

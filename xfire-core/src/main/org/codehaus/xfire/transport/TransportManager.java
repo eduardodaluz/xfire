@@ -44,9 +44,9 @@ public interface TransportManager
 
     void disableAll(String serviceName);
 
-    void enable(String transport, String serviceName);
+    void enable(Transport transport, String serviceName);
 
-    void disable(String transport, String serviceName);
+    void disable(Transport transport, String serviceName);
 
     /**
      * Determine if a transport is enabled for a particular service.
@@ -55,5 +55,5 @@ public interface TransportManager
      * @param transportName The name of the transport.
      * @return
      */
-    boolean isEnabled(String serviceName, String transportName);
+    boolean isEnabled(Transport transport, String serviceName);
 }

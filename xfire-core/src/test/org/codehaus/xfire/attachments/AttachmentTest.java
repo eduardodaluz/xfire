@@ -1,28 +1,14 @@
 package org.codehaus.xfire.attachments;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
-import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.transport.local.LocalTransport;
-import org.codehaus.xfire.util.STAXUtils;
-import org.jdom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
