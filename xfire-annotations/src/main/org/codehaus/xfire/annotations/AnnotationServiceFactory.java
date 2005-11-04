@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -29,6 +30,13 @@ public class AnnotationServiceFactory
 {
     private WebAnnotations webAnnotations;
 
+    public AnnotationServiceFactory(WebAnnotations webAnnotations,
+                                    final TransportManager transportManager)
+    {
+        super(transportManager, new AegisBindingProvider());
+        this.webAnnotations = webAnnotations;
+    }
+    
     /**
      * Initializes a new instance of the <code>AnnotationServiceFactory</code> with the given annotations facade,
      * transport manager and type mapping registry.

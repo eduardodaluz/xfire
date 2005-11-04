@@ -48,7 +48,7 @@ public class FaultToTest
     public void testInvoke()
         throws Exception
     {
-        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
+        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
         Channel channel = t.createChannel("xfire.local://FaultReceiver");
         JDOMEndpoint endpoint = new JDOMEndpoint();
         channel.setEndpoint(endpoint);

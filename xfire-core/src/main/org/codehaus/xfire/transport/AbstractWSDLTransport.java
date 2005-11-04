@@ -68,6 +68,12 @@ public abstract class AbstractWSDLTransport
         return binding;
     }
 
+    /**
+     * Returns a name for this binding that is used when constructing a wsdl document.
+     * @return
+     */
+    protected abstract String getName();
+    
     protected SOAPBinding createSoapBinding(Service endpoint, WSDL11ParameterBinding binding)
     {
         SOAPBinding soapBind = new SOAPBindingImpl();

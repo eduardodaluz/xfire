@@ -26,12 +26,7 @@ public class DelegatedTransport
     {
         return transport;
     }
-
-    public String getName()
-    {
-        return transport.getName();
-    }
-
+    
     public void dispose()
     {
         transport.dispose();

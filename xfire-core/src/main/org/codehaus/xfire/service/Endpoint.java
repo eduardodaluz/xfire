@@ -19,10 +19,12 @@ public class Endpoint
     {
         return name;
     }
+    
     public String getAddress()
     {
         return address;
     }
+    
     public String getBindingId()
     {
         return bindingId;

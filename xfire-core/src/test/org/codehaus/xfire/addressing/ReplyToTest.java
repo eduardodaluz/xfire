@@ -49,7 +49,7 @@ public class ReplyToTest
     public void testInvoke()
         throws Exception
     {
-        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
+        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
         Channel channel = t.createChannel("xfire.local://EchoReceiver");
         JDOMEndpoint endpoint = new JDOMEndpoint();
         channel.setEndpoint(endpoint);

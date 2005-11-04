@@ -6,9 +6,6 @@ import com.meterware.servletunit.ServletRunner;
 public class XFireConfigurableServletNewTest
     extends XFireConfigurableServletTest
 {
-
-    
-    
     public void testServlet()
         throws Exception
     {
@@ -20,7 +17,6 @@ public class XFireConfigurableServletNewTest
     protected String getConfiguration()
     {
         return "/org/codehaus/xfire/transport/http/configurable-web-new.xml";
-        
     }
 
     public void setUp()
@@ -30,6 +26,4 @@ public class XFireConfigurableServletNewTest
         
         sr = new ServletRunner( getResourceAsStream(getConfiguration()) );
     }
-
-    
 }

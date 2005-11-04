@@ -22,7 +22,6 @@ import org.codehaus.xfire.util.STAXUtils;
 public class LocalChannel
     extends AbstractChannel
 {
-    private String uri;
     protected static final String SENDER_URI = "senderUri";
     protected static final String OLD_CONTEXT = "urn:xfire:transport:local:oldContext";
     

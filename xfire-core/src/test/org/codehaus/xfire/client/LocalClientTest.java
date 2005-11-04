@@ -30,7 +30,7 @@ public class LocalClientTest
         service.getBinding().setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);
-        transport = getXFire().getTransportManager().getTransport(LocalTransport.NAME);
+        transport = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
     }
 
     public void testInvoke()

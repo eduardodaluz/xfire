@@ -20,9 +20,9 @@ public class HttpTransport
     extends AbstractWSDLTransport
 {
     private static final Log log = LogFactory.getLog(HttpTransport.class);
-    
-    public final static String NAME = "Http";
 
+    public final static String HTTP_BINDING = "http://www.w3.org/2004/08/wsdl/http";
+    
     public final static String HTTP_TRANSPORT_NS = "http://schemas.xmlsoap.org/soap/http";
 
     private final static String URI_PREFIX = "urn:xfire:transport:http:";
@@ -30,14 +30,6 @@ public class HttpTransport
     public HttpTransport()
     {
         addFaultHandler(new FaultResponseCodeHandler());
-    }
-    
-    /**
-     * @see org.codehaus.xfire.transport.Transport#getName()
-     */
-    public String getName()
-    {
-        return NAME;
     }
 
     protected Channel createNewChannel(String uri)
@@ -54,6 +46,12 @@ public class HttpTransport
     {
         return URI_PREFIX;
     }
+    
+    protected String getName()
+    {
+        return "Http";
+    }
+    
     /**
 	 * Get the URL for a particular service.
 	 */
@@ -104,6 +102,12 @@ public class HttpTransport
 		baseURL.append(request.getContextPath());
 		return baseURL.toString();
 	}
+
+    
+    public String[] getSupportedBindings()
+    {
+        return new String[] { HTTP_BINDING };
+    }
 
     public String[] getKnownUriSchemes()
     {

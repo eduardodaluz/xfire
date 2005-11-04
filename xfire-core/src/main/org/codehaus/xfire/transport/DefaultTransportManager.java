@@ -2,8 +2,10 @@ package org.codehaus.xfire.transport;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +16,7 @@ import org.codehaus.xfire.service.event.RegistrationEventListener;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.dead.DeadLetterTransport;
 import org.codehaus.xfire.transport.http.HttpTransport;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 
 /**
@@ -27,7 +30,7 @@ public class DefaultTransportManager
     private static final Log log = LogFactory.getLog(DefaultTransportManager.class);
 
     private Map services = new HashMap();
-    private Map transports = new HashMap();
+    private Set transports = new HashSet();
     private Map uri2Transport = new HashMap();
     private Map binding2Transport = new HashMap();
 
@@ -69,7 +72,8 @@ public class DefaultTransportManager
         
         register(SoapTransport.createSoapTransport(new LocalTransport()));
         register(SoapTransport.createSoapTransport(new DeadLetterTransport()));
-        register(SoapTransport.createSoapTransport(new HttpTransport()));
+        register(new HttpTransport());
+        register(new SoapHttpTransport());
     }
 
     /**
@@ -87,7 +91,7 @@ public class DefaultTransportManager
 
     public void register(Transport transport)
     {
-        transports.put(transport.getName(), transport);
+        transports.add(transport);
 
         String[] schemes = transport.getKnownUriSchemes();
         for (int i = 0; i < schemes.length; i++)
@@ -103,11 +107,11 @@ public class DefaultTransportManager
         
         for (Iterator itr = services.values().iterator(); itr.hasNext();)
         {
-            Map serviceTransports = (Map) itr.next();
-            serviceTransports.put(transport.getName(), transport);
+            Set serviceTransports = (Set) itr.next();
+            serviceTransports.add(transport);
         }
 
-        log.debug("Registered transport " + transport.getName());
+        log.debug("Registered transport " + transport);
     }
 
     public void unregister(Transport transport)
@@ -124,29 +128,21 @@ public class DefaultTransportManager
         }
     }
 
-    /**
-     * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
-     */
-    public Transport getTransport(String name)
-    {
-        return (Transport) transports.get(name);
-    }
-
     public void enable(String transport, String serviceName)
     {
-        Map serviceTransports = (Map) services.get(serviceName);
+        Set serviceTransports = (Set) services.get(serviceName);
         if (serviceTransports == null)
         {
-            serviceTransports = new HashMap();
+            serviceTransports = new HashSet();
             services.put(serviceName, serviceTransports);
         }
 
-        serviceTransports.put(transport, getTransport(transport));
+        serviceTransports.add(transport);
     }
 
     public void disable(String transport, String serviceName)
     {
-        Map serviceTransports = (Map) services.get(serviceName);
+        Set serviceTransports = (Set) services.get(serviceName);
         if (serviceTransports == null)
         {
             return;
@@ -162,17 +158,17 @@ public class DefaultTransportManager
      */
     public Collection getTransports(String service)
     {
-        Map transports = ((Map) services.get(service));
+        Set transports = ((HashSet) services.get(service));
 
         if (transports != null)
-            return transports.values();
+            return transports;
         else
             return null;
     }
 
     public Collection getTransports()
     {
-        return transports.values();
+        return transports;
     }
 
     /**
@@ -180,18 +176,18 @@ public class DefaultTransportManager
      */
     public void enableAll(String serviceName)
     {
-        Map serviceTransports = (Map) services.get(serviceName);
+        Set serviceTransports = (Set) services.get(serviceName);
         if (serviceTransports == null)
         {
-            serviceTransports = new HashMap();
+            serviceTransports = new HashSet();
             services.put(serviceName, serviceTransports);
         }
 
-        for (Iterator itr = transports.values().iterator(); itr.hasNext();)
+        for (Iterator itr = transports.iterator(); itr.hasNext();)
         {
             Transport t = (Transport) itr.next();
 
-            serviceTransports.put(t.getName(), t);
+            serviceTransports.add(t);
         }
     }
 
@@ -200,17 +196,17 @@ public class DefaultTransportManager
      */
     public void disableAll(String serviceName)
     {
-        Map serviceTransports = (Map) services.get(serviceName);
+        Set serviceTransports = (HashSet) services.get(serviceName);
         if (serviceTransports == null)
         {
             return;
         }
 
-        for (Iterator itr = transports.keySet().iterator(); itr.hasNext();)
+        for (Iterator itr = transports.iterator(); itr.hasNext();)
         {
-            String name = (String) itr.next();
+            Transport t = (Transport) itr.next();
 
-            serviceTransports.remove(name);
+            serviceTransports.remove(t);
         }
     }
 
@@ -272,7 +268,7 @@ public class DefaultTransportManager
         return null;
     }
     
-    public Transport getTransportByBindingId(String id)
+    public Transport getTransport(String id)
     {
         return (Transport) binding2Transport.get(id);
     }

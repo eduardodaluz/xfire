@@ -3,8 +3,6 @@ package org.codehaus.xfire.test;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.xml.sax.SAXException;
@@ -29,16 +27,9 @@ public abstract class AbstractServletTest
   //  private Log log = LogFactory.getLog(AbstractServletTest.class);
     
     protected ServletRunner sr;
-    
-    private XFireFactory factory;
-    
-    private XFire xfire;
-    
+
     public void setUp() throws Exception
     {
-        factory = XFireFactory.newInstance();
-        xfire = factory.getXFire();
-        
         super.setUp();
 
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
@@ -57,7 +48,6 @@ public abstract class AbstractServletTest
     protected XFire getXFire()
     {
         return XFireFactory.newInstance().getXFire();
-       // return xfire;
     }
     
     protected ServletUnitClient newClient()

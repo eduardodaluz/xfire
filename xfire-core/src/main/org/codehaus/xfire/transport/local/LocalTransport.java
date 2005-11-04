@@ -16,14 +16,9 @@ public class LocalTransport
 {
     private static final Log log = LogFactory.getLog(LocalTransport.class);
     
-    public final static String NAME = "urn:xfire:transport:local";
+    public final static String BINDING_ID = "urn:xfire:transport:local";
     public final static String URI_PREFIX = "xfire.local://";
     
-    public String getName()
-    {
-        return NAME;
-    }
-
     protected Channel createNewChannel(String uri)
     {
         log.debug("Creating new channel for uri: " + uri);
@@ -37,6 +32,11 @@ public class LocalTransport
     protected String getUriPrefix()
     {
         return URI_PREFIX;
+    }
+
+    public String[] getSupportedBindings()
+    {
+        return new String[] { BINDING_ID };
     }
 
     public String[] getKnownUriSchemes()

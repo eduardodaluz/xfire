@@ -16,14 +16,12 @@ public interface TransportManager
 
     void unregister(Transport transport);
 
-    Transport getTransport(String id);
-    
     /**
      * Get a transport for a particular binding id.
      * @param id
      * @return
      */
-    Transport getTransportByBindingId(String id);
+    Transport getTransport(String id);
 
     /**
      * Find the best transport for a particular URI.

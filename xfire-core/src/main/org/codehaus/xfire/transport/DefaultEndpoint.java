@@ -128,11 +128,12 @@ public class DefaultEndpoint
 
         try
         {
-            while (reader.hasNext()) reader.next();
+            int event = reader.getEventType();
+            while (reader.hasNext() && event != XMLStreamReader.END_DOCUMENT) reader.next();
         }
         catch (XMLStreamException e)
         {
-            throw new XFireFault("Couldn't parse message.", e, XFireFault.SENDER);
+            log.warn("Couldn't parse to end of message.", e);
         }
     }
 }
