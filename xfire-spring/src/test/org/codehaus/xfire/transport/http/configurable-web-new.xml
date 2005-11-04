@@ -15,12 +15,7 @@
 	 <init-param>
       <param-name>config</param-name>
       <param-value>META-INF/xfire/services-new.xml</param-value>
-    </init-param>
-	 <init-param>
-      <param-name>useNewConfig</param-name>
-      <param-value>true</param-value>
-    </init-param> 
-	  
+    </init-param>	  
   </servlet>
 
   <servlet-mapping>

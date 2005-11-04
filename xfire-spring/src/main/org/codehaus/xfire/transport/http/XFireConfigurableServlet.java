@@ -52,6 +52,9 @@ public class XFireConfigurableServlet
         throws ServletException
     {
         String useNewConfigStr = getInitParameter(PARAM_USE_NEW_CONFIG);
+        
+        if (useNewConfigStr == null) useNewConfigStr = "true";
+        
         useNewConfig = Boolean.valueOf(useNewConfigStr).booleanValue();
         configPath = getInitParameter(PARAM_CONFIG);
         
