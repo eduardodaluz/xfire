@@ -205,7 +205,7 @@ public class WSDLBuilder
             SOAPHeader soapHeader = new SOAPHeaderImpl();
             soapHeader.setMessage(reqHeaders.getQName());
             soapHeader.setPart(headerInfo.getName());
-            soapHeader.setUse(SoapOperationInfo.getSoapAction(op));
+            soapHeader.setUse(SoapOperationInfo.getSoapOperationInfo(op).getUse());
 
             bindingInput.addExtensibilityElement(soapHeader);
         }
