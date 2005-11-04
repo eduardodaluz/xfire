@@ -1,44 +1,52 @@
 <beans xmlns="http://xfire.codehaus.org/config/1.0">
-<xfire>
-	<inHandlers>
-		<handler
-			handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">
-			</handler>
-	</inHandlers>
-</xfire>
-	
-    <service>
-      <name>Echo</name>
-      <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
-      <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
-      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
-	  <properties>
-      <property key="foo" value="bar"/>
+
+  <xfire>
+    <inHandlers>
+      <handler
+        handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">
+      </handler>
+    </inHandlers>
+  </xfire>
+
+  <service>
+    <name>Echo</name>
+    <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+    <implementationClass>
+      org.codehaus.xfire.test.EchoImpl
+    </implementationClass>
+    <bindingProvider>
+      org.codehaus.xfire.service.binding.MessageBindingProvider
+    </bindingProvider>
+    <properties>
+      <property key="foo" value="bar" />
       <property key="cheese" value="baz" />
-	  </properties>
-    </service>
+    </properties>
+  </service>
 
-    <service>
-      <name>Echo1</name>
-      <namespace>urn:Echo</namespace>
-      <style>wrapped</style>
-      <use>literal</use>
+  <service>
+    <name>Echo1</name>
+    <namespace>urn:Echo</namespace>
+    <style>wrapped</style>
+    <use>literal</use>
 
-      <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
-		
-		
-      <soapVersion>1.2</soapVersion>
-      <bindingProvider>org.codehaus.xfire.service.binding.MessageBindingProvider</bindingProvider>
-      
-      <inHandlers>
-        <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler"></handler>
-      </inHandlers>
-      
-      <outHandlers>
-        <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler"/>
-      </outHandlers>
-    </service >
+    <implementationClass>
+      org.codehaus.xfire.test.EchoImpl
+    </implementationClass>
 
-  
+
+    <soapVersion>1.2</soapVersion>
+    <bindingProvider>
+      org.codehaus.xfire.service.binding.MessageBindingProvider
+    </bindingProvider>
+
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">
+      </handler>
+    </inHandlers>
+
+    <outHandlers>
+      <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler" />
+    </outHandlers>
+  </service>
 
 </beans>
