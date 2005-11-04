@@ -3,6 +3,7 @@ package org.codehaus.xfire.demo;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
+// START SNIPPET: book
 public class Book
 {
     private String title;
@@ -39,3 +40,4 @@ public class Book
         this.author = author;
     }
 }
+// END SNIPPET: book

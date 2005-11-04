@@ -1,3 +1,4 @@
+<!-- START SNIPPET: services -->
 <beans xmlns="http://xfire.codehaus.org/config/1.0">
   <service>
     <name>BookService</name>
@@ -5,3 +6,4 @@
     <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
   </service>
 </beans>
+<!-- END SNIPPET: services -->

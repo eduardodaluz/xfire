@@ -3,6 +3,7 @@ package org.codehaus.xfire.demo;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
+//START SNIPPET: book
 public class BookService
 {
     private Book onlyBook;
@@ -28,3 +29,4 @@ public class BookService
         return null;
     }
 }
+//END SNIPPET: book
