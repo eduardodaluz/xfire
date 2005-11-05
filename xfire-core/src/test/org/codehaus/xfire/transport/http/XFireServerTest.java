@@ -1,13 +1,19 @@
 package org.codehaus.xfire.transport.http;
 
+import java.net.MalformedURLException;
+
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.client.Client;
+import org.codehaus.xfire.client.XFireProxyFactory;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.server.http.XFireHttpServer;
+import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
 import org.jdom.Element;
@@ -22,7 +28,9 @@ public class XFireServerTest
     {
         super.setUp();
         
-        service = getServiceFactory().create(EchoImpl.class);
+        service = getServiceFactory().create(Echo.class);
+        service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
+        
         service.getBinding().setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);
@@ -54,7 +62,7 @@ public class XFireServerTest
         
         Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
 
-        Client client = new Client(transport, service, "http://localhost:8391/EchoImpl");
+        Client client = new Client(transport, service, "http://localhost:8391/Echo");
 
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});
@@ -63,6 +71,18 @@ public class XFireServerTest
         
         Element e = (Element) response[0];
 
+        assertEquals(root.getName(), e.getName());
+    }
+    
+    public void testProxy() throws MalformedURLException, XFireFault
+    {
+        Echo echo = (Echo) new XFireProxyFactory().create(service, "http://localhost:8391/Echo");
+        
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
+        
+        Element e = echo.echo(root);
+        
         assertEquals(root.getName(), e.getName());
     }
 }
