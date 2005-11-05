@@ -220,7 +220,6 @@ public class XFireServletController
         {
             try
             {
-                response.setContentType("text/xml; charset=UTF-8");
                 InputStream stream = createMIMERequest(request, context);
                 
                 XMLStreamReader reader = 
@@ -235,7 +234,6 @@ public class XFireServletController
         }
         else
         {
-            response.setContentType("text/xml; charset=UTF-8");
             XMLStreamReader reader = 
                 STAXUtils.createXMLStreamReader(request.getInputStream(), 
                                                 request.getCharacterEncoding());

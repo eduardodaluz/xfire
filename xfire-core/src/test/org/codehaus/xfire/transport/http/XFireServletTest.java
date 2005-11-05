@@ -75,6 +75,9 @@ public class XFireServletTest
 
         response = newClient().getResponse(req);
 
+        assertEquals("text/xml", response.getContentType());
+        assertEquals("UTF-8", response.getCharacterSet());
+        
         Document doc = readDocument(response.getText());
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", doc);
@@ -82,6 +85,25 @@ public class XFireServletTest
         assertTrue(MockSessionHandler.inSession);
     }
 
+    public void testServlet12()
+            throws Exception
+    {
+        WebRequest req = new PostMethodWebRequest("http://localhost/services/EchoImpl",
+                                                  getClass().getResourceAsStream("/org/codehaus/xfire/echo12.xml"),
+                                                  "text/xml");
+
+        WebResponse response = newClient().getResponse(req);
+
+        assertEquals("application/soap+xml", response.getContentType());
+        assertEquals("UTF-8", response.getCharacterSet());
+        
+        Document doc = readDocument(response.getText());
+        addNamespace("m", "urn:Echo");
+        assertValid("//m:echo", doc);
+
+        assertTrue(MockSessionHandler.inSession);
+    }
+    
     public void testFaultCode()
             throws Exception
     {

@@ -6,9 +6,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultEndpoint;
@@ -27,9 +31,13 @@ public class HttpTransport
 
     private final static String URI_PREFIX = "urn:xfire:transport:http:";
 
+    private final static MimeTypeHandler mimeHandler = new MimeTypeHandler();
+    
     public HttpTransport()
     {
         addFaultHandler(new FaultResponseCodeHandler());
+        addFaultHandler(mimeHandler);
+        addOutHandler(mimeHandler);
     }
 
     protected Channel createNewChannel(String uri)
@@ -114,7 +122,7 @@ public class HttpTransport
         return new String[] { "http://", "https://" };
     }
     
-    public class FaultResponseCodeHandler
+    public static class FaultResponseCodeHandler
          extends AbstractHandler
      {        
         public String getPhase()
@@ -133,5 +141,47 @@ public class HttpTransport
             if ( response != null )
                 response.setStatus(500);
         }    
+    }
+    
+    public static class MimeTypeHandler
+        extends AbstractHandler
+    {        
+       public String getPhase()
+       {
+           return Phase.TRANSPORT;
+       }
+    
+       /**
+        * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
+        * @param context
+        * @throws Exception
+        */
+       public void invoke(MessageContext context)
+       {
+           HttpServletResponse response = XFireServletController.getResponse();
+           if ( response != null )
+           {
+               AbstractMessage msg = context.getOutMessage();
+               
+               if (msg == null) msg = context.getExchange().getFaultMessage();
+               
+               if (msg == null) return;
+               
+               SoapVersion soap = msg.getSoapVersion();
+               
+               String encoding = msg.getEncoding();
+               if (encoding == null || encoding.length() == 0) 
+                   encoding = "UTF-8";
+               
+               if (soap instanceof Soap11)
+               {
+                   response.setContentType("text/xml; charset=" + encoding);
+               }
+               else if (soap instanceof Soap12)
+               {
+                   response.setContentType("application/soap+xml; charset=" + encoding);
+               }
+           }
+       }    
     }
 }
