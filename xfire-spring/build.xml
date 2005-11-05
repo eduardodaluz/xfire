@@ -19,9 +19,9 @@
       <classpath refid="module.classpath" />
   </taskdef>
 
-  <target name="config.gen" >
-	   <xsdGenerate destFile="src/main/org/codehaus/xfire/spring/service.xsd" namespace="http://xfire.codehaus.org/config/1.0"
-    classpathref="module.classpath" srcdir="src/main"  metaInfDir="src/main/"/>
+  <target name="config.gen" depends="init">
+	   <xsdGenerate destFile="target/service.xsd" namespace="http://xfire.codehaus.org/config/1.0"
+    classpathref="module.classpath" srcdir="src/main"  metaInfDir="${target.dir}/classes/"/>
   </target>	
   <target name="get-deps" depends="xfire.get-deps">
     <get-dep artifact="commons-beanutils" version="1.7.0" />
