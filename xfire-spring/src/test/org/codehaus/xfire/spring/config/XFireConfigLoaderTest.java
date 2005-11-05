@@ -4,6 +4,7 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.spring.TestHandler;
 import org.codehaus.xfire.spring.XFireConfigLoader;
 
 import junit.framework.TestCase;
@@ -22,6 +23,7 @@ public class XFireConfigLoaderTest
         XFire xfire = loader.loadConfig("META-INF/xfire/sservices.xml");
         assertNotNull(xfire);
         assertEquals(xfire.getInHandlers().size(),3);
+        assertTrue(xfire.getInHandlers().get(2) instanceof TestHandler);
         assertEquals(xfire.getOutHandlers().size(),1);
         assertEquals(xfire.getFaultHandlers().size(),1);
         Service service = xfire.getServiceRegistry().getService("testservice");
@@ -29,6 +31,8 @@ public class XFireConfigLoaderTest
         SoapVersion version = service.getSoapVersion();
         assertEquals(version,Soap12.getInstance());
         assertEquals(service.getInHandlers().size(),2);
+        assertTrue(service.getInHandlers().get(1) instanceof TestHandler);
+        assertEquals(service.getOutHandlers().size(),1);
         assertEquals(service.getProperty("myKey"),"value");
         assertEquals(service.getProperty("myKey1"),"value1");
         
