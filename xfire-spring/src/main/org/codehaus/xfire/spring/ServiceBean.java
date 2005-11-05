@@ -1,6 +1,10 @@
 package org.codehaus.xfire.spring;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,9 +13,16 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
+import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * A convenience bean which creates a Service from a ServiceFactory instance.
@@ -21,18 +32,21 @@ import org.springframework.beans.factory.InitializingBean;
  * @see org.codehaus.xfire.spring.Jsr181BeanPostProcessor
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ * 
+ * @org.xbean.XBean element="service"
  */
 public class ServiceBean
-    implements InitializingBean, BeanNameAware
+    implements InitializingBean, BeanNameAware, ApplicationContextAware
 {
     private final static Log logger = LogFactory.getLog(ServiceBean.class);
 
     private Service xfireService;
 
     private ServiceFactory serviceFactory;
-    
+
     protected XFire xFire;
-    
+
     private String name;
 
     private String namespace;
@@ -49,6 +63,20 @@ public class ServiceBean
 
     private List faultHandlers;
 
+    protected SoapVersion soapVersion = Soap11.getInstance();
+
+    protected Class implementationClass;
+
+    protected String use;
+
+    protected String style;
+
+    private String scope;
+
+    protected Class bindingProvider;
+
+    private List properties = new ArrayList();
+
     public void afterPropertiesSet()
         throws Exception
     {
@@ -59,11 +87,42 @@ public class ServiceBean
             theName = theName.substring(1);
         }
 
+        BindingProvider bindingProviderImpl = (BindingProvider) (bindingProvider != null ? bindingProvider
+                .newInstance()
+                : null);
+
+        if (serviceFactory == null)
+        {
+            serviceFactory = new ObjectServiceFactory(xFire.getTransportManager(),
+                    bindingProviderImpl);
+        }
+
+        ObjectServiceFactory factory = (ObjectServiceFactory) serviceFactory;
+        factory.setSoapVersion(soapVersion);
+        if (style != null && style.length() > 0)
+        {
+            factory.setStyle(style);
+        }
+        if (use != null && use.length() > 0)
+        {
+            factory.setUse(use);
+        }
+
+        // If now service object set, try to create it from implementationClass
+        if (service == null)
+        {
+            if (implementationClass != null)
+            {
+                service = implementationClass.newInstance();
+            }else{
+                throw new RuntimeException("Service object or implementationClass must be set!.");
+            }
+        }
+
         Class intf = getServiceInterface();
         if (intf == null)
             intf = getService().getClass();
 
-        
         xfireService = serviceFactory.create(intf, theName, namespace, null);
 
         AbstractBinding binding = (AbstractBinding) xfireService.getBinding();
@@ -96,8 +155,13 @@ public class ServiceBean
             xfireService.setFaultHandlers(getFaultHandlers());
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
+
+        copyProperites();
     }
 
+    /**
+     * @return
+     */
     protected Object getProxyForService()
     {
         ProxyFactory proxyFactory = new ProxyFactory();
@@ -202,6 +266,113 @@ public class ServiceBean
     public XFire getXfire()
     {
         return xFire;
+    }
+
+    public Class getImplementationClass()
+    {
+        return implementationClass;
+    }
+
+    public void setImplementationClass(Class implementationClass)
+    {
+        this.implementationClass = implementationClass;
+    }
+
+    public Class getBindingProvider()
+    {
+        return bindingProvider;
+    }
+
+    public void setBindingProvider(Class bindingProvider)
+    {
+        this.bindingProvider = bindingProvider;
+    }
+
+    public List getProperties()
+    {
+        return properties;
+    }
+
+    public void setProperties(List properties)
+    {
+        this.properties = properties;
+    }
+
+    public String getScope()
+    {
+        return scope;
+    }
+
+    public void setScope(String scope)
+    {
+        this.scope = scope;
+    }
+
+    public String getStyle()
+    {
+        return style;
+    }
+
+    public void setStyle(String style)
+    {
+        this.style = style;
+    }
+
+    public String getUse()
+    {
+        return use;
+    }
+
+    public void setUse(String use)
+    {
+        this.use = use;
+    }
+
+    public SoapVersion getSoapVersion()
+    {
+        return soapVersion;
+    }
+
+    public void setSoapVersion(SoapVersion soapVersion)
+    {
+        this.soapVersion = soapVersion;
+    }
+
+    public Class getServiceClass()
+    {
+        return getServiceInterface();
+    }
+
+    public void setServiceClass(Class serviceClass)
+    {
+        setServiceInterface(serviceClass);
+    }
+
+    /**
+     * 
+     */
+    protected void copyProperites()
+    {
+        Service service = getXFireService();
+        for (Iterator iter = getProperties().iterator(); iter.hasNext();)
+        {
+            Map.Entry entry = (Entry) iter.next();
+            String key = (String) entry.getKey();
+            Object value = entry.getValue();
+            service.setProperty(key, value);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+     */
+    public void setApplicationContext(ApplicationContext ctx)
+        throws BeansException
+    {
+        xFire = (XFire) ctx.getBean("xfire");
+
     }
 
 }
