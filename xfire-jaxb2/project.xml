@@ -28,19 +28,19 @@
       </properties>
     </dependency>
     <dependency>
-      <groupId>jaxb</groupId>
+      <groupId>xfire</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>20050622</version>
+      <version>20051106</version>
     </dependency>
     <dependency>
-      <groupId>jaxb</groupId>
+      <groupId>xfire</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>20050622</version>
+      <version>20051106</version>
     </dependency>
     <dependency>
-      <groupId>jaxb</groupId>
+      <groupId>xfire</groupId>
       <artifactId>jaxb-xjc</artifactId>
-      <version>20050622</version>
+      <version>20051106</version>
     </dependency>
   </dependencies>
 </project>
