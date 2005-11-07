@@ -92,24 +92,35 @@ public class ClassLoaderUtils
     {
         try
         {
-            return Thread.currentThread().getContextClassLoader().loadClass(className);
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            
+            if (cl != null)
+                return cl.loadClass(className);
+            
+            return loadClass2(className, callingClass);
         }
         catch(ClassNotFoundException e)
         {
+            return loadClass2(className, callingClass);
+        }
+    }
+
+    private static Class loadClass2(String className, Class callingClass)
+        throws ClassNotFoundException
+    {
+        try
+        {
+            return Class.forName(className);
+        }
+        catch(ClassNotFoundException ex)
+        {
             try
             {
-                return Class.forName(className);
+                return ClassLoaderUtils.class.getClassLoader().loadClass(className);
             }
-            catch(ClassNotFoundException ex)
+            catch(ClassNotFoundException exc)
             {
-                try
-                {
-                    return ClassLoaderUtils.class.getClassLoader().loadClass(className);
-                }
-                catch(ClassNotFoundException exc)
-                {
-                    return callingClass.getClassLoader().loadClass(className);
-                }
+                return callingClass.getClassLoader().loadClass(className);
             }
         }
     }
