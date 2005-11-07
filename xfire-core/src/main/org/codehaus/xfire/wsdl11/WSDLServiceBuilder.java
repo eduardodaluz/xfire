@@ -15,6 +15,7 @@ import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
+import javax.wsdl.Message;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
@@ -22,19 +23,21 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.ObjectBindingFactory;
+import org.codehaus.xfire.soap.SoapOperationInfo;
+import org.codehaus.xfire.wsdl.SimpleSchemaType;
 import org.xml.sax.InputSource;
 
 public class WSDLServiceBuilder
@@ -44,8 +47,7 @@ public class WSDLServiceBuilder
     private ServiceInfo serviceInfo;
     private OperationInfo opInfo;
     private String style;
-    private String use;
-    
+
     private List services = new ArrayList();
     
     private BindingProvider provider;
@@ -68,6 +70,8 @@ public class WSDLServiceBuilder
     protected void visit(PortType portType)
     {
         super.visit(portType);
+        
+        serviceInfo.setPortType(portType.getQName());
     }
     
     protected void visit(Binding binding)
@@ -90,41 +94,46 @@ public class WSDLServiceBuilder
         
         opInfo.setInputMessage(info);
         
-        Map parts = input.getMessage().getParts();
+        createMessageParts(info,  input.getMessage());
+    }
+
+    private void createMessageParts(MessageInfo info, Message msg)
+    {
+        Map parts = msg.getParts();
         for (Iterator itr = parts.values().iterator(); itr.hasNext();)
         {
             Part entry = (Part) itr.next();
             
+            // We're extending an abstract schema type
             QName typeName = entry.getTypeName();
             if (typeName != null)
             {
+                QName partName = new QName(getTargetNamespace(), entry.getName());
+                MessagePartInfo part = info.addMessagePart(typeName, null);
                 
+                SimpleSchemaType st = new SimpleSchemaType();
+                st.setAbstract(true);
+                
+                part.setSchemaType(st);
             }
 
+            // We've got a concrete schema type
             QName elementName = entry.getElementName();
             if (elementName != null)
             {
+                MessagePartInfo part = info.addMessagePart(elementName, null);
                 
+                SimpleSchemaType st = new SimpleSchemaType();
+                st.setAbstract(false);
+                
+                part.setSchemaType(st);
             }
-            
-            
-        }
-        
-        SOAPBody body = getSOAPBody(bindingInput.getExtensibilityElements());
-        if (body != null)
-        {
-            checkUse(body.getUse());
-            
-            use = body.getUse();
         }
     }
 
-    private void checkUse(String use2)
+    protected String getTargetNamespace()
     {
-        if (use == null) return;
-        
-        if (!use.equals(use2))
-            throw new XFireRuntimeException("Multiple uses not supported.");
+        return getDefinition().getTargetNamespace();
     }
 
     protected void visit(BindingOutput bindingOutput, Output output)
@@ -132,31 +141,44 @@ public class WSDLServiceBuilder
         MessageInfo info = opInfo.createMessage(output.getMessage().getQName());
         
         opInfo.setOutputMessage(info);
-        
-        SOAPBody body = getSOAPBody(bindingOutput.getExtensibilityElements());
-        if (body != null)
-        {
-            checkUse(body.getUse());
-            
-            use = body.getUse();
-        }
+
+        createMessageParts(info, output.getMessage());
     }
 
     protected void visit(BindingOperation operation)
     {
         opInfo = serviceInfo.addOperation(operation.getName(), null);
+        
+        String use = null;
+        SOAPBody body = getSOAPBody(operation.getBindingInput().getExtensibilityElements());
+        if (body != null)
+        {
+            use = body.getUse();
+            
+            SOAPOperation soapOp = getSOAPOperation(operation);
+
+            String action = null;
+            String style = null;
+            if (soapOp != null)
+            {
+                action = soapOp.getSoapActionURI();
+                style = soapOp.getStyle();
+            }
+            
+            new SoapOperationInfo(action, use, opInfo);
+        }
     }
 
     protected void begin(javax.wsdl.Service wservice)
     {
-        serviceInfo = new ServiceInfo(wservice.getQName(), Object.class);
+        serviceInfo = new ServiceInfo(wservice.getQName(), null, Object.class);
         
         service = new Service(serviceInfo);
     }
 
     protected void end(javax.wsdl.Service wservice)
     {
-        service.setBinding(ObjectBindingFactory.getMessageBinding(style, use));
+        //service.setBinding(ObjectBindingFactory.getMessageBinding(style, use));
         service.setFaultSerializer(new SoapFaultSerializer());
         
         services.add(service);
@@ -168,9 +190,9 @@ public class WSDLServiceBuilder
         SOAPBinding sbind = getSOAPBinding(port.getBinding());
         
         Endpoint ep = new Endpoint(new QName(getDefinition().getTargetNamespace(), port.getName()), 
-                                   add.getLocationURI(), 
-                                   sbind.getTransportURI());
+                                   sbind.getTransportURI(), 
+                                   add.getLocationURI());
         
-        service.addEndpoint(ep);
+        serviceInfo.addEndpoint(ep);
     }
 }

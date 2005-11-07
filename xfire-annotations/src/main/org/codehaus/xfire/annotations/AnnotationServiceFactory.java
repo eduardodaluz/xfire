@@ -1,6 +1,7 @@
 package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -15,9 +16,8 @@ import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ClassLoaderUtils;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
+import org.codehaus.xfire.util.NamespaceHelper;
 
 /**
  * Annotations-bases implementation of the {@link ServiceFactory} interface.
@@ -67,10 +67,12 @@ public class AnnotationServiceFactory
      *            parameters.
      * @return The service.
      */
-    public Service create(final Class clazz, final Map properties)
+    public Service create(final Class clazz, Map properties)
     {
         String style = null;
         String use = null;
+        
+        if (properties == null) properties = new HashMap();
         
         if (webAnnotations.hasSOAPBindingAnnotation(clazz))
         {
@@ -122,14 +124,8 @@ public class AnnotationServiceFactory
                 portType = createPortType(serviceName, webServiceAnnotation);
             }
 
+            properties.put(PORT_TYPE, new QName(tns, portType));
             Service service = create(endpointInterface, serviceName, tns, null, style, use, properties);
-
-            // Fill in WSDL Builder metadata from annotations.
-            WSDLBuilderInfo info = new WSDLBuilderInfo(service);
-            info.setTargetNamespace(tns);
-            info.setServiceName(serviceName);
-            info.setPortType(portType);
-            service.setProperty(WSDLBuilderInfo.KEY, info);
 
             if (clazz != endpointInterface)
             {

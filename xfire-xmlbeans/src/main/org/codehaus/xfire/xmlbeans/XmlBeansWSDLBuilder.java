@@ -1,5 +1,6 @@
 package org.codehaus.xfire.xmlbeans;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ public class XmlBeansWSDLBuilder
     private final static StaxBuilder builder = new StaxBuilder();
     private static Map schemas = new HashMap();
     
+    private List importedSchemas = new ArrayList();
+    
     public XmlBeansWSDLBuilder(Service service, TransportManager tman, WSDL11ParameterBinding paramBinding) throws WSDLException
     {
         super(service, tman, paramBinding);
@@ -41,12 +44,14 @@ public class XmlBeansWSDLBuilder
             {
                 XmlBeansType xbeanType = (XmlBeansType) type;
 
+                Element schema = getSchema(xbeanType);
                 String ns = xbeanType.getSchemaType().getNamespaceURI();
-                if (!hasSchema(ns))
+                if (!importedSchemas.contains(schema))
                 {
-                    Element schema = getSchema(xbeanType);
                     schema.detach();
-                    setSchema(ns, schema);
+                    addSchema(ns, schema);
+                    
+                    importedSchemas.add(schema);
                 }
             }
         }

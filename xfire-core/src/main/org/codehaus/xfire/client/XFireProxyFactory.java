@@ -3,8 +3,8 @@ package org.codehaus.xfire.client;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 
-import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
 
@@ -26,7 +26,7 @@ public class XFireProxyFactory
     
     public XFireProxyFactory()
     {
-        this.xfire = new DefaultXFire();
+        this.xfire = XFireFactory.newInstance().getXFire();
     }
     
     public XFireProxyFactory(XFire xfire)
@@ -51,7 +51,7 @@ public class XFireProxyFactory
     {
         Transport transport = xfire.getTransportManager().getTransportForUri(url);
 
-        return create(transport, service, url);
+        return create(service, transport, url);
     }
     
     /**
@@ -61,13 +61,13 @@ public class XFireProxyFactory
      * String url = "http://localhost:8080/services/Echo");
      * Echo echo = (Echo) factory.create(transport, myService, url);
      * </pre>
-     *
      * @param transport        The transport to use.
-     * @param serviceInterface the service to create a client for.
      * @param url              the URL where the client object is located.
+     * @param serviceInterface the service to create a client for.
+     *
      * @return a proxy to the object with the specified interface.
      */
-    public Object create(Transport transport, Service service, String url)
+    public Object create(Service service, Transport transport, String url)
             throws MalformedURLException
     {
         Client client = new Client(transport, service, url);
@@ -79,5 +79,18 @@ public class XFireProxyFactory
         return Proxy.newProxyInstance(serviceClass.getClassLoader(), 
                                       new Class[]{serviceClass}, 
                                       handler);
+    }
+
+    public Object create(Service service, String bindingId, String address)
+        throws MalformedURLException
+    {
+        Transport transport = xfire.getTransportManager().getTransport(bindingId);
+        
+        if (transport == null)
+        {
+            throw new IllegalStateException("No such transport for binding id: " + bindingId);
+        }
+        
+        return create(service, transport, address);
     }
 }

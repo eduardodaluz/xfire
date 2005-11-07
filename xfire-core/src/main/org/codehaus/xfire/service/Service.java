@@ -1,11 +1,7 @@
 package org.codehaus.xfire.service;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
@@ -38,7 +34,6 @@ public class Service
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private SoapVersion soapVersion;
-    private Map endpoints = new HashMap();
     
     /**
      * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified 
@@ -163,21 +158,5 @@ public class Service
     {
         this.soapVersion = soapVersion;
     }
-    
-    public Collection getEndpoints()
-    {
-        return Collections.unmodifiableCollection(endpoints.values());
-    }
-    
-    public void addEndpoint(Endpoint endpoint)
-    {
-        endpoints.put(endpoint.getName(), endpoint);
-    }
-    
-    public Endpoint getEndpoint(QName name)
-    {
-        return (Endpoint) endpoints.get(name);
-    }
-    
 }
 

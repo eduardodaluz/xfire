@@ -40,6 +40,7 @@ import javax.wsdl.Types;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
 
 public class WSDLVisitor
 {
@@ -274,6 +275,21 @@ public class WSDLVisitor
             }
         }
         return soapAddress;
+    }
+    
+    protected SOAPOperation getSOAPOperation(BindingOperation operation)
+    {
+        SOAPOperation soapOp = null;
+        List extensibilityElements = operation.getExtensibilityElements();
+        for (int i = 0; i < extensibilityElements.size(); i++)
+        {
+            Object element = extensibilityElements.get(i);
+            if (element instanceof SOAPOperation)
+            {
+                soapOp = (SOAPOperation) element;
+            }
+        }
+        return soapOp;
     }
     
     protected Output getOutput(BindingOutput bindingOutput)

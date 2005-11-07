@@ -202,10 +202,10 @@ public class WrappedBinding
          * Don't create the schema until after we add the types in
          * (via WSDLBuilder.addDependency()) writeParametersSchema. 
          */
-        Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
+        Element schemaEl = builder.createSchemaType(builder.getTargetNamespace());
         schemaEl.addContent(element);
 
-        return new QName(builder.getInfo().getTargetNamespace(), opName);
+        return new QName(builder.getTargetNamespace(), opName);
     }
 
     /**

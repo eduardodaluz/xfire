@@ -8,7 +8,7 @@ public class Endpoint
     private String bindingId;
     private String address;
  
-    public Endpoint(QName name, String address, String id)
+    public Endpoint(QName name, String id, String address)
     {
         this.address = address;
         this.bindingId = id;

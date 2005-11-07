@@ -22,7 +22,7 @@ public class VisitorTest
     public void testVisitor()
             throws Exception
     {
-        ServiceInfo service = new ServiceInfo(new QName("service"), String.class);
+        ServiceInfo service = new ServiceInfo(new QName("service"), new QName("serviceport"), String.class);
         Service endpoint = new Service(service);
         Method method = getClass().getMethod("method", new Class[0]);
         OperationInfo operation = service.addOperation("operation", method);

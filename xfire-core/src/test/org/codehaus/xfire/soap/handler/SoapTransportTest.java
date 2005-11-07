@@ -13,6 +13,7 @@ public class SoapTransportTest
         Transport t = SoapTransport.createSoapTransport(new HttpTransport());
         
         assertEquals(2, t.getInHandlers().size());
-        assertEquals(1, t.getOutHandlers().size());
+        assertEquals(2, t.getOutHandlers().size());
+        assertEquals(3, t.getFaultHandlers().size());
     }
 }

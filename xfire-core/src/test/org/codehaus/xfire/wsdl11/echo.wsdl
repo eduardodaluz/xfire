@@ -7,8 +7,8 @@
   <wsdl:types>
     <xsd:schema targetNamespace="urn:Echo" elementFormDefault="qualified" 
       attributeFormDefault="qualified">
-      <xsd:element name="echoRequest" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-      <xsd:element name="echoResponse" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="echoRequest" type="xsd:string"/>
+      <xsd:element name="echoResponse" type="xsd:string"/>
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="echoRequest">

@@ -124,7 +124,7 @@ public class RPCEncodedBinding
             {
                 part.setElementName(pName);
 
-                Element schemaEl = builder.createSchemaType(builder.getInfo().getTargetNamespace());
+                Element schemaEl = builder.createSchemaType(builder.getTargetNamespace());
                 Element element = new Element("element", AbstractWSDL.XSD_NS);
                 schemaEl.addContent(element);
 

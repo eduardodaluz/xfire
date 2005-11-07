@@ -5,8 +5,11 @@ import java.util.Collection;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.Endpoint;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.test.AbstractXFireTest;
 
 /**
@@ -36,7 +39,33 @@ public class WSDLVisitorTest
         OperationInfo opInfo = (OperationInfo) operations.iterator().next();
         assertEquals("echo", opInfo.getName());
         
-        Collection endpoints = service.getEndpoints();
+        // Check the input message
+        MessageInfo message = opInfo.getInputMessage();
+        assertNotNull(message);
+        
+        Collection parts = message.getMessageParts();
+        assertEquals(1, parts.size());
+        
+        MessagePartInfo part = (MessagePartInfo) parts.iterator().next();
+        assertEquals(new QName("urn:Echo", "echoRequest"), part.getName());
+        
+        // Check the output message
+        message = opInfo.getOutputMessage();
+        assertNotNull(message);
+        
+        parts = message.getMessageParts();
+        assertEquals(1, parts.size());
+        
+        part = (MessagePartInfo) parts.iterator().next();
+        assertEquals(new QName("urn:Echo", "echoResponse"), part.getName());
+        
+        // Is the SOAP binding stuff around?
+        SoapOperationInfo soapOp = SoapOperationInfo.getSoapOperationInfo(opInfo);
+        assertNotNull(soapOp);
+        assertEquals("literal", soapOp.getUse());
+        assertEquals("", soapOp.getSoapAction());
+        
+        Collection endpoints = service.getServiceInfo().getEndpoints();
         assertEquals(1, endpoints.size());
         
         Endpoint endpoint = (Endpoint) endpoints.iterator().next();

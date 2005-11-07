@@ -8,6 +8,7 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -71,15 +72,22 @@ public class ServiceFactoryBean
      */
     public Object getObject()
         throws Exception
+    {
+        return factory;
+    }
 
+    /**
+     * @org.xbean.InitMethod
+     * @throws Exception
+     */
+    public void initialize()
+        throws Exception
     {
         String serviceFactory = name;
         if (JSR181_FACTORY.equals(serviceFactory) || COMMONS_FACTORY.equals(serviceFactory))
             factory = getAnnotationServiceFactory(serviceFactory, bindingProvider);
         else
             factory = loadServiceFactory(serviceFactory, bindingProvider);
-
-        return factory;
     }
 
     /*
@@ -89,7 +97,6 @@ public class ServiceFactoryBean
      */
     public Class getObjectType()
     {
-
         return factory.getClass();
     }
 

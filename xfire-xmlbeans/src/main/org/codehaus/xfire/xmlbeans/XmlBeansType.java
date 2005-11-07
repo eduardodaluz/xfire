@@ -38,8 +38,6 @@ public class XmlBeansType
 {
     private SchemaType schemaType;
 
-    private final static Log logger = LogFactory.getLog(XmlBeansType.class); 
-    
     public XmlBeansType()
     {
     }
@@ -87,13 +85,21 @@ public class XmlBeansType
             {
                 SchemaType itype = iprops[j].getType();
                 
-                if (!itype.isPrimitiveType() && itype.getSourceName() != null)
-                {
-                    deps.add(new XmlBeansType(itype));
-                }
+                testAndAddType(deps, itype);
             }
+            
+            testAndAddType(deps, etype.getBaseType());
+            testAndAddType(deps, etype.getBaseEnumType());
         }
         return deps;
+    }
+
+    private void testAndAddType(HashSet deps, SchemaType itype)
+    {
+        if (itype != null && !itype.isPrimitiveType() && itype.getSourceName() != null)
+        {
+            deps.add(new XmlBeansType(itype));
+        }
     }
 
     public QName getSchemaType()

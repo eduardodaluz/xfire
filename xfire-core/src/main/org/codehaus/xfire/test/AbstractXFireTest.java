@@ -15,9 +15,9 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
-import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -152,7 +152,7 @@ public abstract class AbstractXFireTest
         super.setUp();
 
         if( xfire == null )
-            xfire = new DefaultXFire();
+            xfire = XFireFactory.newInstance().getXFire();
 
         addNamespace( "s", Soap11.getInstance().getNamespace() );
         addNamespace( "soap12", Soap12.getInstance().getNamespace() );

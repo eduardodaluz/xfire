@@ -52,6 +52,7 @@ public class WSDLBuilder
     extends org.codehaus.xfire.wsdl11.builder.AbstractWSDL
     implements WSDLWriter
 {
+    
     private PortType portType;
 
     private TransportManager transportManager;
@@ -94,7 +95,10 @@ public class WSDLBuilder
         Service service = getService();
         Definition def = getDefinition();
 
-        QName portName = new QName(getInfo().getTargetNamespace(), getInfo().getPortType());
+        QName portName = service.getServiceInfo().getPortType();
+        
+        if (portName == null)
+            portName = new QName(getTargetNamespace(), service.getName() + "PortType");
 
         portType = def.createPortType();
         portType.setQName(portName);
@@ -142,7 +146,7 @@ public class WSDLBuilder
         Service service = getService();
         Definition def = getDefinition();
 
-        QName name = new QName(getInfo().getTargetNamespace(), getInfo().getServiceName());
+        QName name = service.getServiceInfo().getName();
 
         // Create a concrete instance for each transport.
         javax.wsdl.Service wsdlService = def.createService();
@@ -215,7 +219,7 @@ public class WSDLBuilder
     {
         // response message
         Message res = getDefinition().createMessage();
-        res.setQName(new QName(getInfo().getTargetNamespace(), op.getName() + "Response"));
+        res.setQName(new QName(getTargetNamespace(), op.getName() + "Response"));
 
         res.setUndefined(false);
 
@@ -227,7 +231,7 @@ public class WSDLBuilder
     private Message createInputMessage(OperationInfo op)
     {
         Message req = getDefinition().createMessage();
-        req.setQName(new QName(getInfo().getTargetNamespace(), op.getName() + "Request"));
+        req.setQName(new QName(getTargetNamespace(), op.getName() + "Request"));
         req.setUndefined(false);
 
         paramBinding.createInputParts(this, req, op);
@@ -261,7 +265,7 @@ public class WSDLBuilder
     {
         Message msg = getDefinition().createMessage();
 
-        msg.setQName(new QName(getInfo().getTargetNamespace(), msgInfo.getName().getLocalPart() + "Headers"));
+        msg.setQName(new QName(getTargetNamespace(), msgInfo.getName().getLocalPart() + "Headers"));
         msg.setUndefined(false);
 
         for (Iterator itr = msgInfo.getMessageHeaders().iterator(); itr.hasNext();)
@@ -307,7 +311,7 @@ public class WSDLBuilder
 
         if (!declaredParameters.contains(pName))
         {
-            Element schemaEl = createSchemaType(getInfo().getTargetNamespace());
+            Element schemaEl = createSchemaType(getTargetNamespace());
 
             Element element = new Element("element", XSD_NS);
             schemaEl.addContent(element);

@@ -24,10 +24,16 @@
           classpathref="xmlbeans.path"
           fork="true">
       <arg value="-d"/>
-      <arg value="${maven.test.dest}"/>
-      <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
+      <arg value="${maven.build.dir}/xfire-xmlbeans-test"/>
+      <arg value="${basedir}/src/test-schemas/WeatherForecast.xsd"/>
       <arg value="${basedir}/src/test-schemas/anyschema.xsd"/>
-    </java>
+      <arg value="${basedir}/src/test-schemas/Base.xsd"/>
+      <arg value="${basedir}/src/test-schemas/Request.xsd"/>
+      <arg value="${basedir}/src/test-schemas/Response.xsd"/>
+    </java>  	
+  	<copy todir="${maven.test.dest}">
+      <fileset dir="${maven.build.dir}/xfire-xmlbeans-test"/>
+  	</copy>
   </goal>
   
   <goal name="support-jars">

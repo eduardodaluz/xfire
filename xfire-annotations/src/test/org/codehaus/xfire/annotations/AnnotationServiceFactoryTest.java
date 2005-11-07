@@ -18,7 +18,6 @@ import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilderInfo;
 import org.easymock.MockControl;
 
 public class AnnotationServiceFactoryTest
@@ -169,11 +168,8 @@ public class AnnotationServiceFactoryTest
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
         ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), service.getName());
-
-        WSDLBuilderInfo info = (WSDLBuilderInfo) endpoint.getProperty(WSDLBuilderInfo.KEY);
-        assertEquals("EchoPortType", info.getPortType());
-        assertEquals("Echo", info.getServiceName());
-        assertEquals("http://xfire.codehaus.org/EchoService", info.getTargetNamespace());
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoPortType"), 
+                     service.getPortType());
 
         webAnnotationsControl.verify();
     }

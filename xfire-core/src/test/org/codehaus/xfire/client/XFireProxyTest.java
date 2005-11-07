@@ -36,7 +36,7 @@ public class XFireProxyTest
     public void testHandleEquals()
             throws Exception
     {
-        Echo echoProxy1 = (Echo) factory.create(transport, service, "");
+        Echo echoProxy1 = (Echo) factory.create(service, transport, "");
 
         assertEquals(echoProxy1, echoProxy1);
     }
@@ -44,7 +44,7 @@ public class XFireProxyTest
     public void testHandleHashCode()
             throws Exception
     {
-        Echo echoProxy = (Echo) factory.create(transport, service, "");
+        Echo echoProxy = (Echo) factory.create(service, transport, "");
         
         assertTrue(echoProxy.hashCode() != 0);
     }
@@ -55,7 +55,7 @@ public class XFireProxyTest
         root.addContent("hello");
         
         XFireProxyFactory factory = new XFireProxyFactory(getXFire());
-        Echo echo = (Echo) factory.create(transport, service, "xfire.local://Echo");
+        Echo echo = (Echo) factory.create(service, transport, "xfire.local://Echo");
         
         Element e = echo.echo(root);
         assertEquals(root.getName(), e.getName());

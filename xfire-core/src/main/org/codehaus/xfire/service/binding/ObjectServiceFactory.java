@@ -48,6 +48,8 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
 public class ObjectServiceFactory
         implements ServiceFactory
 {
+    public static final String PORT_TYPE = "portType";
+    
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
     private String style;
@@ -123,7 +125,7 @@ public class ObjectServiceFactory
         reader.readWSDL(wsdlUrl.toString());
 
         QName name = ServiceUtils.makeQualifiedNameFromClass(clazz);
-        ServiceInfo serviceInfo = new ServiceInfo(name, clazz);
+        ServiceInfo serviceInfo = new ServiceInfo(name, null, clazz);
         Service endpoint = new Service(serviceInfo);
 
         endpoint.setWSDLWriter(new ResourceWSDL(wsdlUrl));
@@ -212,7 +214,19 @@ public class ObjectServiceFactory
         String theStyle = (style != null) ? style : this.style;
         String theUse = (use != null) ? use : this.use;
 
-        ServiceInfo serviceInfo = new ServiceInfo(qName, clazz);
+        // Set the portType for the ServiceInfo
+        QName portType = null;
+        if (properties != null)
+        {
+            portType = (QName) properties.get(PORT_TYPE);
+        }
+        
+        if (portType == null)
+        {
+            portType = new QName(theNamespace, theName + "PortType");
+        }
+        
+        ServiceInfo serviceInfo = new ServiceInfo(qName, portType, clazz);
 
         Service endpoint = new Service(serviceInfo);
         setProperties(endpoint, properties);

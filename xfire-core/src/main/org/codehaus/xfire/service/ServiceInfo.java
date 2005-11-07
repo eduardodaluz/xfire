@@ -25,7 +25,9 @@ public class ServiceInfo
     private QName name;
     private Map operations = new HashMap();
     private Class serviceClass;
-
+    private QName portType;
+    private Map endpoints = new HashMap();
+    
     /**
      * Initializes a new instance of the <code>ServiceInfo</code> class with the given qualified name and service
      * class.
@@ -33,9 +35,10 @@ public class ServiceInfo
      * @param name         the qualified name.
      * @param serviceClass the service class.
      */
-    public ServiceInfo(QName name, Class serviceClass)
+    public ServiceInfo(QName name, QName portType, Class serviceClass)
     {
         this.name = name;
+        this.portType = portType;
         this.serviceClass = serviceClass;
     }
 
@@ -147,4 +150,35 @@ public class ServiceInfo
     {
         operations.remove(name);
     }
+
+    public QName getPortType()
+    {
+        return portType;
+    }
+
+    public void setPortType(QName portType)
+    {
+        this.portType = portType;
+    }
+
+    public Collection getEndpoints()
+    {
+        return Collections.unmodifiableCollection(endpoints.values());
+    }
+
+    public void addEndpoint(Endpoint endpoint)
+    {
+        endpoints.put(endpoint.getName(), endpoint);
+    }
+
+    public Endpoint getEndpoint(QName name)
+    {
+        return (Endpoint) endpoints.get(name);
+    }
+
+    public void addEndpoint(QName name, String bindingId, String address)
+    {
+        addEndpoint(new Endpoint(name, bindingId, address));
+    }
+
 }
