@@ -3,12 +3,12 @@ package org.codehaus.xfire.spring.config;
 import java.lang.reflect.Constructor;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -97,7 +97,7 @@ public class ServiceFactoryBean
      */
     public Class getObjectType()
     {
-        return factory.getClass();
+        return ServiceFactory.class;
     }
 
     public boolean isSingleton()
