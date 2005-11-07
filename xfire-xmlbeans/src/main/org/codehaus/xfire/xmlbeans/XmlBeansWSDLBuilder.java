@@ -49,7 +49,7 @@ public class XmlBeansWSDLBuilder
                 if (!importedSchemas.contains(schema))
                 {
                     schema.detach();
-                    addSchema(ns, schema);
+                    setSchema(ns, schema);
                     
                     importedSchemas.add(schema);
                 }

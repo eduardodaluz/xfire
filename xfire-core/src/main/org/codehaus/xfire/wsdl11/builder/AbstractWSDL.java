@@ -45,8 +45,6 @@ import org.jdom.xpath.XPath;
 public abstract class AbstractWSDL
     implements WSDLWriter
 {
-    public final static String REMOVE_IMPORTS = "wsdlBuilder.removeImports"; 
-    
     private static final StaxBuilder builder = new StaxBuilder();
     
     private Definition def;
@@ -61,12 +59,7 @@ public abstract class AbstractWSDL
     
     private Element schemaTypes;
 
-    /** Contains the schemas that we have create internally for Type.writeSchema(). */
-    private Map createdSchemas = new HashMap();
-    
-    /** Contains a Set of schemas, keyed by the namespace. */
-    private Map nsToSchemas = new HashMap();
-
+    private Map typeMap;
     private boolean schemaLocationRemoved = true;
     
     /*-------------------------------------------------
@@ -80,9 +73,8 @@ public abstract class AbstractWSDL
     {
         this.service = service;
 
-        String tns = service.getServiceInfo().getName().getNamespaceURI();
         setDefinition(WSDLFactory.newInstance().newDefinition());
-        getDefinition().setTargetNamespace(tns);
+        getDefinition().setTargetNamespace(getTargetNamespace());
 
         Element root = new Element("types", "wsdl", WSDL11_NS);
         setSchemaTypes(root);
@@ -93,7 +85,9 @@ public abstract class AbstractWSDL
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("wsdl", WSDL11_NS);
         addNamespace("wsdlsoap", WSDL11_SOAP_NS);
-        addNamespace("tns", tns);
+        addNamespace("tns", getTargetNamespace());
+
+        typeMap = new HashMap();
     }
 
     protected void writeDocument()
@@ -156,7 +150,7 @@ public abstract class AbstractWSDL
     {
         Element rootEl = getDocument().getRootElement();
 
-        if (schemaTypes.getChildren().size() > 0)
+        if (schemaTypes.getContentSize() > 0)
         {
             schemaTypes.detach();
             rootEl.addContent(0, schemaTypes);
@@ -331,7 +325,7 @@ public abstract class AbstractWSDL
         {
             Element root = schema.getRootElement();
             root.detach();
-            setCreatedSchema(targetNamespace, root);
+            setSchema(targetNamespace, root);
         }
         else
         {
@@ -394,7 +388,7 @@ public abstract class AbstractWSDL
      */
     public Element createSchemaType(String namespace)
     {
-        Element e = (Element) createdSchemas.get(namespace);
+        Element e = (Element) typeMap.get(namespace);
 
         if (e == null)
         {
@@ -404,40 +398,21 @@ public abstract class AbstractWSDL
             e.setAttribute(new Attribute("elementFormDefault", "qualified"));
             e.setAttribute(new Attribute("attributeFormDefault", "qualified"));
 
-            setCreatedSchema(namespace, e);
-            
-            addSchema(namespace, e);
+            setSchema(namespace, e);
         }
 
         return e;
     }
 
-    /**
-     * Adds a schema to the list of schemas for a particular namespace.
-     * @param namespace
-     * @param e
-     */
-    public void addSchema(String namespace, Element e)
+    protected boolean hasSchema(String namespace)
     {
-        Set schemas = (Set) nsToSchemas.get(namespace);
-        
-        if (schemas == null)
-        {
-            schemas = new HashSet();
-            nsToSchemas.put(namespace, schemas);
-        }
-        
-        if (!schemas.contains(e))
-        {
-            schemas.add(e);
-            
-            getSchemaTypes().addContent(e);
-        }
+        return typeMap.containsKey(namespace);
     }
     
-    protected void setCreatedSchema(String namespace, Element schema)
+    protected void setSchema(String namespace, Element schema)
     {
-        createdSchemas.put(namespace, schema);
+        typeMap.put(namespace, schema);
+        getSchemaTypes().addContent(schema);
     }
 
     protected Element getSchemaTypes()
