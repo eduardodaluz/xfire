@@ -56,7 +56,7 @@ public class DefaultEndpoint
         {
             pipeline.invoke(context);
             
-            finishReadingMessage(msg, context);
+            // finishReadingMessage(msg, context);
         }
         catch (Exception e)
         {
