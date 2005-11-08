@@ -27,12 +27,9 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
@@ -157,8 +154,6 @@ public abstract class AbstractXFireTest
         addNamespace( "s", Soap11.getInstance().getNamespace() );
         addNamespace( "soap12", Soap12.getInstance().getNamespace() );
 
-        TransportManager trans = getXFire().getTransportManager();
-        trans.register( SoapTransport.createSoapTransport( new HttpTransport() ) );
         createSession();
     }
 
