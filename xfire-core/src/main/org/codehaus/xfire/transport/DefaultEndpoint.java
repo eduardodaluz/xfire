@@ -129,7 +129,8 @@ public class DefaultEndpoint
         try
         {
             int event = reader.getEventType();
-            while (reader.hasNext() && event != XMLStreamReader.END_DOCUMENT) reader.next();
+            while (event != XMLStreamReader.END_DOCUMENT && reader.hasNext()) 
+                event = reader.next();
         }
         catch (XMLStreamException e)
         {
