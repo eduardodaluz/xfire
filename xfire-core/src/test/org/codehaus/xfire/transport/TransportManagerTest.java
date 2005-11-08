@@ -18,7 +18,7 @@ public class TransportManagerTest
         Service service = getServiceFactory().create(Echo.class);
         
         TransportManager tm = new DefaultTransportManager(reg);
-        assertEquals(4, tm.getTransports().size()); // the local transport should be there
+        assertEquals(4, tm.getTransports().size());
         
         HttpTransport transport = new HttpTransport();
         tm.register(transport);
@@ -40,11 +40,16 @@ public class TransportManagerTest
         
         tm.enableAll(service.getName());
         assertEquals(5, tm.getTransports(service.getName()).size());
+        
+        tm.unregister(transport);
+        assertEquals(4, tm.getTransports().size()); 
     }
     
     public void testHTTPLookup()
     {
-        TransportManager tm = getXFire().getTransportManager();
+        DefaultTransportManager tm = new DefaultTransportManager(new DefaultServiceRegistry());
+
+        assertEquals(4, tm.getTransports().size());
         
         Transport t = tm.getTransportForUri("http://localhost");
 
