@@ -6,6 +6,7 @@ import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.transport.http.HttpTransport;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
 
 public class TransportManagerTest
     extends AbstractXFireTest
@@ -39,6 +40,18 @@ public class TransportManagerTest
         
         tm.enableAll(service.getName());
         assertEquals(5, tm.getTransports(service.getName()).size());
+    }
+    
+    public void testHTTPLookup()
+    {
+        TransportManager tm = getXFire().getTransportManager();
         
+        Transport t = tm.getTransportForUri("http://localhost");
+
+        assertTrue(t instanceof SoapHttpTransport);
+        
+        t = tm.getTransportForUri("https://localhost");
+
+        assertTrue(t instanceof SoapHttpTransport);
     }
 }
