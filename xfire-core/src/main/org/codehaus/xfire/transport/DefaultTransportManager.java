@@ -120,7 +120,7 @@ public class DefaultTransportManager
 
         for (Iterator itr = services.values().iterator(); itr.hasNext();)
         {
-            Map serviceTransports = (Map) itr.next();
+            Set serviceTransports = (Set) itr.next();
             if (serviceTransports != null)
             {
                 serviceTransports.remove(transport);
