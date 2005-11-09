@@ -42,31 +42,31 @@ public class DefaultTypeMappingRegistry
 {
     private static final Log logger = LogFactory.getLog(DefaultTypeMappingRegistry.class);
     
-    private static final QName XSD_STRING = new QName(SoapConstants.XSD, "string");
-    private static final QName XSD_LONG = new QName(SoapConstants.XSD, "long");
-    private static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float");
-    private static final QName XSD_DOUBLE = new QName(SoapConstants.XSD, "double");
-    private static final QName XSD_INT = new QName(SoapConstants.XSD, "int");
-    private static final QName XSD_SHORT = new QName(SoapConstants.XSD, "short");
-    private static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean");
-    private static final QName XSD_DATETIME = new QName(SoapConstants.XSD, "dateTime");
-    private static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime");
-    private static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary");
-    private static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal");
+    protected static final QName XSD_STRING = new QName(SoapConstants.XSD, "string");
+    protected static final QName XSD_LONG = new QName(SoapConstants.XSD, "long");
+    protected static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float");
+    protected static final QName XSD_DOUBLE = new QName(SoapConstants.XSD, "double");
+    protected static final QName XSD_INT = new QName(SoapConstants.XSD, "int");
+    protected static final QName XSD_SHORT = new QName(SoapConstants.XSD, "short");
+    protected static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean");
+    protected static final QName XSD_DATETIME = new QName(SoapConstants.XSD, "dateTime");
+    protected static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime");
+    protected static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary");
+    protected static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal");
 
-    private static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType");
+    protected static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType");
 
-    private static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
-    private static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
-    private static final QName ENCODED_LONG = new QName(ENCODED_NS, "long");
-    private static final QName ENCODED_FLOAT = new QName(ENCODED_NS, "float");
-    private static final QName ENCODED_DOUBLE = new QName(ENCODED_NS, "double");
-    private static final QName ENCODED_INT = new QName(ENCODED_NS, "int");
-    private static final QName ENCODED_SHORT = new QName(ENCODED_NS, "short");
-    private static final QName ENCODED_BOOLEAN = new QName(ENCODED_NS, "boolean");
-    private static final QName ENCODED_DATETIME = new QName(ENCODED_NS, "dateTime");
-    private static final QName ENCODED_BASE64 = new QName(ENCODED_NS, "base64Binary");
-    private static final QName ENCODED_DECIMAL = new QName(ENCODED_NS, "decimal");
+    protected static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
+    protected static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
+    protected static final QName ENCODED_LONG = new QName(ENCODED_NS, "long");
+    protected static final QName ENCODED_FLOAT = new QName(ENCODED_NS, "float");
+    protected static final QName ENCODED_DOUBLE = new QName(ENCODED_NS, "double");
+    protected static final QName ENCODED_INT = new QName(ENCODED_NS, "int");
+    protected static final QName ENCODED_SHORT = new QName(ENCODED_NS, "short");
+    protected static final QName ENCODED_BOOLEAN = new QName(ENCODED_NS, "boolean");
+    protected static final QName ENCODED_DATETIME = new QName(ENCODED_NS, "dateTime");
+    protected static final QName ENCODED_BASE64 = new QName(ENCODED_NS, "base64Binary");
+    protected static final QName ENCODED_DECIMAL = new QName(ENCODED_NS, "decimal");
 
     private Hashtable registry;
 
@@ -298,7 +298,7 @@ public class DefaultTypeMappingRegistry
         soapTM.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
         soapTM.register(Document.class, XSD_ANY, new DocumentType());
 
-        register(ENCODED_NS, tm);
+        register(ENCODED_NS, soapTM);
 
         return tm;
     }
