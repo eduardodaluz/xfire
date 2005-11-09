@@ -4,8 +4,8 @@
 <beans>
     <!-- START SNIPPET: xfire -->
     <bean name="echoService" class="org.codehaus.xfire.spring.ServiceBean">
-        <property name="service" ref="echo"/>
-        <property name="serviceInterface" value="org.codehaus.xfire.test.Echo"/>
+        <property name="serviceBean" ref="echo"/>
+        <property name="serviceClass" value="org.codehaus.xfire.test.Echo"/>
         <property name="serviceFactory" ref="xfire.serviceFactory"/>
         <property name="xfire" ref="xfire"/>
         <property name="inHandlers">

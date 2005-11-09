@@ -27,7 +27,7 @@ public class XFireProxyFactoryBean
     {
         super.afterPropertiesSet();
 
-        this.serviceProxy = ProxyFactory.getProxy(getService().getServiceInterface(), this);
+        this.serviceProxy = ProxyFactory.getProxy(getService().getServiceClass(), this);
     }
 
     public Object getObject()
@@ -37,7 +37,7 @@ public class XFireProxyFactoryBean
 
     public Class getObjectType()
     {
-        return (this.serviceProxy != null) ? this.serviceProxy.getClass() : getService().getServiceInterface();
+        return (this.serviceProxy != null) ? this.serviceProxy.getClass() : getService().getServiceClass();
     }
 
     public boolean isSingleton()

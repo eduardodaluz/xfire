@@ -12,8 +12,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ServiceComponentTest
         extends AbstractXFireSpringTest
 {
-    private XFireExporter exporter;
-
     public void testSpringIntegration()
             throws Exception
     {

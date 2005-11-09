@@ -96,9 +96,6 @@ public class XFireConfigurableServlet
             URL resource = (URL) en.nextElement();
             builder.buildServices(resource.openStream());
         }
-        
-        
-
     }
 
     /**
@@ -109,7 +106,5 @@ public class XFireConfigurableServlet
     {
         XFireConfigLoader loader = new XFireConfigLoader();
         xfire = loader.loadConfig(getConfigPath());
-
     }
-
 }

@@ -94,12 +94,49 @@ public class WSDLServiceBuilder
         
         opInfo.setInputMessage(info);
         
-        createMessageParts(info,  input.getMessage());
+        if (isWrapped(input))
+        {
+            
+        }
+        else
+        {
+            createMessageParts(info,  input.getMessage());
+        }
     }
 
+    /**
+     * A message is wrapped IFF:
+     * 
+     * The input message has a single part. 
+     * The part is an element. 
+     * The element has the same name as the operation. 
+     * The element's complex type has no attributes.
+     * 
+     * @return
+     */
+    protected boolean isWrapped(Input input)
+    {
+        if (input.getMessage().getParts().size() != 1) 
+            return false;
+        
+        Part part = (Part) input.getMessage().getParts().values().iterator().next();
+        
+        if (part.getElementName() == null) 
+            return false;
+        
+        if (!part.getElementName().getLocalPart().equals(opInfo.getName())) 
+            return false;
+        
+        getDefinition().getTypes().getExtensibilityElements();
+        return true;
+    }
+    
     private void createMessageParts(MessageInfo info, Message msg)
     {
         Map parts = msg.getParts();
+        
+        
+        
         for (Iterator itr = parts.values().iterator(); itr.hasNext();)
         {
             Part entry = (Part) itr.next();
@@ -169,6 +206,7 @@ public class WSDLServiceBuilder
         }
     }
 
+    
     protected void begin(javax.wsdl.Service wservice)
     {
         serviceInfo = new ServiceInfo(wservice.getQName(), null, Object.class);

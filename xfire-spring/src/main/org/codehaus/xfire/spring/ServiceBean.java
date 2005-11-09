@@ -1,23 +1,23 @@
 package org.codehaus.xfire.spring;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
-import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -63,19 +63,20 @@ public class ServiceBean
 
     private List faultHandlers;
 
-    protected SoapVersion soapVersion = Soap11.getInstance();
-
     protected Class implementationClass;
+
+    private List properties = new ArrayList();
+
+    /** Some properties to make it easier to work with ObjectServiceFactory */
+
+    protected SoapVersion soapVersion = Soap11.getInstance();
 
     protected String use;
 
     protected String style;
 
     private String scope;
-
-    protected Class bindingProvider;
-
-    private List properties = new ArrayList();
+    
 
     public void afterPropertiesSet()
         throws Exception
@@ -86,44 +87,45 @@ public class ServiceBean
         {
             theName = theName.substring(1);
         }
-
-        BindingProvider bindingProviderImpl = (BindingProvider) (bindingProvider != null ? bindingProvider
-                .newInstance()
-                : null);
-
+        
         if (serviceFactory == null)
         {
             serviceFactory = new ObjectServiceFactory(xFire.getTransportManager(),
-                    bindingProviderImpl);
+                                                      new AegisBindingProvider());
         }
 
-        ObjectServiceFactory factory = (ObjectServiceFactory) serviceFactory;
-        factory.setSoapVersion(soapVersion);
-        if (style != null && style.length() > 0)
-        {
-            factory.setStyle(style);
-        }
-        if (use != null && use.length() > 0)
-        {
-            factory.setUse(use);
-        }
-
-        // If now service object set, try to create it from implementationClass
-        if (service == null)
-        {
-            if (implementationClass != null)
-            {
-                service = implementationClass.newInstance();
-            }else{
-                throw new RuntimeException("Service object or implementationClass must be set!.");
-            }
-        }
-
-        Class intf = getServiceInterface();
+        /**
+         * Use the ServiceInterface if that is set, otherwise use the Class of 
+         * the service object.
+         */
+        Class intf = getServiceClass();
         if (intf == null)
-            intf = getService().getClass();
-
-        xfireService = serviceFactory.create(intf, theName, namespace, null);
+        {
+            if (getServiceBean() == null)
+                throw new RuntimeException("Error creating service " + theName + "" +
+                        ". The service class or the service bean must be set!");
+            
+            intf = getServiceBean().getClass();
+        }
+        
+        // Lets set up some properties for the service
+        Map properties = new HashMap();
+        properties.put(ObjectServiceFactory.SOAP_VERSION, soapVersion);
+        
+        if (style != null)
+            properties.put(ObjectServiceFactory.STYLE, style);
+        if (use != null)
+            properties.put(ObjectServiceFactory.USE, use);
+        
+        if (implementationClass != null)
+        {
+            properties.put(ObjectInvoker.SERVICE_IMPL_CLASS, implementationClass);
+        }
+        
+        // Set the properties 
+        copyProperties(properties);
+        
+        xfireService = serviceFactory.create(intf, theName, namespace, properties);
 
         AbstractBinding binding = (AbstractBinding) xfireService.getBinding();
         if (logger.isInfoEnabled())
@@ -132,11 +134,15 @@ public class ServiceBean
                     + " service " + xfireService.getName() + " as " + binding.getStyle());
         }
 
+        // Register the service
         xFire.getServiceRegistry().register(xfireService);
-        if (serviceInterface != null)
-            binding.setInvoker(new BeanInvoker(getProxyForService()));
-        else
-            binding.setInvoker(new BeanInvoker(getService()));
+        
+        // If we're referencing a spring bean, set up our invoker.
+        Object serviceBean = getProxyForService();
+        if (serviceBean != null)
+        {
+            binding.setInvoker(new BeanInvoker(serviceBean));
+        }
 
         // set up in handlers
         if (xfireService.getInHandlers() == null)
@@ -155,8 +161,6 @@ public class ServiceBean
             xfireService.setFaultHandlers(getFaultHandlers());
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
-
-        copyProperites();
     }
 
     /**
@@ -164,11 +168,7 @@ public class ServiceBean
      */
     protected Object getProxyForService()
     {
-        ProxyFactory proxyFactory = new ProxyFactory();
-        proxyFactory.addInterface(getServiceInterface());
-
-        proxyFactory.setTarget(getService());
-        return proxyFactory.getProxy();
+        return getServiceBean();
     }
 
     public Service getXFireService()
@@ -176,22 +176,22 @@ public class ServiceBean
         return xfireService;
     }
 
-    public Object getService()
+    public Object getServiceBean()
     {
         return service;
     }
 
-    public void setService(Object service)
+    public void setServiceBean(Object service)
     {
         this.service = service;
     }
 
-    public Class getServiceInterface()
+    public Class getServiceClass()
     {
         return serviceInterface;
     }
 
-    public void setServiceInterface(Class serviceInterface)
+    public void setServiceClass(Class serviceInterface)
     {
         this.serviceInterface = serviceInterface;
     }
@@ -278,16 +278,6 @@ public class ServiceBean
         this.implementationClass = implementationClass;
     }
 
-    public Class getBindingProvider()
-    {
-        return bindingProvider;
-    }
-
-    public void setBindingProvider(Class bindingProvider)
-    {
-        this.bindingProvider = bindingProvider;
-    }
-
     public List getProperties()
     {
         return properties;
@@ -338,28 +328,19 @@ public class ServiceBean
         this.soapVersion = soapVersion;
     }
 
-    public Class getServiceClass()
-    {
-        return getServiceInterface();
-    }
-
-    public void setServiceClass(Class serviceClass)
-    {
-        setServiceInterface(serviceClass);
-    }
-
     /**
      * 
      */
-    protected void copyProperites()
+    protected void copyProperties(Map properties)
     {
         Service service = getXFireService();
         for (Iterator iter = getProperties().iterator(); iter.hasNext();)
         {
-            Map.Entry entry = (Entry) iter.next();
-            String key = (String) entry.getKey();
-            Object value = entry.getValue();
-            service.setProperty(key, value);
+            Object[] keyval = (Object[]) iter.next();
+            String key = (String) keyval[0];
+            Object value = keyval[1];
+            
+            properties.put(key, value);
         }
     }
 

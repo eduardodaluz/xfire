@@ -48,7 +48,7 @@ public class XFireExporterTest
         exporter = new XFireExporter();
         exporter.setXfire(getXFire());
         exporter.setServiceInterface(Echo.class);
-        exporter.setService(echoBean);
+        exporter.setServiceBean(echoBean);
         ServiceFactory serviceFactory = new ObjectServiceFactory(getXFire().getTransportManager(),
                                                                  null);
 

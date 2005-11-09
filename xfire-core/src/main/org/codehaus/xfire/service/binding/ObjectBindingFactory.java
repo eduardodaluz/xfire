@@ -34,7 +34,7 @@ public class ObjectBindingFactory
        }
         else
         {
-        	throw new UnsupportedOperationException( "Service style/use not supported." );
+        	throw new UnsupportedOperationException( "Service style/use not supported: " + style + "/" + use );
         }
 	}
 }

@@ -14,9 +14,6 @@
     <implementationClass>
       org.codehaus.xfire.test.EchoImpl
     </implementationClass>
-    <bindingProvider>
-      org.codehaus.xfire.service.binding.MessageBindingProvider
-    </bindingProvider>
     <properties>
       <property key="foo" value="bar" />
       <property key="cheese" value="baz" />
@@ -28,16 +25,9 @@
     <namespace>urn:Echo</namespace>
     <style>wrapped</style>
     <use>literal</use>
-
-    <implementationClass>
-      org.codehaus.xfire.test.EchoImpl
-    </implementationClass>
-
+    <serviceClass>org.codehaus.xfire.test.EchoImpl</serviceClass>
 
     <soapVersion>1.2</soapVersion>
-    <bindingProvider>
-      org.codehaus.xfire.service.binding.MessageBindingProvider
-    </bindingProvider>
 
     <inHandlers>
       <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">

@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.spring.ServiceBean;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -41,5 +42,26 @@ public class XFireExporter
             throws Exception
     {
         return delegate.handleRequest(request, response);
+    }
+
+    /**
+     * @return
+     */
+    protected Object getProxyForService()
+    {
+        ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.addInterface(getServiceClass());
+
+        proxyFactory.setTarget(getServiceBean());
+        return proxyFactory.getProxy();
+    }
+    
+    /**
+     * This is just a convenience method which delegates to setServiceClass().
+     * @param intf
+     */
+    public void setServiceInterface(Class intf)
+    {
+        setServiceClass(intf);
     }
 }

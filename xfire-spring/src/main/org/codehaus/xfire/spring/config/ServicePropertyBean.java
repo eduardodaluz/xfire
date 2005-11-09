@@ -1,6 +1,5 @@
 package org.codehaus.xfire.spring.config;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.FactoryBean;
@@ -45,12 +44,7 @@ public class ServicePropertyBean
     public Object getObject()
         throws Exception
     {
-        // TODO : reimplement this 
-        // This is only temporary solution to pass 2 values at once
-        Map map = new HashMap();
-        map.put(key, value);
-        Object obj = map.entrySet().iterator().next();
-        return obj;
+        return new Object[] { key, value };
     }
 
     public Class getObjectType()

@@ -49,6 +49,9 @@ public class ObjectServiceFactory
         implements ServiceFactory
 {
     public static final String PORT_TYPE = "portType";
+    public static final String STYLE = "style";
+    public static final String USE = "use";
+    public static final String SOAP_VERSION = "soapVersion";
     
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
@@ -174,6 +177,12 @@ public class ObjectServiceFactory
     {
         return create(clazz, null, null, properties);
     }
+
+    protected String makeServiceNameFromClassName(Class clazz)
+    {
+        return ServiceUtils.makeServiceNameFromClassName(clazz);
+    }
+
     /**
      * Creates a service from the specified class, soap version, style and use. The returned service will have a name
      * based on the class name, and a namespace based on the class package.
@@ -190,41 +199,29 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz, String name, String namespace, Map properties)
     {
-        return create(clazz, name, namespace, null, null, null, properties);
-    }
-
-    protected String makeServiceNameFromClassName(Class clazz)
-    {
-        return ServiceUtils.makeServiceNameFromClassName(clazz);
-    }
-
-    public Service create(Class clazz,
-                          String name,
-                          String namespace,
-                          SoapVersion version,
-                          String style,
-                          String use,
-                          Map properties)
-    {
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(
                 clazz.getName(), "http");
         QName qName = new QName(theNamespace, theName);
-        SoapVersion theVersion = (version != null) ? version : soapVersion;
-        String theStyle = (style != null) ? style : this.style;
-        String theUse = (use != null) ? use : this.use;
-
-        // Set the portType for the ServiceInfo
+        
+        SoapVersion theVersion = null;
+        String theStyle = null;
+        String theUse = null;
         QName portType = null;
+        
         if (properties != null)
         {
+            theVersion = (SoapVersion) properties.get(SOAP_VERSION);
+            theStyle = (String) properties.get(STYLE);
+            theUse = (String) properties.get(USE);
             portType = (QName) properties.get(PORT_TYPE);
         }
         
-        if (portType == null)
-        {
-            portType = new QName(theNamespace, theName + "PortType");
-        }
+        if (theVersion == null) theVersion = soapVersion;
+        if (theStyle == null) theStyle = style;
+        if (theUse == null) theUse = use;
+        if (portType == null) portType = new QName(theNamespace, theName + "PortType");
+        
         
         ServiceInfo serviceInfo = new ServiceInfo(qName, portType, clazz);
 

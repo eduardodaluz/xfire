@@ -2,6 +2,7 @@ package org.codehaus.xfire.service.binding;
 
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -85,13 +86,15 @@ public class ObjectServiceFactoryTest
     public void testCreateNameNamespaceVersionStyleUseEncodingStyle()
             throws Exception
     {
+        Map properties = new HashMap();
+        properties.put(ObjectServiceFactory.STYLE, SoapConstants.STYLE_RPC);
+        properties.put(ObjectServiceFactory.SOAP_VERSION, Soap12.getInstance());
+        properties.put(ObjectServiceFactory.USE, SoapConstants.USE_ENCODED);
+        
         Service endpoint = objectServiceFactory.create(Echo.class,
                                                        "EchoService",
                                                        "http://xfire.codehaus.org",
-                                                       Soap12.getInstance(),
-                                                       SoapConstants.STYLE_RPC,
-                                                       SoapConstants.USE_ENCODED,
-                                                       (Map) null);
+                                                       properties);
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://xfire.codehaus.org", "EchoService"), service.getName());
@@ -107,13 +110,15 @@ public class ObjectServiceFactoryTest
     public void testCreateNameNamespaceNull()
             throws Exception
     {
+        Map properties = new HashMap();
+        properties.put(ObjectServiceFactory.STYLE, SoapConstants.STYLE_RPC);
+        properties.put(ObjectServiceFactory.SOAP_VERSION, Soap12.getInstance());
+        properties.put(ObjectServiceFactory.USE, SoapConstants.USE_ENCODED);
+        
         Service endpoint = objectServiceFactory.create(Echo.class,
                                                        null,
                                                        null,
-                                                       Soap12.getInstance(),
-                                                       SoapConstants.STYLE_RPC,
-                                                       SoapConstants.USE_ENCODED,
-                                                       (Map) null);
+                                                       properties);
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getServiceInfo();
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());

@@ -65,7 +65,6 @@ public class HandlerFactory
     public Object getObject()
         throws Exception
     {
-
         return handler;
     }
 

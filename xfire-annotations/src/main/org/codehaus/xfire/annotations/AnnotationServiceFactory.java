@@ -125,7 +125,10 @@ public class AnnotationServiceFactory
             }
 
             properties.put(PORT_TYPE, new QName(tns, portType));
-            Service service = create(endpointInterface, serviceName, tns, null, style, use, properties);
+            properties.put(STYLE, style);
+            properties.put(USE, use);
+            
+            Service service = create(endpointInterface, serviceName, tns, properties);
 
             if (clazz != endpointInterface)
             {

@@ -3,7 +3,7 @@
 
 <beans>
     <bean name="/Echo" class="org.codehaus.xfire.spring.remoting.XFireExporter">
-        <property name="service">
+        <property name="serviceBean">
             <ref bean="echo"/>
         </property>
         <property name="serviceInterface" value="org.codehaus.xfire.test.Echo"/>
