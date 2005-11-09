@@ -1,0 +1,34 @@
+<project default="jar:install" xmlns:j="jelly:core" 
+	xmlns:ant="jelly:ant" xmlns:maven="jelly:maven" xmlns:i="jelly:interaction">
+
+	<ant:path id="jaxb.path">
+		<ant:path refid="maven.dependency.classpath" />
+		<ant:pathelement path="${maven.build.dest}" />
+		<ant:pathelement path="${maven.test.dest}" />
+	</ant:path>
+
+	<ant:taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="jaxb.path" />
+
+	<!-- 
+	    Generate XMLBeans objects for all the schemas in src/test-schemas 
+	    and make the WeatherService
+	   -->
+	<goal name="generate-jaxb">
+
+		<ant:delete dir="${maven.build.dir}/generated" />
+		<ant:mkdir dir="${maven.build.dir}/generated" />
+
+		<xjc target="${maven.build.dir}/generated">
+			<schema dir="src/schemas" includes="*.xsd" />
+		</xjc>
+
+		<ant:path id="xfire.jaxb.generated" location="${maven.build.dir}/generated" />
+
+		<maven:addPath id="maven.compile.src.set" refid="xfire.jaxb.generated" />
+	</goal>
+
+	<preGoal name="java:compile">
+		<attainGoal name="generate-jaxb" />
+	</preGoal>
+
+</project>
