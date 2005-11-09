@@ -9,7 +9,6 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.TransportManager;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.ObjectReference;
@@ -58,17 +57,6 @@ public class PicoObjectServiceFactory
     public Service create(Class clazz, String name, String namespace, Map properties)
     {
         return prepare(super.create(clazz, name, namespace, properties));
-    }
-
-    public Service create(Class clazz,
-                          String name,
-                          String namespace,
-                          SoapVersion version,
-                          String style,
-                          String use,
-                          Map properties)
-    {
-        return prepare(super.create(clazz, name, namespace, version, style, use, properties));
     }
 
     public Service create(Class clazz, URL wsdlUrl)
