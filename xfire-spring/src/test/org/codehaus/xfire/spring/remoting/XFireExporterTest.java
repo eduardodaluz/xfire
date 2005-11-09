@@ -80,8 +80,7 @@ public class XFireExporterTest
     {
         String name = "EchoService";
         exporter.setName(name);
-        String beanName = "EchoBean";
-        exporter.setBeanName(beanName);
+
         String namespace = "http://tempuri.org";
         exporter.setNamespace(namespace);
         exporter.afterPropertiesSet();
@@ -104,7 +103,6 @@ public class XFireExporterTest
         assertEquals(namespace, service.getQName().getNamespaceURI());
         // The service name should be equal to th
         assertEquals(name, service.getQName().getLocalPart());
-        assertFalse(beanName.equals(service.getQName().getLocalPart()));
         Binding binding = definition.getBinding(new QName(namespace, "EchoServiceHttpBinding"));
         assertNotNull(binding);
         SOAPBinding soapBinding = (SOAPBinding) binding.getExtensibilityElements().get(0);

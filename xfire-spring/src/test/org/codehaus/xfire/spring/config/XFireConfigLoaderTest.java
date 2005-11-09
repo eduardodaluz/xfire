@@ -11,6 +11,7 @@ import org.codehaus.xfire.spring.TestHandler;
 import org.codehaus.xfire.spring.XFireConfigLoader;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
+import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.springframework.context.ApplicationContext;
 import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
@@ -59,6 +60,8 @@ public class XFireConfigLoaderTest
         invoker = service.getBinding().getInvoker();
         assertTrue(invoker instanceof BeanInvoker);
         assertEquals(EchoImpl.class, service.getServiceInfo().getServiceClass());
+        
+        service = xfire.getServiceRegistry().getService("EchoWithSchemas");
     }
 
     protected ApplicationContext createContext()

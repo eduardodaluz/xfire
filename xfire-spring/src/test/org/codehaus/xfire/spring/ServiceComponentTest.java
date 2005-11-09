@@ -5,7 +5,6 @@ package org.codehaus.xfire.spring;
  */
 
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.spring.remoting.XFireExporter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,7 +35,7 @@ public class ServiceComponentTest
     {
         ServiceBean service = (ServiceBean) getContext().getBean("echoService");
         assertNotNull(service);
-        assertEquals("echoService", service.getXFireService().getName());
+        assertEquals("Echo", service.getXFireService().getName());
     }
 
     protected ApplicationContext createContext()

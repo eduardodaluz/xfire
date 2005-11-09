@@ -18,8 +18,8 @@ import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -37,7 +37,7 @@ import org.springframework.context.ApplicationContextAware;
  * @org.xbean.XBean element="service"
  */
 public class ServiceBean
-    implements InitializingBean, BeanNameAware, ApplicationContextAware
+    implements InitializingBean, ApplicationContextAware
 {
     private final static Log logger = LogFactory.getLog(ServiceBean.class);
 
@@ -51,8 +51,6 @@ public class ServiceBean
 
     private String namespace;
 
-    private String beanName;
-
     private Class serviceInterface;
 
     private Object service;
@@ -63,6 +61,8 @@ public class ServiceBean
 
     private List faultHandlers;
 
+    private List schemas;
+    
     protected Class implementationClass;
 
     private List properties = new ArrayList();
@@ -82,12 +82,12 @@ public class ServiceBean
         throws Exception
     {
         // Use specific name if given, else fall back to bean name.
-        String theName = (this.name != null ? this.name : this.beanName);
-        if (theName != null && theName.startsWith("/"))
-        {
-            theName = theName.substring(1);
-        }
-        
+//        String theName = (this.name != null ? this.name : this.beanName);
+//        if (theName != null && theName.startsWith("/"))
+//        {
+//            theName = theName.substring(1);
+//        }
+//        
         if (serviceFactory == null)
         {
             serviceFactory = new ObjectServiceFactory(xFire.getTransportManager(),
@@ -102,7 +102,7 @@ public class ServiceBean
         if (intf == null)
         {
             if (getServiceBean() == null)
-                throw new RuntimeException("Error creating service " + theName + "" +
+                throw new RuntimeException("Error creating service " + name +
                         ". The service class or the service bean must be set!");
             
             intf = getServiceBean().getClass();
@@ -125,13 +125,14 @@ public class ServiceBean
         // Set the properties 
         copyProperties(properties);
         
-        xfireService = serviceFactory.create(intf, theName, namespace, properties);
+        xfireService = serviceFactory.create(intf, name, namespace, properties);
 
         AbstractBinding binding = (AbstractBinding) xfireService.getBinding();
         if (logger.isInfoEnabled())
         {
             logger.info("Exposing SOAP v." + xfireService.getSoapVersion().getVersion()
-                    + " service " + xfireService.getName() + " as " + binding.getStyle());
+                    + " service with name " + xfireService.getName() + ", with style " 
+                    + binding.getStyle());
         }
 
         // Register the service
@@ -144,6 +145,15 @@ public class ServiceBean
             binding.setInvoker(new BeanInvoker(serviceBean));
         }
 
+        if (schemas != null)
+        {
+            ObjectServiceFactory osf = (ObjectServiceFactory) serviceFactory;
+            
+            DefaultWSDLBuilderFactory wbf = 
+                (DefaultWSDLBuilderFactory) osf.getWsdlBuilderFactory();
+            wbf.setSchemaLocations(schemas);
+        }
+        
         // set up in handlers
         if (xfireService.getInHandlers() == null)
             xfireService.setInHandlers(getInHandlers());
@@ -162,6 +172,7 @@ public class ServiceBean
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
     }
+    
 
     /**
      * @return
@@ -221,11 +232,6 @@ public class ServiceBean
     public void setNamespace(String namespace)
     {
         this.namespace = namespace;
-    }
-
-    public void setBeanName(String beanName)
-    {
-        this.beanName = beanName;
     }
 
     public List getFaultHandlers()
@@ -328,9 +334,16 @@ public class ServiceBean
         this.soapVersion = soapVersion;
     }
 
-    /**
-     * 
-     */
+    public List getSchemas()
+    {
+        return schemas;
+    }
+
+    public void setSchemas(List schemas)
+    {
+        this.schemas = schemas;
+    }
+
     protected void copyProperties(Map properties)
     {
         Service service = getXFireService();
@@ -353,7 +366,6 @@ public class ServiceBean
         throws BeansException
     {
         xFire = (XFire) ctx.getBean("xfire");
-
     }
 
 }

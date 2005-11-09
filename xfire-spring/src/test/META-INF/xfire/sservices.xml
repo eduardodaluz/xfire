@@ -50,6 +50,14 @@
     <serviceBean>#EchoBean</serviceBean>
   </service>
 
+  <service>
+    <name>EchoWithSchemas</name>
+    <serviceBean>#EchoBean</serviceBean>
+    <schemas>
+      <schema>src/test-schemas/test.xsd</schema>
+    </schemas>
+  </service>
+
   <bean name="EchoBean" class="org.codehaus.xfire.test.EchoImpl"/>
   
 </beans>
