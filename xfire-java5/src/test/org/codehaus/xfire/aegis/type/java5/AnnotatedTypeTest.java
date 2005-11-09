@@ -2,10 +2,15 @@ package org.codehaus.xfire.aegis.type.java5;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.aegis.type.basic.BeanTest.BadBean;
+import org.codehaus.xfire.aegis.type.basic.BeanTest.BadBean2;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -66,5 +71,40 @@ public class AnnotatedTypeTest
 
         assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:sequence/xsd:element[@name='element'][@type='xsd:string']", wsdl);
         assertValid("//xsd:complexType[@name='AnnotatedBean2']/xsd:attribute[@name='attribute'][@type='xsd:string']", wsdl);
+    }
+    
+    public void testGetSetRequired() throws Exception
+    {
+        BeanType type = new BeanType(new AnnotatedTypeInfo(tm, BadBean.class));
+        type.setSchemaType(new QName("urn:foo", "BadBean"));
+        
+        assertFalse(type.getTypeInfo().getElements().hasNext());
+        
+        type = new BeanType(new AnnotatedTypeInfo(tm, BadBean2.class));
+        type.setTypeClass(BadBean2.class);
+        type.setSchemaType(new QName("urn:foo", "BadBean2"));
+        
+        assertFalse(type.getTypeInfo().getElements().hasNext());
+    }
+    
+    // This class only has a read property, no write
+    public static class BadBean
+    {
+        private String string;
+
+        public String getString()
+        {
+            return string;
+        }
+    }
+    
+    public static class BadBean2
+    {
+        private String string;
+
+        public void setString(String string)
+        {
+            this.string = string;
+        }
     }
 }

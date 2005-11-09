@@ -222,6 +222,13 @@ public class BeanTest
         type.setSchemaType(new QName("urn:foo", "BadBean"));
         
         assertFalse(type.getTypeInfo().getElements().hasNext());
+        
+        type = new BeanType();
+        type.setTypeClass(BadBean2.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:foo", "BadBean2"));
+        
+        assertFalse(type.getTypeInfo().getElements().hasNext());
     }
     
     // This class only has a read property, no write
@@ -232,6 +239,16 @@ public class BeanTest
         public String getString()
         {
             return string;
+        }
+    }
+    
+    public static class BadBean2
+    {
+        private String string;
+
+        public void setString(String string)
+        {
+            this.string = string;
         }
     }
 }
