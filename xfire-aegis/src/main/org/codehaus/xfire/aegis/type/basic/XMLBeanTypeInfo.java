@@ -17,7 +17,6 @@ public class XMLBeanTypeInfo
     extends BeanTypeInfo
 {
     private static final Log logger = LogFactory.getLog(XMLBeanTypeInfo.class);
-    private String encodingUri;
     private Element mapping;
     private QName name;
     private Map name2Nillable = new HashMap();
@@ -107,18 +106,6 @@ public class XMLBeanTypeInfo
         }
         
         return null;
-    }
-
-    private Class loadClass(String componentType)
-    {
-        try
-        {
-            return ClassLoaderUtils.loadClass(componentType, getClass());
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new XFireRuntimeException("Couldn't find component type: " + componentType, e);
-        }
     }
 
     protected QName createQName(Element e, String value)

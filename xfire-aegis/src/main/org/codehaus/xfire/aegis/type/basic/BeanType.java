@@ -29,10 +29,6 @@ import org.jdom.Element;
 public class BeanType
     extends Type
 {
-    private static final Log logger = LogFactory.getLog(BeanType.class);
-    
-    private static Map objectProperties = null;
-    
     private BeanTypeInfo _info;
     
     public BeanType()
