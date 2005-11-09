@@ -67,7 +67,7 @@ public class AnnotationServiceFactory
      *            parameters.
      * @return The service.
      */
-    public Service create(final Class clazz, Map properties)
+    public Service create(final Class clazz, String name, String namespace, Map properties)
     {
         String style = null;
         String use = null;
@@ -86,13 +86,12 @@ public class AnnotationServiceFactory
         {
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
 
-            String serviceName = createServiceName(clazz, webServiceAnnotation);
+            name = createServiceName(clazz, webServiceAnnotation, name);
          
             /* Attempt to load the endpoint interface if there is one. If there is an endpoint
              * interface the attribute WebService.serviceName is the only valid one for the
              * implementing bean class.
              */
-            String tns = null;
             String portType = null;
             Class endpointInterface = clazz;
             if (webServiceAnnotation.getEndpointInterface() != null &&
@@ -109,8 +108,8 @@ public class AnnotationServiceFactory
                     WebServiceAnnotation endpointWSAnnotation =
                             webAnnotations.getWebServiceAnnotation(endpointInterface);
 
-                    tns = createServiceNamespace(endpointInterface, endpointWSAnnotation);
-                    portType = createPortType(serviceName, endpointWSAnnotation);
+                    namespace = createServiceNamespace(endpointInterface, endpointWSAnnotation, namespace);
+                    portType = createPortType(name, endpointWSAnnotation);
                 }
                 catch (ClassNotFoundException e)
                 {
@@ -120,15 +119,15 @@ public class AnnotationServiceFactory
             }
             else
             {
-                tns = createServiceNamespace(endpointInterface, webServiceAnnotation);
-                portType = createPortType(serviceName, webServiceAnnotation);
+                namespace = createServiceNamespace(endpointInterface, webServiceAnnotation, namespace);
+                portType = createPortType(name, webServiceAnnotation);
             }
 
-            properties.put(PORT_TYPE, new QName(tns, portType));
+            properties.put(PORT_TYPE, new QName(namespace, portType));
             properties.put(STYLE, style);
             properties.put(USE, use);
             
-            Service service = create(endpointInterface, serviceName, tns, properties);
+            Service service = super.create(endpointInterface, name, namespace, properties);
 
             if (clazz != endpointInterface)
             {
@@ -156,28 +155,30 @@ public class AnnotationServiceFactory
         return ClassLoaderUtils.loadClass(endpointInterface, getClass());
     }
 
-    protected String createServiceNamespace(Class clazz, WebServiceAnnotation webServiceAnnotation)
+    protected String createServiceNamespace(Class clazz, WebServiceAnnotation webServiceAnnotation, String current)
     {
-        String ns = null;
-        if (webServiceAnnotation.getTargetNamespace().length() > 0)
+        String ns = current;
+        if (ns == null && webServiceAnnotation.getTargetNamespace().length() > 0)
         {
             ns = webServiceAnnotation.getTargetNamespace();
         }
-        else
+        
+        if (ns == null)
         {
             ns = NamespaceHelper.makeNamespaceFromClassName(clazz.getName(), "http");
         }
         return ns;
     }
 
-    protected String createServiceName(Class clazz, WebServiceAnnotation webServiceAnnotation)
+    protected String createServiceName(Class clazz, WebServiceAnnotation webServiceAnnotation, String current)
     {
-        String name = null;
-        if (webServiceAnnotation.getServiceName().length() > 0)
+        String name = current;
+        if (name == null && webServiceAnnotation.getServiceName().length() > 0)
         {
             name = webServiceAnnotation.getServiceName();
         }
-        else
+
+        if (name == null)
         {
             name = makeServiceNameFromClassName(clazz);
         }
