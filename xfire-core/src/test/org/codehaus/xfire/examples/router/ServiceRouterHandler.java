@@ -1,5 +1,5 @@
 package org.codehaus.xfire.examples.router;
-
+// START SNIPPET: handler
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
@@ -13,9 +13,7 @@ public class ServiceRouterHandler
 {
     public final static String VERSION_NS = "http://xfire.codehaus.org/examples/router";
     public final static String VERSION_NAME = "Version";
-    
-    private final static String DEFAULT_VERSION = "1";
-    
+
     public String getPhase()
     {
         return Phase.PRE_DISPATCH;
@@ -39,6 +37,9 @@ public class ServiceRouterHandler
         setVersion(version, context);
     }
 
+    /**
+     * Looks up the appropriate service version using referenced by "Echo" plus the version string.
+     */
     private void setVersion(String version, MessageContext context) 
         throws XFireFault
     {
@@ -51,5 +52,5 @@ public class ServiceRouterHandler
         
         context.setService(service);
    }
-
 }
+// END SNIPPET: handler

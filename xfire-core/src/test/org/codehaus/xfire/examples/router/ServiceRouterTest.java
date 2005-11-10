@@ -1,16 +1,12 @@
 package org.codehaus.xfire.examples.router;
 
+// START SNIPPET: test
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
 
-/**
- * XFireTest
- *
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- */
 public class ServiceRouterTest
         extends AbstractXFireTest
 {
@@ -25,6 +21,7 @@ public class ServiceRouterTest
     {
         super.setUp();
 
+        // This is just an endpoint which doesn't really do anything
         serviceRouter = getServiceFactory().create(ServiceRouter.class);
         
         service1 = getServiceFactory().create(EchoImpl.class, "Echo1", service1Namespace, null);
@@ -55,3 +52,4 @@ public class ServiceRouterTest
     
     public static interface ServiceRouter {}
 }
+// END SNIPPET: test
