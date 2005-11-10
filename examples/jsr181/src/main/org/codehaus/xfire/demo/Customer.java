@@ -1,9 +1,6 @@
 // START SNIPPET: customer
 package org.codehaus.xfire.demo;
 
-/**
- * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
- */
 public class Customer
 {
     private String name;
