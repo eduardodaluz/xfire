@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- START SNIPPET: config -->
 <beans xmlns="http://xfire.codehaus.org/config/1.0">
 
   <bean id="weatherService" class="org.codehaus.xfire.jaxb.WeatherServiceImpl"/>
@@ -18,4 +18,4 @@
   </bean>
 
 </beans>
-
+<!-- END SNIPPET: config -->

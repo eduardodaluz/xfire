@@ -1,5 +1,5 @@
 package org.codehaus.xfire.jaxb;
-
+// START SNIPPET: service
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 
@@ -12,3 +12,4 @@ public interface WeatherService
     @WebMethod
     GetWeatherByZipCodeResponse GetWeatherByZipCode(GetWeatherByZipCode body);
 }
+// END SNIPPET: service

@@ -1,6 +1,6 @@
 package org.codehaus.xfire.jaxb;
 
-
+//START SNIPPET: service
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -33,3 +33,4 @@ public class WeatherServiceImpl implements WeatherService
         return res;
     }
 }
+//END SNIPPET: service

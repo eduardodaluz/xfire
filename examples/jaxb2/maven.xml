@@ -7,23 +7,21 @@
 		<ant:pathelement path="${maven.test.dest}" />
 	</ant:path>
 
-	<ant:taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="jaxb.path" />
-
-	<!-- 
-	    Generate XMLBeans objects for all the schemas in src/test-schemas 
-	    and make the WeatherService
-	   -->
+	
 	<goal name="generate-jaxb">
 
 		<ant:delete dir="${maven.build.dir}/generated" />
 		<ant:mkdir dir="${maven.build.dir}/generated" />
+		
+		<!-- START SNIPPET: xjc -->
+		<ant:taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="jaxb.path" />
 
 		<xjc target="${maven.build.dir}/generated">
 			<schema dir="src/main/META-INF/xfire" includes="*.xsd" />
 		</xjc>
-
+		<!-- END SNIPPET: xjc -->
+		
 		<ant:path id="xfire.jaxb.generated" location="${maven.build.dir}/generated" />
-
 		<maven:addPath id="maven.compile.src.set" refid="xfire.jaxb.generated" />
 	</goal>
 
