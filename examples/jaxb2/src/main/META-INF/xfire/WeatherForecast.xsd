@@ -43,21 +43,5 @@
             <s:element minOccurs="0" maxOccurs="1" name="MinTemperatureC" type="s:string"/>
         </s:sequence>
     </s:complexType>
-    <s:element name="GetWeatherByPlaceName">
-        <s:complexType>
-            <s:sequence>
-                <s:element minOccurs="0" maxOccurs="1" name="PlaceName" type="s:string"/>
-            </s:sequence>
-        </s:complexType>
-    </s:element>
-    <s:element name="GetWeatherByPlaceNameResponse">
-        <s:complexType>
-            <s:sequence>
-                <s:element minOccurs="1" maxOccurs="1" name="GetWeatherByPlaceNameResult"
-                           type="tns:WeatherForecastsType"/>
-            </s:sequence>
-        </s:complexType>
-    </s:element>
-    <s:element name="WeatherForecasts" type="tns:WeatherForecastsType"/>
 </s:schema>
 <!-- END SNIPPET: config -->
