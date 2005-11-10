@@ -14,13 +14,15 @@ public class WeatherTest
 
         addNamespace("w", "http://www.webservicex.net");
         assertValid("//s:Body/w:GetWeatherByZipCodeResponse/w:GetWeatherByZipCodeResult", response);
+        
+        Document wsdl = getWSDLDocument("WeatherService");
     }
     
     protected ApplicationContext createContext()
     {
         return new ClassPathXmlApplicationContext(new String[] {
            "/org/codehaus/xfire/spring/xfire.xml",
-           "/org/codehaus/xfire/jaxb/beans.xml"
+           "/META-INF/xfire/services.xml"
         });
     }
 }

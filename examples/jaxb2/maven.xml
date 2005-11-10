@@ -19,7 +19,7 @@
 		<ant:mkdir dir="${maven.build.dir}/generated" />
 
 		<xjc target="${maven.build.dir}/generated">
-			<schema dir="src/schemas" includes="*.xsd" />
+			<schema dir="src/main/META-INF/xfire" includes="*.xsd" />
 		</xjc>
 
 		<ant:path id="xfire.jaxb.generated" location="${maven.build.dir}/generated" />
