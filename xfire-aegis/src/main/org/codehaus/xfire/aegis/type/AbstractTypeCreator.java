@@ -116,15 +116,16 @@ public abstract class AbstractTypeCreator implements TypeCreator
         }
     }
     
-    protected QName createArrayQName(Class javaType)
+    protected QName createArrayQName(TypeClassInfo info)
     {
-        return createCollectionQName(javaType, javaType.getComponentType());
+        Class javaType = info.getTypeClass();
+        return createCollectionQName(info, javaType.getComponentType());
     }
 
     protected Type createArrayType(TypeClassInfo info)
     {
         ArrayType type = new ArrayType();
-        type.setSchemaType(createArrayQName(info.getTypeClass()));
+        type.setSchemaType(createArrayQName(info));
         type.setTypeClass(info.getTypeClass());
 
         return type;
@@ -151,7 +152,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         type.setTypeMapping(getTypeMapping());
         
         QName name = info.getTypeName();
-        if (name == null) name = createCollectionQName(info.getTypeClass(), component);
+        if (name == null) name = createCollectionQName(info, component);
         type.setSchemaType(name);
         
         type.setTypeClass(info.getTypeClass());
@@ -233,11 +234,13 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     public abstract Type createDefaultType(TypeClassInfo info);
 
-    protected QName createCollectionQName(Class javaType, Class componentType)
+    protected QName createCollectionQName(TypeClassInfo info, Class componentType)
     {
+        Class javaType = info.getTypeClass();
         if(componentType == null)
         {
-            throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName() + ", unspecified component type");
+            throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName() + ", unspecified component type"
+            + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
         Type type = tm.getType(componentType);
         if(type == null)
@@ -274,7 +277,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
     public Type createType(Method m, int index)
     {
         TypeClassInfo info = createClassInfo(m, index);
-        info.setDescription("parameter " + index + " in method " + m.getName() + " in " + m.getDeclaringClass());
+        info.setDescription((index == -1 ? "return type" : "parameter " + index)  + " of method " + m.getName() + " in " + m.getDeclaringClass());
         return createTypeForClass(info);
     }
 
