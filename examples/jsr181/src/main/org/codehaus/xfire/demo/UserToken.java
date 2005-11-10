@@ -1,3 +1,4 @@
+// START SNIPPET: token
 package org.codehaus.xfire.demo;
 
 public class UserToken
@@ -22,3 +23,4 @@ public class UserToken
         this.username = username;
     }
 }
+//START SNIPPET: token

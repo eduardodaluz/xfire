@@ -1,3 +1,4 @@
+// START SNIPPET: service
 package org.codehaus.xfire.demo;
 
 import java.util.ArrayList;
@@ -47,3 +48,4 @@ public class CustomerService
         return "";
     }
 }
+//START SNIPPET: service

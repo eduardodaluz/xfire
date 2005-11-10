@@ -1,3 +1,4 @@
+// START SNIPPET: customer
 package org.codehaus.xfire.demo;
 
 /**
@@ -34,3 +35,4 @@ public class Customer
         this.phone = phone;
     }
 }
+//START SNIPPET: customer
