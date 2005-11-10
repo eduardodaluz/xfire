@@ -20,7 +20,7 @@
             <include name="xfire-annotations/target/*.jar"/>
             <include name="xfire-java5/target/*.jar"/>
         </fileset>
-        <fileset dir="lib">
+        <fileset dir="target/lib">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -31,4 +31,24 @@
         <check-dep module="xfire-annotations"/>
         <check-dep module="xfire-java5"/>
     </target>
+    
+    <target name="internal-test" depends="get-deps,xjc,xfire.internal-test" />
+
+    <target name="xjc" depends="init">
+        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="build.classpath"/>
+
+        <mkdir dir="${target.dir}/generated-test"/>
+
+        <xjc target="${target.dir}/generated-test">
+            <schema dir="src/test-schemas" includes="*.xsd"/>
+        </xjc>
+        <javac destdir="${testclassesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+          <src>
+            <pathelement location="${target.dir}/generated-test" />
+          </src>
+          <classpath refid="build.classpath" />
+        </javac>
+    </target>
+
+
 </project>
