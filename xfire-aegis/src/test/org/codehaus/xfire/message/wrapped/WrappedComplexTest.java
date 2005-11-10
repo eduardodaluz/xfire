@@ -6,6 +6,7 @@ import org.codehaus.xfire.services.ComplexService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -24,7 +25,8 @@ public class WrappedComplexTest
         super.setUp();
 
         service = getServiceFactory().create(ComplexService.class);
-
+        service.setProperty(AbstractWSDL.GENERATE_IMPORTS, "true");
+        
         getServiceRegistry().register(service);
     }
 

@@ -6,6 +6,7 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
 import org.jdom.Document;
 
 /**
@@ -22,7 +23,7 @@ public class DocumentAutoTypeTest
 
         ((ObjectServiceFactory) getServiceFactory()).setStyle(SoapConstants.STYLE_DOCUMENT);
         Service service = getServiceFactory().create(BeanService.class, "Bean", "urn:Bean", null);
-
+        service.setProperty(AbstractWSDL.GENERATE_IMPORTS, "true");
         getServiceRegistry().register(service);
     }
 
