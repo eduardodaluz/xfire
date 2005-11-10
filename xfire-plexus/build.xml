@@ -19,7 +19,7 @@
     <get-dep artifact="smack" group="jivesoftware" version="1.4.1" />
     <get-dep artifact="smackx" group="jivesoftware" version="1.4.1" />
     <get-dep artifact="plexus-container-default" group="plexus" version="1.0-alpha-4" />
-    <get-dep artifact="plexus-servlet" group="plexus" version="1.0-beta-2-SNAPSHOT" />
+    <get-dep artifact="plexus-servlet" group="plexus" version="1.0-beta-2-SNAPSHOT" repository="http://dist.codehaus.org"/>
     <get-dep artifact="plexus-utils" group="plexus" version="1.0.1" />
   </target>
 
