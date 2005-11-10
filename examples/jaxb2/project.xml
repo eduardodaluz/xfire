@@ -98,7 +98,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-all</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>@xfire.version@</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
