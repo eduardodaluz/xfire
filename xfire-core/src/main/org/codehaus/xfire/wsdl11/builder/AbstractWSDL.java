@@ -69,6 +69,14 @@ public abstract class AbstractWSDL
     public final static Namespace XSD_NS = Namespace.getNamespace(SoapConstants.XSD_PREFIX, 
                                                                   SoapConstants.XSD);
 
+    public final static String GENERATE_IMPORTS = "wsdlBuilder.generateImports";
+    public final static String CLEAN_IMPORTS = "wsdlBuilder.cleanImports";
+    public static final String REMOVE_ALL_IMPORTS = "wsdlBuilder.removeAllImports";
+    
+    private boolean generateImports = false;
+    private boolean cleanImports = true;
+    private boolean removeAllImports = false;
+    
     public AbstractWSDL(Service service) throws WSDLException
     {
         this.service = service;
@@ -88,12 +96,27 @@ public abstract class AbstractWSDL
         addNamespace("tns", getTargetNamespace());
 
         typeMap = new HashMap();
+        
+        generateImports = Boolean.valueOf((String) service.getProperty(GENERATE_IMPORTS)).booleanValue();
+        removeAllImports = Boolean.valueOf((String) service.getProperty(REMOVE_ALL_IMPORTS)).booleanValue();
+
+        String cleanImpProp = (String) service.getProperty(CLEAN_IMPORTS);
+        if (cleanImpProp != null) cleanImports = Boolean.valueOf(cleanImpProp).booleanValue();
     }
 
     protected void writeDocument()
         throws WSDLException
     {
-        writeImports();
+        if (removeAllImports)
+        {
+            removeAllImports();
+        }
+        else
+        {
+            if (generateImports) writeImports();
+            
+            if (cleanImports) cleanImports();
+        }
         
         org.w3c.dom.Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
 
@@ -119,7 +142,7 @@ public abstract class AbstractWSDL
             for (Iterator importItr = imports.iterator(); importItr.hasNext();)
             {
                 String ns = (String) importItr.next();
-                if (!ns.equals(SoapConstants.XSD) && !hasImport(schema, ns))
+                if (!ns.equals(SoapConstants.XSD) && getImport(schema, ns) == null)
                 {
                     Element importEl = new Element("import", XSD_NS);
                     importEl.setAttribute(new Attribute("namespace", ns));
@@ -130,7 +153,7 @@ public abstract class AbstractWSDL
         }
     }
 
-    public boolean hasImport(Element schema, String ns)
+    public Element getImport(Element schema, String ns)
     {
         List children = schema.getChildren("import", Namespace.getNamespace(SoapConstants.XSD));
         
@@ -139,12 +162,54 @@ public abstract class AbstractWSDL
             Element importEl = (Element) children.get(i);
             String value = importEl.getAttributeValue("namespace");
             
-            if (value != null && value.equals(ns)) return true;
+            if (value != null && value.equals(ns)) return importEl;
         }
         
-        return false;
+        return null;
     }
 
+    /**
+     * Removes imports from all the schemas.
+     */
+    protected void removeAllImports()
+    {
+        for (Iterator itr = schemaTypes.getChildren().iterator(); itr.hasNext();)
+        {
+            Element schema = (Element) itr.next();
+            List children = schema.getChildren("import", Namespace.getNamespace(SoapConstants.XSD));
+            
+            for (Iterator sitr = children.iterator(); sitr.hasNext();)
+            {
+                sitr.next();
+                sitr.remove();
+            }
+        }
+    }
+    
+    protected void cleanImports()
+    {
+        for (Iterator itr = schemaTypes.getChildren().iterator(); itr.hasNext();)
+        {
+            Element schema = (Element) itr.next();
+            List children = schema.getChildren("import", Namespace.getNamespace(SoapConstants.XSD));
+            
+            for (Iterator sitr = children.iterator(); sitr.hasNext();)
+            {
+                cleanImport((Element) sitr.next());
+            }
+        }
+    }
+    
+    public void cleanImport(Element node)
+    {
+        Attribute schemaLoc = node.getAttribute("schemaLocation");
+        
+        // TODO: How do we make sure this is imported???
+        
+        if (schemaLoc != null)
+            schemaLoc.detach();
+    }
+    
     protected void writeComplexTypes()
         throws WSDLException
     {

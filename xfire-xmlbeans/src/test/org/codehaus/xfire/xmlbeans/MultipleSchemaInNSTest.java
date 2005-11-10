@@ -2,6 +2,7 @@ package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
 import org.jdom.Document;
 
 /**
@@ -27,23 +28,29 @@ public class MultipleSchemaInNSTest
         getServiceRegistry().register(endpoint);
     }
 
-    /*
-    public void testInvoke() throws Exception
-    {
-        Document response = invokeService("TestService", 
-                                          "/org/codehaus/xfire/xmlbeans/DocumentStyleRequest.xml");
-        
-        assertNotNull(response);
-
-        addNamespace("x", "http://codehaus.org/xfire/xmlbeans");
-        assertValid("//s:Body/x:response/x:form", response);
-    }*/
-    
     public void testWSDL() throws Exception
     {
-//        Document wsdl = getWSDLDocument("MultipleSchemaService");
-//
-//        addNamespace("xsd", SoapConstants.XSD);
-//        assertValid("//xsd:schema[@targetNamespace='" + ns + "']", wsdl);
+        Document wsdl = getWSDLDocument("MultipleSchemaService");
+
+        addNamespace("xsd", SoapConstants.XSD);
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][1]", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][1]/xsd:import[@namespace='" + ns + "']", wsdl);
+        assertInvalid("//xsd:schema[@targetNamespace='" + ns + "']" +
+                "[1]/xsd:import[@namespace='" + ns + "'][@schemaLocation]", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][2]", wsdl);
+        assertInvalid("//xsd:schema[@targetNamespace='" + ns + "'][2]/xsd:import[@namespace='" + ns + "']", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][3]", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][3]/xsd:import[@namespace='" + ns + "']", wsdl);
+        
+        endpoint.setProperty(AbstractWSDL.REMOVE_ALL_IMPORTS, "True");
+        
+        wsdl = getWSDLDocument("MultipleSchemaService");
+        
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][1]", wsdl);
+        assertInvalid("//xsd:schema[@targetNamespace='" + ns + "'][1]" +
+                "/xsd:import[@namespace='" + ns + "']", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='" + ns + "'][3]", wsdl);
+        assertInvalid("//xsd:schema[@targetNamespace='" + ns + "'][3]" +
+                "/xsd:import[@namespace='" + ns + "']", wsdl);
     }
 }

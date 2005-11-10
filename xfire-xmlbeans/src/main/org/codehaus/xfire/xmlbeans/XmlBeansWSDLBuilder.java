@@ -18,7 +18,6 @@ import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
-import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
@@ -86,22 +85,7 @@ public class XmlBeansWSDLBuilder
                 return null;
             }
             
-            Element node = (Element) nodes.get(0);
-            
-            nodes = getMatches(schema, "//xsd:import");
-            for (int i = 0; i < nodes.size(); i++)
-            {
-                Element imp = (Element) nodes.get(i);
-                
-                Attribute schemaLoc = imp.getAttribute("schemaLocation");
-                
-                // TODO: How do we make sure this is imported???
-                
-                if (schemaLoc != null)
-                    schemaLoc.detach();
-            }
-            
-            return node;
+            return (Element) nodes.get(0);
         }
         catch (Exception e)
         {
