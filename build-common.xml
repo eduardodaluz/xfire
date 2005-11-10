@@ -46,12 +46,13 @@
       <attribute name="artifact" />
       <attribute name="group" default="@{artifact}"/>
       <attribute name="dir" default="${libdir}"/>
+      <attribute name="repository" default="http://www.ibiblio.org/maven/" /> 
       <attribute name="version" />
       <sequential>
         <available property="@{group}.@{artifact}.exists" file="@{dir}/@{artifact}-@{version}.jar" />
         <antcall target="-download-dep">
           <param name="file" value="@{dir}/@{artifact}-@{version}.jar" />
-          <param name="source" value="http://www.ibiblio.org/maven/@{group}/jars/@{artifact}-@{version}.jar" />
+          <param name="source" value="@{repository}/@{group}/jars/@{artifact}-@{version}.jar" />
           <param name="group" value="@{group}" />
           <param name="artifact" value="@{artifact}" />
         </antcall>

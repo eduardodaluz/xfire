@@ -7,6 +7,12 @@
 
     <import file="../build-common.xml"/>
 
+    <target name="get-deps" depends="xfire.get-deps">
+        <get-dep artifact="jaxb-api" version="20051106" group="xfire" repository="http://dist.codehaus.org/"/>
+        <get-dep artifact="jaxb-impl" version="20051106" group="xfire" repository="http://dist.codehaus.org/"/>
+        <get-dep artifact="jaxb-xjc" version="20051106" group="xfire" repository="http://dist.codehaus.org/"/>
+    </target>
+    
     <path id="module.classpath">
         <fileset dir="..">
             <include name="xfire-core/target/*.jar"/>
