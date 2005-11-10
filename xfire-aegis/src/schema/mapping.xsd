@@ -18,6 +18,7 @@
       <element minOccurs="0" maxOccurs="unbounded" ref="tns:property" />
     </sequence>
     <attribute name="uri" type="string"/>
+    <attribute name="name" type="string"/>
   </complexType>
 
   <element name="property">
@@ -45,6 +46,7 @@
   <attributeGroup name="mappedType">
     <attribute name="name" type="string" />
     <attribute name="type" type="string" />
+    <attribute name="typeName" type="string" />
     <attribute name="mappedName" type="string" />
     <attribute name="nillable" type="boolean" />
     <attribute name="ignore" type="boolean" />
