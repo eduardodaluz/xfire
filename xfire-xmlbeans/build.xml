@@ -1,86 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default="jar" name="xfire-xmlbeans" basedir=".">
-  <import file="../build-common.xml"/>
+    <import file="../build-common.xml"/>
 
-  <path id="module.classpath">
-    <fileset dir="..">
-      <include name="xfire-core/target/*.jar" />
-      <include name="xfire-aegis/target/*.jar" />
-      <include name="${basedir}/target/*.jar" />
-    </fileset>
-  </path>
+    <path id="module.classpath">
+        <fileset dir="..">
+            <include name="xfire-core/target/*.jar"/>
+            <include name="xfire-aegis/target/*.jar"/>
+            <include name="${basedir}/target/*.jar"/>
+        </fileset>
+    </path>
 
-  <target name="get-deps" depends="xfire.get-deps">
-    <get-dep artifact="commons-beanutils" version="1.7.0" />
-    <get-dep artifact="commons-collections" version="2.1" />
-    <get-dep artifact="velocity" version="1.4" />
-    <get-dep artifact="log4j" version="1.2.8" />
-    <get-dep artifact="xbean" group="xmlbeans" version="2.0.0" />
-  </target>
+    <target name="get-deps" depends="xfire.get-deps">
+        <get-dep artifact="commons-beanutils" version="1.7.0"/>
+        <get-dep artifact="commons-collections" version="2.1"/>
+        <get-dep artifact="velocity" version="1.4"/>
+        <get-dep artifact="log4j" version="1.2.8"/>
+        <get-dep artifact="xbean" group="xmlbeans" version="2.0.0"/>
+    </target>
 
-  <target name="init" depends="xfire.init">
-    <check-dep module="xfire-core" />
-    <check-dep module="xfire-aegis" />
-  </target>
-  
-  <target name="compile" depends="get-deps,generate-main,xfire.compile" />
+    <target name="init" depends="xfire.init">
+        <check-dep module="xfire-core"/>
+        <check-dep module="xfire-aegis"/>
+    </target>
 
-  <target name="generate-main" depends="init">
-    <mkdir dir="${target.dir}/xfire-xmlbeans-main"/>
+    <target name="generate-test" depends="init">
+        <mkdir dir="${target.dir}/xfire-xmlbeans-test"/>
 
-    <!-- Output WSDL types to xfire-xmlbeans-main -->
-    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
-          classpathref="build.classpath"
-          fork="true">
-      <arg value="-srconly"/>
-      <arg value="-d"/>
-      <arg value="${target.dir}/xfire-xmlbeans-main"/>
-      <arg value="src/schemas"/>
-    </java>
-    
-    <mkdir dir="${classesdir}" />
-    <copy todir="${classesdir}">
-      <fileset dir="${target.dir}/xfire-xmlbeans-main">
-        <include name="**/*.xsb"/>
-        <include name="**/*.class"/>
-      </fileset>
-    </copy>
-    <javac destdir="${classesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
-      <src>
-        <pathelement location="${target.dir}/xfire-xmlbeans-main" />
-      </src>
-      <classpath refid="build.classpath" />
-    </javac>
-  </target>
-  
-  <target name="internal-test" depends="get-deps,support-jars,xfire.internal-test" />
+        <!-- Output WSDL types to xfire-xmlbeans-test -->
+        <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+              classpathref="build.classpath"
+              fork="true">
+          <arg value="-d"/>
+          <arg value="${target.dir}/xfire-xmlbeans-test"/>
+          <arg value="${basedir}/src/test-schemas/WeatherForecast.xsd"/>
+          <arg value="${basedir}/src/test-schemas/anyschema.xsd"/>
+          <arg value="${basedir}/src/test-schemas/Base.xsd"/>
+          <arg value="${basedir}/src/test-schemas/Request.xsd"/>
+          <arg value="${basedir}/src/test-schemas/Response.xsd"/>
+        </java>
+        
+        <mkdir dir="${testclassesdir}"/>
+        <copy todir="${testclassesdir}">
+            <fileset dir="${target.dir}/xfire-xmlbeans-test" />
+        </copy>
+        <javac destdir="${testclassesdir}" deprecation="true" debug="true" optimize="false" excludes="**/package.html" classpathref="build.classpath">
+            <src>
+                <pathelement location="${target.dir}/xfire-xmlbeans-test"/>
+            </src>
+        </javac>
+    </target>
 
-  <target name="support-jars" depends="init">
-    <mkdir dir="${target.dir}" />
-    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
-          classpathref="build.classpath"
-          fork="true">
-      <arg value="-out"/>
-      <arg value="${target.dir}/wsdl.jar"/>
-      <arg value="${basedir}/src/schemas"/>
-    </java>
+    <target name="internal-test" depends="get-deps,generate-test,xfire.internal-test"/>
 
-    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
-          classpathref="build.classpath"
-          fork="true">
-      <arg value="-out"/>
-      <arg value="${target.dir}/weather.jar"/>
-      <arg value="${basedir}/src/test-schemas/WeatherForecast.wsdl"/>
-    </java>
-
-    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
-          classpathref="build.classpath"
-          fork="true">
-      <arg value="-out"/>
-      <arg value="${target.dir}/anyschema.jar"/>
-      <arg value="${basedir}/src/test-schemas/anyschema.xsd"/>
-    </java>
-  </target>
-  
 </project>
