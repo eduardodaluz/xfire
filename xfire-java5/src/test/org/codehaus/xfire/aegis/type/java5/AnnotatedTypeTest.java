@@ -9,8 +9,6 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
-import org.codehaus.xfire.aegis.type.basic.BeanTest.BadBean;
-import org.codehaus.xfire.aegis.type.basic.BeanTest.BadBean2;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
