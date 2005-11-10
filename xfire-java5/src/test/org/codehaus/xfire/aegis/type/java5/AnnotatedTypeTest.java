@@ -49,8 +49,8 @@ public class AnnotatedTypeTest
         assertFalse(elements.hasNext());
         
         Type custom = info.getType(element);
-        // TODO: Fix custom types
-        // assertTrue(custom instanceof CustomStringType);
+
+        assertTrue(custom instanceof CustomStringType);
         
         Iterator atts = info.getAttributes();
         assertTrue(atts.hasNext());
@@ -98,11 +98,8 @@ public class AnnotatedTypeTest
     
     public static class BadBean2
     {
-        private String string;
-
         public void setString(String string)
         {
-            this.string = string;
         }
     }
 }

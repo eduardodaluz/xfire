@@ -4,6 +4,7 @@ import java.beans.PropertyDescriptor;
 
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -22,25 +23,38 @@ public class AnnotatedTypeInfo
     /**
      * Override from parent in order to check for IgnoreProperty annotation.
      */
-     protected void mapProperty(PropertyDescriptor pd)
-     {
-         if ( isIgnored(pd) ) return; // do not map ignored properties
-         
-         String name = pd.getName();   
-         if (isAttribute(pd))
-         {
-             mapAttribute(name, createMappedName(pd));
-         }
-         else if (isElement(pd))
+    protected void mapProperty(PropertyDescriptor pd)
+    {
+        if (isIgnored(pd))
+            return; // do not map ignored properties
+
+        String name = pd.getName();
+        if (isAttribute(pd))
         {
-             mapElement(name, createMappedName(pd));
-         }
-     }
+            mapAttribute(name, createMappedName(pd));
+        }
+        else if (isElement(pd))
+        {
+            mapElement(name, createMappedName(pd));
+        }
+    }
      
-     protected boolean isIgnored(PropertyDescriptor desc)
-     {
-         return desc.getReadMethod().isAnnotationPresent(IgnoreProperty.class);
-     }
+    @Override
+    protected boolean registerType(PropertyDescriptor desc)
+    {
+        XmlAttribute att = desc.getReadMethod().getAnnotation(XmlAttribute.class);
+        if (att != null && att.type() != Type.class) return false;
+        
+        XmlElement el = desc.getReadMethod().getAnnotation(XmlElement.class);
+        if (el != null && el.type() != Type.class) return false;
+        
+        return super.registerType(desc);
+    }
+
+    protected boolean isIgnored(PropertyDescriptor desc)
+    {
+        return desc.getReadMethod().isAnnotationPresent(IgnoreProperty.class);
+    }
          
     protected boolean isAttribute(PropertyDescriptor desc)
     {

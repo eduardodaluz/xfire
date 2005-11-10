@@ -10,7 +10,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.jdom.Element;
 
 public class XMLBeanTypeInfo
@@ -37,6 +36,14 @@ public class XMLBeanTypeInfo
         }
         
         return name;
+    }
+
+    protected boolean registerType(PropertyDescriptor desc)
+    {
+        Element e = getPropertyElement(mapping, desc.getName());
+        if (e.getAttributeValue("type") != null) return false;
+        
+        return super.registerType(desc);
     }
 
     protected void mapProperty(PropertyDescriptor pd)

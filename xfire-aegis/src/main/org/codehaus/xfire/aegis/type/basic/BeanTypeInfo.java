@@ -165,7 +165,8 @@ public class BeanTypeInfo
                 throw e;
             }
             
-            getTypeMapping().register(type);
+            if (registerType(desc)) getTypeMapping().register(type);
+            
             mapType(name, type);
         }
         
@@ -173,6 +174,11 @@ public class BeanTypeInfo
             throw new XFireRuntimeException( "Couldn't find type for property " + name );
         
         return type;
+    }
+
+    protected boolean registerType(PropertyDescriptor desc)
+    {
+        return true;
     }
 
     public void mapType(String name, Type type)
