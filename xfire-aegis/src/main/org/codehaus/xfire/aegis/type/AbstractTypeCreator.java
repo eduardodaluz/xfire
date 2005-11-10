@@ -42,13 +42,15 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     protected TypeClassInfo createClassInfo(Field f)
     {
-        return createBasicClassInfo(f.getType());
+        TypeClassInfo info = createBasicClassInfo(f.getType());
+        info.setDescription("field " + f.getName() + " in  " + f.getDeclaringClass());
+        return info;
     }
 
     protected TypeClassInfo createBasicClassInfo(Class typeClass)
     {
         TypeClassInfo info = new TypeClassInfo();
-
+        info.setDescription("class '" + typeClass.getName() + '\'');
         info.setTypeClass(typeClass);
 
         return info;
@@ -159,10 +161,9 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     protected Type createMapType(TypeClassInfo info)
     {
+        QName schemaType = createMapQName(info);
         Class keyType = (Class) info.getKeyType();
         Class valueType = (Class) info.getGenericType();
-
-        QName schemaType = createMapQName(keyType, valueType);
         MapType type = new MapType(schemaType, 
                                    keyType, 
                                    valueType);
@@ -172,16 +173,20 @@ public abstract class AbstractTypeCreator implements TypeCreator
         return type;
     }
 
-    protected QName createMapQName(Class keyClass, Class componentClass)
+    protected QName createMapQName(TypeClassInfo info)
     {
+        Class keyClass = (Class) info.getKeyType();
+        Class componentClass = (Class) info.getGenericType();
         if(keyClass == null)
         {
-           throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type");
+           throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type" 
+           + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
         
         if(componentClass == null)
         {
-            throw new XFireRuntimeException("Cannot create mapping for map, unspecified component type");
+            throw new XFireRuntimeException("Cannot create mapping for map, unspecified component type"
+            + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
         
         Type keyType = tm.getType(keyClass);
@@ -199,7 +204,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         }
         
         String name = keyType.getSchemaType().getLocalPart()
-                      + "2"
+                      + '2'
                       + componentType.getSchemaType().getLocalPart()
                       + "Map";
          
@@ -269,7 +274,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
     public Type createType(Method m, int index)
     {
         TypeClassInfo info = createClassInfo(m, index);
-
+        info.setDescription("parameter " + index + " in method " + m.getName() + " in " + m.getDeclaringClass());
         return createTypeForClass(info);
     }
 
@@ -281,7 +286,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
     public Type createType(PropertyDescriptor pd)
     {
         TypeClassInfo info = createClassInfo(pd);
-
+        info.setDescription("property " + pd.getName());
         return createTypeForClass(info);
     }
 
@@ -293,14 +298,14 @@ public abstract class AbstractTypeCreator implements TypeCreator
     public Type createType(Field f)
     {
         TypeClassInfo info = createClassInfo(f);
-
+        info.setDescription("field " + f.getName() + " in " + f.getDeclaringClass());
         return createTypeForClass(info);
     }
 
     public Type createType(Class clazz)
     {
         TypeClassInfo info = createBasicClassInfo(clazz);
-
+        info.setDescription(clazz.toString());
         return createTypeForClass(info);
     }
 
@@ -313,7 +318,18 @@ public abstract class AbstractTypeCreator implements TypeCreator
         String mappedName;
         QName typeName;
         Class type;
-        
+        String description;
+
+        public String getDescription()
+        {
+            return description;
+        }
+
+        public void setDescription(String description)
+        {
+            this.description = description;
+        }
+
         public Object[] getAnnotations()
         {
             return annotations;
