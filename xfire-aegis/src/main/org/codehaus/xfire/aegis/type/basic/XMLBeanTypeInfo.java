@@ -41,7 +41,7 @@ public class XMLBeanTypeInfo
     protected boolean registerType(PropertyDescriptor desc)
     {
         Element e = getPropertyElement(mapping, desc.getName());
-        if (e.getAttributeValue("type") != null) return false;
+        if (e != null && e.getAttributeValue("type") != null) return false;
         
         return super.registerType(desc);
     }
