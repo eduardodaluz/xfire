@@ -1,15 +1,13 @@
 package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.MessageReader;
@@ -119,7 +117,12 @@ public class BeanType
         try
         {
             PropertyDescriptor desc = getTypeInfo().getPropertyDescriptorFromMappedName(name);
-            desc.getWriteMethod().invoke(object, new Object[] {property});
+            
+            Method m = desc.getWriteMethod();
+            
+            if (m == null) throw new XFireFault("No write method for property " + name, XFireFault.SENDER);
+            
+            m.invoke(object, new Object[] {property});
         }
         catch (Exception e)
         {
@@ -213,7 +216,12 @@ public class BeanType
         try
         {
             PropertyDescriptor desc = getTypeInfo().getPropertyDescriptorFromMappedName(name);
-            return desc.getReadMethod().invoke(object, new Object[0]);
+
+            Method m = desc.getReadMethod();
+            
+            if (m == null) throw new XFireFault("No write method for property " + name, XFireFault.SENDER);
+
+            return m.invoke(object, new Object[0]);
         }
         catch (Exception e)
         {

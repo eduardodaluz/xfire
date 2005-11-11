@@ -77,26 +77,9 @@ public class AnnotatedTypeTest
         type.setSchemaType(new QName("urn:foo", "BadBean"));
         
         assertFalse(type.getTypeInfo().getElements().hasNext());
-        
-        type = new BeanType(new AnnotatedTypeInfo(tm, BadBean2.class));
-        type.setTypeClass(BadBean2.class);
-        type.setSchemaType(new QName("urn:foo", "BadBean2"));
-        
-        assertFalse(type.getTypeInfo().getElements().hasNext());
     }
     
-    // This class only has a read property, no write
     public static class BadBean
-    {
-        private String string;
-
-        public String getString()
-        {
-            return string;
-        }
-    }
-    
-    public static class BadBean2
     {
         public void setString(String string)
         {

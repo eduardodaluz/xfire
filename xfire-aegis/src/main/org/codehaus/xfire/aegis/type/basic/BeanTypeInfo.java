@@ -57,9 +57,8 @@ public class BeanTypeInfo
         {
             for (int i = 0; i < descriptors.length; i++)
             {
-                // Don't map the property unless there is both a read and write property
-                if (descriptors[i].getReadMethod() != null &&
-                        descriptors[i].getWriteMethod() != null)
+                // Don't map the property unless there is a read property
+                if (descriptors[i].getReadMethod() != null)
                 {
                     mapProperty(descriptors[i]);
                 }

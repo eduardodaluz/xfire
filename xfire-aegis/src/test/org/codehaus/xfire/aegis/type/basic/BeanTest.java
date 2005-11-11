@@ -8,8 +8,6 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
-import org.codehaus.xfire.aegis.type.basic.BeanType;
-import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
@@ -217,6 +215,13 @@ public class BeanTest
     public void testGetSetRequired() throws Exception
     {
         BeanType type = new BeanType();
+        type.setTypeClass(GoodBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:foo", "BadBean"));
+        
+        assertTrue(type.getTypeInfo().getElements().hasNext());
+        
+        type = new BeanType();
         type.setTypeClass(BadBean.class);
         type.setTypeMapping(mapping);
         type.setSchemaType(new QName("urn:foo", "BadBean"));
@@ -232,7 +237,7 @@ public class BeanTest
     }
     
     // This class only has a read property, no write
-    public static class BadBean
+    public static class GoodBean
     {
         private String string;
 
@@ -242,13 +247,18 @@ public class BeanTest
         }
     }
     
+    public static class BadBean
+    {
+        public String delete()
+        {
+            return null;
+        }
+    }
+    
     public static class BadBean2
     {
-        private String string;
-
         public void setString(String string)
         {
-            this.string = string;
         }
     }
 }
