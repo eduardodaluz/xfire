@@ -29,6 +29,7 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.soap.handler.SoapActionHandler;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -265,6 +266,7 @@ public class ObjectServiceFactory
     {
         service.addOutHandler(new OutMessageSender());
         service.addInHandler(service.getBinding());
+        service.addInHandler(new SoapActionHandler());
         service.addFaultHandler(new FaultSender());
         service.addFaultHandler(new CustomFaultHandler());
     }

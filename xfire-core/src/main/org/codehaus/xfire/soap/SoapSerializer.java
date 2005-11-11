@@ -57,6 +57,7 @@ public class SoapSerializer
                                      env.getLocalPart(),
                                      env.getNamespaceURI());
             writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
+            writer.writeNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
 
             if (message.getHeader() != null && message.getHeader().getContentSize() > 0)
             {

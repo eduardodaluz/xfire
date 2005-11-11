@@ -30,6 +30,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectBinding;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
@@ -99,7 +100,7 @@ public class Client
             msg.setBody(params);
             msg.setUri(url);
             msg.setSerializer(service.getBinding());
-            msg.setAction(SoapOperationInfo.getSoapAction(op));
+            msg.setProperty(SoapConstants.SOAP_ACTION, SoapOperationInfo.getSoapAction(op));
             msg.setChannel(getOutChannel());
             
             context = new MessageContext();

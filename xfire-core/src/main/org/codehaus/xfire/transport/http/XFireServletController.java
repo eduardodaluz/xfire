@@ -24,6 +24,7 @@ import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
@@ -225,6 +226,8 @@ public class XFireServletController
                 XMLStreamReader reader = 
                     STAXUtils.createXMLStreamReader(stream, request.getCharacterEncoding());
                 InMessage message = new InMessage(reader, request.getRequestURI());
+                message.setProperty(SoapConstants.SOAP_ACTION, 
+                                    request.getHeader(SoapConstants.SOAP_ACTION));
                 channel.receive(context, message);
             }
             catch (MessagingException e)

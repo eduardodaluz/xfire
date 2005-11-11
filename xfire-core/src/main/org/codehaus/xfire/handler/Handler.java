@@ -1,5 +1,7 @@
 package org.codehaus.xfire.handler;
 
+import java.util.Collection;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -18,7 +20,7 @@ import org.codehaus.xfire.fault.XFireFault;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @since Feb 18, 2004
  */
-public interface Handler
+public interface Handler extends Comparable
 {
     String ROLE = Handler.class.getName();
 
@@ -60,4 +62,8 @@ public interface Handler
      * @param context
      */
     void handleFault(XFireFault fault, MessageContext context);
+    
+    public Collection getAfter();
+    
+    public Collection getBefore();
 }

@@ -52,4 +52,5 @@ public class SoapConstants
     public static final String MEP_ROBUST_IN_OUT = "urn:xfire:mep:in-out";
     public static final String MEP_IN = "urn:xfire:mep:in";
     
+    public static final String SOAP_ACTION = "SOAPAction";
 }

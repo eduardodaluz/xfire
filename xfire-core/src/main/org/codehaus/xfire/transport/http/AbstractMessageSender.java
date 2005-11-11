@@ -7,6 +7,7 @@ import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.soap.SoapConstants;
 
 public abstract class AbstractMessageSender
 {
@@ -52,12 +53,12 @@ public abstract class AbstractMessageSender
 
     public String getSoapAction()
     {
-        return message.getAction();
+        return (String) message.getProperty(SoapConstants.SOAP_ACTION);
     }
     
     public String getQuotedSoapAction()
     {
-        String action = message.getAction();
+        String action = getSoapAction();
         
         if (action == null)
             action = "";
