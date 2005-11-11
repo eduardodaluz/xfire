@@ -398,7 +398,8 @@ public class ObjectServiceFactory
             // Ignore XFireFaults because they don't need to be declared
             if (exClazz.equals(XFireFault.class) ||
                     exClazz.equals(Exception.class) ||
-                    exClazz.equals(RuntimeException.class))
+                    exClazz.equals(RuntimeException.class) ||
+                    exClazz.equals(Throwable.class))
             {
                 continue;
             }

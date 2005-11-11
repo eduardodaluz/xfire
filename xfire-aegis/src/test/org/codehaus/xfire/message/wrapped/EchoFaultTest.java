@@ -48,6 +48,9 @@ public class EchoFaultTest
         {
             assertEquals("yo", fault.getCustomMessage());
         }
+        catch (Throwable e)
+        {
+        }
     }
     
     public void testFaultWSDL() throws Exception
