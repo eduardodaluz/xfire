@@ -71,6 +71,7 @@ public class ObjectServiceFactory
         setStyle(SoapConstants.STYLE_WRAPPED);
         setUse(SoapConstants.USE_LITERAL);
         ignoredClasses.add("java.lang.Object");
+        ignoredClasses.add("java.lang.Throwable");
         ignoredClasses.add("org.omg.CORBA_2_3.portable.ObjectImpl");
         ignoredClasses.add("org.omg.CORBA.portable.ObjectImpl");
         ignoredClasses.add("javax.ejb.EJBObject");
@@ -119,7 +120,6 @@ public class ObjectServiceFactory
 
     /**
      * @param wsdlUrl
-     * @return
      */
     public Service create(Class clazz, URL wsdlUrl)
             throws Exception
@@ -428,7 +428,6 @@ public class ObjectServiceFactory
      * 
      * @param service
      * @param method
-     * @return
      */
     protected String getOperationName(ServiceInfo service, Method method)
     {

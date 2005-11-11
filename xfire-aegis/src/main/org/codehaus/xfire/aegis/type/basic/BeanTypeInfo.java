@@ -245,9 +245,12 @@ public class BeanTypeInfo
             else if (beanClass == Object.class)
             {
             }
-            else if (Exception.class.isAssignableFrom(beanClass))
+            else if(beanClass == Throwable.class)
             {
-                beanInfo = Introspector.getBeanInfo(beanClass, Exception.class);
+            }
+            else if (Throwable.class.isAssignableFrom(beanClass))
+            {
+                beanInfo = Introspector.getBeanInfo(beanClass, Throwable.class);
             }
             else
             {
