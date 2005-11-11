@@ -79,5 +79,4 @@ public class WSDLVisitorTest
     {
         //Client client = new Client(new URL("echo.wsdl"));
     }
-
 }

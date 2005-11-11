@@ -37,10 +37,6 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Types;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPOperation;
 
 public class WSDLVisitor
 {
@@ -232,75 +228,4 @@ public class WSDLVisitor
     {
     }
     
-    protected SOAPBody getSOAPBody(List extensibilityElements)
-    {
-        SOAPBody body = null;
-        for (int j = 0; j < extensibilityElements.size(); j++)
-        {
-            Object element = extensibilityElements.get(j);
-            if (element instanceof SOAPBody)
-            {
-                body = (SOAPBody) element;
-                break;
-            }
-        }
-        return body;
-    }
-
-    protected SOAPBinding getSOAPBinding(Binding binding)
-    {
-        SOAPBinding soapBinding = null;
-        List extensibilityElements = binding.getExtensibilityElements();
-        for (int i = 0; i < extensibilityElements.size(); i++)
-        {
-            Object element = extensibilityElements.get(i);
-            if (element instanceof SOAPBinding)
-            {
-                soapBinding = (SOAPBinding) element;
-            }
-        }
-        return soapBinding;
-    }
-
-    protected SOAPAddress getSOAPAddress(Port port)
-    {
-        SOAPAddress soapAddress = null;
-        List extensibilityElements = port.getExtensibilityElements();
-        for (int i = 0; i < extensibilityElements.size(); i++)
-        {
-            Object element = extensibilityElements.get(i);
-            if (element instanceof SOAPAddress)
-            {
-                soapAddress = (SOAPAddress) element;
-            }
-        }
-        return soapAddress;
-    }
-    
-    protected SOAPOperation getSOAPOperation(BindingOperation operation)
-    {
-        SOAPOperation soapOp = null;
-        List extensibilityElements = operation.getExtensibilityElements();
-        for (int i = 0; i < extensibilityElements.size(); i++)
-        {
-            Object element = extensibilityElements.get(i);
-            if (element instanceof SOAPOperation)
-            {
-                soapOp = (SOAPOperation) element;
-            }
-        }
-        return soapOp;
-    }
-    
-    protected Output getOutput(BindingOutput bindingOutput)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    protected Input getInput(BindingInput bindingInput)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

@@ -3,7 +3,7 @@
   xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:Echo" 
   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Echo" name="">
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Echo" name="Echo">
   <wsdl:types>
     <xsd:schema targetNamespace="urn:Echo" elementFormDefault="qualified" 
       attributeFormDefault="qualified">
