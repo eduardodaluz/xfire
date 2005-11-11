@@ -29,7 +29,7 @@ public class DefaultTypeCreator extends AbstractTypeCreator
         {
             throw new XFireRuntimeException("Cannot create mapping for " + 
                                             info.getTypeClass().getName() + 
-                                            ", unspecified component type");
+                                            ", unspecified component type for " + info.getDescription());
         }
 
         return createCollectionType(info, (Class)info.getGenericType());
