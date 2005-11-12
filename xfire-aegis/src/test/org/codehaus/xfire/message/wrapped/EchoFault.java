@@ -4,7 +4,8 @@ public class EchoFault
     extends Exception
 {
     private String customMessage;
-
+    private String anotherProperty;
+    
     public EchoFault()
     {
     }
@@ -22,5 +23,15 @@ public class EchoFault
     public void setCustomMessage(String customMessage)
     {
         this.customMessage = customMessage;
+    }
+
+    public String getAnotherProperty()
+    {
+        return anotherProperty;
+    }
+
+    public void setAnotherProperty(String anotherProperty)
+    {
+        this.anotherProperty = anotherProperty;
     }
 }

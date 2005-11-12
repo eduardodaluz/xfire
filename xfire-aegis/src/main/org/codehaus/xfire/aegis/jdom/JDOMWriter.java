@@ -27,7 +27,9 @@ public class JDOMWriter
 
     public void writeValue(Object value, String ns, String attr)
     {
-        element.setAttribute(new Attribute(attr, value.toString(), Namespace.getNamespace(ns)));
+        String prefix = NamespaceHelper.getUniquePrefix(element, ns);
+        
+        element.setAttribute(new Attribute(attr, value.toString(), Namespace.getNamespace(prefix, ns)));
     }
 
     public MessageWriter getElementWriter(String name)
