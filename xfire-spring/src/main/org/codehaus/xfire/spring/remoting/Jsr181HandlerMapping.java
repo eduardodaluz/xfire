@@ -1,5 +1,7 @@
 package org.codehaus.xfire.spring.remoting;
 
+import java.lang.reflect.Modifier;
+
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
@@ -11,9 +13,8 @@ import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContextException;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.beans.factory.BeanIsAbstractException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -38,30 +39,47 @@ public class Jsr181HandlerMapping
     private TypeMappingRegistry typeMappingRegistry;
     private String urlPrefix = "/services/";
 
-
     protected void initApplicationContext()
             throws BeansException
     {
-        if (!(getApplicationContext() instanceof ConfigurableApplicationContext))
-        {
-            throw new ApplicationContextException(
-                    "[" + getClass().getName() + "] needs to run in a ConfigurableApplicationContext");
-        }
-        ConfigurableListableBeanFactory beanFactory =
-                ((ConfigurableApplicationContext) getApplicationContext()).getBeanFactory();
-
-        String[] beanNames = getApplicationContext().getBeanDefinitionNames();
-
         AnnotationServiceFactory serviceFactory =
                 new AnnotationServiceFactory(webAnnotations,
                                              xFire.getTransportManager(),
                                              new AegisBindingProvider(typeMappingRegistry));
 
+        ApplicationContext context = getApplicationContext();
+ 
+        while (true)
+        {
+            if (context == null) break;
+            
+            processBeans(context, serviceFactory);
+
+            context = context.getParent();
+        }
+    }
+
+    private void processBeans(ApplicationContext beanFactory, AnnotationServiceFactory serviceFactory)
+    {
+        String[] beanNames = beanFactory.getBeanDefinitionNames();
+
         // Take any bean name or alias that has a web service annotation
         for (int i = 0; i < beanNames.length; i++)
         {
-            Class clazz = getApplicationContext().getType(beanNames[i]);
-            if (webAnnotations.hasWebServiceAnnotation(clazz))
+            Class clazz;
+            try
+            {
+                clazz = getApplicationContext().getType(beanNames[i]);
+            }
+            catch (BeanIsAbstractException e)
+            {
+                // The bean is abstract, we won't be doing anything with it.
+                continue;
+            }
+
+            if (clazz != null && 
+                    !Modifier.isAbstract(clazz.getModifiers()) && 
+                    webAnnotations.hasWebServiceAnnotation(clazz))
             {
                 Service endpoint = serviceFactory.create(clazz);
                 ServiceInfo service = endpoint.getServiceInfo();

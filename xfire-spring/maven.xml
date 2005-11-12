@@ -13,7 +13,7 @@
 
 		<mapping destFile="target/services.xsd"
 			     namespace="http://xfire.codehaus.org/config/1.0"
-                 srcdir="src/main"
+                 srcdir="${basedir}/src/main"
                  metaInfDir="${maven.build.dir}/classes/"/>
 
 	</postGoal>

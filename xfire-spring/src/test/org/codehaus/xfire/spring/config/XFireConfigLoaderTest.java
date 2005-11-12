@@ -11,7 +11,6 @@ import org.codehaus.xfire.spring.TestHandler;
 import org.codehaus.xfire.spring.XFireConfigLoader;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
-import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.springframework.context.ApplicationContext;
 import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
@@ -40,8 +39,8 @@ public class XFireConfigLoaderTest
         SoapVersion version = service.getSoapVersion();
         assertEquals(version,Soap12.getInstance());
         
-        assertEquals(service.getInHandlers().size(),2);
-        assertTrue(service.getInHandlers().get(1) instanceof TestHandler);
+        assertEquals(service.getInHandlers().size(),3);
+        assertTrue(service.getInHandlers().get(2) instanceof TestHandler);
         
         assertEquals(service.getOutHandlers().size(),1);
         
