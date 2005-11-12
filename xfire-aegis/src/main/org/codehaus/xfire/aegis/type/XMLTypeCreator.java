@@ -3,6 +3,7 @@ package org.codehaus.xfire.aegis.type;
 import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,9 +65,18 @@ public class XMLTypeCreator extends AbstractTypeCreator
     //cache of classes to documents
     private Map documents = new HashMap();
 
+    private static List stopClasses = new ArrayList();
+    static 
+    {
+        stopClasses.add(Object.class);
+        stopClasses.add(Exception.class);
+        stopClasses.add(RuntimeException.class);
+        stopClasses.add(Throwable.class);
+    }
+    
     protected Document getDocument(Class clazz)
     {
-        Document doc = (Document)documents.get(clazz.getName());
+        Document doc = (Document) documents.get(clazz.getName());
         if(doc != null)
         {
             return doc;
@@ -127,13 +137,41 @@ public class XMLTypeCreator extends AbstractTypeCreator
         return mapping;
     }
 
+    protected List findMappings(Class clazz)
+    {
+        ArrayList mappings = new ArrayList();
+        
+        Element top = findMapping(clazz);
+        if (top != null) mappings.add(top);
+        
+        Class parent = clazz;
+        while(true)
+        {
+            Class sup = parent.getSuperclass();
+            
+            if (sup == null || stopClasses.contains(sup)) 
+                break;
+            
+            Element mapping = findMapping(sup);
+            if (mapping != null)
+            {
+                mappings.add(findMapping(sup));
+            }
+            
+            parent = sup;
+        }
+        
+        return mappings;
+    }
+    
     public Type createDefaultType(TypeClassInfo info)
     {
         Element mapping = findMapping(info.getTypeClass());
-        
-        if (mapping != null)
+        List mappings = findMappings(info.getTypeClass());
+
+        if (mapping != null || mappings.size() > 0 )
         {
-            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(info.getTypeClass(), mapping);
+            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(info.getTypeClass(), mapping, mappings);
             btinfo.setTypeMapping(getTypeMapping());
             
             BeanType type = new BeanType(btinfo);

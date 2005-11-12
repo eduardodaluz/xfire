@@ -2,6 +2,7 @@ package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,23 +17,26 @@ public class XMLBeanTypeInfo
     extends BeanTypeInfo
 {
     private static final Log logger = LogFactory.getLog(XMLBeanTypeInfo.class);
-    private Element mapping;
+    private List mappings;
+    private Element topMapping;
     private QName name;
     private Map name2Nillable = new HashMap();
     
     public XMLBeanTypeInfo(Class typeClass,
-                           Element mapping)
+                           Element mapping,
+                           List mappings)
     {
         super(typeClass);
 
-        this.mapping = mapping;
+        this.mappings = mappings;
+        this.topMapping = mapping;
     }
 
     public QName getSchemaType()
     {
-        if (name == null)
+        if (name == null && topMapping != null)
         {
-            name = createQName(mapping, mapping.getAttributeValue("name"));
+            name = createQName(topMapping, topMapping.getAttributeValue("name"));
         }
         
         return name;
@@ -40,7 +44,7 @@ public class XMLBeanTypeInfo
 
     protected boolean registerType(PropertyDescriptor desc)
     {
-        Element e = getPropertyElement(mapping, desc.getName());
+        Element e = getPropertyElement(desc.getName());
         if (e != null && e.getAttributeValue("type") != null) return false;
         
         return super.registerType(desc);
@@ -48,7 +52,7 @@ public class XMLBeanTypeInfo
 
     protected void mapProperty(PropertyDescriptor pd)
     {
-        Element e = getPropertyElement(mapping, pd.getName());
+        Element e = getPropertyElement(pd.getName());
         String style = null;
         String mappedName = null;
         
@@ -98,17 +102,21 @@ public class XMLBeanTypeInfo
         }
     }
 
-    private Element getPropertyElement(Element mapping2, String name2)
+    private Element getPropertyElement(String name2)
     {
-        List elements = mapping2.getChildren("property");
-        for (int i = 0; i < elements.size(); i++)
+        for (Iterator itr = mappings.iterator(); itr.hasNext();)
         {
-            Element e = (Element) elements.get(i);
-            String name = e.getAttributeValue("name");
-            
-            if (name != null && name.equals(name2))
+            Element mapping2 = (Element) itr.next();
+            List elements = mapping2.getChildren("property");
+            for (int i = 0; i < elements.size(); i++)
             {
-                return e;
+                Element e = (Element) elements.get(i);
+                String name = e.getAttributeValue("name");
+                
+                if (name != null && name.equals(name2))
+                {
+                    return e;
+                }
             }
         }
         

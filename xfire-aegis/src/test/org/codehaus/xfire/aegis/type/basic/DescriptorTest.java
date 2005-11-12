@@ -66,6 +66,23 @@ public class DescriptorTest
         String el2 = (String) elItr.next();
         assertEquals("Prop2", el2);
     }
+    
+    public void testParentWithMapping2() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:bean2");
+
+        Type type = tm.getTypeCreator().createType(ParentOfMyBean.class);
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
+
+        Iterator elItr = info.getElements();
+        assertTrue(elItr.hasNext());
+        String el = (String) elItr.next();
+        assertEquals("Prop1", el);
+
+        assertTrue(elItr.hasNext());
+        String el2 = (String) elItr.next();
+        assertEquals("Prop2", el2);
+    }
 
     public void testListHolder() throws Exception
     {

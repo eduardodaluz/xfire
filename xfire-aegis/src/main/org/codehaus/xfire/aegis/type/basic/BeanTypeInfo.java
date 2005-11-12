@@ -58,7 +58,7 @@ public class BeanTypeInfo
             for (int i = 0; i < descriptors.length; i++)
             {
                 // Don't map the property unless there is a read property
-                if (descriptors[i].getReadMethod() != null)
+                if (isMapped(descriptors[i]))
                 {
                     mapProperty(descriptors[i]);
                 }
@@ -73,6 +73,13 @@ public class BeanTypeInfo
         setInitialized(true);
     }
 
+    public boolean isMapped(PropertyDescriptor pd)
+    {
+        if (pd.getReadMethod() == null) return false;
+
+        return true;
+    }
+    
     public boolean isInitialized()
     {
         return initialized;
