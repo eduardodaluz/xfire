@@ -3,9 +3,12 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
@@ -17,6 +20,8 @@ public class OutMessageRequestEntity
     private OutMessage message = null;
     private MessageContext context;
 
+    private static final Log log = LogFactory.getLog(OutMessageRequestEntity.class);
+    
     public OutMessageRequestEntity(OutMessage msg,MessageContext context)
     {
         this.message = msg;
@@ -25,7 +30,7 @@ public class OutMessageRequestEntity
 
     public boolean isRepeatable()
     {
-        return false;
+        return true;
     }
 
     public void writeRequest(OutputStream out)
@@ -35,9 +40,17 @@ public class OutMessageRequestEntity
         try
         {
             message.getSerializer().writeMessage(message, writer, context);
+            
+            writer.close();
         }
         catch (XFireFault e)
         {
+            log.error("Couldn't send message.", e);
+            throw new IOException(e.getMessage());
+        }
+        catch (XMLStreamException e)
+        {
+            log.error("Couldn't send message.", e);
             throw new IOException(e.getMessage());
         }
     }
