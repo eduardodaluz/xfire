@@ -273,6 +273,7 @@
         <root url="jar://$PROJECT_DIR$/target/lib/junit-3.8.1.jar!/" />
         <root url="jar://$PROJECT_DIR$/target/lib/wstx-asl-2.0.3.jar!/" />
         <root url="jar://$PROJECT_DIR$/target/lib/easymock-1.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/jaxen-1.1-beta-5.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
