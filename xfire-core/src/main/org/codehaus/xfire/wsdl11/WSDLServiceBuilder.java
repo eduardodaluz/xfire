@@ -14,10 +14,13 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
+import javax.wsdl.Import;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
+import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
+import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
@@ -36,6 +39,7 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.service.Endpoint;
@@ -45,6 +49,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.DocumentBinding;
 import org.codehaus.xfire.service.binding.ObjectBindingFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapOperationInfo;
@@ -52,7 +57,6 @@ import org.codehaus.xfire.wsdl.SimpleSchemaType;
 import org.xml.sax.InputSource;
 
 public class WSDLServiceBuilder
-    extends WSDLVisitor
 {
     private Service service;
     private ServiceInfo serviceInfo;
@@ -62,15 +66,154 @@ public class WSDLServiceBuilder
     private String style;
     private boolean isWrapped = false;
     private XmlSchemaElement schema;
+
+    protected final Definition definition;
+
     
     public WSDLServiceBuilder(Definition definition)
     {
-        super(definition);
+        this.definition = definition;
     }
 
     public WSDLServiceBuilder(InputStream is) throws WSDLException
     {
-        super(WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(is)));
+        this(WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(is)));
+    }
+
+    public Definition getDefinition()
+    {
+        return definition;
+    }
+    
+
+    public void walkTree() throws Exception
+    {
+        Exception e;
+        
+        //begin();
+
+        //visit(definition);
+        Collection imports = definition.getImports().values();
+        for (Iterator iterator = imports.iterator(); iterator.hasNext();)
+        {
+            Import wsdlImport = (Import) iterator.next();
+            //visit(wsdlImport);
+        }
+        visit(definition.getTypes());
+        
+        Collection messages = definition.getMessages().values();
+        for (Iterator iterator = messages.iterator(); iterator.hasNext();)
+        {
+            Message message = (Message) iterator.next();
+            //visit(message);
+            Collection parts = message.getParts().values();
+            for (Iterator iterator2 = parts.iterator(); iterator2.hasNext();)
+            {
+                Part part = (Part) iterator2.next();
+                //visit(part);
+            }
+        }
+        
+        Collection services = definition.getServices().values();
+        for (Iterator iterator = services.iterator(); iterator.hasNext();)
+        {
+            javax.wsdl.Service wservice = (javax.wsdl.Service) iterator.next();
+            PortType portType = assertOnePortType(wservice);
+            
+            begin(wservice);
+            
+            Collection ports = wservice.getPorts().values();
+            for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
+            {
+
+                Port port = (Port) iterator1.next();
+                Binding binding = port.getBinding();
+
+                if (!isServiceUnderstood(wservice, port, binding))
+                    continue;
+                
+                visit(port);
+                visit(binding);
+                
+                List bindingOperations = binding.getBindingOperations();
+                for (int i = 0; i < bindingOperations.size(); i++)
+                {
+                    BindingOperation bindingOperation = 
+                        (BindingOperation) bindingOperations.get(i);
+                    
+                    visit(bindingOperation);
+                    visit(bindingOperation.getBindingInput(), bindingOperation.getOperation().getInput());
+                    visit(bindingOperation.getBindingOutput(), bindingOperation.getOperation().getOutput());
+                    
+                    Collection bindingFaults = bindingOperation.getBindingFaults().values();
+                    for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
+                    {
+                        BindingFault bindingFault = (BindingFault) iterator2.next();
+                        Fault fault = bindingOperation.getOperation().getFault(bindingFault.getName());
+                        
+                        visit(bindingFault, fault);
+                    }
+
+                }
+                
+                visit(portType);
+                
+                List operations = portType.getOperations();
+                for (int i = 0; i < operations.size(); i++)
+                {
+                    Operation operation = (Operation) operations.get(i);
+                    //visit(operation);
+                    {
+                        Input input = operation.getInput();
+                        //visit(input);
+                    }
+                    {
+                        Output output = operation.getOutput();
+                        //visit(output);
+                    }
+                    
+                    Collection faults = operation.getFaults().values();
+                    for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
+                    {
+                        Fault fault = (Fault) iterator2.next();
+                        //visit(fault);
+                    }
+                }
+            }
+            end(wservice);
+        }
+
+        //end();
+    }
+    
+    private PortType assertOnePortType(javax.wsdl.Service wservice) throws XFireException
+    {
+        PortType portType = null;
+    
+        Collection ports = wservice.getPorts().values();
+        for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
+        {
+            Port port = (Port) iterator1.next();
+            
+            PortType newPT = port.getBinding().getPortType();
+            
+            if (portType == null) portType = newPT;
+            
+            if (newPT != portType)
+                throw new XFireException("WSDLServiceBuilder can only handle one port type per service.");
+        }
+        
+        return portType;
+    }
+
+    private boolean isServiceUnderstood(javax.wsdl.Service wservice, 
+                                        Port port, 
+                                        Binding binding)
+    {
+        if (DefinitionsHelper.getSOAPBinding(binding) != null)
+            return true;
+        
+        return false;
     }
 
     public Collection getServices()
@@ -93,10 +236,9 @@ public class WSDLServiceBuilder
             }
         }
     }
+    
     protected void visit(PortType portType)
     {
-        super.visit(portType);
-        
         serviceInfo.setPortType(portType.getQName());
     }
     
@@ -322,13 +464,16 @@ public class WSDLServiceBuilder
 
     protected void end(javax.wsdl.Service wservice)
     {
-        
         if (isWrapped)
         {
             style = "wrapped";
         }
         
-        service.setBinding(ObjectBindingFactory.getMessageBinding(style, "literal"));
+        if (style != null)
+            service.setBinding(ObjectBindingFactory.getMessageBinding(style, "literal"));
+        else
+            service.setBinding(new DocumentBinding());
+        
         service.setFaultSerializer(new SoapFaultSerializer());
         
         services.add(service);

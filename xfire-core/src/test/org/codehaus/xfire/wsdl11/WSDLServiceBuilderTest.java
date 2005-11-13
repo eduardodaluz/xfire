@@ -15,7 +15,7 @@ import org.codehaus.xfire.test.AbstractXFireTest;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class WSDLVisitorTest
+public class WSDLServiceBuilderTest
     extends AbstractXFireTest
 {
     public void testVisitor()
@@ -72,6 +72,16 @@ public class WSDLVisitorTest
         assertEquals(new QName("urn:Echo", "EchoHttpPort"), endpoint.getName());
         assertEquals("http://schemas.xmlsoap.org/soap/http", endpoint.getBindingId());
         assertEquals("http://localhost:8080/xfire/services/Echo", endpoint.getAddress());
+    }
+    
+    public void testUnknownBinding()
+        throws Exception
+    {
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoHttp.wsdl"));
+        builder.walkTree();
+        
+        Collection services = builder.getServices();        
+        assertEquals(1, services.size());
     }
     
     public void testClient()
