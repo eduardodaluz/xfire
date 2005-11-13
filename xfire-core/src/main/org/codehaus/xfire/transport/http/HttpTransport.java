@@ -27,10 +27,13 @@ public class HttpTransport
 
     public final static String HTTP_BINDING = "http://www.w3.org/2004/08/wsdl/http";
     
+    public final static String CHUNKING_ENABLED = "urn:xfire:transport:http:chunking-enabled";
+    
     public final static String HTTP_TRANSPORT_NS = "http://schemas.xmlsoap.org/soap/http";
 
     private final static String URI_PREFIX = "urn:xfire:transport:http:";
-
+    
+    
     private final static MimeTypeHandler mimeHandler = new MimeTypeHandler();
     
     public HttpTransport()

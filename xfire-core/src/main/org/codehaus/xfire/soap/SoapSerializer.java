@@ -53,10 +53,12 @@ public class SoapSerializer
                 writer.writeStartDocument(message.getEncoding(), "1.0");
             
             writer.setPrefix(env.getPrefix(), env.getNamespaceURI());
+            writer.setPrefix(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
             writer.writeStartElement(env.getPrefix(),
                                      env.getLocalPart(),
                                      env.getNamespaceURI());
             writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
+            
             writer.writeNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
 
             if (message.getHeader() != null && message.getHeader().getContentSize() > 0)
@@ -84,7 +86,7 @@ public class SoapSerializer
             if (serializeProlog)
                 writer.writeEndDocument();
     
-            writer.close();
+            writer.flush();
         }
         catch (XMLStreamException e)
         {

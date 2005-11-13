@@ -1,13 +1,20 @@
 package org.codehaus.xfire.transport.http;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
@@ -27,6 +34,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private HttpClient client;
 
+    private static final Log log = LogFactory.getLog(CommonsHttpMessageSender.class);
+    
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
         super(message, context);
@@ -37,12 +46,14 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     {
         client = new HttpClient();
 
-        client.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
-        client.getParams().setParameter("http.useragent", "XFire Client +http://xfire.codehaus.org");
-        client.getParams().setParameter("http.protocol.expect-continue", Boolean.TRUE);
-        
+        client.getParams().setParameter("http.useragent", " Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; " +
+                "XFire Client +http://xfire.codehaus.org)");
+        client.getParams().setBooleanParameter("http.protocol.expect-continue", false);
+        client.getParams().setVersion(HttpVersion.HTTP_1_1);
+
         postMethod = new PostMethod(getUri());
         postMethod.setRequestHeader("Content-Type", "text/xml; charset="+getEncoding());
+
         if (getSoapAction() != null)
         {
             postMethod.setRequestHeader("SOAPAction", getQuotedSoapAction());
@@ -52,10 +63,51 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public void send()
         throws HttpException, IOException
     {
-        RequestEntity requestEntity = new OutMessageRequestEntity(getMessage(), getMessageContext());
+        RequestEntity requestEntity;
+        
+        /**
+         * Lots of HTTP servers don't handle chunking correctly, so its turned off by default.
+         */
+        boolean chunkingOn = Boolean.valueOf((String) getMessageContext()
+                .getProperty(HttpTransport.CHUNKING_ENABLED)).booleanValue();
+        if (!chunkingOn)
+        {
+            requestEntity = getByteArrayRequestEntity();
+        }
+        else
+        {
+            requestEntity = new OutMessageRequestEntity(getMessage(), getMessageContext());
+        }
+        
         getMethod().setRequestEntity(requestEntity);
         
         client.executeMethod(postMethod);
+    }
+
+    private RequestEntity getByteArrayRequestEntity()
+        throws IOException
+    {
+        OutMessage message = getMessage();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, message.getEncoding());
+        try
+        {
+            message.getSerializer().writeMessage(message, writer, getMessageContext());
+            writer.close();
+            bos.close();
+            
+            return new ByteArrayRequestEntity(bos.toByteArray());
+        }
+        catch (XFireFault e)
+        {
+            log.error("Couldn't send message.", e);
+            throw new IOException(e.getMessage());
+        }
+        catch (XMLStreamException e)
+        {
+            log.error("Couldn't send message.", e);
+            throw new IOException(e.getMessage());
+        }
     }
 
     public InMessage getInMessage()

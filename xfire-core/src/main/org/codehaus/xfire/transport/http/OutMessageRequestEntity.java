@@ -60,12 +60,11 @@ public class OutMessageRequestEntity
     public long getContentLength()
     {
         // not known so we send negative value
-        return -100;
+        return -1;
     }
 
     public String getContentType()
     {
-        return this.message.getEncoding();
+        return "text/xml; charset=" + this.message.getEncoding();
     }
-
 }
