@@ -42,6 +42,8 @@ public class OutMessageRequestEntity
             message.getSerializer().writeMessage(message, writer, context);
             
             writer.close();
+            
+            out.flush();
         }
         catch (XFireFault e)
         {
