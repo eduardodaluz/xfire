@@ -64,7 +64,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         {
             return createUserType(info);
         }
-        if(javaType.isArray())
+        if(isArray(javaType))
         {
             return createArrayType(info);
         }
@@ -90,6 +90,11 @@ public abstract class AbstractTypeCreator implements TypeCreator
             
             return type;
         }
+    }
+
+    private boolean isArray(Class javaType)
+    {
+        return javaType.isArray() && !javaType.equals(byte[].class);
     }
 
     protected Type createUserType(TypeClassInfo info)
