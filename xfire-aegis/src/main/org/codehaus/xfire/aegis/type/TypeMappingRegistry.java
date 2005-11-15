@@ -8,7 +8,7 @@ package org.codehaus.xfire.aegis.type;
  */
 public interface TypeMappingRegistry
 {
-    final public static String ROLE = TypeMappingRegistry.class.getName();
+    String ROLE = TypeMappingRegistry.class.getName();
 
     /**
      */
@@ -58,11 +58,11 @@ public interface TypeMappingRegistry
     /**
      * Create a type mapping with the specified encodying style.
      * 
-     * @param encodingStyleURI Encoding style specified as an URI
+     * @param parentEncodingStyleURI Encoding style of the parent <code>TypeMapping</code> specified as an URI
      * @param autoTypes Should this mapping auto-generate types where possible
      * @return TypeMapping instance
      */
-    public TypeMapping createTypeMapping(String encodingStyleURI, boolean autoTypes);
+    public TypeMapping createTypeMapping(String parentEncodingStyleURI, boolean autoTypes);
 
     /**
      * Unregisters a TypeMapping instance, if present, from the specified
