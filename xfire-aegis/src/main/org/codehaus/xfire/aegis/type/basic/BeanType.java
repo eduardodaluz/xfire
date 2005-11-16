@@ -92,11 +92,11 @@ public class BeanType
         }
         catch (IllegalAccessException e)
         {
-            throw new XFireFault("Illegal access.", e, XFireFault.RECEIVER);
+            throw new XFireFault("Illegal access. " + e.getMessage(), e, XFireFault.RECEIVER);
         }
 		catch (InstantiationException e)
 		{
-            throw new XFireFault("Couldn't instantiate service.", e, XFireFault.SENDER);
+            throw new XFireFault("Couldn't instantiate class. " + e.getMessage(), e, XFireFault.SENDER);
 		}
     }
 
@@ -126,7 +126,7 @@ public class BeanType
         }
         catch (Exception e)
         {
-            throw new XFireFault("Couldn't set property " + name, e, XFireFault.SENDER);
+            throw new XFireFault("Couldn't set property " + name + ". " + e.getMessage(), e, XFireFault.SENDER);
         }
     }
 
