@@ -91,7 +91,7 @@ public class ObjectInvoker
         }
         catch (IllegalArgumentException e)
         {
-            throw new XFireFault("Illegal argument.", e, XFireFault.SENDER);
+            throw new XFireFault("Illegal argument. " + e.getMessage(), e, XFireFault.SENDER);
         }
         catch (InvocationTargetException e)
         {
@@ -114,7 +114,7 @@ public class ObjectInvoker
         }
         catch (IllegalAccessException e)
         {
-            throw new XFireFault("Couldn't access service object.", e, XFireFault.RECEIVER);
+            throw new XFireFault("Couldn't access service object. " + e.getMessage(), e, XFireFault.RECEIVER);
         }
     }
 
