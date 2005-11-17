@@ -12,7 +12,7 @@ public class MethodComparator
         Method m1 = (Method) o1;
         Method m2 = (Method) o2;
      
-        int val = m1.getName().compareTo(m2);
+        int val = m1.getName().compareTo(m2.getName());
         if (val == 0)
         {
             val = m1.getParameterTypes().length - m2.getParameterTypes().length;
