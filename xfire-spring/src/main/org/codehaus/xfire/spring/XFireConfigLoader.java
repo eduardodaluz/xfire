@@ -19,11 +19,13 @@ public class XFireConfigLoader
     
     public XFire loadConfig(String[] configFiles)
     {
+        
         List configList = new ArrayList();
+        configList.add("org/codehaus/xfire/spring/xfire.xml");
         for (int i = 0; i < configFiles.length; i++)
             configList.add(configFiles[i]);
         
-        configList.add("org/codehaus/xfire/spring/xfire.xml");
+        
         
         ClassPathXmlApplicationContext ctx = 
             new ClassPathXmlApplicationContext((String[]) configList.toArray(new String[configList.size()]));
