@@ -120,20 +120,18 @@ public class BeanType
             
             Method m = desc.getWriteMethod();
             
-            if (m == null) throw new XFireFault("No write method for property " + name, XFireFault.SENDER);
+            if (m == null) throw new XFireFault("No write method for property " + name + " in " + object.getClass(), XFireFault.SENDER);
             
             m.invoke(object, new Object[] {property});
         }
         catch (Exception e)
         {
-            throw new XFireFault("Couldn't set property " + name + ". " + e.getMessage(), e, XFireFault.SENDER);
+            throw new XFireFault("Couldn't set property " + name + " on " + object + ". " + e.getMessage(), e, XFireFault.SENDER);
         }
     }
 
-
-
     /**
-     * @see org.codehaus.xfire.aegis.type.Type#writeObject(java.lang.Object)
+     * @see org.codehaus.xfire.aegis.type.Type#writeObject(Object, org.codehaus.xfire.aegis.MessageWriter, org.codehaus.xfire.MessageContext) 
      */
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
         throws XFireFault
@@ -219,18 +217,18 @@ public class BeanType
 
             Method m = desc.getReadMethod();
             
-            if (m == null) throw new XFireFault("No write method for property " + name, XFireFault.SENDER);
+            if (m == null) throw new XFireFault("No read method for property " + name + " in class " + object.getClass().getName(), XFireFault.SENDER);
 
             return m.invoke(object, new Object[0]);
         }
         catch (Exception e)
         {
-            throw new XFireRuntimeException( "Couldn't get property " + name, e );
+            throw new XFireRuntimeException( "Couldn't get property " + name + " from bean " + object, e );
         }
     }
 
     /**
-     * @see org.codehaus.xfire.aegis.type.Type#writeSchema()
+     * @see org.codehaus.xfire.aegis.type.Type#writeSchema(org.jdom.Element) 
      */
     public void writeSchema(Element root)
     {
@@ -284,7 +282,7 @@ public class BeanType
                                                             type.getSchemaType().getNamespaceURI() );
             
             element.setAttribute(new Attribute("name", name));
-            element.setAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
         }
     }
 
@@ -306,7 +304,7 @@ public class BeanType
         if (type.isAbstract())
         {
             element.setAttribute(new Attribute("name", name));
-            element.setAttribute(new Attribute("type", prefix + ":" + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
             
             if (getTypeInfo().isNillable(name))
             {
@@ -315,7 +313,7 @@ public class BeanType
         }
         else
         {
-            element.setAttribute(new Attribute("ref", prefix + ":" + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("ref", prefix + ':' + type.getSchemaType().getLocalPart()));
         }
     }
     
