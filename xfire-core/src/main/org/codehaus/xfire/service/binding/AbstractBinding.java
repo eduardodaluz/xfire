@@ -109,7 +109,7 @@ public abstract class AbstractBinding
         catch (XFireRuntimeException e)
         {
             logger.warn("Error invoking service.", e);
-            throw new XFireFault("Error invoking service.", e, XFireFault.SENDER);
+            throw new XFireFault("Error invoking service" + (e.getMessage() != null ? ": " + e.getMessage() : ".") , e, XFireFault.SENDER);
         }
     }
 

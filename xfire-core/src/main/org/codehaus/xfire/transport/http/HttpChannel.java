@@ -66,6 +66,8 @@ public class HttpChannel
                 if (e instanceof XFireException)
                     throw (XFireException) e;
                 
+                if (e instanceof XFireRuntimeException)
+                    throw (XFireRuntimeException) e;
                 throw new XFireException("Couldn't send message.", e);
             }
         }
