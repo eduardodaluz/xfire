@@ -48,7 +48,7 @@ public class XFireProxy
         
         if (result == null)
         {
-            result = handleRequest(methodName, args);
+            result = handleRequest(method, args);
         }
         if (log.isDebugEnabled())
         {
@@ -57,10 +57,10 @@ public class XFireProxy
         return result;
     }
 
-    private Object handleRequest(String methodName, Object[] args)
+    private Object handleRequest(Method m, Object[] args)
             throws Exception
     {
-        OperationInfo op = client.getService().getServiceInfo().getOperation(methodName);
+        OperationInfo op = client.getService().getServiceInfo().getOperation(m);
         
         Object[] response = (Object[]) client.invoke(op, args);
 

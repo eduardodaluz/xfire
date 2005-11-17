@@ -27,6 +27,7 @@ public class ServiceInfo
     private QName name;
     private List operations = new ArrayList();
     private Map nameToOperation = new HashMap();
+    private Map methodToOperation = new HashMap();
     private Class serviceClass;
     private QName portType;
     private Map endpoints = new HashMap();
@@ -92,6 +93,9 @@ public class ServiceInfo
     {
         nameToOperation.put(operation.getName(), operation);
         operations.add(operation);
+        
+        if (operation.getMethod() != null)
+            methodToOperation.put(operation.getMethod(), operation);
     }
 
     /**
@@ -196,6 +200,11 @@ public class ServiceInfo
     public void addEndpoint(QName name, String bindingId, String address)
     {
         addEndpoint(new Endpoint(name, bindingId, address));
+    }
+
+    public OperationInfo getOperation(Method m)
+    {
+        return (OperationInfo) methodToOperation.get(m);
     }
 
 }
