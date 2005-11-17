@@ -1,15 +1,9 @@
 package org.codehaus.xfire.transport.http;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -22,6 +16,12 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Sends a http message via commons http client.
  * 
@@ -30,6 +30,8 @@ import org.codehaus.xfire.util.STAXUtils;
  */
 public class CommonsHttpMessageSender extends AbstractMessageSender
 {
+    private static final ThreadLocal httpState = new ThreadLocal();
+
     private PostMethod postMethod;
 
     private HttpClient client;
@@ -81,7 +83,19 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         
         getMethod().setRequestEntity(requestEntity);
         
-        client.executeMethod(postMethod);
+        client.executeMethod(null, postMethod, getHttpState() );
+    }
+
+    private HttpState getHttpState()
+    {
+        HttpState state = (HttpState)httpState.get();
+
+        if( null == state ) {
+            state = new HttpState();
+            httpState.set( state );
+        }
+
+        return state;
     }
 
     private RequestEntity getByteArrayRequestEntity()
@@ -95,7 +109,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             message.getSerializer().writeMessage(message, writer, getMessageContext());
             writer.close();
             bos.close();
-            
+
             return new ByteArrayRequestEntity(bos.toByteArray());
         }
         catch (XFireFault e)
