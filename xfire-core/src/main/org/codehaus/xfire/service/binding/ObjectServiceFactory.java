@@ -3,6 +3,7 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.soap.handler.SoapActionHandler;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
@@ -286,7 +288,8 @@ public class ObjectServiceFactory
     protected void initializeOperations(Service endpoint, String use)
     {
         final Method[] methods = endpoint.getServiceInfo().getServiceClass().getMethods();
-
+        Arrays.sort(methods, new MethodComparator());
+        
         for (int i = 0; i < methods.length; i++)
         {
             final Method method = methods[i];
