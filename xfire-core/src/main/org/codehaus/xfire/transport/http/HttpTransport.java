@@ -1,8 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
@@ -16,6 +13,9 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.AbstractWSDLTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultEndpoint;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -136,7 +136,6 @@ public class HttpTransport
         /**
          * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
          * @param context
-         * @throws Exception
          */
         public void invoke(MessageContext context)
         {
@@ -157,7 +156,6 @@ public class HttpTransport
        /**
         * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
         * @param context
-        * @throws Exception
         */
        public void invoke(MessageContext context)
        {
