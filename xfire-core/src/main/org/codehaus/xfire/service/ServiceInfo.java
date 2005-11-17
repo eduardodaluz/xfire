@@ -1,10 +1,12 @@
 package org.codehaus.xfire.service;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -23,7 +25,8 @@ public class ServiceInfo
     implements Visitable
 {
     private QName name;
-    private Map operations = new HashMap();
+    private List operations = new ArrayList();
+    private Map nameToOperation = new HashMap();
     private Class serviceClass;
     private QName portType;
     private Map endpoints = new HashMap();
@@ -50,7 +53,7 @@ public class ServiceInfo
     public void accept(Visitor visitor)
     {
         visitor.startService(this);
-        for (Iterator iterator = operations.values().iterator(); iterator.hasNext();)
+        for (Iterator iterator = nameToOperation.values().iterator(); iterator.hasNext();)
         {
             OperationInfo operationInfo = (OperationInfo) iterator.next();
             operationInfo.accept(visitor);
@@ -70,7 +73,7 @@ public class ServiceInfo
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
-        if (operations.containsKey(name))
+        if (nameToOperation.containsKey(name))
         {
             throw new IllegalArgumentException("An operation with name [" + name + "] already exists in this service");
         }
@@ -87,7 +90,8 @@ public class ServiceInfo
      */
     void addOperation(OperationInfo operation)
     {
-        operations.put(operation.getName(), operation);
+        nameToOperation.put(operation.getName(), operation);
+        operations.add(operation);
     }
 
     /**
@@ -118,9 +122,22 @@ public class ServiceInfo
      */
     public OperationInfo getOperation(String name)
     {
-        return (OperationInfo) operations.get(name);
+        return (OperationInfo) nameToOperation.get(name);
     }
 
+    public Collection getOperations(String name)
+    {
+        List operations = new ArrayList();
+        for (Iterator itr = getOperations().iterator(); itr.hasNext();)
+        {
+            OperationInfo candidate = (OperationInfo) itr.next();
+            if (candidate.getName().equals(name))
+            {
+                operations.add(candidate);
+            }
+        }
+        return operations;
+    }
     /**
      * Returns all operations for this service.
      *
@@ -128,7 +145,7 @@ public class ServiceInfo
      */
     public Collection getOperations()
     {
-        return Collections.unmodifiableCollection(operations.values());
+        return Collections.unmodifiableCollection(operations);
     }
 
     /**
@@ -148,7 +165,7 @@ public class ServiceInfo
      */
     public void removeOperation(String name)
     {
-        operations.remove(name);
+        nameToOperation.remove(name);
     }
 
     public QName getPortType()
