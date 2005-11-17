@@ -1,11 +1,5 @@
 package org.codehaus.xfire.util.jdom;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.jdom.Attribute;
 import org.jdom.CDATA;
 import org.jdom.Comment;
@@ -16,21 +10,26 @@ import org.jdom.EntityRef;
 import org.jdom.Namespace;
 import org.jdom.Text;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.util.Iterator;
+import java.util.List;
+
 public class StaxSerializer
 {
     public void writeDocument(Document doc, XMLStreamWriter writer)
         throws XMLStreamException
     {
-        writer.writeStartDocument("1.0");        
+        writer.writeStartDocument("1.0");
 
         for (Iterator itr = doc.getContent().iterator(); itr.hasNext();)
         {
             Content content = (Content) itr.next();
-            
+
             if (content instanceof Element)
                 writeElement((Element) content, writer);
         }
-        
+
         writer.writeEndDocument();
     }
 
@@ -45,10 +44,10 @@ public class StaxSerializer
         String boundPrefix = writer.getPrefix(elUri);
         boolean writeElementNS = false;
         if ( boundPrefix == null || !elPrefix.equals(boundPrefix) )
-        {   
+        {
             writeElementNS = true;
         }
-        
+
         writer.writeStartElement(elPrefix, e.getName(), elUri);
 
         List namespaces = e.getAdditionalNamespaces();
@@ -58,12 +57,44 @@ public class StaxSerializer
 
             String prefix = ns.getPrefix();
             String uri = ns.getURI();
-            
+
             writer.writeNamespace(prefix, uri);
-            
+
             if (elUri.equals(uri) && elPrefix.equals(prefix))
             {
                 writeElementNS = false;
+            }
+        }
+
+        for (Iterator itr = e.getAttributes().iterator(); itr.hasNext();)
+        {
+            Attribute attr = (Attribute) itr.next();
+            String attPrefix= attr.getNamespacePrefix();
+            String attUri = attr.getNamespaceURI();
+
+            if (attUri == null)
+            {
+                writer.writeAttribute(attr.getName(), attr.getValue());
+            }
+            else
+            {
+                writer.writeAttribute(attPrefix, attUri, attr.getName(), attr.getValue());
+
+                if (!isDeclared(writer, attPrefix, attUri))
+                {
+                    if( elUri.equals( attUri ) && elPrefix.equals( attPrefix ) )
+                    {
+                        if( writeElementNS )
+                        {
+                            writer.writeNamespace( attPrefix, attUri );
+                            writeElementNS = false;
+                        }
+                    }
+                    else
+                    {
+                        writer.writeNamespace( attPrefix, attUri );
+                    }
+                }
             }
         }
 
@@ -76,27 +107,6 @@ public class StaxSerializer
             else
             {
                 writer.writeNamespace(elPrefix, elUri);
-            }
-        }
-        
-        for (Iterator itr = e.getAttributes().iterator(); itr.hasNext();)
-        {
-            Attribute attr = (Attribute) itr.next();
-            String attPrefix= attr.getNamespacePrefix();
-            String attUri = attr.getNamespaceURI();
-            
-            if (attUri == null)
-            {
-                writer.writeAttribute(attr.getName(), attr.getValue());
-            }
-            else
-            {
-                writer.writeAttribute(attPrefix, attUri, attr.getName(), attr.getValue());
-                
-                if (!isDeclared(writer, attPrefix, attUri))
-                {
-                    writer.writeNamespace(attPrefix, attUri);
-                }
             }
         }
 
