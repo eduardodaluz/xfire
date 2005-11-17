@@ -51,49 +51,27 @@ public class WrappedBinding
         if ( !STAXUtils.toNextElement(dr) )
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
-        MessageInfo msgInfo = null;
-        if (isClientModeOn())
+        OperationInfo op = context.getExchange().getOperation();
+        List operations = null;
+        if (!isClientModeOn() && op == null)
         {
-            OperationInfo op = context.getExchange().getOperation();
-            
-            msgInfo = op.getOutputMessage();
-        }
-        else
-        {
-            if (context.getExchange().getOperation() == null)
+            operations = new ArrayList();
+            for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
             {
-                OperationInfo op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
-                
-                if (op == null)
+                OperationInfo candidate = (OperationInfo) itr.next();
+                if (candidate.getName().equals(dr.getLocalName()))
                 {
-                    throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
+                    operations.add(candidate);
                 }
-        
-                setOperation(op, context);
             }
-            
-            msgInfo = context.getExchange().getOperation().getInputMessage();
         }
         
         // Move from Operation element to whitespace or start element
         nextEvent(dr);
-
-        while(STAXUtils.toNextElement(dr))
-        {
-            MessagePartInfo p = msgInfo.getMessagePart(dr.getName());
-
-            if (p == null)
-            {
-                throw new XFireFault("Parameter " + dr.getName() + " does not exist!", 
-                                     XFireFault.SENDER);
-            }
-
-            parameters.add( getBindingProvider().readParameter(p, inMessage.getXMLStreamReader(), context) );
-        }
         
-        inMessage.setBody(parameters);
+        read(inMessage, context, operations);
     }
-    
+
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {

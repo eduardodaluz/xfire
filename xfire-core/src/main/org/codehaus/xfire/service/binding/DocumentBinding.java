@@ -1,13 +1,10 @@
 package org.codehaus.xfire.service.binding;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.wsdl.Message;
 import javax.wsdl.Part;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
@@ -19,8 +16,6 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
@@ -38,33 +33,8 @@ public class DocumentBinding
     {
         Service endpoint = context.getService();
         
-        List parameters = new ArrayList();
-        DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
-        
-        while (STAXUtils.toNextElement(dr))
-        {
-            MessagePartInfo p = findMessagePart(endpoint, dr.getName());
-            
-            if (p == null)
-            {
-                throw new XFireFault("Parameter " + dr.getName() + " does not exist!", 
-                                     XFireFault.SENDER);
-            }
-
-            parameters.add( getBindingProvider().readParameter(p, dr, context) );
-        }
-
-        if (!isClientModeOn())
-        {
-            OperationInfo info = findOperation(endpoint, parameters);
-
-            if (info == null)
-                throw new XFireFault("Could not find appropriate operation!", XFireFault.SENDER);
-            
-            setOperation(info, context);
-        }
-        
-        context.getInMessage().setBody(parameters);
+        Collection operations = endpoint.getServiceInfo().getOperations();
+        read(inMessage, context, operations);
     }
 
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
@@ -93,84 +63,6 @@ public class DocumentBinding
         }
     }
 
-    protected OperationInfo findOperation(Service endpoint, List parameters)
-    {
-        for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
-        {
-            OperationInfo o = (OperationInfo) itr.next();
-            List messageParts = o.getInputMessage().getMessageParts();
-            if ( messageParts.size() == parameters.size() )
-            {
-                if (checkParameters(messageParts, parameters))
-                    return o;
-            }
-        }
-        
-        return null;
-    }
-
-    private boolean checkParameters(List messageParts, List parameters)
-    {
-        Iterator messagePartIterator = messageParts.iterator();
-        for (Iterator parameterIterator = parameters.iterator(); parameterIterator.hasNext();)
-        {
-            Object param = parameterIterator.next();
-            MessagePartInfo mpi = (MessagePartInfo) messagePartIterator.next();
-            
-            if (!mpi.getTypeClass().isAssignableFrom(param.getClass()))
-            {
-                if (!param.getClass().isPrimitive() && mpi.getTypeClass().isPrimitive())
-                {
-                    return checkPrimitiveMatch(mpi.getTypeClass(), param.getClass());
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean checkPrimitiveMatch(Class clazz, Class typeClass)
-    {
-        if ((typeClass == Integer.class && clazz == int.class) ||
-                (typeClass == Double.class && clazz == double.class) ||
-                (typeClass == Long.class && clazz == long.class) ||
-                (typeClass == Float.class && clazz == float.class) ||
-                (typeClass == Short.class && clazz == short.class) ||
-                (typeClass == Boolean.class && clazz == boolean.class) ||
-                (typeClass == Byte.class && clazz == byte.class))
-            return true;
-        
-        return false;
-    }
-
-    protected MessagePartInfo findMessagePart(Service endpoint, QName name)
-    {
-
-        for ( Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext(); )
-        {
-            OperationInfo op = (OperationInfo) itr.next();
-            MessageInfo msgInfo = null;
-            if (isClientModeOn())
-            {
-                msgInfo = op.getOutputMessage();
-            }
-            else
-            {
-                msgInfo = op.getInputMessage();
-            }
-
-            MessagePartInfo p = msgInfo.getMessagePart(name);
-
-            if ( p != null )
-                return p;
-        }
-        return null;
-    }
-    
-    
     public void createInputParts(WSDLBuilder builder,
                                  Message req, 
                                  OperationInfo op)
