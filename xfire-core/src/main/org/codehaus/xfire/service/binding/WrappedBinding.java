@@ -52,16 +52,23 @@ public class WrappedBinding
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
         OperationInfo op = context.getExchange().getOperation();
-        Collection operations = null;
+
         if (!isClientModeOn() && op == null)
         {
-            operations = endpoint.getServiceInfo().getOperations(dr.getLocalName());
+            op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
+            
+            if (op == null)
+            {
+                throw new XFireFault("Invalid operation: " + dr.getName(), XFireFault.SENDER);
+            }
+
+            setOperation(op, context);
         }
         
         // Move from Operation element to whitespace or start element
         nextEvent(dr);
         
-        read(inMessage, context, operations);
+        read(inMessage, context, null);
     }
 
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
