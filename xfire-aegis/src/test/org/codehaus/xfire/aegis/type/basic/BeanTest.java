@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis.type.basic;
 
+import java.util.Date;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -170,6 +172,31 @@ public class BeanTest
         assertValid("//xsd:complexType[@name='bean']/xsd:attribute[@name='howdy']", schema);
         assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='bleh']", schema);
     }
+    
+    public void testNullNonNillableWithDate()
+        throws Exception
+    {
+        BeanTypeInfo info = new BeanTypeInfo(DateBean.class);
+        info.setTypeMapping(mapping);
+        
+        BeanType type = new BeanType(info);
+        type.setTypeClass(DateBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:Bean", "bean"));
+    
+        DateBean bean = new DateBean();
+        
+        // Test writing
+        Element element = new Element("root", "b", "urn:Bean");
+        Document doc = new Document(element);
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
+
+        // Make sure the date doesn't have an element. Its non nillable so it just
+        // shouldn't be there.
+        assertInvalid("/b:root/b:date", element);
+        assertValid("/b:root", element);
+    }
+        
     /*
     public void testNonDefaultNames()
         throws Exception
@@ -236,6 +263,21 @@ public class BeanTest
         assertFalse(type.getTypeInfo().getElements().hasNext());
     }
     
+    public static class DateBean
+    {
+        private Date date;
+
+        public Date getDate() 
+        {
+            return date;
+        }
+
+        public void setDate(Date date) 
+        {
+            this.date = date;
+        }
+    }
+
     // This class only has a read property, no write
     public static class GoodBean
     {

@@ -178,35 +178,44 @@ public class BeanType
             
             Type type = getType( info, name );
             MessageWriter cwriter;
-            
-            // Write the outer element
-            if (type.isAbstract())
-            {
-                cwriter = writer.getElementWriter(name, getSchemaType().getNamespaceURI());
-            }
-            else
-            {
-                cwriter = writer.getElementWriter(name, type.getSchemaType().getNamespaceURI());
-            }
 
             // Write the value if it is not null.
             if ( value != null)
             {
+                cwriter = cwriter = getWriter(writer, name, type);
+                
                 if ( type == null )
                     throw new XFireRuntimeException( "Couldn't find type for " + value.getClass() + " for property " + name );
 
                 type.writeObject(value, cwriter, context);
+                
+                cwriter.close();
             }
             else if (info.isNillable(name))
             {
+                cwriter = getWriter(writer, name, type);
+                
                 // Write the xsi:nil if it is null.
                 MessageWriter attWriter = cwriter.getAttributeWriter("nil", SoapConstants.XSI_NS);
                 attWriter.writeValue("true");
                 attWriter.close();
+                
+                cwriter.close();
             }
-            
-            cwriter.close();
         }
+    }
+
+    private MessageWriter getWriter(MessageWriter writer, String name, Type type) {
+        MessageWriter cwriter;
+        if (type.isAbstract())
+        {
+            cwriter = writer.getElementWriter(name, getSchemaType().getNamespaceURI());
+        }
+        else
+        {
+            cwriter = writer.getElementWriter(name, type.getSchemaType().getNamespaceURI());
+        }
+        return cwriter;
     }
 
     protected Object readProperty(Object object, String name)
