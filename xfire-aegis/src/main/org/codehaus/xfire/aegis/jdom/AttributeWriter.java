@@ -10,10 +10,7 @@ public class AttributeWriter
     extends AbstractMessageWriter
 {
     private Attribute att;
-    private String namespace;
-    private String name;
-    private String prefix;
-    
+
     public AttributeWriter(Attribute att)
     {
         this.att = att;

@@ -64,10 +64,7 @@ public class JDOMWriter
 
     public MessageWriter getAttributeWriter(String name)
     {
-        Attribute att = new Attribute(name,
-                                      "",
-                                      Namespace.getNamespace(element.getNamespacePrefix(), 
-                                                             element.getNamespaceURI()));
+        Attribute att = new Attribute(name, "", element.getNamespace());
         element.setAttribute(att);
         return new AttributeWriter(att);
     }
