@@ -113,7 +113,11 @@ public class StaxSerializer
         for (Iterator itr = e.getContent().iterator(); itr.hasNext();)
         {
             Content n = (Content) itr.next();
-            if (n instanceof Text)
+            if (n instanceof CDATA)
+            {
+                writer.writeCData(n.getValue());
+            }
+            else if (n instanceof Text)
             {
                 writer.writeCharacters(((Text) n).getText());
             }
@@ -124,10 +128,6 @@ public class StaxSerializer
             else if (n instanceof Comment)
             {
                 writer.writeComment(n.getValue());
-            }
-            else if (n instanceof CDATA)
-            {
-                writer.writeCData(n.getValue());
             }
             else if (n instanceof EntityRef)
             {
