@@ -52,18 +52,10 @@ public class WrappedBinding
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
         OperationInfo op = context.getExchange().getOperation();
-        List operations = null;
+        Collection operations = null;
         if (!isClientModeOn() && op == null)
         {
-            operations = new ArrayList();
-            for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
-            {
-                OperationInfo candidate = (OperationInfo) itr.next();
-                if (candidate.getName().equals(dr.getLocalName()))
-                {
-                    operations.add(candidate);
-                }
-            }
+            operations = endpoint.getServiceInfo().getOperations(dr.getLocalName());
         }
         
         // Move from Operation element to whitespace or start element
