@@ -1,9 +1,7 @@
 package org.codehaus.xfire.service.binding;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.wsdl.Message;
 import javax.wsdl.Part;
@@ -45,7 +43,6 @@ public class WrappedBinding
     {
         Service endpoint = context.getService();
         
-        List parameters = new ArrayList();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
 
         if ( !STAXUtils.toNextElement(dr) )
@@ -80,9 +77,9 @@ public class WrappedBinding
             Object[] values = (Object[]) message.getBody();
             
             OperationInfo op = context.getExchange().getOperation();
-            String name = null;
+            String name;
             
-            MessageInfo msgInfo = null;
+            MessageInfo msgInfo;
             if (isClientModeOn())
             {
                 name = op.getName();
@@ -185,10 +182,6 @@ public class WrappedBinding
         return new QName(builder.getTargetNamespace(), opName);
     }
 
-    /**
-     * @param op
-     * @param sequence
-     */
     private void writeParametersSchema(WSDLBuilder builder,
                                        Collection params, 
                                        Element sequence)
@@ -218,11 +211,11 @@ public class WrappedBinding
                 element.setAttribute(new Attribute("name", pName.getLocalPart()));
                 
                 element.setAttribute(new Attribute("type", 
-                                                   prefix + ":" + schemaType.getLocalPart()));
+                                                   prefix + ':' + schemaType.getLocalPart()));
             }
             else
             {
-                element.setAttribute(new Attribute("ref",  prefix + ":" + schemaType.getLocalPart()));
+                element.setAttribute(new Attribute("ref",  prefix + ':' + schemaType.getLocalPart()));
             }
 
             element.setAttribute(new Attribute("minOccurs", "1"));
