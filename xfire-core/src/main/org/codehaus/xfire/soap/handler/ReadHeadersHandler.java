@@ -1,11 +1,5 @@
 package org.codehaus.xfire.soap.handler;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
@@ -15,6 +9,11 @@ import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.jdom.Element;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReadHeadersHandler
     extends AbstractHandler
@@ -48,7 +47,6 @@ public class ReadHeadersHandler
                     message.setEncoding(encoding);
                     break;
                 case XMLStreamReader.END_DOCUMENT:
-                    end = true;
                     return;
                 case XMLStreamReader.END_ELEMENT:
                     break;
@@ -116,8 +114,6 @@ public class ReadHeadersHandler
             event = reader.next();
         }
         while (event == XMLStreamReader.SPACE);
-        
-        return;
     }
 
     /**
@@ -132,8 +128,10 @@ public class ReadHeadersHandler
         StaxBuilder builder = new StaxBuilder();
 
         InMessage msg = context.getInMessage();
-        Element header = builder.build(new FragmentStreamReader(msg.getXMLStreamReader())).getRootElement();
+        FragmentStreamReader fsr = new FragmentStreamReader( msg.getXMLStreamReader() );
+        fsr.setAdvanceAtEnd( false );
+        Element header = builder.build( fsr ).getRootElement();
 
-        context.getInMessage().setHeader(header);
+        context.getInMessage().setHeader( header );
     }
 }
