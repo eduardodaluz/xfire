@@ -74,8 +74,6 @@ public class XmlBeansWSDLBuilder
             
             schema = builder.build(new FragmentStreamReader(obj.newXMLStreamReader())).getRootElement();
             
-            schemas.put(name, schema);
-            
             String ns = xbeanType.getSchemaType().getNamespaceURI();
             String expr = "//xsd:schema[@targetNamespace='" + ns + "']";
 
@@ -85,7 +83,10 @@ public class XmlBeansWSDLBuilder
                 return null;
             }
             
-            return (Element) nodes.get(0);
+            schema = (Element) nodes.get(0);
+            schemas.put(name, schema);
+            
+            return schema;
         }
         catch (Exception e)
         {
