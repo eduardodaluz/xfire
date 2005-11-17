@@ -1,5 +1,6 @@
 package org.codehaus.xfire.transport.http;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
@@ -57,18 +58,29 @@ public class XFireConfigurableServlet
         
         useNewConfig = Boolean.valueOf(useNewConfigStr).booleanValue();
         configPath = getInitParameter(PARAM_CONFIG);
+        Enumeration en ;
         
         try
         {
+            
             log.debug("Searching for  "+getConfigPath());
+            en = getClass().getClassLoader().getResources(getConfigPath());
+            if( !en.hasMoreElements()){
+                log.warn("Can't find any configuration file : "+ getConfigPath());
+            }
+            
             if (!useNewConfig)
             {
                 super.init();
-                configureXFire();
+                configureXFire(en);
             }
             else
             {
-                configureXFireNew();
+                if( en.hasMoreElements()){
+                  configureXFireNew();
+                }else{
+                    xfire = createXFire();
+                }
                 controller = createController();
             }
 
@@ -84,12 +96,11 @@ public class XFireConfigurableServlet
     /**
      * @throws Exception
      */
-    protected void configureXFire()
+    protected void configureXFire(Enumeration en)
         throws Exception
     {
 
         XMLServiceBuilder builder = new XMLServiceBuilder(getXFire());
-        Enumeration en = getClass().getClassLoader().getResources(getConfigPath());
         
         while (en.hasMoreElements())
         {
@@ -104,7 +115,9 @@ public class XFireConfigurableServlet
     protected void configureXFireNew()
         throws Exception
     {
-        XFireConfigLoader loader = new XFireConfigLoader();
-        xfire = loader.loadConfig(getConfigPath());
+        
+          XFireConfigLoader loader = new XFireConfigLoader();
+          xfire = loader.loadConfig(getConfigPath());
+        
     }
 }
