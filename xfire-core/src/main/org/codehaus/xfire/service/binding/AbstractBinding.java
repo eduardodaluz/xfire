@@ -125,7 +125,7 @@ public abstract class AbstractBinding
 
         if (context.getExchange().hasOutMessage())
         {
-            OutMessage outMsg = (OutMessage) context.getExchange().getOutMessage();
+            OutMessage outMsg = context.getExchange().getOutMessage();
             outMsg.setBody(new Object[] {value});
             outMsg.setSerializer(context.getService().getBinding());
             context.getOutPipeline().invoke(context);
@@ -257,7 +257,24 @@ public abstract class AbstractBinding
             opInfo = findOperation(operations, parameters);
 
             if (opInfo == null)
-                throw new XFireFault("Could not find appropriate operation!", XFireFault.SENDER);
+            {
+                StringBuffer sb = new StringBuffer("Could not find appropriate operation for request ");
+                //we know we have at least one operation, right?
+                sb.append(((OperationInfo)operations.iterator().next()).getName());
+                sb.append('(');
+                for(Iterator iterator = parameters.iterator(); iterator.hasNext();)
+                {
+                    sb.append(iterator.next().getClass().getName());
+                    if(iterator.hasNext())
+                    {
+                        sb.append(", ");
+                    }
+                }
+                sb.append(") in service '");
+                sb.append(context.getService().getName());
+                sb.append('\'');
+                throw new XFireFault(sb.toString(), XFireFault.SENDER);
+            }
             
             setOperation(opInfo, context);
         }
