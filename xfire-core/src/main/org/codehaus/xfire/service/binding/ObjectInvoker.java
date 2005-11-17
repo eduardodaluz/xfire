@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Session;
@@ -91,7 +92,7 @@ public class ObjectInvoker
         }
         catch (IllegalArgumentException e)
         {
-            throw new XFireFault("Illegal argument. " + e.getMessage(), e, XFireFault.SENDER);
+            throw new XFireFault("Illegal argument invoking '" + ServiceUtils.getMethodName(method) + "': " + e.getMessage(), e, XFireFault.SENDER);
         }
         catch (InvocationTargetException e)
         {
@@ -103,18 +104,18 @@ public class ObjectInvoker
             }
             else if (t instanceof Exception)
             {
-                logger.warn("Error invoking service.", t);
+                logger.warn("Error invoking '" + method + '\'', t);
                 throw new XFireFault(t, XFireFault.SENDER);
             }
             else
             {
-                logger.warn("Error invoking service.", e);
-                throw new XFireRuntimeException("Error invoking service.", e);
+                logger.warn("Error invoking '" + ServiceUtils.getMethodName(method) + '\'', e);
+                throw new XFireRuntimeException("Error invoking '" + ServiceUtils.getMethodName(method) + '\'', e);
             }
         }
         catch (IllegalAccessException e)
         {
-            throw new XFireFault("Couldn't access service object. " + e.getMessage(), e, XFireFault.RECEIVER);
+            throw new XFireFault("Couldn't access service object to invoke '" + ServiceUtils.getMethodName(method) + "': " + e.getMessage(), e, XFireFault.RECEIVER);
         }
     }
 
