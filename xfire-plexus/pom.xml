@@ -1,53 +1,47 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.codehaus.xfire</groupId>
-	  <artifactId>xfire-parent</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.codehaus.xfire</groupId>
+        <artifactId>xfire-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>xfire-plexus</artifactId>
+    <name>XFire Plexus</name>
     <version>1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>xfire-plexus</artifactId>
-  <name>XFire Plexus</name>
-  <version>1.0-SNAPSHOT</version>
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-annotations</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-aegis</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-xmpp</artifactId>
-      <scope>compile</scope>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <!-- plexus stuff -->
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-6</version>
-    </dependency>
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-servlet</artifactId>
-      <version>1.0-beta-2</version>
-        <exclusions>
-            <exclusion>
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-annotations</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-aegis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-xmpp</artifactId>
+            <scope>compile</scope>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- plexus stuff -->
+        <dependency>
             <groupId>plexus</groupId>
             <artifactId>plexus-container-default</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-  </dependencies>
+            <version>1.0-alpha-6</version>
+        </dependency>
+        <dependency>
+            <groupId>plexus</groupId>
+            <artifactId>plexus-servlet</artifactId>
+            <version>1.0-beta-2</version>
+        </dependency>
+    </dependencies>
 </project>

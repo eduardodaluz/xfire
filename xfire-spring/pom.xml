@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -13,45 +12,138 @@
     <dependencies>
         <dependency>
             <groupId>org.codehaus.xfire</groupId>
-            <artifactId>xfire-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.xfire</groupId>
-            <artifactId>xfire-aegis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.xfire</groupId>
             <artifactId>xfire-annotations</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.xfire</groupId>
             <artifactId>xfire-xmlbeans</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-context</artifactId>
             <version>1.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>1.2.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>jstl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>struts</groupId>
+                    <artifactId>struts</artifactId>
+
+                </exclusion>
+                <exclusion>
+                    <groupId>com.servlets</groupId>
+                    <artifactId>cos</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>taglibs</groupId>
+                    <artifactId>standard</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.faces</groupId>
+                    <artifactId>jsf-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-remoting</artifactId>
+            <version>1.2.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.ejb</groupId>
+                    <artifactId>ejb</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.xml</groupId>
+                    <artifactId>jaxrpc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>springframework</groupId>
+                    <artifactId>spring-dao</artifactId>
+
+                </exclusion>
+                <exclusion>
+                    <groupId>springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-mock</artifactId>
+            <version>1.2.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>xbean</groupId>
             <artifactId>xbean-spring</artifactId>
             <version>2.0</version>
         </dependency>
-        <dependency>
-            <groupId>springframework</groupId>
-            <artifactId>spring-mock</artifactId>
-            <version>1.2.5</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>springframework</groupId>
-                    <artifactId>spring-jdbc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test</directory>
+            </testResource>
+            <testResource>
+                <directory>target/test-generated</directory>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef classname="org.xbean.spring.generator.MappingGeneratorTask" name="mapping">
+                                    <classpath>
+                                        <pathelement path="${basedir}/target/classes"></pathelement>
+                                        <pathelement path="${basedir}/target/test-classes"></pathelement>
+                                        <path refid="maven.dependency.classpath"></path>
+                                    </classpath>
+                                </taskdef>
+                                <mapping namespace="http://xfire.codehaus.org/config/1.0" srcdir="src/main"
+                                         destFile="target/test-generated/services.xsd"
+                                         metaInfDir="${basedir}/target/test-generated/"></mapping>
+                                <copy todir="${basedir}/target/classes">
+                                    <fileset dir="${basedir}/target/test-generated"></fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
 </project>
