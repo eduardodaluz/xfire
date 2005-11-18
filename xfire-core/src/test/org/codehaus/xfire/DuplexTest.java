@@ -16,13 +16,13 @@ public class DuplexTest
     public void testPeer1() throws Exception
     {
         LocalTransport transport = new LocalTransport();
-        Channel channel1 = transport.createChannel("urn:xfire:local:Peer1");
+        Channel channel1 = transport.createChannel("urn:xfire:local://Peer1");
         channel1.open();
         
-        Channel channel2 = transport.createChannel("urn:xfire:local:Peer2");
+        Channel channel2 = transport.createChannel("urn:xfire:local://Peer2");
         JDOMEndpoint endpoint = new JDOMEndpoint();
         channel2.setEndpoint(endpoint);
-        
+
         // Document to send
         Element root = new Element("root");
         root.addContent("hello");
@@ -30,7 +30,7 @@ public class DuplexTest
         
         MessageContext context = new MessageContext();
         
-        OutMessage msg = new OutMessage("urn:xfire:local:Peer2");
+        OutMessage msg = new OutMessage("urn:xfire:local://Peer2");
         msg.setSerializer(new JDOMSerializer());
         msg.setBody(doc);
         
