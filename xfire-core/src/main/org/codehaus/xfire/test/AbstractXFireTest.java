@@ -9,12 +9,11 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
-
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
@@ -28,6 +27,7 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.MapSession;
 import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
@@ -57,7 +57,7 @@ public abstract class AbstractXFireTest
      * Namespaces for the XPath expressions.
      */
     private Map namespaces = new HashMap();
-    private SimpleSession session;
+    private MapSession session;
 
     protected void printNode(Document node)
         throws Exception
@@ -84,35 +84,46 @@ public abstract class AbstractXFireTest
     protected Document invokeService(String service, String document)
             throws Exception
     {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MessageContext context = new MessageContext();
+		InputStream stream = getResourceAsStream(document);
+		return invokeService( service, STAXUtils.createXMLStreamReader( stream, "UTF-8" ) );
+	}
+
+	/**
+	 * Invoke a service with the specified document.
+	 *
+	 * @param service  The name of the service.
+	 * @param streamReader Stream representing incoming message
+	 */
+	protected Document invokeService( String service, XMLStreamReader streamReader ) throws Exception
+	{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		MessageContext context = new MessageContext();
 		context.setSession( session );
 		context.setXFire(getXFire());
-        context.setProperty(Channel.BACKCHANNEL_URI, out);
+		context.setProperty( Channel.BACKCHANNEL_URI, out );
 
-        if (service != null)
-            context.setService(getServiceRegistry().getService(service));
-        
-        InputStream stream = getResourceAsStream(document); 
-        InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(stream, "UTF-8"));
+		if (service != null)
+			context.setService(getServiceRegistry().getService(service));
 
-        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
-        Channel c = t.createChannel();
-        
-        c.receive(context, msg);
-        
-        String response = out.toString();
-        if (response == null || response.length() == 0)
-            return null;
+		InMessage msg = new InMessage(streamReader);
 
-        return readDocument(response);
-    }
+		Transport t = getXFire().getTransportManager().getTransport( LocalTransport.BINDING_ID );
+		Channel c = t.createChannel();
 
-    protected Document readDocument(String text)
-            throws XMLStreamException
-    {
-        return readDocument(text, defaultInputFactory);
-    }
+		c.receive(context, msg);
+
+		String response = out.toString();
+		if (response == null || response.length() == 0)
+			return null;
+
+		return readDocument(response);
+	}
+
+	protected Document readDocument(String text)
+			throws XMLStreamException
+	{
+		return readDocument(text, defaultInputFactory);
+	}
 
     protected Document readDocument(String text, XMLInputFactory ifactory)
             throws XMLStreamException
@@ -159,7 +170,7 @@ public abstract class AbstractXFireTest
 
     protected void createSession()
     {
-        session = new SimpleSession();
+        session = new MapSession();
     }
 
     /**
@@ -296,16 +307,4 @@ public abstract class AbstractXFireTest
         return basedirPath;
     }
 
-    private static class SimpleSession implements Session
-    {
-        Map values = new HashMap();
-
-        public Object get( Object key ) {
-            return values.get( key );
-        }
-
-        public void put( Object key, Object value ) {
-            values.put( key, value );
-        }
-    }
 }
