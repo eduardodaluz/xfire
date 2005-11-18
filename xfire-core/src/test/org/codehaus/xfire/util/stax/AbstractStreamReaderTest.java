@@ -9,7 +9,7 @@ import org.codehaus.xfire.test.AbstractXFireTest;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Oct 26, 2004
  */
-public class AbstractStreamReaderTest
+public abstract class AbstractStreamReaderTest
     extends AbstractXFireTest
 {
     public void testSingleElement(XMLStreamReader reader) throws Exception
