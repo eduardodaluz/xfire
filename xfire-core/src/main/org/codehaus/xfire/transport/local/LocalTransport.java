@@ -5,28 +5,51 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultEndpoint;
+import org.codehaus.xfire.transport.MapSession;
+import org.codehaus.xfire.transport.Session;
 
 /**
  * A transport which passes messages via the JVM.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class LocalTransport
     extends AbstractTransport
 {
-    private static final Log log = LogFactory.getLog(LocalTransport.class);
-    
+    private static final Log log = LogFactory.getLog( LocalTransport.class );
+
     public final static String BINDING_ID = "urn:xfire:transport:local";
     public final static String URI_PREFIX = "xfire.local://";
-    
-    protected Channel createNewChannel(String uri)
+
+    private Session session;
+    private boolean maintainSession;
+
+    protected Channel createNewChannel( String uri )
     {
-        log.debug("Creating new channel for uri: " + uri);
-        
-        LocalChannel c = new LocalChannel(uri, this);
-        c.setEndpoint(new DefaultEndpoint());
+        log.debug( "Creating new channel for uri: " + uri );
+
+        LocalChannel c = new LocalChannel( uri, this, session );
+        c.setEndpoint( new DefaultEndpoint() );
 
         return c;
+    }
+
+    public void setMaintainSession( boolean maintainSession )
+    {
+        this.maintainSession = maintainSession;
+        resetSession();
+    }
+
+    public void resetSession()
+    {
+        if( maintainSession )
+        {
+            session = new MapSession();
+        }
+        else
+        {
+            session = null;
+        }
     }
 
     protected String getUriPrefix()
@@ -36,11 +59,11 @@ public class LocalTransport
 
     public String[] getSupportedBindings()
     {
-        return new String[] { BINDING_ID };
+        return new String[]{ BINDING_ID };
     }
 
     public String[] getKnownUriSchemes()
     {
-        return new String[] { URI_PREFIX };
+        return new String[]{ URI_PREFIX };
     }
 }
