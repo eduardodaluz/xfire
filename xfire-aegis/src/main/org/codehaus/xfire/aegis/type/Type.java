@@ -1,7 +1,6 @@
 package org.codehaus.xfire.aegis.type;
 
 import java.util.Set;
-
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -103,7 +102,7 @@ public abstract class Type
      * Return a set of Type dependencies.  Returns null if this type
      * has no dependencies.
      * 
-     * @return
+     * @return Set of <code>Type</code> dependencies
      */
     public Set getDependencies()
     {
