@@ -21,6 +21,8 @@ public interface MessageReader
     public float getValueAsFloat();
 
 	public boolean getValueAsBoolean();
+
+    public MessageReader getAttributeReader( QName qName );
     
     public boolean hasMoreAttributeReaders();
     
@@ -34,13 +36,15 @@ public interface MessageReader
     
     /**
      * Get the local name of the element this reader represents.
-     * @return
+     * @return Local Name
      */
     public String getLocalName();
 
     /**
-     * @return
+     * @return Namespace
      */
     public String getNamespace();
+
+    public String getNamespaceForPrefix( String prefix );
 
 }
