@@ -1,13 +1,13 @@
 package org.codehaus.xfire.aegis.type;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
@@ -22,10 +22,12 @@ import org.codehaus.xfire.aegis.type.basic.DoubleType;
 import org.codehaus.xfire.aegis.type.basic.FloatType;
 import org.codehaus.xfire.aegis.type.basic.IntType;
 import org.codehaus.xfire.aegis.type.basic.LongType;
+import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.aegis.type.basic.ShortType;
 import org.codehaus.xfire.aegis.type.basic.StringType;
 import org.codehaus.xfire.aegis.type.basic.TimeType;
 import org.codehaus.xfire.aegis.type.basic.TimestampType;
+import org.codehaus.xfire.aegis.type.basic.URIType;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.ClassLoaderUtils;
@@ -42,19 +44,20 @@ public class DefaultTypeMappingRegistry
 {
     private static final Log logger = LogFactory.getLog(DefaultTypeMappingRegistry.class);
     
-    protected static final QName XSD_STRING = new QName(SoapConstants.XSD, "string");
-    protected static final QName XSD_LONG = new QName(SoapConstants.XSD, "long");
-    protected static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float");
-    protected static final QName XSD_DOUBLE = new QName(SoapConstants.XSD, "double");
-    protected static final QName XSD_INT = new QName(SoapConstants.XSD, "int");
-    protected static final QName XSD_SHORT = new QName(SoapConstants.XSD, "short");
-    protected static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean");
-    protected static final QName XSD_DATETIME = new QName(SoapConstants.XSD, "dateTime");
-    protected static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime");
-    protected static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary");
-    protected static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal");
+    protected static final QName XSD_STRING = new QName(SoapConstants.XSD, "string",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_LONG = new QName(SoapConstants.XSD, "long",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_DOUBLE = new QName(SoapConstants.XSD, "double",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_INT = new QName(SoapConstants.XSD, "int",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_SHORT = new QName(SoapConstants.XSD, "short",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_DATETIME = new QName(SoapConstants.XSD, "dateTime",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal",SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_URI = new QName(SoapConstants.XSD, "anyURI",SoapConstants.XSD_PREFIX);
 
-    protected static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType");
+    protected static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType",SoapConstants.XSD_PREFIX);
 
     protected static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
     protected static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
@@ -116,7 +119,7 @@ public class DefaultTypeMappingRegistry
      */
     public String[] getRegisteredEncodingStyleURIs()
     {
-        return (String[]) registry.keySet().toArray(new String[0]);
+        return (String[]) registry.keySet().toArray(new String[registry.size()]);
     }
 
     /**
@@ -251,7 +254,9 @@ public class DefaultTypeMappingRegistry
         tm.register(Calendar.class, XSD_DATETIME, new CalendarType());
         tm.register(byte[].class, XSD_BASE64, new Base64Type());
         tm.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        tm.register(URI.class, XSD_URI, new URIType());
         tm.register(Document.class, XSD_ANY, new DocumentType());
+        tm.register(Object.class, XSD_ANY, new ObjectType());
 
         register(SoapConstants.XSD, tm);
         registerDefault(tm);
@@ -296,7 +301,9 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Calendar.class, XSD_DATETIME, new CalendarType());
         soapTM.register(byte[].class, XSD_BASE64, new Base64Type());
         soapTM.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
-        soapTM.register(Document.class, XSD_ANY, new DocumentType());
+		soapTM.register(URI.class, XSD_URI, new URIType());
+		soapTM.register(Document.class, XSD_ANY, new DocumentType());
+		soapTM.register(Object.class, XSD_ANY, new ObjectType());
 
         register(ENCODED_NS, soapTM);
 
