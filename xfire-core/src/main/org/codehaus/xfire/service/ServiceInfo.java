@@ -31,7 +31,7 @@ public class ServiceInfo
     private Class serviceClass;
     private QName portType;
     private Map endpoints = new HashMap();
-    
+
     /**
      * Initializes a new instance of the <code>ServiceInfo</code> class with the given qualified name and service
      * class.
@@ -93,7 +93,7 @@ public class ServiceInfo
     {
         nameToOperation.put(operation.getName(), operation);
         operations.add(operation);
-        
+
         if (operation.getMethod() != null)
             methodToOperation.put(operation.getMethod(), operation);
     }
@@ -155,7 +155,7 @@ public class ServiceInfo
     /**
      * Returns the service class of the service descriptor.
      *
-     * @return
+     * @return Service Class
      */
     public Class getServiceClass()
     {
