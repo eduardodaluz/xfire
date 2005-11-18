@@ -1,7 +1,6 @@
 package org.codehaus.xfire.aegis.jdom;
 
 import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
@@ -10,6 +9,7 @@ import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.stax.AttributeReader;
 import org.jdom.Attribute;
 import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class JDOMReader
     extends AbstractMessageReader
@@ -79,11 +79,24 @@ public class JDOMReader
         return (currentAttribute < element.getAttributes().size());
     }
 
+    public MessageReader getAttributeReader( QName qName )
+    {
+        return new AttributeReader( qName,
+                                    element.getAttributeValue( qname.getLocalPart(),
+                                                               Namespace.getNamespace( qName.getNamespaceURI() ) ) );
+    }
+
     public MessageReader getNextAttributeReader()
     {
         currentAttribute++;
         Attribute att = (Attribute) element.getAttributes().get(currentAttribute);
         
         return new AttributeReader(new QName(att.getNamespaceURI(), att.getName()), att.getValue());
+    }
+
+    public String getNamespaceForPrefix( String prefix )
+    {
+        Namespace namespace = element.getNamespace( prefix );
+        return null == namespace ? null : namespace.getURI();
     }
 }

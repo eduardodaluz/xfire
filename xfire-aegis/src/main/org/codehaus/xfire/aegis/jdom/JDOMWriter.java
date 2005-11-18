@@ -57,6 +57,11 @@ public class JDOMWriter
         return new JDOMWriter(child);
     }
 
+    public String getPrefixForNamespace( String namespace )
+    {
+        return NamespaceHelper.getUniquePrefix(element, namespace);
+    }
+
     public XMLStreamWriter getXMLStreamWriter()
     {
         throw new UnsupportedOperationException("Stream writing not supported from a JDOMWriter.");
@@ -71,7 +76,7 @@ public class JDOMWriter
 
     public MessageWriter getAttributeWriter(String name, String namespace)
     {
-        Attribute att = null;
+        Attribute att;
         if (namespace != null && namespace.length() > 0)
         {
             String prefix = NamespaceHelper.getUniquePrefix(element, namespace);
