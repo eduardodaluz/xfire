@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
@@ -136,19 +135,21 @@ public class HandlerPipeline
     public void handleFault(XFireFault fault, MessageContext context) 
     {
         Stack invoked = (Stack) context.getProperty(this.toString());
-        
-        while (invoked.size() > 0)
-        {
-            Handler h = (Handler) invoked.pop();
-            h.handleFault(fault, context);
-        }
-    }
+
+		if ( null != invoked )
+		{
+			while (invoked.size() > 0)
+			{
+				Handler h = (Handler) invoked.pop();
+				h.handleFault(fault, context);
+			}
+		}
+	}
     
     /**
      * Determines whether or not this Pipeline "understands" a particular header.
-     * @param pipeline
      * @param name
-     * @return
+     * @return true if pipeline understands a header
      */
     public boolean understands(QName name)
     {
