@@ -11,7 +11,7 @@ public interface Session
      * Get a variable from the session by the key.
      * 
      * @param key
-     * @return
+     * @return Value
      */
     Object get( Object key );
     
