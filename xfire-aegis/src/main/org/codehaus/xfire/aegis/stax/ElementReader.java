@@ -1,16 +1,15 @@
 package org.codehaus.xfire.aegis.stax;
 
-import java.io.InputStream;
+import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.AbstractMessageReader;
+import org.codehaus.xfire.aegis.MessageReader;
+import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.aegis.AbstractMessageReader;
-import org.codehaus.xfire.aegis.MessageReader;
-import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
+import java.io.InputStream;
 
 /**
  * Reads literal encoded messages.
@@ -57,7 +56,7 @@ public class ElementReader
     }
 
     /**
-     * @param resourceAsStream
+     * @param is
      * @throws XMLStreamException 
      */
     public ElementReader(InputStream is) 
@@ -65,9 +64,11 @@ public class ElementReader
     {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader xmlReader = factory.createXMLStreamReader(is);
-        
-        while ( xmlReader.getEventType() != XMLStreamReader.START_ELEMENT )
+
+        while( xmlReader.getEventType() != XMLStreamReader.START_ELEMENT )
+        {
             xmlReader.next();
+        }
         
         this.root = new DepthXMLStreamReader(xmlReader);
         this.localName = root.getLocalName();
@@ -202,6 +203,11 @@ public class ElementReader
         return currentAttribute < root.getAttributeCount();
     }
 
+    public MessageReader getAttributeReader( QName qName )
+    {
+        return new AttributeReader( qName, root.getAttributeValue( qName.getNamespaceURI(), qName.getLocalPart() ) );
+    }
+
     public MessageReader getNextAttributeReader()
     {
         MessageReader reader = new AttributeReader(root.getAttributeName(currentAttribute),
@@ -209,5 +215,10 @@ public class ElementReader
         currentAttribute++;
         
         return reader;
+    }
+
+    public String getNamespaceForPrefix( String prefix )
+    {
+        return root.getNamespaceURI( prefix );
     }
 }

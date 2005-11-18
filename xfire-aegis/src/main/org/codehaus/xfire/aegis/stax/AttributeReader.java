@@ -1,9 +1,9 @@
 package org.codehaus.xfire.aegis.stax;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.aegis.AbstractMessageReader;
 import org.codehaus.xfire.aegis.MessageReader;
+
+import javax.xml.namespace.QName;
 
 public class AttributeReader
     extends AbstractMessageReader
@@ -32,6 +32,11 @@ public class AttributeReader
         throw new IllegalStateException();
     }
 
+    public MessageReader getAttributeReader( QName qName )
+    {
+        throw new IllegalStateException();
+    }
+
     public boolean hasMoreElementReaders()
     {
         return false;
@@ -55,5 +60,10 @@ public class AttributeReader
     public String getNamespace()
     {
         return name.getNamespaceURI();
+    }
+
+    public String getNamespaceForPrefix( String prefix )
+    {
+        throw new IllegalStateException();
     }
 }

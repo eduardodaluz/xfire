@@ -203,6 +203,28 @@ public class ElementWriter
 
     public MessageWriter getAttributeWriter(QName qname)
     {
-        return new AttributeWriter(writer, qname.getLocalPart(), qname.getLocalPart());
+        return new AttributeWriter(writer, qname.getLocalPart(), qname.getNamespaceURI());
+    }
+
+    public String getPrefixForNamespace( String namespace )
+    {
+        try
+        {
+            String prefix = writer.getPrefix(namespace);
+
+            if (prefix == null )
+            {
+                prefix = NamespaceHelper.getUniquePrefix(writer);
+
+                writer.setPrefix(prefix, namespace);
+                writer.writeNamespace(prefix, namespace);
+            }
+
+            return prefix;
+        }
+        catch( XMLStreamException e )
+        {
+            throw new XFireRuntimeException("Error writing document.", e);
+        }
     }
 }

@@ -1,13 +1,13 @@
 package org.codehaus.xfire.aegis.stax;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AbstractMessageWriter;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.util.NamespaceHelper;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 public class AttributeWriter
     extends AbstractMessageWriter
@@ -76,6 +76,11 @@ public class AttributeWriter
     }
 
     public MessageWriter getElementWriter(QName qname)
+    {
+        throw new IllegalStateException();
+    }
+
+    public String getPrefixForNamespace( String namespace )
     {
         throw new IllegalStateException();
     }
