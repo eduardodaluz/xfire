@@ -32,6 +32,8 @@ public interface MessageWriter
     MessageWriter getElementWriter(String name, String namespace);
     
     MessageWriter getElementWriter(QName qname);
+
+    String getPrefixForNamespace( String namespace );
    
     /**
      * Tells the MessageWriter that writing operations are completed so 
