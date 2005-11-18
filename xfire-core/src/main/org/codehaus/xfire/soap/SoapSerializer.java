@@ -1,7 +1,6 @@
 package org.codehaus.xfire.soap;
 
 import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -54,12 +53,14 @@ public class SoapSerializer
             
             writer.setPrefix(env.getPrefix(), env.getNamespaceURI());
             writer.setPrefix(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+            writer.setPrefix(SoapConstants.XSI_PREFIX, SoapConstants.XSI_NS);
             writer.writeStartElement(env.getPrefix(),
                                      env.getLocalPart(),
                                      env.getNamespaceURI());
             writer.writeNamespace(env.getPrefix(), env.getNamespaceURI());
             
             writer.writeNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+            writer.writeNamespace(SoapConstants.XSI_PREFIX, SoapConstants.XSI_NS);
 
             if (message.getHeader() != null && message.getHeader().getContentSize() > 0)
             {
