@@ -27,6 +27,11 @@ public class XFireProxy
         this.client = client;
     }
 
+    public Client getClient()
+    {
+        return client;
+    }
+
     /**
      * Handles the object invocation.
      *
@@ -43,9 +48,9 @@ public class XFireProxy
         {
             log.debug("Method [" + methodName + "] " + ((args == null) ? "" : Arrays.asList(args).toString()));
         }
-        
+
         Object result = handleCanonicalMethods(methodName, parameterTypes, args);
-        
+
         if (result == null)
         {
             result = handleRequest(method, args);
@@ -61,10 +66,10 @@ public class XFireProxy
             throws Exception
     {
         OperationInfo op = client.getService().getServiceInfo().getOperation(m);
-        
-        Object[] response = (Object[]) client.invoke(op, args);
 
-        if (response != null && response.length > 0) 
+        Object[] response = client.invoke(op, args);
+
+        if (response != null && response.length > 0)
             return response[0];
         else
             return null;
@@ -81,19 +86,19 @@ public class XFireProxy
     private Object handleCanonicalMethods(String methodName, Class[] params, Object[] args)
     {
         if (methodName.equals("equals") &&
-                params.length == 1
-                && params[0].equals(Object.class))
+            params.length == 1
+            && params[0].equals(Object.class))
         {
             Object other = args[0];
             if (other == null ||
-                    !Proxy.isProxyClass(other.getClass()) ||
-                    !(Proxy.getInvocationHandler(other) instanceof XFireProxy))
+                !Proxy.isProxyClass(other.getClass()) ||
+                !(Proxy.getInvocationHandler(other) instanceof XFireProxy))
             {
                 return Boolean.FALSE;
             }
-            
+
             XFireProxy otherClient = (XFireProxy) Proxy.getInvocationHandler(other);
-            
+
             return new Boolean(otherClient == this);
         }
         else if (methodName.equals("hashCode") && params.length == 0)
