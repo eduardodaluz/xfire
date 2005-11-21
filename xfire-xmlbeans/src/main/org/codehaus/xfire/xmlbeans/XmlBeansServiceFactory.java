@@ -13,6 +13,9 @@ public class XmlBeansServiceFactory
 {
     public XmlBeansServiceFactory()
     {
+        AegisBindingProvider provider = new AegisBindingProvider(new XmlBeansTypeRegistry());
+        setBindingProvider(provider);
+        
         setStyle(SoapConstants.STYLE_DOCUMENT);
         setWsdlBuilderFactory(new XmlBeansWSDLBuilderFactory());
     }
