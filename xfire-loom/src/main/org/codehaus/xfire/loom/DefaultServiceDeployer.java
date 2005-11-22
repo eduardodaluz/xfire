@@ -15,7 +15,6 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
@@ -96,7 +95,7 @@ public class DefaultServiceDeployer
                 getLogger().debug("Created '" + endpoint.getServiceInfo().getName() + "' from key '" + key + "'");
         }
 
-        endpoint.getBinding().setInvoker(new ServiceInvoker(object));
+        endpoint.setInvoker(new ServiceInvoker(object));
 
         registerService(key, endpoint);
     }
