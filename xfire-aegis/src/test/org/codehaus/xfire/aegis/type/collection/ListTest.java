@@ -116,8 +116,8 @@ public class ListTest
         assertValid("//xsd:schema[@targetNamespace='urn:double']/xsd:complexType[@name='doubles']" +
                     "/xsd:sequence/xsd:element[@name='double'][@type='xsd:double']", wsdl);
         assertValid("//xsd:element[@name='getStringsResponse']/xsd:complexType/xsd:sequence" +
-                    "/xsd:element[@name='out'][@type='ns2:strings']", wsdl);
+                    "/xsd:element[@name='out'][@type='ns1:strings']", wsdl);
         assertValid("//xsd:element[@name='getDoublesResponse']/xsd:complexType/xsd:sequence" +
-                    "/xsd:element[@name='out'][@type='ns1:doubles']", wsdl);
+                    "/xsd:element[@name='out'][@type='ns2:doubles']", wsdl);
     }
 }

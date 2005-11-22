@@ -10,7 +10,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.xfire.transport.AbstractWSDLTransport;
+import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultEndpoint;
 
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class HttpTransport
-    extends AbstractWSDLTransport
+    extends AbstractTransport 
 {
     private static final Log log = LogFactory.getLog(HttpTransport.class);
 
@@ -32,7 +32,6 @@ public class HttpTransport
     public final static String HTTP_TRANSPORT_NS = "http://schemas.xmlsoap.org/soap/http";
 
     private final static String URI_PREFIX = "urn:xfire:transport:http:";
-    
     
     private final static MimeTypeHandler mimeHandler = new MimeTypeHandler();
     
@@ -57,12 +56,7 @@ public class HttpTransport
     {
         return URI_PREFIX;
     }
-    
-    protected String getName()
-    {
-        return "Http";
-    }
-    
+
     /**
 	 * Get the URL for a particular service.
 	 */
@@ -183,6 +177,6 @@ public class HttpTransport
                    response.setContentType("application/soap+xml; charset=" + encoding);
                }
            }
-       }    
+        }
     }
 }

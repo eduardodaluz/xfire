@@ -14,6 +14,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
+
+import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
@@ -30,6 +32,7 @@ import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.MapSession;
 import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
@@ -46,8 +49,6 @@ import org.jdom.output.XMLOutputter;
 public abstract class AbstractXFireTest
         extends TestCase
 {
-    private XFire xfire;
-
     private ServiceFactory factory;
 
     private static String basedirPath;
@@ -59,6 +60,8 @@ public abstract class AbstractXFireTest
     private Map namespaces = new HashMap();
     private MapSession session;
 
+    private XFire xfire;
+    
     protected void printNode(Document node)
         throws Exception
     {
@@ -159,9 +162,6 @@ public abstract class AbstractXFireTest
     {
         super.setUp();
 
-        if( xfire == null )
-            xfire = XFireFactory.newInstance().getXFire();
-
         addNamespace( "s", Soap11.getInstance().getNamespace() );
         addNamespace( "soap12", Soap12.getInstance().getNamespace() );
 
@@ -246,7 +246,15 @@ public abstract class AbstractXFireTest
 
     protected XFire getXFire()
     {
+        if (xfire == null)
+            xfire = new DefaultXFire();
+        
         return xfire;
+    }
+    
+    protected TransportManager getTransportManager()
+    {
+        return getXFire().getTransportManager();
     }
 
     protected ServiceRegistry getServiceRegistry()
@@ -259,8 +267,7 @@ public abstract class AbstractXFireTest
         if (factory == null)
         {
             ObjectServiceFactory ofactory = 
-                new ObjectServiceFactory(getXFire().getTransportManager(),
-                                         new MessageBindingProvider());
+                new ObjectServiceFactory(getTransportManager(), new MessageBindingProvider());
             
             ofactory.setStyle(SoapConstants.STYLE_MESSAGE);
             

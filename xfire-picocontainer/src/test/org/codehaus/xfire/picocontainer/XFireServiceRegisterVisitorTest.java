@@ -9,7 +9,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.picocontainer.defaults.CachingComponentAdapter;
 import org.picocontainer.defaults.ConstructorInjectionComponentAdapter;
 
@@ -67,7 +66,7 @@ public class XFireServiceRegisterVisitorTest
         Service endpoint = sr.getService("test");
         assertNotNull(endpoint);
 
-        Invoker invoker = ((ObjectBinding) endpoint.getBinding()).getInvoker();
+        Invoker invoker = endpoint.getInvoker();
         assertNotNull(invoker);
 
         Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[] {});
@@ -99,7 +98,7 @@ public class XFireServiceRegisterVisitorTest
         Service endpoint = sr.getService("test");
         assertNotNull(endpoint);
 
-        Invoker invoker = ((ObjectBinding) endpoint.getBinding()).getInvoker();
+        Invoker invoker = endpoint.getInvoker();
         assertNotNull(invoker);
 
         Method method = DummyServiceThatCounts.class.getMethod("theMethod", new Class[] {});

@@ -15,7 +15,7 @@ public class AbstractXFireAegisTest
     {
         super.setUp();
 
-        setServiceFactory(new ObjectServiceFactory(getXFire().getTransportManager(), 
+        setServiceFactory(new ObjectServiceFactory(getTransportManager(), 
                                                    new AegisBindingProvider()));
     }
 }

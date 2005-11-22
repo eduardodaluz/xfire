@@ -13,35 +13,34 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.client.Client;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
+import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
-import org.codehaus.xfire.service.MessageHeaderInfo;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
+import org.codehaus.xfire.util.stax.JDOMStreamReader;
+import org.jdom.Element;
+import org.jdom.Namespace;
+
 
 public abstract class AbstractBinding
     extends AbstractHandler
-    implements ObjectBinding, Cloneable
+    implements MessageSerializer
 {
     private static final Log logger = LogFactory.getLog(AbstractBinding.class.getName());
 
-    public static final String OPERATION_KEY = "xfire.operation";
-    
     public static final String RESPONSE_VALUE = "xfire.java.response";
-
     public static final String RESPONSE_PIPE = "xfire.java.responsePipe";
-
-    private String style;
-    private Invoker invoker;
-    private BindingProvider bindingProvider;
-    private boolean clientModeOn = false;
 
     public String getPhase()
     {
@@ -68,15 +67,24 @@ public abstract class AbstractBinding
             final OperationInfo operation = context.getExchange().getOperation();
 
             // read in the headers
-            final List headerInfos = operation.getInputMessage().getMessageHeaders();
+            Binding binding = context.getBinding();
+            final List headerInfos = binding.getHeaders(operation.getInputMessage());
             for (Iterator itr = headerInfos.iterator(); itr.hasNext();)
             {
-                MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
-                BindingProvider provider = context.getService().getBinding().getBindingProvider();
-                params.add(header.getIndex(), provider.readHeader(header, context));
+                MessagePartInfo header = (MessagePartInfo) itr.next();
+                BindingProvider provider = context.getService().getBindingProvider();
+                XMLStreamReader headerReader = getXMLStreamReader(context.getInMessage(), header);
+
+                Object headerVal = null;
+                if (headerReader != null)
+                {
+                    headerVal = provider.readParameter(header, headerReader, context);
+                }
+                
+                params.add(header.getIndex(), headerVal);
             }
 
-            final Invoker invoker = getInvoker();
+            final Invoker invoker = context.getService().getInvoker();
             
             // invoke the service method...
             if (!operation.isAsync())
@@ -113,6 +121,17 @@ public abstract class AbstractBinding
         }
     }
 
+    private XMLStreamReader getXMLStreamReader(AbstractMessage msg, MessagePartInfo header)
+    {
+        QName name = header.getName();
+        Element el = 
+            msg.getHeader().getChild(name.getLocalPart(), Namespace.getNamespace(name.getNamespaceURI()));
+        
+        if (el == null) return null;
+        
+        return new JDOMStreamReader(el);
+    }
+
     protected void sendMessage(final MessageContext context,
                                final List params,
                                final OperationInfo operation,
@@ -127,7 +146,7 @@ public abstract class AbstractBinding
         {
             OutMessage outMsg = context.getExchange().getOutMessage();
             outMsg.setBody(new Object[] {value});
-            outMsg.setSerializer(context.getService().getBinding());
+            outMsg.setSerializer(this);
             context.getOutPipeline().invoke(context);
         }
     }
@@ -197,13 +216,13 @@ public abstract class AbstractBinding
         return false;
     }
 
-    protected MessagePartInfo findMessagePart(Collection operations, QName name)
+    protected MessagePartInfo findMessagePart(MessageContext context, Collection operations, QName name)
     {
         for ( Iterator itr = operations.iterator(); itr.hasNext(); )
         {
             OperationInfo op = (OperationInfo) itr.next();
             MessageInfo msgInfo = null;
-            if (isClientModeOn())
+            if (isClientModeOn(context))
             {
                 msgInfo = op.getOutputMessage();
             }
@@ -226,21 +245,22 @@ public abstract class AbstractBinding
         List parameters = new ArrayList();
         OperationInfo opInfo = context.getExchange().getOperation();
         
+        Binding binding = context.getBinding();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
         while (STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p;
-            if (opInfo != null && isClientModeOn())
+            if (opInfo != null && isClientModeOn(context))
             {
                 p = opInfo.getOutputMessage().getMessagePart(dr.getName());
             }
-            else if (opInfo != null && !isClientModeOn())
+            else if (opInfo != null && !isClientModeOn(context))
             {
                 p = opInfo.getInputMessage().getMessagePart(dr.getName());
             }
             else
             {
-                p = findMessagePart(operations, dr.getName());
+                p = findMessagePart(context, operations, dr.getName());
             }
             
             if (p == null)
@@ -249,10 +269,12 @@ public abstract class AbstractBinding
                                      XFireFault.SENDER);
             }
 
-            parameters.add( getBindingProvider().readParameter(p, dr, context) );
+            if (binding.isHeader(p)) continue;
+            
+            parameters.add( context.getService().getBindingProvider().readParameter(p, dr, context) );
         }
 
-        if (opInfo == null && !isClientModeOn())
+        if (opInfo == null && !isClientModeOn(context))
         {
             opInfo = findOperation(operations, parameters);
 
@@ -282,45 +304,10 @@ public abstract class AbstractBinding
         context.getInMessage().setBody(parameters);
     }
     
-    public Invoker getInvoker()
+    public boolean isClientModeOn(MessageContext context)
     {
-        return invoker;
+        Boolean on = (Boolean) context.getProperty(Client.CLIENT_MODE);
+        
+        return (on != null && on.booleanValue());
     }
- 
-    public void setInvoker(Invoker invoker)
-    {
-        this.invoker = invoker;
-    }
-    
-    public String getStyle()
-    {
-        return style;
-    }
-    
-    protected void setStyle(String style)
-    {
-        this.style = style;
-    }
-
-    public BindingProvider getBindingProvider()
-    {
-        return bindingProvider;
-    }
-
-    public void setBindingProvider(BindingProvider bindingProvider)
-    {
-        this.bindingProvider = bindingProvider;
-    }
-
-    public boolean isClientModeOn()
-    {
-        return clientModeOn;
-    }
-
-    public void setClientModeOn(boolean clientModeOn)
-    {
-        this.clientModeOn = clientModeOn;
-    }
-    
-    public abstract Object clone();
 }

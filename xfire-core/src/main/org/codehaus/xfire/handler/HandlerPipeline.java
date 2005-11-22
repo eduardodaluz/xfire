@@ -1,12 +1,12 @@
 package org.codehaus.xfire.handler;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
@@ -26,8 +26,7 @@ public class HandlerPipeline
     
     private List phases;
     private Map handlers;
-    private boolean sorted = false;
-    
+
     public HandlerPipeline(List phases)
     {
         handlers = new HashMap();
@@ -40,7 +39,7 @@ public class HandlerPipeline
         {
             Phase phase = (Phase) itr.next();
             
-            handlers.put(phase.getName(), new ArrayList());
+            handlers.put(phase.getName(), new HandlerOrderer());
         }
     }
     
@@ -56,36 +55,19 @@ public class HandlerPipeline
         }
     }
 
-    void sort()
-    {
-        // And now lets sort things
-        for (Iterator itr = phases.iterator(); itr.hasNext();)
-        {
-            Phase phase = (Phase) itr.next();
-            
-            List phaseHandlers = (List) handlers.get(phase.getName());
-
-            Collections.sort(phaseHandlers);
-        }
-        
-        sorted = true;
-    }
-
     public void addHandler(Handler handler)
     {
-        List phaseHandlers = getHandlers(handler.getPhase());
+        HandlerOrderer phaseHandlers = getPhase(handler.getPhase());
         
         if (phaseHandlers == null) 
             throw new XFireRuntimeException("Invalid phase: " + handler.getPhase());
 
-        phaseHandlers.add(handler);
-        
-        sorted = false;
+        phaseHandlers.insertHandler(handler);
     }
 
-    public List getHandlers(String phase)
+    public HandlerOrderer getPhase(String phase)
     {
-        return (List) handlers.get(phase);
+        return (HandlerOrderer) handlers.get(phase);
     }
     
     /**
@@ -97,8 +79,6 @@ public class HandlerPipeline
     public void invoke(MessageContext context) 
     	throws Exception
     {
-        if (!sorted) sort();
-        
         Stack invoked = new Stack();
         context.setProperty(this.toString(), invoked);
         
@@ -106,7 +86,7 @@ public class HandlerPipeline
         {
             Phase phase = (Phase) itr.next();
             
-            List phaseHandlers = getHandlers(phase.getName());
+            List phaseHandlers = getPhase(phase.getName()).getHandlers();
             for (int i = 0; i < phaseHandlers.size(); i++ )
             {
                 Handler h = (Handler) phaseHandlers.get(i);
@@ -157,7 +137,7 @@ public class HandlerPipeline
         {
             Phase phase = (Phase) itr.next();
             
-            List phaseHandlers = (List) handlers.get(phase.getName());
+            List phaseHandlers = getPhase(phase.getName()).getHandlers();
             for (int i = 0; i < phaseHandlers.size(); i++ )
             {
                 Handler h = (Handler) phaseHandlers.get(i);

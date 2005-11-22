@@ -1,12 +1,10 @@
 package org.codehaus.xfire.service;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -25,13 +23,12 @@ public class ServiceInfo
     implements Visitable
 {
     private QName name;
-    private List operations = new ArrayList();
-    private Map nameToOperation = new HashMap();
-    private Map methodToOperation = new HashMap();
+    private Map operations = new HashMap();
+    private Map methodToOp = new HashMap();
     private Class serviceClass;
     private QName portType;
-    private Map endpoints = new HashMap();
-
+    private boolean wrapped;
+    
     /**
      * Initializes a new instance of the <code>ServiceInfo</code> class with the given qualified name and service
      * class.
@@ -54,7 +51,7 @@ public class ServiceInfo
     public void accept(Visitor visitor)
     {
         visitor.startService(this);
-        for (Iterator iterator = nameToOperation.values().iterator(); iterator.hasNext();)
+        for (Iterator iterator = operations.values().iterator(); iterator.hasNext();)
         {
             OperationInfo operationInfo = (OperationInfo) iterator.next();
             operationInfo.accept(visitor);
@@ -74,7 +71,7 @@ public class ServiceInfo
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
-        if (nameToOperation.containsKey(name))
+        if (operations.containsKey(name))
         {
             throw new IllegalArgumentException("An operation with name [" + name + "] already exists in this service");
         }
@@ -91,11 +88,8 @@ public class ServiceInfo
      */
     void addOperation(OperationInfo operation)
     {
-        nameToOperation.put(operation.getName(), operation);
-        operations.add(operation);
-
-        if (operation.getMethod() != null)
-            methodToOperation.put(operation.getMethod(), operation);
+        operations.put(operation.getName(), operation);
+        methodToOp.put(operation.getMethod(), operation);
     }
 
     /**
@@ -126,22 +120,14 @@ public class ServiceInfo
      */
     public OperationInfo getOperation(String name)
     {
-        return (OperationInfo) nameToOperation.get(name);
+        return (OperationInfo) operations.get(name);
     }
 
-    public Collection getOperations(String name)
+    public OperationInfo getOperation(Method m)
     {
-        List operations = new ArrayList();
-        for (Iterator itr = getOperations().iterator(); itr.hasNext();)
-        {
-            OperationInfo candidate = (OperationInfo) itr.next();
-            if (candidate.getName().equals(name))
-            {
-                operations.add(candidate);
-            }
-        }
-        return operations;
+        return (OperationInfo) methodToOp.get(m);
     }
+    
     /**
      * Returns all operations for this service.
      *
@@ -149,13 +135,13 @@ public class ServiceInfo
      */
     public Collection getOperations()
     {
-        return Collections.unmodifiableCollection(operations);
+        return Collections.unmodifiableCollection(operations.values());
     }
 
     /**
      * Returns the service class of the service descriptor.
      *
-     * @return Service Class
+     * @return
      */
     public Class getServiceClass()
     {
@@ -169,7 +155,7 @@ public class ServiceInfo
      */
     public void removeOperation(String name)
     {
-        nameToOperation.remove(name);
+        operations.remove(name);
     }
 
     public QName getPortType()
@@ -182,29 +168,13 @@ public class ServiceInfo
         this.portType = portType;
     }
 
-    public Collection getEndpoints()
+    public boolean isWrapped()
     {
-        return Collections.unmodifiableCollection(endpoints.values());
+        return wrapped;
     }
 
-    public void addEndpoint(Endpoint endpoint)
+    public void setWrapped(boolean wrapped)
     {
-        endpoints.put(endpoint.getName(), endpoint);
+        this.wrapped = wrapped;
     }
-
-    public Endpoint getEndpoint(QName name)
-    {
-        return (Endpoint) endpoints.get(name);
-    }
-
-    public void addEndpoint(QName name, String bindingId, String address)
-    {
-        addEndpoint(new Endpoint(name, bindingId, address));
-    }
-
-    public OperationInfo getOperation(Method m)
-    {
-        return (OperationInfo) methodToOperation.get(m);
-    }
-
 }

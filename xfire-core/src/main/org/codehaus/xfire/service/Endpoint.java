@@ -2,16 +2,22 @@ package org.codehaus.xfire.service;
 
 import javax.xml.namespace.QName;
 
-public class Endpoint
+public class Endpoint extends Extensible
 {
     private QName name;
-    private String bindingId;
+    private Binding binding;
     private String address;
- 
-    public Endpoint(QName name, String id, String address)
+
+    public Endpoint(QName name, Binding binding)
+    {
+        this.binding = binding;
+        this.name = name;
+    }
+    
+    public Endpoint(QName name, Binding binding, String address)
     {
         this.address = address;
-        this.bindingId = id;
+        this.binding = binding;
         this.name = name;
     }
     
@@ -24,9 +30,9 @@ public class Endpoint
     {
         return address;
     }
-    
-    public String getBindingId()
+
+    public Binding getBinding()
     {
-        return bindingId;
+        return binding;
     }
 }

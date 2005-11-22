@@ -5,27 +5,25 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapOperationInfo;
 
 /**
- * Inspects the SOAPAction if there is one, and selects the appropraite Operation.
+ * Sets the SOAP action on an outgoing invocation.
  * 
  * @author Dan Diephouse
  */
-public class SoapActionHandler
+public class SoapActionOutHandler
     extends AbstractHandler
 {
-    public SoapActionHandler()
+    public SoapActionOutHandler()
     {
         super();
-
-        before(ReadHeadersHandler.class.getName());
     }
 
     public String getPhase()
     {
-        return Phase.DISPATCH;
+        return Phase.TRANSPORT;
     }
 
     public void invoke(MessageContext context)
@@ -34,13 +32,11 @@ public class SoapActionHandler
         Service service = context.getService();
         if (service == null) return;
         
-        String action = (String) context.getInMessage().getProperty(SoapConstants.SOAP_ACTION);
+        OperationInfo op = context.getExchange().getOperation();
+        SoapBinding binding = (SoapBinding) context.getBinding();
         
-        if (action == null || action.length() == 0) return;
-        
-        OperationInfo op = SoapOperationInfo.getOperationByAction(service.getServiceInfo(), action);
-        
-        if (op != null) 
-            context.getExchange().setOperation(op);
+        String action = binding.getSoapAction(op);
+        if (action != null)
+            context.getOutMessage().setProperty(SoapConstants.SOAP_ACTION, action);
     }
 }

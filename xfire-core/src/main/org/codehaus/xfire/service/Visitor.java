@@ -1,6 +1,5 @@
 package org.codehaus.xfire.service;
 
-import org.codehaus.xfire.service.binding.ObjectBinding;
 
 
 /**
@@ -98,32 +97,4 @@ public interface Visitor
      * @param messagePartInfo the message part info.
      */
     void endMessagePart(MessagePartInfo messagePartInfo);
-
-    /**
-     * Receive notification at the beginning of a message header visit.
-     *
-     * @param messageHeaderInfo the message header info.
-     */
-    void startMessageHeader(MessageHeaderInfo messageHeaderInfo);
-
-    /**
-     * Receive notification at the end of a message header visit.
-     *
-     * @param messageHeaderInfo the message header info.
-     */
-    void endMessageHeader(MessageHeaderInfo messageHeaderInfo);
-
-    /**
-     * Receive notification at the beginning of a binding visit.
-     *
-     * @param binding the binding.
-     */
-    void startBinding(ObjectBinding binding);
-
-    /**
-     * Receive notification at the end of a binding visit.
-     *
-     * @param binding the binding.
-     */
-    void endBinding(ObjectBinding binding);
 }

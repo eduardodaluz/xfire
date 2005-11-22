@@ -5,11 +5,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.DispatchServiceHandler;
-import org.codehaus.xfire.handler.ParseMessageHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.DefaultServiceRegistry;
 import org.codehaus.xfire.service.Service;
@@ -29,8 +26,6 @@ public class DefaultXFire
     private ServiceRegistry registry;
 
     private TransportManager transportManager;
-
-    private static final Log logger = LogFactory.getLog(DefaultXFire.class);
 
     private List inPhases;
     private List outPhases;
@@ -57,7 +52,6 @@ public class DefaultXFire
 
     protected void createHandlers()
     {
-        addInHandler(new ParseMessageHandler());
         addInHandler(new DispatchServiceHandler());
     }
 

@@ -28,9 +28,9 @@ public class ReplyToTest
         ObjectServiceFactory factory = new ObjectServiceFactory(getXFire().getTransportManager(), 
                                                                 new MessageBindingProvider())
         {
-            protected OperationInfo addOperation(Service endpoint, Method method, String use)
+            protected OperationInfo addOperation(Service endpoint, Method method, String style)
             {
-                OperationInfo op = super.addOperation(endpoint, method, use);
+                OperationInfo op = super.addOperation(endpoint, method, style);
                 
                 new AddressingOperationInfo("http://example.com/Echo", op);
                 
@@ -54,7 +54,7 @@ public class ReplyToTest
         JDOMEndpoint endpoint = new JDOMEndpoint();
         channel.setEndpoint(endpoint);
         
-        Document response = invokeService("Echo", "/org/codehaus/xfire/addressing/ReplyTo.xml");
+        Document response = invokeService(null, "/org/codehaus/xfire/addressing/ReplyTo.xml");
 
         assertNull(response);
         Thread.sleep(1000);

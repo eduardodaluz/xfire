@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -21,9 +20,7 @@ import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.jdom.StaxSerializer;
 import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.codehaus.xfire.wsdl.SchemaType;
-import org.jdom.Content;
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.w3c.dom.Document;
 
 public class MessageBindingProvider
@@ -47,7 +44,7 @@ public class MessageBindingProvider
             StaxBuilder builder = new StaxBuilder();
             try
             {
-                org.jdom.Document doc = builder.build(new FragmentStreamReader(context.getInMessage().getXMLStreamReader()));
+                org.jdom.Document doc = builder.build(new FragmentStreamReader(reader));
                 
                 if (doc.hasRootElement())
                     return doc.getRootElement();
@@ -92,21 +89,25 @@ public class MessageBindingProvider
     {
         if (value == null) return;
         
-        if (value instanceof Element)
+        try
         {
-            StaxSerializer serializer = new StaxSerializer();
-            try
+            if (value instanceof Element)
             {
+                StaxSerializer serializer = new StaxSerializer();
                 serializer.writeElement((Element) value, writer);
             }
-            catch (XMLStreamException e)
+            else if (value instanceof XMLStreamReader)
             {
-                throw new XFireRuntimeException("Couldn't write to stream.", e);
+                STAXUtils.copy((XMLStreamReader) value, writer);
+            }
+            else
+            {
+                logger.warn("Unknown type for serialization: " + value.getClass());
             }
         }
-        else
+        catch (XMLStreamException e)
         {
-            logger.warn("Unknown type for serialization: " + value.getClass());
+            throw new XFireRuntimeException("Couldn't write to stream.", e);
         }
     }
 
@@ -118,18 +119,5 @@ public class MessageBindingProvider
     public SchemaType getSchemaType(Service service, MessagePartInfo param)
     {
         return null;
-    }
-
-    public Object readHeader(MessageHeaderInfo p, MessageContext context)
-        throws XFireFault
-    {
-        return context.getInMessage().getHeader().getChild(p.getName().getLocalPart(),
-                                                           Namespace.getNamespace(p.getName().getNamespaceURI()));
-    }
-
-    public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
-        throws XFireFault
-    {
-        context.getOutMessage().getHeader().addContent((Content) value);
     }
 }

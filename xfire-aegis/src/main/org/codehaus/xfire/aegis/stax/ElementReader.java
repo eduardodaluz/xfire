@@ -32,7 +32,6 @@ public class ElementReader
     private int currentAttribute = 0;
     
     /**
-     * Expects the XMLStreamReader in the START_DOCUMENT event.
      * @param root
      */
     public ElementReader(DepthXMLStreamReader root)
@@ -47,12 +46,7 @@ public class ElementReader
     
     public ElementReader(XMLStreamReader reader)
     {
-        this.root = new DepthXMLStreamReader(reader);
-        this.localName = root.getLocalName();
-        this.name = root.getName();
-        this.namespace = root.getNamespaceURI();
-        
-        depth = root.getDepth();
+        this(new DepthXMLStreamReader(reader));
     }
 
     /**
@@ -85,6 +79,8 @@ public class ElementReader
     {
         while( !hasFoundText && checkHasMoreChildReaders() )
         {
+            if (hasChildren)
+                readToEnd(this);
         }
 
         if (value == null)
@@ -93,6 +89,18 @@ public class ElementReader
         return value.toString().trim();
     }
     
+    private void readToEnd(MessageReader childReader)
+    {
+        if (value == null) value = new StringBuffer();
+        
+        while (childReader.hasMoreElementReaders())
+        {
+            MessageReader reader = childReader.getNextElementReader();
+            String s = reader.getValue();
+            if (s != null) value.append(s);
+        }
+    }
+
     public String getValue( String ns, String attr )
     {
         return root.getAttributeValue(ns, attr);
@@ -122,6 +130,7 @@ public class ElementReader
                     {
                         hasCheckedChildren = true;
                         hasChildren = true;
+
                         return true;
                     }
                     break;

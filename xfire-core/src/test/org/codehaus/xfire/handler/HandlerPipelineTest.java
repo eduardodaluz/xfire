@@ -10,7 +10,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.soap.handler.SoapBindingHandler;
 
 public class HandlerPipelineTest
         extends TestCase
@@ -52,14 +52,10 @@ public class HandlerPipelineTest
         PhaseHandler2 handler2 = new PhaseHandler2(Phase.TRANSPORT);
         handler2.before(handler1.getClass().getName());
         
-        assertEquals(1, handler1.compareTo(handler2));
-        assertEquals(-1, handler2.compareTo(handler1));
-        
         handlerPipeline.addHandler(handler1);
         handlerPipeline.addHandler(handler2);
-        handlerPipeline.sort();
-        
-        List handlers = handlerPipeline.getHandlers(Phase.TRANSPORT);
+
+        List handlers = handlerPipeline.getPhase(Phase.TRANSPORT).getHandlers();
         
         assertTrue(handlers.get(0) == handler2);
         assertTrue(handlers.get(1) == handler1);
@@ -71,19 +67,35 @@ public class HandlerPipelineTest
         handler2 = new PhaseHandler2(Phase.TRANSPORT);
         handler2.after(handler1.getClass().getName());
         
-        assertEquals(-1, handler1.compareTo(handler2));
-        assertEquals(1, handler2.compareTo(handler1));
-        
         handlerPipeline.addHandler(handler1);
         handlerPipeline.addHandler(handler2);
-        handlerPipeline.sort();
 
-        handlers = handlerPipeline.getHandlers(Phase.TRANSPORT);
+        handlers = handlerPipeline.getPhase(Phase.TRANSPORT).getHandlers();
         
         assertTrue(handlers.get(0) == handler1);
         assertTrue(handlers.get(1) == handler2);
     }
     
+    public void testAdvancedSorting() 
+    {
+        List phases = new ArrayList();
+        phases.add(new Phase(Phase.TRANSPORT, 100));
+        phases.add(new Phase(Phase.PARSE, 100));
+        phases.add(new Phase(Phase.PRE_DISPATCH, 100));
+        phases.add(new Phase(Phase.DISPATCH, 500));
+        phases.add(new Phase(Phase.USER, 500));
+
+        handlerPipeline = new HandlerPipeline(phases);
+        
+        handlerPipeline.addHandler(new DispatchServiceHandler());
+        handlerPipeline.addHandler(new LocateBindingHandler());
+        handlerPipeline.addHandler(new SoapBindingHandler());
+
+        List handlers = handlerPipeline.getPhase(Phase.DISPATCH).getHandlers();
+        
+        assertTrue(handlers.get(0) instanceof LocateBindingHandler);
+        assertTrue(handlers.get(1) instanceof SoapBindingHandler);
+    }
 
     public void testInvalidSorting()
         throws Exception
@@ -99,14 +111,13 @@ public class HandlerPipelineTest
         handler2.before(handler1.getClass().getName());
         
         handlerPipeline.addHandler(handler1);
-        handlerPipeline.addHandler(handler2);
         
         try
         {
-            handlerPipeline.sort();
+            handlerPipeline.addHandler(handler2);
             fail("Invalid sort!");
         }
-        catch (XFireRuntimeException e) {}
+        catch (IllegalStateException e) {}
         
         handlerPipeline = new HandlerPipeline(phases);
         
@@ -116,14 +127,13 @@ public class HandlerPipelineTest
         handler2.after(handler1.getClass().getName());
         
         handlerPipeline.addHandler(handler1);
-        handlerPipeline.addHandler(handler2);
         
         try
         {
-            handlerPipeline.sort();
+            handlerPipeline.addHandler(handler2);
             fail("Invalid sort!");
         }
-        catch (XFireRuntimeException e) {}
+        catch (IllegalStateException e) {}
     }
         
     public class PhaseHandler extends AbstractHandler 

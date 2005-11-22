@@ -10,8 +10,6 @@ import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.ObjectBinding;
-import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanIsAbstractException;
 import org.springframework.context.ApplicationContext;
@@ -85,14 +83,12 @@ public class Jsr181HandlerMapping
                 ServiceInfo service = endpoint.getServiceInfo();
                 if (logger.isInfoEnabled())
                 {
-                    WSDL11ParameterBinding binding = (WSDL11ParameterBinding) endpoint.getBinding();
                     logger.info("Exposing SOAP v." + endpoint.getSoapVersion().getVersion() + " service " +
-                                service.getName() + " to " + urlPrefix + endpoint.getName() +
-                                " as " + binding.getStyle());
+                                service.getName() + " to " + urlPrefix + endpoint.getName());
                 }
                 
                 xFire.getServiceRegistry().register(endpoint);
-                ((ObjectBinding) endpoint.getBinding()).setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
+                endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
                 Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getServiceInfo().getName());
                 registerHandler(urlPrefix + endpoint.getName(), controller);
             }

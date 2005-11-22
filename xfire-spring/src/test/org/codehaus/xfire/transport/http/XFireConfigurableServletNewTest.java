@@ -9,9 +9,8 @@ public class XFireConfigurableServletNewTest
     public void testServlet()
         throws Exception
     {
-        // TODO Auto-generated method stub
         super.testServlet();
-        assertEquals(getXFire().getInHandlers().size(),3);
+        assertEquals(2, getXFire().getInHandlers().size());
     }
 
     protected String getConfiguration()

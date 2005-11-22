@@ -255,4 +255,9 @@ public class OperationInfo
         }
         visitor.endOperation(this);
     }
+
+    public boolean hasOutput()
+    {
+        return outputMessage != null;
+    }
 }

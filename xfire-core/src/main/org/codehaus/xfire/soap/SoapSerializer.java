@@ -38,7 +38,6 @@ public class SoapSerializer
      * @param context
      * @throws XFireFault
      */
-
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {

@@ -10,8 +10,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.aegis.jdom.JDOMReader;
-import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -20,15 +18,12 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.FaultInfo;
-import org.codehaus.xfire.service.MessageHeaderInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.jdom.Element;
-import org.jdom.Namespace;
 
 /**
  * A BindingProvider for the Aegis type system.
@@ -80,7 +75,8 @@ public class AegisBindingProvider
             
             try
             {
-                initializeMessage(endpoint, opInfo.getOutputMessage(), OUT_PARAM);
+                if (opInfo.hasOutput())
+                    initializeMessage(endpoint, opInfo.getOutputMessage(), OUT_PARAM);
             }
             catch(XFireRuntimeException e)
             {
@@ -106,13 +102,6 @@ public class AegisBindingProvider
 
     protected void initializeMessage(Service service, MessagePartContainer container, int type)
     {
-        for (Iterator itr = container.getMessageHeaders().iterator(); itr.hasNext();)
-        {
-            MessageHeaderInfo header = (MessageHeaderInfo) itr.next();
-            
-            header.setSchemaType(getParameterType(getTypeMapping(service), header, type));
-        }
-        
         for (Iterator itr = container.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
@@ -184,21 +173,11 @@ public class AegisBindingProvider
             
             if (paramtype != FAULT_PARAM)
             {
-                int index;
-                if (paramtype == IN_PARAM)
-                {
-                    index = param.getIndex();
-                }
-                else
-                {
-                    index = -1 - param.getIndex();
-                }
-                
                 /* Note: we are not registering the type here, because it is an anonymous
                  * type. Potentially there could be many schema types with this name. For example,
                  * there could be many ns:in0 paramters.
                  */
-                type = tm.getTypeCreator().createType(op.getMethod(), index);
+                type = tm.getTypeCreator().createType(op.getMethod(), param.getIndex());
             }
             else
             {
@@ -212,35 +191,6 @@ public class AegisBindingProvider
         return type;
     }
 
-    private Type getParameterType(TypeMapping tm, MessageHeaderInfo param, int paramtype)
-    {
-        Type type = tm.getType(param.getName());
-
-        if (type == null && tm.isRegistered(param.getTypeClass()))
-        {
-            type = tm.getType(param.getTypeClass());
-        }
-        
-        if (type == null)
-        {
-            OperationInfo op = param.getContainer().getOperation();
-            
-            int index = -1;
-            
-            if (op.getInputMessage().getMessageHeaders().contains(param))
-                index = param.getIndex();
-            
-            /* Note: we are not registering the type here, because it is an anonymous
-             * type. Potentially there could be many schema types with this name. For example,
-             * there could be many ns:in0 paramters.
-             */
-            type = tm.getTypeCreator().createType(op.getMethod(), index);
-            type.setTypeMapping(tm);
-        }
-
-        return type;
-    }
-    
     public TypeMapping getTypeMapping(Service service)
     {
         TypeMapping tm = (TypeMapping) service.getProperty(TYPE_MAPPING_KEY);
@@ -266,33 +216,6 @@ public class AegisBindingProvider
         registry.register(endpoint.getServiceInfo().getName().getNamespaceURI(), tm);
         
         return tm;
-    }
-
-    public Object readHeader(MessageHeaderInfo p, MessageContext context)
-        throws XFireFault
-    {
-        Type type = (Type) p.getSchemaType();
-
-        QName name = p.getName();
-        Element headers = context.getExchange().getInMessage().getHeader();
-        Element header = headers.getChild(name.getLocalPart(), 
-                                          Namespace.getNamespace(name.getNamespaceURI()));
-        
-        if (header == null) return null;
-        
-        return type.readObject(new JDOMReader(header), context);
-    }
-
-    public void writeHeader(MessagePartInfo p, MessageContext context, Object value)
-        throws XFireFault
-    {
-        Type type = (Type) p.getSchemaType();
-
-        MessageWriter mw = new JDOMWriter(context.getOutMessage().getHeader());
-
-        type.writeObject(value, mw, context);
-    
-        mw.close();
     }
 
     public Class getTypeClass(QName name, Service service)

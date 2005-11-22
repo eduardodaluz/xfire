@@ -22,12 +22,6 @@ public class XFireConfigurableServletTest
         return "/org/codehaus/xfire/transport/http/configurable-web.xml";
     }
     
-    public void setUp()
-        throws Exception
-    {
-        // TODO Auto-generated method stub
-        super.setUp();
-    }
     public void testServlet()
             throws Exception
     {
@@ -50,8 +44,9 @@ public class XFireConfigurableServletTest
         Service echo1 = reg.getService("Echo1");
         assertTrue(echo1.getSoapVersion() instanceof Soap12);
 
-        assertEquals(3, echo1.getInHandlers().size());
-        assertTrue(echo1.getInHandlers().get(2) instanceof AddressingInHandler);
+        assertEquals(1, echo1.getInHandlers().size());
+
+        assertTrue(echo1.getInHandlers().get(0) instanceof AddressingInHandler);
         assertEquals(2, echo1.getOutHandlers().size());
         assertTrue(echo1.getOutHandlers().get(1) instanceof AddressingInHandler);        
     }

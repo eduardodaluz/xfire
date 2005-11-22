@@ -7,7 +7,6 @@ import org.codehaus.xfire.picocontainer.util.PicoObjectInvoker;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.picocontainer.PicoContainer;
@@ -75,7 +74,7 @@ public class PicoObjectServiceFactory
      */
     protected Service prepare(Service endpoint)
     {
-        ((ObjectBinding) endpoint.getBinding()).setInvoker(new PicoObjectInvoker(picoReference,
+        endpoint.setInvoker(new PicoObjectInvoker(picoReference,
                 endpoint.getServiceInfo().getServiceClass()));
         return endpoint;
     }

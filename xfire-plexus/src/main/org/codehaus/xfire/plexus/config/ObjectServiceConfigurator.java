@@ -26,7 +26,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
@@ -123,13 +122,12 @@ public class ObjectServiceConfigurator
             }
         }
 
-        ObjectBinding binding = ((ObjectBinding) service.getBinding());
         // Setup the Invoker
         if (getServiceLocator().hasComponent(role))
         {
             Invoker invoker = new ServiceInvoker(role, getServiceLocator());
             
-            binding.setInvoker(invoker);
+            service.setInvoker(invoker);
         }
         else
         {
@@ -150,7 +148,7 @@ public class ObjectServiceConfigurator
                 service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, loadClass(implClass));
             }
 
-            binding.setInvoker(oinvoker);
+            service.setInvoker(oinvoker);
         }
 
         // Setup pipelines

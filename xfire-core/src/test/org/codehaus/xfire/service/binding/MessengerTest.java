@@ -21,8 +21,7 @@ public class MessengerTest
     {
         Service service = getServiceFactory().create(Messenger.class);
 
-        assertNotNull(service.getBinding());
-        assertNotNull(((ObjectBinding) service.getBinding()).getBindingProvider());
+        assertNotNull(service.getBindingProvider());
         
         OperationInfo info = service.getServiceInfo().getOperation("receive");
         assertEquals(1, info.getInputMessage().getMessageParts().size());

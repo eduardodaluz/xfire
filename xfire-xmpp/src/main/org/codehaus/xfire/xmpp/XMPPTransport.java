@@ -5,18 +5,19 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.transport.AbstractWSDLTransport;
+import org.codehaus.xfire.soap.SoapTransport;
+import org.codehaus.xfire.soap.SoapTransportHelper;
+import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultEndpoint;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class XMPPTransport
-    extends AbstractWSDLTransport
-    implements Transport, WSDL11Transport
+    extends AbstractTransport
+    implements SoapTransport, WSDL11Transport
 {
     private static final Log log = LogFactory.getLog(XMPPTransport.class);
     
@@ -43,6 +44,7 @@ public class XMPPTransport
         new SoapIQProvider();
         
         addFaultHandler(new XMPPFaultHandler());
+        SoapTransportHelper.createSoapTransport(this);
     }
 
     /**
@@ -113,9 +115,13 @@ public class XMPPTransport
         return username;
     }
 
+    public String[] getSupportedBindings()
+    {
+        return new String[] { XMPP_TRANSPORT_NS };
+    }
+
     public String[] getKnownUriSchemes()
     {
         return new String[] { "xmpp://" };
     }
-
 }

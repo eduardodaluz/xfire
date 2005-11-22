@@ -7,7 +7,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**
@@ -68,23 +67,5 @@ public abstract class AbstractHandler
     public Collection getBefore()
     {
         return before;
-    }
-
-    public int compareTo(Object o1)
-    {
-        Handler h1 = (Handler) o1;
-        if (h1 == this) return 0;
-        
-        boolean thisBefore = getBefore().contains(h1.getClass().getName());
-        boolean thisAfter = getAfter().contains(h1.getClass().getName());
-        boolean thisAfter2 = h1.getBefore().contains(getClass().getName());
-        boolean thisBefore2 = h1.getAfter().contains(getClass().getName());
-
-        if ((thisBefore2 && thisAfter) || (thisBefore && thisAfter2))
-            throw new XFireRuntimeException("Impossible ordering!");
-        
-        if ( thisAfter2 || thisAfter) return 1;
-        else if (thisBefore2  || thisBefore) return -1;
-        else return 0;
     }
 }

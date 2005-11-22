@@ -1,10 +1,11 @@
 package org.codehaus.xfire.client;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -13,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
@@ -21,21 +23,18 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.OutMessageSender;
-import org.codehaus.xfire.handler.ParseMessageHandler;
-import org.codehaus.xfire.handler.Phase;
+import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.ObjectBinding;
-import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
+import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.jdom.Element;
 
 public class Client
@@ -44,21 +43,31 @@ public class Client
 {
     private static final Log log = LogFactory.getLog(Client.class);
 
+    public static final String CLIENT_MODE = "client.mode";
+
     private Object[] response;
     private Transport transport;
     private Service service;
-    private ObjectBinding clientBinding;
+    private Binding binding;
     private String url;
     private int timeout = 10*1000;
     private MessageContext context;
     private Exception fault;
     private String endpointUri;
-    private List inPhases;
-    private List outPhases;
    
     /** The XFire instance. This is only needed when invoking local services. */
-    private XFire xfire;
+    private XFire xfire = XFireFactory.newInstance().getXFire();
     
+    public Client(Endpoint endpoint)
+    {
+        this(endpoint.getBinding(), endpoint.getAddress());
+    }
+    
+    public Client(Binding binding, String url)
+    {
+        this(binding.getTransport(), binding.getService(), url);
+    }
+
     public Client(Transport transport, Service service, String url)
     {
         this(transport, service, url, null);
@@ -69,54 +78,62 @@ public class Client
         this.transport = transport;
         this.url = url;
         this.endpointUri = endpointUri;
-        
-        clientBinding = (ObjectBinding) ((AbstractBinding) service.getBinding()).clone();
-        clientBinding.setClientModeOn(true);
-        
+
         // Create a service clone
-        this.service = new Service(service.getServiceInfo());
-        this.service.setBinding(clientBinding);
+        this.service = service;
         this.service.setFaultSerializer(service.getFaultSerializer());
         this.service.setSoapVersion(service.getSoapVersion());
         
-        inPhases = new ArrayList();
-        outPhases = new ArrayList();
-        createPhases();
+        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        {
+            Binding b = (Binding) itr.next();
+            if (b.getTransport() != null && b.getTransport().equals(transport))
+            {
+                this.binding = b;
+                break;
+            }
+        }
+        
+        if (binding == null)
+        {
+            throw new IllegalStateException("Couldn't find an appropriate binding for the selected transport.");
+        }
         
         addOutHandler(new OutMessageSender());
-        addInHandler(new ParseMessageHandler());
     }
 
-    public Client(URL wsdlUrl)
+    public Client(URL wsdlUrl) throws IOException, WSDLException
     {
-        // TODO Auto-generated constructor stub
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(wsdlUrl.openStream());
+        
+        Service service = (Service) builder.getServices().iterator().next();
     }
 
     public Object[] invoke(OperationInfo op, Object[] params) throws Exception
     {
         try
         {
-            OutMessage msg = new OutMessage("targeturl");
+            OutMessage msg = new OutMessage(url);
             msg.setBody(params);
-            msg.setUri(url);
-            msg.setSerializer(service.getBinding());
-            msg.setProperty(SoapConstants.SOAP_ACTION, SoapOperationInfo.getSoapAction(op));
             msg.setChannel(getOutChannel());
             
             context = new MessageContext();
             context.setService(service);
             context.setXFire(xfire);
+            context.setBinding(binding);
+            context.setProperty(CLIENT_MODE, Boolean.TRUE);
             
             RobustInOutExchange exchange = new RobustInOutExchange(context);
             exchange.setOperation(op);
             exchange.setOutMessage(msg);
             context.setExchange(exchange);
             
-            HandlerPipeline pipeline = new HandlerPipeline(outPhases);
-            pipeline.addHandlers(getOutHandlers());
-            pipeline.addHandlers(transport.getOutHandlers());
-        
-            pipeline.invoke(context);
+            HandlerPipeline outPipe = new HandlerPipeline(xfire.getOutPhases());
+            outPipe.addHandlers(getOutHandlers());
+            outPipe.addHandlers(transport.getOutHandlers());
+            context.setOutPipeline(outPipe);
+
+            outPipe.invoke(context);
         }
         catch (Exception e1)
         {
@@ -168,14 +185,15 @@ public class Client
         
         RobustInOutExchange exchange = (RobustInOutExchange) context.getExchange();
         exchange.setInMessage(msg);
-        
-        HandlerPipeline pipeline = new HandlerPipeline(inPhases);
-        pipeline.addHandlers(getInHandlers());
-        pipeline.addHandlers(transport.getInHandlers());
-        
+
         try
         {
-            pipeline.invoke(context);
+            HandlerPipeline inPipe = new HandlerPipeline(xfire.getInPhases());
+            inPipe.addHandlers(getInHandlers());
+            inPipe.addHandlers(transport.getInHandlers());
+            recvContext.setInPipeline(inPipe);
+            
+            inPipe.invoke(context);
             
             finishReadingMessage(msg, context);
             
@@ -184,7 +202,7 @@ public class Client
         catch (Exception e1)
         {
             XFireFault fault = XFireFault.createFault(e1);
-            pipeline.handleFault(fault, context);
+            recvContext.getInPipeline().handleFault(fault, context);
             this.fault = fault;
             
             Element detail = fault.getDetail();
@@ -209,8 +227,7 @@ public class Client
             
             try
             {
-                BindingProvider provider = context.getService().getBinding()
-                        .getBindingProvider();
+                BindingProvider provider = context.getService().getBindingProvider();
                 JDOMStreamReader reader = new JDOMStreamReader(exDetail);
                 reader.nextTag();
                 
@@ -256,26 +273,6 @@ public class Client
         {
             throw new XFireFault("Couldn't parse message.", e, XFireFault.SENDER);
         }
-    }
-    
-    protected void createPhases()
-    {
-        inPhases = new ArrayList();
-        inPhases.add(new Phase(Phase.TRANSPORT, 1000));
-        inPhases.add(new Phase(Phase.PARSE, 2000));
-        inPhases.add(new Phase(Phase.PRE_DISPATCH, 3000));
-        inPhases.add(new Phase(Phase.DISPATCH, 4000));
-        inPhases.add(new Phase(Phase.POLICY, 5000));
-        inPhases.add(new Phase(Phase.USER, 6000));
-        inPhases.add(new Phase(Phase.PRE_INVOKE, 7000));
-        inPhases.add(new Phase(Phase.SERVICE, 8000));
-
-        outPhases = new ArrayList();
-        outPhases.add(new Phase(Phase.POST_INVOKE, 1000));
-        outPhases.add(new Phase(Phase.POLICY, 2000));
-        outPhases.add(new Phase(Phase.USER, 3000));
-        outPhases.add(new Phase(Phase.TRANSPORT, 4000));
-        outPhases.add(new Phase(Phase.SEND, 5000));
     }
 
     public Channel getOutChannel()

@@ -28,8 +28,8 @@ public class XFireConfigLoaderTest
         XFire xfire = configLoader.loadConfig(new String[] {"META-INF/xfire/sservices.xml"});
         
         assertNotNull(xfire);
-        assertEquals(3, xfire.getInHandlers().size());
-        assertTrue(xfire.getInHandlers().get(2) instanceof TestHandler);
+        assertEquals(2, xfire.getInHandlers().size());
+        assertTrue(xfire.getInHandlers().get(1) instanceof TestHandler);
         assertEquals(xfire.getOutHandlers().size(),1);
         assertEquals(xfire.getFaultHandlers().size(),1);
         
@@ -39,8 +39,8 @@ public class XFireConfigLoaderTest
         SoapVersion version = service.getSoapVersion();
         assertEquals(version,Soap12.getInstance());
         
-        assertEquals(service.getInHandlers().size(),3);
-        assertTrue(service.getInHandlers().get(2) instanceof TestHandler);
+        assertEquals(1, service.getInHandlers().size());
+        assertTrue(service.getInHandlers().get(0) instanceof TestHandler);
         
         assertEquals(service.getOutHandlers().size(),1);
         
@@ -51,12 +51,12 @@ public class XFireConfigLoaderTest
         assertEquals(EchoImpl.class, service.getServiceInfo().getServiceClass());
         
         service = xfire.getServiceRegistry().getService("EchoWithBean");
-        Invoker invoker = service.getBinding().getInvoker();
+        Invoker invoker = service.getInvoker();
         assertTrue(invoker instanceof BeanInvoker);
         assertEquals(Echo.class, service.getServiceInfo().getServiceClass());
         
         service = xfire.getServiceRegistry().getService("EchoWithBeanNoServiceClass");
-        invoker = service.getBinding().getInvoker();
+        invoker = service.getInvoker();
         assertTrue(invoker instanceof BeanInvoker);
         assertEquals(EchoImpl.class, service.getServiceInfo().getServiceClass());
         

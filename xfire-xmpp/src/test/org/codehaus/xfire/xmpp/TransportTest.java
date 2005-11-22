@@ -1,11 +1,13 @@
 package org.codehaus.xfire.xmpp;
 
+import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapSerializer;
-import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.util.jdom.JDOMEndpoint;
@@ -35,15 +37,15 @@ public class TransportTest
     {
         super.setUp();
 
+        transport2 = new XMPPTransport(getXFire(), server, username, password);
+        getTransportManager().register(transport2);
+        
+        transport1 = new XMPPTransport(getXFire(), server, "xfireTestClient", "password2");
+
         echo = getServiceFactory().create(Echo.class);
 
         getServiceRegistry().register(echo);
-
-        transport2 = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, username, password));
-        transport1 = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, "xfireTestClient", "password2"));
-        
-        getXFire().getTransportManager().register(transport2);
-        //XMPPConnection.DEBUG_ENABLED = true;
+        // XMPPConnection.DEBUG_ENABLED = true;
     }
 
     protected void tearDown()
@@ -99,6 +101,9 @@ public class TransportTest
         
         Channel channel2 = transport2.createChannel("Echo");
 
+        Binding binding = echo.getBinding(transport2);
+        assertNotNull(binding);
+        
         // Document to send
         StaxBuilder builder = new StaxBuilder();
         Document doc = builder.build(getResourceAsStream("/org/codehaus/xfire/xmpp/echo.xml"));
@@ -110,10 +115,14 @@ public class TransportTest
         msg.setBody(doc);
 
         channel1.send(context, msg);
-        channel1.send(context, msg);
-        Thread.sleep(6000); 
+
+        for (int i = 0; i < 100; i++)
+        {
+            Thread.sleep(50);
+            if (peer.getCount() == 1) break;
+        }
         
-        assertEquals(2, peer.getCount());
+        assertEquals(1, peer.getCount());
     }
 
     public void testWSDL()

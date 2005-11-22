@@ -1,4 +1,4 @@
-package org.codehaus.xfire.wsdl11;
+package org.codehaus.xfire.wsdl11.parser;
 
 import java.util.List;
 

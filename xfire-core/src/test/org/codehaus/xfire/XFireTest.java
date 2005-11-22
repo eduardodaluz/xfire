@@ -17,7 +17,6 @@ import org.jdom.Document;
 public class XFireTest
         extends AbstractXFireTest
 {
-
     public void setUp()
             throws Exception
     {

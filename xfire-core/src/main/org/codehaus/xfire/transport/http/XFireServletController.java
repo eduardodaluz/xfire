@@ -25,7 +25,6 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
@@ -50,15 +49,7 @@ public class XFireServletController
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
-        this.transport = SoapTransport.createSoapTransport(new HttpTransport());
-
-        registerTransport();
-    }
-
-    protected void registerTransport()
-    {
-        TransportManager service = getTransportManager();
-        service.register(transport);
+        this.transport = getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
     }
 
     public static HttpServletRequest getRequest()
@@ -205,6 +196,7 @@ public class XFireServletController
         }
         catch (Exception e)
         {
+            logger.debug("Couldn't open channel.", e);
             throw new ServletException("Couldn't open channel.", e);
         }
         

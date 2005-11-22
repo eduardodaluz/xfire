@@ -31,7 +31,7 @@ public class XFireServerTest
         service = getServiceFactory().create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         
-        service.getBinding().setBindingProvider(new MessageBindingProvider());
+        service.setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);
 
@@ -60,7 +60,7 @@ public class XFireServerTest
         Element root = new Element("root", "a", "urn:a");
         root.addContent("hello");
         
-        Transport transport = getXFire().getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        Transport transport = getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
 
         Client client = new Client(transport, service, "http://localhost:8391/Echo");
 

@@ -10,10 +10,10 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
@@ -26,21 +26,16 @@ import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 public class MessageBinding
     extends AbstractBinding
 {
-    public MessageBinding()
-    {
-        setStyle(SoapConstants.STYLE_MESSAGE);
-    }
-
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
     {
-        final Service endpoint = context.getService();
+        final Service service = context.getService();
         
         OperationInfo operation = context.getExchange().getOperation();
 
         if (context.getExchange().getOperation() == null)
         {
-            operation = (OperationInfo) endpoint.getServiceInfo().getOperations().iterator().next();
+            operation = (OperationInfo) service.getServiceInfo().getOperations().iterator().next();
             
             setOperation(operation, context);
         }
@@ -51,10 +46,13 @@ public class MessageBinding
 
         final List params = new ArrayList();
         
+        Binding binding = context.getBinding();
         for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
-            params.add( getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
+            if (binding.isHeader(p)) continue;
+            
+            params.add( service.getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
             nextEvent(message.getXMLStreamReader());
         }
 
@@ -71,17 +69,10 @@ public class MessageBinding
         for (Iterator itr = operation.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
+            if (context.getBinding().isHeader(p)) continue;
             
-            getBindingProvider().writeParameter(p, writer, context, values[i]);
+            context.getService().getBindingProvider().writeParameter(p, writer, context, values[i]);
             i++;
         }
-    }
-
-    public Object clone()
-    {
-        MessageBinding binding = new MessageBinding();
-        binding.setBindingProvider(getBindingProvider());
-        
-        return binding;
-    }    
+    }   
 }

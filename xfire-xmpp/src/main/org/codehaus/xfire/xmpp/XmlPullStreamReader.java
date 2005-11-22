@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -31,8 +32,7 @@ public class XmlPullStreamReader
         }
         catch (XmlPullParserException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new XFireRuntimeException("Couldn't convert to stax event.", e);
         }
     }
 

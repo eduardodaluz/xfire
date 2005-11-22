@@ -1,43 +1,25 @@
 package org.codehaus.xfire.service.binding;
 
-import java.util.Collection;
 import java.util.Iterator;
 
-import javax.wsdl.Message;
-import javax.wsdl.Part;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
-import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
-import org.codehaus.xfire.wsdl.SchemaType;
-import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
-import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
-import org.jdom.Attribute;
-import org.jdom.Element;
 
 public class WrappedBinding
     extends AbstractBinding
-    implements WSDL11ParameterBinding, MessageSerializer
 {
-    public WrappedBinding()
-    {
-        setStyle(SoapConstants.STYLE_WRAPPED);
-    }
-    
     public void readMessage(InMessage inMessage, MessageContext context)
         throws XFireFault
     {
@@ -50,7 +32,7 @@ public class WrappedBinding
         
         OperationInfo op = context.getExchange().getOperation();
 
-        if (!isClientModeOn() && op == null)
+        if (!isClientModeOn(context) && op == null)
         {
             op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
             
@@ -78,9 +60,9 @@ public class WrappedBinding
             
             OperationInfo op = context.getExchange().getOperation();
             String name;
-            
+
             MessageInfo msgInfo;
-            if (isClientModeOn())
+            if (isClientModeOn(context))
             {
                 name = op.getName();
                 msgInfo = op.getInputMessage();
@@ -98,7 +80,7 @@ public class WrappedBinding
             {
                 MessagePartInfo outParam = (MessagePartInfo) itr.next();
     
-                getBindingProvider().writeParameter(outParam, writer, context, values[i]);
+                endpoint.getBindingProvider().writeParameter(outParam, writer, context, values[i]);
                 i++;
             }
     
@@ -119,122 +101,4 @@ public class WrappedBinding
         writer.writeStartElement(prefix, name, namespace);
         writer.writeNamespace(prefix, namespace);
     }
-
-    public void createInputParts(WSDLBuilder builder,
-                                 Message req, 
-                                 OperationInfo op)
-    {
-        Part part = builder.getDefinition().createPart();
-
-        QName typeQName = createDocumentType(builder, 
-                                             op.getInputMessage(), 
-                                             part,
-                                             op.getName());
-        part.setName("parameters");
-        part.setElementName(typeQName);
-
-        req.addPart(part);
-    }
-
-    public void createOutputParts(WSDLBuilder builder,
-                                  Message req, 
-                                  OperationInfo op)
-    {
-        // response message part
-        Part part = builder.getDefinition().createPart();
-
-        // Document style service
-        QName typeQName = createDocumentType(builder, 
-                                             op.getOutputMessage(), 
-                                             part,
-                                             op.getName() + "Response");
-        part.setElementName(typeQName);
-        part.setName("parameters");
-
-        req.addPart(part);
-    }
-
-    private QName createDocumentType(WSDLBuilder builder,
-                                     MessageInfo message, 
-                                     Part part,
-                                     String opName)
-    {
-        Element element = new Element("element", AbstractWSDL.XSD_NS);
-        element.setAttribute(new Attribute("name", opName));
-
-        Element complex = new Element("complexType", AbstractWSDL.XSD_NS);
-        element.addContent(complex);
-
-        if (message.getMessageParts().size() > 0)
-        {
-            Element sequence = createSequence(complex);
-
-            writeParametersSchema(builder, message.getMessageParts(), sequence);
-        }
-
-        /**
-         * Don't create the schema until after we add the types in
-         * (via WSDLBuilder.addDependency()) writeParametersSchema. 
-         */
-        Element schemaEl = builder.createSchemaType(builder.getTargetNamespace());
-        schemaEl.addContent(element);
-
-        return new QName(builder.getTargetNamespace(), opName);
-    }
-
-    private void writeParametersSchema(WSDLBuilder builder,
-                                       Collection params, 
-                                       Element sequence)
-    {
-        for (Iterator itr = params.iterator(); itr.hasNext();)
-        {
-            MessagePartInfo param = (MessagePartInfo) itr.next();
-
-            QName pName = param.getName();
-            SchemaType type = param.getSchemaType();
-
-            builder.addDependency(type);
-            QName schemaType = type.getSchemaType();
-
-            builder.addNamespaceImport(builder.getService().getServiceInfo().getName().getNamespaceURI(), 
-                                       schemaType.getNamespaceURI());
-            
-            String uri = type.getSchemaType().getNamespaceURI();
-            String prefix = builder.getNamespacePrefix(uri);
-            builder.addNamespace(prefix, uri);
-
-            Element element = new Element("element", AbstractWSDL.XSD_NS);
-            sequence.addContent(element);
-
-            if (type.isAbstract())
-            {
-                element.setAttribute(new Attribute("name", pName.getLocalPart()));
-                
-                element.setAttribute(new Attribute("type", 
-                                                   prefix + ':' + schemaType.getLocalPart()));
-            }
-            else
-            {
-                element.setAttribute(new Attribute("ref",  prefix + ':' + schemaType.getLocalPart()));
-            }
-
-            element.setAttribute(new Attribute("minOccurs", "1"));
-            element.setAttribute(new Attribute("maxOccurs", "1"));
-        }
-    }
-
-    private Element createSequence(Element complex)
-    {
-        Element sequence = new Element("sequence", AbstractWSDL.XSD_NS);
-        complex.addContent(sequence);
-        return sequence;
-    }
-
-    public Object clone()
-    {
-        WrappedBinding binding = new WrappedBinding();
-        binding.setBindingProvider(getBindingProvider());
-        
-        return binding;
-    }    
 }

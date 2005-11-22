@@ -1,6 +1,7 @@
 package org.codehaus.xfire.xmpp;
 
 import org.jdom.Document;
+import org.jdom.output.XMLOutputter;
 import org.jivesoftware.smack.packet.IQ;
 
 /**
@@ -11,6 +12,7 @@ public class SoapEnvelopePacket
 {
     private String body;
     private Document doc;
+    private final static XMLOutputter outputter = new XMLOutputter();
     
     public SoapEnvelopePacket(String body)
     {
@@ -21,11 +23,21 @@ public class SoapEnvelopePacket
     {
         this.doc = doc;
     }
-    
+
     public String getChildElementXML()
     {
-        if (body == null) throw new RuntimeException();
-        return body;
+        if (body != null)
+        {
+            return body;
+        }
+        else if (doc != null)
+        {
+            return outputter.outputString(doc);
+        }
+        else
+        {
+            throw new RuntimeException("Body can not be null!");
+        }
     }
     
     public Document getDocument()

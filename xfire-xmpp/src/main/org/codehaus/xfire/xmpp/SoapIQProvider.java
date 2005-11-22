@@ -46,7 +46,7 @@ public class SoapIQProvider
         reader.setAdvanceAtEnd(false);
         
         Document doc = builder.build(reader);
- 
+
         return new SoapEnvelopePacket(doc);
     }
 }

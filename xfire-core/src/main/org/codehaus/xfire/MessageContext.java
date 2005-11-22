@@ -6,6 +6,7 @@ import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.exchange.RobustInOutExchange;
 import org.codehaus.xfire.handler.HandlerPipeline;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -22,7 +23,7 @@ public class MessageContext extends AbstractContext
     private Session session;
 
     private Service service;
-
+    private Binding binding;
     private MessageExchange exchange;
 
     private HandlerPipeline inPipeline;
@@ -41,6 +42,16 @@ public class MessageContext extends AbstractContext
     public void setXFire(XFire xfire)
     {
         this.xfire = xfire;
+    }
+
+    public Binding getBinding()
+    {
+        return binding;
+    }
+
+    public void setBinding(Binding binding)
+    {
+        this.binding = binding;
     }
 
     public MessageExchange createMessageExchange(OperationInfo operation)

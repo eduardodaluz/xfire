@@ -28,9 +28,9 @@ public class FaultToTest
         ObjectServiceFactory factory = new ObjectServiceFactory(getXFire().getTransportManager(), 
                                                                 new MessageBindingProvider())
         {
-            protected OperationInfo addOperation(Service endpoint, Method method, String use)
+            protected OperationInfo addOperation(Service endpoint, Method method, String style)
             {
-                OperationInfo op = super.addOperation(endpoint, method, use);
+                OperationInfo op = super.addOperation(endpoint, method, style);
                 
                 new AddressingOperationInfo("http://example.com/Echo", op);
                 

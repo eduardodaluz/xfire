@@ -46,7 +46,7 @@ public class Jsr181BeanPostProcessor
         if (annotations.hasWebServiceAnnotation(clazz))
         {
             Service service = serviceFactory.create(clazz);
-            service.getBinding().setInvoker(new BeanInvoker(bean));
+            service.setInvoker(new BeanInvoker(bean));
             registry.register(service);
         }
         return bean;

@@ -16,8 +16,8 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapOperationInfo;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Element;
 
@@ -53,12 +53,9 @@ public class ObjectServiceFactoryTest
         assertEquals(Soap11.getInstance(), endpoint.getSoapVersion());
         assertTrue(endpoint.getFaultSerializer() instanceof SoapFaultSerializer);
         
-        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
-        assertNotNull(binding);
-        assertEquals(SoapConstants.STYLE_WRAPPED, binding.getStyle());
+        assertTrue(service.isWrapped());
         
-        SoapOperationInfo soapOp = 
-            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
+        SoapBinding soapOp = (SoapBinding) endpoint.getBindings().iterator().next();
         assertEquals(SoapConstants.USE_LITERAL, soapOp.getUse());
     }
 
@@ -76,11 +73,9 @@ public class ObjectServiceFactoryTest
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
         
-        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
+        SoapBinding binding = (SoapBinding) endpoint.getBindings().iterator().next();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
-        SoapOperationInfo soapOp = 
-            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
-        assertEquals(SoapConstants.USE_ENCODED, soapOp.getUse());
+        assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
     }
 
     public void testCreateNameNamespaceVersionStyleUseEncodingStyle()
@@ -100,11 +95,9 @@ public class ObjectServiceFactoryTest
         assertEquals(new QName("http://xfire.codehaus.org", "EchoService"), service.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
         
-        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
+        SoapBinding binding = (SoapBinding) endpoint.getBindings().iterator().next();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
-        SoapOperationInfo soapOp = 
-            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
-        assertEquals(SoapConstants.USE_ENCODED, soapOp.getUse());
+        assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
     }
 
     public void testCreateNameNamespaceNull()
@@ -124,11 +117,9 @@ public class ObjectServiceFactoryTest
         assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
 
-        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
+        SoapBinding binding = (SoapBinding) endpoint.getBindings().iterator().next();
         assertEquals(SoapConstants.STYLE_RPC, binding.getStyle());
-        SoapOperationInfo soapOp = 
-            SoapOperationInfo.getSoapOperationInfo(endpoint.getServiceInfo().getOperation("echo"));
-        assertEquals(SoapConstants.USE_ENCODED, soapOp.getUse());
+        assertEquals(SoapConstants.USE_ENCODED, binding.getUse());
     }
     
     public void testOverridenNames()
@@ -163,8 +154,12 @@ public class ObjectServiceFactoryTest
         ServiceInfo info = service.getServiceInfo();
         
         MessagePartContainer inMsg =info.getOperation("doSomething").getInputMessage();
-        assertEquals(1, inMsg.getMessageHeaders().size());
-        assertNotNull(inMsg.getMessageHeader(new QName(info.getName().getNamespaceURI(), "in1")));
+        assertEquals(2, inMsg.getMessageParts().size());
+        MessagePartInfo part = inMsg.getMessagePart(new QName(info.getName().getNamespaceURI(), "in1"));
+        assertNotNull(part);
+        
+        SoapBinding soapOp = (SoapBinding) service.getBindings().iterator().next();
+        assertTrue(soapOp.isHeader(part));
     }
     
     public static class HeaderService

@@ -3,6 +3,7 @@ package org.codehaus.xfire.service.binding;
 
 import java.lang.reflect.Method;
 
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -34,7 +35,10 @@ public class HeaderBindingTest
         Service service = osf.create(HeaderService.class, "HeaderService", "urn:HeaderService", null);
         getXFire().getServiceRegistry().register(service);
         
-        Document response = invokeService("HeaderService", "/org/codehaus/xfire/service/binding/header.xml");
+        Binding binding = (Binding) service.getBindings().iterator().next();
+        assertEquals(1, binding.getHeaders().size());
+        
+        Document response = invokeService("HeaderService", "header.xml");
         assertNotNull(HeaderService.a);
         assertEquals("a", HeaderService.a.getName());
         assertNotNull(HeaderService.b);

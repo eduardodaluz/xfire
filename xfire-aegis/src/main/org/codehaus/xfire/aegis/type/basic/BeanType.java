@@ -73,7 +73,7 @@ public class BeanType
             {
                 MessageReader childReader = reader.getNextElementReader();
                 QName name = childReader.getName();
-                
+
                 Type type = info.getType(name.getLocalPart());
 
                 if (type != null)

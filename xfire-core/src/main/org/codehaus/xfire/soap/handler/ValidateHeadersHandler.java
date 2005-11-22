@@ -73,5 +73,4 @@ public class ValidateHeadersHandler
         throw new XFireFault("Header {" + name.getLocalPart() + "}" + name.getNamespaceURI()
                 + " was not undertsood by the service.", XFireFault.MUST_UNDERSTAND);
     }
-
 }

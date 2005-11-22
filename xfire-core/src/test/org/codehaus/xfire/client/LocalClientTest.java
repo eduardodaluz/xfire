@@ -6,7 +6,6 @@ import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
@@ -27,7 +26,6 @@ public class LocalClientTest
         super.setUp();
 
         service = getServiceFactory().create(Echo.class);
-        service.getBinding().setBindingProvider(new MessageBindingProvider());
 
         getServiceRegistry().register(service);
         transport = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
@@ -40,8 +38,7 @@ public class LocalClientTest
 
         Element root = new Element("root", "a", "urn:a");
         root.addContent("hello");
-        
-        
+
         Client client = new Client(transport, service, "xfire.local://Echo", "xfire.local://Client");
         client.setXFire(getXFire());
         

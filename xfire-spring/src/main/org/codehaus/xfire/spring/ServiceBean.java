@@ -12,7 +12,6 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -127,12 +126,10 @@ public class ServiceBean
         
         xfireService = serviceFactory.create(intf, name, namespace, properties);
 
-        AbstractBinding binding = (AbstractBinding) xfireService.getBinding();
         if (logger.isInfoEnabled())
         {
             logger.info("Exposing SOAP v." + xfireService.getSoapVersion().getVersion()
-                    + " service with name " + xfireService.getName() + ", with style " 
-                    + binding.getStyle());
+                    + " service with name " + xfireService.getName());
         }
 
         // Register the service
@@ -142,7 +139,7 @@ public class ServiceBean
         Object serviceBean = getProxyForService();
         if (serviceBean != null)
         {
-            binding.setInvoker(new BeanInvoker(serviceBean));
+            xfireService.setInvoker(new BeanInvoker(serviceBean));
         }
 
         if (schemas != null)
@@ -153,7 +150,7 @@ public class ServiceBean
                 (DefaultWSDLBuilderFactory) osf.getWsdlBuilderFactory();
             wbf.setSchemaLocations(schemas);
         }
-        
+
         // set up in handlers
         if (xfireService.getInHandlers() == null)
             xfireService.setInHandlers(getInHandlers());

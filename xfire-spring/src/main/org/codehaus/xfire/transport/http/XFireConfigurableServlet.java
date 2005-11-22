@@ -1,6 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
@@ -40,12 +39,15 @@ public class XFireConfigurableServlet
     /**
      * @return
      */
-    private String getConfigPath(){
-        if( configPath == null || configPath.length() == 0){
+    private String getConfigPath()
+    {
+        if (configPath == null || configPath.length() == 0)
+        {
             return CONFIG_FILE;
         }
         return configPath;
     }
+    
     /**
      * @see javax.servlet.Servlet#init()
      */
@@ -63,24 +65,31 @@ public class XFireConfigurableServlet
         try
         {
             
-            log.debug("Searching for  "+getConfigPath());
             en = getClass().getClassLoader().getResources(getConfigPath());
-            if( !en.hasMoreElements()){
-                log.warn("Can't find any configuration file : "+ getConfigPath());
+            if (!en.hasMoreElements())
+            {
+                log.warn("Can't find any configuration file : " + getConfigPath());
             }
+            
+            log.debug("Found services.xml at "+getConfigPath());
             
             if (!useNewConfig)
             {
                 super.init();
+                
                 configureXFire(en);
             }
             else
             {
-                if( en.hasMoreElements()){
-                  configureXFireNew();
-                }else{
+                if (en.hasMoreElements())
+                {
+                    configureXFireNew();
+                }
+                else
+                {
                     xfire = createXFire();
                 }
+                
                 controller = createController();
             }
 
@@ -90,7 +99,6 @@ public class XFireConfigurableServlet
         {
             log.error("Couldn't configure XFire", e);
         }
-
     }
 
     /**
@@ -99,7 +107,6 @@ public class XFireConfigurableServlet
     protected void configureXFire(Enumeration en)
         throws Exception
     {
-
         XMLServiceBuilder builder = new XMLServiceBuilder(getXFire());
         
         while (en.hasMoreElements())
@@ -115,9 +122,7 @@ public class XFireConfigurableServlet
     protected void configureXFireNew()
         throws Exception
     {
-        
-          XFireConfigLoader loader = new XFireConfigLoader();
-          xfire = loader.loadConfig(getConfigPath());
-        
+        XFireConfigLoader loader = new XFireConfigLoader();
+        xfire = loader.loadConfig(getConfigPath());
     }
 }

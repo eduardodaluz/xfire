@@ -1,12 +1,21 @@
 package org.codehaus.xfire.service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
-import org.codehaus.xfire.service.binding.ObjectBinding;
+import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -29,11 +38,18 @@ public class Service
     public final static String ROLE = Service.class.getName();
 
     private ServiceInfo service;
+    private Map bindings = new HashMap();
+    private Invoker invoker;
+    private BindingProvider bindingProvider;
+    
     private MessageSerializer faultSerializer;
-    private ObjectBinding binding;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private SoapVersion soapVersion;
+
+    private Map endpoints = new HashMap();
+    private Map bindingToEndpoint = new HashMap();
+    private Map idToBinding = new HashMap();
     
     /**
      * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified 
@@ -45,7 +61,6 @@ public class Service
     {
         this.service = service;
     }
-
 
     /**
      * Accepts the given visitor. Iterates over all the contained service.
@@ -75,24 +90,24 @@ public class Service
         properties.put(name, value);
     }
 
-    /**
-     * Returns the binding for this endpoint.
-     *
-     * @return the binding.
-     */
-    public ObjectBinding getBinding()
+    public Invoker getInvoker()
     {
-        return binding;
+        return invoker;
     }
 
-    /**
-     * Sets the binding for this endpoint.
-     *
-     * @param binding the binding.
-     */
-    public void setBinding(ObjectBinding binding)
+    public void setInvoker(Invoker invoker)
     {
-        this.binding = binding;
+        this.invoker = invoker;
+    }
+
+    public BindingProvider getBindingProvider()
+    {
+        return bindingProvider;
+    }
+
+    public void setBindingProvider(BindingProvider bindingProvider)
+    {
+        this.bindingProvider = bindingProvider;
     }
 
     public MessageSerializer getFaultSerializer()
@@ -158,5 +173,71 @@ public class Service
     {
         this.soapVersion = soapVersion;
     }
-}
+    
+    public void addBinding(Binding binding)
+    {
+        bindings.put(binding.getName(), binding);
 
+        idToBinding.put(binding.getBindingId(), binding);
+    }
+    
+    public Binding getBinding(QName name)
+    {
+        return (Binding) bindings.get(name);
+    }
+    
+    public Collection getBindings()
+    {
+        return Collections.unmodifiableCollection(bindings.values());
+    }
+
+    public Binding getBinding(Transport t)
+    {
+        for (Iterator itr = bindings.values().iterator(); itr.hasNext();)
+        {
+            Binding binding = (Binding) itr.next();
+            if (binding.getTransport().equals(t))
+            {
+                return binding;
+            }
+        }
+        
+        return null;
+    }
+
+    public Collection getEndpoints()
+    {
+        return Collections.unmodifiableCollection(endpoints.values());
+    }
+
+    public void addEndpoint(Endpoint endpoint)
+    {
+        endpoints.put(endpoint.getName(), endpoint);
+
+        Set eps = (Set) bindingToEndpoint.get(endpoint.getBinding().getName());
+        
+        if (eps == null)
+        {
+            eps = new HashSet();
+            bindingToEndpoint.put(endpoint.getBinding().getName(), eps);
+        }
+        
+        eps.add(endpoint);
+    }
+
+    public Endpoint getEndpoint(QName name)
+    {
+        return (Endpoint) endpoints.get(name);
+    }
+    
+    public void addEndpoint(QName name, Binding binding, String address)
+    {
+        addEndpoint(new Endpoint(name, binding, address));
+    }
+
+    public Collection getEndpoints(QName binding)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+}

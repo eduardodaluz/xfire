@@ -9,8 +9,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -22,22 +20,22 @@ import org.codehaus.xfire.handler.CustomFaultHandler;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapOperationInfo;
+import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.xfire.soap.handler.SoapActionHandler;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
-import org.codehaus.xfire.wsdl.ResourceWSDL;
-import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
@@ -127,20 +125,7 @@ public class ObjectServiceFactory
     public Service create(Class clazz, URL wsdlUrl)
             throws Exception
     {
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        reader.readWSDL(wsdlUrl.toString());
-
-        QName name = ServiceUtils.makeQualifiedNameFromClass(clazz);
-        ServiceInfo serviceInfo = new ServiceInfo(name, null, clazz);
-        Service endpoint = new Service(serviceInfo);
-
-        endpoint.setWSDLWriter(new ResourceWSDL(wsdlUrl));
-
-        // TODO: Bring wsdl configuration functionality back!
-
         throw new UnsupportedOperationException("create() isn't working yet.");
-
-        // return endpoint;
     }
 
     /**
@@ -225,33 +210,29 @@ public class ObjectServiceFactory
         if (theUse == null) theUse = use;
         if (portType == null) portType = new QName(theNamespace, theName + "PortType");
         
-        
         ServiceInfo serviceInfo = new ServiceInfo(qName, portType, clazz);
 
+        if (theStyle.equals(SoapConstants.STYLE_WRAPPED))
+            serviceInfo.setWrapped(true);
+        
         Service endpoint = new Service(serviceInfo);
         setProperties(endpoint, properties);
         endpoint.setSoapVersion(theVersion);
 
-        ObjectBinding binding = ObjectBindingFactory.getMessageBinding(theStyle, theUse);
-        binding.setInvoker(new ObjectInvoker());
-        endpoint.setBinding(binding);
+        endpoint.setInvoker(new ObjectInvoker());
         endpoint.setFaultSerializer(new SoapFaultSerializer());
 
-        if (transportManager != null && binding instanceof WSDL11ParameterBinding)
-        {
-            endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilderFactory(),
-                                                          endpoint,
-                                                          transportManager,
-                                                          (WSDL11ParameterBinding) binding));
-        }
+        endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilderFactory(), endpoint));
+ 
+        initializeOperations(endpoint, theStyle);
 
-        initializeOperations(endpoint, theUse);
-
+        createBindings(endpoint, theStyle, theUse);
+        
         try
         {
             BindingProvider provider = getBindingProvider();
             provider.initialize(endpoint);
-            binding.setBindingProvider(provider);
+            endpoint.setBindingProvider(provider);
         }
         catch (Exception e)
         {
@@ -264,11 +245,82 @@ public class ObjectServiceFactory
         return endpoint;
     }
 
+    protected void createBindings(Service service, String style, String use)
+    {
+        for (Iterator itr = transportManager.getTransports().iterator(); itr.hasNext();)
+        {
+            Transport t = (Transport) itr.next();
+
+            if (t instanceof SoapTransport)
+            {
+                createSoapBinding(service, (SoapTransport) t, style, use);
+            }
+        }
+    }
+
+    protected void createSoapBinding(Service service, SoapTransport transport, String style, String use)
+    {
+        ServiceInfo serviceInfo = service.getServiceInfo();
+        String tname = transport.getName();
+        QName name = serviceInfo.getName();
+        QName bindingName = new QName(name.getNamespaceURI(), 
+                                      name.getLocalPart() + tname + "Binding");
+        
+        String bindingId = transport.getSupportedBindings()[0];
+        SoapBinding binding = new SoapBinding(bindingName, service);
+        binding.setStyle(style);
+        binding.setUse(use);
+        binding.setTransport(transport);
+        
+        // Create SOAP metadata for the binding operation
+        for (Iterator itr = serviceInfo.getOperations().iterator(); itr.hasNext();)
+        {
+            OperationInfo op = (OperationInfo) itr.next();
+            
+            createBindingOperation(service, binding, op);
+        }
+                
+        service.addBinding(binding);
+    }
+
+    private void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
+    {
+        createMessageBinding(binding, op.getInputMessage());
+        
+        if (op.hasOutput())
+        {
+            createMessageBinding(binding, op.getOutputMessage());
+        }
+        
+        for (Iterator fitr = op.getFaults().iterator(); fitr.hasNext();)
+        {
+            FaultInfo fault = (FaultInfo) fitr.next();
+            
+            // we don't support fault headers yet...
+        }
+    }
+
+    private void createMessageBinding(SoapBinding binding, MessageInfo msg)
+    {
+        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo part = (MessagePartInfo) itr.next();
+            
+            if (isHeader(part))
+            {
+                binding.setHeader(part, true);
+            }
+        }
+    }
+    
+    protected boolean isHeader(MessagePartInfo part)
+    {
+        return isHeader(part.getContainer().getOperation().getMethod(), part.getIndex());
+    }
+
     protected void registerHandlers(Service service)
     {
         service.addOutHandler(new OutMessageSender());
-        service.addInHandler(service.getBinding());
-        service.addInHandler(new SoapActionHandler());
         service.addFaultHandler(new FaultSender());
         service.addFaultHandler(new CustomFaultHandler());
     }
@@ -285,7 +337,7 @@ public class ObjectServiceFactory
         }
     }
 
-    protected void initializeOperations(Service endpoint, String use)
+    protected void initializeOperations(Service endpoint, String style)
     {
         final Method[] methods = endpoint.getServiceInfo().getServiceClass().getMethods();
         Arrays.sort(methods, new MethodComparator());
@@ -296,7 +348,7 @@ public class ObjectServiceFactory
 
             if (isValidMethod(method))
             {
-                addOperation(endpoint, method, use);
+                addOperation(endpoint, method, style);
             }
         }
     }
@@ -328,21 +380,17 @@ public class ObjectServiceFactory
         return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
-    protected OperationInfo addOperation(Service endpoint, final Method method, String use)
+    protected OperationInfo addOperation(Service endpoint, final Method method, String style)
     {
         ServiceInfo service = endpoint.getServiceInfo();
-        AbstractBinding binding = (AbstractBinding) endpoint.getBinding();
 
         final String opName = getOperationName(service, method);
 
         final OperationInfo op = service.addOperation(opName, method);
 
-        // Setup soap specific information
-        new SoapOperationInfo(getAction(op), use, op);
-
         final Class[] paramClasses = method.getParameterTypes();
 
-        final boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        boolean isDoc = style.equals(SoapConstants.STYLE_DOCUMENT);
 
         // Setup the input message
         MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
@@ -350,46 +398,44 @@ public class ObjectServiceFactory
 
         for (int j = 0; j < paramClasses.length; j++)
         {
-            if (isHeader(method, j))
-            {
-                final QName q = getInParameterName(endpoint, op, method, j, isDoc);
-                inMsg.addMessageHeader(q, paramClasses[j]).setIndex(j);
-            }
-            else if (!paramClasses[j].equals(MessageContext.class))
+            if (!paramClasses[j].equals(MessageContext.class))
             {
                 final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 inMsg.addMessagePart(q, paramClasses[j]).setIndex(j);
             }
         }
 
-        // Setup the output message
-        MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
-        op.setOutputMessage(outMsg);
-
-        final Class returnType = method.getReturnType();
-        if (!returnType.isAssignableFrom(void.class))
+        String mep = getMEP(method);
+        op.setMEP(mep);
+        if (hasOutMessage(mep))
         {
-            if (isHeader(method, -1))
-            {
-                final QName q =  getOutParameterName(endpoint, op, method, isDoc);
-                outMsg.addMessageHeader(q, method.getReturnType()).setIndex(0);
-            }
-            else
+            // Setup the output message
+            MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
+            op.setOutputMessage(outMsg);
+
+            final Class returnType = method.getReturnType();
+            if (!returnType.isAssignableFrom(void.class))
             {
                 final QName q = getOutParameterName(endpoint, op, method, isDoc);
-                outMsg.addMessagePart(q, method.getReturnType());
+                outMsg.addMessagePart(q, method.getReturnType()).setIndex(-1);
             }
         }
 
         if (isCustomFaultsEnabled())
             initializeFaults(method, service, op);
         
-        op.setMEP(getMEP(method));
         op.setAsync(isAsync(method));
         
         return op;
     }
 
+    protected boolean hasOutMessage(String mep)
+    {
+        if (mep.equals(SoapConstants.MEP_IN)) return false;
+        
+        return true;
+    }
+    
     protected void initializeFaults(final Method method, 
                                     final ServiceInfo service, 
                                     final OperationInfo op)

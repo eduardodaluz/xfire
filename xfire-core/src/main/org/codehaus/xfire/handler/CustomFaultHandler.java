@@ -7,7 +7,6 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.service.binding.ObjectBinding;
 import org.codehaus.xfire.util.stax.ElementStreamWriter;
 
 /**
@@ -42,11 +41,9 @@ public class CustomFaultHandler
 
         if (faultPart != null)
         {
-            ObjectBinding binding = context.getService().getBinding();
-
             ElementStreamWriter writer = new ElementStreamWriter(fault.getDetail());
             
-            binding.getBindingProvider().writeParameter(faultPart, writer, context, cause);
+            context.getService().getBindingProvider().writeParameter(faultPart, writer, context, cause);
         }
     }
 

@@ -1,31 +1,29 @@
 package org.codehaus.xfire.transport.jms;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.transport.AbstractWSDLTransport;
+import org.codehaus.xfire.soap.SoapTransport;
+import org.codehaus.xfire.soap.SoapTransportHelper;
+import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultEndpoint;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 
 public class JMSTransport
-    extends AbstractWSDLTransport
-    implements Transport, WSDL11Transport
+    extends AbstractTransport
+    implements SoapTransport, WSDL11Transport
 {
     private static final Log log = LogFactory.getLog(JMSTransport.class);
     
     public final static String NAME = "JMS";
     
+    private static final String BINDING_ID = "urn:xfire:jms";
     private static final String URI_PREFIX = "";
-    
-    private Destination source;
-    private Destination destination;
-    private Destination errors;
+
     private ConnectionFactory connectionFactory;
     private XFire xfire;
     
@@ -36,6 +34,8 @@ public class JMSTransport
     {
         this.xfire = xfire;
         this.connectionFactory = factory;
+        
+        SoapTransportHelper.createSoapTransport(this);
     }
 
     public String getName()
@@ -87,4 +87,10 @@ public class JMSTransport
     {
         return new String[] { "jms://" };
     }
+
+    public String[] getSupportedBindings()
+    {
+        return new String[] { BINDING_ID };
+    }
+    
 }

@@ -18,14 +18,14 @@ public class InMessage
     
     public InMessage(XMLStreamReader xmlStreamReader)
     {
-        this.xmlStreamReader = xmlStreamReader;
-        setUri(ANONYMOUS_URI);
+        this(xmlStreamReader, ANONYMOUS_URI);
     }
     
     public InMessage(XMLStreamReader xmlStreamReader, String uri)
     {
         this.xmlStreamReader = xmlStreamReader;
         setUri(uri);
+        setEncoding(xmlStreamReader.getCharacterEncodingScheme());
     }
 
     public void setXMLStreamReader(XMLStreamReader xmlStreamReader)

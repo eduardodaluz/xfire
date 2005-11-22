@@ -6,11 +6,14 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
-import org.codehaus.xfire.soap.SoapTransport;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.TransportManager;
+
 
 /**
  * XFireTest
@@ -20,8 +23,6 @@ import org.codehaus.xfire.transport.Transport;
 public class XMPPClientTest
         extends AbstractXFireAegisTest
 {
-    private Service service;
-
     private Transport clientTrans;
     private Transport serverTrans;
 
@@ -35,17 +36,17 @@ public class XMPPClientTest
     {
         super.setUp();
 
+        clientTrans = new XMPPTransport(getXFire(), server, "xfireTestClient", "password2");
+        serverTrans = new XMPPTransport(getXFire(), server, username, password);
+        
+        getXFire().getTransportManager().register(serverTrans);
+
         ServiceFactory factory = getServiceFactory();
 
-        service = factory.create(Echo.class);
+        Service service = factory.create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         getServiceRegistry().register(service);
         // XMPPConnection.DEBUG_ENABLED = true;       
-
-        clientTrans = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, "xfireTestClient", "password2"));
-        serverTrans = SoapTransport.createSoapTransport(new XMPPTransport(getXFire(), server, username, password));
-        
-        getXFire().getTransportManager().register(serverTrans);
     }
     
     protected void tearDown()
@@ -62,9 +63,14 @@ public class XMPPClientTest
     {
         Channel serverChannel = serverTrans.createChannel("Echo");
 
-        Client client = new Client(clientTrans, service, id + "/Echo");
-
-        OperationInfo op = service.getServiceInfo().getOperation("echo");
+        TransportManager tm = new DefaultTransportManager();
+        tm.register(clientTrans);
+        
+        Service serviceModel = new ObjectServiceFactory(tm).create(Echo.class);
+        Client client = new Client(clientTrans, serviceModel, id + "/Echo");
+        client.setTimeout(10000);
+        
+        OperationInfo op = serviceModel.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
 
         assertNotNull(response);

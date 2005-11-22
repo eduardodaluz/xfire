@@ -20,7 +20,7 @@ import org.codehaus.xfire.fault.XFireFault;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @since Feb 18, 2004
  */
-public interface Handler extends Comparable
+public interface Handler
 {
     String ROLE = Handler.class.getName();
 

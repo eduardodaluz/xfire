@@ -5,6 +5,7 @@ import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.soap.SoapSerializer;
 
 public class SoapSerializerHandler
@@ -25,7 +26,12 @@ public class SoapSerializerHandler
         throws Exception
     {
         MessageSerializer serializer = context.getOutMessage().getSerializer();
-
+        if (serializer == null)
+        {
+            SoapBinding binding = (SoapBinding) context.getBinding();
+            serializer = SoapBindingHandler.getSerializer(binding.getStyle(), binding.getUse());
+        }
+        
         context.getOutMessage().setSerializer(new SoapSerializer(serializer));
     }
 }

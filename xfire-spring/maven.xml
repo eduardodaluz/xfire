@@ -14,7 +14,10 @@
 		<mapping destFile="target/services.xsd"
 			     namespace="http://xfire.codehaus.org/config/1.0"
                  srcdir="${basedir}/src/main"
-                 metaInfDir="${maven.build.dir}/classes/"/>
+                 metaInfDir="${maven.build.dir}/generated/"/>
 
+		<ant:copy todir="${maven.build.dir}/classes">
+		  <ant:fileset dir="${maven.build.dir}/generated/"/>
+		</ant:copy>
 	</postGoal>
 </project>

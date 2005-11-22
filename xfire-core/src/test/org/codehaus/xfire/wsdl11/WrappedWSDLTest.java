@@ -13,8 +13,10 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.DocumentBinding;
 import org.codehaus.xfire.service.binding.WrappedBinding;
-import org.codehaus.xfire.soap.SoapOperationInfo;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -52,17 +54,17 @@ public class WrappedWSDLTest
         parts = message.getMessageParts();
         assertEquals(1, parts.size());
         
+        assertTrue(service.getServiceInfo().isWrapped());
+        
         part = (MessagePartInfo) parts.iterator().next();
         assertEquals(new QName("urn:Echo", "text"), part.getName());
 
-        assertTrue(service.getBinding() instanceof WrappedBinding);
-        
-        Collection endpoints = service.getServiceInfo().getEndpoints();
+        Collection endpoints = service.getEndpoints();
         assertEquals(1, endpoints.size());
         
         Endpoint endpoint = (Endpoint) endpoints.iterator().next();
         assertEquals(new QName("urn:Echo", "EchoHttpPort"), endpoint.getName());
-        assertEquals("http://schemas.xmlsoap.org/soap/http", endpoint.getBindingId());
+        assertEquals(SoapBinding.SOAP_BINDING_ID, endpoint.getBinding().getBindingId());
         assertEquals("http://localhost:8080/xfire/services/Echo", endpoint.getAddress());
     }
     
@@ -105,12 +107,11 @@ public class WrappedWSDLTest
         assertEquals(new QName("urn:Echo", "echo2Response"), part.getName());
         
         // Is the SOAP binding stuff around?
-        SoapOperationInfo soapOp = SoapOperationInfo.getSoapOperationInfo(opInfo);
-        assertNotNull(soapOp);
-        assertEquals("literal", soapOp.getUse());
-        assertEquals("urn:Echo/echo2", soapOp.getSoapAction());
+        SoapBinding binding = (SoapBinding) service.getBinding(new QName("urn:Echo", "EchoHttpBinding"));
+        assertNotNull(binding);
+        assertEquals("literal", binding.getUse());
+        //assertEquals("urn:Echo/echo2", binding.getSoapAction(opInfo));
         
-        assertTrue(service.getBinding() instanceof DocumentBinding);
     }
     
     public void testClient()

@@ -13,10 +13,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.stax.FragmentStreamReader;
-import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -30,9 +28,9 @@ public class XmlBeansWSDLBuilder
     
     private List importedSchemas = new ArrayList();
     
-    public XmlBeansWSDLBuilder(Service service, TransportManager tman, WSDL11ParameterBinding paramBinding) throws WSDLException
+    public XmlBeansWSDLBuilder(Service service) throws WSDLException
     {
-        super(service, tman, paramBinding);
+        super(service);
     }
 
     public void addDependency(org.codehaus.xfire.wsdl.SchemaType type)

@@ -57,26 +57,22 @@ public class XFireWebAnnotationsHandlerMappingTest
         
         Method echoMethod = EchoImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        control.setReturnValue(true);
+        control.setDefaultReturnValue(true);
         
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        control.setReturnValue(true);
+        control.setDefaultReturnValue(true);
         
         WebMethodAnnotation wma = new WebMethodAnnotation();
         wma.setOperationName("echo");
         webAnnotations.getWebMethodAnnotation(echoMethod);
-        control.setReturnValue(wma);
+        control.setDefaultReturnValue(wma);
         
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        control.setReturnValue(false);
-        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        control.setReturnValue(false);
+        control.setDefaultReturnValue(false);
         webAnnotations.hasWebResultAnnotation(echoMethod);
-        control.setReturnValue(false);
+        control.setDefaultReturnValue(false);
         webAnnotations.hasOnewayAnnotation(echoMethod);
-        control.setReturnValue(false);
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        control.setReturnValue(false);
+        control.setDefaultReturnValue(false);
 
         control.replay();
 

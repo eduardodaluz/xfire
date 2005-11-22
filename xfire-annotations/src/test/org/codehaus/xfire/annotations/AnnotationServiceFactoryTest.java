@@ -15,9 +15,8 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapOperationInfo;
-import org.codehaus.xfire.wsdl11.WSDL11ParameterBinding;
 import org.easymock.MockControl;
 
 public class AnnotationServiceFactoryTest
@@ -60,26 +59,18 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setReturnValue(true);
         
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(true);
 
         WebMethodAnnotation wma = new WebMethodAnnotation();
         wma.setAction("test");
         webAnnotations.getWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(wma);
+        webAnnotationsControl.setDefaultReturnValue(wma);
 
         webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(true);
 
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(false);
-
-        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(false);
-
-        webAnnotations.hasWebResultAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
@@ -143,23 +134,18 @@ public class AnnotationServiceFactoryTest
         Method echoMethod = EchoService.class.getMethod("echo", new Class[]{String.class});
         
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(true);
 
         WebMethodAnnotation wma = new WebMethodAnnotation();
         wma.setAction("test");
         webAnnotations.getWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(wma);
+        webAnnotationsControl.setDefaultReturnValue(wma);
         
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(false);
-
-        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(false);
@@ -194,7 +180,7 @@ public class AnnotationServiceFactoryTest
         
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotationsControl.replay();
 
@@ -238,17 +224,17 @@ public class AnnotationServiceFactoryTest
 
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
         
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
-        WSDL11ParameterBinding binding = (WSDL11ParameterBinding) service.getBinding();
+        SoapBinding binding = (SoapBinding) service.getBindings().iterator().next();
         
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         assertNotNull(op);
-        assertEquals(SoapConstants.USE_LITERAL, SoapOperationInfo.getSoapOperationInfo(op).getUse());
-
+        assertEquals(SoapConstants.USE_LITERAL, binding.getUse());
+        
         webAnnotationsControl.verify();
     }
 
@@ -258,37 +244,24 @@ public class AnnotationServiceFactoryTest
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setReturnValue(true);
-        
-        webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
 
         WebMethodAnnotation wma = new WebMethodAnnotation();
         wma.setAction("test");
         webAnnotations.getWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(wma);
+        webAnnotationsControl.setDefaultReturnValue(wma);
         
         webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
-        webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
+
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        webAnnotationsControl.setDefaultReturnValue(true);
 
         WebParamAnnotation paramAnnotation = new WebParamAnnotation();
         paramAnnotation.setName("input");
         webAnnotations.getWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(paramAnnotation);
-
-        webAnnotations.getWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(paramAnnotation);
-
-        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(true);
-
-        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(paramAnnotation);
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
-        
-        
+        webAnnotationsControl.setDefaultReturnValue(false); 
     }
 }

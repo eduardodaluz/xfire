@@ -6,7 +6,6 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
-import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.Transport;
@@ -38,7 +37,7 @@ public class WrappedClientTest
     public void testInvoke()
             throws Exception
     {
-        Transport transport =  SoapTransport.createSoapTransport(new LocalTransport());
+        Transport transport = getTransportManager().getTransport(LocalTransport.BINDING_ID);
         Client client = new Client(transport, service, "xfire.local://Echo");
         client.setXFire(getXFire());
         

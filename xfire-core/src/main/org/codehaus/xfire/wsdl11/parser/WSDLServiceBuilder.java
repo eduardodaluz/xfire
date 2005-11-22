@@ -1,8 +1,9 @@
-package org.codehaus.xfire.wsdl11;
+package org.codehaus.xfire.wsdl11.parser;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +27,6 @@ import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
@@ -40,19 +37,17 @@ import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
-import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.DocumentBinding;
-import org.codehaus.xfire.service.binding.ObjectBindingFactory;
-import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapOperationInfo;
+import org.codehaus.xfire.service.binding.MessageBindingProvider;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.SimpleSchemaType;
 import org.xml.sax.InputSource;
 
@@ -63,16 +58,27 @@ public class WSDLServiceBuilder
     private OperationInfo opInfo;
     private XmlSchemaCollection schemas;
     private List services = new ArrayList();
-    private String style;
     private boolean isWrapped = false;
     private XmlSchemaElement schema;
 
     protected final Definition definition;
-
+    
+    private List visitedPortTypes = new ArrayList();
+    
+    private List bindingAnnotators = new ArrayList();
+    
+    private Map wop2op = new HashMap();
+    private Map winput2msg = new HashMap();
+    private Map woutput2msg = new HashMap();
+    
+    private TransportManager transportManager =
+        XFireFactory.newInstance().getXFire().getTransportManager();
     
     public WSDLServiceBuilder(Definition definition)
     {
         this.definition = definition;
+        
+        bindingAnnotators.add(new SoapBindingAnnotator());
     }
 
     public WSDLServiceBuilder(InputStream is) throws WSDLException
@@ -84,12 +90,19 @@ public class WSDLServiceBuilder
     {
         return definition;
     }
-    
+
+    public TransportManager getTransportManager()
+    {
+        return transportManager;
+    }
+
+    public void setTransportManager(TransportManager transportManager)
+    {
+        this.transportManager = transportManager;
+    }
 
     public void walkTree() throws Exception
     {
-        Exception e;
-        
         //begin();
 
         //visit(definition);
@@ -125,60 +138,40 @@ public class WSDLServiceBuilder
             Collection ports = wservice.getPorts().values();
             for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
             {
-
                 Port port = (Port) iterator1.next();
                 Binding binding = port.getBinding();
 
-                if (!isServiceUnderstood(wservice, port, binding))
-                    continue;
-                
-                visit(port);
                 visit(binding);
                 
-                List bindingOperations = binding.getBindingOperations();
-                for (int i = 0; i < bindingOperations.size(); i++)
+                if (!visitedPortTypes.contains(portType))
                 {
-                    BindingOperation bindingOperation = 
-                        (BindingOperation) bindingOperations.get(i);
+                    visit(portType);
+                    visitedPortTypes.add(portType);
                     
-                    visit(bindingOperation);
-                    visit(bindingOperation.getBindingInput(), bindingOperation.getOperation().getInput());
-                    visit(bindingOperation.getBindingOutput(), bindingOperation.getOperation().getOutput());
-                    
-                    Collection bindingFaults = bindingOperation.getBindingFaults().values();
-                    for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
+                    List operations = portType.getOperations();
+                    for (int i = 0; i < operations.size(); i++)
                     {
-                        BindingFault bindingFault = (BindingFault) iterator2.next();
-                        Fault fault = bindingOperation.getOperation().getFault(bindingFault.getName());
+                        Operation operation = (Operation) operations.get(i);
+                        visit(operation);
+                        {
+                            Input input = operation.getInput();
+                            visit(input);
+                        }
+                        {
+                            Output output = operation.getOutput();
+                            visit(output);
+                        }
                         
-                        visit(bindingFault, fault);
-                    }
-
-                }
-                
-                visit(portType);
-                
-                List operations = portType.getOperations();
-                for (int i = 0; i < operations.size(); i++)
-                {
-                    Operation operation = (Operation) operations.get(i);
-                    //visit(operation);
-                    {
-                        Input input = operation.getInput();
-                        //visit(input);
-                    }
-                    {
-                        Output output = operation.getOutput();
-                        //visit(output);
-                    }
-                    
-                    Collection faults = operation.getFaults().values();
-                    for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
-                    {
-                        Fault fault = (Fault) iterator2.next();
-                        //visit(fault);
+                        Collection faults = operation.getFaults().values();
+                        for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
+                        {
+                            Fault fault = (Fault) iterator2.next();
+                            //visit(fault);
+                        }
                     }
                 }
+                
+                visit(port);
             }
             end(wservice);
         }
@@ -206,15 +199,6 @@ public class WSDLServiceBuilder
         return portType;
     }
 
-    private boolean isServiceUnderstood(javax.wsdl.Service wservice, 
-                                        Port port, 
-                                        Binding binding)
-    {
-        if (DefinitionsHelper.getSOAPBinding(binding) != null)
-            return true;
-        
-        return false;
-    }
 
     public Collection getServices()
     {
@@ -244,19 +228,64 @@ public class WSDLServiceBuilder
     
     protected void visit(Binding binding)
     {
-        SOAPBinding soapBinding = DefinitionsHelper.getSOAPBinding(binding);
+        BindingAnnotator ann = getBindingAnnotator(binding);
+        
+        if (ann != null)
+        {
+            ann.visit(binding);
+            
+            List bindingOperations = binding.getBindingOperations();
+            for (int i = 0; i < bindingOperations.size(); i++)
+            {
+                BindingOperation bindingOperation = 
+                    (BindingOperation) bindingOperations.get(i);
+                
+                ann.visit(bindingOperation, (OperationInfo) wop2op.get(bindingOperation.getOperation()));
+                
+                visit(bindingOperation.getBindingInput(), bindingOperation.getOperation().getInput());
+                visit(bindingOperation.getBindingOutput(), bindingOperation.getOperation().getOutput());
+                
+                Collection bindingFaults = bindingOperation.getBindingFaults().values();
+                for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
+                {
+                    BindingFault bindingFault = (BindingFault) iterator2.next();
+                    Fault fault = bindingOperation.getOperation().getFault(bindingFault.getName());
+                    
+                    visit(bindingFault, fault);
+                }
+
+            }
+        }
     }
 
+    protected BindingAnnotator getBindingAnnotator(Binding binding)
+    {
+        for (Iterator itr = bindingAnnotators.iterator(); itr.hasNext();)
+        {
+            BindingAnnotator ann = (BindingAnnotator) itr.next();
+            if (ann.isUnderstood(binding))
+            {
+                ann.setService(service);
+                return ann;
+            }
+        }
+        
+        return null;
+    }
+    
     protected void visit(BindingFault bindingFault, Fault fault)
     {
-        FaultInfo faultInfo = opInfo.addFault(fault.getName());
-        
-        
+    }
+    
+    protected void visit(Fault fault)
+    {
+        FaultInfo faultInfo = opInfo.addFault(fault.getName());    
     }
 
-    protected void visit(BindingInput bindingInput, Input input)
+    protected void visit(Input input)
     {
         MessageInfo info = opInfo.createMessage(input.getMessage().getQName());
+        winput2msg.put(input, info);
         
         opInfo.setInputMessage(info);
         
@@ -273,6 +302,16 @@ public class WSDLServiceBuilder
         {
             createMessageParts(info,  input.getMessage());
         }
+    }
+    
+    protected void visit(Operation operation)
+    {
+        opInfo = serviceInfo.addOperation(operation.getName(), null);
+        wop2op.put(operation, opInfo);
+    }
+    
+    protected void visit(BindingInput bindingInput, Input input)
+    {
     }
 
     private void createMessageParts(MessageInfo info, XmlSchemaComplexType type)
@@ -401,10 +440,14 @@ public class WSDLServiceBuilder
 
     protected void visit(BindingOutput bindingOutput, Output output)
     {
+    }
+    
+    protected void visit(Output output)
+    {
         MessageInfo info = opInfo.createMessage(output.getMessage().getQName());
-        
         opInfo.setOutputMessage(info);
-
+        woutput2msg.put(output, info);
+        
         if (isWrapped)
         {
             if (schema.getSchemaType() instanceof XmlSchemaComplexType)
@@ -420,39 +463,7 @@ public class WSDLServiceBuilder
 
     protected void visit(BindingOperation operation)
     {
-        opInfo = serviceInfo.addOperation(operation.getName(), null);
-        
-        String use = null;
-        SOAPOperation soapOp = DefinitionsHelper.getSOAPOperation(operation);
-
-        SOAPBody body = DefinitionsHelper.getSOAPBody(operation.getBindingInput().getExtensibilityElements());
-        if (body != null)
-        {
-            use = body.getUse();
-            
-            String action = null;
-            if (soapOp != null)
-            {
-                action = soapOp.getSoapActionURI();
-                
-                String opStyle = soapOp.getStyle();
-                
-                if (style != null && opStyle != null && !style.equals(opStyle))
-                {
-                    throw new XFireRuntimeException("Multiple styles are not supported yet!");
-                }
-                else if (soapOp.getStyle() != null)
-                {
-                    style = soapOp.getStyle();
-                }
-                else
-                {
-                    style = SoapConstants.STYLE_DOCUMENT;
-                }                
-            }
-
-            new SoapOperationInfo(action, use, opInfo);
-        }
+        opInfo = serviceInfo.getOperation(operation.getName());
     }
     
     protected void begin(javax.wsdl.Service wservice)
@@ -464,30 +475,19 @@ public class WSDLServiceBuilder
 
     protected void end(javax.wsdl.Service wservice)
     {
-        if (isWrapped)
-        {
-            style = "wrapped";
-        }
-        
-        if (style != null)
-            service.setBinding(ObjectBindingFactory.getMessageBinding(style, "literal"));
-        else
-            service.setBinding(new DocumentBinding());
-        
+        serviceInfo.setWrapped(isWrapped);
+
         service.setFaultSerializer(new SoapFaultSerializer());
-        
+        service.setBindingProvider(new MessageBindingProvider());
         services.add(service);
     }
     
     protected void visit(javax.wsdl.Port port)
     {
-        SOAPAddress add = DefinitionsHelper.getSOAPAddress(port);
-        SOAPBinding sbind = DefinitionsHelper.getSOAPBinding(port.getBinding());
-        
-        Endpoint ep = new Endpoint(new QName(getDefinition().getTargetNamespace(), port.getName()), 
-                                   sbind.getTransportURI(), 
-                                   add.getLocationURI());
-        
-        serviceInfo.addEndpoint(ep);
+        BindingAnnotator ann = getBindingAnnotator(port.getBinding());
+        if (ann != null)
+        {
+            ann.visit(port);
+        }
     }
 }
