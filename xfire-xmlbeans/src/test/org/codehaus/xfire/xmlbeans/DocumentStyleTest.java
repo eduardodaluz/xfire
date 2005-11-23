@@ -39,8 +39,7 @@ public class DocumentStyleTest
     public void testWSDL() throws Exception
     {
         Document wsdl = getWSDLDocument("TestService");
-        printNode(wsdl);
-        
+
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:schema[@targetNamespace='urn:TestService']" +
                 "/xsd:element[@name='mixedRequestin0'][@type='xsd:string']", wsdl);

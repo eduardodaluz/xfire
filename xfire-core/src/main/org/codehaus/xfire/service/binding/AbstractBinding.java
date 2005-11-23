@@ -240,7 +240,7 @@ public abstract class AbstractBinding
             }
 
             Collection bodyParts = context.getBinding().getBodyParts(msgInfo);
-            if (bodyParts.size() == 0 || bodyParts.size() < index) 
+            if (bodyParts.size() == 0 || bodyParts.size() <= index) 
             {
                 // itr.remove();
                 continue;
