@@ -21,9 +21,7 @@ import org.w3c.dom.Element;
 /**
  * Reads and writes <code>javax.xml.transform.Source</code> types.
  * <p>
- * By default this uses the StAXSource object from the stax-utils project when
- * reading streams in. When writing out a Source, it uses the XMLInputFactory
- * to create an XMLStreamReader from the Source object.
+ * The XML stream is converted DOMSource and sent off.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @see javanet.staxutils.StAXSource
