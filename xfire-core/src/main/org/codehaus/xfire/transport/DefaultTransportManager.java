@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +14,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
-import org.codehaus.xfire.soap.SoapTransportHelper;
 import org.codehaus.xfire.transport.dead.DeadLetterTransport;
 import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
@@ -30,7 +30,7 @@ public class DefaultTransportManager
     private static final Log log = LogFactory.getLog(DefaultTransportManager.class);
 
     private Map services = new HashMap();
-    private Set transports = new HashSet();
+    private Set transports = new LinkedHashSet();
     private Map binding2Transport = new HashMap();
 
     private ServiceRegistry serviceRegistry;
@@ -70,9 +70,9 @@ public class DefaultTransportManager
         initializeTransports();
         
         register(new LocalTransport());
-        register(SoapTransportHelper.createSoapTransport(new DeadLetterTransport()));
-        register(new HttpTransport());
+        register(new DeadLetterTransport());
         register(new SoapHttpTransport());
+        register(new HttpTransport());
     }
 
     /**
@@ -252,10 +252,29 @@ public class DefaultTransportManager
         {
             Transport t = (Transport) itr.next();
             
-            if (t.isUriSupported(uri)) return t;
+            if (t.isUriSupported(uri)) 
+            {
+                return t;
+            }
         }
         
         return null;
+    }
+    
+    public Collection getTransportsForUri(String uri)
+    {
+        Set uritrans = new HashSet(); 
+        for (Iterator itr = transports.iterator(); itr.hasNext();)
+        {
+            Transport t = (Transport) itr.next();
+            
+            if (t.isUriSupported(uri)) 
+            {
+                uritrans.add(t);
+            }
+        }
+        
+        return uritrans;
     }
     
     public Transport getTransport(String id)

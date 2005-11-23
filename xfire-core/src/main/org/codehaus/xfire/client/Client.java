@@ -69,7 +69,7 @@ public class Client
         this(binding.getTransport(), binding.getService(), url);
         this.binding = binding;
     }
-
+    
     public Client(Transport transport, Service service, String url)
     {
         this(transport, service, url, null);
@@ -87,7 +87,7 @@ public class Client
         this.service = service;
         this.service.setFaultSerializer(service.getFaultSerializer());
         this.service.setSoapVersion(service.getSoapVersion());
-        
+
         this.binding = findBinding(transport, service);
         
         addOutHandler(new OutMessageSender());

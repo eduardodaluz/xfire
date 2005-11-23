@@ -30,6 +30,8 @@ public interface TransportManager
      */
     Transport getTransportForUri(String uri);
     
+    Collection getTransportsForUri(String uri);
+    
     /**
      * Get the transports applicable to a particular service.
      *

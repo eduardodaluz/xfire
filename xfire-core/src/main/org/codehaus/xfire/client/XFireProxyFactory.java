@@ -2,9 +2,12 @@ package org.codehaus.xfire.client;
 
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
@@ -50,9 +53,38 @@ public class XFireProxyFactory
     public Object create(Service service, String url)
             throws MalformedURLException
     {
-        Transport transport = xfire.getTransportManager().getTransportForUri(url);
+        Collection transports = xfire.getTransportManager().getTransportsForUri(url);
 
-        return create(service, transport, url);
+        if (transports.size() == 0)
+            throw new XFireRuntimeException("No Transport is available for url " + url);
+        
+        Binding lastChoice = null;
+        Binding firstChoice = null;
+        Transport t = null;
+        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        {
+            Binding binding = (Binding) itr.next();
+            if (binding.getTransport() == null) 
+            {
+                lastChoice = binding;
+            }
+            else if (transports.contains(binding.getTransport()))
+            {
+                firstChoice = binding;
+                t = binding.getTransport();
+                break;
+            }
+        }
+        
+        if (firstChoice == null)
+        {
+            firstChoice = lastChoice;
+            t = (Transport) transports.iterator().next();
+        }
+
+        Client client = new Client(firstChoice, url);
+        client.setTransport(t);
+        return create(client);
     }
     
     /**
@@ -71,11 +103,15 @@ public class XFireProxyFactory
     public Object create(Service service, Transport transport, String url)
             throws MalformedURLException
     {
-        Client client = new Client(transport, service, url);
+        return create(new Client(transport, service, url));
+    }
+    
+    public Object create(Client client)
+    {
         client.setXFire(xfire);
         
         XFireProxy handler = new XFireProxy(client);
-        Class serviceClass = service.getServiceInfo().getServiceClass();
+        Class serviceClass = client.getService().getServiceInfo().getServiceClass();
         
         return Proxy.newProxyInstance(serviceClass.getClassLoader(), 
                                       new Class[]{serviceClass}, 

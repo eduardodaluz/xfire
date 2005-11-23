@@ -273,9 +273,8 @@ public class ObjectServiceFactory
         binding.setTransport(transport);
     }
     
-    private SoapBinding createBinding(Service service, String tname, String style2, String use2)
+    private SoapBinding createBinding(Service service, String tname, String style, String use)
     {
-    
         ServiceInfo serviceInfo = service.getServiceInfo();
         QName name = serviceInfo.getName();
         QName bindingName = new QName(name.getNamespaceURI(), 

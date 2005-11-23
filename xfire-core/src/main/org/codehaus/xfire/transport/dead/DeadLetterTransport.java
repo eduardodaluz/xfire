@@ -1,5 +1,6 @@
 package org.codehaus.xfire.transport.dead;
 
+import org.codehaus.xfire.soap.SoapTransportHelper;
 import org.codehaus.xfire.transport.AbstractTransport;
 import org.codehaus.xfire.transport.Channel;
 
@@ -14,6 +15,11 @@ public class DeadLetterTransport
     public final static String NAME = "dead-letter-transport";
     public static final String DEAD_LETTER_URI = "xfire.dead://";
     
+    public DeadLetterTransport()
+    {
+        SoapTransportHelper.createSoapTransport(this);
+    }
+
     protected Channel createNewChannel(String uri)
     {
         return new DeadLetterChannel(this);
