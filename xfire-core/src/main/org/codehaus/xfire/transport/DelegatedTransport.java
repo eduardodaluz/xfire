@@ -59,9 +59,9 @@ public class DelegatedTransport
         return transport.getFaultHandlers();
     }
 
-    public String[] getKnownUriSchemes()
+    public boolean isUriSupported(String uri)
     {
-        return transport.getKnownUriSchemes();
+        return transport.isUriSupported(uri);
     }
 
     public String[] getSupportedBindings()

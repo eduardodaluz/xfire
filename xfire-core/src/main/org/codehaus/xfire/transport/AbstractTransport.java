@@ -60,6 +60,19 @@ public abstract class AbstractTransport
         return new String[0];
     }
 
+    
     protected abstract Channel createNewChannel(String uri);
     protected abstract String getUriPrefix();
+    protected abstract String[] getKnownUriSchemes();
+
+    public boolean isUriSupported(String uri)
+    {
+        String[] schemes = getKnownUriSchemes();
+        for (int i = 0; i < schemes.length; i++)
+        {
+            if (uri.startsWith(schemes[i])) return true;
+        }
+        
+        return false;
+    }
 }

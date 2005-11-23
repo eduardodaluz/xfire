@@ -3,7 +3,6 @@ package org.codehaus.xfire.client;
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.MessageBinding;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -59,7 +58,7 @@ public class XFireProxyTest
         Element e = echo.echo(root);
         assertEquals(root.getName(), e.getName());
     }
-    /*
+    
     public void testInvokeDifferentBinding() throws Exception
     {
         Element root = new Element("root", "a", "urn:a");
@@ -71,5 +70,5 @@ public class XFireProxyTest
         
         Element e = echo.echo(root);
         assertEquals(root.getName(), e.getName());
-    }*/
+    }
 }

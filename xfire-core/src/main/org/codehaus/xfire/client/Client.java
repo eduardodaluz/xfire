@@ -30,6 +30,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
@@ -103,10 +104,23 @@ public class Client
             }
         }
 
-        return null;
+        return findSoapBinding(service);
         // throw new IllegalStateException("Couldn't find an appropriate binding for the selected transport.");
     }
 
+    private SoapBinding findSoapBinding(Service service)
+    {
+        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        {
+            Object o = itr.next();
+            if (o instanceof SoapBinding)
+            {
+                return (SoapBinding) o;
+            }
+        }
+        return null;
+    }
+    
     public Client(URL wsdlUrl) throws IOException, WSDLException
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(wsdlUrl.openStream());

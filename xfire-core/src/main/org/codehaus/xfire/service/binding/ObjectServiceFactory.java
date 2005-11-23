@@ -250,6 +250,12 @@ public class ObjectServiceFactory
 
     protected void createBindings(Service service, String style, String use)
     {
+        if (transportManager == null)
+        {
+            createBinding(service, "Soap", style, use);
+            return;
+        }
+        
         for (Iterator itr = transportManager.getTransports().iterator(); itr.hasNext();)
         {
             Transport t = (Transport) itr.next();
@@ -263,8 +269,14 @@ public class ObjectServiceFactory
 
     protected void createSoapBinding(Service service, SoapTransport transport, String style, String use)
     {
+        SoapBinding binding = createBinding(service, transport.getName(), style, use);
+        binding.setTransport(transport);
+    }
+    
+    private SoapBinding createBinding(Service service, String tname, String style2, String use2)
+    {
+    
         ServiceInfo serviceInfo = service.getServiceInfo();
-        String tname = transport.getName();
         QName name = serviceInfo.getName();
         QName bindingName = new QName(name.getNamespaceURI(), 
                                       name.getLocalPart() + tname + "Binding");
@@ -272,8 +284,7 @@ public class ObjectServiceFactory
         SoapBinding binding = new SoapBinding(bindingName, service);
         binding.setStyle(style);
         binding.setUse(use);
-        binding.setTransport(transport);
-        
+         
         // Create SOAP metadata for the binding operation
         for (Iterator itr = serviceInfo.getOperations().iterator(); itr.hasNext();)
         {
@@ -283,6 +294,7 @@ public class ObjectServiceFactory
         }
                 
         service.addBinding(binding);
+        return binding;
     }
 
     private void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)

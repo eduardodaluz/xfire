@@ -10,7 +10,7 @@ import org.codehaus.xfire.handler.HandlerSupport;
 public interface Transport
     extends ChannelFactory, HandlerSupport
 {
-    String[] getKnownUriSchemes();
+    boolean isUriSupported(String uri);
     
     String[] getSupportedBindings();
     

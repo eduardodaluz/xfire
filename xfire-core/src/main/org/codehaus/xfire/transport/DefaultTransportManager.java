@@ -31,7 +31,6 @@ public class DefaultTransportManager
 
     private Map services = new HashMap();
     private Set transports = new HashSet();
-    private Map uri2Transport = new HashMap();
     private Map binding2Transport = new HashMap();
 
     private ServiceRegistry serviceRegistry;
@@ -92,12 +91,6 @@ public class DefaultTransportManager
     public void register(Transport transport)
     {
         transports.add(transport);
-
-        String[] schemes = transport.getKnownUriSchemes();
-        for (int i = 0; i < schemes.length; i++)
-        {
-            uri2Transport.put(schemes[i], transport);
-        }
         
         String[] bindingIds = transport.getSupportedBindings();
         for (int i = 0; i < bindingIds.length; i++)
@@ -255,14 +248,11 @@ public class DefaultTransportManager
 
     public Transport getTransportForUri(String uri)
     {
-        for (Iterator itr = uri2Transport.entrySet().iterator(); itr.hasNext();)
+        for (Iterator itr = transports.iterator(); itr.hasNext();)
         {
-            Map.Entry entry = (Map.Entry) itr.next();
+            Transport t = (Transport) itr.next();
             
-            if (uri.startsWith((String) entry.getKey()))
-            {
-                return (Transport) entry.getValue();
-            }
+            if (t.isUriSupported(uri)) return t;
         }
         
         return null;
