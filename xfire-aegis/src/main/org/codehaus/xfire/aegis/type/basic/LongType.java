@@ -20,6 +20,13 @@ public class LongType
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValueAsLong( (Long) object );
+        if (object instanceof Long)
+        {
+            writer.writeValueAsLong( (Long) object );
+        }
+        else
+        {
+            writer.writeValueAsLong(new Long(((Number)object).longValue()));
+        }
     }
 }

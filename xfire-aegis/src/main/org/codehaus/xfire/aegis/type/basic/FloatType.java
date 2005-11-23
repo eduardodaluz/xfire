@@ -21,6 +21,13 @@ public class FloatType
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValueAsFloat( (Float) object );
+        if (object instanceof Float)
+        {
+            writer.writeValueAsFloat((Float) object);
+        }
+        else
+        {
+            writer.writeValueAsFloat(new Float(((Number)object).floatValue()));
+        }
     }
 }

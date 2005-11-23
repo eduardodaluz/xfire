@@ -27,6 +27,13 @@ public class IntType
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValueAsInt( (Integer) object );
+        if (object instanceof Integer)
+        {
+            writer.writeValueAsInt( (Integer) object );
+        }
+        else
+        {
+            writer.writeValueAsInt(new Integer(((Number)object).intValue()));
+        }
     }
 }

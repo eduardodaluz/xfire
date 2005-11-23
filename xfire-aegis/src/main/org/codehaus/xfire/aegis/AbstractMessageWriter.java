@@ -56,4 +56,9 @@ public abstract class AbstractMessageWriter
     {
         writeValue(b ? "true" : "false");
     }
+
+    public void writeValueAsShort(Short s)
+    {
+        writeValue(s.toString());
+    }
 }

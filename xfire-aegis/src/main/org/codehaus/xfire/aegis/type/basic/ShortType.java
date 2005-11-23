@@ -27,6 +27,13 @@ public class ShortType
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValue( ((Short) object).toString() );
+        if (object instanceof Short)
+        {
+            writer.writeValueAsShort( (Short) object );
+        }
+        else
+        {
+            writer.writeValueAsShort(new Short(((Number)object).shortValue()));
+        }
     }
 }

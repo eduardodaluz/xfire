@@ -19,6 +19,8 @@ public interface MessageWriter
 
     void writeValueAsFloat(Float f);
 
+    void writeValueAsShort(Short short1);
+    
     void writeValueAsBoolean(boolean b);
  
     MessageWriter getAttributeWriter(String name);
