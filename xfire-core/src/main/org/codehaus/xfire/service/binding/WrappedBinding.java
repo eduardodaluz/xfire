@@ -46,7 +46,7 @@ public class WrappedBinding
         
         // Move from Operation element to whitespace or start element
         nextEvent(dr);
-        
+
         read(inMessage, context, null);
     }
 

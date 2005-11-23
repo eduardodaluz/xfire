@@ -9,6 +9,7 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.wsdl.SchemaType;
 
 /**
  * A BindingProvider provides the ability to map XML and java objects. This can
@@ -36,4 +37,6 @@ public interface BindingProvider
                         XMLStreamWriter writer,
                         MessageContext context,
                         Object value) throws XFireFault;
+
+    SchemaType getSchemaType(QName name, Service service);
 }

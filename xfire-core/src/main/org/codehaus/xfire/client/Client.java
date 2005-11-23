@@ -66,11 +66,14 @@ public class Client
     public Client(Binding binding, String url)
     {
         this(binding.getTransport(), binding.getService(), url);
+        this.binding = binding;
     }
 
     public Client(Transport transport, Service service, String url)
     {
         this(transport, service, url, null);
+        
+        findBinding(transport, service);       
     }
     
     public Client(Transport transport, Service service, String url, String endpointUri)
@@ -84,22 +87,24 @@ public class Client
         this.service.setFaultSerializer(service.getFaultSerializer());
         this.service.setSoapVersion(service.getSoapVersion());
         
+        this.binding = findBinding(transport, service);
+        
+        addOutHandler(new OutMessageSender());
+    }
+
+    private Binding findBinding(Transport transport, Service service)
+    {
         for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
         {
             Binding b = (Binding) itr.next();
             if (b.getTransport() != null && b.getTransport().equals(transport))
             {
-                this.binding = b;
-                break;
+                return b;
             }
         }
-        
-        if (binding == null)
-        {
-            throw new IllegalStateException("Couldn't find an appropriate binding for the selected transport.");
-        }
-        
-        addOutHandler(new OutMessageSender());
+
+        return null;
+        // throw new IllegalStateException("Couldn't find an appropriate binding for the selected transport.");
     }
 
     public Client(URL wsdlUrl) throws IOException, WSDLException
@@ -299,6 +304,11 @@ public class Client
     public Transport getTransport()
     {
         return transport;
+    }
+
+    public void setTransport(Transport transport)
+    {
+        this.transport = transport;
     }
 
     public void receive(Object response)

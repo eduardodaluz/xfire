@@ -20,6 +20,7 @@ import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.jdom.StaxSerializer;
 import org.codehaus.xfire.util.stax.FragmentStreamReader;
 import org.codehaus.xfire.wsdl.SchemaType;
+import org.codehaus.xfire.wsdl.SimpleSchemaType;
 import org.jdom.Element;
 import org.w3c.dom.Document;
 
@@ -120,4 +121,13 @@ public class MessageBindingProvider
     {
         return null;
     }
+
+    public SchemaType getSchemaType(QName name, Service service)
+    {
+        SimpleSchemaType st = new SimpleSchemaType();
+        st.setSchemaType(name);
+        
+        return st;
+    }
+    
 }

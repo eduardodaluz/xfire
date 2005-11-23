@@ -24,6 +24,7 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.wsdl.SchemaType;
 
 /**
  * A BindingProvider for the Aegis type system.
@@ -106,7 +107,10 @@ public class AegisBindingProvider
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
             
-            part.setSchemaType(getParameterType(getTypeMapping(service), part, type));
+            if (part.getSchemaType() == null)
+            {
+                part.setSchemaType(getParameterType(getTypeMapping(service), part, type));
+            }
         }
     }
 
@@ -226,5 +230,11 @@ public class AegisBindingProvider
         if (type == null) return null;
         
         return tm.getType(name).getTypeClass();
+    }
+
+    public SchemaType getSchemaType(QName name, Service service)
+    {
+        TypeMapping tm = getTypeMapping(service);
+        return tm.getType(name);
     }
 }

@@ -11,11 +11,9 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.DocumentBinding;
-import org.codehaus.xfire.service.binding.WrappedBinding;
+import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 
 /**
@@ -28,6 +26,7 @@ public class WrappedWSDLTest
         throws Exception
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoWrapped.wsdl"));
+        builder.setBindingProvider(new MessageBindingProvider());
         builder.walkTree();
         
         Collection services = builder.getServices();        
@@ -72,6 +71,7 @@ public class WrappedWSDLTest
         throws Exception
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoBadWrapped.wsdl"));
+        builder.setBindingProvider(new MessageBindingProvider());
         builder.walkTree();
         
         Collection services = builder.getServices();        

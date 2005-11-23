@@ -46,9 +46,10 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.MessageBindingProvider;
+import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.transport.TransportManager;
-import org.codehaus.xfire.wsdl.SimpleSchemaType;
+import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.wsdl.SchemaType;
 import org.xml.sax.InputSource;
 
 public class WSDLServiceBuilder
@@ -59,8 +60,8 @@ public class WSDLServiceBuilder
     private XmlSchemaCollection schemas;
     private List services = new ArrayList();
     private boolean isWrapped = false;
-    private XmlSchemaElement schema;
-
+    private BindingProvider bindingProvider;
+    
     protected final Definition definition;
     
     private List visitedPortTypes = new ArrayList();
@@ -84,6 +85,29 @@ public class WSDLServiceBuilder
     public WSDLServiceBuilder(InputStream is) throws WSDLException
     {
         this(WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(is)));
+    }
+
+    public BindingProvider getBindingProvider()
+    {
+        if (bindingProvider == null)
+        {
+            try
+            {
+                bindingProvider = (BindingProvider) ClassLoaderUtils
+                        .loadClass("org.codehaus.xfire.aegis.AegisBindingProvider", getClass()).newInstance();
+            }
+            catch (Exception e)
+            {
+                throw new XFireRuntimeException("Couldn't find a binding provider!", e);
+            }
+        }
+
+        return bindingProvider;
+    }
+    
+    public void setBindingProvider(BindingProvider bindingProvider)
+    {
+        this.bindingProvider = bindingProvider;
     }
 
     public Definition getDefinition()
@@ -289,25 +313,22 @@ public class WSDLServiceBuilder
         
         opInfo.setInputMessage(info);
         
-        schema = getWrappedSchema(input);
-        isWrapped = schema != null;
         if (isWrapped)
         {
-            if (schema.getSchemaType() instanceof XmlSchemaComplexType)
-            {
-                createMessageParts(info, (XmlSchemaComplexType) schema.getSchemaType());
-            }
+            createMessageParts(info, getWrappedSchema(input.getMessage()));
         }
         else
         {
             createMessageParts(info,  input.getMessage());
         }
     }
-    
+
     protected void visit(Operation operation)
     {
         opInfo = serviceInfo.addOperation(operation.getName(), null);
         wop2op.put(operation, opInfo);
+        
+        isWrapped = isWrapped(operation);
     }
     
     protected void visit(BindingInput bindingInput, Input input)
@@ -337,18 +358,25 @@ public class WSDLServiceBuilder
     {
         MessagePartInfo part = info.addMessagePart(element.getQName(), XmlSchemaElement.class);
         
-        SimpleSchemaType st = new SimpleSchemaType();
+        SchemaType st = getBindingProvider().getSchemaType(element.getQName(), service);
 
-        if (element.getRefName() != null)
+        if (st == null)
         {
-            st.setAbstract(false);
-            st.setSchemaType(element.getRefName());
+            st = getBindingProvider().getSchemaType(element.getSchemaTypeName(), service);
         }
-        else
-        {
-            st.setAbstract(true);
-            st.setSchemaType(element.getSchemaTypeName());
-        }
+        
+//        SimpleSchemaType st = new SimpleSchemaType();
+//
+//        if (element.getRefName() != null)
+//        {
+//            st.setAbstract(false);
+//            st.setSchemaType(element.getRefName());
+//        }
+//        else
+//        {
+//            st.setAbstract(true);
+//            st.setSchemaType(element.getSchemaTypeName());
+//        }
         
         part.setSchemaType(st);
     }
@@ -363,39 +391,69 @@ public class WSDLServiceBuilder
      * 
      * @return
      */
-    protected XmlSchemaElement getWrappedSchema(Input input)
+    protected boolean isWrapped(Operation op)
     {
-        if (input.getMessage().getParts().size() != 1) 
-            return null;
+        Input input = op.getInput();
+        Output output = op.getOutput();
+        if (input.getMessage().getParts().size() != 1 || 
+                output.getMessage().getParts().size() != 1) 
+            return false;
         
-        Part part = (Part) input.getMessage().getParts().values().iterator().next();
+        Part inPart = (Part) input.getMessage().getParts().values().iterator().next();
+        Part outPart = (Part) output.getMessage().getParts().values().iterator().next();
         
-        QName elementName = part.getElementName();
-        if (elementName == null) 
-            return null;
+        QName inElementName = inPart.getElementName();
+        QName outElementName = outPart.getElementName();
+        if (inElementName == null || outElementName == null) 
+            return false;
         
-        if (!elementName.getLocalPart().equals(opInfo.getName())) 
-            return null;
+        if (!inElementName.getLocalPart().equals(opInfo.getName()) || 
+                !outElementName.getLocalPart().equals(opInfo.getName() + "Response")) 
+            return false;
         
-        XmlSchemaElement schemaEl = schemas.getElementByQName(elementName);
-        
-        if (schemaEl == null) 
-            throw new XFireRuntimeException("Couldn't find schema for part: " + elementName);
+        XmlSchemaElement reqSchemaEl = schemas.getElementByQName(inElementName);
+        XmlSchemaElement resSchemaEl = schemas.getElementByQName(outElementName);
+
+        if (reqSchemaEl == null) 
+            throw new XFireRuntimeException("Couldn't find schema for part: " + inElementName);
 
         // Now lets see if we have any attributes...
         // This should probably look at the restricted and substitute types too.
-        if (schemaEl.getSchemaType() instanceof XmlSchemaComplexType)
+        if (reqSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
         {
-            XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaEl.getSchemaType();
-            
-            if (complexType.getAnyAttribute() != null ||
-                    complexType.getAttributes().getCount() > 0)
-                return null;
-            else
-                return schemaEl;
+            if (hasAttributes((XmlSchemaComplexType) reqSchemaEl.getSchemaType()))
+                return false;
         }
         
-        return null;
+        if (resSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
+        {
+            if (hasAttributes((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
+                return false;
+        }
+
+        return true;
+    }
+    
+    
+    private XmlSchemaComplexType getWrappedSchema(Message message)
+    {
+        Part part = (Part) message.getParts().values().iterator().next();
+        
+        XmlSchemaElement schemaEl = schemas.getElementByQName(part.getElementName());
+        
+        return (XmlSchemaComplexType) schemaEl.getSchemaType();
+    }
+    
+    protected boolean hasAttributes(XmlSchemaComplexType complexType)
+    {
+        // Now lets see if we have any attributes...
+        // This should probably look at the restricted and substitute types too.
+        
+        if (complexType.getAnyAttribute() != null ||
+                complexType.getAttributes().getCount() > 0)
+            return true;
+        else
+            return false;
     }
     
     private void createMessageParts(MessageInfo info, Message msg)
@@ -413,10 +471,7 @@ public class WSDLServiceBuilder
                 QName partName = new QName(getTargetNamespace(), entry.getName());
                 MessagePartInfo part = info.addMessagePart(typeName, null);
                 
-                SimpleSchemaType st = new SimpleSchemaType();
-                st.setAbstract(true);
-                
-                part.setSchemaType(st);
+                part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
             }
 
             // We've got a concrete schema type
@@ -424,11 +479,8 @@ public class WSDLServiceBuilder
             if (elementName != null)
             {
                 MessagePartInfo part = info.addMessagePart(elementName, null);
-                
-                SimpleSchemaType st = new SimpleSchemaType();
-                st.setAbstract(false);
-                
-                part.setSchemaType(st);
+
+                part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
             }
         }
     }
@@ -450,14 +502,11 @@ public class WSDLServiceBuilder
         
         if (isWrapped)
         {
-            if (schema.getSchemaType() instanceof XmlSchemaComplexType)
-            {
-                createMessageParts(info, (XmlSchemaComplexType) schema.getSchemaType());
-            }
+            createMessageParts(info, getWrappedSchema(output.getMessage()));
         }
         else
         {
-            createMessageParts(info,  output.getMessage());
+            createMessageParts(info, output.getMessage());
         }
     }
 
@@ -478,7 +527,7 @@ public class WSDLServiceBuilder
         serviceInfo.setWrapped(isWrapped);
 
         service.setFaultSerializer(new SoapFaultSerializer());
-        service.setBindingProvider(new MessageBindingProvider());
+        service.setBindingProvider(getBindingProvider());
         services.add(service);
     }
     

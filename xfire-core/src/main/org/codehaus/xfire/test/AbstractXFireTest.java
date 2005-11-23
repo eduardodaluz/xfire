@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -18,7 +19,6 @@ import junit.framework.TestCase;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
