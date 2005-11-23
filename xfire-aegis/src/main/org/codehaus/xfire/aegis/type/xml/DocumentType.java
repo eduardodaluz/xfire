@@ -1,4 +1,4 @@
-package org.codehaus.xfire.aegis.type.basic;
+package org.codehaus.xfire.aegis.type.xml;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,11 +39,13 @@ public class DocumentType
         {
            throw new XFireRuntimeException("Couldn't load document builder.", e);
         }
+        setWriteOuter(false);
     }
     
     public DocumentType(DocumentBuilder builder)
     {
         this.builder = builder;
+        setWriteOuter(false);
     }
 
     public Object readObject(MessageReader mreader, MessageContext context)

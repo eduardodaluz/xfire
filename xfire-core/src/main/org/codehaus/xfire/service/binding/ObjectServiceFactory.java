@@ -96,11 +96,14 @@ public class ObjectServiceFactory
 
     public ObjectServiceFactory(TransportManager transportManager)
     {
-        this();
-
-        this.transportManager = transportManager;
+        this(transportManager, null);
     }
 
+    public ObjectServiceFactory(BindingProvider bp)
+    {
+        this(null, bp);
+    }
+    
     public BindingProvider getBindingProvider()
     {
         if (bindingProvider == null)
@@ -265,8 +268,7 @@ public class ObjectServiceFactory
         QName name = serviceInfo.getName();
         QName bindingName = new QName(name.getNamespaceURI(), 
                                       name.getLocalPart() + tname + "Binding");
-        
-        String bindingId = transport.getSupportedBindings()[0];
+
         SoapBinding binding = new SoapBinding(bindingName, service);
         binding.setStyle(style);
         binding.setUse(use);

@@ -95,4 +95,16 @@ public abstract class Binding
         }
         return inputHeaders;
     }
+    
+    public List getBodyParts(MessageInfo msg)
+    {
+        List parts = new ArrayList();
+        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo part = (MessagePartInfo) itr.next();
+            if (!isHeader(part)) 
+                parts.add(part);
+        }
+        return parts;
+    }
 }

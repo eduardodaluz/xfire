@@ -25,7 +25,7 @@ public class TransformTest
         assertNoFault(response);
 
         addNamespace("t", "http://basic.type.aegis.xfire.codehaus.org");
-        assertValid("//t:transformResponse/t:out/t:in1/t:foo", response);
+        assertValid("//t:transformResponse/t:in1/t:foo", response);
     }
 
     public void testTransformWSDL() throws Exception

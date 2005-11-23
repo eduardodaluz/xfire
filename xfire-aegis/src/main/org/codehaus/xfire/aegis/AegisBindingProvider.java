@@ -16,6 +16,7 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
+import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
@@ -235,6 +236,15 @@ public class AegisBindingProvider
     public SchemaType getSchemaType(QName name, Service service)
     {
         TypeMapping tm = getTypeMapping(service);
-        return tm.getType(name);
+        Type type = tm.getType(name);
+        
+        if (type == null)
+        {
+            ObjectType ot = new ObjectType();
+            ot.setSchemaType(name);
+            type = ot;
+        }
+        
+        return type;
     }
 }

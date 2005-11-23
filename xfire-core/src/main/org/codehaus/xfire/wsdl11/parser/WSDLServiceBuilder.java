@@ -357,10 +357,13 @@ public class WSDLServiceBuilder
     private void createMessagePart(MessageInfo info, XmlSchemaElement element)
     {
         MessagePartInfo part = info.addMessagePart(element.getQName(), XmlSchemaElement.class);
-        
-        SchemaType st = getBindingProvider().getSchemaType(element.getQName(), service);
 
-        if (st == null)
+        SchemaType st = null;
+        if (element.getRefName() != null)
+        {
+            st = getBindingProvider().getSchemaType(element.getRefName(), service);
+        }
+        else if (element.getSchemaTypeName() != null)
         {
             st = getBindingProvider().getSchemaType(element.getSchemaTypeName(), service);
         }

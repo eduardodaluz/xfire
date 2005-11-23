@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
 
@@ -81,16 +82,16 @@ public class XFireProxyFactory
                                       handler);
     }
 
-    public Object create(Service service, String bindingId, String address)
+    public Object create(Binding binding, String address)
         throws MalformedURLException
     {
-        Transport transport = xfire.getTransportManager().getTransport(bindingId);
+        Transport transport = binding.getTransport();
         
         if (transport == null)
         {
-            throw new IllegalStateException("No such transport for binding id: " + bindingId);
+            throw new IllegalStateException("No such transport for binding.");
         }
         
-        return create(service, transport, address);
+        return create(binding.getService(), transport, address);
     }
 }

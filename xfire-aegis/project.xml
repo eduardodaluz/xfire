@@ -1,20 +1,32 @@
 <project>
-    <extend>${basedir}/../project.xml</extend>
-    <artifactId>xfire-aegis</artifactId>
-    <name>Aegis XFire Module</name>
-    <package>org.codehaus.xfire</package>
-    <shortDescription/>
-    <description/>
-    <siteDirectory>/home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}</siteDirectory>
-    <dependencies>
-        <dependency>
-            <groupId>xfire</groupId>
-            <artifactId>xfire-core</artifactId>
-            <version>${pom.currentVersion}</version>
-            <url>${pom.url}</url>
-            <properties>
-                <eclipse.dependency>true</eclipse.dependency>
-            </properties>
-        </dependency>	
-    </dependencies>
+  <extend>${basedir}/../project.xml</extend>
+  <artifactId>xfire-aegis</artifactId>
+  <name>Aegis XFire Module</name>
+  <package>org.codehaus.xfire</package>
+  <shortDescription />
+  <description />
+  <siteDirectory>
+    /home/projects/xfire/public_html/maven/xfire-${pom.currentVersion}/multiproject/${pom.artifactId}
+  </siteDirectory>
+  <dependencies>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-core</artifactId>
+      <version>${pom.currentVersion}</version>
+      <url>${pom.url}</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>XmlSchema</artifactId>
+      <version>20051110</version>
+    </dependency>
+    <dependency>
+      <groupId>stax-utils</groupId>
+      <artifactId>stax-utils</artifactId>
+      <version>snapshot-20040917</version>
+    </dependency>
+  </dependencies>
 </project>

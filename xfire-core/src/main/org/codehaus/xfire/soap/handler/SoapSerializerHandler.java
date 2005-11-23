@@ -1,6 +1,7 @@
 package org.codehaus.xfire.soap.handler;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
@@ -29,6 +30,10 @@ public class SoapSerializerHandler
         if (serializer == null)
         {
             SoapBinding binding = (SoapBinding) context.getBinding();
+            if (binding == null)
+            {
+                throw new XFireException("Couldn't find the binding!");
+            }
             serializer = SoapBindingHandler.getSerializer(binding.getStyle(), binding.getUse());
         }
         

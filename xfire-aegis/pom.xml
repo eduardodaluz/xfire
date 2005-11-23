@@ -15,5 +15,11 @@
             <artifactId>xfire-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>20051110</version>
+        </dependency>
     </dependencies>
 </project>

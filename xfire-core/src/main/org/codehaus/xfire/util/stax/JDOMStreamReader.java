@@ -139,7 +139,7 @@ public class JDOMStreamReader
         this(document.getRootElement());
     }
 
-    Element getCurrentElement()
+    public Element getCurrentElement()
     {
         return (Element) getCurrentFrame().element;
     }

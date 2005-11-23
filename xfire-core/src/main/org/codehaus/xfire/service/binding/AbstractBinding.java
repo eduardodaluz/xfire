@@ -26,6 +26,7 @@ import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
@@ -38,6 +39,7 @@ public abstract class AbstractBinding
     implements MessageSerializer
 {
     private static final Log logger = LogFactory.getLog(AbstractBinding.class.getName());
+    private static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType", SoapConstants.XSD_PREFIX);
 
     public static final String RESPONSE_VALUE = "xfire.java.response";
     public static final String RESPONSE_PIPE = "xfire.java.responsePipe";
@@ -216,8 +218,14 @@ public abstract class AbstractBinding
         return false;
     }
 
-    protected MessagePartInfo findMessagePart(MessageContext context, Collection operations, QName name)
+    protected MessagePartInfo findMessagePart(MessageContext context, 
+                                              Collection operations, 
+                                              QName name,
+                                              int index)
     {
+        // TODO: This isn't too efficient. we need to only look at non headers here
+        // TODO: filter out operations which aren't applicable
+        MessagePartInfo lastChoice = null;
         for ( Iterator itr = operations.iterator(); itr.hasNext(); )
         {
             OperationInfo op = (OperationInfo) itr.next();
@@ -231,12 +239,20 @@ public abstract class AbstractBinding
                 msgInfo = op.getInputMessage();
             }
 
-            MessagePartInfo p = msgInfo.getMessagePart(name);
+            Collection bodyParts = context.getBinding().getBodyParts(msgInfo);
+            if (bodyParts.size() == 0 || bodyParts.size() < index) 
+            {
+                // itr.remove();
+                continue;
+            }
+            
+            MessagePartInfo p = (MessagePartInfo) msgInfo.getMessageParts().get(index);
+            if (p.getName().equals(name)) return p;
 
-            if ( p != null )
-                return p;
+            if (p.getSchemaType().getSchemaType().equals(XSD_ANY))
+                lastChoice = p;
         }
-        return null;
+        return lastChoice;
     }
 
     protected void read(InMessage inMessage, MessageContext context, Collection operations)
@@ -250,17 +266,18 @@ public abstract class AbstractBinding
         while (STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p;
+            
             if (opInfo != null && isClientModeOn(context))
             {
-                p = opInfo.getOutputMessage().getMessagePart(dr.getName());
+                p = (MessagePartInfo) opInfo.getOutputMessage().getMessageParts().get(parameters.size());
             }
             else if (opInfo != null && !isClientModeOn(context))
             {
-                p = opInfo.getInputMessage().getMessagePart(dr.getName());
+                p = (MessagePartInfo) opInfo.getInputMessage().getMessageParts().get(parameters.size());
             }
             else
             {
-                p = findMessagePart(context, operations, dr.getName());
+                p = findMessagePart(context, operations, dr.getName(), parameters.size());
             }
             
             if (p == null)

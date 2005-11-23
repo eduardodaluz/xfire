@@ -23,6 +23,7 @@ public abstract class Type
     private Class typeClass;
     private boolean abstrct = true;
     private boolean nillable = false;
+    private boolean writeOuter = true;
     
     public Type()
     {
@@ -167,6 +168,11 @@ public abstract class Type
 
     public boolean isWriteOuter()
     {
-        return true;
+        return writeOuter;
+    }
+
+    public void setWriteOuter(boolean writeOuter)
+    {
+        this.writeOuter = writeOuter;
     }
 }
