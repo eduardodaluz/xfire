@@ -28,6 +28,7 @@ public class BeanType
     extends Type
 {
     private BeanTypeInfo _info;
+    private static final QName XSI_NIL = new QName(SoapConstants.XSI_NS, "nil", SoapConstants.XSI_PREFIX);
     
     public BeanType()
     {
@@ -78,9 +79,30 @@ public class BeanType
 
                 if (type != null)
                 {
-                    Object writeObj = type.readObject(childReader, context);
-    
-                    writeProperty(name.getLocalPart(), object, writeObj);
+                    boolean nil = false;
+                    // Only bother to check for elements that are defined to be
+                    // nil
+                    MessageReader nilReader = childReader.getAttributeReader(XSI_NIL);
+                    if (nilReader != null)
+                    {
+                        nil = Boolean.valueOf(nilReader.getValue()).booleanValue();
+                    }
+
+                    if (!nil)
+                    {
+                        Object writeObj = type.readObject(childReader, context);
+                        writeProperty(name.getLocalPart(), object, writeObj);
+                    }
+                    else
+                    {
+                        if (!info.isNillable(name.getLocalPart()))
+                        {
+                            throw new XFireFault(name.getLocalPart() + " is nil, but not nillable.",
+                                    XFireFault.SENDER);
+
+                        }
+                        readToEnd(childReader);
+                    }
                 }
                 else
                 {

@@ -5,9 +5,11 @@ import java.util.Date;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
+import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -239,6 +241,41 @@ public class BeanTest
         //assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@ref='ns1:bleh']", schema);
     }
     */
+    
+    public void testByteBean()
+        throws Exception
+    {
+        BeanTypeInfo info = new BeanTypeInfo(ByteBean.class);
+        info.setTypeMapping(mapping);
+        
+        BeanType type = new BeanType(info);
+        type.setTypeClass(ByteBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:Bean", "bean"));
+    
+        Type dataType = type.getTypeInfo().getType("data");
+        assertNotNull(dataType);
+        
+        assertTrue( type.getTypeInfo().isNillable("data") );
+        
+        ByteBean bean = new ByteBean();
+        
+        // Test writing
+        Element element = new Element("root", "b", "urn:Bean");
+        Document doc = new Document(element);
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
+    
+        // Make sure the date doesn't have an element. Its non nillable so it just
+        // shouldn't be there.
+        
+        addNamespace("xsi", SoapConstants.XSI_NS);
+        assertValid("/b:root/b:data[@xsi:nil='true']", element);
+
+        bean = (ByteBean) type.readObject(new JDOMReader(element), new MessageContext());
+        assertNotNull(bean);
+        assertNull(bean.getData());
+    }
+        
     public void testGetSetRequired() throws Exception
     {
         BeanType type = new BeanType();
@@ -275,6 +312,21 @@ public class BeanTest
         public void setDate(Date date) 
         {
             this.date = date;
+        }
+    }
+
+    public static class ByteBean
+    {
+        private byte[] data;
+
+        public byte[] getData()
+        {
+            return data;
+        }
+
+        public void setData(byte[] data)
+        {
+            this.data = data;
         }
     }
 

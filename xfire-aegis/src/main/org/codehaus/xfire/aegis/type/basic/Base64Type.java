@@ -15,6 +15,12 @@ import org.codehaus.xfire.util.Base64;
 public class Base64Type
     extends Type
 {
+    public Base64Type()
+    {
+        super();
+        setNillable(true);
+    }
+
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
