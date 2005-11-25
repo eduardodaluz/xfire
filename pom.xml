@@ -52,6 +52,11 @@
         <artifactId>xfire-xmlbeans</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
+      <dependency>
+        <groupId>org.codehaus.xfire</groupId>
+        <artifactId>xfire-java5</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -202,8 +207,8 @@
     <module>xfire-xmpp</module>
     <module>xfire-jaxb</module>
     <module>xfire-annotations</module>
-    <!-- module>xfire-java5</module>
+    <module>xfire-java5</module>
     <module>xfire-xmlbeans</module>
-      <module>xfire-picocontainer</module>-->
+    <!-- module>xfire-picocontainer</module>-->
   </modules>
 </project>
