@@ -263,21 +263,22 @@ public abstract class AbstractBinding
         
         Binding binding = context.getBinding();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
+        int param = 0;
         while (STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p;
             
             if (opInfo != null && isClientModeOn(context))
             {
-                p = (MessagePartInfo) opInfo.getOutputMessage().getMessageParts().get(parameters.size());
+                p = (MessagePartInfo) opInfo.getOutputMessage().getMessageParts().get(param);
             }
             else if (opInfo != null && !isClientModeOn(context))
             {
-                p = (MessagePartInfo) opInfo.getInputMessage().getMessageParts().get(parameters.size());
+                p = (MessagePartInfo) opInfo.getInputMessage().getMessageParts().get(param);
             }
             else
             {
-                p = findMessagePart(context, operations, dr.getName(), parameters.size());
+                p = findMessagePart(context, operations, dr.getName(), param);
             }
             
             if (p == null)
@@ -286,7 +287,12 @@ public abstract class AbstractBinding
                                      XFireFault.SENDER);
             }
 
-            if (binding.isHeader(p)) continue;
+            param++;
+            
+            if (binding.isHeader(p)) 
+            {
+                continue;
+            }
             
             parameters.add( context.getService().getBindingProvider().readParameter(p, dr, context) );
         }
