@@ -8,7 +8,9 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.type.AbstractTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.AbstractTypeCreator.TypeClassInfo;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.aegis.type.collection.MapType;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 
@@ -77,6 +79,28 @@ public class Java5TypeCreator
         }
         
         return info;
+    }
+
+    @Override
+    protected Type createMapType(TypeClassInfo info)
+    {
+        Object genericType = info.getGenericType();
+        Class keyClass = Object.class;
+        Class valueClass = Object.class;
+        if (genericType instanceof ParameterizedType)
+        {
+            ParameterizedType type = (ParameterizedType) genericType;
+            if (type.getActualTypeArguments()[0] instanceof Class)
+            {
+            	keyClass = (Class) type.getActualTypeArguments()[0];
+            }
+            if (type.getActualTypeArguments()[1] instanceof Class)
+            {
+            	valueClass = (Class) type.getActualTypeArguments()[1];
+            }
+        }
+
+        return super.createMapType(info, keyClass, valueClass);
     }
 
     @Override

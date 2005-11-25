@@ -165,11 +165,9 @@ public abstract class AbstractTypeCreator implements TypeCreator
         return type;
     }
 
-    protected Type createMapType(TypeClassInfo info)
+    protected Type createMapType(TypeClassInfo info, Class keyType, Class valueType)
     {
-        QName schemaType = createMapQName(info);
-        Class keyType = (Class) info.getKeyType();
-        Class valueType = (Class) info.getGenericType();
+        QName schemaType = createMapQName(info, keyType, valueType);
         MapType type = new MapType(schemaType, 
                                    keyType, 
                                    valueType);
@@ -179,19 +177,22 @@ public abstract class AbstractTypeCreator implements TypeCreator
         return type;
     }
 
-    protected QName createMapQName(TypeClassInfo info)
+    protected Type createMapType(TypeClassInfo info)
     {
-        Class keyClass = (Class) info.getKeyType();
-        Class componentClass = (Class) info.getGenericType();
+    	return createMapType(info, (Class) info.getKeyType(), (Class) info.getGenericType());
+    }
+
+    protected QName createMapQName(TypeClassInfo info, Class keyClass, Class valueClass)
+    {
         if(keyClass == null)
         {
            throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type" 
            + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
         
-        if(componentClass == null)
+        if(valueClass == null)
         {
-            throw new XFireRuntimeException("Cannot create mapping for map, unspecified component type"
+            throw new XFireRuntimeException("Cannot create mapping for map, unspecified value type"
             + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
         
@@ -202,16 +203,16 @@ public abstract class AbstractTypeCreator implements TypeCreator
             getTypeMapping().register(keyType);
         }
         
-        Type componentType = tm.getType(componentClass);
-        if(componentType == null)
+        Type valueType = tm.getType(valueClass);
+        if(valueType == null)
         {
-            componentType = createType(componentClass);
-            getTypeMapping().register(componentType);
+        	valueType = createType(valueClass);
+            getTypeMapping().register(valueType);
         }
         
         String name = keyType.getSchemaType().getLocalPart()
                       + '2'
-                      + componentType.getSchemaType().getLocalPart()
+                      + valueType.getSchemaType().getLocalPart()
                       + "Map";
          
         // TODO: Get namespace from XML?
