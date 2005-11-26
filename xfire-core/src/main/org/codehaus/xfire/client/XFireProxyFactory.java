@@ -9,6 +9,7 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Transport;
 
@@ -118,6 +119,12 @@ public class XFireProxyFactory
                                       handler);
     }
 
+    public Object create(Endpoint endpoint)
+        throws MalformedURLException
+    {
+        return create(new Client(endpoint));
+    }
+        
     public Object create(Binding binding, String address)
         throws MalformedURLException
     {

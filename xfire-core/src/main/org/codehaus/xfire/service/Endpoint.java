@@ -16,6 +16,9 @@ public class Endpoint extends Extensible
     
     public Endpoint(QName name, Binding binding, String address)
     {
+        if (name == null) throw new IllegalStateException("Endpoint name cannot be null.");
+        if (binding == null) throw new IllegalStateException("Binding cannot be null.");
+        
         this.address = address;
         this.binding = binding;
         this.name = name;
