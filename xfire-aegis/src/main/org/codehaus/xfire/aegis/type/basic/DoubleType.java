@@ -13,6 +13,16 @@ import org.codehaus.xfire.aegis.type.Type;
 public class DoubleType
     extends Type
 {
+    public void setTypeClass(Class typeClass)
+    {
+        super.setTypeClass(typeClass);
+        
+        if (typeClass.equals(Double.class))
+        {
+            setNillable(true);
+        }
+    }
+    
     public Object readObject(MessageReader reader, MessageContext context)
     {
         return new Double( reader.getValueAsDouble() );

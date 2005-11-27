@@ -175,6 +175,30 @@ public class BeanTest
         assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='bleh']", schema);
     }
     
+    public void testNillableInt()
+        throws Exception
+    {
+        BeanTypeInfo info = new BeanTypeInfo(IntBean.class);
+        info.setTypeMapping(mapping);
+        
+        BeanType type = new BeanType(info);
+        type.setTypeClass(IntBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:Bean", "bean"));
+        
+        Element types = new Element("types", "xsd", SoapConstants.XSD);
+        Element schema = new Element("schema", "xsd", SoapConstants.XSD);
+        types.addContent(schema);
+        
+        Document doc = new Document(types);
+        
+        type.writeSchema(schema);
+
+        assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int1'][@nillable='true']", schema);
+        assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int2']", schema);
+        assertInvalid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int2'][@nillable='true']", schema);
+    }   
+    
     public void testNullNonNillableWithDate()
         throws Exception
     {
@@ -312,6 +336,29 @@ public class BeanTest
         public void setDate(Date date) 
         {
             this.date = date;
+        }
+    }
+    
+    public static class IntBean
+    {
+        private Integer int1;
+        private int int2;
+        
+        public Integer getInt1()
+        {
+            return int1;
+        }
+        public void setInt1(Integer int1)
+        {
+            this.int1 = int1;
+        }
+        public int getInt2()
+        {
+            return int2;
+        }
+        public void setInt2(int int2)
+        {
+            this.int2 = int2;
         }
     }
 

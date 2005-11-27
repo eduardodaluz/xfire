@@ -14,6 +14,12 @@ import org.codehaus.xfire.aegis.type.Type;
  */
 public class BigDecimalType extends Type
 {
+    public BigDecimalType()
+    {
+        super();
+        setNillable(true);
+    }
+
     public Object readObject( final MessageReader reader, final MessageContext context )
     {
         final String value = reader.getValue();
