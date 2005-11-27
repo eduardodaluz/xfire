@@ -1,5 +1,5 @@
 <project>
-  <extend>${basedir}/../project.xml</extend>
+  <extend>${basedir}/../../project.xml</extend>
   <artifactId>xfire-jaxws</artifactId>
   <name>JAXWS XFire Module</name>
   <package>org.codehaus.xfire.jaxws</package>
@@ -55,17 +55,46 @@
       </properties>
     </dependency>
     <dependency>
-      <groupId>jaxb</groupId>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-aegis</artifactId>
+      <version>${pom.currentVersion}</version>
+      <url>${pom.url}</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>beehive</groupId>
+      <artifactId>wsm</artifactId>
+      <version>1.0alpha</version>
+    </dependency>
+    <dependency>
+      <groupId>sun</groupId>
+      <artifactId>jaxws-api</artifactId>
+      <version>20051114</version>
+    </dependency>
+    <dependency>
+      <groupId>sun</groupId>
+      <artifactId>saaj-api</artifactId>
+      <version>20051114</version>
+    </dependency>
+    <dependency>
+      <groupId>sun</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>20051114</version>
+    </dependency>
+    <dependency>
+      <groupId>xfire</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>20051114</version>
     </dependency>
     <dependency>
-      <groupId>jaxb</groupId>
+      <groupId>xfire</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>20051114</version>
     </dependency>
     <dependency>
-      <groupId>jaxb</groupId>
+      <groupId>xfire</groupId>
       <artifactId>jaxb-xjc</artifactId>
       <version>20051114</version>
     </dependency>

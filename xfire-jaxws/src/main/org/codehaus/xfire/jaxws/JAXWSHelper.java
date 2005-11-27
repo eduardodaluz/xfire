@@ -5,11 +5,7 @@ import java.util.Map;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
-import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.annotations.AnnotationServiceFactory;
-import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
 import org.codehaus.xfire.client.XFireProxyFactory;
-import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.jaxws.binding.AbstractBinding;
 import org.codehaus.xfire.jaxws.binding.HTTPBinding;
 import org.codehaus.xfire.jaxws.binding.SOAPBinding;
@@ -24,10 +20,7 @@ class JAXWSHelper
     private XFire xfire = XFireFactory.newInstance().getXFire();
     private TransportManager tManager = xfire.getTransportManager();
     
-    private ServiceFactory serviceFactory = 
-        new AnnotationServiceFactory(new Jsr181WebAnnotations(), 
-                                     tManager, 
-                                     new AegisBindingProvider(new JaxbTypeRegistry()));
+    private ServiceFactory serviceFactory = new JAXWSServiceFactory(tManager);
     
     private XFireProxyFactory proxyFactory = new XFireProxyFactory(xfire);
     

@@ -1,9 +1,6 @@
 package org.codehaus.xfire.jaxws;
 
-import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
-import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
-import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
@@ -17,9 +14,7 @@ public class SubscribeServiceTest extends AbstractXFireTest {
     {
         super.setUp();
         
-        osf = new AnnotationServiceFactory(new Jsr181WebAnnotations(),
-                                           getXFire().getTransportManager(),
-                                           new AegisBindingProvider(new JaxbTypeRegistry()));
+        osf = new JAXWSServiceFactory(getXFire().getTransportManager());
 
         Service service = osf.create(SubscribeService.class);
 
