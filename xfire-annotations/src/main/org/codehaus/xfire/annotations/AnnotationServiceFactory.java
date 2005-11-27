@@ -11,6 +11,7 @@ import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -200,6 +201,18 @@ public class AnnotationServiceFactory
         return portType;
     }
 
+    protected String getOperationName(ServiceInfo service, Method method)
+    {
+    	if (webAnnotations.hasWebMethodAnnotation(method)) 
+    	{
+            WebMethodAnnotation wma = webAnnotations.getWebMethodAnnotation(method);
+            if (wma.getOperationName().length() > 0)
+                return wma.getOperationName();
+    	}
+        
+        return super.getOperationName(service, method);
+    }
+    
     protected String getAction(OperationInfo op)
     {
         if (webAnnotations.hasWebMethodAnnotation(op.getMethod()))
