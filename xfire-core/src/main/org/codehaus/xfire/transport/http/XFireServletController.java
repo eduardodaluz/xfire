@@ -83,7 +83,10 @@ public class XFireServletController
         requests.set(request);
         responses.set(response);
 
-        if (serviceName == null || serviceName.length() == 0 || !reg.hasService(serviceName))
+        if (serviceName == null || 
+                serviceName.length() == 0 || 
+                !reg.hasService(serviceName) ||
+                !getTransportManager().isEnabled(transport, getService(serviceName)))
         {
             if (!reg.hasService(serviceName))
             {

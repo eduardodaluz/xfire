@@ -2,6 +2,8 @@ package org.codehaus.xfire.transport;
 
 import java.util.Collection;
 
+import org.codehaus.xfire.service.Service;
+
 
 /**
  * Registers transports for the SOAP services.
@@ -38,17 +40,17 @@ public interface TransportManager
      * @param service
      * @return
      */
-    Collection getTransports(String service);
+    Collection getTransports(Service service);
 
     Collection getTransports();
 
-    void enableAll(String serviceName);
+    void enableAll(Service service);
 
-    void disableAll(String serviceName);
+    void disableAll(Service service);
 
-    void enable(Transport transport, String serviceName);
+    void enable(Transport transport, Service service);
 
-    void disable(Transport transport, String serviceName);
+    void disable(Transport transport, Service service);
 
     /**
      * Determine if a transport is enabled for a particular service.
@@ -57,5 +59,5 @@ public interface TransportManager
      * @param transportName The name of the transport.
      * @return
      */
-    boolean isEnabled(Transport transport, String serviceName);
+    boolean isEnabled(Transport transport, Service service);
 }

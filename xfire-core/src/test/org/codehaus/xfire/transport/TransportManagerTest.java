@@ -28,21 +28,21 @@ public class TransportManagerTest
         assertEquals(5, tm.getTransports().size());
         
         reg.register(service);
-        assertTrue(tm.isEnabled(transport, service.getName()));
+        assertTrue(tm.isEnabled(transport, service));
 
-        assertEquals(5, tm.getTransports(service.getName()).size());
+        assertEquals(5, tm.getTransports(service).size());
         
-        tm.disable(transport, service.getName());
-        assertFalse(tm.isEnabled(transport, service.getName()));
+        tm.disable(transport, service);
+        assertFalse(tm.isEnabled(transport, service));
         
-        tm.enable(transport, service.getName());
-        assertTrue(tm.isEnabled(transport, service.getName()));
+        tm.enable(transport, service);
+        assertTrue(tm.isEnabled(transport, service));
         
-        tm.disableAll(service.getName());
-        assertEquals(0, tm.getTransports(service.getName()).size());
+        tm.disableAll(service);
+        assertEquals(0, tm.getTransports(service).size());
         
-        tm.enableAll(service.getName());
-        assertEquals(5, tm.getTransports(service.getName()).size());
+        tm.enableAll(service);
+        assertEquals(5, tm.getTransports(service).size());
         
         tm.unregister(transport);
         assertEquals(4, tm.getTransports().size()); 

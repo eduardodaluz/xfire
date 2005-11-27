@@ -83,7 +83,7 @@ public class DefaultTransportManager
         for (Iterator itr = serviceRegistry.getServices().iterator(); itr.hasNext();)
         {
             Service endpoint = (Service) itr.next();
-            enableAll(endpoint.getName());
+            enableAll(endpoint);
         }
         serviceRegistry.addRegistrationEventListener(this);
     }
@@ -121,21 +121,21 @@ public class DefaultTransportManager
         }
     }
 
-    public void enable(Transport transport, String serviceName)
+    public void enable(Transport transport, Service service)
     {
-        Set serviceTransports = (Set) services.get(serviceName);
+        Set serviceTransports = (Set) services.get(service);
         if (serviceTransports == null)
         {
             serviceTransports = new HashSet();
-            services.put(serviceName, serviceTransports);
+            services.put(service, serviceTransports);
         }
 
         serviceTransports.add(transport);
     }
 
-    public void disable(Transport transport, String serviceName)
+    public void disable(Transport transport, Service service)
     {
-        Set serviceTransports = (Set) services.get(serviceName);
+        Set serviceTransports = (Set) services.get(service);
         if (serviceTransports == null)
         {
             return;
@@ -149,7 +149,7 @@ public class DefaultTransportManager
      * @return
      * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
      */
-    public Collection getTransports(String service)
+    public Collection getTransports(Service service)
     {
         Set transports = ((HashSet) services.get(service));
 
@@ -165,15 +165,15 @@ public class DefaultTransportManager
     }
 
     /**
-     * @param serviceName
+     * @param service
      */
-    public void enableAll(String serviceName)
+    public void enableAll(Service service)
     {
-        Set serviceTransports = (Set) services.get(serviceName);
+        Set serviceTransports = (Set) services.get(service);
         if (serviceTransports == null)
         {
             serviceTransports = new HashSet();
-            services.put(serviceName, serviceTransports);
+            services.put(service, serviceTransports);
         }
 
         for (Iterator itr = transports.iterator(); itr.hasNext();)
@@ -185,11 +185,11 @@ public class DefaultTransportManager
     }
 
     /**
-     * @param serviceName
+     * @param service
      */
-    public void disableAll(String serviceName)
+    public void disableAll(Service service)
     {
-        Set serviceTransports = (HashSet) services.get(serviceName);
+        Set serviceTransports = (HashSet) services.get(service);
         if (serviceTransports == null)
         {
             return;
@@ -208,7 +208,7 @@ public class DefaultTransportManager
      * @param transportName
      * @return
      */
-    public boolean isEnabled(Transport transport, String service)
+    public boolean isEnabled(Transport transport, Service service)
     {
         Set serviceTransports = (HashSet) services.get(service);
         if (serviceTransports == null)
@@ -232,7 +232,7 @@ public class DefaultTransportManager
      */
     public void endpointRegistered(RegistrationEvent event)
     {
-        enableAll(event.getEndpoint().getName());
+        enableAll(event.getEndpoint());
     }
 
     /**
@@ -243,7 +243,7 @@ public class DefaultTransportManager
      */
     public void endpointUnregistered(RegistrationEvent event)
     {
-        disableAll(event.getEndpoint().getName());
+        disableAll(event.getEndpoint());
     }
 
     public Transport getTransportForUri(String uri)
