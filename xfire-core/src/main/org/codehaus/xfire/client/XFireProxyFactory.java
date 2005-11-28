@@ -77,6 +77,11 @@ public class XFireProxyFactory
             }
         }
         
+        if (firstChoice == null && lastChoice == null)
+        {
+            throw new XFireRuntimeException("Could not find binding for url " + url);
+        }
+        
         if (firstChoice == null)
         {
             firstChoice = lastChoice;
