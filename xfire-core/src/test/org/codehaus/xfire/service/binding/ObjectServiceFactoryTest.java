@@ -9,7 +9,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.service.FaultInfo;
-import org.codehaus.xfire.service.MessagePartContainer;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -153,13 +153,12 @@ public class ObjectServiceFactoryTest
         Service service = osf.create(HeaderService.class);
         ServiceInfo info = service.getServiceInfo();
         
-        MessagePartContainer inMsg =info.getOperation("doSomething").getInputMessage();
-        assertEquals(2, inMsg.getMessageParts().size());
-        MessagePartInfo part = inMsg.getMessagePart(new QName(info.getName().getNamespaceURI(), "in1"));
-        assertNotNull(part);
+        MessageInfo inMsg =info.getOperation("doSomething").getInputMessage();
+        assertEquals(1, inMsg.getMessageParts().size());
         
         SoapBinding soapOp = (SoapBinding) service.getBindings().iterator().next();
-        assertTrue(soapOp.isHeader(part));
+        MessagePartInfo part = soapOp.getHeaders(inMsg).getMessagePart(new QName(info.getName().getNamespaceURI(), "in1"));
+        assertNotNull(part);
     }
     
     public static class HeaderService

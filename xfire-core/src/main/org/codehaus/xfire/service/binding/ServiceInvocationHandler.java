@@ -46,7 +46,7 @@ public class ServiceInvocationHandler
 
             // read in the headers
             Binding binding = context.getBinding();
-            final List headerInfos = binding.getHeaders(operation.getInputMessage());
+            final List headerInfos = binding.getHeaders(operation.getInputMessage()).getMessageParts();
             for (Iterator itr = headerInfos.iterator(); itr.hasNext();)
             {
                 MessagePartInfo header = (MessagePartInfo) itr.next();

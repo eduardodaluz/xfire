@@ -43,8 +43,6 @@ public class EchoWSDLClientTest
         super.tearDown();
     }
 
-
-
     protected XFire getXFire()
     {
         return XFireFactory.newInstance().getXFire();

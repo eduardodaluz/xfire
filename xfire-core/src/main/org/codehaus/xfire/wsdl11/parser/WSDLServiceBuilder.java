@@ -264,11 +264,16 @@ public class WSDLServiceBuilder
             {
                 BindingOperation bindingOperation = 
                     (BindingOperation) bindingOperations.get(i);
+                OperationInfo opInfo = (OperationInfo) wop2op.get(bindingOperation.getOperation());
+                ann.visit(bindingOperation, opInfo);
                 
-                ann.visit(bindingOperation, (OperationInfo) wop2op.get(bindingOperation.getOperation()));
+                ann.visit(bindingOperation.getBindingInput(), 
+                          bindingOperation.getOperation().getInput(),
+                          opInfo.getInputMessage());
                 
-                visit(bindingOperation.getBindingInput(), bindingOperation.getOperation().getInput());
-                visit(bindingOperation.getBindingOutput(), bindingOperation.getOperation().getOutput());
+                ann.visit(bindingOperation.getBindingOutput(), 
+                          bindingOperation.getOperation().getOutput(),
+                          opInfo.getOutputMessage());
                 
                 Collection bindingFaults = bindingOperation.getBindingFaults().values();
                 for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)

@@ -10,7 +10,9 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
+import javax.wsdl.Message;
 import javax.wsdl.Output;
+import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -28,6 +30,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.wsdl.SchemaType;
 
 public class SoapBindingAnnotator extends BindingAnnotator
 {
@@ -75,7 +78,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
         for (Iterator itr = ext.iterator(); itr.hasNext();)
         {
             Object o = itr.next();
-            
+
             if (o instanceof SOAPBody)
             {
                 SOAPBody body = (SOAPBody) o;
@@ -86,17 +89,22 @@ public class SoapBindingAnnotator extends BindingAnnotator
             {
                 SOAPHeader header = (SOAPHeader) o;
 
-                MessagePartInfo part = getMessagePart(header.getPart(), msg);
-
-                getSoapBinding().setHeader(part, true);
+                QName msgName = header.getMessage();
+                Message hmsg = getServiceBuilder().getDefinition().getMessage(msgName);
+                Part part = hmsg.getPart(header.getPart());
+                
+                QName name = part.getElementName();
+                if (name == null)
+                {
+                    name = part.getTypeName();
+                }
+                
+                SchemaType st = getServiceBuilder().getBindingProvider().getSchemaType(name, getService());
+                
+                MessagePartInfo info = getSoapBinding().getHeaders((MessageInfo) msg).addMessagePart(name, null);
+                info.setSchemaType(st);
             }
         }
-    }
-
-    private MessagePartInfo getMessagePart(String name, MessagePartContainer msg)
-    {
-        String ns = getService().getServiceInfo().getName().getNamespaceURI();
-        return msg.getMessagePart(new QName(ns, name));
     }
 
     protected void visit(BindingOperation operation, OperationInfo opInfo)

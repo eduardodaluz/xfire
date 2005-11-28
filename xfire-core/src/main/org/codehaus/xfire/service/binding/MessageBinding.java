@@ -50,8 +50,7 @@ public class MessageBinding
         for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
-            if (binding.isHeader(p)) continue;
-            
+
             params.add( service.getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
             nextEvent(message.getXMLStreamReader());
         }
@@ -69,8 +68,7 @@ public class MessageBinding
         for (Iterator itr = operation.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
-            if (context.getBinding().isHeader(p)) continue;
-            
+ 
             context.getService().getBindingProvider().writeParameter(p, writer, context, values[i]);
             i++;
         }

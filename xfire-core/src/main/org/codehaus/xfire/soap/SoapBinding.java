@@ -217,7 +217,7 @@ public class SoapBinding extends Binding
     
     protected void createHeaders(WSDLBuilder builder, OperationInfo op, BindingOperation bop)
     {
-        List inputHeaders = getHeaders(op.getInputMessage());
+        List inputHeaders = getHeaders(op.getInputMessage()).getMessageParts();
         
         if (inputHeaders.size() == 0)
         {

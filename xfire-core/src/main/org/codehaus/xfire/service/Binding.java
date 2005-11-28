@@ -1,14 +1,7 @@
 package org.codehaus.xfire.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
@@ -29,9 +22,8 @@ public abstract class Binding
 
     private Transport transport;
 
-    private Set headers = new HashSet();
-
     private Map op2serializer = new HashMap();
+    private Map msg2parts = new HashMap();
     
     private MessageSerializer serializer;
 
@@ -75,44 +67,17 @@ public abstract class Binding
                                     WSDLBuilder builder,
                                     javax.wsdl.Binding wbinding);
 
-    public void setHeader(MessagePartInfo part, boolean b)
-    {
-        if (b) headers.add(part);
-        else headers.remove(part);
-    }
-
-    public Collection getHeaders()
-    {
-        return Collections.unmodifiableSet(headers);
-    }
-
-    public boolean isHeader(MessagePartInfo part)
-    {
-        return headers.contains(part);
-    }
-
-    public List getHeaders(MessageInfo msg)
-    {
-        List inputHeaders = new ArrayList();
-        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
-        {
-            MessagePartInfo part = (MessagePartInfo) itr.next();
-            if (isHeader(part)) 
-                inputHeaders.add(part);
-        }
-        return inputHeaders;
-    }
     
-    public List getBodyParts(MessageInfo msg)
+    public MessagePartContainer getHeaders(MessageInfo msg)
     {
-        List parts = new ArrayList();
-        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
+        MessagePartContainer c = (MessagePartContainer) msg2parts.get(msg);
+        if (c == null)
         {
-            MessagePartInfo part = (MessagePartInfo) itr.next();
-            if (!isHeader(part)) 
-                parts.add(part);
+            c = new HeaderPartContainer(msg.getOperation());
+            msg2parts.put(msg, c);
         }
-        return parts;
+        
+        return c;
     }
 
     public MessageSerializer getSerializer(OperationInfo operation)
@@ -139,5 +104,13 @@ public abstract class Binding
     public void setSerializer(MessageSerializer serializer)
     {
         this.serializer = serializer;
+    }
+    
+    static class HeaderPartContainer extends MessagePartContainer
+    {
+        public HeaderPartContainer(OperationInfo operation)
+        {
+            super(operation);
+        }        
     }
 }

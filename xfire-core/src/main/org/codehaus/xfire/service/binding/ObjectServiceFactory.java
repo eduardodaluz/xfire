@@ -20,7 +20,7 @@ import org.codehaus.xfire.handler.CustomFaultHandler;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
-import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -301,6 +301,7 @@ public class ObjectServiceFactory
 
     public void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
     {
+        binding.setSoapAction(op, getAction(op));
         createMessageBinding(binding, op.getInputMessage());
         
         if (op.hasOutput())
@@ -318,20 +319,19 @@ public class ObjectServiceFactory
 
     private void createMessageBinding(SoapBinding binding, MessageInfo msg)
     {
-        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
+        Method method = msg.getOperation().getMethod();
+        Class[] paramClasses = method.getParameterTypes();
+        boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
+        
+        MessagePartContainer parts = binding.getHeaders(msg);
+        for (int j = 0; j < paramClasses.length; j++)
         {
-            MessagePartInfo part = (MessagePartInfo) itr.next();
-            
-            if (isHeader(part))
+            if (!paramClasses[j].equals(MessageContext.class) && isHeader(method, j))
             {
-                binding.setHeader(part, true);
+                final QName q = getInParameterName(binding.getService(), msg.getOperation(), method, j, isDoc);
+                parts.addMessagePart(q, paramClasses[j]).setIndex(j);
             }
         }
-    }
-    
-    protected boolean isHeader(MessagePartInfo part)
-    {
-        return isHeader(part.getContainer().getOperation().getMethod(), part.getIndex());
     }
 
     protected void registerHandlers(Service service)
@@ -415,7 +415,7 @@ public class ObjectServiceFactory
 
         for (int j = 0; j < paramClasses.length; j++)
         {
-            if (!paramClasses[j].equals(MessageContext.class))
+            if (!paramClasses[j].equals(MessageContext.class) && !isHeader(method, j))
             {
                 final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 inMsg.addMessagePart(q, paramClasses[j]).setIndex(j);
@@ -431,7 +431,7 @@ public class ObjectServiceFactory
             op.setOutputMessage(outMsg);
 
             final Class returnType = method.getReturnType();
-            if (!returnType.isAssignableFrom(void.class))
+            if (!returnType.isAssignableFrom(void.class) && !isHeader(method, -1))
             {
                 final QName q = getOutParameterName(endpoint, op, method, isDoc);
                 outMsg.addMessagePart(q, method.getReturnType()).setIndex(-1);

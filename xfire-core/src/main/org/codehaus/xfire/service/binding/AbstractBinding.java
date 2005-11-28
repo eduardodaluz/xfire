@@ -126,7 +126,7 @@ public abstract class AbstractBinding
                 msgInfo = op.getInputMessage();
             }
 
-            Collection bodyParts = context.getBinding().getBodyParts(msgInfo);
+            Collection bodyParts = msgInfo.getMessageParts();
             if (bodyParts.size() == 0 || bodyParts.size() <= index) 
             {
                 // itr.remove();
@@ -175,11 +175,6 @@ public abstract class AbstractBinding
             }
 
             param++;
-            
-            if (binding.isHeader(p)) 
-            {
-                continue;
-            }
             
             parameters.add( context.getService().getBindingProvider().readParameter(p, dr, context) );
         }
