@@ -4,10 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 
 import javax.xml.bind.JAXBContext;
@@ -17,6 +15,7 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
 
 import org.codehaus.xfire.client.XFireProxyFactory;
+import org.codehaus.xfire.jaxws.handler.SimpleHandlerResolver;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
@@ -37,15 +36,16 @@ public class ServiceDelegate
     private HandlerResolver handlerResolver;
     private Class serviceClass;
     private QName serviceName;
-    
-    private Map<URI, Binding> uri2Binding = new HashMap<URI, Binding>();
-    
+
     public ServiceDelegate()
     {
+        handlerResolver = new SimpleHandlerResolver();
     }
     
     public ServiceDelegate(URL wsdlLocation, QName serviceName, Class jaxClass)
     {
+        this();
+        
         this.wsdlDocumentLocation = wsdlLocation;
         this.serviceName = serviceName;
 

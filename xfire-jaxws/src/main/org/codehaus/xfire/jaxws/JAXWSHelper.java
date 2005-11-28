@@ -15,7 +15,7 @@ import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
 
-class JAXWSHelper
+public class JAXWSHelper
 {
     private XFire xfire = XFireFactory.newInstance().getXFire();
     private TransportManager tManager = xfire.getTransportManager();
@@ -26,37 +26,45 @@ class JAXWSHelper
     
     private Map<String, AbstractBinding> bindings = 
         new HashMap<String, AbstractBinding>();
+    private Map<Transport, AbstractBinding> transport2Binding = 
+        new HashMap<Transport, AbstractBinding>();
     
     private static JAXWSHelper helper = new JAXWSHelper();
     
     protected JAXWSHelper() 
     { 
         Transport soap11 = tManager.getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
-        bindings.put(SOAPBinding.SOAP11HTTP_BINDING, new SOAPBinding(soap11));
+        AbstractBinding binding = new SOAPBinding(soap11);
+        bindings.put(SOAPBinding.SOAP11HTTP_BINDING, binding);
+        transport2Binding.put(soap11, binding);
         
         Transport soap12 = tManager.getTransport(SoapHttpTransport.SOAP12_HTTP_BINDING);
-        bindings.put(SOAPBinding.SOAP12HTTP_BINDING, new SOAPBinding(soap12));
+        binding = new SOAPBinding(soap12);
+        bindings.put(SOAPBinding.SOAP12HTTP_BINDING, binding);
+        transport2Binding.put(soap12, binding);
         
         Transport http = tManager.getTransport(HttpTransport.HTTP_BINDING);
-        bindings.put(HTTPBinding.HTTP_BINDING, new HTTPBinding(http));
+        binding = new HTTPBinding(http);
+        bindings.put(HTTPBinding.HTTP_BINDING, binding);
+        transport2Binding.put(http, binding);
     }
     
-    static JAXWSHelper getInstance()
+    public static JAXWSHelper getInstance()
     {
         return helper;
     }
     
-    ServiceFactory getServiceFactory()
+    public ServiceFactory getServiceFactory()
     {
         return serviceFactory;
     }
     
-    XFire getXFire()
+    public XFire getXFire()
     {
         return xfire;
     }
     
-    TransportManager getTransportManager()
+    public TransportManager getTransportManager()
     {
         return xfire.getTransportManager();
     }
@@ -69,5 +77,10 @@ class JAXWSHelper
     public AbstractBinding getBinding(String bindingUri)
     {
         return bindings.get(bindingUri);
+    }
+    
+    public AbstractBinding getBinding(Transport t)
+    {
+        return transport2Binding.get(t);
     }
 }
