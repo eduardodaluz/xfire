@@ -9,9 +9,9 @@ junit*.properties
 .project
 bin
 build.properties
-.settings
 *.lnk
 *.sh
 *.ajsym
 *.lst
 *.jar
+*.wtpmodules
