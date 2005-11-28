@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.OperationInfo;
 
 /**
@@ -67,12 +68,38 @@ public class XFireProxy
     {
         OperationInfo op = client.getService().getServiceInfo().getOperation(m);
 
-        Object[] response = client.invoke(op, args);
+        try
+        {
+            Object[] response = client.invoke(op, args);
 
-        if (response != null && response.length > 0)
-            return response[0];
-        else
-            return null;
+            if (response != null && response.length > 0)
+                return response[0];
+            else
+                return null;
+        }
+        catch (Exception e)
+        {
+            if (isDeclared(e, m))
+            {
+                throw e;
+            }
+            else
+            {
+                throw new XFireRuntimeException("Could not invoke service.", e);
+            }
+        }
+    }
+
+    private boolean isDeclared(Exception e, Method m)
+    {
+        Class[] types = m.getExceptionTypes();
+        for (int i = 0; i < types.length; i++)
+        {
+            if (types[i].isAssignableFrom(e.getClass()))
+                return true;
+        }
+        
+        return false;
     }
 
     /**
