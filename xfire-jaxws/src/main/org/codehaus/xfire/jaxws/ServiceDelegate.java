@@ -68,14 +68,14 @@ public class ServiceDelegate
         
         if (endpoint == null) throw new WebServiceException("Invalid port name " + portName);
         
-        return createPort(endpoint);
+        return (T) createPort(endpoint);
     }
 
-    private <T> T createPort(Endpoint endpoint)
+    private Object createPort(Endpoint endpoint)
     {
         try
         {
-            return (T) factory.create(endpoint);
+            return factory.create(endpoint);
         }
         catch (MalformedURLException e)
         {
@@ -91,7 +91,7 @@ public class ServiceDelegate
             throw new WebServiceException("No available ports.");
         }
         
-        return createPort((Endpoint) service.getEndpoints().iterator().next());
+        return (T) createPort((Endpoint) service.getEndpoints().iterator().next());
     }
 
     @Override
