@@ -1,9 +1,14 @@
 package org.codehaus.xfire.jaxb2;
 
+import java.lang.annotation.Annotation;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -98,18 +103,44 @@ public class JaxbType
 
     public static QName getSchemaType(Class clazz)
     {
-        try
-        {
-            JAXBContext jc = JAXBContext.newInstance( clazz);
-
-            QName name =  jc.createJAXBIntrospector().getElementName(clazz.newInstance());
-
-            return name;
-        }
-        catch (Exception e)
-        {
-            throw new XFireRuntimeException("Couldn't determine element name.", e);
-        }
+		XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+    	XmlType type = (XmlType) clazz.getAnnotation(XmlType.class);
+    	String local = null;
+    	String nsUri = null;
+    	if (root != null) 
+    	{
+    		local = root.name();
+    		nsUri = root.namespace();
+    	}
+    	else if (type != null) 
+    	{
+    		local = type.name();
+    		nsUri = type.namespace();
+    	} else 
+    	{
+    		throw new XFireRuntimeException("Couldn't determine element name.");
+    	}
+		if (local.equals("##default")) {
+			local = clazz.getSimpleName();
+		}
+		if (nsUri.equals("##default")) {
+			nsUri = getPackageNs(clazz);
+		}
+    	return new QName(nsUri, local);
+    }
+    
+    public static String getPackageNs(Class clazz) {
+		Package pack = clazz.getPackage();
+		XmlSchema schema = pack.getAnnotation(XmlSchema.class);
+   		String namespace = null;
+		if (schema != null) 
+		{
+			namespace = schema.namespace();
+		} else
+		{
+			namespace = "";
+		}
+		return namespace;
     }
 
     /**
