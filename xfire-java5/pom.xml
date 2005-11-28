@@ -8,6 +8,7 @@
 	<artifactId>xfire-java5</artifactId>
 	<name>XFire Java 5 Module</name>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.codehaus.xfire</groupId>

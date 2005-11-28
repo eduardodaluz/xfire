@@ -13,5 +13,5 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  <xs:attribute name="test" type="xs:string" />
+  <xs:attribute name="foo" type="xs:string" />
 </xs:schema>
