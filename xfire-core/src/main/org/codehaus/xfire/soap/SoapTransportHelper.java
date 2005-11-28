@@ -6,7 +6,7 @@ import org.codehaus.xfire.soap.handler.FaultSoapSerializerHandler;
 import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.soap.handler.SoapActionInHandler;
 import org.codehaus.xfire.soap.handler.SoapActionOutHandler;
-import org.codehaus.xfire.soap.handler.SoapBindingHandler;
+import org.codehaus.xfire.soap.handler.SoapBodyHandler;
 import org.codehaus.xfire.soap.handler.SoapSerializerHandler;
 import org.codehaus.xfire.soap.handler.ValidateHeadersHandler;
 import org.codehaus.xfire.transport.AbstractTransport;
@@ -28,7 +28,7 @@ public class SoapTransportHelper
     private static final Handler bindingLocater = new LocateBindingHandler();
     private static final Handler soapAction = new SoapActionInHandler();
     private static final Handler soapActionOut = new SoapActionOutHandler();
-    private static final Handler soapBinding = new SoapBindingHandler();
+    private static final Handler soapBinding = new SoapBodyHandler();
     
     public static Transport createSoapTransport(AbstractTransport transport)
     {

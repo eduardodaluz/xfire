@@ -165,8 +165,6 @@ public class WSDLServiceBuilder
                 Port port = (Port) iterator1.next();
                 Binding binding = port.getBinding();
 
-                visit(binding);
-                
                 if (!visitedPortTypes.contains(portType))
                 {
                     visit(portType);
@@ -194,6 +192,8 @@ public class WSDLServiceBuilder
                         }
                     }
                 }
+                
+                visit(binding);
                 
                 visit(port);
             }
@@ -327,7 +327,7 @@ public class WSDLServiceBuilder
     {
         opInfo = serviceInfo.addOperation(operation.getName(), null);
         wop2op.put(operation, opInfo);
-        
+
         isWrapped = isWrapped(operation);
     }
     

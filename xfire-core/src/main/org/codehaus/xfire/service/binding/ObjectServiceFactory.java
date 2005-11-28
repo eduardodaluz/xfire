@@ -267,10 +267,12 @@ public class ObjectServiceFactory
         }
     }
 
-    protected void createSoapBinding(Service service, SoapTransport transport, String style, String use)
+    protected SoapBinding createSoapBinding(Service service, SoapTransport transport, String style, String use)
     {
         SoapBinding binding = createBinding(service, transport.getName(), style, use);
         binding.setTransport(transport);
+    
+        return binding;
     }
     
     private SoapBinding createBinding(Service service, String tname, String style, String use)
@@ -283,7 +285,8 @@ public class ObjectServiceFactory
         SoapBinding binding = new SoapBinding(bindingName, service);
         binding.setStyle(style);
         binding.setUse(use);
-         
+        binding.setSerializer(SoapBinding.getSerializer(style, use));
+        
         // Create SOAP metadata for the binding operation
         for (Iterator itr = serviceInfo.getOperations().iterator(); itr.hasNext();)
         {
@@ -296,7 +299,7 @@ public class ObjectServiceFactory
         return binding;
     }
 
-    private void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
+    public void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
     {
         createMessageBinding(binding, op.getInputMessage());
         
@@ -333,6 +336,7 @@ public class ObjectServiceFactory
 
     protected void registerHandlers(Service service)
     {
+        service.addInHandler(new ServiceInvocationHandler());
         service.addOutHandler(new OutMessageSender());
         service.addFaultHandler(new FaultSender());
         service.addFaultHandler(new CustomFaultHandler());
@@ -406,7 +410,7 @@ public class ObjectServiceFactory
         boolean isDoc = style.equals(SoapConstants.STYLE_DOCUMENT);
 
         // Setup the input message
-        MessageInfo inMsg = op.createMessage(new QName(op.getName() + "Request"));
+        MessageInfo inMsg = op.createMessage(createInputMessageName(op));
         op.setInputMessage(inMsg);
 
         for (int j = 0; j < paramClasses.length; j++)
@@ -423,7 +427,7 @@ public class ObjectServiceFactory
         if (hasOutMessage(mep))
         {
             // Setup the output message
-            MessageInfo outMsg = op.createMessage(new QName(op.getName() + "Response"));
+            MessageInfo outMsg = op.createMessage(createOutputMessageName(op));
             op.setOutputMessage(outMsg);
 
             final Class returnType = method.getReturnType();
@@ -442,6 +446,16 @@ public class ObjectServiceFactory
         return op;
     }
 
+    protected QName createInputMessageName(final OperationInfo op)
+    {
+        return new QName(op.getService().getName().getNamespaceURI(), op.getName() + "Request");
+    }
+
+    protected QName createOutputMessageName(final OperationInfo op)
+    {
+        return new QName(op.getService().getName().getNamespaceURI(), op.getName() + "Response");
+    }
+    
     protected boolean hasOutMessage(String mep)
     {
         if (mep.equals(SoapConstants.MEP_IN)) return false;

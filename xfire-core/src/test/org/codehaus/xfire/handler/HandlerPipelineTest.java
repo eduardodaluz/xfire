@@ -10,7 +10,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.soap.handler.SoapBindingHandler;
+import org.codehaus.xfire.soap.handler.SoapBodyHandler;
 
 public class HandlerPipelineTest
         extends TestCase
@@ -89,12 +89,12 @@ public class HandlerPipelineTest
         
         handlerPipeline.addHandler(new DispatchServiceHandler());
         handlerPipeline.addHandler(new LocateBindingHandler());
-        handlerPipeline.addHandler(new SoapBindingHandler());
+        handlerPipeline.addHandler(new SoapBodyHandler());
 
         List handlers = handlerPipeline.getPhase(Phase.DISPATCH).getHandlers();
         
         assertTrue(handlers.get(0) instanceof LocateBindingHandler);
-        assertTrue(handlers.get(1) instanceof SoapBindingHandler);
+        assertTrue(handlers.get(1) instanceof SoapBodyHandler);
     }
 
     public void testInvalidSorting()

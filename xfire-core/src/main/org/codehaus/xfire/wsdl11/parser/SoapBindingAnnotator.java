@@ -54,7 +54,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
 
         soapBinding = new SoapBinding(wbinding.getQName(), getService());
         getService().addBinding(soapBinding);
-
+        
         getSoapBinding().setStyle(sbind.getStyle());
     }
 
@@ -101,13 +101,17 @@ public class SoapBindingAnnotator extends BindingAnnotator
     {
         SOAPOperation soapOp = DefinitionsHelper.getSOAPOperation(operation);
 
-        getSoapBinding().setSoapAction(opInfo, soapOp.getSoapActionURI());
+        SoapBinding binding = getSoapBinding();
         
+        binding.setSoapAction(opInfo, soapOp.getSoapActionURI());
+
         String style = soapOp.getStyle();
         if (style != null)
         {
             setStyle(opInfo, style);
         }
+        System.out.println("setting the serializer " + opInfo.getName());
+        binding.setSerializer(opInfo, SoapBinding.getSerializer(binding.getStyle(), binding.getUse()));
     }
 
     protected void setStyle(OperationInfo opInfo, String style)

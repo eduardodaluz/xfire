@@ -3,7 +3,7 @@ package org.codehaus.xfire.handler;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.soap.handler.SoapBindingHandler;
+import org.codehaus.xfire.soap.handler.SoapBodyHandler;
 import org.codehaus.xfire.transport.DefaultEndpoint;
 
 /**
@@ -17,7 +17,7 @@ public class DispatchServiceHandler
     public DispatchServiceHandler()
     {
         super();
-        after(SoapBindingHandler.class.getName());
+        after(SoapBodyHandler.class.getName());
     }
 
     public String getPhase()

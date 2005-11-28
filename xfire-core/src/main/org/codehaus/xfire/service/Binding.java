@@ -3,15 +3,18 @@ package org.codehaus.xfire.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
+import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
@@ -27,6 +30,10 @@ public abstract class Binding
     private Transport transport;
 
     private Set headers = new HashSet();
+
+    private Map op2serializer = new HashMap();
+    
+    private MessageSerializer serializer;
 
     protected Binding(QName name, String bindingId, Service service)
     {
@@ -106,5 +113,31 @@ public abstract class Binding
                 parts.add(part);
         }
         return parts;
+    }
+
+    public MessageSerializer getSerializer(OperationInfo operation)
+    {
+        MessageSerializer ser = (MessageSerializer) op2serializer.get(operation);
+        if (ser == null)
+        {
+            ser = getSerializer();
+        }
+        
+        return ser;
+    }
+
+    public void setSerializer(OperationInfo op, MessageSerializer ser)
+    {
+        op2serializer.put(op, ser);
+    }
+    
+    public MessageSerializer getSerializer()
+    {
+        return serializer;
+    }
+
+    public void setSerializer(MessageSerializer serializer)
+    {
+        this.serializer = serializer;
     }
 }

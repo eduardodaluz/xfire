@@ -73,7 +73,7 @@ public class WrappedBinding
                 msgInfo = op.getOutputMessage();
             }
 
-            writeStartElement(writer, name, endpoint.getServiceInfo().getName().getNamespaceURI());
+            writeStartElement(writer, name, msgInfo.getName().getNamespaceURI());
             
             int i = 0;
             for(Iterator itr = msgInfo.getMessageParts().iterator(); itr.hasNext();)

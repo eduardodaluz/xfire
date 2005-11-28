@@ -1,45 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk 1.5.0"/>
-	<classpathentry kind="lib" path="lib/jaxws-api.jar"/>
-	<classpathentry kind="src" path="src/test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xfire-aegis"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xfire-annotations"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xfire-core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xfire-java5"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/xfire-jaxb2"/>
+	<classpathentry output="target/test-classes" kind="src" path="src/test"/>
+	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/xfire-jaxb2"/>
+	<classpathentry kind="src" path="/xfire-java5"/>
+	<classpathentry kind="src" path="/xfire-annotations"/>
+	<classpathentry kind="src" path="/xfire-aegis"/>
+	<classpathentry kind="lib" path="C:/cygwin/home/Dan/xfire/xfire-sandbox/xfire-jaxws/lib/jaxws-api.jar"/>
+	<classpathentry kind="lib" path="C:/cygwin/home/Dan/xfire/xfire-sandbox/xfire-jaxws/lib/saaj-api.jar"/>
+	<classpathentry kind="lib" path="C:/cygwin/home/Dan/xfire/xfire-sandbox/xfire-jaxws/lib/saaj-impl.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-api-20051114.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-impl-20051114.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-xjc-20051114.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/activation/jars/activation-1.0.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-api-1.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-1.1.2-dev.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-1.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/woodstox/jars/wstx-asl-2.0.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/woodstox/jars/wstx-asl-2.0.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jaxen/jars/jaxen-1.1-beta-5.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jaxen/jars/jaxen-1.1-beta-8.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.5.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/easymock/jars/easymock-1.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/xmlunit/jars/xmlunit-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="lib/saaj-api.jar"/>
-	<classpathentry kind="lib" path="lib/saaj-impl.jar"/>
-<<<<<<< .classpath
-	<classpathentry kind="lib" path="lib/jaxws-tools.jar"/>
-	<classpathentry kind="lib" path="lib/jaxws-rt.jar"/>
-	<classpathentry kind="lib" path="/xfire-java5/lib/jsr181-api.jar"/>
-	<classpathentry kind="lib" path="lib/codemodel.jar"/>
-	<classpathentry kind="lib" path="/jaxws-ri/lib/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="/jaxws-ri/lib/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="/jaxws-ri/lib/jaxb-xjc.jar"/>
-	<classpathentry kind="lib" path="/jaxws-ri/lib/jsr250-api.jar"/>
-	<classpathentry kind="lib" path="/jaxws-ri/lib/resolver.jar"/>
-=======
-	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-api-20051114.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-impl-20051114.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-xjc-20051114.jar"/>
->>>>>>> 1.2
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/xfire-core"/>
+	<classpathentry kind="var" path="MAVEN_REPO/beehive/jars/wsm-1.0-alpha.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

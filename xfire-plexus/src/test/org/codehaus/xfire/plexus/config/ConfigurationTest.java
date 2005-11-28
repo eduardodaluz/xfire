@@ -26,7 +26,7 @@ public class ConfigurationTest
         Service service = getServiceRegistry().getService("Echo");
         assertNotNull(service);
         assertNotNull(service.getInHandlers());
-        assertEquals(2, service.getInHandlers().size());
+        assertEquals(3, service.getInHandlers().size());
         assertNotNull(service.getOutHandlers());
         assertEquals(2, service.getOutHandlers().size());
 

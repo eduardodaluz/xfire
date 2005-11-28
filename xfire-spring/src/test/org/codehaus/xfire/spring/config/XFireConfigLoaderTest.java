@@ -39,8 +39,8 @@ public class XFireConfigLoaderTest
         SoapVersion version = service.getSoapVersion();
         assertEquals(version,Soap12.getInstance());
         
-        assertEquals(1, service.getInHandlers().size());
-        assertTrue(service.getInHandlers().get(0) instanceof TestHandler);
+        assertEquals(2, service.getInHandlers().size());
+        assertTrue(service.getInHandlers().get(1) instanceof TestHandler);
         
         assertEquals(service.getOutHandlers().size(),1);
         

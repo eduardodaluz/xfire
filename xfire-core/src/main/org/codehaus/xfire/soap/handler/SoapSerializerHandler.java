@@ -34,7 +34,7 @@ public class SoapSerializerHandler
             {
                 throw new XFireException("Couldn't find the binding!");
             }
-            serializer = SoapBindingHandler.getSerializer(binding.getStyle(), binding.getUse());
+            serializer = SoapBinding.getSerializer(binding.getStyle(), binding.getUse());
         }
         
         context.getOutMessage().setSerializer(new SoapSerializer(serializer));

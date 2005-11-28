@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <projectDescription>
-	<name>xfire-jax-ws</name>
-	<comment></comment>
-	<projects>
-	</projects>
-	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-	</buildSpec>
-	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-	</natures>
+  <name>xfire-jaxws</name>
+  <comment>A JAX WS implementation for XFire.</comment>
+  <projects>
+    <project>xfire-core</project>
+    <project>xfire-jaxb2</project>
+    <project>xfire-java5</project>
+    <project>xfire-core</project>
+    <project>xfire-annotations</project>
+    <project>xfire-aegis</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments>
+      </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
 </projectDescription>

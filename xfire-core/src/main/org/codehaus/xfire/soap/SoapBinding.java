@@ -29,6 +29,11 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.AbstractBinding;
+import org.codehaus.xfire.service.binding.DocumentBinding;
+import org.codehaus.xfire.service.binding.MessageBinding;
+import org.codehaus.xfire.service.binding.RPCBinding;
+import org.codehaus.xfire.service.binding.WrappedBinding;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -359,5 +364,35 @@ public class SoapBinding extends Binding
         port.addExtensibilityElement( add );
        
         return port;
+    }
+
+    public static AbstractBinding getSerializer(String style, String use)
+    {
+        if (style.equals(SoapConstants.STYLE_WRAPPED) && use.equals(SoapConstants.USE_LITERAL))
+        {
+            return new WrappedBinding();
+        }
+        else if (style.equals(SoapConstants.STYLE_DOCUMENT)
+                && use.equals(SoapConstants.USE_LITERAL))
+        {
+            return new DocumentBinding();
+        }
+        else if (style.equals(SoapConstants.STYLE_RPC) && use.equals(SoapConstants.USE_LITERAL))
+        {
+            return new RPCBinding();
+        }
+        else if (style.equals(SoapConstants.STYLE_RPC) && use.equals(SoapConstants.USE_ENCODED))
+        {
+            return new RPCBinding();
+        }
+        else if (style.equals(SoapConstants.STYLE_MESSAGE) && use.equals(SoapConstants.USE_LITERAL))
+        {
+            return new MessageBinding();
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Service style/use not supported: " + style
+                    + "/" + use);
+        }
     }
 }

@@ -247,4 +247,18 @@ public class AegisBindingProvider
         
         return type;
     }
+
+    public Type getType(Service service, Class clazz)
+    {       
+        TypeMapping tm = getTypeMapping(service);
+        Type type = tm.getType(clazz);
+        
+        if (type == null)
+        {
+            type = tm.getTypeCreator().createType(clazz);
+            tm.register(type);
+        }
+        
+        return type;
+    }
 }
