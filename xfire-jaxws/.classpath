@@ -8,9 +8,6 @@
 	<classpathentry kind="src" path="/xfire-java5"/>
 	<classpathentry kind="src" path="/xfire-annotations"/>
 	<classpathentry kind="src" path="/xfire-aegis"/>
-	<classpathentry kind="lib" path="C:/cygwin/home/Dan/xfire/xfire-sandbox/xfire-jaxws/lib/jaxws-api.jar"/>
-	<classpathentry kind="lib" path="C:/cygwin/home/Dan/xfire/xfire-sandbox/xfire-jaxws/lib/saaj-api.jar"/>
-	<classpathentry kind="lib" path="C:/cygwin/home/Dan/xfire/xfire-sandbox/xfire-jaxws/lib/saaj-impl.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-api-20051114.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-impl-20051114.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/xfire/jars/jaxb-xjc-20051114.jar"/>
@@ -30,5 +27,8 @@
 	<classpathentry kind="var" path="MAVEN_REPO/xmlunit/jars/xmlunit-1.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/xfire-core"/>
 	<classpathentry kind="var" path="MAVEN_REPO/beehive/jars/wsm-1.0-alpha.jar"/>
+	<classpathentry kind="lib" path="lib/jaxws-api.jar"/>
+	<classpathentry kind="lib" path="lib/saaj-api.jar"/>
+	<classpathentry kind="lib" path="lib/saaj-impl.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -11,6 +11,7 @@ import javax.xml.ws.ResponseWrapper;
 import org.oasis_open.docs.wsn._2004._06.wsn_ws_basenotification_1_2_draft_01.TopicExpressionType;
 import org.oasis_open.docs.wsrf._2004._06.wsrf_ws_resourceproperties_1_2_draft_01.QueryExpressionType;
 import org.xmlsoap.schemas.ws._2003._03.addressing.EndpointReferenceType;
+import org.xmlsoap.schemas.ws._2003._03.addressing.ServiceNameType;
 
 @WebService
 public class SubscribeService {
@@ -34,6 +35,10 @@ public class SubscribeService {
             Object subscriptionPolicy,
             @WebParam(name = "InitialTerminationTime", targetNamespace = "http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.xsd")
             XMLGregorianCalendar terminationTime) throws ResourceUnknownFault, SubscribeCreationFailedFault {
-    	return null;
+    	EndpointReferenceType ref = new EndpointReferenceType();
+    	ServiceNameType sn = new ServiceNameType();
+    	sn.setPortName("myPort");
+    	ref.setServiceName(sn);
+    	return ref;
     }
 }

@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,11 +18,13 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.stax.ElementReader;
+import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.jaxb2.JaxbType;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.util.ClassLoaderUtils;
@@ -129,7 +132,7 @@ public class JAXWSOperationBinding
                 
                 try
                 {
-                    Object val = pd.getReadMethod().invoke(in, new Object[] {});
+                    Object val = getReadMethod(inputClass, pd).invoke(in, new Object[] {});
                     parameters.add(val);
                 }
                 catch (Exception e)
@@ -151,17 +154,17 @@ public class JAXWSOperationBinding
     {
         if (processOutput)
         {
-            List<Object> params = (List<Object>) message.getBody();
+        	Object[] params = (Object[]) message.getBody();
             
             Service service = context.getService();
             AegisBindingProvider provider = (AegisBindingProvider) service.getBindingProvider();
             
-            Type type = provider.getType(service, inputClass);
+            Type type = provider.getType(service, outputClass);
 
-            Object in;
+            Object out;
             try
             {
-                in = outputClass.newInstance();
+                out = outputClass.newInstance();
             }
             catch (Exception e)
             {
@@ -171,23 +174,55 @@ public class JAXWSOperationBinding
             for (int i = 0; i < outputPDs.size(); i++)
             {
                 PropertyDescriptor pd = (PropertyDescriptor) outputPDs.get(i);
-                Object val = params.get(i);
+                Object val = params[i];
                 
                 if (val == null) continue;
                 
                 try
                 {
-                    pd.getWriteMethod().invoke(in, new Object[] {val});
+                    getWriteMethod(pd).invoke(out, new Object[] {val});
                 }
                 catch (Exception e)
                 {
                     throw new XFireRuntimeException("Couldn't read property " + pd.getName(), e);
                 }
             }
+            ((JaxbType) type).writeObject(out, new ElementWriter(writer), context);
         }
         else
         {
             delegate.writeMessage(message, writer, context);
         }
+    }
+    
+    protected Method getReadMethod(Class clazz, PropertyDescriptor pd) 
+    {
+    	Method mth = pd.getReadMethod();
+    	if (mth == null && pd.getPropertyType() == Boolean.class) {
+    		String name = pd.getName();
+    		name = name.substring(0, 1).toUpperCase() + name.substring(1);
+    		name = "is" + name;
+    		try 
+    		{
+    			mth = clazz.getMethod(name, new Class[0]);
+    			if (mth != null) {
+    				pd.setReadMethod(mth);
+    			}
+    		} 
+    		catch (IntrospectionException e) 
+    		{
+    			// do nothing
+    		}
+    		catch (NoSuchMethodException e) 
+    		{
+    			// do nothing
+    		}
+    	}
+    	return mth;
+    }
+    
+    protected Method getWriteMethod(PropertyDescriptor pd) 
+    {
+    	return pd.getWriteMethod();
     }
 }

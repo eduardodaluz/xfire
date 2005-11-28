@@ -25,6 +25,12 @@ public class SubscribeServiceTest extends AbstractXFireTest {
             throws Exception
     {
         Document response = invokeService("SubscribeService", "/org/codehaus/xfire/jaxws/wsn-subscribe.xml");
+        
+        assertNotNull(response);
+        assertNoFault(response);
+
+        addNamespace("wsnt", "http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.xsd");
+        assertValid("//wsnt:SubscribeResponse", response);
     }
     
 }

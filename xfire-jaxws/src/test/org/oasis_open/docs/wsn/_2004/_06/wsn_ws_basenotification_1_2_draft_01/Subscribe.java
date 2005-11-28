@@ -123,7 +123,7 @@ public class Subscribe {
      *     {@link Boolean }
      *     
      */
-    public Boolean getUseNotify() {
+    public Boolean isUseNotify() {
         return useNotify;
     }
 
