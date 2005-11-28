@@ -110,7 +110,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
         {
             setStyle(opInfo, style);
         }
-        System.out.println("setting the serializer " + opInfo.getName());
+
         binding.setSerializer(opInfo, SoapBinding.getSerializer(binding.getStyle(), binding.getUse()));
     }
 
