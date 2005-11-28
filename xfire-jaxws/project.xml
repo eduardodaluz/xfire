@@ -66,7 +66,7 @@
     <dependency>
       <groupId>beehive</groupId>
       <artifactId>wsm</artifactId>
-      <version>1.0alpha</version>
+      <version>1.0-alpha</version>
     </dependency>
     <dependency>
       <groupId>sun</groupId>

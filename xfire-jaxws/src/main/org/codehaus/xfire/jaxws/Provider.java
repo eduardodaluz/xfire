@@ -4,6 +4,7 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.spi.ServiceDelegate;
 
 import org.apache.commons.logging.Log;
@@ -43,11 +44,20 @@ public class Provider
     @Override
     public Endpoint createAndPublishEndpoint(String address, Object implementor)
     {
-        TransportManager transportManager = JAXWSHelper.getInstance().getTransportManager();
-        Transport t = transportManager.getTransportForUri(address);
+        String bindingId;
+        if (address.startsWith("http:") || address.startsWith("https:"))
+        {
+            bindingId = SOAPBinding.SOAP11HTTP_BINDING;
+        }
+        else
+        {
+            TransportManager transportManager = JAXWSHelper.getInstance().getTransportManager();
+            Transport t = transportManager.getTransportForUri(address);
+            bindingId = t.getSupportedBindings()[0];
+        }
         
         org.codehaus.xfire.jaxws.Endpoint endpoint = 
-            new org.codehaus.xfire.jaxws.Endpoint(t.getSupportedBindings()[0], implementor);
+            new org.codehaus.xfire.jaxws.Endpoint(bindingId, implementor);
         endpoint.publish(address);
         return endpoint;
     }

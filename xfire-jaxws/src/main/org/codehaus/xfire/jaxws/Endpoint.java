@@ -38,14 +38,15 @@ public class Endpoint
                 bindingId = type.value();
             }
         }
-        
+
         // We now must use the SOAP 1.1 HTTP binding
-        if (bindingId == null)
+        if (bindingId == null || bindingId.length() == 0)
         {
             bindingId = SOAPBinding.SOAP11HTTP_BINDING;
         }
         
         this.binding = jaxWsHelper.getBinding(bindingId);
+
         this.implementor = implementor;
         
         this.service = jaxWsHelper.getServiceFactory().create(implementor.getClass());
