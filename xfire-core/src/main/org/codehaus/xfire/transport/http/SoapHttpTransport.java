@@ -8,7 +8,7 @@ public class SoapHttpTransport
     extends HttpTransport
     implements WSDL11Transport, SoapTransport
 {
-    public static final String WSDL_SOAP_BINDING = "http://schemas.xmlsoap.org/wsdl/soap/";
+    public static final String WSDL_SOAP_BINDING = "http://schemas.xmlsoap.org/wsdl/soap/http";
 
     public static final String SOAP11_HTTP_BINDING = "http://schemas.xmlsoap.org/soap/http";
 
