@@ -230,7 +230,7 @@
     <module>xfire-plexus</module>
     <module>xfire-spring</module>
     <module>xfire-xmpp</module>
-    <module>xfire-jaxb</module>
+    <!-- module>xfire-jaxb</module -->
     <module>xfire-annotations</module>
     <module>xfire-java5</module>
     <module>xfire-xmlbeans</module>
