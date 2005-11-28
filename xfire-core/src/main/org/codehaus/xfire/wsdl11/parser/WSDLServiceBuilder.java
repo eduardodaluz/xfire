@@ -256,6 +256,7 @@ public class WSDLServiceBuilder
         
         if (ann != null)
         {
+            ann.setServiceBuilder(this);
             ann.visit(binding);
             
             List bindingOperations = binding.getBindingOperations();

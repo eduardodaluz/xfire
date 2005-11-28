@@ -1,11 +1,10 @@
 package org.codehaus.xfire.client;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -34,6 +33,7 @@ import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.jdom.Element;
@@ -59,6 +59,11 @@ public class Client
     /** The XFire instance. This is only needed when invoking local services. */
     private XFire xfire = XFireFactory.newInstance().getXFire();
     
+    protected Client()
+    {
+        addOutHandler(new OutMessageSender());
+    }
+    
     public Client(Endpoint endpoint)
     {
         this(endpoint.getBinding(), endpoint.getAddress());
@@ -79,18 +84,56 @@ public class Client
     
     public Client(Transport transport, Service service, String url, String endpointUri)
     {
+        this();
         this.transport = transport;
         this.url = url;
         this.endpointUri = endpointUri;
 
         // Create a service clone
+        setService(service);
+
+        this.binding = findBinding(transport, service);
+    }
+
+    private void setService(Service service)
+    {
         this.service = service;
         this.service.setFaultSerializer(service.getFaultSerializer());
         this.service.setSoapVersion(service.getSoapVersion());
-
-        this.binding = findBinding(transport, service);
+    }
+    
+    public Client(URL wsdlLocation) throws Exception
+    {
+        this();
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(wsdlLocation.openStream());
+        builder.setTransportManager(xfire.getTransportManager());
+        builder.walkTree();
         
-        addOutHandler(new OutMessageSender());
+        Endpoint ep = findEndpoint(builder.getServices());
+        
+        this.url = ep.getAddress();
+        this.binding = ep.getBinding();
+        this.transport = ep.getBinding().getTransport();
+        setService(ep.getBinding().getService());
+    }
+    
+    public Endpoint findEndpoint(Collection services)
+    {
+        for (Iterator itr = services.iterator(); itr.hasNext();)
+        {
+            Service service = (Service) itr.next();
+            
+            for (Iterator eitr = service.getEndpoints().iterator(); eitr.hasNext();)
+            {
+                Endpoint ep = (Endpoint) eitr.next();
+                
+                if (ep.getBinding().getTransport() instanceof SoapHttpTransport)
+                {
+                    return ep;
+                }
+            }
+        }
+        return null;
     }
 
     private Binding findBinding(Transport transport, Service service)
@@ -119,13 +162,6 @@ public class Client
             }
         }
         return null;
-    }
-    
-    public Client(URL wsdlUrl) throws IOException, WSDLException
-    {
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(wsdlUrl.openStream());
-        
-        Service service = (Service) builder.getServices().iterator().next();
     }
 
     public Object[] invoke(OperationInfo op, Object[] params) throws Exception

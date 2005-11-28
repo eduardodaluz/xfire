@@ -53,6 +53,8 @@ public class SoapBindingAnnotator extends BindingAnnotator
         SOAPBinding sbind = DefinitionsHelper.getSOAPBinding(wbinding);
 
         soapBinding = new SoapBinding(wbinding.getQName(), getService());
+        soapBinding.setTransport(getServiceBuilder().getTransportManager().getTransport(sbind.getTransportURI()));
+        
         getService().addBinding(soapBinding);
         
         getSoapBinding().setStyle(sbind.getStyle());

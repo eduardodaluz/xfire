@@ -2,10 +2,14 @@ package org.codehaus.xfire.message.wrapped;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 
+import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.client.Client;
+import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
@@ -29,6 +33,21 @@ public class EchoWSDLClientTest
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
 
         getServiceRegistry().register(service);
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
+        getServiceRegistry().unregister("Echo");
+        
+        super.tearDown();
+    }
+
+
+
+    protected XFire getXFire()
+    {
+        return XFireFactory.newInstance().getXFire();
     }
 
     public void testInvoke()
@@ -57,5 +76,23 @@ public class EchoWSDLClientTest
         assertEquals(1, response.length);
         
         assertEquals("hello", response[0]);
+    }
+    
+    public void testHTTPInvoke() throws Exception
+    {
+        XFireHttpServer server = new XFireHttpServer();
+        server.setPort(8080);
+        server.start();
+        
+        Client client = new Client(new URL("http://localhost:8080/Echo?wsdl"));
+        
+        OperationInfo op = client.getService().getServiceInfo().getOperation("echo");
+
+        Object[] response = client.invoke(op, new Object[] {"hello"});
+
+        assertNotNull(response);
+        assertEquals(1, response.length);
+        
+        server.stop();
     }
 }
