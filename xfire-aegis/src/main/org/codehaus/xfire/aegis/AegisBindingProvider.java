@@ -18,6 +18,7 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
@@ -96,7 +97,26 @@ public class AegisBindingProvider
             }
             catch(XFireRuntimeException e)
             {
-                e.prepend("Error initializing return value for method " + opInfo.getMethod());
+                e.prepend("Error initializing fault for method " + opInfo.getMethod());
+                throw e;
+            }
+            
+            try
+            {
+                for (Iterator bItr = endpoint.getBindings().iterator(); bItr.hasNext();)
+                {
+                    Binding binding = (Binding) bItr.next();
+                    initializeMessage(endpoint, binding.getHeaders(opInfo.getInputMessage()), IN_PARAM);
+                    
+                    if (opInfo.hasOutput())
+                    {
+                        initializeMessage(endpoint, binding.getHeaders(opInfo.getOutputMessage()), OUT_PARAM);
+                    }
+                }
+            }
+            catch(XFireRuntimeException e)
+            {
+                e.prepend("Error initializing fault for method " + opInfo.getMethod());
                 throw e;
             }
         }
