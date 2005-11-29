@@ -60,21 +60,26 @@ public class DefaultEndpoint
         }
         catch (Exception e)
         {
-            log.debug("Fault occurred!", e);
-            XFireFault fault = XFireFault.createFault(e);
+            handleException(context, pipeline, e);
+        }
+    }
 
-            // Give the previously invoked pipeline a chance to clean up.
-            pipeline.handleFault(fault, context);
-            
-            Service service = context.getService();
-            if (service == null || service.getFaultSerializer() == null || !context.getExchange().hasFaultMessage())
-            {
-                sendToDeadLetter(fault, context);
-            }
-            else
-            {
-                sendFault(fault, context);
-            }
+    protected void handleException(MessageContext context, HandlerPipeline pipeline, Exception e)
+    {
+        log.debug("Fault occurred!", e);
+        XFireFault fault = XFireFault.createFault(e);
+
+        // Give the previously invoked pipeline a chance to clean up.
+        pipeline.handleFault(fault, context);
+        
+        Service service = context.getService();
+        if (service == null || service.getFaultSerializer() == null || !context.getExchange().hasFaultMessage())
+        {
+            sendToDeadLetter(fault, context);
+        }
+        else
+        {
+            sendFault(fault, context);
         }
     }
 
