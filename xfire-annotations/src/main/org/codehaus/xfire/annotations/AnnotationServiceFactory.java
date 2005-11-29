@@ -124,9 +124,19 @@ public class AnnotationServiceFactory
                 portType = createPortType(name, webServiceAnnotation);
             }
 
-            properties.put(PORT_TYPE, new QName(namespace, portType));
-            properties.put(STYLE, style);
-            properties.put(USE, use);
+            // Allow the user to override informations given in the annotations
+            if (!properties.containsKey(PORT_TYPE))
+            {
+            	properties.put(PORT_TYPE, new QName(namespace, portType));
+            }
+            if (!properties.containsKey(STYLE))
+            {
+	            properties.put(STYLE, style);
+            }
+            if (!properties.containsKey(USE))
+            {
+	            properties.put(USE, use);
+            }
             
             Service service = super.create(endpointInterface, name, namespace, properties);
 
