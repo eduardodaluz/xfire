@@ -67,6 +67,10 @@ public class XFireProxy
             throws Exception
     {
         OperationInfo op = client.getService().getServiceInfo().getOperation(m);
+        if (op == null) 
+        {
+        	op = client.getService().getServiceInfo().getOperation(m.getName());
+        }
 
         try
         {
