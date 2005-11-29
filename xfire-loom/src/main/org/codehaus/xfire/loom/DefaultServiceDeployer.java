@@ -186,14 +186,14 @@ public class DefaultServiceDeployer
     {
         m_serviceRegistry.register(endpoint);
 
-        m_services.put(key, endpoint.getName());
+        m_services.put(key, endpoint.getSimpleName());
     }
 
     public void undeploy(final String key)
     {
         if (m_services.containsKey(key))
         {
-            m_serviceRegistry.unregister((String) m_services.remove(key));
+            m_serviceRegistry.unregister((Service) m_services.remove(key));
         }
         else if (getLogger().isWarnEnabled())
         {
