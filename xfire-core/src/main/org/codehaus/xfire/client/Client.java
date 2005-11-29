@@ -112,6 +112,11 @@ public class Client
     	initFromDefinition(transport, definition, serviceClass);
     }
     
+    public Client(URL wsdlLocation) throws Exception
+    {
+    	this(wsdlLocation, null);
+    }
+    
     public Client(URL wsdlLocation, Class serviceClass) throws Exception
     {
     	this();
@@ -147,7 +152,9 @@ public class Client
         this.url = ep.getAddress();
         this.binding = ep.getBinding();
         this.transport = ep.getBinding().getTransport();
-        ep.getBinding().getService().getServiceInfo().setServiceClass(serviceClass);
+        if (serviceClass != null) {
+            ep.getBinding().getService().getServiceInfo().setServiceClass(serviceClass);
+        }
         setService(ep.getBinding().getService());
     }
     

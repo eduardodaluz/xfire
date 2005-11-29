@@ -1,25 +1,15 @@
 package org.codehaus.xfire.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-
 import org.codehaus.xfire.service.Echo;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.jdom.Element;
-import org.xml.sax.InputSource;
 
 public class XFireProxyTest
         extends AbstractXFireTest
@@ -82,37 +72,4 @@ public class XFireProxyTest
         assertEquals(root.getName(), e.getName());
     }
     
-    public void testInvokeWithWsdl() throws Exception
-    {
-        Service service = getServiceFactory().create(StringEcho.class);
-        service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, StringEchoImpl.class);
-        getServiceRegistry().register(service);
-        
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	getXFire().generateWSDL("StringEcho", baos);
-    	String wsdl = baos.toString();
-    	System.err.println(wsdl);
-        Definition desc = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(new ByteArrayInputStream(wsdl.getBytes())));
-        
-        XFireProxyFactory factory = new XFireProxyFactory(getXFire());
-        Client client = new Client(desc, Echo.class);
-        StringEcho echo = (StringEcho) factory.create(client);
-        
-        String msg = "Hello world !";
-        String ans = echo.echo(msg);
-        assertEquals(msg, ans);
-    }
-    
-    public static interface StringEcho
-    {
-    	String echo(String msg);
-    }
-    
-    public static class StringEchoImpl implements StringEcho
-    {
-    	public String echo(String msg)
-    	{
-    		return msg;
-    	}
-    }
 }
