@@ -147,6 +147,11 @@ public class ServiceInfo
     {
         return serviceClass;
     }
+    
+    public void setServiceClass(Class serviceClass)
+    {
+    	this.serviceClass = serviceClass;
+    }
 
     /**
      * Removes an operation from this service.

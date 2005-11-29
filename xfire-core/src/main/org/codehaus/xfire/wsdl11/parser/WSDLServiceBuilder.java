@@ -1,6 +1,7 @@
 package org.codehaus.xfire.wsdl11.parser;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 public class WSDLServiceBuilder
@@ -241,6 +243,19 @@ public class WSDLServiceBuilder
             {
                 UnknownExtensibilityElement uee = (UnknownExtensibilityElement) ee;
                 schemas.read(uee.getElement());
+            }
+            else
+            {
+            	// if we are using wsdl4j >= 1.5.1, a specific extensibility
+            	// element is defined for schemas, so try retrieve the element
+            	try 
+            	{
+            		Method mth = ee.getClass().getMethod("getElement", new Class[0]);
+            		Object val = mth.invoke(ee, new Object[0]);
+            		schemas.read((Element) val);
+            	} catch (Exception e) {
+            		// Ignore exceptions ?
+            	}
             }
         }
     }

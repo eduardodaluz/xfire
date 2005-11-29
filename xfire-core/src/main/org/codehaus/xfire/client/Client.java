@@ -1,10 +1,13 @@
 package org.codehaus.xfire.client;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -37,6 +40,7 @@ import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.jdom.Element;
+import org.xml.sax.InputSource;
 
 public class Client
     extends AbstractHandlerSupport
@@ -95,6 +99,36 @@ public class Client
         this.binding = findBinding(transport, service);
     }
 
+    public Client(Definition definition, Class serviceClass) throws Exception
+    {
+    	this();
+		Transport transport = xfire.getTransportManager().getTransportForUri(SoapHttpTransport.WSDL_SOAP_BINDING);
+    	initFromDefinition(transport, definition, serviceClass);
+    }
+    
+    public Client(Transport transport, Definition definition, Class serviceClass) throws Exception
+    {
+    	this();
+    	initFromDefinition(transport, definition, serviceClass);
+    }
+    
+    public Client(URL wsdlLocation, Class serviceClass) throws Exception
+    {
+    	this();
+    	InputStream is = wsdlLocation.openStream();
+    	try 
+    	{
+    		InputSource src = new InputSource(is);
+    		Definition def = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, src);
+    		Transport transport = xfire.getTransportManager().getTransport(SoapHttpTransport.WSDL_SOAP_BINDING);
+    		initFromDefinition(transport, def, serviceClass);
+    	}
+    	finally
+    	{
+    		is.close();
+    	}
+    }
+    
     private void setService(Service service)
     {
         this.service = service;
@@ -102,22 +136,22 @@ public class Client
         this.service.setSoapVersion(service.getSoapVersion());
     }
     
-    public Client(URL wsdlLocation) throws Exception
+    protected void initFromDefinition(Transport transport, Definition definition, Class serviceClass) throws Exception
     {
-        this();
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(wsdlLocation.openStream());
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(definition);
         builder.setTransportManager(xfire.getTransportManager());
         builder.walkTree();
         
-        Endpoint ep = findEndpoint(builder.getServices());
+        Endpoint ep = findEndpoint(transport, builder.getServices());
         
         this.url = ep.getAddress();
         this.binding = ep.getBinding();
         this.transport = ep.getBinding().getTransport();
+        ep.getBinding().getService().getServiceInfo().setServiceClass(serviceClass);
         setService(ep.getBinding().getService());
     }
     
-    public Endpoint findEndpoint(Collection services)
+    public Endpoint findEndpoint(Transport transport, Collection services)
     {
         for (Iterator itr = services.iterator(); itr.hasNext();)
         {
@@ -127,7 +161,7 @@ public class Client
             {
                 Endpoint ep = (Endpoint) eitr.next();
                 
-                if (ep.getBinding().getTransport() instanceof SoapHttpTransport)
+                if (ep.getBinding().getTransport() != null && ep.getBinding().getTransport().equals(transport))
                 {
                     return ep;
                 }
