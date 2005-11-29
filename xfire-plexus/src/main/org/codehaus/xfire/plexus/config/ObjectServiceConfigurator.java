@@ -160,7 +160,7 @@ public class ObjectServiceConfigurator
         createHandlers(config.getChild("outHandlers"), service.getOutHandlers());
         createHandlers(config.getChild("faultHandlers"), service.getFaultHandlers());
 
-        getLogger().info("Registered service " + service.getName());
+        getLogger().info("Registered service " + service.getSimpleName());
 
         getServiceRegistry().register(service);
 

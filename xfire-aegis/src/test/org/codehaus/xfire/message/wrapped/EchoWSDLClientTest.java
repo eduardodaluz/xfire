@@ -25,11 +25,13 @@ import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 public class EchoWSDLClientTest
         extends AbstractXFireAegisTest
 {
+    private Service service;
+
     public void setUp() throws Exception
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(Echo.class, "Echo", "urn:Echo", null);
+        service = getServiceFactory().create(Echo.class, "Echo", "urn:Echo", null);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
 
         getServiceRegistry().register(service);
@@ -38,7 +40,7 @@ public class EchoWSDLClientTest
     protected void tearDown()
         throws Exception
     {
-        getServiceRegistry().unregister("Echo");
+        getServiceRegistry().unregister(service);
         
         super.tearDown();
     }
@@ -62,7 +64,7 @@ public class EchoWSDLClientTest
         assertTrue(service.getBindingProvider() instanceof AegisBindingProvider);
         SoapBinding binding = (SoapBinding) service.getBindings().iterator().next();
         
-        Client client = new Client(binding, "xfire.local://" + service.getName());
+        Client client = new Client(binding, "xfire.local://" + service.getSimpleName());
         client.setXFire(getXFire());
         client.setTransport(getTransportManager().getTransport(LocalTransport.BINDING_ID));
         

@@ -26,7 +26,7 @@ public class InnerClassTest
     public void testInnerBeanService()
             throws Exception
     {
-        assertEquals("InnerService", service.getName());
+        assertEquals("InnerService", service.getSimpleName());
         
         Document response =
                 invokeService("InnerService",

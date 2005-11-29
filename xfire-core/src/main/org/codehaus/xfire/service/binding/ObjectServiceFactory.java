@@ -49,10 +49,10 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
 public class ObjectServiceFactory
         implements ServiceFactory
 {
-    public static final String PORT_TYPE = "portType";
-    public static final String STYLE = "style";
-    public static final String USE = "use";
-    public static final String SOAP_VERSION = "soapVersion";
+    public static final String PORT_TYPE = "objectServiceFactory.portType";
+    public static final String STYLE = "sobjectServiceFactory.tyle";
+    public static final String USE = "objectServiceFactory.use";
+    public static final String SOAP_VERSION = "objectServiceFactory.soapVersion";
     
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
@@ -63,6 +63,7 @@ public class ObjectServiceFactory
     private boolean voidOneWay;
     private WSDLBuilderFactory wsdlBuilderFactory = new DefaultWSDLBuilderFactory();
     private boolean customFaultsEnabled = true;
+    private boolean bindingCreationEnabled = true;
     
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
@@ -229,7 +230,12 @@ public class ObjectServiceFactory
  
         initializeOperations(endpoint, theStyle);
 
-        createBindings(endpoint, theStyle, theUse);
+        endpoint.setProperty(STYLE, theStyle);
+        endpoint.setProperty(USE, theUse);
+        if (bindingCreationEnabled)
+        {
+            createBindings(endpoint);
+        }
         
         try
         {
@@ -248,11 +254,16 @@ public class ObjectServiceFactory
         return endpoint;
     }
 
-    protected void createBindings(Service service, String style, String use)
+    protected void createBindings(Service service)
     {
+        QName name = service.getName();
+        
         if (transportManager == null)
         {
-            createBinding(service, "Soap", style, use);
+            QName bindingName = new QName(name.getNamespaceURI(), 
+                                          name.getLocalPart() + "SoapBinding");
+
+            createSoapBinding(service, name);
             return;
         }
         
@@ -262,27 +273,30 @@ public class ObjectServiceFactory
 
             if (t instanceof SoapTransport)
             {
-                createSoapBinding(service, (SoapTransport) t, style, use);
+                SoapTransport st = (SoapTransport) t;
+                QName bindingName = new QName(name.getNamespaceURI(), 
+                                              name.getLocalPart() + st.getName() + "Binding");
+
+                createSoapBinding(service, bindingName, st);
             }
         }
     }
 
-    protected SoapBinding createSoapBinding(Service service, SoapTransport transport, String style, String use)
+    public SoapBinding createSoapBinding(Service service, QName name, SoapTransport transport)
     {
-        SoapBinding binding = createBinding(service, transport.getName(), style, use);
+        SoapBinding binding = createSoapBinding(service, name);
         binding.setTransport(transport);
     
         return binding;
     }
     
-    private SoapBinding createBinding(Service service, String tname, String style, String use)
+    public SoapBinding createSoapBinding(Service service, QName name)
     {
         ServiceInfo serviceInfo = service.getServiceInfo();
-        QName name = serviceInfo.getName();
-        QName bindingName = new QName(name.getNamespaceURI(), 
-                                      name.getLocalPart() + tname + "Binding");
 
-        SoapBinding binding = new SoapBinding(bindingName, service);
+        SoapBinding binding = new SoapBinding(name, service);
+        String style = (String) service.getProperty(STYLE);
+        String use = (String) service.getProperty(USE);
         binding.setStyle(style);
         binding.setUse(use);
         binding.setSerializer(SoapBinding.getSerializer(style, use));
@@ -294,12 +308,12 @@ public class ObjectServiceFactory
             
             createBindingOperation(service, binding, op);
         }
-                
+    
         service.addBinding(binding);
         return binding;
     }
 
-    public void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
+    protected void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
     {
         binding.setSoapAction(op, getAction(op));
         createMessageBinding(binding, op.getInputMessage());
@@ -650,5 +664,15 @@ public class ObjectServiceFactory
     public void setCustomFaultsEnabled(boolean customFaultsEnabled)
     {
         this.customFaultsEnabled = customFaultsEnabled;
+    }
+
+    public boolean isBindingCreationEnabled()
+    {
+        return bindingCreationEnabled;
+    }
+
+    public void setBindingCreationEnabled(boolean bindingCreationEnabled)
+    {
+        this.bindingCreationEnabled = bindingCreationEnabled;
     }
 }

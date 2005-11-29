@@ -63,7 +63,7 @@ public class XMPPTransport
     {
         try
         {
-            return id + "/" + service.getName();
+            return id + "/" + service.getSimpleName();
         }
         catch (Exception e)
         {

@@ -51,7 +51,7 @@ public class HtmlServiceWriter
             {
                 Service service = (Service) iterator.next();
                 writer.writeStartElement("li");
-                writer.writeCharacters(service.getName().toString());
+                writer.writeCharacters(service.getSimpleName().toString());
                 writer.writeEndElement(); // li
             }
         }
@@ -74,7 +74,7 @@ public class HtmlServiceWriter
         XMLStreamWriter writer = factory.createXMLStreamWriter(out);
 
         writer.writeStartDocument();
-        String title = service.getName() + " Web Service";
+        String title = service.getSimpleName() + " Web Service";
         writePreamble(writer, title);
 
         writer.writeStartElement("body");

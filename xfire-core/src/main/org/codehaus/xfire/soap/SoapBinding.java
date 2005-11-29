@@ -53,6 +53,7 @@ public class SoapBinding extends Binding
 {
     public static final String SOAP_BINDING_ID = "http://schemas.xmlsoap.org/wsdl/soap/";
 
+    private String transportURI;
     private String style = SoapConstants.STYLE_DOCUMENT;
     private String use = SoapConstants.USE_LITERAL;
     
@@ -124,6 +125,16 @@ public class SoapBinding extends Binding
     public void setUse(String use)
     {
         this.use = use;
+    }
+
+    public String getTransportURI()
+    {
+        return transportURI;
+    }
+
+    public void setTransportURI(String transportURI)
+    {
+        this.transportURI = transportURI;
     }
 
     public javax.wsdl.Binding createBinding(WSDLBuilder builder, PortType portType)
@@ -360,7 +371,7 @@ public class SoapBinding extends Binding
         
         Port port = builder.getDefinition().createPort();
         port.setBinding( wbinding );
-        port.setName( builder.getService().getName() + transport.getName() + "Port" );
+        port.setName( builder.getService().getSimpleName() + transport.getName() + "Port" );
         port.addExtensibilityElement( add );
        
         return port;

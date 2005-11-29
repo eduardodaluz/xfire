@@ -84,13 +84,13 @@ public class Jsr181HandlerMapping
                 if (logger.isInfoEnabled())
                 {
                     logger.info("Exposing SOAP v." + endpoint.getSoapVersion().getVersion() + " service " +
-                                service.getName() + " to " + urlPrefix + endpoint.getName());
+                                service.getName() + " to " + urlPrefix + endpoint.getSimpleName());
                 }
                 
                 xFire.getServiceRegistry().register(endpoint);
                 endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
                 Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getServiceInfo().getName());
-                registerHandler(urlPrefix + endpoint.getName(), controller);
+                registerHandler(urlPrefix + endpoint.getSimpleName(), controller);
             }
             else
             {

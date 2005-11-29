@@ -66,7 +66,7 @@ public class HttpTransport
         
         if (req == null)
         {
-            return "http://localhost/services/" + service.getName();
+            return "http://localhost/services/" + service.getSimpleName();
         }
         
         StringBuffer output = new StringBuffer( 128 );

@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.service.event.RegistrationEvent;
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
@@ -18,7 +20,8 @@ public class DefaultServiceRegistry
         implements ServiceRegistry
 {
     // maps string names to service endpoints
-    private Map services = new HashMap();
+    private Map name2service = new HashMap();
+    private Map qname2service = new HashMap();
     private List eventListeners = new ArrayList();
 
     /**
@@ -30,9 +33,14 @@ public class DefaultServiceRegistry
      */
     public Service getService(String name)
     {
-        return (Service) services.get(name);
+        return (Service) name2service.get(name);
     }
 
+    public Service getService(QName name)
+    {
+        return (Service) qname2service.get(name);
+    }
+    
     /**
      * Registers a given <code>ServiceEndpoint</code> with this registry.
      *
@@ -40,7 +48,8 @@ public class DefaultServiceRegistry
      */
     public void register(Service endpoint)
     {
-        services.put(endpoint.getName(), endpoint);
+        name2service.put(endpoint.getSimpleName(), endpoint);
+        qname2service.put(endpoint.getName(), endpoint);
 
         for (Iterator iterator = eventListeners.iterator(); iterator.hasNext();)
         {
@@ -55,10 +64,8 @@ public class DefaultServiceRegistry
      *
      * @param name the service name.
      */
-    public void unregister(String name)
+    public void unregister(Service endpoint)
     {
-        Service endpoint = getService(name);
-
         for (Iterator iterator = eventListeners.iterator(); iterator.hasNext();)
         {
             RegistrationEventListener listener = (RegistrationEventListener) iterator.next();
@@ -66,7 +73,11 @@ public class DefaultServiceRegistry
             listener.endpointUnregistered(event);
         }
 
-        services.remove(name);
+        if (name2service.containsValue(endpoint))
+            name2service.remove(endpoint.getSimpleName());
+        
+        if (qname2service.containsValue(endpoint))
+            qname2service.remove(endpoint.getName());
     }
 
     /**
@@ -77,9 +88,14 @@ public class DefaultServiceRegistry
      */
     public boolean hasService(String name)
     {
-        return services.containsKey(name);
+        return name2service.containsKey(name);
     }
 
+    public boolean hasService(QName name)
+    {
+        return qname2service.containsKey(name);
+    }
+    
     /**
      * Returns all <code>ServiceEndpoint</code> registered to this registry.
      *
@@ -87,7 +103,7 @@ public class DefaultServiceRegistry
      */
     public Collection getServices()
     {
-        return Collections.unmodifiableCollection(services.values());
+        return Collections.unmodifiableCollection(qname2service.values());
     }
 
     /**

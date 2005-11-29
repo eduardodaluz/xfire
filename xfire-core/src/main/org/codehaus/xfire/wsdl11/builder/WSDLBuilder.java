@@ -79,7 +79,7 @@ public class WSDLBuilder
         QName portName = service.getServiceInfo().getPortType();
         
         if (portName == null)
-            portName = new QName(getTargetNamespace(), service.getName() + "PortType");
+            portName = new QName(getTargetNamespace(), service.getSimpleName() + "PortType");
 
         portType = def.createPortType();
         portType.setQName(portName);

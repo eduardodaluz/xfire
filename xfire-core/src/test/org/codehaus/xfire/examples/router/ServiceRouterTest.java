@@ -37,13 +37,13 @@ public class ServiceRouterTest
     public void testInvoke()
             throws Exception
     {
-        Document response = invokeService(serviceRouter.getName(), 
+        Document response = invokeService(serviceRouter.getSimpleName(), 
                                           "/org/codehaus/xfire/examples/router/Echo2.xml");
 
         addNamespace("m", "http://xfire.codehaus.org/Echo2");
         assertValid("//m:echo", response);
         
-        response = invokeService(serviceRouter.getName(),
+        response = invokeService(serviceRouter.getSimpleName(),
                                  "/org/codehaus/xfire/examples/router/Echo1.xml");
 
         addNamespace("m", "http://xfire.codehaus.org/Echo1");

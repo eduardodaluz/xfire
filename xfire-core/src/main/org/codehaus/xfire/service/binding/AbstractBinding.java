@@ -198,7 +198,7 @@ public abstract class AbstractBinding
                     }
                 }
                 sb.append(") in service '");
-                sb.append(context.getService().getName());
+                sb.append(context.getService().getSimpleName());
                 sb.append('\'');
                 throw new XFireFault(sb.toString(), XFireFault.SENDER);
             }

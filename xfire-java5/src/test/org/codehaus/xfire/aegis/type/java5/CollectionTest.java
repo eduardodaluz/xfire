@@ -91,7 +91,7 @@ public class CollectionTest
         Service service = getServiceFactory().create(DTOService.class);
         getServiceRegistry().register(service);
         
-        printNode(invokeService(service.getName(), "/org/codehaus/xfire/aegis/type/java5/dto/GetDTO.xml"));
+        printNode(invokeService(service.getSimpleName(), "/org/codehaus/xfire/aegis/type/java5/dto/GetDTO.xml"));
     }
     
     public void testCollectionServiceWSDL() throws Exception
@@ -99,7 +99,7 @@ public class CollectionTest
         Service service = getServiceFactory().create(DTOService.class);
         getServiceRegistry().register(service);
         
-        printNode(getWSDLDocument(service.getName()));
+        printNode(getWSDLDocument(service.getSimpleName()));
     }
     
     public class CollectionService

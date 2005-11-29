@@ -129,7 +129,7 @@ public class ServiceBean
         if (logger.isInfoEnabled())
         {
             logger.info("Exposing SOAP v." + xfireService.getSoapVersion().getVersion()
-                    + " service with name " + xfireService.getName());
+                    + " service with name " + xfireService.getSimpleName());
         }
 
         // Register the service

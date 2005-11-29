@@ -45,7 +45,7 @@ public class JMSTransport
 
     public String getServiceURL(Service service)
     {
-        return "jms://" + service.getName();
+        return "jms://" + service.getSimpleName();
     }
 
     public String getTransportURI(Service service)

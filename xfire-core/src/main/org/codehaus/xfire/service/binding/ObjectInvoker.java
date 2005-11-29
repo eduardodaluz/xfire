@@ -141,7 +141,7 @@ public class ObjectInvoker
         else if (scope == ObjectInvoker.SCOPE_SESSION)
         {
             final Session session = context.getSession();
-            final String key = "service." + service.getName();
+            final String key = "service." + service.getSimpleName();
 
             Object sessObj = session.get(key);
             if (sessObj == null)

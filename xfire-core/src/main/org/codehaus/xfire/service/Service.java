@@ -50,7 +50,7 @@ public class Service
     private Map endpoints = new HashMap();
     private Map bindingToEndpoint = new HashMap();
     private Map idToBinding = new HashMap();
-    
+
     /**
      * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified 
      * <code>ServiceInfo</code>.
@@ -121,6 +121,16 @@ public class Service
     }
 
     /**
+     * Returns the qualified name of the service descriptor.
+     *
+     * @return the qualified name.
+     */
+    public QName getName()
+    {
+        return service.getName();
+    }
+    
+    /**
      * Returns the name of this endpoint. This method simply returns the local part of the qualified name of the
      * <code>ServiceInfo</code>.
      *
@@ -128,11 +138,16 @@ public class Service
      * @see ServiceInfo#getName()
      * @see javax.xml.namespace.QName#getLocalPart()
      */
-    public String getName()
+    public String getSimpleName()
     {
-        return service.getName().getLocalPart();
+        return getName().getLocalPart();
     }
 
+    public String getTargetNamespace()
+    {
+        return getName().getNamespaceURI();
+    }
+    
     /**
      * Returns the service descriptor for this endpoint.
      *
@@ -252,4 +267,5 @@ public class Service
         // TODO Auto-generated method stub
         return null;
     }
+
 }

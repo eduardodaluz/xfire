@@ -25,7 +25,7 @@ public class ServiceComponentTest
         assertNotNull(service.getXFireService());
         
         ServiceRegistry reg = (ServiceRegistry) appContext.getBean("xfire.serviceRegistry");
-        assertTrue(reg.hasService(service.getXFireService().getName()));
+        assertTrue(reg.hasService(service.getXFireService().getSimpleName()));
         
         assertNotNull(service.getInHandlers());
     }
@@ -35,7 +35,7 @@ public class ServiceComponentTest
     {
         ServiceBean service = (ServiceBean) getContext().getBean("echoService");
         assertNotNull(service);
-        assertEquals("Echo", service.getXFireService().getName());
+        assertEquals("Echo", service.getXFireService().getSimpleName());
     }
 
     protected ApplicationContext createContext()

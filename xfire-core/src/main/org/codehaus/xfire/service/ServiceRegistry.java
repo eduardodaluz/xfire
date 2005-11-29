@@ -2,6 +2,8 @@ package org.codehaus.xfire.service;
 
 import java.util.Collection;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.service.event.RegistrationEventListener;
 
 /**
@@ -26,6 +28,14 @@ public interface ServiceRegistry
     Service getService(String name);
 
     /**
+     * Returns the <code>ServiceEndpoint</code> with the given name, if found. Returns <code>null</code> if not found.
+     *
+     * @param name the service name.
+     * @return the service endpoint, or <code>null</code> if not found.
+     */
+    Service getService(QName name);
+
+    /**
      * Registers a given <code>ServiceEndpoint</code> with this registry.
      *
      * @param endpoint the endpoint.
@@ -37,7 +47,7 @@ public interface ServiceRegistry
      *
      * @param name the service name.
      */
-    void unregister(String name);
+    void unregister(Service service);
 
     /**
      * Indicates whether this registry has a service endpoint with the given name.
@@ -46,6 +56,14 @@ public interface ServiceRegistry
      * @return <code>true</code> if this registry has a service with the given name; <code>false</code> otherwise.
      */
     boolean hasService(String name);
+
+    /**
+     * Indicates whether this registry has a service endpoint with the given name.
+     *
+     * @param name the service name.
+     * @return <code>true</code> if this registry has a service with the given name; <code>false</code> otherwise.
+     */
+    boolean hasService(QName name);
 
     /**
      * Returns all <code>ServiceEndpoint</code> registered to this registry.

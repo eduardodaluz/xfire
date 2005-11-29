@@ -55,7 +55,7 @@ public class EchoFaultTest
     
     public void testFaultWSDL() throws Exception
     {
-        Document wsdl = getWSDLDocument(service.getName());
+        Document wsdl = getWSDLDocument(service.getSimpleName());
 
         String ns = service.getServiceInfo().getName().getNamespaceURI();
         addNamespace("xsd", SoapConstants.XSD);
