@@ -35,9 +35,9 @@ public class JAXWSServiceFactory
     }
 
     @Override
-    protected SoapBinding createSoapBinding(Service service, SoapTransport transport, String style, String use)
+    public SoapBinding createSoapBinding(Service service, QName name, SoapTransport transport)
     {
-       SoapBinding binding = super.createSoapBinding(service, transport, style, use);
+       SoapBinding binding = super.createSoapBinding(service, name, transport);
        
        binding.setSerializer(new JAXWSBinding(binding.getSerializer()));
        
