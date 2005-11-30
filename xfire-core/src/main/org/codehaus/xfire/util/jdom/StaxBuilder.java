@@ -57,6 +57,8 @@ package org.codehaus.xfire.util.jdom;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -123,6 +125,20 @@ public class StaxBuilder
      */
     protected boolean cfgIgnoreWS = false;
 
+    private Map additionalNamespaces = null;
+    
+    public Map getAdditionalNamespaces()
+    {
+        return additionalNamespaces;
+    }
+
+
+    public void setAdditionalNamespaces(Map additionalNamespaces)
+    {
+        this.additionalNamespaces = additionalNamespaces;
+    }
+
+
     /**
      * Default constructor.
      */
@@ -131,6 +147,12 @@ public class StaxBuilder
         xifactory = XMLInputFactory.newInstance();
     }
 
+    
+    public StaxBuilder(Map namespaces)
+    {
+        xifactory = XMLInputFactory.newInstance();
+        this.additionalNamespaces = namespaces;
+    }
     public StaxBuilder(XMLInputFactory xifactory)
     {
         this.xifactory = xifactory;
@@ -321,6 +343,14 @@ public class StaxBuilder
                 if (current == null)
                 { // at root
                     doc.setRootElement(newElem);
+                    if(additionalNamespaces != null ){
+                     for( Iterator iter = additionalNamespaces .keySet().iterator();iter.hasNext();){
+                        String prefix = (String) iter.next();
+                        String uri = (String) additionalNamespaces .get(prefix);
+
+                        newElem.addNamespaceDeclaration(Namespace.getNamespace(prefix,uri));
+                     }
+                    }
                 }
                 else
                 {
@@ -357,6 +387,7 @@ public class StaxBuilder
                     else
                     {
                         ns = newElem.getNamespace(prefix);
+                        
                     }
                     Attribute attr = f.attribute(r.getAttributeLocalName(i),
                                                  r.getAttributeValue(i),

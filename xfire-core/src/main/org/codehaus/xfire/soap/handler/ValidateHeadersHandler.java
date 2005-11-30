@@ -8,6 +8,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
+import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -45,7 +46,7 @@ public class ValidateHeadersHandler
             String mustUnderstand = e.getAttributeValue("mustUnderstand",
                     Namespace.getNamespace(version.getNamespace()));
 
-            if (mustUnderstand != null && mustUnderstand.equals("1"))
+            if (mustUnderstand != null && ( mustUnderstand.equals("1") ||  (version == Soap12.getInstance() &&  mustUnderstand.equals("true"))) )
             {
                 assertUnderstandsHeader(context, new QName(e.getNamespaceURI(), e.getName()));
             }

@@ -55,7 +55,7 @@ public class ReadHeadersHandler
                 case XMLStreamReader.START_ELEMENT:
                     if (reader.getLocalName().equals("Header"))
                     {
-                        readHeaders(context);
+                        readHeaders(context,namespaces);
                     }
                     else if (reader.getLocalName().equals("Body"))
                     {
@@ -126,15 +126,18 @@ public class ReadHeadersHandler
      * @param context
      * @throws XMLStreamException
      */
-    protected void readHeaders(MessageContext context)
+    protected void readHeaders(MessageContext context, Map namespaces)
             throws XMLStreamException
     {
         StaxBuilder builder = new StaxBuilder();
 
         InMessage msg = context.getInMessage();
-        FragmentStreamReader fsr = new FragmentStreamReader(msg.getXMLStreamReader());
-        fsr.setAdvanceAtEnd(false);
-        Element header = builder.build(fsr).getRootElement();
+
+        FragmentStreamReader fsr = new FragmentStreamReader( msg.getXMLStreamReader() );
+        fsr.setAdvanceAtEnd( false );
+        builder.setAdditionalNamespaces(namespaces);
+        Element header = builder.build( fsr ).getRootElement();
+
 
         context.getInMessage().setHeader(header);
     }

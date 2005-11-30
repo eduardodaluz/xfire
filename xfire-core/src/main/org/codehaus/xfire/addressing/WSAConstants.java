@@ -9,7 +9,10 @@ public interface WSAConstants
 {
     String WSA_NAMESPACE_200408 = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
     String WSA_NAMESPACE_200502 = "http://www.w3.org/2005/02/addressing";
-
+    String WSA_NAMESPACE_200508 = "http://www.w3.org/2005/08/addressing";
+    String WSA_200508_ANONYMOUS_URI = "http://www.w3.org/2005/08/addressing/anonymous";
+    String WSA_200508_NONE_URI ="http://www.w3.org/2005/08/addressing/none";
+    
     String WSA_200408_ANONYMOUS_URI = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
 
     String WSA_PREFIX = "wsa";
@@ -43,6 +46,8 @@ public interface WSAConstants
     String WSA_ENDPOINT_NAME = "EndpointName";
 
     String WSA_POLICIES = "Policies";
+    
+    String WSA_METADATA = "Metadata";
 
     String WSA_NAMESPACE = WSA_NAMESPACE_200408;
 }

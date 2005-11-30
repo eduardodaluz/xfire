@@ -4,9 +4,14 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-public class EndpointReference
+import org.jdom.Element;
+
+public class EndpointReference extends Element implements WSAConstants
 {
-    private String address;
+    
+    private Element element;
+    
+   // private String address;
 
     private QName interfaceName;
 
@@ -16,31 +21,36 @@ public class EndpointReference
 
     private List policies;
 
-    private List any;
+//    private Element any;
 
-    private List referenceProperties;
+   // private List referenceProperties;
     
-    private List referenceParameters;
+    //private Element referenceParameters;
+    
+//    private Element metadata;
     
     public String getAddress()
     {
-        return address;
+        return getAddressElem().getValue();
+    }
+    public Element getAddressElem(){
+        return element.getChild(WSA_ADDRESS,element.getNamespace());
     }
 
-    public void setAddress(String address)
+    /*public void setAddress(Element address)
     {
         this.address = address;
-    }
+    }*/
 
-    public List getAny()
+    /*public Element getAny()
     {
         return any;
     }
 
-    public void setAny(List any)
+    public void setAny(Element any)
     {
         this.any = any;
-    }
+    }*/
 
     public String getEndpointName()
     {
@@ -82,24 +92,58 @@ public class EndpointReference
         this.serviceName = serviceName;
     }
 
+    public Element getReferenceParametersElem()
+    {
+        return  element.getChild(WSA_REFERENCE_PARAMETERS,element.getNamespace());
+    }
     public List getReferenceParameters()
     {
-        return referenceParameters;
+        return getReferenceParametersElem().getChildren();
     }
-
-    public void setReferenceParameters(List referenceParameters)
+    
+    /*public void setReferenceParameters(Element referenceParameters)
     {
         this.referenceParameters = referenceParameters;
-    }
+    }*/
 
+    public Element getReferencePropertiesElem()
+    {
+        return element.getChild(WSA_REFERENCE_PROPERTIES,element.getNamespace());
+    }
+    
     public List getReferenceProperties()
     {
-        return referenceProperties;
+        return getReferencePropertiesElem().getChildren();
     }
 
-    public void setReferenceProperties(List referenceProperties)
+    /*public void setReferenceProperties(List referenceProperties)
     {
         this.referenceProperties = referenceProperties;
+    }*/
+
+    public Element getMetadataElem()
+    {
+        return element.getChild(WSA_METADATA, element.getNamespace());
+    }
+
+    public List getMetadata()
+    {
+        return getMetadataElem().getChildren();
+    }
+    
+    /*public void setMetadata(Element metadata)
+    {
+        this.metadata = metadata;
+    }*/
+
+    public Element getElement()
+    {
+        return element;
+    }
+
+    public void setElement(Element element)
+    {
+        this.element = element;
     }
 
 }

@@ -44,7 +44,26 @@ public class WSATest
                      headers.getTo());
         assertEquals("http://example.com/fabrikam/SubmitPO", headers.getAction());
     }
-    
+    public void test200508Headers() throws Exception
+    {
+        StaxBuilder builder = new StaxBuilder();
+        Document doc =builder.build(getResourceAsStream("/org/codehaus/xfire/addressing/200508Headers1.xml"));
+        
+        AddressingHeadersFactory200508 factory = new AddressingHeadersFactory200508();
+        
+        assertTrue(factory.hasHeaders(doc.getRootElement()));
+        
+        AddressingHeaders headers = factory.createHeaders(doc.getRootElement());
+        assertEquals("http://example.com/6B29FC40-CA47-1067-B31D-00DD010662DA", 
+                     headers.getMessageID());
+        
+        assertNotNull(headers.getReplyTo());
+        assertEquals("http://example.com/business/client1",
+                     headers.getReplyTo().getAddress());
+        assertEquals("http://example.com/fabrikam/Purchasing",
+                     headers.getTo());
+        assertEquals("http://example.com/fabrikam/SubmitPO", headers.getAction());
+    }
 
     public void test200408Headers() throws Exception
     {
@@ -66,7 +85,7 @@ public class WSATest
         assertEquals("http://business456.example/client1", ref.getAddress());
 
         assertNotNull(ref.getReferenceParameters());
-        assertEquals(1, ref.getReferenceParameters().size());
+        assertEquals(1, ref.getReferenceParametersElem().getChildren().size());
         
         assertNotNull(ref.getReferenceProperties());
         assertEquals(1, ref.getReferenceProperties().size());

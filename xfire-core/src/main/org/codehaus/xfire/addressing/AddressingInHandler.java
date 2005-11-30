@@ -3,6 +3,7 @@ package org.codehaus.xfire.addressing;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
@@ -12,9 +13,12 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.dead.DeadLetterTransport;
 import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class AddressingInHandler
     extends AbstractHandler
@@ -32,8 +36,10 @@ public class AddressingInHandler
     
     public void createFactories()
     {
+        factories.add(new AddressingHeadersFactory200508());
         factories.add(new AddressingHeadersFactory200502());
         factories.add(new AddressingHeadersFactory200408());
+        
     }
     
     public String getPhase()
@@ -50,15 +56,26 @@ public class AddressingInHandler
             
             InMessage msg = context.getInMessage();
             Element header = msg.getHeader();
+                    
+            
             if (factory.hasHeaders(header))
             {
+                
+                
                 AddressingHeaders headers = factory.createHeaders(header);
                 msg.setProperty(ADRESSING_HEADERS, headers);
                 msg.setProperty(ADRESSING_FACTORY, factory);
 
+                
                 // Dispatch the service
                 Service service = getService(headers, context);
-                if (service != null) context.setService(service);
+               if (service != null) {
+                  context.setService(service);
+               
+               }else{
+                   // wsa:To can  be not  specified, so use service found by url
+                   service  = context.getService();
+               }
                 
                 // Dispatch the Exchange and operation
                 AddressingOperationInfo op = 
@@ -119,6 +136,9 @@ public class AddressingInHandler
         
         return outMessage;
     }
+    private boolean isNoneAddress(AddressingHeadersFactory factory, String addr){
+        return factory.getNoneUri()!= null && factory.getNoneUri().equals(addr);
+    }
 
     protected OutMessage processEPR(MessageContext context, 
                                     EndpointReference epr,
@@ -141,11 +161,14 @@ public class AddressingInHandler
         {
             outMessage = new OutMessage(addr);
         }
-        
+        Transport t = null;
         outMessage.setSoapVersion(context.getExchange().getInMessage().getSoapVersion());
-        
+        if(isNoneAddress(factory, addr)){
+        t = new DeadLetterTransport();    
+        }else{
         // Find the correct transport for the reply message.
-        Transport t = context.getXFire().getTransportManager().getTransportForUri(addr);
+        t = context.getXFire().getTransportManager().getTransportForUri(addr);
+        }
         if (t == null)
         {
             throw new XFireFault("URL was not recognized: " + addr, XFireFault.SENDER);
@@ -165,10 +188,19 @@ public class AddressingInHandler
     
     protected Service getService(AddressingHeaders headers, MessageContext context)
     {
-        if (headers.getTo() == null) return null;
+        String serviceName = null;
+       
         
-        int i = headers.getTo().lastIndexOf('/');
+        if (headers.getTo() != null) {
+            int i = headers.getTo().lastIndexOf('/');
+            serviceName = headers.getTo().substring(i+1);
+        }
+        
+        if(serviceName == null ){
+            return null;
+        }
+      
 
-        return context.getXFire().getServiceRegistry().getService(headers.getTo().substring(i+1));
+        return context.getXFire().getServiceRegistry().getService(serviceName);
     }
 }
