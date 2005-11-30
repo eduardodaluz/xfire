@@ -94,6 +94,12 @@ public abstract class AbstractWSDL
         addNamespace("wsdl", WSDL11_NS);
         addNamespace("wsdlsoap", WSDL11_SOAP_NS);
         addNamespace("tns", getTargetNamespace());
+        // If port type namespace if different from target namespace,
+        // we must add its definition
+        if (!getTargetNamespace().equals(service.getServiceInfo().getPortType().getNamespaceURI()))
+        {
+        	addNamespace("itf", service.getServiceInfo().getPortType().getNamespaceURI());
+        }
 
         typeMap = new HashMap();
         

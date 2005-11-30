@@ -3,6 +3,12 @@ package org.codehaus.xfire.message.wrapped;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
@@ -13,11 +19,13 @@ import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
+import org.xml.sax.InputSource;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -94,5 +102,21 @@ public class EchoWSDLClientTest
         assertEquals(1, response.length);
         
         server.stop();
+    }
+    
+    public void testWSDLWithSpecifiedInterface() throws Exception
+    {
+    	Map props = new HashMap();
+        props.put(ObjectServiceFactory.PORT_TYPE, new QName("urn:EchoInterface", "Echo"));
+        Service service = getServiceFactory().create(Echo.class, "EchoTest", "urn:EchoTest", props);
+        service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
+        getServiceRegistry().register(service);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        getXFire().generateWSDL(service.getSimpleName(), baos);
+        System.out.println(baos.toString());
+        InputSource is = new InputSource(new ByteArrayInputStream(baos.toByteArray()));
+    	Definition def = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, is);
+    	javax.wsdl.Service wsdlSvc = def.getService(new QName("urn:EchoTest", "EchoTest"));
+    	assertNotNull(def.getPortType(new QName("urn:EchoInterface", "Echo")));
     }
 }
