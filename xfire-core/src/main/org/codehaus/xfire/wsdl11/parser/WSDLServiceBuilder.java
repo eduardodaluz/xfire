@@ -37,7 +37,6 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
@@ -56,8 +55,7 @@ import org.xml.sax.InputSource;
 
 public class WSDLServiceBuilder
 {
-    private Service service;
-    private ServiceInfo serviceInfo;
+    private PortType portType;
     private OperationInfo opInfo;
     private XmlSchemaCollection schemas;
     private List services = new ArrayList();
@@ -67,15 +65,16 @@ public class WSDLServiceBuilder
     protected final Definition definition;
     
     private List visitedPortTypes = new ArrayList();
-    
     private List bindingAnnotators = new ArrayList();
     
+    private Map portType2serviceInfo = new HashMap();
     private Map wop2op = new HashMap();
     private Map winput2msg = new HashMap();
     private Map woutput2msg = new HashMap();
     
     private TransportManager transportManager =
         XFireFactory.newInstance().getXFire().getTransportManager();
+    private Service service;
     
     public WSDLServiceBuilder(Definition definition)
     {
@@ -153,78 +152,70 @@ public class WSDLServiceBuilder
             }
         }
         
+        Collection portTypes = definition.getPortTypes().values();
+        for (Iterator itr = portTypes.iterator(); itr.hasNext();)
+        {
+            portType = (PortType) itr.next();
+            visit(portType);
+        }
+        
         Collection services = definition.getServices().values();
         for (Iterator iterator = services.iterator(); iterator.hasNext();)
         {
             javax.wsdl.Service wservice = (javax.wsdl.Service) iterator.next();
-            PortType portType = assertOnePortType(wservice);
+            Map portType2Ports = getPortTypeToPortMap(wservice);
             
-            begin(wservice);
-            
-            Collection ports = wservice.getPorts().values();
-            for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
+            for (Iterator ptitr = portType2Ports.entrySet().iterator(); ptitr.hasNext();)
             {
-                Port port = (Port) iterator1.next();
-                Binding binding = port.getBinding();
-
-                if (!visitedPortTypes.contains(portType))
+                Map.Entry entry = (Map.Entry) ptitr.next();
+                
+                PortType portType = (PortType) entry.getKey();
+                Collection ports = (Collection) entry.getValue();
+                
+                if (ports.size() == 0) continue;
+                
+                begin(wservice, portType);
+                
+                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
                 {
-                    visit(portType);
-                    visitedPortTypes.add(portType);
+                    Port port = (Port) iterator1.next();
+                    Binding binding = port.getBinding();
+
+                    visit(binding);
                     
-                    List operations = portType.getOperations();
-                    for (int i = 0; i < operations.size(); i++)
-                    {
-                        Operation operation = (Operation) operations.get(i);
-                        visit(operation);
-                        {
-                            Input input = operation.getInput();
-                            visit(input);
-                        }
-                        {
-                            Output output = operation.getOutput();
-                            visit(output);
-                        }
-                        
-                        Collection faults = operation.getFaults().values();
-                        for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
-                        {
-                            Fault fault = (Fault) iterator2.next();
-                            //visit(fault);
-                        }
-                    }
+                    visit(port);
                 }
                 
-                visit(binding);
-                
-                visit(port);
+                end(wservice, portType);
             }
-            end(wservice);
         }
 
         //end();
     }
-    
-    private PortType assertOnePortType(javax.wsdl.Service wservice) throws XFireException
+
+    private Map getPortTypeToPortMap(javax.wsdl.Service wservice)
     {
-        PortType portType = null;
-    
-        Collection ports = wservice.getPorts().values();
-        for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
+        Map pt2port = new HashMap();
+        
+        for (Iterator itr = definition.getPortTypes().values().iterator(); itr.hasNext();)
         {
-            Port port = (Port) iterator1.next();
+            PortType pt = (PortType) itr.next();
+            List ports = new ArrayList();
+            pt2port.put(pt, ports);
             
-            PortType newPT = port.getBinding().getPortType();
-            
-            if (portType == null) portType = newPT;
-            
-            if (newPT != portType)
-                throw new XFireException("WSDLServiceBuilder can only handle one port type per service.");
+            for (Iterator pitr = wservice.getPorts().values().iterator(); pitr.hasNext();)
+            {
+                Port port = (Port) pitr.next();
+                
+                if (port.getBinding().getPortType().equals(pt))
+                {
+                    ports.add(port);
+                }
+            }
         }
         
-        return portType;
+        return pt2port;
     }
-
 
     public Collection getServices()
     {
@@ -262,7 +253,41 @@ public class WSDLServiceBuilder
     
     protected void visit(PortType portType)
     {
+        ServiceInfo serviceInfo = new ServiceInfo(null, Object.class);
+        portType2serviceInfo.put(portType, serviceInfo);
         serviceInfo.setPortType(portType.getQName());
+        
+        visitedPortTypes.add(portType);
+        
+        List operations = portType.getOperations();
+        for (int i = 0; i < operations.size(); i++)
+        {
+            Operation operation = (Operation) operations.get(i);
+            visit(operation);
+            {
+                Input input = operation.getInput();
+                visit(input);
+            }
+            {
+                Output output = operation.getOutput();
+                visit(output);
+            }
+            
+            Collection faults = operation.getFaults().values();
+            for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
+            {
+                Fault fault = (Fault) iterator2.next();
+                //visit(fault);
+            }
+        }
+        
+        serviceInfo.setWrapped(isWrapped);
+        isWrapped = false;
+    }
+    
+    protected ServiceInfo getServiceInfo(PortType portType)
+    {
+        return (ServiceInfo) portType2serviceInfo.get(portType);
     }
     
     protected void visit(Binding binding)
@@ -346,7 +371,7 @@ public class WSDLServiceBuilder
 
     protected void visit(Operation operation)
     {
-        opInfo = serviceInfo.addOperation(operation.getName(), null);
+        opInfo = getServiceInfo(portType).addOperation(operation.getName(), null);
         wop2op.put(operation, opInfo);
 
         isWrapped = isWrapped(operation);
@@ -447,11 +472,17 @@ public class WSDLServiceBuilder
         {
             if (hasAttributes((XmlSchemaComplexType) reqSchemaEl.getSchemaType()))
                 return false;
+            
+            if (!hasOneElement((XmlSchemaComplexType) reqSchemaEl.getSchemaType()))
+                return false;
         }
         
         if (resSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
         {
             if (hasAttributes((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
+                return false;
+            
+            if (!hasOneElement((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
                 return false;
         }
 
@@ -459,6 +490,28 @@ public class WSDLServiceBuilder
     }
     
     
+    private boolean hasOneElement(XmlSchemaComplexType type)
+    {
+        if (type.getParticle() != null && type.getParticle() instanceof XmlSchemaSequence)
+        {
+            XmlSchemaSequence seq = (XmlSchemaSequence) type.getParticle();
+            XmlSchemaObjectCollection items = seq.getItems();
+            
+            if (items.getCount() != 1) return false;
+            
+            XmlSchemaObject o = items.getItem(0);
+            if (!(o instanceof XmlSchemaElement)) return false;
+            
+            XmlSchemaElement el = (XmlSchemaElement) o;
+            
+            if (el.getMaxOccurs() > 1) return false;
+            
+            return true;
+        }
+        
+        return false;
+    }
+
     private XmlSchemaComplexType getWrappedSchema(Message message)
     {
         Part part = (Part) message.getParts().values().iterator().next();
@@ -536,21 +589,17 @@ public class WSDLServiceBuilder
 
     protected void visit(BindingOperation operation)
     {
-        opInfo = serviceInfo.getOperation(operation.getName());
+        opInfo = service.getServiceInfo().getOperation(operation.getName());
     }
     
-    protected void begin(javax.wsdl.Service wservice)
+    protected void begin(javax.wsdl.Service wservice, PortType portType)
     {
-        serviceInfo = new ServiceInfo(null, Object.class);
-        
-        service = new Service(serviceInfo);
+        service = new Service(getServiceInfo(portType));
         service.setName(wservice.getQName());
     }
 
-    protected void end(javax.wsdl.Service wservice)
+    protected void end(javax.wsdl.Service wservice, PortType portType)
     {
-        serviceInfo.setWrapped(isWrapped);
-
         service.setFaultSerializer(new SoapFaultSerializer());
         service.setBindingProvider(getBindingProvider());
         services.add(service);

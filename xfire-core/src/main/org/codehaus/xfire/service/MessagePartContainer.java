@@ -54,11 +54,12 @@ public abstract class MessagePartContainer
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
+        /*
         if (messageParts.containsKey(name))
         {
             throw new IllegalArgumentException(
                     "An message part with name [" + name + "] already exists in this container");
-        }
+        }*/
 
         MessagePartInfo part = new MessagePartInfo(name, clazz, this);
         addMessagePart(part);

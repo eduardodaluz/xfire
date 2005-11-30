@@ -270,7 +270,12 @@ public class AegisBindingProvider
 
     public SchemaType getSchemaType(QName name, Service service)
     {
-        TypeMapping tm = getTypeMapping(service);
+        TypeMapping tm;
+        if (service != null)
+            tm = getTypeMapping(service);
+        else
+            tm = registry.getDefaultTypeMapping();
+        
         Type type = tm.getType(name);
         
         if (type == null)
