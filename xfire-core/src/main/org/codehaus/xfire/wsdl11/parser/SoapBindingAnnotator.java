@@ -182,7 +182,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
 
         if (binding != null)
         {
-            Endpoint ep = new Endpoint(new QName(getService().getServiceInfo().getName().getNamespaceURI(), 
+            Endpoint ep = new Endpoint(new QName(getService().getTargetNamespace(), 
                                                  port.getName()), 
                                        binding, 
                                        add.getLocationURI());

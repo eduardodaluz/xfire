@@ -23,8 +23,9 @@ public class HtmlServiceWriterTest
             throws Exception
     {
         htmlServiceWriter = new HtmlServiceWriter();
-        ServiceInfo serviceInfo = new ServiceInfo(new QName("service"), new QName("serviceport"), getClass());
+        ServiceInfo serviceInfo = new ServiceInfo(new QName("serviceport"), getClass());
         service = new Service(serviceInfo);
+        service.setName(new QName("service"));
     }
 
     public void testdescribeServices()

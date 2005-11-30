@@ -68,7 +68,7 @@ public class RPCEncodedTest
                     "/wsdlsoap:body[@use='encoded']", doc);
         assertValid("//wsdl:binding/wsdl:operation/wsdl:input[@name='echoRequest']" +
                     "/wsdlsoap:body[@namespace='" +
-                    service.getServiceInfo().getName().getNamespaceURI() + "']", doc);
+                    service.getTargetNamespace() + "']", doc);
 
         assertValid("//wsdl:binding/wsdl:operation/wsdl:output[@name='echoResponse']" +
                     "/wsdlsoap:body", doc);
@@ -79,7 +79,7 @@ public class RPCEncodedTest
                     "/wsdlsoap:body[@use='encoded']", doc);
         assertValid("//wsdl:binding/wsdl:operation/wsdl:output[@name='echoResponse']" +
                     "/wsdlsoap:body[@namespace='" +
-                    service.getServiceInfo().getName().getNamespaceURI() + "']", doc);
+                    service.getTargetNamespace() + "']", doc);
 
         assertValid(
                 "/wsdl:definitions/wsdl:service/wsdl:port/wsdlsoap:address[@location='http://localhost/services/Echo']",

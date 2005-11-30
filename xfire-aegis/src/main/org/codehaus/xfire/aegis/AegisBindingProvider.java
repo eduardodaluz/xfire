@@ -57,6 +57,18 @@ public class AegisBindingProvider
         this.registry = registry;
     }
     
+    public TypeMappingRegistry getTypeMappingRegistry()
+    {
+        return registry;
+    }
+    
+
+    public void setTypeMappingRegistry(TypeMappingRegistry registry)
+    {
+        this.registry = registry;
+    }
+    
+
     /**
      * Creates a type mapping for this class and registers it with the TypeMappingRegistry. This needs to be called
      * before initializeOperations().
@@ -227,6 +239,9 @@ public class AegisBindingProvider
 
     protected TypeMapping createTypeMapping(Service endpoint)
     {
+        //TypeMapping tm = registry.getTypeMapping(endpoint.getTargetNamespace());
+        //if (tm != null) return tm;
+        
         String encodingStyle = (String) endpoint.getProperty(ENCODING_URI_KEY);
 
         if (encodingStyle == null)
@@ -235,10 +250,10 @@ public class AegisBindingProvider
         }
 
         endpoint.setProperty(ENCODING_URI_KEY, encodingStyle);
-        final TypeMapping tm = registry.createTypeMapping(encodingStyle, true);
+        TypeMapping tm = registry.createTypeMapping(encodingStyle, true);
 
         endpoint.setProperty(TYPE_MAPPING_KEY, tm);
-        registry.register(endpoint.getServiceInfo().getName().getNamespaceURI(), tm);
+        registry.register(endpoint.getName().getNamespaceURI(), tm);
         
         return tm;
     }

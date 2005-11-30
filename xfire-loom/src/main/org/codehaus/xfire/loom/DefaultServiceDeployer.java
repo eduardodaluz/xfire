@@ -92,7 +92,7 @@ public class DefaultServiceDeployer
             endpoint = createServiceFromConfiguration(configuration);
 
             if (getLogger().isDebugEnabled())
-                getLogger().debug("Created '" + endpoint.getServiceInfo().getName() + "' from key '" + key + "'");
+                getLogger().debug("Created '" + endpoint.getName() + "' from key '" + key + "'");
         }
 
         endpoint.setInvoker(new ServiceInvoker(object));

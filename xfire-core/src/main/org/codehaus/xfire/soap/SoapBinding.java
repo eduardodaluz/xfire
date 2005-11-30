@@ -280,7 +280,7 @@ public class SoapBinding extends Binding
 
         if ( getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
-            fault.setNamespaceURI( endpoint.getServiceInfo().getName().getNamespaceURI() );
+            fault.setNamespaceURI( endpoint.getTargetNamespace() );
         }
         
         if ( use.equals( SoapConstants.USE_ENCODED ) )
@@ -301,7 +301,7 @@ public class SoapBinding extends Binding
 
         if ( getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
-            header.setNamespaceURI( endpoint.getServiceInfo().getName().getNamespaceURI() );
+            header.setNamespaceURI( endpoint.getTargetNamespace() );
         }
         
         if ( use.equals( SoapConstants.USE_ENCODED ) )
@@ -332,7 +332,7 @@ public class SoapBinding extends Binding
 
         if ( getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
-            body.setNamespaceURI( service.getServiceInfo().getName().getNamespaceURI() );
+            body.setNamespaceURI( service.getTargetNamespace() );
         }
         
         if ( use.equals( SoapConstants.USE_ENCODED ) )

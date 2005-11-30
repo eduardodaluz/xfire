@@ -127,7 +127,7 @@ public class WSDLBuilder
         Service service = getService();
         Definition def = getDefinition();
 
-        QName name = service.getServiceInfo().getName();
+        QName name = service.getName();
 
         // Create a concrete instance for each transport.
         javax.wsdl.Service wsdlService = def.createService();
@@ -309,7 +309,7 @@ public class WSDLBuilder
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
             
-            addNamespaceImport(getService().getServiceInfo().getName().getNamespaceURI(), 
+            addNamespaceImport(getService().getTargetNamespace(), 
                                        param.getSchemaType().getSchemaType().getNamespaceURI());
             
             Part part = createPart(param);
@@ -390,8 +390,7 @@ public class WSDLBuilder
             addDependency(type);
             QName schemaType = type.getSchemaType();
 
-            addNamespaceImport(getService().getServiceInfo().getName().getNamespaceURI(), 
-                                       schemaType.getNamespaceURI());
+            addNamespaceImport(getService().getTargetNamespace(), schemaType.getNamespaceURI());
             
             String uri = type.getSchemaType().getNamespaceURI();
             String prefix = getNamespacePrefix(uri);

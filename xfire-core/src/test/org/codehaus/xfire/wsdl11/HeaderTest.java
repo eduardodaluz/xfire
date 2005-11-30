@@ -33,7 +33,7 @@ public class HeaderTest
         
         Service service = (Service) services.iterator().next();
         
-        QName name = service.getServiceInfo().getName();
+        QName name = service.getName();
         assertNotNull(name);
         assertEquals(new QName("urn:Echo", "Echo"), name);
         

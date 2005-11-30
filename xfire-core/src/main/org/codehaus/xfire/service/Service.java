@@ -37,6 +37,8 @@ public class Service
 {
     public final static String ROLE = Service.class.getName();
 
+    private QName name;
+    
     private ServiceInfo service;
     private Map bindings = new HashMap();
     private Invoker invoker;
@@ -120,6 +122,7 @@ public class Service
         this.faultSerializer = faultSerializer;
     }
 
+
     /**
      * Returns the qualified name of the service descriptor.
      *
@@ -127,7 +130,17 @@ public class Service
      */
     public QName getName()
     {
-        return service.getName();
+        return name;
+    }
+
+    /**
+     * Sets the qualified name of the service descriptor.
+     *
+     * @param name the new qualified name.
+     */
+    public void setName(QName name)
+    {
+        this.name = name;
     }
     
     /**

@@ -344,7 +344,7 @@ public abstract class AbstractWSDL
 
     public String getTargetNamespace()
     {
-        return service.getServiceInfo().getName().getNamespaceURI();
+        return service.getTargetNamespace();
     }
 
     public void addSchemas(List schemaLocations)

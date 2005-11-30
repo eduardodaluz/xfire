@@ -214,12 +214,13 @@ public class ObjectServiceFactory
         if (theUse == null) theUse = use;
         if (portType == null) portType = new QName(theNamespace, theName + "PortType");
         
-        ServiceInfo serviceInfo = new ServiceInfo(qName, portType, clazz);
+        ServiceInfo serviceInfo = new ServiceInfo(portType, clazz);
 
         if (theStyle.equals(SoapConstants.STYLE_WRAPPED))
             serviceInfo.setWrapped(true);
         
         Service endpoint = new Service(serviceInfo);
+        endpoint.setName(qName);
         setProperties(endpoint, properties);
         endpoint.setSoapVersion(theVersion);
 
@@ -462,12 +463,12 @@ public class ObjectServiceFactory
 
     protected QName createInputMessageName(final OperationInfo op)
     {
-        return new QName(op.getService().getName().getNamespaceURI(), op.getName() + "Request");
+        return new QName(op.getService().getPortType().getNamespaceURI(), op.getName() + "Request");
     }
 
     protected QName createOutputMessageName(final OperationInfo op)
     {
-        return new QName(op.getService().getName().getNamespaceURI(), op.getName() + "Response");
+        return new QName(op.getService().getPortType().getNamespaceURI(), op.getName() + "Response");
     }
     
     protected boolean hasOutMessage(String mep)
@@ -499,7 +500,7 @@ public class ObjectServiceFactory
             String name = ServiceUtils.makeServiceNameFromClassName(exClazz);
             
             FaultInfo info = op.addFault(name);
-            info.addMessagePart(new QName(service.getName().getNamespaceURI(), name), exClazz);
+            info.addMessagePart(new QName(service.getPortType().getNamespaceURI(), name), exClazz);
         }
     }
 
@@ -572,7 +573,7 @@ public class ObjectServiceFactory
         if (doc)
             paramName = method.getName();
 
-        return new QName(endpoint.getServiceInfo().getName().getNamespaceURI(), paramName + "in" + paramNumber);
+        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), paramName + "in" + paramNumber);
     }
 
     protected QName getOutParameterName(final Service endpoint, 
@@ -588,7 +589,7 @@ public class ObjectServiceFactory
         if (doc)
             outName = method.getName();
 
-        return new QName(endpoint.getServiceInfo().getName().getNamespaceURI(), outName + "out");
+        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), outName + "out");
     }
 
     public TransportManager getTransportManager()

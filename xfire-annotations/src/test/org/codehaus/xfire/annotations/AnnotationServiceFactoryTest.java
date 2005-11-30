@@ -153,7 +153,7 @@ public class AnnotationServiceFactoryTest
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), service.getName());
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), endpoint.getName());
         assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoPortType"), 
                      service.getPortType());
 
@@ -186,7 +186,7 @@ public class AnnotationServiceFactoryTest
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), service.getName());
+        assertEquals(new QName("http://xfire.codehaus.org/EchoService", "Echo"), endpoint.getName());
 
         final OperationInfo operation = service.getOperation("echo");
         assertNotNull(operation);

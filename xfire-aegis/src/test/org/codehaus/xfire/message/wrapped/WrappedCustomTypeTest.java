@@ -46,7 +46,7 @@ public class WrappedCustomTypeTest
         ServiceInfo info = service.getServiceInfo();
         OperationInfo o = info.getOperation("getSubmitBean");
         MessageInfo inMsg = o.getInputMessage();
-        MessagePartInfo p = inMsg.getMessagePart(new QName(info.getName().getNamespaceURI(), "in0"));
+        MessagePartInfo p = inMsg.getMessagePart(new QName(service.getTargetNamespace(), "in0"));
         p.setSchemaType(type);
     }
 

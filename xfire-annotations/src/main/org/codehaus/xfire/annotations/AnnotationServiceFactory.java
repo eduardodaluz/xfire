@@ -280,7 +280,7 @@ public class AnnotationServiceFactory
 
             if (ns == null || ns.length() == 0) 
             {
-                ns = endpoint.getServiceInfo().getName().getNamespaceURI();
+                ns = endpoint.getTargetNamespace();
             }
 
             return new QName(ns, name);
@@ -302,7 +302,7 @@ public class AnnotationServiceFactory
 
             if (ns == null || ns.length() == 0)
             {
-                ns = endpoint.getServiceInfo().getName().getNamespaceURI();
+                ns = endpoint.getTargetNamespace();
             }
 
             return new QName(ns, name);

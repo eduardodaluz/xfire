@@ -41,7 +41,7 @@ public class XFireServiceRegisterVisitor
 
             if (log.isInfoEnabled())
             {
-                log.info("Service \"" + endpoint.getServiceInfo().getName() + "\" registred.");
+                log.info("Service \"" + endpoint.getName() + "\" registred.");
             }
         }
     }

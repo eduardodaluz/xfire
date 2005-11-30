@@ -57,7 +57,7 @@ public class EchoFaultTest
     {
         Document wsdl = getWSDLDocument(service.getSimpleName());
 
-        String ns = service.getServiceInfo().getName().getNamespaceURI();
+        String ns = service.getTargetNamespace();
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("w", WSDLBuilder.WSDL11_NS);
         addNamespace("ws", WSDLBuilder.WSDL11_SOAP_NS);

@@ -47,10 +47,9 @@ public class ServiceEndpoints
         {
             throw new XFireRuntimeException("Could not find echo method on Echo class", e);
         }
-        ServiceInfo service = new ServiceInfo(new QName("http://test.xfire.codehaus.org", "Echo"), 
-                                              new QName("http://test.xfire.codehaus.org", "EchoPortType"),
-                                              echoClass);
-        OperationInfo operation = service.addOperation("echo", echoMethod);
+        ServiceInfo serviceInfo = new ServiceInfo(new QName("http://test.xfire.codehaus.org", "EchoPortType"),
+                                                  echoClass);
+        OperationInfo operation = serviceInfo.addOperation("echo", echoMethod);
         MessageInfo inputMessage = operation.createMessage(new QName("echoRequest"));
         operation.setInputMessage(inputMessage);
         MessageInfo outputMessage = operation.createMessage(new QName("echoResponse"));
@@ -58,7 +57,9 @@ public class ServiceEndpoints
         inputMessage.addMessagePart(new QName("echoRequestin0"), String.class);
         outputMessage.addMessagePart(new QName("echoResponseout"), String.class);
 
-        return new Service(service);
+        Service service = new Service(serviceInfo);
+        service.setName(new QName("http://test.xfire.codehaus.org", "Echo"));
+        return service;
     }
 
     /**

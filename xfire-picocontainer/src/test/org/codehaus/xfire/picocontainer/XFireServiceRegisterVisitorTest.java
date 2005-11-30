@@ -33,7 +33,7 @@ public class XFireServiceRegisterVisitorTest
         // pico.
         ServiceFactory sf = getServiceFactory();
         Service ms = sf.create(DummyServiceThatCounts.class);
-        ms.getServiceInfo().setName(new QName("test"));
+        ms.setName(new QName("test"));
         getPico().registerComponentInstance(ms);
 
         // Register XFireServiceRegisterVisitor and its dependency into the

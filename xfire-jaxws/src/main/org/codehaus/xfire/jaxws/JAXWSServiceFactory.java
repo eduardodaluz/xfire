@@ -60,7 +60,7 @@ public class JAXWSServiceFactory
             RequestWrapper wrapper = op.getMethod().getAnnotation(RequestWrapper.class);
             
             String ns = wrapper.targetNamespace();
-            if (ns.length() == 0) ns = op.getService().getName().getNamespaceURI();
+            if (ns.length() == 0) ns = op.getService().getPortType().getNamespaceURI();
 
             String name = wrapper.localName();
             if (name.length() == 0) name = op.getName();
@@ -79,7 +79,7 @@ public class JAXWSServiceFactory
             ResponseWrapper wrapper = op.getMethod().getAnnotation(ResponseWrapper.class);
             
             String ns = wrapper.targetNamespace();
-            if (ns.length() == 0) ns = op.getService().getName().getNamespaceURI();
+            if (ns.length() == 0) ns = op.getService().getPortType().getNamespaceURI();
 
             String name = wrapper.localName();
             if (name.length() == 0) name = op.getName();

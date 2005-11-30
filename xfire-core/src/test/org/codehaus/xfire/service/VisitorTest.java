@@ -20,8 +20,9 @@ public class VisitorTest
     public void testVisitor()
             throws Exception
     {
-        ServiceInfo service = new ServiceInfo(new QName("service"), new QName("serviceport"), String.class);
+        ServiceInfo service = new ServiceInfo(new QName("serviceport"), String.class);
         Service endpoint = new Service(service);
+        endpoint.setName(new QName("service"));
         Method method = getClass().getMethod("method", new Class[0]);
         OperationInfo operation = service.addOperation("operation", method);
         MessageInfo inputMessage = operation.createMessage(new QName("input"));

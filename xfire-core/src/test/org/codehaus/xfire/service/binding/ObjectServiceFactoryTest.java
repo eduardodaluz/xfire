@@ -49,7 +49,7 @@ public class ObjectServiceFactoryTest
         Service endpoint = objectServiceFactory.create(Echo.class);
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
+        assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), endpoint.getName());
         assertEquals(Soap11.getInstance(), endpoint.getSoapVersion());
         assertTrue(endpoint.getFaultSerializer() instanceof SoapFaultSerializer);
         
@@ -70,7 +70,7 @@ public class ObjectServiceFactoryTest
 
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
+        assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), endpoint.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
         
         SoapBinding binding = (SoapBinding) endpoint.getBindings().iterator().next();
@@ -92,7 +92,7 @@ public class ObjectServiceFactoryTest
                                                        properties);
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://xfire.codehaus.org", "EchoService"), service.getName());
+        assertEquals(new QName("http://xfire.codehaus.org", "EchoService"), endpoint.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
         
         SoapBinding binding = (SoapBinding) endpoint.getBindings().iterator().next();
@@ -114,7 +114,7 @@ public class ObjectServiceFactoryTest
                                                        properties);
         assertNotNull(endpoint);
         ServiceInfo service = endpoint.getServiceInfo();
-        assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), service.getName());
+        assertEquals(new QName("http://binding.service.xfire.codehaus.org", "Echo"), endpoint.getName());
         assertEquals(Soap12.getInstance(), endpoint.getSoapVersion());
 
         SoapBinding binding = (SoapBinding) endpoint.getBindings().iterator().next();
@@ -157,7 +157,7 @@ public class ObjectServiceFactoryTest
         assertEquals(1, inMsg.getMessageParts().size());
         
         SoapBinding soapOp = (SoapBinding) service.getBindings().iterator().next();
-        MessagePartInfo part = soapOp.getHeaders(inMsg).getMessagePart(new QName(info.getName().getNamespaceURI(), "in1"));
+        MessagePartInfo part = soapOp.getHeaders(inMsg).getMessagePart(new QName(service.getName().getNamespaceURI(), "in1"));
         assertNotNull(part);
     }
     
@@ -179,7 +179,7 @@ public class ObjectServiceFactoryTest
         assertNotNull(info);
         
         assertEquals(1, info.getMessageParts().size());
-        MessagePartInfo mp = info.getMessagePart(new QName(service.getServiceInfo().getName().getNamespaceURI(),
+        MessagePartInfo mp = info.getMessagePart(new QName(service.getName().getNamespaceURI(),
                                                            "EchoFault"));
         assertEquals(EchoFault.class, mp.getTypeClass());
     }

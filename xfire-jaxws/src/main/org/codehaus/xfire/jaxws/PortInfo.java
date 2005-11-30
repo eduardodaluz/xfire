@@ -11,7 +11,7 @@ public class PortInfo implements javax.xml.ws.handler.PortInfo
     public PortInfo(String bindingID, QName portName, QName serviceName)
     {
         super();
-        // TODO Auto-generated constructor stub
+
         this.bindingID = bindingID;
         this.portName = portName;
         this.serviceName = serviceName;

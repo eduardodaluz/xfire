@@ -32,7 +32,7 @@ public class WSDLServiceBuilderTest
         
         Service service = (Service) services.iterator().next();
         
-        QName name = service.getServiceInfo().getName();
+        QName name = service.getName();
         assertNotNull(name);
         assertEquals(new QName("urn:Echo", "Echo"), name);
         
@@ -89,7 +89,7 @@ public class WSDLServiceBuilderTest
         
         Service service = (Service) services.iterator().next();
         
-        QName name = service.getServiceInfo().getName();
+        QName name = service.getName();
         assertNotNull(name);
         assertEquals(new QName("urn:Echo", "Echo"), name);
         

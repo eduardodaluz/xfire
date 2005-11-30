@@ -43,20 +43,20 @@ public class ListTest
         ServiceInfo service = endpoint.getServiceInfo();
         OperationInfo o = service.getOperation("getDoubles");
         MessageInfo outMsg = o.getOutputMessage();
-        MessagePartInfo p = outMsg.getMessagePart(new QName(service.getName().getNamespaceURI(), "out"));
+        MessagePartInfo p = outMsg.getMessagePart(new QName(endpoint.getTargetNamespace(), "out"));
         p.setSchemaType(doubles);
 
         o = service.getOperation("getStrings");
         outMsg = o.getOutputMessage();
-        p = outMsg.getMessagePart(new QName(service.getName().getNamespaceURI(), "out"));
+        p = outMsg.getMessagePart(new QName(endpoint.getTargetNamespace(), "out"));
         p.setSchemaType(strings);
 
         o = service.getOperation("receiveDoubles");
-        p = o.getInputMessage().getMessagePart(new QName(service.getName().getNamespaceURI(), "in0"));
+        p = o.getInputMessage().getMessagePart(new QName(endpoint.getTargetNamespace(), "in0"));
         p.setSchemaType(doubles);
 
         o = service.getOperation("receiveStrings");
-        p = o.getInputMessage().getMessagePart(new QName(service.getName().getNamespaceURI(), "in0"));
+        p = o.getInputMessage().getMessagePart(new QName(endpoint.getTargetNamespace(), "in0"));
         p.setSchemaType(strings);
     }
 

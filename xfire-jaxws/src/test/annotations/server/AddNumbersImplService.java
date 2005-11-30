@@ -5,8 +5,11 @@ import java.net.URISyntaxException;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebEndpoint;
+import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.soap.SOAPBinding;
 
+@WebServiceClient(name="AddNumbersService", targetNamespace="", wsdlLocation="")
 public class AddNumbersImplService
     extends Service
 {
@@ -29,6 +32,7 @@ public class AddNumbersImplService
         }
     }
     
+    @WebEndpoint(name="AddNumbersPort")
     public AddNumbersIF getAddNumbersImplPort()
     {
         return (AddNumbersIF) getPort(addNumbersImplPort, SERVICE_CLASS);

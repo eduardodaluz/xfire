@@ -22,7 +22,6 @@ public class ServiceInfo
     extends AbstractContext
     implements Visitable
 {
-    private QName name;
     private Map operations = new HashMap();
     private Map methodToOp = new HashMap();
     private Class serviceClass;
@@ -36,9 +35,8 @@ public class ServiceInfo
      * @param name         the qualified name.
      * @param serviceClass the service class.
      */
-    public ServiceInfo(QName name, QName portType, Class serviceClass)
+    public ServiceInfo(QName portType, Class serviceClass)
     {
-        this.name = name;
         this.portType = portType;
         this.serviceClass = serviceClass;
     }
@@ -90,26 +88,6 @@ public class ServiceInfo
     {
         operations.put(operation.getName(), operation);
         methodToOp.put(operation.getMethod(), operation);
-    }
-
-    /**
-     * Returns the qualified name of the service descriptor.
-     *
-     * @return the qualified name.
-     */
-    public QName getName()
-    {
-        return name;
-    }
-
-    /**
-     * Sets the qualified name of the service descriptor.
-     *
-     * @param name the new qualified name.
-     */
-    public void setName(QName name)
-    {
-        this.name = name;
     }
 
     /**

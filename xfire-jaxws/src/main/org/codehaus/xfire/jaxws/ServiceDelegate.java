@@ -29,8 +29,7 @@ public class ServiceDelegate
     private Service service;
     private XFireProxyFactory factory = jaxWsHelper.getProxyFactory();
     private ServiceFactory serviceFactory = jaxWsHelper.getServiceFactory();
-        
-    
+
     private URL wsdlDocumentLocation;
     private Executor executor;
     private HandlerResolver handlerResolver;

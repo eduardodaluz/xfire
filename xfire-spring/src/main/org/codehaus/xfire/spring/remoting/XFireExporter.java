@@ -27,7 +27,7 @@ public class XFireExporter
         super.afterPropertiesSet();
         
         delegate = new XFireServletControllerAdapter(getXfire(), 
-                                                     getXFireService().getServiceInfo().getName());
+                                                     getXFireService().getName());
     }
 
     /**

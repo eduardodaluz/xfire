@@ -287,7 +287,7 @@ public class XMLServiceBuilder
             {
                 log.info("Created Service " + name + " with impl " + implClazz + ", soap version: "
                         + soapVersionValue + ", style: " + style + ", use: " + use + ", namespace "
-                        + svc.getServiceInfo().getName().getNamespaceURI());
+                        + svc.getTargetNamespace());
             }
         }
         else
@@ -296,7 +296,7 @@ public class XMLServiceBuilder
             {
                 log.info("Created Service " + name + " with impl " + clazz + ", soap version: "
                         + soapVersionValue + ", style: " + style + ", use: " + use + ", namespace "
-                        + svc.getServiceInfo().getName().getNamespaceURI());
+                        + svc.getTargetNamespace());
             }
         }
 

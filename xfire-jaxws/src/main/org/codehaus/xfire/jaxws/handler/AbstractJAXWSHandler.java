@@ -3,8 +3,6 @@ package org.codehaus.xfire.jaxws.handler;
 import java.util.List;
 
 import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.soap.SOAPHandler;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandler;
@@ -15,12 +13,12 @@ import org.codehaus.xfire.jaxws.ServiceDelegate;
 import org.codehaus.xfire.jaxws.binding.AbstractBinding;
 import org.codehaus.xfire.transport.Transport;
 
-public class JAXWSHandler
+public abstract class AbstractJAXWSHandler
     extends AbstractHandler
 {
     private ServiceDelegate service;
     
-    public JAXWSHandler(ServiceDelegate service)
+    public AbstractJAXWSHandler(ServiceDelegate service)
     {
         super();
         
@@ -47,21 +45,10 @@ public class JAXWSHandler
         
         for (Handler handler : handlers)
         {
-            if (handler instanceof LogicalHandler)
-            {
-                LogicalHandler lh = (LogicalHandler) handler;
-                
-            }
-            else if (handler instanceof SOAPHandler)
-            {
-                SOAPHandler sh = (SOAPHandler) handler;
-
-                sh.handleMessage(soapContext);
-            }
-            else
-            {
-                handler.handleMessage(soapContext);
-            }
+            invokeHandler(soapContext, handler);
         }
     }
+
+    protected abstract void invokeHandler(SOAPMessageContext soapContext, Handler handler);
+    
 }

@@ -541,9 +541,10 @@ public class WSDLServiceBuilder
     
     protected void begin(javax.wsdl.Service wservice)
     {
-        serviceInfo = new ServiceInfo(wservice.getQName(), null, Object.class);
+        serviceInfo = new ServiceInfo(null, Object.class);
         
         service = new Service(serviceInfo);
+        service.setName(wservice.getQName());
     }
 
     protected void end(javax.wsdl.Service wservice)
