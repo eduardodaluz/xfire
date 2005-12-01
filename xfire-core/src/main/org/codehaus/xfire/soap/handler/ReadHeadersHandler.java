@@ -1,5 +1,6 @@
 package org.codehaus.xfire.soap.handler;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,13 +110,13 @@ public class ReadHeadersHandler
         throws XMLStreamException
     {
         int event = reader.next();
-        if (event != XMLStreamReader.SPACE) return;
+        if (event != XMLStreamReader.SPACE && event != XMLStreamReader.CHARACTERS) return;
         
         do
         {
             event = reader.next();
         }
-        while (event == XMLStreamReader.SPACE);
+        while (event == XMLStreamReader.SPACE ||event == XMLStreamReader.CHARACTERS);
         
         return;
     }
