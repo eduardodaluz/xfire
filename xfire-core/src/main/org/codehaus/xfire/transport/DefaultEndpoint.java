@@ -66,7 +66,15 @@ public class DefaultEndpoint
 
     protected void handleException(MessageContext context, HandlerPipeline pipeline, Exception e)
     {
-        log.debug("Fault occurred!", e);
+        if (e instanceof RuntimeException)
+        {
+            log.error("Fault occurred!", e);
+        }
+        else if (log.isDebugEnabled())
+        {
+            log.debug("Fault occurred!", e);
+        }
+        
         XFireFault fault = XFireFault.createFault(e);
 
         // Give the previously invoked pipeline a chance to clean up.
