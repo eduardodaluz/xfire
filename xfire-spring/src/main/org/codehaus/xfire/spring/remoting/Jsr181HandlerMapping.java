@@ -65,9 +65,11 @@ public class Jsr181HandlerMapping
         for (int i = 0; i < beanNames.length; i++)
         {
             Class clazz;
+            Object bean;
             try
             {
                 clazz = getApplicationContext().getType(beanNames[i]);
+                bean = beanFactory.getBean(beanNames[i]);
             }
             catch (BeanIsAbstractException e)
             {
@@ -88,7 +90,7 @@ public class Jsr181HandlerMapping
                 }
                 
                 xFire.getServiceRegistry().register(endpoint);
-                endpoint.setInvoker(new BeanInvoker(beanFactory.getBean(beanNames[i])));
+                endpoint.setInvoker(new BeanInvoker(bean));
                 Controller controller = new XFireServletControllerAdapter(xFire, endpoint.getName());
                 registerHandler(urlPrefix + endpoint.getSimpleName(), controller);
             }
