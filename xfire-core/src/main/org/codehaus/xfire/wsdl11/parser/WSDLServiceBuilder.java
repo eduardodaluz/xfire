@@ -63,8 +63,7 @@ public class WSDLServiceBuilder
     private BindingProvider bindingProvider;
     
     protected final Definition definition;
-    
-    private List visitedPortTypes = new ArrayList();
+
     private List bindingAnnotators = new ArrayList();
     
     private Map portType2serviceInfo = new HashMap();
@@ -256,8 +255,16 @@ public class WSDLServiceBuilder
         ServiceInfo serviceInfo = new ServiceInfo(null, Object.class);
         portType2serviceInfo.put(portType, serviceInfo);
         serviceInfo.setPortType(portType.getQName());
+
+        isWrapped = true;
+        Iterator itr = portType.getOperations().iterator();
+        while (isWrapped && itr.hasNext())
+        {
+           Operation o = (Operation) itr.next();
+           isWrapped = isWrapped(o);
+        }
         
-        visitedPortTypes.add(portType);
+        serviceInfo.setWrapped(isWrapped);
         
         List operations = portType.getOperations();
         for (int i = 0; i < operations.size(); i++)
@@ -280,9 +287,6 @@ public class WSDLServiceBuilder
                 //visit(fault);
             }
         }
-        
-        serviceInfo.setWrapped(isWrapped);
-        isWrapped = false;
     }
     
     protected ServiceInfo getServiceInfo(PortType portType)
@@ -373,8 +377,6 @@ public class WSDLServiceBuilder
     {
         opInfo = getServiceInfo(portType).addOperation(operation.getName(), null);
         wop2op.put(operation, opInfo);
-
-        isWrapped = isWrapped(operation);
     }
     
     protected void visit(BindingInput bindingInput, Input input)
