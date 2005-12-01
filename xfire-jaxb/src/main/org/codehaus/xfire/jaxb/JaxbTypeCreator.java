@@ -41,9 +41,9 @@ public class JaxbTypeCreator implements TypeCreator
         if (isJaxbType(clazz))
         {
             return createJaxbType(clazz);
-        } else
+        } 
+        else
         {
-            System.out.println(nextCreator);
             return nextCreator.createType(m, index);
         }
     }

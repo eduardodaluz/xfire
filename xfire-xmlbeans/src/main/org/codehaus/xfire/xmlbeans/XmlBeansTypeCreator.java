@@ -43,7 +43,6 @@ public class XmlBeansTypeCreator
         }
         else
         {
-            System.out.println(nextCreator);
             return nextCreator.createType(m, index);
         }
     }
