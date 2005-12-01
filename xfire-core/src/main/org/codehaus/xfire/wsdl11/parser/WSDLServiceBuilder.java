@@ -458,8 +458,8 @@ public class WSDLServiceBuilder
         if (inElementName == null || outElementName == null) 
             return false;
         
-        if (!inElementName.getLocalPart().equals(opInfo.getName()) || 
-                !outElementName.getLocalPart().equals(opInfo.getName() + "Response")) 
+        if (!inElementName.getLocalPart().equals(op.getName()) || 
+                !outElementName.getLocalPart().equals(op.getName() + "Response")) 
             return false;
         
         XmlSchemaElement reqSchemaEl = schemas.getElementByQName(inElementName);
