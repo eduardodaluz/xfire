@@ -1,5 +1,7 @@
 This directory contains several different examples:
 
 book: An example POJO web service.
+geoip-client: A simple client example using XMLBeans
+jaxb2: Shows how to do schema-first development with JAXB 2.0
 jsr181: An example service which uses JSR 181 annotations.
 spring: An example showing how to use XFire with the Spring Framework
