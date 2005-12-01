@@ -74,5 +74,6 @@ public class WrappedComplexTest
         
         assertValid("//xsd:schema[@targetNamespace='" + ns1
                     + "']/xsd:import[@namespace='" + ns2 + "']", doc);
+        assertValid("//wsdlsoap:binding[@style='document']", doc);
     }
 }

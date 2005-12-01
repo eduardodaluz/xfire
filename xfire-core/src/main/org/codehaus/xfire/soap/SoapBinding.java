@@ -319,7 +319,10 @@ public class SoapBinding extends Binding
     {
         SOAPBinding soapBind = new SOAPBindingImpl();
 
-        soapBind.setStyle( getStyle() );
+        String style = getStyle();
+        if (style.equals(SoapConstants.STYLE_WRAPPED)) style = SoapConstants.STYLE_DOCUMENT;
+        
+        soapBind.setStyle( style );
         soapBind.setTransportURI( getTransport().getSupportedBindings()[0] );
 
         return soapBind;
