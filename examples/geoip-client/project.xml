@@ -11,7 +11,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>xfire-all</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>@xfire.version@</version>
     </dependency>
     <!-- XJC is needed regardless of whether you are using XMLBeans or JAXB -->
     <dependency>
