@@ -224,7 +224,7 @@ public class Service
         for (Iterator itr = bindings.values().iterator(); itr.hasNext();)
         {
             Binding binding = (Binding) itr.next();
-            if (binding.getTransport().equals(t))
+            if (binding.getTransport() != null && binding.getTransport().equals(t))
             {
                 return binding;
             }

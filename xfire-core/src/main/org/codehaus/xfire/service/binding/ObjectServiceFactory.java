@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
@@ -67,17 +68,11 @@ public class ObjectServiceFactory
     
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
+     * Uses the XFireFactory to obtain an instance of the TransportManager.
      */
     public ObjectServiceFactory()
     {
-        setStyle(SoapConstants.STYLE_WRAPPED);
-        setUse(SoapConstants.USE_LITERAL);
-        ignoredClasses.add("java.lang.Object");
-        ignoredClasses.add("java.lang.Throwable");
-        ignoredClasses.add("org.omg.CORBA_2_3.portable.ObjectImpl");
-        ignoredClasses.add("org.omg.CORBA.portable.ObjectImpl");
-        ignoredClasses.add("javax.ejb.EJBObject");
-        ignoredClasses.add("javax.rmi.CORBA.Stub");
+        this(XFireFactory.newInstance().getXFire().getTransportManager());
     }
 
     /**
@@ -89,15 +84,25 @@ public class ObjectServiceFactory
      */
     public ObjectServiceFactory(TransportManager transportManager, BindingProvider provider)
     {
-        this();
+        this(transportManager);
 
         this.bindingProvider = provider;
-        this.transportManager = transportManager;
     }
 
+    /**
+     * Initializes a new instance of the <code>ObjectServiceFactory</code>.
+     */
     public ObjectServiceFactory(TransportManager transportManager)
     {
-        this(transportManager, null);
+        this.transportManager = transportManager;
+        setStyle(SoapConstants.STYLE_WRAPPED);
+        setUse(SoapConstants.USE_LITERAL);
+        ignoredClasses.add("java.lang.Object");
+        ignoredClasses.add("java.lang.Throwable");
+        ignoredClasses.add("org.omg.CORBA_2_3.portable.ObjectImpl");
+        ignoredClasses.add("org.omg.CORBA.portable.ObjectImpl");
+        ignoredClasses.add("javax.ejb.EJBObject");
+        ignoredClasses.add("javax.rmi.CORBA.Stub");
     }
 
     public ObjectServiceFactory(BindingProvider bp)
