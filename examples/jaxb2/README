@@ -1,0 +1,9 @@
+This example shows how to use XFire with JAXB 2.0. You must
+have maven 1.x installed. To create a war:
+
+$ maven war
+
+The resultant war should work in any web application. The WSDL file
+for the service should be viewable at:
+
+http://yourhost:port/jaxb2-example/services/WeatherService?wsdl
