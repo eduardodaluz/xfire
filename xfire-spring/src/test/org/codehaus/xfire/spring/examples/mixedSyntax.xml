@@ -1,0 +1,12 @@
+<!-- START SNIPPET: mixed -->
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+
+  <service>
+    <name>Echo</name>
+    <serviceBean>#echoBean</serviceBean>
+  </service>
+
+  <bean id="echoBean" class="org.codehaus.xfire.test.Echo"/>
+  
+</beans>
+<!-- END SNIPPET: mixed -->
