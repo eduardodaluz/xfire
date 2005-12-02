@@ -61,7 +61,8 @@ public class SoapBindingAnnotator extends BindingAnnotator
         
         getService().addBinding(soapBinding);
         
-        getSoapBinding().setStyle(sbind.getStyle());
+        soapBinding.setStyle(null);
+        setStyle(sbind.getStyle());
     }
 
     protected void visit(BindingFault bindingFault, Fault fault, FaultInfo msg)
@@ -111,7 +112,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
     protected void visit(BindingOperation operation, OperationInfo opInfo)
     {
         SOAPOperation soapOp = DefinitionsHelper.getSOAPOperation(operation);
-
+        
         SoapBinding binding = getSoapBinding();
         
         binding.setSoapAction(opInfo, soapOp.getSoapActionURI());
@@ -119,22 +120,22 @@ public class SoapBindingAnnotator extends BindingAnnotator
         String style = soapOp.getStyle();
         if (style != null)
         {
-            setStyle(opInfo, style);
+            setStyle(style);
         }
 
         binding.setSerializer(opInfo, SoapBinding.getSerializer(binding.getStyle(), binding.getUse()));
     }
 
-    protected void setStyle(OperationInfo opInfo, String style)
+    protected void setStyle(String style)
     {
-        String current = getSoapBinding().getStyle();
+        if (getService().getServiceInfo().isWrapped())
+            style = SoapConstants.STYLE_WRAPPED;
         
+        String current = getSoapBinding().getStyle();
+
         if (current == null)
         {
-            if (opInfo.getService().isWrapped())
-                getSoapBinding().setStyle(SoapConstants.STYLE_WRAPPED);
-            else
-                getSoapBinding().setStyle(style);
+            getSoapBinding().setStyle(style);
         }
         else
         {

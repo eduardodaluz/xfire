@@ -103,7 +103,7 @@ public class MapTest
         Service service = getServiceFactory().create(MapDTOService.class);
         getServiceRegistry().register(service);
         
-        printNode(invokeService(service.getSimpleName(), "/org/codehaus/xfire/aegis/type/java5/dto/GetDTO.xml"));
+        invokeService(service.getSimpleName(), "/org/codehaus/xfire/aegis/type/java5/dto/GetDTO.xml");
     }
     
     public void testMapServiceWSDL() throws Exception
@@ -111,7 +111,7 @@ public class MapTest
         Service service = getServiceFactory().create(MapDTOService.class);
         getServiceRegistry().register(service);
         
-        printNode(getWSDLDocument(service.getSimpleName()));
+        getWSDLDocument(service.getSimpleName());
     }
     
     public class MapService

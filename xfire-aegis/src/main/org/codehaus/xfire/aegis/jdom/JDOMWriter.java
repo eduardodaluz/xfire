@@ -49,12 +49,7 @@ public class JDOMWriter
 
     public MessageWriter getElementWriter(QName qname)
     {
-        Element child = new Element(qname.getLocalPart(), 
-                                    Namespace.getNamespace(qname.getPrefix(),
-                                                           qname.getNamespaceURI()));
-        element.addContent(child);
-        
-        return new JDOMWriter(child);
+        return getElementWriter(qname.getLocalPart(), qname.getNamespaceURI());
     }
 
     public String getPrefixForNamespace( String namespace )

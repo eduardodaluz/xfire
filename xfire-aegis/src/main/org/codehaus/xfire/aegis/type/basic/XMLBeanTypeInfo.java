@@ -21,12 +21,13 @@ public class XMLBeanTypeInfo
     private Element topMapping;
     private QName name;
     private Map name2Nillable = new HashMap();
-    
+ 
     public XMLBeanTypeInfo(Class typeClass,
                            Element mapping,
-                           List mappings)
+                           List mappings,
+                           String defaultNamespace)
     {
-        super(typeClass);
+        super(typeClass, defaultNamespace);
 
         this.mappings = mappings;
         this.topMapping = mapping;
@@ -36,7 +37,7 @@ public class XMLBeanTypeInfo
     {
         if (name == null && topMapping != null)
         {
-            name = createQName(topMapping, topMapping.getAttributeValue("name"));
+            name = createQName(topMapping, topMapping.getAttributeValue("name"), getDefaultNamespace());
         }
         
         return name;
@@ -54,7 +55,7 @@ public class XMLBeanTypeInfo
     {
         Element e = getPropertyElement(pd.getName());
         String style = null;
-        String mappedName = null;
+        QName mappedName = null;
         
         if (e != null)
         {
@@ -65,7 +66,7 @@ public class XMLBeanTypeInfo
             logger.debug("Found mapping for property " + pd.getName());
 
             style = e.getAttributeValue("style");
-            mappedName = e.getAttributeValue("mappedName");
+            mappedName = createQName(e, e.getAttributeValue("mappedName"), getDefaultNamespace());
         }
         
         if (style == null) style = "element";
@@ -73,7 +74,7 @@ public class XMLBeanTypeInfo
         
         if (e != null)
         {
-            QName mappedType = createQName(e, e.getAttributeValue("typeName"));
+            QName mappedType = createQName(e, e.getAttributeValue("typeName"), getDefaultNamespace());
             if (mappedType != null) mapTypeName(mappedName, mappedType);
             
             String nillableVal = e.getAttributeValue("nillable");
@@ -123,14 +124,16 @@ public class XMLBeanTypeInfo
         return null;
     }
 
-    protected QName createQName(Element e, String value)
+    protected QName createQName(Element e, String value, String defaultNamespace)
     {
         if (value == null) return null;
         
         int index = value.indexOf(":");
         
         if (index == -1)
-            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        {
+            return new QName(defaultNamespace, value);
+        }
         
         String prefix = value.substring(0, index);
         String localName = value.substring(index+1);
@@ -142,7 +145,7 @@ public class XMLBeanTypeInfo
         return new QName(ns, localName, prefix);
     }
 
-    public boolean isNillable(String name)
+    public boolean isNillable(QName name)
     {
         Boolean nillable = (Boolean) name2Nillable.get(name);
         

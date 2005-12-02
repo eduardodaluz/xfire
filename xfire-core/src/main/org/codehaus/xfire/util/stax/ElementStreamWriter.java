@@ -67,9 +67,13 @@ public class ElementStreamWriter
         throws XMLStreamException
     {
         if (prefix == null || prefix.equals(""))
+        {
             writeStartElement(namespace, local);
-
-        newChild(new Element(local, prefix, namespace));
+        }
+        else
+        {
+            newChild(new Element(local, prefix, namespace));
+        }
     }
 
     public void writeEmptyElement(String namespace, String local)

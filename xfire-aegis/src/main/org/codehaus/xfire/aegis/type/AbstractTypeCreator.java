@@ -103,7 +103,10 @@ public abstract class AbstractTypeCreator implements TypeCreator
         {
             Type type = (Type) info.getType().newInstance();
             
-            type.setSchemaType(createQName(info.getTypeClass()));
+            QName name = info.getTypeName();
+            if (name == null) name = createQName(info.getTypeClass());
+            
+            type.setSchemaType(name);
             type.setTypeClass(info.getTypeClass());
             type.setTypeMapping(getTypeMapping());
             
@@ -387,16 +390,6 @@ public abstract class AbstractTypeCreator implements TypeCreator
         public void setTypeName(QName name)
         {
             this.typeName = name;
-        }
-
-        public String getMappedName()
-        {
-            return mappedName;
-        }
-
-        public void setMappedName(String mappedName)
-        {
-            this.mappedName = mappedName;
         }
 
         public Class getType()

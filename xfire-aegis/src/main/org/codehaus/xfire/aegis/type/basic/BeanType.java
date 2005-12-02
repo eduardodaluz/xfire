@@ -59,13 +59,13 @@ public class BeanType
                 MessageReader childReader = reader.getNextAttributeReader();
                 QName name = childReader.getName();
                 
-                Type type = info.getType(name.getLocalPart());
+                Type type = info.getType(name);
 
                 if (type != null)
                 {
                     Object writeObj = type.readObject(childReader, context);
     
-                    writeProperty(name.getLocalPart(), object, writeObj);
+                    writeProperty(name, object, writeObj);
                 }
             }
 
@@ -75,7 +75,7 @@ public class BeanType
                 MessageReader childReader = reader.getNextElementReader();
                 QName name = childReader.getName();
 
-                Type type = info.getType(name.getLocalPart());
+                Type type = info.getType(name);
 
                 if (type != null)
                 {
@@ -91,11 +91,11 @@ public class BeanType
                     if (!nil)
                     {
                         Object writeObj = type.readObject(childReader, context);
-                        writeProperty(name.getLocalPart(), object, writeObj);
+                        writeProperty(name, object, writeObj);
                     }
                     else
                     {
-                        if (!info.isNillable(name.getLocalPart()))
+                        if (!info.isNillable(name))
                         {
                             throw new XFireFault(name.getLocalPart() + " is nil, but not nillable.",
                                     XFireFault.SENDER);
@@ -133,7 +133,7 @@ public class BeanType
     /**
      * Write the specified property to a field.
      */
-    protected void writeProperty(String name, Object object, Object property)
+    protected void writeProperty(QName name, Object object, Object property)
         throws XFireFault
     {
         try
@@ -165,7 +165,7 @@ public class BeanType
         
     	for (Iterator itr = info.getAttributes(); itr.hasNext(); )
         {
-            String name = (String) itr.next();
+            QName name = (QName) itr.next();
 
             Object value = readProperty(object, name);
             if (value != null)
@@ -175,16 +175,7 @@ public class BeanType
                 if ( type == null )
                     throw new XFireRuntimeException( "Couldn't find type for " + value.getClass() + " for property " + name );
     
-                MessageWriter cwriter;
-                
-                if (type.isAbstract())
-                {
-                    cwriter = writer.getAttributeWriter(name, getSchemaType().getNamespaceURI());
-                }
-                else
-                {
-                    cwriter = writer.getAttributeWriter(name, type.getSchemaType().getNamespaceURI());
-                }
+                MessageWriter cwriter = writer.getAttributeWriter(name);
 
                 type.writeObject(value, cwriter, context);
     
@@ -194,7 +185,7 @@ public class BeanType
         
         for (Iterator itr = info.getElements(); itr.hasNext(); )
         {
-            String name = (String) itr.next();
+            QName name = (QName) itr.next();
 
             Object value = readProperty(object, name);
             
@@ -204,7 +195,7 @@ public class BeanType
             // Write the value if it is not null.
             if ( value != null)
             {
-                cwriter = cwriter = getWriter(writer, name, type);
+                cwriter = getWriter(writer, name, type);
                 
                 if ( type == null )
                     throw new XFireRuntimeException( "Couldn't find type for " + value.getClass() + " for property " + name );
@@ -227,20 +218,21 @@ public class BeanType
         }
     }
 
-    private MessageWriter getWriter(MessageWriter writer, String name, Type type) {
+    private MessageWriter getWriter(MessageWriter writer, QName name, Type type) 
+    {
         MessageWriter cwriter;
         if (type.isAbstract())
         {
-            cwriter = writer.getElementWriter(name, getSchemaType().getNamespaceURI());
+            cwriter = writer.getElementWriter(name);
         }
         else
         {
-            cwriter = writer.getElementWriter(name, type.getSchemaType().getNamespaceURI());
+            cwriter = writer.getElementWriter(name);
         }
         return cwriter;
     }
 
-    protected Object readProperty(Object object, String name)
+    protected Object readProperty(Object object, QName name)
     {
         try
         {
@@ -282,7 +274,7 @@ public class BeanType
                 complex.addContent(seq);
             }
                             
-            String name = (String) itr.next();
+            QName name = (QName) itr.next();
             
             Element element = new Element("element",
                                           SoapConstants.XSD_PREFIX,
@@ -291,16 +283,24 @@ public class BeanType
             
             Type type = getType(info, name);
             
+            String nameNS = name.getNamespaceURI(); 
+            String nameWithPrefix = name.getLocalPart();
+            if (!nameNS.equals(getSchemaType().getNamespaceURI()))
+            {
+                nameWithPrefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), nameNS)
+                    + ":" + nameWithPrefix;
+            }
+            
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
             
-            writeTypeReference(name, element, type, prefix);
+            writeTypeReference(name, nameWithPrefix, element, type, prefix);
         }
         
         // Write out schema for attributes
         for (Iterator itr = info.getAttributes(); itr.hasNext();)
         {
-            String name = (String) itr.next();
+            QName name = (QName) itr.next();
             
             Element element = new Element("attribute",
                                           SoapConstants.XSD_PREFIX,
@@ -309,15 +309,22 @@ public class BeanType
             
             Type type = getType(info, name);
 
+            String nameNS = name.getNamespaceURI(); 
+            String nameWithPrefix = name.getLocalPart();
+            if (!nameNS.equals(getSchemaType().getNamespaceURI()))
+            {
+                nameWithPrefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), nameNS)
+                    + ":" + nameWithPrefix;
+            }
+
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
-            
-            element.setAttribute(new Attribute("name", name));
+            element.setAttribute(new Attribute("name", nameWithPrefix));
             element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
         }
     }
 
-    private Type getType(BeanTypeInfo info, String name)
+    private Type getType(BeanTypeInfo info, QName name)
     {
         Type type = info.getType(name);
         
@@ -330,11 +337,11 @@ public class BeanType
         return type;
     }
 
-    private void writeTypeReference(String name, Element element, Type type, String prefix)
+    private void writeTypeReference(QName name, String nameWithPrefix, Element element, Type type, String prefix)
     {
         if (type.isAbstract())
         {
-            element.setAttribute(new Attribute("name", name));
+            element.setAttribute(new Attribute("name", nameWithPrefix));
             element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
             
             if (getTypeInfo().isNillable(name))
@@ -366,14 +373,14 @@ public class BeanType
         
         for (Iterator itr = info.getAttributes(); itr.hasNext(); )
         {
-            String name = (String) itr.next();
+            QName name = (QName) itr.next();
 
             deps.add(info.getType(name));
         }
 
         for (Iterator itr = info.getElements(); itr.hasNext(); )
         {
-            String name = (String) itr.next();
+            QName name = (QName) itr.next();
 
             deps.add(info.getType(name));
         }
@@ -399,7 +406,8 @@ public class BeanType
 
     public BeanTypeInfo createTypeInfo()
     {
-        BeanTypeInfo info = new BeanTypeInfo(getTypeClass());
+        BeanTypeInfo info = new BeanTypeInfo(getTypeClass(), 
+                                             getSchemaType().getNamespaceURI());
 
         info.setTypeMapping(getTypeMapping());
 

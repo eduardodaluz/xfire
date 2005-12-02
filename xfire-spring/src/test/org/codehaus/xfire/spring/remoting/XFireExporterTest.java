@@ -107,7 +107,7 @@ public class XFireExporterTest
         assertNotNull(binding);
         SOAPBinding soapBinding = (SOAPBinding) binding.getExtensibilityElements().get(0);
         assertNotNull(soapBinding);
-        assertEquals(SoapConstants.STYLE_WRAPPED, soapBinding.getStyle());
+        assertEquals(SoapConstants.STYLE_DOCUMENT, soapBinding.getStyle());
     }
 
     public void testHandleSoapRequest()

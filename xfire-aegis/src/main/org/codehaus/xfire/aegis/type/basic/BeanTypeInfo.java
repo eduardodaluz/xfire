@@ -28,11 +28,13 @@ public class BeanTypeInfo
     private PropertyDescriptor[] descriptors;
     private TypeMapping typeMapping;
     private boolean initialized;
+    private String defaultNamespace;
     
-    public BeanTypeInfo(Class typeClass)
+    public BeanTypeInfo(Class typeClass, String defaultNamespace)
     {
         this.beanClass = typeClass;
-
+        this.defaultNamespace = defaultNamespace;
+        
         initializeProperties();
     }
 
@@ -43,12 +45,18 @@ public class BeanTypeInfo
      * @param defaultNamespace
      * @param initiallize If true attempt default property/xml mappings.
      */
-    public BeanTypeInfo(Class typeClass, boolean initialize)
+    public BeanTypeInfo(Class typeClass, String defaultNamespace, boolean initialize)
     {
         this.beanClass = typeClass;
-
+        this.defaultNamespace = defaultNamespace;
+        
         initializeProperties();
         setInitialized(!initialize);
+    }
+
+    public String getDefaultNamespace()
+    {
+        return defaultNamespace;
     }
 
     public void initialize()
@@ -123,7 +131,7 @@ public class BeanTypeInfo
     /**
      * Get the type class for the field with the specified QName.
      */
-    public Type getType(String name) 
+    public Type getType(QName name) 
     {
         // 1. Try a prexisting mapped type
         Type type = (Type) mappedName2type.get(name);
@@ -187,12 +195,12 @@ public class BeanTypeInfo
         return true;
     }
 
-    public void mapType(String name, Type type)
+    public void mapType(QName name, Type type)
     {
         mappedName2type.put(name, type);
     }
 
-    private QName getMappedTypeName(String name)
+    private QName getMappedTypeName(QName name)
     {
         return (QName) mappedName2typeName.get(name);
     }
@@ -213,18 +221,18 @@ public class BeanTypeInfo
      * @param desc
      * @return
      */
-    protected String createMappedName(PropertyDescriptor desc)
+    protected QName createMappedName(PropertyDescriptor desc)
     {
-        return desc.getName();
+        return new QName(getDefaultNamespace(), desc.getName());
     }
 
-    public void mapAttribute(String property, String mappedName)
+    public void mapAttribute(String property, QName mappedName)
     {
         mappedName2pdName.put(mappedName, property);
         attributes.add(mappedName);
     }
 
-    public void mapElement(String property, String mappedName)
+    public void mapElement(String property, QName mappedName)
     {
         mappedName2pdName.put(mappedName, property);
         elements.add(mappedName);
@@ -235,7 +243,7 @@ public class BeanTypeInfo
      * @param mappedName
      * @param type
      */
-    public void mapTypeName(String mappedName, QName type)
+    public void mapTypeName(QName mappedName, QName type)
     {
         mappedName2typeName.put(mappedName, type);
     }
@@ -286,7 +294,7 @@ public class BeanTypeInfo
         }
     }
 
-    public PropertyDescriptor getPropertyDescriptorFromMappedName(String name)
+    public PropertyDescriptor getPropertyDescriptorFromMappedName(QName name)
     {
         return getPropertyDescriptor( getPropertyNameFromMappedName(name) );
     }
@@ -311,12 +319,12 @@ public class BeanTypeInfo
         return beanClass;
     }
 
-    public boolean isNillable(String name)
+    public boolean isNillable(QName name)
     {
         return getType(name).isNillable();
     }
     
-    private String getPropertyNameFromMappedName(String name)
+    private String getPropertyNameFromMappedName(QName name)
     {
         return (String) mappedName2pdName.get(name);
     }

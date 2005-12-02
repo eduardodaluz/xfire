@@ -8,14 +8,14 @@ import java.lang.annotation.Target;
 import org.codehaus.xfire.aegis.type.Type;
 
 /**
- * Annotates services method parameters to provide information about how they are
+ * Annotates a service's return type to provide information about how it is
  * to be serialized.
  * 
  * @author Dan Diephouse
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface XmlParamType
+@Target(ElementType.METHOD)
+public @interface XmlReturnType
 {
     Class type() default Type.class;
     String name() default "";

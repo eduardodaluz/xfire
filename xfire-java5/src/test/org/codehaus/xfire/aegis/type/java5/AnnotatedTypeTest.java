@@ -38,14 +38,14 @@ public class AnnotatedTypeTest
     
     public void testType()
     {
-        AnnotatedTypeInfo info = new AnnotatedTypeInfo(tm, AnnotatedBean1.class);
+        AnnotatedTypeInfo info = new AnnotatedTypeInfo(tm, AnnotatedBean1.class, "urn:foo");
         
         Iterator elements = info.getElements();
         assertTrue(elements.hasNext());
-        String element = (String) elements.next();
+        QName element = (QName) elements.next();
         assertTrue(elements.hasNext());
         
-        element = (String) elements.next();
+        element = (QName) elements.next();
         assertFalse(elements.hasNext());
         
         Type custom = info.getType(element);
@@ -54,7 +54,7 @@ public class AnnotatedTypeTest
         
         Iterator atts = info.getAttributes();
         assertTrue(atts.hasNext());
-        String att = (String) atts.next();
+        QName att = (QName) atts.next();
         assertFalse(atts.hasNext());
     }
 
@@ -73,7 +73,7 @@ public class AnnotatedTypeTest
     
     public void testGetSetRequired() throws Exception
     {
-        BeanType type = new BeanType(new AnnotatedTypeInfo(tm, BadBean.class));
+        BeanType type = new BeanType(new AnnotatedTypeInfo(tm, BadBean.class, "urn:foo"));
         type.setSchemaType(new QName("urn:foo", "BadBean"));
         
         assertFalse(type.getTypeInfo().getElements().hasNext());

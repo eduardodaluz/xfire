@@ -104,7 +104,7 @@ public class MapTypeTest
 
         BeanType beanType = (BeanType) creator.createType(MapBean.class);
         
-        String mapName = (String) beanType.getTypeInfo().getElements().next();
+        QName mapName = (QName) beanType.getTypeInfo().getElements().next();
         
         Type type = beanType.getTypeInfo().getType(mapName);
         assertTrue(type instanceof MapType);

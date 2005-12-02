@@ -71,11 +71,14 @@ public class BeanTest
     public void testUnmappedProperty()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, false);
-        info.mapElement("howdy", "howdycustom");
+        String ns = "urn:Bean";
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, ns, false);
+        
+        QName name = new QName(ns, "howdycustom");
+        info.mapElement("howdy", name);
         info.setTypeMapping(mapping);
         
-        assertEquals("howdy", info.getPropertyDescriptorFromMappedName("howdycustom").getName());
+        assertEquals("howdy", info.getPropertyDescriptorFromMappedName(name).getName());
         
         BeanType type = new BeanType(info);
         type.setTypeClass(SimpleBean.class);
@@ -102,9 +105,9 @@ public class BeanTest
     public void testAttributeMap()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class);
-        info.mapAttribute("howdy", "howdy");
-        info.mapAttribute("bleh", "bleh");
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
+        info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
+        info.mapAttribute("bleh", new QName("urn:Bean", "bleh"));
         info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
@@ -143,10 +146,10 @@ public class BeanTest
     public void testNullProperties()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class);
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
         info.setTypeMapping(mapping);
-        info.mapAttribute("howdy", "howdy");
-        info.mapElement("bleh", "bleh");
+        info.mapAttribute("howdy", new QName("urn:Bean", "howdy"));
+        info.mapElement("bleh", new QName("urn:Bean", "bleh"));
         
         BeanType type = new BeanType(info);
         type.setTypeClass(SimpleBean.class);
@@ -178,7 +181,7 @@ public class BeanTest
     public void testNillableInt()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(IntBean.class);
+        BeanTypeInfo info = new BeanTypeInfo(IntBean.class, "urn:Bean");
         info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
@@ -202,7 +205,7 @@ public class BeanTest
     public void testNullNonNillableWithDate()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(DateBean.class);
+        BeanTypeInfo info = new BeanTypeInfo(DateBean.class, "urn:Bean");
         info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
@@ -269,7 +272,7 @@ public class BeanTest
     public void testByteBean()
         throws Exception
     {
-        BeanTypeInfo info = new BeanTypeInfo(ByteBean.class);
+        BeanTypeInfo info = new BeanTypeInfo(ByteBean.class, "urn:Bean");
         info.setTypeMapping(mapping);
         
         BeanType type = new BeanType(info);
@@ -277,10 +280,11 @@ public class BeanTest
         type.setTypeMapping(mapping);
         type.setSchemaType(new QName("urn:Bean", "bean"));
     
-        Type dataType = type.getTypeInfo().getType("data");
+        QName name = new QName("urn:Bean", "data");
+        Type dataType = type.getTypeInfo().getType(name);
         assertNotNull(dataType);
         
-        assertTrue( type.getTypeInfo().isNillable("data") );
+        assertTrue( type.getTypeInfo().isNillable(name) );
         
         ByteBean bean = new ByteBean();
         

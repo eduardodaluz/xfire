@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis.type.java5;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 
@@ -33,8 +34,22 @@ public class Java5TypeCreator
                 info.setGenericType(genericType);
             }
             info.setTypeClass(m.getParameterTypes()[index]);
-            if(m.getParameterAnnotations() != null && m.getParameterAnnotations()[index].length > 0)
-                info.setAnnotations(m.getParameterAnnotations()[index]);
+
+            XmlParamType xmlParam = getXmlParamAnnotation(m, index);
+            if (xmlParam != null)
+            {
+                if (xmlParam.type() != Type.class)
+                    info.setType(xmlParam.type());
+                
+                info.setTypeName(createQName(m.getParameterTypes()[index],
+                                             xmlParam.name(),
+                                             xmlParam.namespace()));
+            }
+            else
+            {
+                info.setTypeName(createQName(m.getParameterTypes()[index]));
+            }
+            
             return info;
         }
         else
@@ -53,8 +68,45 @@ public class Java5TypeCreator
             info.setTypeClass(m.getReturnType());
             if(m.getParameterAnnotations() != null && m.getAnnotations().length > 0)
                 info.setAnnotations(m.getAnnotations());
+            
+            XmlReturnType xmlParam = m.getAnnotation(XmlReturnType.class);
+            if (xmlParam != null)
+            {
+                if (xmlParam.type() != Type.class)
+                    info.setType(xmlParam.type());
+                
+                info.setTypeName(createQName(m.getReturnType(),
+                                             xmlParam.name(),
+                                             xmlParam.namespace()));
+            }
+            else
+            {
+                info.setTypeName(createQName(m.getReturnType()));
+            }
+            
             return info;
         }
+    }
+    
+    public XmlParamType getXmlParamAnnotation(Method m, int index)
+    {
+        if (m.getParameterAnnotations() == null ||
+                m.getParameterAnnotations().length < index ||
+                m.getParameterAnnotations()[index] == null)
+            return null;
+        
+        Annotation[] annotations = m.getParameterAnnotations()[index];
+        
+        for (int i = 0; i < annotations.length; i++)
+        {
+            Annotation annotation = annotations[i];
+            if (annotation.annotationType().equals(XmlParamType.class))
+            {
+                return (XmlParamType) annotations[i];
+            }
+        }
+        
+        return null;
     }
     
     @Override
@@ -122,9 +174,12 @@ public class Java5TypeCreator
     @Override
     public Type createDefaultType(TypeClassInfo info)
     {
-        BeanType type = new BeanType(new AnnotatedTypeInfo(getTypeMapping(), info.getTypeClass()));
+        QName typeName = info.getTypeName();
+        if (typeName == null) typeName = createQName(info.getTypeClass());
+        
+        BeanType type = new BeanType(new AnnotatedTypeInfo(getTypeMapping(), info.getTypeClass(), typeName.getNamespaceURI()));
         type.setTypeMapping(getTypeMapping());
-        type.setSchemaType(createQName(info.getTypeClass()));
+        type.setSchemaType(typeName);
         
         return type;
     }
@@ -154,6 +209,11 @@ public class Java5TypeCreator
             ns = xtype.namespace();
         }
         
+        return createQName(typeClass, name, ns);
+    }
+
+    private QName createQName(Class typeClass, String name, String ns)
+    {
         String clsName = typeClass.getName();
         if (name == null || name.length() == 0)
             name = ServiceUtils.makeServiceNameFromClassName(typeClass);

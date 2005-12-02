@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
@@ -41,13 +43,13 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        String el = (String) elItr.next();
-        assertEquals("Prop1", el);
+        QName el = (QName) elItr.next();
+        assertEquals("Prop1", el.getLocalPart());
 
         Iterator attItr = info.getAttributes();
         assertTrue(attItr.hasNext());
-        String att = (String) attItr.next();
-        assertEquals("Prop2", att);
+        QName att = (QName) attItr.next();
+        assertEquals("Prop2", att.getLocalPart());
     }
 
     public void testMapping2() throws Exception
@@ -59,12 +61,12 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        String el = (String) elItr.next();
-        assertEquals("Prop1", el);
+        QName el = (QName) elItr.next();
+        assertEquals("Prop1", el.getLocalPart());
 
         assertTrue(elItr.hasNext());
-        String el2 = (String) elItr.next();
-        assertEquals("Prop2", el2);
+        QName el2 = (QName) elItr.next();
+        assertEquals("Prop2", el2.getLocalPart());
     }
     
     public void testParentWithMapping2() throws Exception
@@ -76,12 +78,12 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        String el = (String) elItr.next();
-        assertEquals("Prop1", el);
+        QName el = (QName) elItr.next();
+        assertEquals("Prop1", el.getLocalPart());
 
         assertTrue(elItr.hasNext());
-        String el2 = (String) elItr.next();
-        assertEquals("Prop2", el2);
+        QName el2 = (QName) elItr.next();
+        assertEquals("Prop2", el2.getLocalPart());
     }
 
     public void testListHolder() throws Exception
@@ -93,8 +95,8 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        String el = (String) elItr.next();
-        assertEquals("Beans", el);
+        QName el = (QName) elItr.next();
+        assertEquals("Beans", el.getLocalPart());
 
         Type beanList = info.getType(el);
         assertTrue( beanList instanceof CollectionType );
@@ -109,8 +111,8 @@ public class DescriptorTest
 
         Iterator elItr = info.getElements();
         assertTrue(elItr.hasNext());
-        String el = (String) elItr.next();
-        assertEquals("beans", el);
+        QName el = (QName) elItr.next();
+        assertEquals("beans", el.getLocalPart());
 
         Type beanList = info.getType(el);
         assertTrue( beanList instanceof CollectionType );
@@ -125,8 +127,8 @@ public class DescriptorTest
 
         Iterator attItr = info.getAttributes();
         assertTrue(attItr.hasNext());
-        String el = (String) attItr.next();
-        assertEquals("prop2", el);
+        QName el = (QName) attItr.next();
+        assertEquals("prop2", el.getLocalPart());
     }
 
     public void testNillable() throws Exception
@@ -136,8 +138,8 @@ public class DescriptorTest
         Type type = tm.getTypeCreator().createType(MyBean.class);
         BeanTypeInfo info = ((BeanType) type).getTypeInfo();
 
-        assertFalse(info.isNillable("prop1"));
-        assertTrue(info.isNillable("prop2"));
+        assertFalse(info.isNillable(new QName(info.getDefaultNamespace(), "prop1")));
+        assertTrue(info.isNillable(new QName(info.getDefaultNamespace(), "prop2")));
     }
 
     public void testCustomType() throws Exception
@@ -147,7 +149,7 @@ public class DescriptorTest
         BeanType type = (BeanType) tm.getTypeCreator().createType(MyBean.class);
         BeanTypeInfo info = type.getTypeInfo();
 
-        String name = (String) info.getElements().next();
+        QName name = (QName) info.getElements().next();
         Type custom = info.getType(name);
         assertTrue(custom instanceof MyStringType);
     }

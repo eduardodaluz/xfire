@@ -12,9 +12,9 @@ import org.codehaus.xfire.util.NamespaceHelper;
 public class AnnotatedTypeInfo
     extends BeanTypeInfo
 {
-    public AnnotatedTypeInfo(TypeMapping tm, Class typeClass)
+    public AnnotatedTypeInfo(TypeMapping tm, Class typeClass, String ns)
     {
-        super(typeClass);
+        super(typeClass, ns);
         setTypeMapping(tm);
         
         initialize();
@@ -72,9 +72,9 @@ public class AnnotatedTypeInfo
     }
         
     @Override
-    protected String createMappedName(PropertyDescriptor desc)
+    protected QName createMappedName(PropertyDescriptor desc)
     {
-        return createQName(desc).getLocalPart();
+        return createQName(desc);
     }
 
     protected QName createQName(PropertyDescriptor desc)
@@ -110,7 +110,7 @@ public class AnnotatedTypeInfo
         return new QName(ns, name);
     }
 
-    public boolean isNillable(String name)
+    public boolean isNillable(QName name)
     {
         PropertyDescriptor desc = getPropertyDescriptorFromMappedName(name);
         

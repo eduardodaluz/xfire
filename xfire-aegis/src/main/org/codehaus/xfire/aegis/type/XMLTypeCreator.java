@@ -18,6 +18,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.XMLBeanTypeInfo;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -171,7 +172,21 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
         if (mapping != null || mappings.size() > 0 )
         {
-            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(info.getTypeClass(), mapping, mappings);
+            QName typeName = info.getTypeName();
+            String defaultNS;
+            if (typeName != null)
+            {
+                defaultNS = typeName.getNamespaceURI();
+            }
+            else
+            {
+                defaultNS = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
+            }
+            
+            XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(info.getTypeClass(), 
+                                                         mapping, 
+                                                         mappings,
+                                                         defaultNS);
             btinfo.setTypeMapping(getTypeMapping());
             
             BeanType type = new BeanType(btinfo);
