@@ -80,8 +80,7 @@ public class BeanType
                 if (type != null)
                 {
                     boolean nil = false;
-                    // Only bother to check for elements that are defined to be
-                    // nil
+
                     MessageReader nilReader = childReader.getAttributeReader(XSI_NIL);
                     if (nilReader != null)
                     {
