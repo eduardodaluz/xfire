@@ -157,10 +157,10 @@
       <url>http://jcp.org/en/jsr/detail?id=173</url>
     </dependency>
     <dependency>
-      <groupId>wsdl4j</groupId>
+      <groupId>xfire</groupId>
       <artifactId>wsdl4j</artifactId>
-      <version>1.5.1</version>
-      <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+      <version>1.5.2</version>
+      <url>http://wsdl4j.sf.net/</url>
     </dependency>
     <dependency>
       <groupId>woodstox</groupId>
