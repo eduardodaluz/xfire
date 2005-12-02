@@ -3,7 +3,7 @@
   <groupId>xfire</groupId>
   <artifactId>xfire-all</artifactId>
   <name>XFire</name>
-  <currentVersion>1.0-SNAPSHOT</currentVersion>
+  <currentVersion>1.0-M6</currentVersion>
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
@@ -159,7 +159,7 @@
     <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
-      <version>1.4</version>
+      <version>1.5.1</version>
       <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
     </dependency>
     <dependency>

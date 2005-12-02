@@ -189,11 +189,11 @@
     <get-dep artifact="stax" version="1.1.2-dev" dir="${master.libdir}"/>
     <get-dep artifact="stax-api" group="stax" version="1.0" dir="${master.libdir}"/>
     <get-dep artifact="jdom" version="1.0" dir="${master.libdir}"/>
-    <get-dep artifact="wsdl4j" version="1.4" dir="${master.libdir}"/>
+    <get-dep artifact="wsdl4j" version="1.5.1" dir="${master.libdir}"/>
     <get-dep artifact="commons-logging" version="1.0.4" dir="${master.libdir}"/>
     <get-dep artifact="servletapi" version="2.3" dir="${master.libdir}"/>
     <get-dep artifact="httpunit" version="1.5.1" dir="${master.libdir}"/>
-    <get-dep artifact="jaxen" version="1.1-beta-5" dir="${master.libdir}"/>
+    <get-dep artifact="jaxen" version="1.1-beta-8" dir="${master.libdir}"/>
     <get-dep artifact="easymock" version="1.1" dir="${master.libdir}"/>
     <get-dep artifact="xmlunit" version="1.0" dir="${master.libdir}"/>
   </target>
