@@ -50,7 +50,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
         client.getParams().setParameter("http.useragent", " Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; " +
                 "XFire Client +http://xfire.codehaus.org)");
-        client.getParams().setBooleanParameter("http.protocol.expect-continue", false);
+        client.getParams().setBooleanParameter("http.protocol.expect-continue", true);
         client.getParams().setVersion(HttpVersion.HTTP_1_1);
 
         postMethod = new PostMethod(getUri());
