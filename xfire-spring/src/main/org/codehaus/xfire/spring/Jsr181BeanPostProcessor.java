@@ -10,7 +10,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
  * This BeanPostProcessor will create an XFire service from a service class if and only if
- * it is marked with the JSR 181 @WebService attribute. This replaces the need for using the
+ * it is marked with the JSR 181 {@lit @}WebService attribute. This replaces the need for using the
  * ServiceComponent class.
  * 
  * @see org.codehaus.xfire.spring.ServiceBean

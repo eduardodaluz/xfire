@@ -24,11 +24,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * A convenience bean which creates a Service from a ServiceFactory instance.
- * Alternatively, the Jsr181BeanPostProcessor may be used.
+ * A convenience bean which creates a Service from a ServiceFactory instance. If there is no
+ * ServiceFactory set, ServiceBean will create one from the ObjectServiceFactory.
+ * <p>
+ * Alternatively, the <code>Jsr181BeanPostProcessor</code> or the 
+ * <code>XFireExporter</code>may be used.
  * 
  * @see org.codehaus.xfire.service.Service
  * @see org.codehaus.xfire.spring.Jsr181BeanPostProcessor
+ * @see org.codehaus.xfire.service.binding.ObjectServiceFactory
+ * @see org.codehaus.xfire.spring.remoting.XFireExporter
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -179,21 +185,39 @@ public class ServiceBean
         return getServiceBean();
     }
 
+    /**
+     * Gets the XFire Service created by this bean.
+     * @return
+     * @see Service
+     */
     public Service getXFireService()
     {
         return xfireService;
     }
 
+    /**
+     * Gets the object which backs this service.
+     * @return
+     */
     public Object getServiceBean()
     {
         return service;
     }
 
+    /**
+     * Sets the object which backs this service.
+     * @return
+     */
     public void setServiceBean(Object service)
     {
         this.service = service;
     }
 
+    /**
+     * Set the service class. The service class is passed to the ServiceFactory's
+     * create method and is used to determine the operations on the service.
+     * @return
+     */
     public Class getServiceClass()
     {
         return serviceInterface;
