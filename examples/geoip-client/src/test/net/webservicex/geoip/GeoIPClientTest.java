@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 
 public class GeoIPClientTest extends TestCase
 {
-    public void testClient()
+    public void testClient() throws Exception
     {
         GeoIPServiceClient service = new GeoIPServiceClient();
         GeoIPServiceSoap geoIPClient = service.getGeoIPServiceSoap();
