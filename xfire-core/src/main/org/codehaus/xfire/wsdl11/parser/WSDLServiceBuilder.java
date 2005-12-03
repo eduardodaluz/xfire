@@ -11,9 +11,7 @@ import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
-import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Import;
@@ -42,6 +40,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -70,6 +69,7 @@ public class WSDLServiceBuilder
     private Map wop2op = new HashMap();
     private Map winput2msg = new HashMap();
     private Map woutput2msg = new HashMap();
+    private Map wfault2msg = new HashMap();
     
     private TransportManager transportManager =
         XFireFactory.newInstance().getXFire().getTransportManager();
@@ -284,7 +284,7 @@ public class WSDLServiceBuilder
             for (Iterator iterator2 = faults.iterator(); iterator2.hasNext();)
             {
                 Fault fault = (Fault) iterator2.next();
-                //visit(fault);
+                visit(fault);
             }
         }
     }
@@ -315,17 +315,21 @@ public class WSDLServiceBuilder
                           bindingOperation.getOperation().getInput(),
                           opInfo.getInputMessage());
                 
-                ann.visit(bindingOperation.getBindingOutput(), 
-                          bindingOperation.getOperation().getOutput(),
-                          opInfo.getOutputMessage());
+                if (opInfo.hasOutput())
+                {
+                    ann.visit(bindingOperation.getBindingOutput(), 
+                              bindingOperation.getOperation().getOutput(),
+                              opInfo.getOutputMessage());
+                }
                 
                 Collection bindingFaults = bindingOperation.getBindingFaults().values();
                 for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
                 {
                     BindingFault bindingFault = (BindingFault) iterator2.next();
                     Fault fault = bindingOperation.getOperation().getFault(bindingFault.getName());
+                    FaultInfo faultInfo = (FaultInfo) wfault2msg.get(fault);
                     
-                    visit(bindingFault, fault);
+                    ann.visit(bindingFault, fault, faultInfo);
                 }
 
             }
@@ -346,14 +350,13 @@ public class WSDLServiceBuilder
         
         return null;
     }
-    
-    protected void visit(BindingFault bindingFault, Fault fault)
-    {
-    }
-    
+
     protected void visit(Fault fault)
     {
-        FaultInfo faultInfo = opInfo.addFault(fault.getName());    
+        FaultInfo faultInfo = opInfo.addFault(fault.getName()); 
+        wfault2msg.put(fault, faultInfo);
+        
+        createMessageParts(faultInfo, fault.getMessage());
     }
 
     protected void visit(Input input)
@@ -377,10 +380,6 @@ public class WSDLServiceBuilder
     {
         opInfo = getServiceInfo(portType).addOperation(operation.getName(), null);
         wop2op.put(operation, opInfo);
-    }
-    
-    protected void visit(BindingInput bindingInput, Input input)
-    {
     }
 
     private void createMessageParts(MessageInfo info, XmlSchemaComplexType type)
@@ -535,7 +534,7 @@ public class WSDLServiceBuilder
             return false;
     }
     
-    private void createMessageParts(MessageInfo info, Message msg)
+    private void createMessageParts(MessagePartContainer info, Message msg)
     {
         Map parts = msg.getParts();
         
@@ -569,10 +568,6 @@ public class WSDLServiceBuilder
         return getDefinition().getTargetNamespace();
     }
 
-    protected void visit(BindingOutput bindingOutput, Output output)
-    {
-    }
-    
     protected void visit(Output output)
     {
         MessageInfo info = opInfo.createMessage(output.getMessage().getQName());
