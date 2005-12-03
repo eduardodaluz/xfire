@@ -86,7 +86,7 @@ public class AnnotationServiceFactory
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
-
+            
             name = createServiceName(clazz, webServiceAnnotation, name);
          
             /* Attempt to load the endpoint interface if there is one. If there is an endpoint
@@ -110,7 +110,7 @@ public class AnnotationServiceFactory
                             webAnnotations.getWebServiceAnnotation(endpointInterface);
 
                     namespace = createServiceNamespace(endpointInterface, endpointWSAnnotation, namespace);
-                    portType = createPortType(name, endpointWSAnnotation);
+                    portType = createPortType(makeServiceNameFromClassName(clazz), endpointWSAnnotation);
                 }
                 catch (ClassNotFoundException e)
                 {
@@ -121,7 +121,7 @@ public class AnnotationServiceFactory
             else
             {
                 namespace = createServiceNamespace(endpointInterface, webServiceAnnotation, namespace);
-                portType = createPortType(name, webServiceAnnotation);
+                portType = createPortType(makeServiceNameFromClassName(clazz), webServiceAnnotation);
             }
 
             // Allow the user to override informations given in the annotations
@@ -196,7 +196,7 @@ public class AnnotationServiceFactory
         return name;
     }
 
-    protected String createPortType(String serviceName, WebServiceAnnotation webServiceAnnotation)
+    protected String createPortType(String name, WebServiceAnnotation webServiceAnnotation)
     {
         String portType = null;
         if (webServiceAnnotation.getName().length() > 0)
@@ -205,7 +205,7 @@ public class AnnotationServiceFactory
         }
         else
         {
-            portType = serviceName + "PortType";
+            portType = name;
         }
 
         return portType;

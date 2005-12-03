@@ -78,9 +78,15 @@ public class AnnotationServiceFactoryTest
 
         webAnnotationsControl.replay();
 
-        annotationServiceFactory.create(EchoServiceImpl.class);
+        Service service = annotationServiceFactory.create(EchoServiceImpl.class);
 
         webAnnotationsControl.verify();
+        
+        assertEquals(new QName(annotation.getTargetNamespace(), "EchoService"), 
+                     service.getName());
+        
+        assertEquals(new QName(annotation.getTargetNamespace(), "EchoServiceImpl"), 
+                     service.getServiceInfo().getPortType());
     }
 
     public void testNoWebServiceAnnotation()
