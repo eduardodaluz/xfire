@@ -124,6 +124,8 @@
 			</c:forEach>
 			<copy tofile="${maven.build.dir}/dist/libs/README.txt" file="${basedir}/libs-README.txt"/>
 		</c:forEach>
+		
+		<copy toDir="${maven.build.dir}/dist/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar"/>
 	</goal>
 
 </project>
