@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.GeneratorPlugin;
@@ -156,6 +157,9 @@ public abstract class AbstractServiceGenerator
             }
         }
         
+        method._throws(XFireFault.class);
+        
+        /*
         for (Iterator itr = op.getFaults().iterator(); itr.hasNext();)
         {
             FaultInfo faultInfo = (FaultInfo) itr.next();
@@ -170,7 +174,7 @@ public abstract class AbstractServiceGenerator
             MessagePartInfo part = (MessagePartInfo) messageParts.get(0);
             
             generateExceptionClass(context, part);
-        }
+        }*/
     }
 
     protected void generateExceptionClass(GenerationContext context, MessagePartInfo part)
