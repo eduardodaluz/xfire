@@ -1,13 +1,17 @@
 package org.codehaus.xfire.addressing;
 
+/**
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ *
+ */
 public class AddressingInData
 {
 
-    private AddressingHeaders  outHeaders;
+    private AddressingHeaders outHeaders;
 
-    private AddressingHeaders  inHeaders;
-    
-    public AddressingHeaders getHeaders()
+    private AddressingHeaders inHeaders;
+
+    public AddressingHeaders getOutHeaders()
     {
         return outHeaders;
     }
@@ -26,5 +30,5 @@ public class AddressingInData
     {
         this.inHeaders = inHeaders;
     }
-    
+
 }

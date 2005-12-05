@@ -18,11 +18,13 @@ public class WSATestHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-        
-        AddressingHeaders inHeaders = (AddressingHeaders) context.getInMessage().getProperty(AddressingInHandler.ADRESSING_HEADERS);
+
+        AddressingHeaders inHeaders = (AddressingHeaders) context.getInMessage()
+                .getProperty(AddressingInHandler.ADRESSING_HEADERS);
         data.setInHeaders(inHeaders);
         OutMessage msg = context.getOutMessage();
-        AddressingHeaders headers = (AddressingHeaders) msg.getProperty(AddressingInHandler.ADRESSING_HEADERS);
+        AddressingHeaders headers = (AddressingHeaders) msg
+                .getProperty(AddressingInHandler.ADRESSING_HEADERS);
         data.setOutHeaders(headers);
 
     }

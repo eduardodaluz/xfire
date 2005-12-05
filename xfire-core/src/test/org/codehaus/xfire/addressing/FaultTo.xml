@@ -1,6 +1,6 @@
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
 	<env:Header xmlns:S="http://www.w3.org/2003/05/soap-envelope"
-		xmlns:wsa="http://www.w3.org/2005/02/addressing">
+		xmlns:wsa="http://www.w3.org/2005/08/addressing">
 		<wsa:MessageID>
 			http://example.com/6B29FC40-CA47-1067-B31D-00DD010662DA
 		</wsa:MessageID>

@@ -16,35 +16,36 @@ public class WSAHandlerTest
     extends AbstractXFireTest
 {
     Service service;
-    
-    public void setUp() throws Exception
+
+    public void setUp()
+        throws Exception
     {
         super.setUp();
-        
-        ObjectServiceFactory factory = new ObjectServiceFactory(getXFire().getTransportManager(), 
-                                                                new MessageBindingProvider())
+
+        ObjectServiceFactory factory = new ObjectServiceFactory(getXFire().getTransportManager(),
+                new MessageBindingProvider())
         {
             protected OperationInfo addOperation(Service endpoint, Method method, String style)
             {
                 OperationInfo op = super.addOperation(endpoint, method, style);
-                
+
                 new AddressingOperationInfo("http://example.com/Echo", op);
-                
+
                 return op;
             }
         };
         factory.setStyle(SoapConstants.STYLE_MESSAGE);
-        
-        ((DefaultXFire)getXFire()).addInHandler(new AddressingInHandler());
+
+        ((DefaultXFire) getXFire()).addInHandler(new AddressingInHandler());
         service = factory.create(EchoImpl.class, "Echo", "urn:Echo", null);
         getServiceRegistry().register(service);
     }
-    
+
     public void testInvoke()
         throws Exception
     {
         Document response = invokeService(null, "/org/codehaus/xfire/addressing/echo.xml");
-        
+
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", response);
     }

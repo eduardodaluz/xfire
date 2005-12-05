@@ -7,11 +7,13 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+/**
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ * 
+ */
 public abstract class AbstactAddressingHeadersFactory2005
     extends AbstactAddressingHeadersFactory
 {
-
-   
 
     protected abstract Namespace getNamespace();
 
@@ -60,43 +62,36 @@ public abstract class AbstactAddressingHeadersFactory2005
         return headers;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.xfire.addressing.AddressingHeadersFactory#createEPR(org.jdom.Element)
+     */
     public EndpointReference createEPR(Element eprElement)
     {
         EndpointReference epr = new EndpointReference();
 
-        List anyContent = null;
-
         List elements = eprElement.getChildren();
         String version = eprElement.getNamespaceURI();
 
-        Namespace wsa= getNamespace();
         epr.setElement(eprElement);
+        // This will be removed.. but later :)
         for (int i = 0; i < elements.size(); i++)
         {
             Element e = (Element) elements.get(i);
             if (e.getNamespaceURI().equals(version))
             {
-                
-                
-                /*if (e.getName().equals(WSA_ADDRESS) )
-                {
-                    Element address = new Element(e.getName(),e.getNamespace());
-                    address.setAttributes(e.getAttributes());
-                    // TODO : xxx
-                   // epr.setAddress(e);
-                }
-                else*/ 
-               
-                if (e.getName().equals(WSA_SERVICE_NAME) )
+
+                if (e.getName().equals(WSA_SERVICE_NAME))
                 {
                     epr.setServiceName(elementToQName(e));
                     epr.setEndpointName(e.getAttributeValue(WSA_ENDPOINT_NAME, version));
                 }
-                else if (e.getName().equals(WSA_INTERFACE_NAME) )
+                else if (e.getName().equals(WSA_INTERFACE_NAME))
                 {
-                    epr.setInterfaceName(elementToQName(e) );
+                    epr.setInterfaceName(elementToQName(e));
                 }
-                else if (e.getName().equals(WSA_POLICIES) )
+                else if (e.getName().equals(WSA_POLICIES))
                 {
                     List policies = new ArrayList();
 
@@ -106,52 +101,24 @@ public abstract class AbstactAddressingHeadersFactory2005
                         policies.add(polEls.get(j));
                     }
                     epr.setPolicies(policies);
-                }/*else if( e.getName().equals(WSA_REFERENCE_PARAMETERS) ){
-                    List parameters = new ArrayList();
-                    List polEls = e.getChildren();
-                    for (int j = 0; j < polEls.size(); j++)
-                    {
-                        parameters .add(polEls.get(j));
-                    }
-                    epr.setReferenceParameters(e);
-                }*//*else if( e.getName().equals(WSA_METADATA) ){
-                    List metadata = new ArrayList();
-                    List polEls = e.getChildren();
-                    for (int j = 0; j < polEls.size(); j++)
-                    {
-                        metadata .add(polEls.get(j));
-                    }
-                    epr.setMetadata(metadata);
                 }
-*/                /*else
-                {
-                    if (anyContent == null)
-                        anyContent = new ArrayList();
-
-                    anyContent.add(e);
-                }*/
-            }/*else{
-                if (anyContent == null)
-                    anyContent = new ArrayList();
-
-                anyContent.add(e);
             }
-*/
         }
-
-        /*if (anyContent != null)
-        {
-            epr.setAny(anyContent);
-        }*/
 
         return epr;
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.addressing.AddressingHeadersFactory#hasHeaders(org.jdom.Element)
+     */
     public boolean hasHeaders(Element root)
     {
         return root.getChild(WSA_ACTION, getNamespace()) != null;
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.addressing.AddressingHeadersFactory#writeHeaders(org.jdom.Element, org.codehaus.xfire.addressing.AddressingHeaders)
+     */
     public void writeHeaders(Element root, AddressingHeaders headers)
     {
         final Namespace ns = getNamespace();
@@ -214,9 +181,18 @@ public abstract class AbstactAddressingHeadersFactory2005
             root.addContent(replyTo);
 
             writeEPR(replyTo, headers.getReplyTo());
+
         }
+        if (headers.getReferenceParameters() != null)
+        {
+            root.addContent(headers.getReferenceParameters());
+        }
+
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.addressing.AddressingHeadersFactory#writeEPR(org.jdom.Element, org.codehaus.xfire.addressing.EndpointReference)
+     */
     public void writeEPR(Element root, EndpointReference epr)
     {
         final Namespace ns = getNamespace();

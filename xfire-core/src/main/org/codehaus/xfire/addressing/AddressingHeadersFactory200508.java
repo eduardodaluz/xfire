@@ -9,7 +9,7 @@ public class AddressingHeadersFactory200508
   
     public String getAnonymousUri()
     {
-        return WSA_200408_ANONYMOUS_URI;
+        return WSA_200508_ANONYMOUS_URI;
     }
 
     protected Namespace getNamespace()

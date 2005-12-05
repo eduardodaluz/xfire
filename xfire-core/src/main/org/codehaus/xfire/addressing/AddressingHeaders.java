@@ -1,5 +1,7 @@
 package org.codehaus.xfire.addressing;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -24,7 +26,9 @@ public class AddressingHeaders
     private EndpointReference replyTo;
 
     private EndpointReference faultTo;
-
+    
+    private List referenceParameters;
+    
     public String getAction()
     {
         return action;
@@ -104,4 +108,17 @@ public class AddressingHeaders
     {
         this.relationshipType = relationshipType;
     }
+    
+    
+
+    public List getReferenceParameters()
+    {
+        return referenceParameters;
+    }
+
+    public void setReferenceParameters(List referenceParameter)
+    {
+        this.referenceParameters = referenceParameter;
+    }
+    
 }

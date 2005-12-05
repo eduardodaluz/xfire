@@ -62,7 +62,7 @@ public class ReplyToTest
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", endpoint.getMessage());
         
-        addNamespace("wsa", WSAConstants.WSA_NAMESPACE_200502);
-        assertXPathEquals("//s:Header/wsa:To", "xfire.local://EchoReceiver", endpoint.getMessage());
+      //  addNamespace("wsa", WSAConstants.WSA_NAMESPACE_200502);
+       // assertXPathEquals("//s:Header/wsa:To", "xfire.local://EchoReceiver", endpoint.getMessage());
     }
 }

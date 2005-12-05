@@ -1,9 +1,6 @@
 package org.codehaus.xfire.addressing;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.service.OperationInfo;
@@ -12,25 +9,22 @@ import org.codehaus.xfire.service.TestWSAServiceImpl;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.xfire.soap.SoapVersionFactory;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.util.NamespaceHelper;
 import org.jdom.Attribute;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.output.DOMOutputter;
-import org.jdom.output.XMLOutputter;
 
 /**
- * @author @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ * 
  */
 public class WSAddressingNotify1_2Test
     extends AbstractXFireTest
 {
-    AddressingInData data = null;
+    private static final String SERVICE_NAME = "TestWSAServiceImpl";
+
+    private AddressingInData data = null;
 
     protected void setUp()
         throws Exception
@@ -67,7 +61,7 @@ public class WSAddressingNotify1_2Test
     {
         // /soap12:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/notify
 
-        invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
                       "/org/codehaus/xfire/addressing/testcases/notify/soap12/message0.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
@@ -80,8 +74,8 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/notify
         // soap12:Envelope/soap12:Header/wsa:MessageID{regex}.*
 
-        invokeService("TestWSAServiceImpl",
-                                          "/org/codehaus/xfire/addressing/testcases/notify/soap12/message1.xml");
+        invokeService(SERVICE_NAME,
+                      "/org/codehaus/xfire/addressing/testcases/notify/soap12/message1.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
         // TODO: change to regexp check
@@ -96,7 +90,7 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/notify
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
 
-        invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
                       "/org/codehaus/xfire/addressing/testcases/notify/soap12/message2.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
@@ -111,7 +105,7 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/notify
         // soap12:Envelope/soap12:Header/wsa:FaultTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
 
-        invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
                       "/org/codehaus/xfire/addressing/testcases/notify/soap12/message3.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
@@ -127,8 +121,8 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
         // soap12:Envelope/soap12:Header/wsa:FaultTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
 
-        invokeService("TestWSAServiceImpl",
-                                          "/org/codehaus/xfire/addressing/testcases/notify/soap12/message4.xml");
+        invokeService(SERVICE_NAME,
+                      "/org/codehaus/xfire/addressing/testcases/notify/soap12/message4.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
         assertEquals(data.getInHeaders().getFaultTo().getAddress(),
@@ -165,20 +159,19 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:ReferenceParameters/customer:CustomerKey{match}Key#123456789
 
-        invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
 
         "/org/codehaus/xfire/addressing/testcases/notify/soap12/message7.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
         assertEquals(data.getInHeaders().getReplyTo().getAddress(),
                      "http://www.w3.org/2005/08/addressing/none");
-        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElem();
+        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElement();
         assertNotNull(params);
         Element customerKey = params.getChild("CustomerKey", Namespace
                 .getNamespace("customer", "http://example.org/customer"));
-        // TODO: namespace is missing
-         assertNotNull(customerKey);
-         assertEquals(customerKey.getValue(),"Key#123456789");
+        assertNotNull(customerKey);
+        assertEquals(customerKey.getValue(), "Key#123456789");
 
     }
 
@@ -191,14 +184,14 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Metadata/wsdl11:definitions{exists}
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Metadata/wsdl20:definitions{exists}
 
-        invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
 
         "/org/codehaus/xfire/addressing/testcases/notify/soap12/message8.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
         assertEquals(data.getInHeaders().getReplyTo().getAddress(),
                      "http://www.w3.org/2005/08/addressing/none");
-        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElem();
+        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElement();
 
         assertNotNull(params);
 
@@ -206,9 +199,8 @@ public class WSAddressingNotify1_2Test
                 .getNamespace("customer", "http://example.org/customer"));
         assertNotNull(customerKey);
         assertEquals(customerKey.getValue(), "Key#123456789");
-    
 
-        Element metadata = data.getInHeaders().getReplyTo().getMetadataElem();
+        Element metadata = data.getInHeaders().getReplyTo().getMetadataElement();
         assertNotNull(metadata);
 
         Element wsdl11 = metadata.getChild("definitions", Namespace
@@ -231,26 +223,65 @@ public class WSAddressingNotify1_2Test
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Metadata/@customer:total{match}1
         // soap12:Envelope/soap12:Header/wsa:ReplyTo/customer:Metadata{exists}
 
-        invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
 
         "/org/codehaus/xfire/addressing/testcases/notify/soap12/message9.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
         assertEquals(data.getInHeaders().getReplyTo().getAddress(),
                      "http://www.w3.org/2005/08/addressing/none");
-        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElem();
+        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElement();
         Element customerKey = params.getChild("CustomerKey", Namespace
                 .getNamespace("customer", "http://example.org/customer"));
         assertNotNull(customerKey);
         assertEquals(customerKey.getValue(), "Key#123456789");
 
-        Element metadata = data.getInHeaders().getReplyTo().getMetadataElem();
+        Element metadata = data.getInHeaders().getReplyTo().getMetadataElement();
         assertNotNull(metadata);
         Attribute total = metadata.getAttribute("total", Namespace
                 .getNamespace("customer", "http://example.org/customer"));
         assertNotNull(total);
         assertEquals(total.getValue(), "1");
+        Element meta = data.getInHeaders().getReplyTo()
+                .getChild("Metadata",
+                          Namespace.getNamespace("customer", "http://example.org/customer"));
+        assertNotNull(meta);
 
     }
 
+    public void test1230()
+        throws Exception
+    {
+        // soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/notify
+        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
+        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:ReferenceParameters/@customer:level{match}premium
+        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:ReferenceParameters/customer:CustomerKey{match}Key#123456789
+        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Metadata/@customer:total{match}1
+        // soap12:Envelope/soap12:Header/wsa:ReplyTo/customer:Metadata{exists}
+
+        invokeService(SERVICE_NAME,
+
+        "/org/codehaus/xfire/addressing/testcases/notify/soap12/message9.xml");
+
+        assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
+        assertEquals(data.getInHeaders().getReplyTo().getAddress(),
+                     "http://www.w3.org/2005/08/addressing/none");
+        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElement();
+        Element customerKey = params.getChild("CustomerKey", Namespace
+                .getNamespace("customer", "http://example.org/customer"));
+        assertNotNull(customerKey);
+        assertEquals(customerKey.getValue(), "Key#123456789");
+
+        Element metadata = data.getInHeaders().getReplyTo().getMetadataElement();
+        assertNotNull(metadata);
+        Attribute total = metadata.getAttribute("total", Namespace
+                .getNamespace("customer", "http://example.org/customer"));
+        assertNotNull(total);
+        assertEquals(total.getValue(), "1");
+        Element meta = data.getInHeaders().getReplyTo()
+                .getChild("Metadata",
+                          Namespace.getNamespace("customer", "http://example.org/customer"));
+        assertNotNull(meta);
+
+    }
 }

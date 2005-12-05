@@ -1,7 +1,5 @@
 package org.codehaus.xfire.addressing;
 
-import java.util.Map;
-
 import org.jdom.Element;
 
 public interface AddressingHeadersFactory

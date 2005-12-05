@@ -9,13 +9,17 @@ import org.codehaus.xfire.service.TestWSAServiceImpl;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.jdom.Document;
 
+/**
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ * 
+ */
 public class WSAddressingNotify1_1Test
     extends AbstractXFireTest
 {
-
-    AddressingInData data = null;
+    private static final String SERVICE_NAME="TestWSAServiceImpl";
+    
+    private AddressingInData data = null;
 
     protected void setUp()
         throws Exception
@@ -50,7 +54,7 @@ public class WSAddressingNotify1_1Test
     {
         // /soap11:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/notify
 
-        Document response = invokeService("TestWSAServiceImpl",
+        invokeService(SERVICE_NAME,
                                           "/org/codehaus/xfire/addressing/testcases/notify/soap11/message0.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
