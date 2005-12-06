@@ -14,6 +14,7 @@ import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.transport.local.LocalTransport;
 
 public class JAXWSHelper
 {
@@ -33,20 +34,22 @@ public class JAXWSHelper
     
     protected JAXWSHelper() 
     { 
-        Transport soap11 = tManager.getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
-        AbstractBinding binding = new SOAPBinding(soap11);
-        bindings.put(SOAPBinding.SOAP11HTTP_BINDING, binding);
-        transport2Binding.put(soap11, binding);
-        
-        Transport soap12 = tManager.getTransport(SoapHttpTransport.SOAP12_HTTP_BINDING);
-        binding = new SOAPBinding(soap12);
-        bindings.put(SOAPBinding.SOAP12HTTP_BINDING, binding);
-        transport2Binding.put(soap12, binding);
+        createSoapBinding(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        createSoapBinding(SoapHttpTransport.SOAP12_HTTP_BINDING);
+        createSoapBinding(LocalTransport.BINDING_ID);
         
         Transport http = tManager.getTransport(HttpTransport.HTTP_BINDING);
-        binding = new HTTPBinding(http);
+        HTTPBinding binding = new HTTPBinding(http);
         bindings.put(HTTPBinding.HTTP_BINDING, binding);
         transport2Binding.put(http, binding);
+    }
+    
+    public void createSoapBinding(String id)
+    {
+        Transport localSoap = tManager.getTransport(id);
+        AbstractBinding binding = new SOAPBinding(localSoap);
+        bindings.put(id, binding);
+        transport2Binding.put(localSoap, binding);
     }
     
     public static JAXWSHelper getInstance()

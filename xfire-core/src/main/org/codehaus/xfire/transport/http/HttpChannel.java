@@ -117,4 +117,9 @@ public class HttpChannel
     public void close()
     {
     }
+
+    public boolean isAsync()
+    {
+        return false;
+    }
 }

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.jaxws;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -10,6 +11,10 @@ import java.util.concurrent.Executor;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.WebEndpoint;
+import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
@@ -41,7 +46,7 @@ public class ServiceDelegate
         handlerResolver = new SimpleHandlerResolver();
     }
     
-    public ServiceDelegate(URL wsdlLocation, QName serviceName, Class jaxClass)
+    public ServiceDelegate(URL wsdlLocation, QName serviceName, Class clientClass)
     {
         this();
         
@@ -50,14 +55,27 @@ public class ServiceDelegate
 
         try
         {
-            this.serviceClass = (Class) jaxClass.getField("SERVICE_CLASS").get(null);
+            this.serviceClass = (Class) clientClass.getField("SERVICE_CLASS").get(null);
         }
         catch (Exception e)
         {
-            throw new WebServiceException("Could not find service class on " + jaxClass.toString());
+            throw new WebServiceException("Could not find service class on " + clientClass.toString());
         }
         
-        this.service = serviceFactory.create(serviceClass);
+        this.service = serviceFactory.create(serviceClass, wsdlLocation, null);
+        
+        WebServiceClient wsClient = (WebServiceClient) clientClass.getAnnotation(WebServiceClient.class);
+        
+        Method[] methods = clientClass.getMethods();
+        for(Method m : methods)
+        {
+            if (m.isAnnotationPresent(WebEndpoint.class))
+            {
+                WebEndpoint we = m.getAnnotation(WebEndpoint.class);
+                
+                // TODO             
+            }
+        }
     }
 
     @Override
@@ -116,19 +134,22 @@ public class ServiceDelegate
         return b;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> javax.xml.ws.Dispatch<T> createDispatch(QName arg0, Class<T> arg1, Mode arg2)
+    public <T> javax.xml.ws.Dispatch<T> createDispatch(QName port, Class<T> type, Mode serviceMode)
     {
-        // TODO Auto-generated method stub
+        if (type == Source.class)
+        {
+            return (Dispatch<T>) new SourceDispatch();
+        }
+        
         return null;
     }
 
     @Override
     public javax.xml.ws.Dispatch<Object> createDispatch(QName arg0, JAXBContext arg1, Mode arg2)
     {
-        Dispatch dispatch = new Dispatch();
-        
-        return dispatch;
+        return null;
     }
 
     @Override

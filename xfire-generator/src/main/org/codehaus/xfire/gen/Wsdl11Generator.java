@@ -57,6 +57,7 @@ public class Wsdl11Generator
         
         GenerationContext context = new GenerationContext(codeModel, builder.getDefinition());
         context.setOutputDirectory(dest);
+        context.setWsdlLocation(wsdl);
         
         support.initialize(context);
         

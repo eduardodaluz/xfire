@@ -35,7 +35,8 @@ import org.codehaus.xfire.wsdl.SchemaType;
 public class SoapBindingAnnotator extends BindingAnnotator
 {
     private SoapBinding soapBinding;
-
+    private boolean useSet = false;
+    
     protected org.codehaus.xfire.service.Binding getBinding()
     {
         return soapBinding;
@@ -148,9 +149,10 @@ public class SoapBindingAnnotator extends BindingAnnotator
     {
         String current = getSoapBinding().getUse();
         
-        if (current == null)
+        if (!useSet)
         {
             getSoapBinding().setUse(use);
+            useSet = true;
         }
         else
         {

@@ -45,4 +45,6 @@ public interface Channel
      * @return The URI which represents this Channel's endpoint.
      */
     String getUri();
+    
+    boolean isAsync();
 }

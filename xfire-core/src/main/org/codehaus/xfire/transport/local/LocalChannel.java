@@ -188,4 +188,9 @@ public class LocalChannel
     public void close()
     {
     }
+    
+    public boolean isAsync()
+    {
+        return true;
+    }
 }

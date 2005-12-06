@@ -29,6 +29,15 @@
     </dependency>
     <dependency>
       <groupId>xfire</groupId>
+      <artifactId>xfire-generator</artifactId>
+      <version>${pom.currentVersion}</version>
+      <url>${pom.url}</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>xfire</groupId>
       <artifactId>xfire-java5</artifactId>
       <version>${pom.currentVersion}</version>
       <url>${pom.url}</url>
@@ -64,6 +73,12 @@
       </properties>
     </dependency>
     <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>XmlSchema</artifactId>
+      <version>20051110</version>
+      <url>${pom.url}</url>
+    </dependency>
+    <dependency>
       <groupId>beehive</groupId>
       <artifactId>wsm</artifactId>
       <version>1.0-alpha</version>
@@ -86,17 +101,17 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>20051114</version>
+      <version>20051201</version>
     </dependency>
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>jaxb-impl</artifactId>
-      <version>20051114</version>
+      <version>20051201</version>
     </dependency>
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>jaxb-xjc</artifactId>
-      <version>20051114</version>
+      <version>20051201</version>
     </dependency>
   </dependencies>
 </project>

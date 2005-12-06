@@ -63,4 +63,9 @@ public class DelegatedChannel
     {
         return channel.getEndpoint();
     }
+
+    public boolean isAsync()
+    {
+        return channel.isAsync();
+    } 
 }

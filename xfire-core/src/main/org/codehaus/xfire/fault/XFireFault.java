@@ -1,7 +1,5 @@
 package org.codehaus.xfire.fault;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +56,6 @@ public class XFireFault
     private String role;
     private Element detail;
     private Map namespaces;
-    private Throwable cause;
 
     /**
      * Creates a <code>XFireFault</code> from the given throwable. If the throwable is a <code>XFireFault</code>, it is
@@ -129,9 +126,10 @@ public class XFireFault
                       Throwable cause,
                       String code)
     {
+        super(message, cause);
+        
         this.message = message != null ? message : "Fault";
         this.faultCode = code;
-        this.cause = cause;
         this.namespaces = new HashMap();
     }
 
@@ -144,52 +142,6 @@ public class XFireFault
     public void addNamespace(String prefix, String ns)
     {
         namespaces.put(prefix, ns);
-    }
-
-    /**
-     * Prints this throwable and its backtrace to the specified print stream.
-     *
-     * @param s <code>PrintStream</code> to use for output
-     */
-    public void printStackTrace(PrintStream s)
-    {
-        if (this.cause == null || this.cause == this)
-        {
-            super.printStackTrace(s);
-        }
-        else
-        {
-            s.println(this);
-            this.cause.printStackTrace(s);
-        }
-    }
-
-    /**
-     * Prints this throwable and its backtrace to the specified print writer.
-     *
-     * @param w <code>PrintWriter</code> to use for output
-     */
-    public void printStackTrace(PrintWriter w)
-    {
-        if (this.cause == null || this.cause == this)
-        {
-            super.printStackTrace(w);
-        }
-        else
-        {
-            w.println(this);
-            this.cause.printStackTrace(w);
-        }
-    }
-
-    /**
-     * Returns the cause of this throwable or <code>null</code> if the  cause is nonexistent or unknown.
-     *
-     * @return the nested cause.
-     */
-    public Throwable getCause()
-    {
-        return (this.cause == this ? null : this.cause);
     }
 
     /**

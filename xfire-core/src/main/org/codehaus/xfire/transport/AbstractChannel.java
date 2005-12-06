@@ -47,4 +47,9 @@ public abstract class AbstractChannel
     {
         this.transport = transport;
     }
+
+    public boolean isAsync()
+    {
+        return true;
+    }
 }

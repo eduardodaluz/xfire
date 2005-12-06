@@ -46,13 +46,12 @@ public interface ServiceFactory
                           Map properties);
     
     /**
-     * Create a service from a WSDL file. NOTE: This probably doesn't work yet.
+     * Create a service from a WSDL file.
      *
      * @param clazz   The service class for the wsdl.
      * @param wsdlUrl The WSDL URL.
      * @return
      * @throws Exception
      */
-    public Service create(Class clazz, URL wsdlUrl)
-            throws Exception;
+    public Service create(Class clazz, URL wsdlUrl, Map properties);
 }

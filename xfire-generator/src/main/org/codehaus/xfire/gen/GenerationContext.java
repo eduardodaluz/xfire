@@ -16,11 +16,22 @@ public class GenerationContext
     private String destinationPackage;
     private SchemaSupport schemaGenerator;
     private File outputDirectory;
+    private String wsdlLocation;
     
     public GenerationContext(JCodeModel model, Object wsdl)
     {
         codeModel = model;
         this.wsdl = wsdl;
+    }
+
+    public String getWsdlLocation()
+    {
+        return wsdlLocation;
+    }
+
+    public void setWsdlLocation(String wsdlLocation)
+    {
+        this.wsdlLocation = wsdlLocation;
     }
 
     public File getOutputDirectory()

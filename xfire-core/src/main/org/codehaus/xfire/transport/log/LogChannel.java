@@ -58,4 +58,9 @@ public class LogChannel
     public void close()
     {
     }
+    
+    public boolean isAsync()
+    {
+        return true;
+    }
 }

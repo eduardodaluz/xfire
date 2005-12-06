@@ -41,12 +41,24 @@ public class CustomFaultHandler
 
         if (faultPart != null)
         {
-            ElementStreamWriter writer = new ElementStreamWriter(fault.getDetail());
-            
-            context.getService().getBindingProvider().writeParameter(faultPart, writer, context, cause);
+            handleFault(context, fault, cause, faultPart);
         }
     }
 
+    protected void handleFault(MessageContext context, XFireFault fault, Throwable cause, MessagePartInfo faultPart)
+        throws XFireFault
+    {
+        ElementStreamWriter writer = new ElementStreamWriter(fault.getDetail());
+        
+        context.getService().getBindingProvider().writeParameter(faultPart, writer, context, cause);
+    }
+
+    /**
+     * Find the correct Fault part for a particular exception.
+     * @param op
+     * @param class1
+     * @return
+     */
     public MessagePartInfo getFaultForClass(OperationInfo op, Class class1)
     {
         for (Iterator itr = op.getFaults().iterator(); itr.hasNext();)
@@ -55,7 +67,7 @@ public class CustomFaultHandler
             
             MessagePartInfo info = (MessagePartInfo) faultInfo.getMessageParts().get(0);
             
-            if (info.getTypeClass().equals(class1))
+            if (class1.isAssignableFrom(info.getTypeClass()))
                 return info;
         }
         

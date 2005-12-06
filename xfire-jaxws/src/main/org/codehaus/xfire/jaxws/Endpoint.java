@@ -1,5 +1,6 @@
 package org.codehaus.xfire.jaxws;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -26,6 +27,8 @@ public class Endpoint
     private List<Source> metadata;
     private Executor executor;
     private Service service;
+    
+    private Map<String,Object> properties = new HashMap<String,Object>();
     
     public Endpoint(String bindingId, Object implementor)
     {
@@ -132,14 +135,12 @@ public class Endpoint
     @Override
     public Map<String, Object> getProperties()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return properties;
     }
 
     @Override
-    public void setProperties(Map<String, Object> arg0)
+    public void setProperties(Map<String, Object> properties)
     {
-        // TODO Auto-generated method stub
-        
+        this.properties = properties;
     }
 }

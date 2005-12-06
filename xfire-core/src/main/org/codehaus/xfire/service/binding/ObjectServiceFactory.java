@@ -37,6 +37,7 @@ import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
@@ -128,14 +129,15 @@ public class ObjectServiceFactory
         return bindingProvider;
     }
 
-    /**
-     * @param wsdlUrl
-     */
-    public Service create(Class clazz, URL wsdlUrl)
-            throws Exception
+    public Service create(Class clazz, URL wsdlUrl, Map properties)
     {
-        throw new UnsupportedOperationException("create() isn't working yet.");
+        Service service = create(clazz, null, null, false, properties);
+        
+        service.setWSDLWriter(new ResourceWSDL(wsdlUrl));
+        
+        return service;
     }
+    
 
     /**
      * Creates a service from the specified class. The service name will be the 
@@ -196,6 +198,11 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz, String name, String namespace, Map properties)
     {
+        return create(clazz, name, namespace, bindingCreationEnabled, properties);
+    }
+    
+    protected Service create(Class clazz, String name, String namespace, boolean buildBindings, Map properties)
+    {
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(
                 clazz.getName(), "http");
@@ -238,7 +245,7 @@ public class ObjectServiceFactory
 
         endpoint.setProperty(STYLE, theStyle);
         endpoint.setProperty(USE, theUse);
-        if (bindingCreationEnabled)
+        if (buildBindings)
         {
             createBindings(endpoint);
         }
@@ -459,7 +466,7 @@ public class ObjectServiceFactory
         }
 
         if (isCustomFaultsEnabled())
-            initializeFaults(method, service, op);
+            initializeFaults(endpoint, op);
         
         op.setAsync(isAsync(method));
         
@@ -483,12 +490,11 @@ public class ObjectServiceFactory
         return true;
     }
     
-    protected void initializeFaults(final Method method, 
-                                    final ServiceInfo service, 
+    protected void initializeFaults(final Service service, 
                                     final OperationInfo op)
     {
         // Set up the fault messages
-        final Class[] exceptionClasses = method.getExceptionTypes();
+        final Class[] exceptionClasses = op.getMethod().getExceptionTypes();
         for (int i = 0; i < exceptionClasses.length; i++)
         {
             Class exClazz = exceptionClasses[i];
@@ -502,13 +508,26 @@ public class ObjectServiceFactory
                 continue;
             }
             
-            String name = ServiceUtils.makeServiceNameFromClassName(exClazz);
-            
-            FaultInfo info = op.addFault(name);
-            info.addMessagePart(new QName(service.getPortType().getNamespaceURI(), name), exClazz);
+            addFault(service, op, exClazz);
         }
     }
 
+    protected FaultInfo addFault(final Service service, final OperationInfo op, Class exClazz)
+    {
+        QName name = getFaultName(service, op, exClazz);
+        
+        FaultInfo info = op.addFault(name.getLocalPart());
+        info.addMessagePart(name, exClazz);
+        
+        return info;
+    }
+
+    protected QName getFaultName(Service service, OperationInfo o, Class exClazz)
+    {
+        String name = ServiceUtils.makeServiceNameFromClassName(exClazz);
+        return new QName(service.getTargetNamespace(), name);
+    }
+    
     protected String getAction(OperationInfo op)
     {
         return "";

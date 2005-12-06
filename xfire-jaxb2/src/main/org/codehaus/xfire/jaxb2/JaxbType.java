@@ -25,10 +25,12 @@ public class JaxbType
     extends Type
 {
     private JAXBContext context;
-    
+
     public JaxbType(Class clazz)
     {
         setTypeClass(clazz);
+
+        initType();
     }
 
     public Object readObject(MessageReader reader, MessageContext context)
@@ -39,13 +41,13 @@ public class JaxbType
             JAXBContext jc = getJAXBContext();
 
             Unmarshaller u = jc.createUnmarshaller();
-            return u.unmarshal( ((ElementReader) reader).getXMLStreamReader() );
+            return u.unmarshal(((ElementReader) reader).getXMLStreamReader());
         }
         catch (JAXBException e)
         {
             throw new XFireFault("Could not unmarshall type.", e, XFireFault.RECEIVER);
         }
-        
+
     }
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
@@ -54,10 +56,10 @@ public class JaxbType
         try
         {
             JAXBContext jc = getJAXBContext();
-            
+
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            m.marshal( object, ((ElementWriter) writer).getXMLStreamWriter() );
+            m.marshal(object, ((ElementWriter) writer).getXMLStreamWriter());
         }
         catch (JAXBException e)
         {
@@ -65,19 +67,14 @@ public class JaxbType
         }
     }
 
-    public JAXBContext getJAXBContext() throws JAXBException
+    public JAXBContext getJAXBContext()
+        throws JAXBException
     {
         if (context == null)
         {
-            context = JAXBContext.newInstance( getTypeClass() );
+            context = JAXBContext.newInstance(getTypeClass());
         }
         return context;
-    }
-
-    @Override
-    public boolean isAbstract()
-    {
-        return false;
     }
 
     @Override
@@ -95,57 +92,66 @@ public class JaxbType
     @Override
     public QName getSchemaType()
     {
-        if (super.getSchemaType() == null)
-            setSchemaType(getSchemaType(getTypeClass()));
-        
         return super.getSchemaType();
     }
 
-    public static QName getSchemaType(Class clazz)
+    public void initType()
     {
-		XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-    	XmlType type = (XmlType) clazz.getAnnotation(XmlType.class);
-    	String local = null;
-    	String nsUri = null;
-    	if (root != null) 
-    	{
-    		local = root.name();
-    		nsUri = root.namespace();
-    	}
-    	else if (type != null) 
-    	{
-    		local = type.name();
-    		nsUri = type.namespace();
-    	} else 
-    	{
-    		throw new XFireRuntimeException("Couldn't determine element name.");
-    	}
-		if (local.equals("##default")) {
-			local = clazz.getSimpleName();
-		}
-		if (nsUri.equals("##default")) {
-			nsUri = getPackageNs(clazz);
-		}
-    	return new QName(nsUri, local);
+        Class clazz = getTypeClass();
+        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+        XmlType type = (XmlType) clazz.getAnnotation(XmlType.class);
+        String local = null;
+        String nsUri = null;
+        
+        if (root != null)
+        {
+            setAbstract(false);
+            local = root.name();
+            nsUri = root.namespace();
+        }
+        else if (type != null)
+        {
+            setAbstract(true);
+            local = type.name();
+            nsUri = type.namespace();
+        }
+        else
+        {
+            throw new XFireRuntimeException("Couldn't determine element name.");
+        }
+        
+        if (local.equals("##default"))
+        {
+            local = clazz.getSimpleName();
+        }
+        
+        if (nsUri.equals("##default"))
+        {
+            nsUri = getPackageNs(clazz);
+        }
+
+        setSchemaType(new QName(nsUri, local));
     }
-    
-    public static String getPackageNs(Class clazz) {
-		Package pack = clazz.getPackage();
-		XmlSchema schema = pack.getAnnotation(XmlSchema.class);
-   		String namespace = null;
-		if (schema != null) 
-		{
-			namespace = schema.namespace();
-		} else
-		{
-			namespace = "";
-		}
-		return namespace;
+
+    public static String getPackageNs(Class clazz)
+    {
+        Package pack = clazz.getPackage();
+        XmlSchema schema = pack.getAnnotation(XmlSchema.class);
+        String namespace = null;
+        if (schema != null)
+        {
+            namespace = schema.namespace();
+        }
+        else
+        {
+            namespace = "";
+        }
+        return namespace;
     }
 
     /**
-     * JAXB doesn't retain all the schema information at runtime, so schemas must be
-     * added manually. So, this method does absolutely nothing.
+     * JAXB doesn't retain all the schema information at runtime, so schemas
+     * must be added manually. So, this method does absolutely nothing.
      */
     @Override
     public void writeSchema(Element root)

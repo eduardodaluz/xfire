@@ -43,7 +43,7 @@ public class Service
     private Map bindings = new HashMap();
     private Invoker invoker;
     private BindingProvider bindingProvider;
-    
+    private Object executor;
     private MessageSerializer faultSerializer;
     private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
@@ -90,6 +90,16 @@ public class Service
     public void setProperty(String name, Object value)
     {
         properties.put(name, value);
+    }
+
+    public Object getExecutor()
+    {
+        return executor;
+    }
+
+    public void setExecutor(Object executor)
+    {
+        this.executor = executor;
     }
 
     public Invoker getInvoker()

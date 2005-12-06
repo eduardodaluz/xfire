@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -18,6 +17,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.exchange.RobustInOutExchange;
@@ -27,19 +27,14 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
-import org.codehaus.xfire.service.FaultInfo;
-import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.soap.SoapBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
-import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
-import org.jdom.Element;
 import org.xml.sax.InputSource;
 
 public class Client
@@ -66,6 +61,7 @@ public class Client
     protected Client()
     {
         addOutHandler(new OutMessageSender());
+        addFaultHandler(new ClientFaultConverter());
     }
     
     public Client(Endpoint endpoint)
@@ -241,21 +237,9 @@ public class Client
          * for a response. Channels such as HTTP will have the response set
          * by the time we get to this point.
          */
-        if (response == null && fault == null)
+        if (getOutChannel().isAsync() && response == null && fault == null && op.hasOutput())
         {
-            int count = 0;
-            while (response == null && fault == null && count < timeout)
-            {
-                try
-                {
-                    Thread.sleep(50);
-                    count += 50;
-                }
-                catch (InterruptedException e)
-                {
-                    break;
-                }
-            }
+            waitForResponse();
         }
 
         if (fault != null)
@@ -268,6 +252,26 @@ public class Client
         Object[] localResponse = response;
         response = null;
         return localResponse;
+    }
+
+    /**
+     * Waits for a response from the service.
+     */
+    protected void waitForResponse()
+    {
+        int count = 0;
+        while (response == null && fault == null && count < timeout)
+        {
+            try
+            {
+                Thread.sleep(50);
+                count += 50;
+            }
+            catch (InterruptedException e)
+            {
+                break;
+            }
+        }
     }
     
     public void onReceive(MessageContext recvContext, InMessage msg)
@@ -298,63 +302,27 @@ public class Client
         catch (Exception e1)
         {
             XFireFault fault = XFireFault.createFault(e1);
-            recvContext.getInPipeline().handleFault(fault, context);
-            this.fault = fault;
             
-            Element detail = fault.getDetail();
-            if (detail != null)
-            {
-                processFaultDetail(detail);
-            }
-        }
-    }
-    
-    protected void processFaultDetail(Element detail)
-    {
-        if (detail.getContentSize() > 0)
-        {
-            Element exDetail = (Element) detail.getContent().get(0);
+            AbstractMessage faultMsg = context.getExchange().getFaultMessage();
+            faultMsg.setBody(fault);
             
-            MessagePartInfo faultPart = getFaultPart(context.getExchange().getOperation(),
-                                                     exDetail);
+            HandlerPipeline inPipe = new HandlerPipeline(xfire.getFaultPhases());
+            inPipe.addHandlers(getFaultHandlers());
+            inPipe.addHandlers(transport.getFaultHandlers());
 
-            if (faultPart == null)
-                return;
-            
             try
             {
-                BindingProvider provider = context.getService().getBindingProvider();
-                JDOMStreamReader reader = new JDOMStreamReader(exDetail);
-                reader.nextTag();
+                inPipe.invoke(context);
                 
-                this.fault = (Exception) provider.readParameter(faultPart, reader, context);
+                this.fault = (Exception) faultMsg.getBody();
             }
-            catch (XFireFault e)
-            {
-                this.fault = e;
-            }
-            catch (XMLStreamException e)
+            catch (Exception e)
             {
                 this.fault = e;
             }
         }
     }
     
-    protected MessagePartInfo getFaultPart(OperationInfo operation, Element exDetail)
-    {
-        QName qname = new QName(exDetail.getNamespaceURI(), exDetail.getName());
-        
-        for (Iterator itr = operation.getFaults().iterator(); itr.hasNext();)
-        {
-            FaultInfo faultInfo = (FaultInfo) itr.next();
-            
-            MessagePartInfo part = faultInfo.getMessagePart(qname);
-            
-            if (part != null) return part;
-        }
-        
-        return null;
-    }
 
     public void finishReadingMessage(InMessage message, MessageContext context)
         throws XFireFault

@@ -40,4 +40,9 @@ public class DeadLetterChannel
     public void close()
     {
     }
+    
+    public boolean isAsync()
+    {
+        return true;
+    }
 }

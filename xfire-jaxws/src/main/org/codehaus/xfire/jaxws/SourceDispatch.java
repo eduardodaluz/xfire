@@ -3,33 +3,37 @@ package org.codehaus.xfire.jaxws;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.xml.transform.Source;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
 
-public class Dispatch
-    implements javax.xml.ws.Dispatch
+import org.codehaus.xfire.client.Client;
+
+public class SourceDispatch
+    implements javax.xml.ws.Dispatch<Source>
 {
+    Client client;
+    
+    public Source invoke(Source source)
+    {
+        
+        return null;
+    }
 
-    public Object invoke(Object arg0)
+    public Future< ? > invokeAsync(Source source, AsyncHandler<Source> arg1)
     {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public Future invokeAsync(Object arg0, AsyncHandler arg1)
+    public Response<Source> invokeAsync(Source source)
     {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public Response invokeAsync(Object arg0)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void invokeOneWay(Object arg0)
+    public void invokeOneWay(Source source)
     {
         // TODO Auto-generated method stub
         

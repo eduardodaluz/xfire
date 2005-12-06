@@ -1,14 +1,10 @@
 package org.codehaus.xfire.plexus.config;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -58,69 +54,39 @@ public class ObjectServiceConfigurator
         String soapVersion = config.getChild("soapVersion").getValue("1.1");
         String wsdlUrl = config.getChild("wsdl").getValue("");
 
-        Service service = null;
-        if (wsdlUrl.length() > 0)
+
+        Class clazz = getClass().getClassLoader().loadClass(serviceClass);
+        Service service;
+        SoapVersion version = null;
+        if (soapVersion.equals("1.1"))
         {
-            try
-            {
-                TypeMapping tm = getTypeMappingRegistry().createTypeMapping(true);
-                PlexusConfiguration[] types = config.getChild("types").getChildren("type");
-                for (int i = 0; i < types.length; i++)
-                {
-                    initializeType(types[i], tm);
-                }
+            version = Soap11.getInstance();
+        }
+        else if (soapVersion.equals("1.2"))
+        {
+            version = Soap12.getInstance();
+        }
 
-                URL url = null;
-                try
-                {
-                    url = new URL(wsdlUrl);
-                }
-                catch (MalformedURLException e)
-                {
-                    url = new File(wsdlUrl).toURL();
-                }
-
-                service = builder.create(loadClass(serviceClass), url);
-            }
-            catch (WSDLException e)
-            {
-                throw new PlexusConfigurationException("Could not load the WSDL file.", e);
-            }
+        builder.setStyle(style);
+        builder.setUse(use);
+        builder.setSoapVersion(version);
+        
+        if (name.length() == 0 && namespace.length() == 0)
+        {
+            service = builder.create(clazz, (Map) null);
         }
         else
         {
-            Class clazz = getClass().getClassLoader().loadClass(serviceClass);
-
-            SoapVersion version = null;
-            if (soapVersion.equals("1.1"))
-            {
-                version = Soap11.getInstance();
-            }
-            else if (soapVersion.equals("1.2"))
-            {
-                version = Soap12.getInstance();
-            }
-
-            builder.setStyle(style);
-            builder.setUse(use);
-            builder.setSoapVersion(version);
-            
-            if (name.length() == 0 && namespace.length() == 0)
-            {
-                service = builder.create(clazz, (Map) null);
-            }
-            else
-            {
-                service = builder.create(clazz, name, namespace, null);
-            }
-
-            PlexusConfiguration[] types = config.getChild("types").getChildren("type");
-            for (int i = 0; i < types.length; i++)
-            {
-                initializeType(types[i],
-                               ((AegisBindingProvider) builder.getBindingProvider()).getTypeMapping(service));
-            }
+            service = builder.create(clazz, name, namespace, null);
         }
+
+        PlexusConfiguration[] types = config.getChild("types").getChildren("type");
+        for (int i = 0; i < types.length; i++)
+        {
+            initializeType(types[i],
+                           ((AegisBindingProvider) builder.getBindingProvider()).getTypeMapping(service));
+        }
+
 
         // Setup the Invoker
         if (getServiceLocator().hasComponent(role))
