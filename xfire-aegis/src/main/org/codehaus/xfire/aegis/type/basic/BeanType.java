@@ -2,6 +2,7 @@ package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -23,6 +24,7 @@ import org.jdom.Element;
  * Serializes JavaBeans.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:jack.xu.hong@gmail.com">Jack Hong</a>
  */
 public class BeanType
     extends Type
@@ -42,8 +44,8 @@ public class BeanType
         
         this.setTypeClass(info.getTypeClass());
     }
-
-    public Object readObject(MessageReader reader, MessageContext context)
+	
+	public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
         BeanTypeInfo info = getTypeInfo();
@@ -51,7 +53,21 @@ public class BeanType
         try
         {
             Class clazz = getTypeClass();
-            Object object = clazz.newInstance();
+            boolean isInterface = clazz.isInterface();
+            Object object = null;
+            InterfaceInvocationHandler delegate = null;
+            
+            if (isInterface)
+            {
+                delegate = new InterfaceInvocationHandler();
+                object = Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                                                new Class[] { clazz },
+                                                delegate);
+            }
+            else
+            {
+                object = clazz.newInstance();
+            }
 
             // Read attributes
             while (reader.hasMoreAttributeReaders())
@@ -64,8 +80,13 @@ public class BeanType
                 if (type != null)
                 {
                     Object writeObj = type.readObject(childReader, context);
-    
-                    writeProperty(name, object, writeObj);
+
+                    if (isInterface) {
+                    	delegate.writeProperty(name.getLocalPart(), writeObj);
+                    }
+                    else {
+                    	writeProperty(name, object, writeObj);
+                    }
                 }
             }
 
@@ -90,7 +111,15 @@ public class BeanType
                     if (!nil)
                     {
                         Object writeObj = type.readObject(childReader, context);
-                        writeProperty(name, object, writeObj);
+
+                        if (isInterface)
+                        {
+                            delegate.writeProperty(name.getLocalPart(), writeObj);
+                        }
+                        else
+                        {
+                            writeProperty(name, object, writeObj);
+                        }
                     }
                     else
                     {
