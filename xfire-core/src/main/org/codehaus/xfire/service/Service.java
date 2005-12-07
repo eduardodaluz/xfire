@@ -45,7 +45,6 @@ public class Service
     private BindingProvider bindingProvider;
     private Object executor;
     private MessageSerializer faultSerializer;
-    private Map properties = new HashMap();
     private WSDLWriter wsdlWriter;
     private SoapVersion soapVersion;
 
@@ -74,22 +73,6 @@ public class Service
         visitor.startEndpoint(this);
         service.accept(visitor);
         visitor.endEndpoint(this);
-    }
-
-    /**
-     * @see org.codehaus.xfire.service.Service#getProperty(java.lang.String)
-     */
-    public Object getProperty(String name)
-    {
-        return properties.get(name);
-    }
-
-    /**
-     * @see org.codehaus.xfire.service.Service#setProperty(java.lang.String, java.lang.Object)
-     */
-    public void setProperty(String name, Object value)
-    {
-        properties.put(name, value);
     }
 
     public Object getExecutor()

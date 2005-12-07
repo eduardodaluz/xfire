@@ -3,7 +3,10 @@ package org.codehaus.xfire.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.xfire.AbstractContext;
+
 public abstract class AbstractHandlerSupport
+    extends AbstractContext
     implements HandlerSupport
 {
     private List inHandlers = new ArrayList();

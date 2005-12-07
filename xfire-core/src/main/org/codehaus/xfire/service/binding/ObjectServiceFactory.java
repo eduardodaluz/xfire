@@ -135,6 +135,7 @@ public class ObjectServiceFactory
         
         service.setWSDLWriter(new ResourceWSDL(wsdlUrl));
         
+        
         return service;
     }
     

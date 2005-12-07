@@ -19,6 +19,9 @@ public interface Channel
      * an HttpServletResponse, instead of opening a new connection.
      */
     String BACKCHANNEL_URI = "urn:xfire:channel:backchannel";
+    
+    String USERNAME = "username";
+    String PASSWORD = "password";
 
     void open() throws Exception;
     

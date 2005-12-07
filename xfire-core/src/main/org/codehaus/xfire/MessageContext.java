@@ -1,5 +1,6 @@
 package org.codehaus.xfire;
 
+import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.exchange.InExchange;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
@@ -22,6 +23,7 @@ public class MessageContext extends AbstractContext
 {
     private Session session;
 
+    private Client client;
     private Service service;
     private Binding binding;
     private MessageExchange exchange;
@@ -130,6 +132,16 @@ public class MessageContext extends AbstractContext
         this.service = service;
     }
 
+    public Client getClient()
+    {
+        return client;
+    }
+
+    public void setClient(Client client)
+    {
+        this.client = client;
+    }
+
     public HandlerPipeline getInPipeline()
     {
         return inPipeline;
@@ -148,5 +160,40 @@ public class MessageContext extends AbstractContext
     public void setOutPipeline(HandlerPipeline outPipeline)
     {
         this.outPipeline = outPipeline;
+    }
+    
+    /**
+     * Gets a propert by checking layered contexts. Contexts are checked in the
+     * following order:
+     * <ul>
+     * <li>MessageContext
+     * <li>OperationInfo
+     * <li>Client
+     * <li>Service
+     * </li>
+     *  
+     * @param key
+     * @return
+     */
+    public Object getContextualProperty(String key)
+    {
+        Object val = getProperty(key);
+        
+        if (val == null && getExchange() != null && getExchange().getOperation() != null)
+        {
+            val = getExchange().getOperation().getProperty(key);
+        }
+        
+        if (val == null && getClient() != null)
+        {
+            val = getClient().getProperty(key);
+        }
+        
+        if (val == null && getService() != null)
+        {
+            val = getService().getProperty(key);
+        }
+        
+        return val;
     }
 }
