@@ -1,9 +1,11 @@
 package org.codehaus.xfire.xmlbeans;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
@@ -49,7 +51,7 @@ public class XmlBeansFault
         {
             if ( cursor.getName().getLocalPart().equals("faultcode") )
             {
-                setFaultCode( cursor.getTextValue() );
+                setFaultCode( readQName(cursor) );
             }
             if ( cursor.getName().getLocalPart().equals("faultstring") )
             {
@@ -76,6 +78,31 @@ public class XmlBeansFault
     }
 
     
+    private QName readQName(XmlCursor cursor)
+    {
+        String value = cursor.getTextValue();
+        if (value == null) return null;
+        
+        int index = value.indexOf(":");
+        
+        if (index == -1)
+        {
+            return new QName(value);
+        }
+        
+        String prefix = value.substring(0, index);
+        String localName = value.substring(index+1);
+        String ns = cursor.namespaceForPrefix(prefix);
+        
+        if (ns == null || localName == null)
+        {
+            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        }
+        
+        return new QName(ns, localName, prefix);
+    }
+    
+
     /**
      * Fill in the fault information from the XmlCursor.
      * @param cursor

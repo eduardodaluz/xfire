@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -13,7 +14,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.jdom.StaxSerializer;
@@ -58,7 +59,7 @@ public class Soap12FaultSerializer
                             
                             if (reader.getLocalName().equals("Value"))
                             {
-                                fault.setFaultCode(parseFaultCode(reader, reader.getElementText()));
+                                fault.setFaultCode(NamespaceHelper.readQName(reader));
                             }
                         }
                         else if (reader.getLocalName().equals("SubCode"))
@@ -68,7 +69,7 @@ public class Soap12FaultSerializer
                             
                             if (reader.getLocalName().equals("Value"))
                             {
-                                fault.setSubCode(reader.getElementText());
+                                fault.setSubCode(NamespaceHelper.readQName(reader));
                             }
                             
                         }
@@ -102,28 +103,7 @@ public class Soap12FaultSerializer
         }
         message.setBody(fault);
     }
-    
-    protected static String parseFaultCode(XMLStreamReader reader, String value)
-    {
-        int colon = value.indexOf(":");
-        if (colon > -1)
-        {
-            String prefix = value.substring(0, colon);
-            String local = value.substring(colon+1);
-            String uri = reader.getNamespaceURI(prefix);
 
-            if (uri.equals(Soap12.getInstance().getNamespace()))
-            {
-                return local;
-            }
-            
-            return value;
-        }
-        else
-        {
-            return value;
-        }
-    }
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {
@@ -142,14 +122,14 @@ public class Soap12FaultSerializer
             writer.writeStartElement("soap:Code");
 
             writer.writeStartElement("soap:Value");
-            writer.writeCharacters("soap:" + fault.getFaultCode());
+            writeQName(writer, fault.getFaultCode());
             writer.writeEndElement(); // Value
 
             if (fault.getSubCode() != null)
             {
                 writer.writeStartElement("soap:SubCode");
                 writer.writeStartElement("soap:Value");
-                writer.writeCharacters(fault.getSubCode());
+                writeQName(writer, fault.getSubCode());
                 writer.writeEndElement(); // Value
                 writer.writeEndElement(); // SubCode
             }
@@ -191,5 +171,18 @@ public class Soap12FaultSerializer
         {
             throw new XFireRuntimeException("Couldn't create fault.", xe);
         }
+    }
+    
+    protected void writeQName(XMLStreamWriter writer, QName qname) 
+        throws XMLStreamException
+    {
+        String ns = qname.getNamespaceURI();
+        String prefix = "";
+        if (ns.length() > 0)
+        {
+            prefix = NamespaceHelper.getUniquePrefix(writer, ns, true) + ":";
+        }
+        
+        writer.writeCharacters(prefix + qname.getLocalPart());
     }
 }

@@ -3,7 +3,11 @@ package org.codehaus.xfire.fault;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
 import org.jdom.Element;
 
 /**
@@ -24,20 +28,23 @@ public class XFireFault
     /**
 	 * Serialization ID. 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	/**
      * Fault codes.
      */
-    public final static String VERSION_MISMATCH = "VersionMismatch";
-    public final static String MUST_UNDERSTAND = "MustUnderstand";
-    public final static String DATA_ENCODING_UNKNOWN = "DataEncodingUnknown";
+    private final static String ns12 = Soap12.getInstance().getNamespace();
+    private final static String ns11 = Soap11.getInstance().getNamespace();
+    
+    public final static QName VERSION_MISMATCH = new QName(ns12, "VersionMismatch");
+    public final static QName MUST_UNDERSTAND = new QName(ns12, "MustUnderstand");
+    public final static QName DATA_ENCODING_UNKNOWN = new QName(ns12, "DataEncodingUnknown");
 
     /**
      * "The message was incorrectly formed or did not contain the appropriate information in order to succeed." -- SOAP
      * 1.2 Spec
      */
-    public final static String SENDER = "Sender";
+    public final static QName SENDER = new QName(ns12, "Sender");
 
     /**
      * A SOAP 1.2 only fault code.
@@ -48,10 +55,15 @@ public class XFireFault
      * If this message is used in a SOAP 1.1 Fault it will most likely (depending on the FaultHandler) be mapped to
      * "Sender" instead.
      */
-    public final static String RECEIVER = "Receiver";
+    public final static QName RECEIVER = new QName(ns12, "Receiver");
+    
+    public final static QName SOAP11_SERVER = new QName(ns11, "Server");
+    public final static QName SOAP11_CLIENT = new QName(ns11, "Client");
+    public final static QName SOAP11_MUST_UNDERSTAND = new QName(ns11, "MustUnderstand");
+    public final static QName SOAP11_VERSION_MISMATCH = new QName(ns11, "VersionMismatch");
 
-    private String faultCode;
-    private String subCode;
+    private QName faultCode;
+    private QName subCode;
     private String message;
     private String role;
     private Element detail;
@@ -100,7 +112,7 @@ public class XFireFault
      * @param throwable The exception that caused this fault.
      * @param code      The fault code. See XFireFault's static fields.
      */
-    public XFireFault(Throwable throwable, String code)
+    public XFireFault(Throwable throwable, QName code)
     {
         this(throwable.getMessage(), throwable, code);
     }
@@ -111,7 +123,7 @@ public class XFireFault
      * @param message The fault message.
      * @param code    The fault code. See XFireFault's static fields.
      */
-    public XFireFault(String message, String code)
+    public XFireFault(String message, QName code)
     {
         this(message, null, code);
     }
@@ -124,7 +136,7 @@ public class XFireFault
      */
     public XFireFault(String message,
                       Throwable cause,
-                      String code)
+                      QName code)
     {
         super(message, cause);
         
@@ -173,7 +185,7 @@ public class XFireFault
      *
      * @return the fault code.
      */
-    public String getFaultCode()
+    public QName getFaultCode()
     {
         return faultCode;
     }
@@ -183,7 +195,7 @@ public class XFireFault
      *
      * @param faultCode the fault code.
      */
-    public void setFaultCode(String faultCode)
+    public void setFaultCode(QName faultCode)
     {
         this.faultCode = faultCode;
     }
@@ -247,7 +259,7 @@ public class XFireFault
      *
      * @return The SubCode element as detailed by the SOAP 1.2 spec.
      */
-    public String getSubCode()
+    public QName getSubCode()
     {
         return subCode;
     }
@@ -257,7 +269,7 @@ public class XFireFault
      *
      * @param subCode The SubCode element as detailed by the SOAP 1.2 spec.
      */
-    public void setSubCode(String subCode)
+    public void setSubCode(QName subCode)
     {
         this.subCode = subCode;
     }

@@ -36,7 +36,7 @@ public class FaultTest
         Document response = invokeService("Echo", "/org/codehaus/xfire/echo11.xml");
 
         addNamespace("s", Soap11.getInstance().getNamespace());
-        assertValid("//s:Fault/faultcode[text()='MustUnderstand']", response);
+        assertValid("//s:Fault/faultcode[text()='soap:MustUnderstand']", response);
         assertValid("//s:Fault/faultstring[text()='CustomFault']", response);
         assertValid("//s:Fault/detail/test", response);
     }

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -13,6 +14,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.util.jdom.StaxSerializer;
 import org.codehaus.xfire.util.stax.FragmentStreamReader;
@@ -50,7 +52,7 @@ public class Soap11FaultSerializer
                     case XMLStreamReader.START_ELEMENT:
                         if (reader.getLocalName().equals("faultcode"))
                         {
-                            fault.setFaultCode(reader.getElementText());
+                            fault.setFaultCode(NamespaceHelper.readQName(reader));
                         }
                         else if (reader.getLocalName().equals("faultstring"))
                         {
@@ -77,6 +79,7 @@ public class Soap11FaultSerializer
         message.setBody(fault);
     }
 
+
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {
@@ -95,18 +98,38 @@ public class Soap11FaultSerializer
 
             writer.writeStartElement("faultcode");
 
-            String codeString = fault.getFaultCode();
-            if (codeString.equals(XFireFault.RECEIVER))
+            QName faultCode = fault.getFaultCode();
+            String codeString;
+            if (faultCode.equals(XFireFault.RECEIVER))
             {
-                codeString = "Server";
+                codeString = "soap:Server";
             }
-            if (codeString.equals(XFireFault.SENDER))
+            else if (faultCode.equals(XFireFault.SENDER))
             {
-                codeString = "Server";
+                codeString = "soap:Server";
             }
-            else if (codeString.equals(XFireFault.DATA_ENCODING_UNKNOWN))
+            else if (faultCode.equals(XFireFault.VERSION_MISMATCH))
             {
-                codeString = "Client";
+                codeString = "soap:VersionMismatch";
+            }
+            else if (faultCode.equals(XFireFault.MUST_UNDERSTAND))
+            {
+                codeString = "soap:MustUnderstand";
+            }
+            else if (faultCode.equals(XFireFault.DATA_ENCODING_UNKNOWN))
+            {
+                codeString = "soap:Client";
+            }
+            else
+            {
+                String ns = faultCode.getNamespaceURI();
+                String prefix = "";
+                if (ns.length() > 0)
+                {
+                    prefix = NamespaceHelper.getUniquePrefix(writer, ns, true) + ":";
+                }
+                
+                codeString = prefix + faultCode.getLocalPart();
             }
 
             writer.writeCharacters(codeString);

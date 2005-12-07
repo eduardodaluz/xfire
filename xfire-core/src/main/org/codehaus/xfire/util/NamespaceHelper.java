@@ -4,9 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.XFireRuntimeException;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -155,5 +158,37 @@ public class NamespaceHelper
         }
 
         return protocol + "://" + sb.toString();
+    }
+
+    /**
+     * Reads a QName from the element text. Reader must be positioned at the
+     * start tag.
+     * @param reader
+     * @return
+     * @throws XMLStreamException
+     */
+    public static QName readQName(XMLStreamReader reader) 
+        throws XMLStreamException
+    {
+        String value = reader.getElementText();
+        if (value == null) return null;
+        
+        int index = value.indexOf(":");
+        
+        if (index == -1)
+        {
+            return new QName(value);
+        }
+        
+        String prefix = value.substring(0, index);
+        String localName = value.substring(index+1);
+        String ns = reader.getNamespaceURI(prefix);
+        
+        if (ns == null || localName == null)
+        {
+            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        }
+        
+        return new QName(ns, localName, prefix);
     }
 }

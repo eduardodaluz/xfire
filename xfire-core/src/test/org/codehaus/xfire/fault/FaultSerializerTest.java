@@ -3,6 +3,7 @@ package org.codehaus.xfire.fault;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -34,7 +35,7 @@ public class FaultSerializerTest
 
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
-        fault.setSubCode("m:NotAvailable");
+        fault.setSubCode(new QName("urn:test", "NotAvailable", "m"));
         Element e = new Element("bah", "t", "urn:test");
         e.addContent("bleh");
         fault.getDetail().addContent(e);
@@ -61,7 +62,7 @@ public class FaultSerializerTest
         Document doc = readDocument(out.toString());
         //printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
-        assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc);
+        assertValid("//s:SubCode/s:Value[text()='ns1:NotAvailable']", doc);
         addNamespace("t", "urn:test2");
         assertValid("//s:Detail/t:bah2[text()='bleh']", doc);
         assertValid("//s:Role[text()='http://someuri']", doc);
@@ -128,7 +129,7 @@ public class FaultSerializerTest
         writer.close();
 
         Document doc = readDocument(out.toString());
-        //printNode(doc);
+
         addNamespace("s", Soap12.getInstance().getNamespace());
         addNamespace("t", "urn:test2");
         assertValid("//detail/t:bah2[text()='bleh']", doc);
@@ -143,7 +144,7 @@ public class FaultSerializerTest
         assertTrue(inMsg.getBody() instanceof XFireFault);
         XFireFault fault2 = (XFireFault) inMsg.getBody();
         
-        assertEquals("Server", fault2.getFaultCode());
+        assertEquals(XFireFault.SOAP11_SERVER, fault2.getFaultCode());
         assertEquals(fault.getMessage(), fault2.getMessage());
         
         assertNotNull(fault.getDetail().getChild("bah2", Namespace.getNamespace("urn:test2")));
