@@ -39,8 +39,15 @@ public class PortGenerator
     public void generate(GenerationContext context)
         throws Exception
     {
-        Service service = context.getService();
-        
+        for (Iterator itr = context.getServices().iterator(); itr.hasNext();)
+        {
+            generate(context, (Service) itr.next());
+        }
+    }
+    
+    public void generate(GenerationContext context, Service service)
+        throws Exception
+    {
         String name = service.getSimpleName();
         String ns = service.getTargetNamespace();
         
@@ -60,8 +67,8 @@ public class PortGenerator
         
         JVar serviceVar = servCls.field(JMod.PRIVATE, Service.class, "service");
         
-        JDefinedClass serviceImpl = (JDefinedClass) context.getProperty(ServiceStubGenerator.SERVICE_STUB);
-        JDefinedClass serviceIntf = (JDefinedClass) context.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
+        JDefinedClass serviceImpl = (JDefinedClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
+        JDefinedClass serviceIntf = (JDefinedClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         
         JType pfType = model._ref(XFireProxyFactory.class);
         JFieldVar pfVar = servCls.field(JMod.STATIC + JMod.PRIVATE, pfType, "proxyFactory", JExpr._new(pfType));

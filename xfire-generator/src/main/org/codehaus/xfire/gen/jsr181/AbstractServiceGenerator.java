@@ -13,7 +13,6 @@ import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.GeneratorPlugin;
 import org.codehaus.xfire.gen.SchemaSupport;
 import org.codehaus.xfire.service.Binding;
-import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -33,12 +32,24 @@ public abstract class AbstractServiceGenerator
 {
     private static final Log log = LogFactory.getLog(AbstractServiceGenerator.class);
 
+    private Service currentService;
+    
     public void generate(GenerationContext context)
         throws Exception
     {
-        if (!isWritten(context));
+        for (Iterator itr = context.getServices().iterator(); itr.hasNext();)
+        {
+            generate(context, (Service) itr.next());
+        }
+    }
+    
+    public void generate(GenerationContext context, Service service)
+        throws Exception
+    {
+        setCurrentService(service);
         
-        Service service = context.getService();
+        if (!isWritten(context));
+
         ServiceInfo serviceInfo = service.getServiceInfo();
 
         String clsName = getClassName(context, service);
@@ -67,6 +78,16 @@ public abstract class AbstractServiceGenerator
         }
     }
 
+    public Service getCurrentService()
+    {
+        return currentService;
+    }
+
+    public void setCurrentService(Service currentService)
+    {
+        this.currentService = currentService;
+    }
+
     protected boolean isWritten(GenerationContext context)
     {
         return false;
@@ -75,7 +96,7 @@ public abstract class AbstractServiceGenerator
     private void generateOperation(GenerationContext context, OperationInfo op, JMethod method) 
         throws GenerationException
     {
-        Collection bindings = context.getService().getBindings();
+        Collection bindings = getCurrentService().getBindings();
         SchemaSupport schema = context.getSchemaGenerator();
         
         List<String> partNames = new ArrayList<String>();

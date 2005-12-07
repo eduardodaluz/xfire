@@ -60,22 +60,18 @@ public class Wsdl11Generator
         context.setWsdlLocation(wsdl);
         
         support.initialize(context);
+
+        context.setServices(builder.getServices());
+        context.setDestinationPackage(getDestinationPackage());
+        context.setSchemaGenerator(support);
         
-        for (Iterator itr = builder.getServices().iterator(); itr.hasNext();)
+        for (Iterator<GeneratorPlugin> pitr = profileObj.getPlugins().iterator(); pitr.hasNext();)
         {
-            Service service = (Service) itr.next();
-            context.setService(service);
-            context.setDestinationPackage(getDestinationPackage());
-            context.setSchemaGenerator(support);
+            GeneratorPlugin plugin = pitr.next();
             
-            for (Iterator<GeneratorPlugin> pitr = profileObj.getPlugins().iterator(); pitr.hasNext();)
-            {
-                GeneratorPlugin plugin = pitr.next();
-                
-                plugin.generate(context);
-            }
+            plugin.generate(context);
         }
-        
+
         // Write the code!
         codeModel.build(dest);
     }

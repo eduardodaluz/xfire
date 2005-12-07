@@ -1,6 +1,7 @@
 package org.codehaus.xfire.gen;
 
 import java.io.File;
+import java.util.Collection;
 
 import org.codehaus.xfire.AbstractContext;
 import org.codehaus.xfire.service.Service;
@@ -11,7 +12,7 @@ public class GenerationContext
     extends AbstractContext
 {
     private JCodeModel codeModel;
-    private Service service;
+    private Collection services;
     private Object wsdl;
     private String destinationPackage;
     private SchemaSupport schemaGenerator;
@@ -49,14 +50,14 @@ public class GenerationContext
         return codeModel;
     }
 
-    public void setService(Service service)
+    public Collection getServices()
     {
-        this.service = service;
+        return services;
     }
 
-    public Service getService()
+    public void setServices(Collection services)
     {
-        return service;
+        this.services = services;
     }
 
     public Object getWsdl()

@@ -34,7 +34,7 @@ public class JAXWSHelper
     
     protected JAXWSHelper() 
     { 
-        createSoapBinding(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        createSoapBinding(SoapHttpTransport.WSDL_SOAP_BINDING);
         createSoapBinding(SoapHttpTransport.SOAP12_HTTP_BINDING);
         createSoapBinding(LocalTransport.BINDING_ID);
         

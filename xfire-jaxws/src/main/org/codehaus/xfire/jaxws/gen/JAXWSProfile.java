@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.codehaus.xfire.gen.GeneratorPlugin;
 import org.codehaus.xfire.gen.PluginProfile;
-import org.codehaus.xfire.gen.jsr181.PortGenerator;
 import org.codehaus.xfire.gen.jsr181.ServiceStubGenerator;
 
 public class JAXWSProfile 

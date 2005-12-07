@@ -50,13 +50,18 @@ public class Endpoint
         
         this.binding = jaxWsHelper.getBinding(bindingId);
 
+        if (binding == null)
+        {
+            throw new IllegalStateException("Could not find binding: " + bindingId);
+        }
+        
         this.implementor = implementor;
         
         this.service = jaxWsHelper.getServiceFactory().create(implementor.getClass());
         this.service.setInvoker(new BeanInvoker(implementor));
         
         transportManager = jaxWsHelper.getXFire().getTransportManager();
-        transportManager.disableAll(service);
+        
     }
 
     @Override
@@ -75,8 +80,12 @@ public class Endpoint
     public void publish(String address)
     {
         if (published)
+        {
             throw new IllegalStateException("Endpoint has already been published.");
+        }
         
+        jaxWsHelper.getXFire().getServiceRegistry().register(service);
+        transportManager.disableAll(service);
         transportManager.enable(binding.getTransport(), service);
         
         published = true;
@@ -86,7 +95,9 @@ public class Endpoint
     public void publish(Object context)
     {
         if (published)
+        {
             throw new IllegalStateException("Endpoint has already been published.");
+        }
         
         published = true;
     }

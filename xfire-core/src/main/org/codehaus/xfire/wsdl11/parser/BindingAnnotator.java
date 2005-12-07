@@ -12,21 +12,34 @@ import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.transport.TransportManager;
 
 public abstract class BindingAnnotator
 {
     private Service service;
     private Definition definition;
-    private WSDLServiceBuilder serviceBuilder;
-
-    public WSDLServiceBuilder getServiceBuilder()
+    private TransportManager transportManager;
+    private BindingProvider bindingProvider;
+    
+    public BindingProvider getBindingProvider()
     {
-        return serviceBuilder;
+        return bindingProvider;
     }
 
-    public void setServiceBuilder(WSDLServiceBuilder serviceBuilder)
+    public void setBindingProvider(BindingProvider bindingProvider)
     {
-        this.serviceBuilder = serviceBuilder;
+        this.bindingProvider = bindingProvider;
+    }
+
+    public TransportManager getTransportManager()
+    {
+        return transportManager;
+    }
+
+    public void setTransportManager(TransportManager transportManager)
+    {
+        this.transportManager = transportManager;
     }
 
     public Service getService()

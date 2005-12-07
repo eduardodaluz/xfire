@@ -25,12 +25,12 @@ public class ServiceStubGenerator
     public static final String SERVICE_STUB = "service.stub";
     
     @Override
-    public void generate(GenerationContext context)
+    public void generate(GenerationContext context, Service service)
         throws Exception
     {
-        if (context.getService().getEndpoints().size() == 0) return;
+        if (service.getEndpoints().size() == 0) return;
         
-        super.generate(context);
+        super.generate(context, service);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ServiceStubGenerator
         ann.param("serviceName", service.getSimpleName());
         ann.param("targetNamespace", service.getTargetNamespace());
         
-        JClass intf = (JClass) context.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
+        JClass intf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         ann.param("endpointInterface", intf.fullName());
         
         jc._implements(intf);
@@ -71,7 +71,7 @@ public class ServiceStubGenerator
            ann.param("parameterStyle", ParameterStyle.BARE);
         }
         
-        context.setProperty(SERVICE_STUB, jc);
+        service.setProperty(SERVICE_STUB, jc);
     }
     
     @Override

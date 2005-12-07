@@ -34,22 +34,22 @@ public class ServiceInterfaceGenerator
     private List<ServiceInfo> serviceInfos = new ArrayList<ServiceInfo>();
 
     @Override
-    public void generate(GenerationContext context)
+    public void generate(GenerationContext context, Service service)
         throws Exception
     {
-        if (context.getService().getEndpoints().size() == 0) return;
+        if (service.getEndpoints().size() == 0) return;
         
-        super.generate(context);
+        super.generate(context, service);
     }
 
     protected boolean isWritten(GenerationContext context)
     {
-        if (serviceInfos.contains(context.getService().getServiceInfo()))
+        if (serviceInfos.contains(getCurrentService().getServiceInfo()))
         {
             return true;
         }
         
-        serviceInfos.add(context.getService().getServiceInfo());
+        serviceInfos.add(getCurrentService().getServiceInfo());
         return false;
     }
     
@@ -66,7 +66,7 @@ public class ServiceInterfaceGenerator
         ann.param("name", service.getServiceInfo().getPortType().getLocalPart());
         ann.param("targetNamespace", service.getTargetNamespace());
         
-        context.setProperty(SERVICE_INTERFACE, jc);
+        service.setProperty(SERVICE_INTERFACE, jc);
     }
 
     protected void annotate(GenerationContext context, OperationInfo op, JMethod method)

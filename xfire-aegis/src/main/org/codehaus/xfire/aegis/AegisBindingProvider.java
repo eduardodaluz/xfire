@@ -172,7 +172,10 @@ public class AegisBindingProvider
         else
             mw = new ElementWriter(writer);
 
-        type.writeObject(value, mw, context);
+        if (value != null)
+        {
+            type.writeObject(value, mw, context);
+        }
     
         if (writeOuter)
             mw.close();
@@ -260,7 +263,12 @@ public class AegisBindingProvider
 
     public Class getTypeClass(QName name, Service service)
     {
-        TypeMapping tm = getTypeMapping(service);
+        TypeMapping tm;
+        if (service != null)
+            tm = getTypeMapping(service);
+        else
+            tm = registry.getDefaultTypeMapping();
+        
         Type type = tm.getType(name);
         
         if (type == null) return null;

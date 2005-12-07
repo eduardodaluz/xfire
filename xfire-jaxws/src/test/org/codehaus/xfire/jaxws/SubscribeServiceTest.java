@@ -16,7 +16,7 @@ public class SubscribeServiceTest extends AbstractXFireTest {
         
         osf = new JAXWSServiceFactory(getXFire().getTransportManager());
 
-        Service service = osf.create(SubscribeServiceEx.class);
+        Service service = osf.create(SubscribeService.class);
 
         getXFire().getServiceRegistry().register(service);
     }
@@ -24,7 +24,7 @@ public class SubscribeServiceTest extends AbstractXFireTest {
     public void testService()
             throws Exception
     {
-        Document response = invokeService("SubscribeServiceEx", 
+        Document response = invokeService("SubscribeService", 
                                           "/org/codehaus/xfire/jaxws/wsn-subscribe.xml");
         
         assertNotNull(response);

@@ -24,7 +24,6 @@ public class SourceDispatchTest
     {
         EchoService service = new EchoService();
         
-        EchoPortType echo = service.getEchoLocalPort();
-        assertEquals("echo", echo.echo("echo"));
+        //Dispatch d = service.createDispatch()
     }
 }

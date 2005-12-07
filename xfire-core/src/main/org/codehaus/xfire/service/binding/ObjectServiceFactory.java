@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,6 +42,7 @@ import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
+import org.codehaus.xfire.wsdl11.parser.WSDLServiceConfigurator;
 
 /**
  * Java objects-specific implementation of the {@link ServiceFactory} interface.
@@ -55,6 +57,7 @@ public class ObjectServiceFactory
     public static final String STYLE = "sobjectServiceFactory.tyle";
     public static final String USE = "objectServiceFactory.use";
     public static final String SOAP_VERSION = "objectServiceFactory.soapVersion";
+    public static final String CREATE_BINDINGS =  "objectServiceFactory.createBindings";
     
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
@@ -129,11 +132,33 @@ public class ObjectServiceFactory
         return bindingProvider;
     }
 
-    public Service create(Class clazz, URL wsdlUrl, Map properties)
+    /**
+     * Creates a service via <code>create(Class)</code>. It then configures
+     * the bindings and endpoints on the service via the WSDL. 
+     */
+    public Service create(Class clazz, QName name, URL wsdlUrl, Map properties)
     {
-        Service service = create(clazz, null, null, false, properties);
+        if (properties == null) properties = new HashMap();
+        
+        properties.put(CREATE_BINDINGS, Boolean.FALSE);
+        
+        Service service = create(clazz, properties);
+        service.setName(name);
         
         service.setWSDLWriter(new ResourceWSDL(wsdlUrl));
+
+        try
+        {
+            WSDLServiceConfigurator config = new WSDLServiceConfigurator(service, wsdlUrl, transportManager);
+            config.configure();
+        }
+        catch (Exception e)
+        {
+            if (e instanceof XFireRuntimeException)
+                throw (XFireRuntimeException) e;
+            
+            throw new XFireRuntimeException("Couldn't configure service.", e);
+        }
         
         
         return service;
@@ -175,7 +200,7 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz, Map properties)
     {
-        return create(clazz, null, null, properties);
+        return create(clazz, (String) null, (String) null, properties);
     }
 
     protected String makeServiceNameFromClassName(Class clazz)
@@ -199,14 +224,8 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz, String name, String namespace, Map properties)
     {
-        return create(clazz, name, namespace, bindingCreationEnabled, properties);
-    }
-    
-    protected Service create(Class clazz, String name, String namespace, boolean buildBindings, Map properties)
-    {
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
-        String theNamespace = (namespace != null) ? namespace : NamespaceHelper.makeNamespaceFromClassName(
-                clazz.getName(), "http");
+        String theNamespace = (namespace != null) ? namespace : getTargetNamespace(clazz);
         QName qName = new QName(theNamespace, theName);
         
         SoapVersion theVersion = null;
@@ -246,6 +265,13 @@ public class ObjectServiceFactory
 
         endpoint.setProperty(STYLE, theStyle);
         endpoint.setProperty(USE, theUse);
+        
+        boolean buildBindings = bindingCreationEnabled;
+        if (properties != null && properties.containsKey(CREATE_BINDINGS))
+        {
+            buildBindings = ((Boolean) properties.get(CREATE_BINDINGS)).booleanValue();
+        }
+        
         if (buildBindings)
         {
             createBindings(endpoint);
@@ -266,6 +292,12 @@ public class ObjectServiceFactory
         registerHandlers(endpoint);
 
         return endpoint;
+    }
+
+    protected String getTargetNamespace(Class clazz)
+    {
+        return NamespaceHelper.makeNamespaceFromClassName(
+                clazz.getName(), "http");
     }
 
     protected void createBindings(Service service)

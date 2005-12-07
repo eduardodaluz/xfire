@@ -1,46 +1,45 @@
 package org.codehaus.xfire.jaxws;
 
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Dispatch;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
 
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.jaxws.handler.SimpleHandlerResolver;
-import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.transport.Transport;
 
 public class ServiceDelegate
     extends javax.xml.ws.spi.ServiceDelegate
 {
     private JAXWSHelper jaxWsHelper = JAXWSHelper.getInstance();
-    private Service service;
     private XFireProxyFactory factory = jaxWsHelper.getProxyFactory();
     private ServiceFactory serviceFactory = jaxWsHelper.getServiceFactory();
 
-    private URL wsdlDocumentLocation;
+    private URL wsdlLocation;
     private Executor executor;
     private HandlerResolver handlerResolver;
-    private Class serviceClass;
     private QName serviceName;
-
+    
+    private Map<QName, Service> port2Service = new HashMap<QName, Service>();
+    private Map<Class, Service> intf2service = new HashMap<Class, Service>();
+    private Map<QName, PortInfo> port2Endpoint = new HashMap<QName, PortInfo>();
+    
     public ServiceDelegate()
     {
         handlerResolver = new SimpleHandlerResolver();
@@ -50,38 +49,28 @@ public class ServiceDelegate
     {
         this();
         
-        this.wsdlDocumentLocation = wsdlLocation;
+        this.wsdlLocation = wsdlLocation;
         this.serviceName = serviceName;
-
-        try
+    }
+    
+    private Service getService(Class clazz)
+    {
+        Service service = intf2service.get(clazz);
+        if (service == null)
         {
-            this.serviceClass = (Class) clientClass.getField("SERVICE_CLASS").get(null);
-        }
-        catch (Exception e)
-        {
-            throw new WebServiceException("Could not find service class on " + clientClass.toString());
+            service = serviceFactory.create(clazz, serviceName, wsdlLocation, null);
+            
+            intf2service.put(clazz, service);
         }
         
-        this.service = serviceFactory.create(serviceClass, wsdlLocation, null);
-        
-        WebServiceClient wsClient = (WebServiceClient) clientClass.getAnnotation(WebServiceClient.class);
-        
-        Method[] methods = clientClass.getMethods();
-        for(Method m : methods)
-        {
-            if (m.isAnnotationPresent(WebEndpoint.class))
-            {
-                WebEndpoint we = m.getAnnotation(WebEndpoint.class);
-                
-                // TODO             
-            }
-        }
+        return service;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getPort(QName portName, Class<T> clazz)
     {
-        Endpoint endpoint = service.getEndpoint(portName);
+        Endpoint endpoint = getService(clazz).getEndpoint(portName);
         
         if (endpoint == null) throw new WebServiceException("Invalid port name " + portName);
         
@@ -100,39 +89,26 @@ public class ServiceDelegate
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getPort(Class<T> arg0)
+    public <T> T getPort(Class<T> clazz)
     {
-        if (service.getEndpoints().size() == 0)
+        if (getService(clazz).getEndpoints().size() == 0)
         {
             throw new WebServiceException("No available ports.");
         }
         
-        return (T) createPort((Endpoint) service.getEndpoints().iterator().next());
+        return (T) createPort((Endpoint) getService(clazz).getEndpoints().iterator().next());
     }
 
     @Override
     public void addPort(QName portName, URI bindingUri, String address)
     {
-        Binding binding = getOrCreateBinding(bindingUri);
-        Endpoint endpoint = new Endpoint(portName, binding, address);
+        PortInfo portInfo = new PortInfo(bindingUri, address);
         
-        service.addEndpoint(endpoint);
+        port2Endpoint.put(portName, portInfo);
     }
 
-    protected Binding getOrCreateBinding(URI bindingUri)
-    {
-        Transport t = jaxWsHelper.getBinding(bindingUri.toString()).getTransport();
-        
-        if (t == null)
-        {
-            throw new WebServiceException("Could not find a transport for binding " + bindingUri);
-        }
-        
-        Binding b = service.getBinding(t);
-        
-        return b;
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -163,10 +139,8 @@ public class ServiceDelegate
     {
         List<QName> ports = new ArrayList<QName>();
         
-        for (Iterator itr = service.getEndpoints().iterator(); itr.hasNext();)
-        {
-            ports.add(((Endpoint) itr.next()).getName());
-        }
+        ports.addAll(port2Endpoint.keySet());
+        ports.addAll(port2Service.keySet());
         
         return ports.iterator();
     }
@@ -174,7 +148,7 @@ public class ServiceDelegate
     @Override
     public URL getWSDLDocumentLocation()
     {
-        return wsdlDocumentLocation;
+        return wsdlLocation;
     }
 
     @Override
@@ -199,5 +173,33 @@ public class ServiceDelegate
     public void setExecutor(Executor executor)
     {
         this.executor = executor;
+    }
+    
+    static class PortInfo 
+    {
+        private URI bindingUri;
+        private String address;
+        
+        public PortInfo(URI bindingUri, String address2)
+        {
+            this.bindingUri = bindingUri;
+            this.address = address2;
+        }
+        public String getAddress()
+        {
+            return address;
+        }
+        public void setAddress(String address)
+        {
+            this.address = address;
+        }
+        public URI getBindingUri()
+        {
+            return bindingUri;
+        }
+        public void setBindingUri(URI bindingUri)
+        {
+            this.bindingUri = bindingUri;
+        }
     }
 }

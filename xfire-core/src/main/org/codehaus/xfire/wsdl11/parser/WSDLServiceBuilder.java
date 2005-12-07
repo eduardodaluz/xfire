@@ -9,9 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingFault;
-import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Import;
@@ -37,7 +34,6 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
@@ -52,6 +48,12 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+/**
+ * Builds a collection of Services from a WSDL.
+ * 
+ * @author Dan Diephouse
+ * @see org.codehaus.xfire.service.Service
+ */
 public class WSDLServiceBuilder
 {
     private PortType portType;
@@ -173,19 +175,16 @@ public class WSDLServiceBuilder
                 
                 if (ports.size() == 0) continue;
                 
-                begin(wservice, portType);
-                
-                for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
-                {
-                    Port port = (Port) iterator1.next();
-                    Binding binding = port.getBinding();
-
-                    visit(binding);
-                    
-                    visit(port);
-                }
-                
-                end(wservice, portType);
+                ServiceInfo serviceInfo = getServiceInfo(portType);
+                WSDLServiceConfigurator config = new WSDLServiceConfigurator(serviceInfo,
+                                                                             definition,
+                                                                             wservice, 
+                                                                             portType,
+                                                                             ports,
+                                                                             bindingProvider,
+                                                                             transportManager);
+                config.configure();
+                this.services.add(config.getService());
             }
         }
 
@@ -261,7 +260,7 @@ public class WSDLServiceBuilder
         while (isWrapped && itr.hasNext())
         {
            Operation o = (Operation) itr.next();
-           isWrapped = isWrapped(o);
+           isWrapped = isWrapped(o, schemas);
         }
         
         serviceInfo.setWrapped(isWrapped);
@@ -292,63 +291,6 @@ public class WSDLServiceBuilder
     protected ServiceInfo getServiceInfo(PortType portType)
     {
         return (ServiceInfo) portType2serviceInfo.get(portType);
-    }
-    
-    protected void visit(Binding binding)
-    {
-        BindingAnnotator ann = getBindingAnnotator(binding);
-        
-        if (ann != null)
-        {
-            ann.setServiceBuilder(this);
-            ann.visit(binding);
-            
-            List bindingOperations = binding.getBindingOperations();
-            for (int i = 0; i < bindingOperations.size(); i++)
-            {
-                BindingOperation bindingOperation = 
-                    (BindingOperation) bindingOperations.get(i);
-                OperationInfo opInfo = (OperationInfo) wop2op.get(bindingOperation.getOperation());
-                ann.visit(bindingOperation, opInfo);
-                
-                ann.visit(bindingOperation.getBindingInput(), 
-                          bindingOperation.getOperation().getInput(),
-                          opInfo.getInputMessage());
-                
-                if (opInfo.hasOutput())
-                {
-                    ann.visit(bindingOperation.getBindingOutput(), 
-                              bindingOperation.getOperation().getOutput(),
-                              opInfo.getOutputMessage());
-                }
-                
-                Collection bindingFaults = bindingOperation.getBindingFaults().values();
-                for (Iterator iterator2 = bindingFaults.iterator(); iterator2.hasNext();)
-                {
-                    BindingFault bindingFault = (BindingFault) iterator2.next();
-                    Fault fault = bindingOperation.getOperation().getFault(bindingFault.getName());
-                    FaultInfo faultInfo = (FaultInfo) wfault2msg.get(fault);
-                    
-                    ann.visit(bindingFault, fault, faultInfo);
-                }
-
-            }
-        }
-    }
-
-    protected BindingAnnotator getBindingAnnotator(Binding binding)
-    {
-        for (Iterator itr = bindingAnnotators.iterator(); itr.hasNext();)
-        {
-            BindingAnnotator ann = (BindingAnnotator) itr.next();
-            if (ann.isUnderstood(binding))
-            {
-                ann.setService(service);
-                return ann;
-            }
-        }
-        
-        return null;
     }
 
     protected void visit(Fault fault)
@@ -441,7 +383,7 @@ public class WSDLServiceBuilder
      * 
      * @return
      */
-    protected boolean isWrapped(Operation op)
+    public static boolean isWrapped(Operation op, XmlSchemaCollection schemas)
     {
         Input input = op.getInput();
         Output output = op.getOutput();
@@ -491,7 +433,7 @@ public class WSDLServiceBuilder
     }
     
     
-    private boolean hasOneElement(XmlSchemaComplexType type)
+    private static boolean hasOneElement(XmlSchemaComplexType type)
     {
         if (type.getParticle() != null && type.getParticle() instanceof XmlSchemaSequence)
         {
@@ -522,7 +464,7 @@ public class WSDLServiceBuilder
         return (XmlSchemaComplexType) schemaEl.getSchemaType();
     }
     
-    protected boolean hasAttributes(XmlSchemaComplexType complexType)
+    protected static boolean hasAttributes(XmlSchemaComplexType complexType)
     {
         // Now lets see if we have any attributes...
         // This should probably look at the restricted and substitute types too.
@@ -581,33 +523,6 @@ public class WSDLServiceBuilder
         else
         {
             createMessageParts(info, output.getMessage());
-        }
-    }
-
-    protected void visit(BindingOperation operation)
-    {
-        opInfo = service.getServiceInfo().getOperation(operation.getName());
-    }
-    
-    protected void begin(javax.wsdl.Service wservice, PortType portType)
-    {
-        service = new Service(getServiceInfo(portType));
-        service.setName(wservice.getQName());
-    }
-
-    protected void end(javax.wsdl.Service wservice, PortType portType)
-    {
-        service.setFaultSerializer(new SoapFaultSerializer());
-        service.setBindingProvider(getBindingProvider());
-        services.add(service);
-    }
-    
-    protected void visit(javax.wsdl.Port port)
-    {
-        BindingAnnotator ann = getBindingAnnotator(port.getBinding());
-        if (ann != null)
-        {
-            ann.visit(port);
         }
     }
 }

@@ -116,10 +116,10 @@ public class JAXBSchemaSupport implements SchemaSupport
         
         if (typeClass == null)
         {
-            Class clazz = provider.getTypeClass(concreteType, context.getService());
+            Class clazz = provider.getTypeClass(concreteType, null);
             if (clazz == null)
             {
-                clazz = provider.getTypeClass(schemaType, context.getService());
+                clazz = provider.getTypeClass(schemaType, null);
             }
             
             if (clazz == null)

@@ -58,7 +58,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
 
         soapBinding = new SoapBinding(wbinding.getQName(), getService());
         soapBinding.setTransportURI(sbind.getTransportURI());
-        soapBinding.setTransport(getServiceBuilder().getTransportManager().getTransport(sbind.getTransportURI()));
+        soapBinding.setTransport(getTransportManager().getTransport(sbind.getTransportURI()));
         
         getService().addBinding(soapBinding);
         
@@ -93,7 +93,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
                 SOAPHeader header = (SOAPHeader) o;
 
                 QName msgName = header.getMessage();
-                Message hmsg = getServiceBuilder().getDefinition().getMessage(msgName);
+                Message hmsg = getDefinition().getMessage(msgName);
                 Part part = hmsg.getPart(header.getPart());
                 
                 QName name = part.getElementName();
@@ -102,7 +102,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
                     name = part.getTypeName();
                 }
                 
-                SchemaType st = getServiceBuilder().getBindingProvider().getSchemaType(name, getService());
+                SchemaType st = getBindingProvider().getSchemaType(name, getService());
                 
                 MessagePartInfo info = getSoapBinding().getHeaders((MessageInfo) msg).addMessagePart(name, null);
                 info.setSchemaType(st);

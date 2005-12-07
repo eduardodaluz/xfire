@@ -3,6 +3,8 @@ package org.codehaus.xfire.service;
 import java.net.URL;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
@@ -53,5 +55,5 @@ public interface ServiceFactory
      * @return
      * @throws Exception
      */
-    public Service create(Class clazz, URL wsdlUrl, Map properties);
+    public Service create(Class clazz, QName service, URL wsdlUrl, Map properties);
 }

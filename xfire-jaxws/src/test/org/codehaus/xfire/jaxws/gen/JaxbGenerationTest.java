@@ -12,6 +12,21 @@ public class JaxbGenerationTest
     public void testEcho() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl("src/wsdl/globalweather-twoporttypes.wsdl");
+        generator.setOutputDirectory("target/test-services");
+        generator.setDestinationPackage("services.global");
+        generator.setProfile(JAXWSProfile.class.getName());
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("services.global.GlobalWeatherService");
+        assertNotNull(echo);
+    }
+
+    public void testWeather() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl("src/wsdl/echo.wsdl");
         generator.setOutputDirectory("target/test-services");
         generator.setDestinationPackage("services.echo");
@@ -23,5 +38,4 @@ public class JaxbGenerationTest
         JDefinedClass echo = model._getClass("services.echo.EchoPortType");
         assertNotNull(echo);
     }
-
 }

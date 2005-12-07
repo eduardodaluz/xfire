@@ -109,7 +109,7 @@ public class ObjectServiceFactoryTest
         properties.put(ObjectServiceFactory.USE, SoapConstants.USE_ENCODED);
         
         Service endpoint = objectServiceFactory.create(Echo.class,
-                                                       null,
+                                                       (String) null,
                                                        null,
                                                        properties);
         assertNotNull(endpoint);
