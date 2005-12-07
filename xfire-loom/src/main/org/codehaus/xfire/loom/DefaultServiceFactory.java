@@ -3,6 +3,8 @@ package org.codehaus.xfire.loom;
 import java.net.URL;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
@@ -67,13 +69,12 @@ public class DefaultServiceFactory
     {
         m_factory.addIgnoredMethods(className);
     }
-
-    public Service create(final Class clazz, final URL wsdlUrl)
-            throws Exception
-    {
-        return m_factory.create(clazz, wsdlUrl);
-    }
     
+    public Service create(Class clazz, QName service, URL wsdlUrl, Map properties)
+    {
+        return m_factory.create(clazz, service, wsdlUrl, properties);
+    }
+
     public Service create(Class clazz, Map properties)
     {
         return m_factory.create(clazz, properties);
