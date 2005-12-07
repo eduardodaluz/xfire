@@ -3,6 +3,8 @@ package org.codehaus.xfire.picocontainer;
 import java.net.URL;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.picocontainer.util.PicoObjectInvoker;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -58,10 +60,15 @@ public class PicoObjectServiceFactory
         return prepare(super.create(clazz, name, namespace, properties));
     }
 
-    public Service create(Class clazz, URL wsdlUrl)
-        throws Exception
+
+    public Service create(Class clazz, Map properties)
     {
-        return prepare(super.create(clazz, wsdlUrl));
+        return prepare(super.create(clazz, properties));
+    }
+
+    public Service create(Class clazz, QName name, URL wsdlUrl, Map properties)
+    {
+        return prepare(super.create(clazz, name, wsdlUrl, properties));
     }
 
     public Service create(Class clazz)
