@@ -227,4 +227,39 @@ public class ElementWriter
             throw new XFireRuntimeException("Error writing document.", e);
         }
     }
+
+    public String getPrefixForNamespace(String namespace, String hint)
+    {
+        try
+        {
+            String prefix = writer.getPrefix(namespace);
+
+            if(prefix == null)
+            {
+                String ns = writer.getNamespaceContext().getNamespaceURI(hint);
+                if(ns == null)
+                {
+                    prefix = hint;
+                }
+                else
+                if(ns.equals(namespace))
+                {
+                    return prefix;
+                }
+                else
+                {
+                    prefix = NamespaceHelper.getUniquePrefix(writer);
+                }
+
+                writer.setPrefix(prefix, namespace);
+                writer.writeNamespace(prefix, namespace);
+            }
+
+            return prefix;
+        }
+        catch(XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Error writing document.", e);
+        }
+    }
 }

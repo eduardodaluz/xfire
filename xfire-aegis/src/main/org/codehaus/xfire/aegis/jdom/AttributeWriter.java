@@ -56,6 +56,11 @@ public class AttributeWriter
         throw new IllegalStateException();
     }
 
+    public String getPrefixForNamespace(String namespace, String hint)
+    {
+        throw new IllegalStateException();
+    }
+
     public void close()
     {
     }

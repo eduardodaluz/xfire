@@ -36,6 +36,19 @@ public interface MessageWriter
     MessageWriter getElementWriter(QName qname);
 
     String getPrefixForNamespace( String namespace );
+
+    /**
+     * Get a prefix for a namespace. After calling this, the prefix returned is registered with the namespace.
+     * <p/>
+     * This method will make an attempt to use the hint prefix if possible. If the namespace is already registered or
+     * the hint is already registered with a different namespace then the behavior will be the same as the non-hint
+     * version.
+     *
+     * @param namespace     the namespace to retrieve the prefix for
+     * @param hint          the hint for the prefix.
+     * @return      the prefix associated with the namespace
+     */
+    String getPrefixForNamespace( String namespace, String hint );
    
     /**
      * Tells the MessageWriter that writing operations are completed so 

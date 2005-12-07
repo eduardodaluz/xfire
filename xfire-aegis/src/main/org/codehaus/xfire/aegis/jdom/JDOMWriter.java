@@ -62,6 +62,12 @@ public class JDOMWriter
         throw new UnsupportedOperationException("Stream writing not supported from a JDOMWriter.");
     }
 
+    public String getPrefixForNamespace(String namespace, String hint)
+    {
+        // todo: this goes for the option of ignoring the hint - we should probably at least attempt to honour it
+        return NamespaceHelper.getUniquePrefix(element, namespace);
+    }
+
     public MessageWriter getAttributeWriter(String name)
     {
         Attribute att = new Attribute(name, "", element.getNamespace());
