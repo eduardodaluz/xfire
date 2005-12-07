@@ -104,12 +104,10 @@ public class ObjectInvoker
             }
             else if (t instanceof Exception)
             {
-                logger.warn("Error invoking '" + ServiceUtils.getMethodName(method) + '\'', t);
                 throw new XFireFault(t, XFireFault.SENDER);
             }
             else
             {
-                logger.warn("Error invoking '" + ServiceUtils.getMethodName(method) + '\'', e);
                 throw new XFireRuntimeException("Error invoking '" + ServiceUtils.getMethodName(method) + '\'', e);
             }
         }
