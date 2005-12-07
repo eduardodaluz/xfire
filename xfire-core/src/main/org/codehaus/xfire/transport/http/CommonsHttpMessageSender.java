@@ -1,9 +1,16 @@
 package org.codehaus.xfire.transport.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
@@ -19,12 +26,6 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Sends a http message via commons http client. To customize the
@@ -74,15 +75,17 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             client.setParams(params);
         }
         
-        String username = (String) context.getProperty(Channel.USERNAME);
+        postMethod = new PostMethod(getUri());
+        
+        String username = (String) context.getContextualProperty(Channel.USERNAME);
         if (username != null)
         {
-            String password = (String) context.getProperty(Channel.PASSWORD);
-            client.getState().setCredentials(AuthScope.ANY, 
-                                             new UsernamePasswordCredentials(username, password));
+            String password = (String) context.getContextualProperty(Channel.PASSWORD);
+            client.getParams().setAuthenticationPreemptive(true);
+            getHttpState().setCredentials(AuthScope.ANY, 
+                                          new UsernamePasswordCredentials(username, password));
         }
         
-        postMethod = new PostMethod(getUri());
         postMethod.setRequestHeader("Content-Type", "text/xml; charset="+getEncoding());
 
         if (getSoapAction() != null)
@@ -119,7 +122,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     {
         HttpState state = (HttpState)httpState.get();
 
-        if( null == state ) {
+        if( null == state )
+        {
             state = new HttpState();
             httpState.set( state );
         }

@@ -214,6 +214,7 @@ public class Client
             context.setXFire(xfire);
             context.setBinding(binding);
             context.setProperty(CLIENT_MODE, Boolean.TRUE);
+            context.setClient(this);
             
             RobustInOutExchange exchange = new RobustInOutExchange(context);
             exchange.setOperation(op);
