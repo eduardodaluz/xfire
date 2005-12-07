@@ -85,7 +85,7 @@ public class HttpAuthTest
 
     public void testProxy() throws MalformedURLException, XFireFault
     {
-        Echo echo = (Echo) new XFireProxyFactory().create(service, "http://localhost:8391/Echo");
+        Echo echo = (Echo) new XFireProxyFactory().create(service, "http://localhost:8191/Echo");
         
         Client client = ((XFireProxy) Proxy.getInvocationHandler(echo)).getClient();
         client.setProperty(Channel.USERNAME, "user");
