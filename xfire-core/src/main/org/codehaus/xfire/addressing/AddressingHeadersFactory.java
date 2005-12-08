@@ -1,10 +1,11 @@
 package org.codehaus.xfire.addressing;
 
+import org.codehaus.xfire.fault.XFireFault;
 import org.jdom.Element;
 
 public interface AddressingHeadersFactory
 {
-    AddressingHeaders createHeaders(Element root);
+    AddressingHeaders createHeaders(Element root) throws XFireFault;
     
  
     

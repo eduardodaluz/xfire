@@ -3,6 +3,9 @@ package org.codehaus.xfire.addressing;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
+import org.codehaus.xfire.fault.XFireFault;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -17,7 +20,7 @@ public abstract class AbstactAddressingHeadersFactory2005
 
     protected abstract Namespace getNamespace();
 
-    public AddressingHeaders createHeaders(Element root)
+    public AddressingHeaders createHeaders(Element root) throws XFireFault
     {
         AddressingHeaders headers = new AddressingHeaders();
 
@@ -34,8 +37,8 @@ public abstract class AbstactAddressingHeadersFactory2005
         {
             headers.setReplyTo(createEPR(replyTo));
         }
-
-        Element faultTo = root.getChild(WSA_FAULT_TO, wsa);
+        assertSingle(root,WSA_FAULT_TO,wsa);
+        Element faultTo = root.getChild(WSA_FAULT_TO, wsa); 
         if (faultTo != null)
         {
             headers.setFaultTo(createEPR(faultTo));
@@ -60,6 +63,24 @@ public abstract class AbstactAddressingHeadersFactory2005
         }
 
         return headers;
+    }
+
+    
+    private void assertSingle(Element root, String tagName, Namespace wsa) throws XFireFault
+    {
+        List list = root.getChildren(tagName,wsa);
+        if( list!= null ){
+            if(list.size()> 1){
+                
+                XFireFault fault = new XFireFault("Invalid header",new QName("Sender"));
+                fault.setSubCode(new QName(wsa.getURI(),"InvalidAddressingHeader"));
+                Element detail = new Element("ProblemHeaderQName",wsa);
+                detail.addContent(tagName);
+                fault.setDetail(detail);
+                throw fault;
+            }
+        }
+        
     }
 
     /*

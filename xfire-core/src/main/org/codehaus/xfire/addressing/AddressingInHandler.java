@@ -162,7 +162,7 @@ public class AddressingInHandler
         String addr = epr.getAddress();
         OutMessage outMessage = null;
         
-
+        boolean isFault = epr.getName().equals(WSAConstants.WSA_FAULT_TO);
         Transport t = null;
         if (addr == null)
         {
@@ -196,9 +196,11 @@ public class AddressingInHandler
         outMessage.setChannel(t.createChannel());
 
         AddressingHeaders headers = new AddressingHeaders();
+        // Fault can have only refrenceFaprameters
+        if(!isFault ){
         headers.setTo(addr);
-
         headers.setAction(aoi.getOutAction());
+        }
 
         Element refParam = epr.getReferenceParametersElement();
         if (refParam != null)
@@ -216,8 +218,9 @@ public class AddressingInHandler
                     params.add(e);
                 }
 
-                headers.setReferenceParameters(params);
+                
             }
+            headers.setReferenceParameters(params);
         }
 
         outMessage.setProperty(ADRESSING_HEADERS, headers);
