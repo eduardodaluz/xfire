@@ -233,15 +233,7 @@ public class Client
             throw XFireFault.createFault(e1);
         }
         
-        /**
-         * If this is an asynchronous channel, we'll need to sleep() and wait
-         * for a response. Channels such as HTTP will have the response set
-         * by the time we get to this point.
-         */
-        if (getOutChannel().isAsync() && response == null && fault == null && op.hasOutput())
-        {
-            waitForResponse();
-        }
+        waitForResponse();
 
         if (fault != null)
         {
@@ -254,12 +246,30 @@ public class Client
         response = null;
         return localResponse;
     }
+    
+    public Object[] invoke(String name, Object[] params) throws Exception
+    {
+        return invoke(service.getServiceInfo().getOperation(name), params);
+    }
 
     /**
      * Waits for a response from the service.
      */
     protected void waitForResponse()
     {
+        /**
+         * If this is an asynchronous channel, we'll need to sleep() and wait
+         * for a response. Channels such as HTTP will have the response set
+         * by the time we get to this point.
+         */
+        if (!getOutChannel().isAsync() || 
+                response != null && 
+                fault != null && 
+                !context.getExchange().getOperation().hasOutput())
+        {
+            return;
+        }
+        
         int count = 0;
         while (response == null && fault == null && count < timeout)
         {

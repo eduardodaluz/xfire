@@ -40,7 +40,7 @@ public class STAXUtilsTest
         doAmazonDoc();
         doEbayDoc();
         doAmazonDoc2();
-        //doDOMWrite();
+        doDOMWrite();
         doDOMRead();
     }
     
@@ -166,8 +166,8 @@ public class STAXUtilsTest
         
         org.w3c.dom.Document doc = STAXUtils.read(builder, reader);
         
-        DOMUtils.writeXml(doc, System.out);
-        /*DOMReader domReader = new DOMReader();
+        /*DOMUtils.writeXml(doc, System.out);
+        DOMReader domReader = new DOMReader();
         Document testDoc = domReader.read(doc);
 
         addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");

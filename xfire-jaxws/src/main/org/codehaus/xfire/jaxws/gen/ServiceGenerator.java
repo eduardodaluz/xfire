@@ -33,7 +33,9 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JMods;
 import com.sun.codemodel.JType;
+import com.sun.codemodel.JVar;
 
 /**
  * Generates JAX-WS Client Service artifacts.
@@ -107,6 +109,16 @@ public class ServiceGenerator
         
         boolean addedLocal = false;
         
+        JBlock staticBlock = servCls.init();
+        
+        JType hashMapType = model._ref(HashMap.class);
+        JType mapType = model._ref(Map.class);
+        JVar portsVar = servCls.field(JMod.PRIVATE + JMod.STATIC,
+                                      mapType, "ports", JExpr._new(hashMapType));
+
+        JMethod method = servCls.method(JMod.PUBLIC + JMod.STATIC, mapType, "getPortClassMap");
+        method.body()._return(JExpr.ref("ports"));
+        
         for (Service service : services)
         {
             JDefinedClass serviceImpl = (JDefinedClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
@@ -150,6 +162,8 @@ public class ServiceGenerator
                 
                 JAnnotationUse weAnn = getFooEndpoint.annotate(WebEndpoint.class);
                 weAnn.param("name", endpoint.getName().getLocalPart());
+                
+                staticBlock.add(portsVar.invoke("put").arg(newQN).arg(intfClass));
             }
         }
     }

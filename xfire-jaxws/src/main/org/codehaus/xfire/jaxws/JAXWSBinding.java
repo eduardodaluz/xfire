@@ -47,15 +47,17 @@ public class JAXWSBinding
         {
             op = endpoint.getServiceInfo().getOperation( dr.getLocalName() );
 
-            setOperation(op, context);
+            if (op != null)
+            {
+                setOperation(op, context);
+    
+                JAXWSOperationBinding opBinding = getOperationBinding(op);
+                opBinding.readMessage(message, context);
+                return;
+            }
+        }
 
-            JAXWSOperationBinding opBinding = getOperationBinding(op);
-            opBinding.readMessage(message, context);
-        }
-        else
-        {
-            delegate.readMessage(message, context);
-        }
+        delegate.readMessage(message, context);
     }
 
     private JAXWSOperationBinding getOperationBinding(OperationInfo op)

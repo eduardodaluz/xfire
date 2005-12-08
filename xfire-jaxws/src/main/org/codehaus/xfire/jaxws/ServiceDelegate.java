@@ -1,5 +1,6 @@
 package org.codehaus.xfire.jaxws;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -18,11 +19,13 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
 
+import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.jaxws.handler.SimpleHandlerResolver;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.transport.Transport;
 
 public class ServiceDelegate
     extends javax.xml.ws.spi.ServiceDelegate
@@ -38,7 +41,7 @@ public class ServiceDelegate
     
     private Map<QName, Service> port2Service = new HashMap<QName, Service>();
     private Map<Class, Service> intf2service = new HashMap<Class, Service>();
-    private Map<QName, PortInfo> port2Endpoint = new HashMap<QName, PortInfo>();
+    private Map<QName, PortInfo> port2info = new HashMap<QName, PortInfo>();
     
     public ServiceDelegate()
     {
@@ -51,6 +54,28 @@ public class ServiceDelegate
         
         this.wsdlLocation = wsdlLocation;
         this.serviceName = serviceName;
+        
+        try
+        {
+            Method method = clientClass.getMethod("getPortClassMap", new Class[0]);
+            
+            Map port2Class = (Map) method.invoke(null, new Object[0]);
+            for (Iterator itr = port2Class.entrySet().iterator(); itr.hasNext();)
+            {
+                Map.Entry entry = (Map.Entry) itr.next();
+                
+                QName port = (QName) entry.getKey();
+                Class clazz = (Class) entry.getValue();
+
+                Service service = getService(clazz);
+                port2Service.put(port, service);
+                intf2service.put(clazz, service);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new IllegalStateException("Cannot access getPortClassMap method.", e);
+        }
     }
     
     private Service getService(Class clazz)
@@ -106,20 +131,57 @@ public class ServiceDelegate
     {
         PortInfo portInfo = new PortInfo(bindingUri, address);
         
-        port2Endpoint.put(portName, portInfo);
+        port2info.put(portName, portInfo);
     }
 
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> javax.xml.ws.Dispatch<T> createDispatch(QName port, Class<T> type, Mode serviceMode)
-    {
-        if (type == Source.class)
+    {   
+        Transport transport;
+        String address;
+        
+        PortInfo portInfo = getPortInfo(port);
+        if (portInfo != null)
         {
-            return (Dispatch<T>) new SourceDispatch();
+            String bindingUri = portInfo.getBindingUri().toASCIIString();
+            transport = jaxWsHelper.getBinding(bindingUri).getTransport();
+            address = portInfo.getAddress();
+        }
+        else
+        {
+            Service service = port2Service.get(port);
+            
+            if (service == null)
+            {
+                throw new IllegalStateException("Could not find port " + port);
+            }
+            
+            Endpoint ep = service.getEndpoint(port);
+            transport = ep.getBinding().getTransport();
+            address = ep.getAddress();
         }
         
-        return null;
+        Client client = new Client(transport,
+                                   jaxWsHelper.getSourceService(), 
+                                   address);
+        
+        if (type == Source.class)
+        {
+            SourceDispatch dispatch = new SourceDispatch(client);
+            dispatch.setMode(serviceMode);
+            return (Dispatch<T>) dispatch;
+        }
+        else
+        {
+            throw new WebServiceException("Unknown dispatch type: " + type.getName());
+        }
+    }
+
+    private PortInfo getPortInfo(QName port)
+    {
+        return port2info.get(port);
     }
 
     @Override
@@ -139,7 +201,7 @@ public class ServiceDelegate
     {
         List<QName> ports = new ArrayList<QName>();
         
-        ports.addAll(port2Endpoint.keySet());
+        ports.addAll(port2info.keySet());
         ports.addAll(port2Service.keySet());
         
         return ports.iterator();

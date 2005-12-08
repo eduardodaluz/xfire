@@ -1,9 +1,8 @@
 package org.codehaus.xfire.aegis.type.xml;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -14,7 +13,6 @@ import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.util.stax.W3CDOMStreamReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -57,9 +55,7 @@ public class SourceType
         {
             if (object == null) return;
             
-            XMLStreamReader reader = createXMLStreamReader((Source) object);
-
-            STAXUtils.copy(reader, ((ElementWriter) writer).getXMLStreamWriter());
+            write((Source) object, ((ElementWriter) writer).getXMLStreamWriter());
         }
         catch (XMLStreamException e)
         {
@@ -67,10 +63,10 @@ public class SourceType
         }
     }
 
-    protected XMLStreamReader createXMLStreamReader(Source object)
+    protected void write(Source object, XMLStreamWriter writer)
         throws FactoryConfigurationError, XMLStreamException, XFireFault
     {
-        if (object == null) return null;
+        if (object == null) return;
 
         if (object instanceof DOMSource)
         {
@@ -90,12 +86,8 @@ public class SourceType
                 throw new XFireFault("Node type " + ds.getNode().getClass() + 
                                      " was not understood.", XFireFault.RECEIVER);
             }
-            
-            return new W3CDOMStreamReader(element);
+           
+            STAXUtils.writeElement(element, writer);
         }
-        
-        XMLInputFactory xif = XMLInputFactory.newInstance();
-        XMLStreamReader reader = xif.createXMLStreamReader(object);
-        return reader;
     }
 }

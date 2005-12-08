@@ -3,13 +3,18 @@ package org.codehaus.xfire.jaxws;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.jaxws.binding.AbstractBinding;
 import org.codehaus.xfire.jaxws.binding.HTTPBinding;
 import org.codehaus.xfire.jaxws.binding.SOAPBinding;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.HttpTransport;
@@ -32,6 +37,8 @@ public class JAXWSHelper
     
     private static JAXWSHelper helper = new JAXWSHelper();
     
+    private Service sourceService;
+    
     protected JAXWSHelper() 
     { 
         createSoapBinding(SoapHttpTransport.WSDL_SOAP_BINDING);
@@ -42,6 +49,12 @@ public class JAXWSHelper
         HTTPBinding binding = new HTTPBinding(http);
         bindings.put(HTTPBinding.HTTP_BINDING, binding);
         transport2Binding.put(http, binding);
+        
+        Map props = new HashMap();
+        props.put(ObjectServiceFactory.CREATE_BINDINGS, Boolean.TRUE);
+        props.put(ObjectServiceFactory.STYLE, SoapConstants.STYLE_DOCUMENT);
+        
+        sourceService = new ObjectServiceFactory().create(SourceService.class, props);
     }
     
     public void createSoapBinding(String id)
@@ -85,5 +98,15 @@ public class JAXWSHelper
     public AbstractBinding getBinding(Transport t)
     {
         return transport2Binding.get(t);
+    }
+    
+    public static interface SourceService
+    {
+        public Source invoke(Source source);
+    }
+
+    public Service getSourceService()
+    {
+        return sourceService;
     }
 }

@@ -15,11 +15,13 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.w3c.dom.Attr;
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * Common StAX utilities.
@@ -259,35 +261,20 @@ public class STAXUtils
         String prefix = e.getPrefix();
         String ns = e.getNamespaceURI();
         String localName = e.getLocalName();
+
+        if (prefix == null) prefix = "";
         
-        if ( prefix == null )
+        String decUri = writer.getNamespaceContext().getNamespaceURI(prefix);
+        boolean declareNamespace = (decUri == null || !decUri.equals(ns));
+        
+
+        if (ns == null || ns.length() == 0)
         {
-            if ( ns == null )
-            {
-                writer.writeStartElement( localName );
-            }
-            else
-            {
-                prefix = "";
-                writer.setDefaultNamespace(ns);
-                writer.writeStartElement( ns, localName );
-                
-                String curUri = writer.getNamespaceContext().getNamespaceURI(prefix);
-                if ( curUri == null || curUri.length() != ns.length() )
-                {
-                    writer.writeDefaultNamespace(ns);
-                }
-            }
+            writer.writeStartElement( localName );
         }
         else
         {
             writer.writeStartElement(prefix, localName, ns);
-            
-            String curUri = writer.getNamespaceContext().getNamespaceURI(prefix);
-            if ( curUri == null || curUri.length() != ns.length() || !curUri.equals(ns) )
-            {
-                writer.writeNamespace(prefix, ns);
-            }
         }
 
         NamedNodeMap attrs = e.getAttributes();
@@ -295,21 +282,41 @@ public class STAXUtils
         {
             Node attr = attrs.item(i);
             
-            String attrPrefix = writer.getNamespaceContext().getPrefix(attr.getNamespaceURI());
-            if ( attrPrefix == null )
+            String name = attr.getNodeName();
+            String attrPrefix = "";
+            int prefixIndex = name.indexOf(':');
+            if (prefixIndex != -1)
             {
-                writer.writeAttribute(attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
+                attrPrefix = name.substring(0, prefixIndex);
+                name = name.substring(prefixIndex+1);
+            }
+
+            if (attrPrefix.equals("xmlns"))
+            {
+                writer.writeNamespace(attrPrefix, attr.getNamespaceURI());
+                
+                if (attrPrefix.equals(prefix) && attr.getNamespaceURI().equals(ns))
+                {
+                    declareNamespace = false;
+                }
             }
             else
             {
-                writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), attr.getNodeName(), attr.getNodeValue());
+                if ( attrPrefix == null )
+                {
+                    writer.writeAttribute(attr.getNamespaceURI(), name, attr.getNodeValue());
+                }
+                else
+                {
+                    writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), name, attr.getNodeValue());
+                }
             }
         }
-    
-        String value = DOMUtils.getContent(e);
-        
-        if ( value != null && value.length() > 0)
-            writer.writeCharacters( value );
+
+        if (declareNamespace)
+        {
+            writer.writeNamespace(prefix, ns);
+        }
         
         NodeList nodes = e.getChildNodes();
         for ( int i = 0; i < nodes.getLength(); i++ )
@@ -319,25 +326,17 @@ public class STAXUtils
             {
                 writeElement((Element)n, writer);
             }
+            else if ( n instanceof Text )
+            {
+                writer.writeCharacters(((Text) n).getWholeText());
+            }
+            else if ( n instanceof CDATASection )
+            {
+                writer.writeCData(((CDATASection) n).getData());
+            }
         }
 
         writer.writeEndElement();
-    }
-    
-    /**
-     * @param e
-     * @return
-     */
-    private static Element getNamespaceDeclarer(Element e)
-    {
-        while( true )
-        {
-            Node n = e.getParentNode();
-            if ( n.equals(e) )
-                return null;
-            if ( n.getNamespaceURI() != null )
-                return (Element) n;
-        }
     }
 
     public static Document read(DocumentBuilder builder, XMLStreamReader reader)
