@@ -328,7 +328,7 @@ public class STAXUtils
             }
             else if ( n instanceof Text )
             {
-                writer.writeCharacters(((Text) n).getWholeText());
+                writer.writeCharacters(((Text) n).getNodeValue());
             }
             else if ( n instanceof CDATASection )
             {
