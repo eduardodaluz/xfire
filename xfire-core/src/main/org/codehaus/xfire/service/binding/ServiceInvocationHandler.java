@@ -112,6 +112,7 @@ public class ServiceInvocationHandler
         if (context.getExchange().hasOutMessage())
         {
             OutMessage outMsg = context.getExchange().getOutMessage();
+            context.setCurrentMessage(outMsg);
             outMsg.setBody(new Object[] {value});
             outMsg.setSerializer(context.getBinding().getSerializer(operation));
             context.getOutPipeline().invoke(context);

@@ -24,7 +24,7 @@ public class AddressingOutHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-        OutMessage msg = context.getOutMessage();
+        OutMessage msg = (OutMessage) context.getCurrentMessage();
         AddressingHeaders headers = (AddressingHeaders) msg.getProperty(AddressingInHandler.ADRESSING_HEADERS);
         AddressingHeadersFactory factory = (AddressingHeadersFactory) msg.getProperty(AddressingInHandler.ADRESSING_FACTORY);
         

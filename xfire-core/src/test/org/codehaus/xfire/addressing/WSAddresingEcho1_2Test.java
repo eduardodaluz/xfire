@@ -68,6 +68,7 @@ public class WSAddresingEcho1_2Test
         {
             ((DefaultXFire) getXFire()).addInHandler(new AddressingInHandler());
             ((DefaultXFire) getXFire()).addOutHandler(new AddressingOutHandler());
+            ((DefaultXFire) getXFire()).addFaultHandler(new AddressingOutHandler());
         }
 
         getServiceRegistry().register(service);

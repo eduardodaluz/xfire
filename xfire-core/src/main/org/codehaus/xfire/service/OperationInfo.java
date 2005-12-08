@@ -260,4 +260,9 @@ public class OperationInfo
     {
         return outputMessage != null;
     }
+
+    public boolean hasInput()
+    {
+        return inputMessage != null;
+    }
 }

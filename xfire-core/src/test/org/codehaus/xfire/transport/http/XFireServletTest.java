@@ -46,6 +46,7 @@ public class XFireServletTest
         Service asyncService = getServiceFactory().create(AsyncService.class);
         OperationInfo op = asyncService.getServiceInfo().getOperation("echo");
         op.setMEP(SoapConstants.MEP_IN);
+        op.setOutputMessage(null);
         getServiceRegistry().register(asyncService);
     }
 

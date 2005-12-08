@@ -6,16 +6,12 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.addressing.AddressingHeaders;
-import org.codehaus.xfire.addressing.AddressingHeadersFactory;
-import org.codehaus.xfire.addressing.AddressingInHandler;
-import org.codehaus.xfire.exchange.InExchange;
 import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Service;
-import org.jdom.Element;
 
 /**
  * A <code>ChannelEndpoint</code> which executes the in pipeline
@@ -39,8 +35,9 @@ public class DefaultEndpoint
         
         if (context.getExchange() == null)
         {
-            InExchange exchange = new InExchange(context);
+            MessageExchange exchange = new MessageExchange(context);
             exchange.setInMessage(msg);
+            context.setCurrentMessage(msg);
         }
         
         // Create the handlerpipeline and invoke it
@@ -108,11 +105,8 @@ public class DefaultEndpoint
         outMsg.setSerializer(context.getService().getFaultSerializer());
         outMsg.setBody(fault);
         
-           AddressingHeadersFactory factory =  (AddressingHeadersFactory) outMsg.getProperty(AddressingInHandler.ADRESSING_FACTORY);
-           AddressingHeaders headers =  (AddressingHeaders) outMsg.getProperty(AddressingInHandler.ADRESSING_HEADERS);
-           Element header  = new Element("Header");
-        factory.writeHeaders(header,headers);
-        outMsg.setHeader(header);
+        context.setCurrentMessage(outMsg);
+        
         // Create a fault pipeline
         HandlerPipeline faultPipe = new HandlerPipeline(context.getXFire().getFaultPhases());
         

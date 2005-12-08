@@ -108,8 +108,6 @@ public class AddressingHeaders
     {
         this.relationshipType = relationshipType;
     }
-    
-    
 
     public List getReferenceParameters()
     {

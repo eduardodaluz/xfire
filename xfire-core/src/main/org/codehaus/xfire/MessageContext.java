@@ -1,16 +1,13 @@
 package org.codehaus.xfire;
 
 import org.codehaus.xfire.client.Client;
-import org.codehaus.xfire.exchange.InExchange;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.exchange.RobustInOutExchange;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Binding;
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Session;
 
 /**
@@ -27,7 +24,7 @@ public class MessageContext extends AbstractContext
     private Service service;
     private Binding binding;
     private MessageExchange exchange;
-
+    private AbstractMessage currentMessage;
     private HandlerPipeline inPipeline;
     private HandlerPipeline outPipeline;
     private XFire xfire;
@@ -55,32 +52,6 @@ public class MessageContext extends AbstractContext
     {
         this.binding = binding;
     }
-
-    public MessageExchange createMessageExchange(OperationInfo operation)
-    {
-        MessageExchange ex = createMessageExchange(operation.getMEP());
-        ex.setOperation(operation);
-        
-        return ex;
-    }
-
-    public MessageExchange createMessageExchange(String mepUri)
-    {
-        MessageExchange ex = null;
-        
-        if (mepUri.equals(SoapConstants.MEP_ROBUST_IN_OUT))
-        {
-            ex = new RobustInOutExchange(this);
-        }
-        else if (mepUri.equals(SoapConstants.MEP_IN))
-        {
-            ex = new InExchange(this);
-        }
-        
-        setExchange(ex);
-        
-        return ex;
-    }
     
     public MessageExchange getExchange()
     {
@@ -101,6 +72,18 @@ public class MessageContext extends AbstractContext
     {
         return exchange.getInMessage();
     }
+
+    public AbstractMessage getCurrentMessage()
+    {
+        return currentMessage;
+    }
+    
+
+    public void setCurrentMessage(AbstractMessage currentMessage)
+    {
+        this.currentMessage = currentMessage;
+    }
+    
 
     /**
      * The session that this request is a part of.

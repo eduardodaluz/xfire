@@ -13,7 +13,6 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.exchange.InMessage;
-import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Binding;
@@ -32,12 +31,9 @@ public abstract class AbstractBinding
     public static final String RESPONSE_VALUE = "xfire.java.response";
     public static final String RESPONSE_PIPE = "xfire.java.responsePipe";
 
-
     public void setOperation(OperationInfo operation, MessageContext context)
     {
-        MessageExchange exchange = context.createMessageExchange(operation);
-        
-        context.setExchange(exchange);
+        context.getExchange().setOperation(operation);
     }
 
     protected void nextEvent(XMLStreamReader dr)

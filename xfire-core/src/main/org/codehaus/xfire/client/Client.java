@@ -19,8 +19,8 @@ import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.exchange.RobustInOutExchange;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.HandlerPipeline;
@@ -216,10 +216,9 @@ public class Client
             context.setProperty(CLIENT_MODE, Boolean.TRUE);
             context.setClient(this);
             
-            RobustInOutExchange exchange = new RobustInOutExchange(context);
+            MessageExchange exchange = new MessageExchange(context);
             exchange.setOperation(op);
             exchange.setOutMessage(msg);
-            context.setExchange(exchange);
             
             HandlerPipeline outPipe = new HandlerPipeline(xfire.getOutPhases());
             outPipe.addHandlers(getOutHandlers());
@@ -291,10 +290,10 @@ public class Client
         
         if (context.getExchange() == null)
         {
-            context.setExchange(new RobustInOutExchange(context));
+            new MessageExchange(context);
         }
         
-        RobustInOutExchange exchange = (RobustInOutExchange) context.getExchange();
+        MessageExchange exchange = context.getExchange();
         exchange.setInMessage(msg);
 
         try

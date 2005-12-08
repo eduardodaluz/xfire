@@ -84,9 +84,9 @@ public class AddressingInHandler
                             + "' was not found for service " + headers.getTo(), XFireFault.SENDER);
                 }
 
-                MessageExchange exchange = context.createMessageExchange(op.getOperationInfo());
-                context.setExchange(exchange);
-
+                MessageExchange exchange = context.getExchange();
+                exchange.setOperation(op.getOperationInfo());
+                
                 EndpointReference faultTo = headers.getFaultTo();
                 OutMessage faultMsg = null;
                 if (faultTo != null)

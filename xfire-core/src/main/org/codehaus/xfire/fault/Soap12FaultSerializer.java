@@ -156,7 +156,7 @@ public class Soap12FaultSerializer
                 writer.writeStartElement("soap:Detail");
 
                 StaxSerializer serializer = new StaxSerializer();
-                List details = detail.getContent();
+                List details = detail.getChildren();
                 for (int i = 0; i < details.size(); i++)
                 {
                     serializer.writeElement((Element) details.get(i), writer);
