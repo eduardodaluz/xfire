@@ -165,20 +165,27 @@ public class AegisBindingProvider
     {
         Type type = (Type) p.getSchemaType();
 
-        MessageWriter mw;
         boolean writeOuter = type.isWriteOuter();
         if (writeOuter)
-            mw = new ElementWriter(writer, p.getName());
-        else
-            mw = new ElementWriter(writer);
-
-        if (value != null)
         {
+            MessageWriter mw = new ElementWriter(writer, p.getName());
+            
+            if (p.getSchemaType().isNillable() && value == null)
+            {
+                mw.writeXsiNil();
+            }
+            else
+            {
+                type.writeObject(value, mw, context);
+            }
+            
+            mw.close();
+        }
+        else
+        {
+            MessageWriter mw = new ElementWriter(writer);
             type.writeObject(value, mw, context);
         }
-    
-        if (writeOuter)
-            mw.close();
     }
 
     public QName getSuggestedName(Service service, OperationInfo op, int param)

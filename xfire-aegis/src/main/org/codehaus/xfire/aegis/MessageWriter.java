@@ -55,4 +55,6 @@ public interface MessageWriter
      * it can write the end element.
      */
     void close();
+
+    void writeXsiNil();
 }

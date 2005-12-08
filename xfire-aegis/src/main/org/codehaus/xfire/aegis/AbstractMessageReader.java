@@ -1,8 +1,10 @@
 package org.codehaus.xfire.aegis;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.soap.SoapConstants;
 
 /**
  * Basic type conversions for reading messages.
@@ -12,9 +14,24 @@ import org.codehaus.xfire.XFireRuntimeException;
 public abstract class AbstractMessageReader
     implements MessageReader
 {
+    private static final QName XSI_NIL = new QName(SoapConstants.XSI_NS, "nil", SoapConstants.XSI_PREFIX);
+    
     public AbstractMessageReader()
     {
     }
+
+    public boolean isXsiNil()
+    {
+        MessageReader nilReader = getAttributeReader(XSI_NIL);
+        boolean nil = false;
+        if (nilReader != null)
+        {
+            nil = Boolean.valueOf(nilReader.getValue()).booleanValue();
+        }
+        
+        return nil;
+    }
+
 
     public boolean hasValue()
     {

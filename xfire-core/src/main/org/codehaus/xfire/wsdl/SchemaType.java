@@ -29,6 +29,8 @@ public interface SchemaType
      */
     boolean isAbstract();
     
+    boolean isNillable();
+    
     /**
      * The <code>SchemaType</code>s that this type references.
      * 

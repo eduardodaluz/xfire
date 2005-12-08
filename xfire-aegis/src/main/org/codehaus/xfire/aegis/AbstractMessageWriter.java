@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis;
 
+import org.codehaus.xfire.soap.SoapConstants;
+
 /**
  * Basic type conversion functionality for writing messages.
  *
@@ -17,6 +19,13 @@ public abstract class AbstractMessageWriter
     {
     }
 
+    public void writeXsiNil()
+    {
+        MessageWriter attWriter = getAttributeWriter("nil", SoapConstants.XSI_NS);
+        attWriter.writeValue("true");
+        attWriter.close();
+    }
+    
     /**
      * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsInt(java.lang.Integer)
      */

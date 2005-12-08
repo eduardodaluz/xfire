@@ -30,7 +30,6 @@ public class BeanType
     extends Type
 {
     private BeanTypeInfo _info;
-    private static final QName XSI_NIL = new QName(SoapConstants.XSI_NS, "nil", SoapConstants.XSI_PREFIX);
     
     public BeanType()
     {
@@ -100,15 +99,7 @@ public class BeanType
 
                 if (type != null)
                 {
-                    boolean nil = false;
-
-                    MessageReader nilReader = childReader.getAttributeReader(XSI_NIL);
-                    if (nilReader != null)
-                    {
-                        nil = Boolean.valueOf(nilReader.getValue()).booleanValue();
-                    }
-
-                    if (!nil)
+                    if (!childReader.isXsiNil())
                     {
                         Object writeObj = type.readObject(childReader, context);
 
@@ -237,9 +228,7 @@ public class BeanType
                 cwriter = getWriter(writer, name, type);
                 
                 // Write the xsi:nil if it is null.
-                MessageWriter attWriter = cwriter.getAttributeWriter("nil", SoapConstants.XSI_NS);
-                attWriter.writeValue("true");
-                attWriter.close();
+                cwriter.writeXsiNil();
                 
                 cwriter.close();
             }

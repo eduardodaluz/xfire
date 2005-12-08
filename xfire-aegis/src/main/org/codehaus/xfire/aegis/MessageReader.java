@@ -13,6 +13,8 @@ public interface MessageReader
 {
     public String getValue();
 
+    public boolean isXsiNil();
+    
     public int getValueAsInt();
 
     public long getValueAsLong();

@@ -11,6 +11,7 @@ public class SimpleSchemaType
 {
     private boolean complex;
     private boolean _abstract;
+    private boolean nillable;
     private Set dependencies;
     private QName schemaType;
 
@@ -56,5 +57,15 @@ public class SimpleSchemaType
     public void setSchemaType(QName schemaType)
     {
         this.schemaType = schemaType;
+    }
+
+    public boolean isNillable()
+    {
+        return nillable;
+    }
+
+    public void setNillable(boolean nillable)
+    {
+        this.nillable = nillable;
     }
 }
