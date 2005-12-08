@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.XFireRuntimeException;
 
 /**
@@ -75,4 +77,9 @@ public abstract class AbstractMessageReader
         
         throw new XFireRuntimeException("Invalid boolean value: " + value);
 	}
+
+    public XMLStreamReader getXMLStreamReader()
+    {
+        throw new UnsupportedOperationException();
+    }
 }

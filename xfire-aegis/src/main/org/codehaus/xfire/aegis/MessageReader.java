@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * A MessageReader. You must call getNextChildReader() until hasMoreChildReaders()
@@ -47,4 +48,5 @@ public interface MessageReader
 
     public String getNamespaceForPrefix( String prefix );
 
+    public XMLStreamReader getXMLStreamReader();
 }

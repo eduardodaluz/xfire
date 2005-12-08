@@ -233,7 +233,7 @@ public abstract class DOMStreamReader
         return currentEvent;
     }
 
-    public int getTextCharacters(int arg0, char[] arg1, int arg2, int arg3)
+    public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length)
         throws XMLStreamException
     {
         throw new UnsupportedOperationException();

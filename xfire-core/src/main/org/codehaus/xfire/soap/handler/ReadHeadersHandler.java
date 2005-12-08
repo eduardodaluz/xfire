@@ -1,6 +1,5 @@
 package org.codehaus.xfire.soap.handler;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +61,7 @@ public class ReadHeadersHandler
                     {
                         readNamespaces(reader, namespaces);
                         
-                        seekToWhitespaceEnd(reader);
+                        event = reader.nextTag();
 
                         checkForFault(context, message, reader);
 
@@ -104,21 +103,6 @@ public class ReadHeadersHandler
                 throw (XFireFault) msg.getBody();
             }
         }
-    }
-
-    private void seekToWhitespaceEnd(XMLStreamReader reader)
-        throws XMLStreamException
-    {
-        int event = reader.next();
-        if (event != XMLStreamReader.SPACE && event != XMLStreamReader.CHARACTERS) return;
-        
-        do
-        {
-            event = reader.next();
-        }
-        while (event == XMLStreamReader.SPACE ||event == XMLStreamReader.CHARACTERS);
-        
-        return;
     }
 
     /**

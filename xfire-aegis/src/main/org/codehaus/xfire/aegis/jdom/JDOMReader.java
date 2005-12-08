@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.codehaus.xfire.aegis.AbstractMessageReader;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.stax.AttributeReader;
+import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -72,7 +73,7 @@ public class JDOMReader
 
     public XMLStreamReader getXMLStreamReader()
     {
-        throw new UnsupportedOperationException("Stream reading not supported from a JDOMWriter.");
+        return new JDOMStreamReader(element);
     }
 
     public boolean hasMoreAttributeReaders()
