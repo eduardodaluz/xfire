@@ -72,6 +72,12 @@ public class ReadHeadersHandler
                         readNamespaces(reader, namespaces);
                         
                         message.setSoapVersion(reader.getNamespaceURI());
+                        
+                        if (message.getSoapVersion() == null)
+                        {
+                            throw new XFireFault("Invalid SOAP version: " + reader.getNamespaceURI(), 
+                                                 XFireFault.SENDER);
+                        }
                     }
                     break;
                 default:
