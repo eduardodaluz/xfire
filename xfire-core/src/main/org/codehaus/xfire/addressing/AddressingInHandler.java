@@ -21,6 +21,8 @@ import org.jdom.Element;
 public class AddressingInHandler
     extends AbstractHandler
 {
+    private RandomGUID guidGenerator = new RandomGUID(false);
+
     public static final Object ADRESSING_HEADERS = "xfire-ws-adressing-headers";
 
     public static final Object ADRESSING_FACTORY = "xfire-ws-adressing-factory";
@@ -201,6 +203,7 @@ public class AddressingInHandler
         headers.setTo(addr);
         headers.setAction(aoi.getOutAction());
         }
+        headers.setMessageID("urn:uuid:"+guidGenerator.toString());
 
         Element refParam = epr.getReferenceParametersElement();
         if (refParam != null)
