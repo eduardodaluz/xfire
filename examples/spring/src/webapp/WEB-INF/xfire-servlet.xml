@@ -20,7 +20,7 @@
         <property name="xfire">
             <ref bean="xfire"/>
         </property>
-        <property name="service">
+        <property name="serviceBean">
             <ref bean="echoBean"/>
         </property>
         <property name="serviceInterface">
