@@ -1,7 +1,9 @@
 package org.codehaus.xfire.spring.config;
 
-import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
 
+import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,9 +21,11 @@ public class HandlerFactory
 
     private Handler handler;
 
-    private String before;
-
-    public String getBefore()
+    private Collection before;
+    
+    private Collection after;
+    
+    public Collection getBefore()
     {
         return before;
     }
@@ -29,9 +33,19 @@ public class HandlerFactory
     /**
      * @param before
      */
-    public void setBefore(String before)
+    public void setBefore(Collection before)
     {
         this.before = before;
+    }
+
+    public Collection getAfter()
+    {
+        return after;
+    }
+
+    public void setAfter(Collection after)
+    {
+        this.after = after;
     }
 
     /**
@@ -99,8 +113,24 @@ public class HandlerFactory
     {
         if (before != null)
         {
-            Method method = handler.getClass().getMethod("setBefore", new Class[] { String.class });
-            method.invoke(handler, new Object[] { before });
+            if(!(handler instanceof AbstractHandler )){
+                throw new RuntimeException("Handler "+ handler.getClass().getName()+" is not instance of AbstractHandler!");
+            }
+            AbstractHandler aHandler = (AbstractHandler) handler;
+            for( Iterator iter = before.iterator(); iter.hasNext();){
+                aHandler.before((String)iter.next());
+            }
         }
+        if (after!= null)
+        {
+            if(!(handler instanceof AbstractHandler )){
+                throw new RuntimeException("Handler "+ handler.getClass().getName()+" is not instance of AbstractHandler!");
+            }
+            AbstractHandler aHandler = (AbstractHandler) handler;
+            for( Iterator iter = after.iterator(); iter.hasNext();){
+                aHandler.after((String)iter.next());
+            }
+        }
+
     }
 }

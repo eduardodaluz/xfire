@@ -1,6 +1,7 @@
 package org.codehaus.xfire.spring.config;
 
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.Invoker;
@@ -40,7 +41,10 @@ public class XFireConfigLoaderTest
         assertEquals(version,Soap12.getInstance());
         
         assertEquals(2, service.getInHandlers().size());
-        assertTrue(service.getInHandlers().get(1) instanceof TestHandler);
+        Handler testHandler = (Handler) service.getInHandlers().get(1); 
+        assertTrue(testHandler instanceof TestHandler);
+        assertEquals(testHandler.getAfter().size(),1);
+        assertEquals(testHandler.getBefore().size(),2);
         
         assertEquals(service.getOutHandlers().size(),1);
         

@@ -31,6 +31,9 @@
 
     <inHandlers>
       <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">
+		  <before>
+			<handlerName handler="costam" />  
+		  </before>
       </handler>
     </inHandlers>
 
