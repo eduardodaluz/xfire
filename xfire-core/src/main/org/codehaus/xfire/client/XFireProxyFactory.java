@@ -61,14 +61,16 @@ public class XFireProxyFactory
         
         Binding binding = null;
         Transport transport = null;
-        for (Iterator itr = transports.iterator(); itr.hasNext();)
+        for (Iterator itr = transports.iterator(); itr.hasNext() && binding == null;)
         {
             transport = (Transport) itr.next();
+            
             for (int i = 0; i < transport.getSupportedBindings().length; i++)
             {
                 binding = service.getBinding(transport.getSupportedBindings()[i]);
                 
-                if (binding != null) break;
+                if (binding != null)
+                    break;
             }
         }
 

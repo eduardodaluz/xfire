@@ -9,10 +9,7 @@
 
   <bean id="xfire.transportManager"
     class="org.codehaus.xfire.transport.DefaultTransportManager"
-    singleton="true">
-    <constructor-arg index="0">
-      <ref bean="xfire.serviceRegistry" />
-    </constructor-arg>
+    singleton="true" init-method="initialize">
   </bean>
 
   <bean id="xfire" class="org.codehaus.xfire.DefaultXFire"

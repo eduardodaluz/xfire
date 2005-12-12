@@ -34,7 +34,10 @@ public class DefaultXFire
     public DefaultXFire()
     {
         registry = new DefaultServiceRegistry();
-        transportManager = new DefaultTransportManager(registry);
+        DefaultTransportManager transportManager = new DefaultTransportManager();
+        transportManager.initialize();
+        
+        this.transportManager = transportManager;
         
         createPhases();
         createHandlers();

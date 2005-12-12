@@ -10,10 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.event.RegistrationEvent;
-import org.codehaus.xfire.service.event.RegistrationEventListener;
 import org.codehaus.xfire.transport.dead.DeadLetterTransport;
 import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
@@ -25,40 +21,16 @@ import org.codehaus.xfire.transport.local.LocalTransport;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class DefaultTransportManager
-        implements TransportManager, RegistrationEventListener
+        implements TransportManager
 {
     private static final Log log = LogFactory.getLog(DefaultTransportManager.class);
 
-    private Map services = new HashMap();
     private Set transports = new LinkedHashSet();
     private Map binding2Transport = new HashMap();
 
-    private ServiceRegistry serviceRegistry;
     
     public DefaultTransportManager()
-    {        
-    }
-    
-    /**
-     * Creates a DefaultTransportManager. A LocalTransport and DeadLetterTransport 
-     * are registered automatically.
-     * @param xfire
-     */
-    public DefaultTransportManager(ServiceRegistry registry)
     {
-        this.serviceRegistry = registry;
-        
-        initialize();
-    }
-
-    public ServiceRegistry getServiceRegistry()
-    {
-        return serviceRegistry;
-    }
-
-    public void setServiceRegistry(ServiceRegistry serviceRegistry)
-    {
-        this.serviceRegistry = serviceRegistry;
     }
 
     /**
@@ -67,26 +39,12 @@ public class DefaultTransportManager
      */
     public void initialize()
     {
-        initializeTransports();
-        
         register(new LocalTransport());
         register(new DeadLetterTransport());
         register(new SoapHttpTransport());
         register(new HttpTransport());
     }
 
-    /**
-     * @param registry
-     */
-    protected void initializeTransports()
-    {
-        for (Iterator itr = serviceRegistry.getServices().iterator(); itr.hasNext();)
-        {
-            Service endpoint = (Service) itr.next();
-            enableAll(endpoint);
-        }
-        serviceRegistry.addRegistrationEventListener(this);
-    }
 
     public void register(Transport transport)
     {
@@ -98,12 +56,6 @@ public class DefaultTransportManager
             binding2Transport.put(bindingIds[i], transport);
         } 
         
-        for (Iterator itr = services.values().iterator(); itr.hasNext();)
-        {
-            Set serviceTransports = (Set) itr.next();
-            serviceTransports.add(transport);
-        }
-
         log.debug("Registered transport " + transport);
     }
 
@@ -111,52 +63,12 @@ public class DefaultTransportManager
     {
         transports.remove(transport);
 
-        for (Iterator itr = services.values().iterator(); itr.hasNext();)
+        String[] bindingIds = transport.getSupportedBindings();
+        for (int i = 0; i < bindingIds.length; i++)
         {
-            Set serviceTransports = (Set) itr.next();
-            if (serviceTransports != null)
-            {
-                serviceTransports.remove(transport);
-            }
-        }
-    }
-
-    public void enable(Transport transport, Service service)
-    {
-        Set serviceTransports = (Set) services.get(service);
-        if (serviceTransports == null)
-        {
-            serviceTransports = new HashSet();
-            services.put(service, serviceTransports);
-        }
-
-        serviceTransports.add(transport);
-    }
-
-    public void disable(Transport transport, Service service)
-    {
-        Set serviceTransports = (Set) services.get(service);
-        if (serviceTransports == null)
-        {
-            return;
-        }
-
-        serviceTransports.remove(transport);
-    }
-
-    /**
-     * @param service
-     * @return
-     * @see org.codehaus.xfire.transport.TransportManager#getTransports(java.lang.String)
-     */
-    public Collection getTransports(Service service)
-    {
-        Set transports = ((HashSet) services.get(service));
-
-        if (transports != null)
-            return transports;
-        else
-            return null;
+            if (binding2Transport.get(bindingIds[i]) == transport)
+                binding2Transport.remove(bindingIds[i]);
+        } 
     }
 
     public Collection getTransports()
@@ -164,88 +76,7 @@ public class DefaultTransportManager
         return transports;
     }
 
-    /**
-     * @param service
-     */
-    public void enableAll(Service service)
-    {
-        Set serviceTransports = (Set) services.get(service);
-        if (serviceTransports == null)
-        {
-            serviceTransports = new HashSet();
-            services.put(service, serviceTransports);
-        }
-
-        for (Iterator itr = transports.iterator(); itr.hasNext();)
-        {
-            Transport t = (Transport) itr.next();
-
-            serviceTransports.add(t);
-        }
-    }
-
-    /**
-     * @param service
-     */
-    public void disableAll(Service service)
-    {
-        Set serviceTransports = (HashSet) services.get(service);
-        if (serviceTransports == null)
-        {
-            return;
-        }
-
-        for (Iterator itr = transports.iterator(); itr.hasNext();)
-        {
-            Transport t = (Transport) itr.next();
-
-            serviceTransports.remove(t);
-        }
-    }
-
-    /**
-     * @param service
-     * @param transportName
-     * @return
-     */
-    public boolean isEnabled(Transport transport, Service service)
-    {
-        Set serviceTransports = (HashSet) services.get(service);
-        if (serviceTransports == null)
-        {
-            return false;
-        }
-
-        if (serviceTransports.contains(transport))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Notifies this <code>RegistrationEventListener</code> that the <code>ServiceEndpointRegistry</code> has registered
-     * an endpoint.
-     *
-     * @param event an event object describing the source of the event
-     */
-    public void endpointRegistered(RegistrationEvent event)
-    {
-        enableAll(event.getEndpoint());
-    }
-
-    /**
-     * Notifies this <code>RegistrationEventListener</code> that the <code>ServiceEndpointRegistry</code> has
-     * deregistered an endpoint.
-     *
-     * @param event an event object describing the source of the event
-     */
-    public void endpointUnregistered(RegistrationEvent event)
-    {
-        disableAll(event.getEndpoint());
-    }
-
+    
     public Transport getTransportForUri(String uri)
     {
         for (Iterator itr = transports.iterator(); itr.hasNext();)

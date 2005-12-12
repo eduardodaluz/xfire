@@ -33,6 +33,7 @@ import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -92,6 +93,10 @@ public class XFireServletController
         transport.addFaultHandler(mimeHandler);
         transport.addOutHandler(mimeHandler);
         
+        Transport oldSoap = getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        
+        if (oldSoap != null) getTransportManager().unregister(oldSoap);
+        
         getTransportManager().register(transport);
     }
 
@@ -128,8 +133,7 @@ public class XFireServletController
 
         if (serviceName == null || 
                 serviceName.length() == 0 || 
-                !reg.hasService(serviceName) ||
-                !getTransportManager().isEnabled(transport, getService(serviceName)))
+                !reg.hasService(serviceName))
         {
             if (!reg.hasService(serviceName))
             {

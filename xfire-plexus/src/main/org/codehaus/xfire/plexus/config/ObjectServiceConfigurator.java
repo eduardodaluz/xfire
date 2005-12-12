@@ -69,8 +69,7 @@ public class ObjectServiceConfigurator
 
         builder.setStyle(style);
         builder.setUse(use);
-        builder.setSoapVersion(version);
-        
+
         if (name.length() == 0 && namespace.length() == 0)
         {
             service = builder.create(clazz, (Map) null);
