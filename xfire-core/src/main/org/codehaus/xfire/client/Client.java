@@ -317,6 +317,9 @@ public class Client
         }
         
         MessageExchange exchange = context.getExchange();
+        
+        if (!exchange.getOperation().hasOutput()) return;
+        
         exchange.setInMessage(msg);
 
         try

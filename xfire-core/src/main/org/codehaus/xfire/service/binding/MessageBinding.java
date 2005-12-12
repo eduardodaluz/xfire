@@ -11,6 +11,7 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -46,8 +47,18 @@ public class MessageBinding
 
         final List params = new ArrayList();
         
+        MessageInfo msg;
+        if (context.getClient() != null)
+        {
+            msg = operation.getOutputMessage();
+        }
+        else
+        {
+            msg = operation.getInputMessage();
+        }
+        
         Binding binding = context.getBinding();
-        for (Iterator itr = operation.getInputMessage().getMessageParts().iterator(); itr.hasNext();)
+        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
 
@@ -65,7 +76,17 @@ public class MessageBinding
         final OperationInfo operation = context.getExchange().getOperation();
         
         int i = 0;
-        for (Iterator itr = operation.getOutputMessage().getMessageParts().iterator(); itr.hasNext();)
+        MessageInfo msg;
+        if (context.getClient() != null)
+        {
+            msg = operation.getInputMessage();
+        }
+        else
+        {
+            msg = operation.getOutputMessage();
+        }
+        
+        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
  

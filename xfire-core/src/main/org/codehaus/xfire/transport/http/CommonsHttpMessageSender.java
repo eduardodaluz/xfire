@@ -118,6 +118,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         client.executeMethod(null, postMethod, getHttpState() );
     }
 
+    public boolean hasResponse()
+    {
+        String ct = postMethod.getResponseHeader("Content-Type").getValue();
+
+        return ct != null && ct.length() > 0;
+    }
+    
     private HttpState getHttpState()
     {
         HttpState state = (HttpState)httpState.get();
@@ -156,7 +163,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             throw new IOException(e.getMessage());
         }
     }
-
+    
     public InMessage getInMessage()
         throws IOException
     {

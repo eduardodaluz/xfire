@@ -23,7 +23,8 @@ public abstract class AbstractMessageSender
     public abstract void open() throws IOException, XFireFault;
     public abstract void send() throws IOException, XFireFault;
     public abstract void close() throws XFireException;
-
+    public abstract boolean hasResponse();
+    
     public abstract InMessage getInMessage() throws IOException;
     
     public MessageContext getMessageContext()

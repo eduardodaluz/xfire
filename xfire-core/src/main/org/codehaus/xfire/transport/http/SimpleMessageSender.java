@@ -99,6 +99,11 @@ public class SimpleMessageSender extends AbstractMessageSender
         return (HttpURLConnection) url.openConnection();
     }
 
+    public boolean hasResponse()
+    {
+        return true;
+    }
+
     public void send()
         throws IOException, XFireFault
     {

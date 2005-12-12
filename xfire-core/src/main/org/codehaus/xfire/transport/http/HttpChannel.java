@@ -102,7 +102,10 @@ public class HttpChannel
             
             sender.send();
 
-            getEndpoint().onReceive(context, sender.getInMessage());
+            if (sender.hasResponse())
+            {
+                getEndpoint().onReceive(context, sender.getInMessage());
+            }
         }
         catch (IOException e)
         {
