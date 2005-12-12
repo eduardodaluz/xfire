@@ -24,12 +24,6 @@
       <role>org.codehaus.xfire.transport.TransportManager</role>
       <implementation>org.codehaus.xfire.plexus.transport.PlexusTransportManager</implementation>
       <lifecycle-handler>plexus-configurable</lifecycle-handler>
-      <configuration/>
-      <requirements>
-        <requirement>
-          <role>org.codehaus.xfire.service.ServiceRegistry</role>
-        </requirement>
-      </requirements>
     </component>
                     
     <component>
