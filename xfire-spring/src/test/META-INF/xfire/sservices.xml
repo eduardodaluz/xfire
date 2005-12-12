@@ -20,8 +20,12 @@
   	<!-- serviceFactory>#commons-attributes</serviceFactory -->
   	<style>wrapped</style>
   	<use>literal</use>
-  	<soapVersion>1.2</soapVersion>
   	<scope>session</scope>
+  	
+  	<bindings>
+  	  <soap12Binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+  	</bindings>
+  	
   	<properties>
   		<property key="myKey" >value</property>
   		<property key="myKey1" >value1</property>

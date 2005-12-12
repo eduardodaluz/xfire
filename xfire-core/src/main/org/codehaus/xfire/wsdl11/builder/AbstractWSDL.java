@@ -19,6 +19,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -79,7 +81,7 @@ public abstract class AbstractWSDL
     public AbstractWSDL(Service service) throws WSDLException
     {
         this.service = service;
-
+        
         setDefinition(WSDLFactory.newInstance().newDefinition());
         getDefinition().setTargetNamespace(getTargetNamespace());
 
@@ -87,8 +89,10 @@ public abstract class AbstractWSDL
         setSchemaTypes(root);
         root.addNamespaceDeclaration(Namespace.getNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD));
 
-        addNamespace("soap", service.getSoapVersion().getNamespace());
-        addNamespace("soapenc", service.getSoapVersion().getSoapEncodingStyle());
+        addNamespace("soap11", Soap11.getInstance().getNamespace());
+        addNamespace("soapenc11", Soap11.getInstance().getSoapEncodingStyle());
+        addNamespace("soap12", Soap12.getInstance().getNamespace());
+        addNamespace("soapenc12", Soap12.getInstance().getSoapEncodingStyle());
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("wsdl", WSDL11_NS);
         addNamespace("wsdlsoap", WSDL11_SOAP_NS);

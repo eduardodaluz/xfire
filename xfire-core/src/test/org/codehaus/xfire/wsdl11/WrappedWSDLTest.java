@@ -12,8 +12,9 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 
 /**
@@ -63,7 +64,7 @@ public class WrappedWSDLTest
         
         Endpoint endpoint = (Endpoint) endpoints.iterator().next();
         assertEquals(new QName("urn:Echo", "EchoHttpPort"), endpoint.getName());
-        assertEquals(SoapBinding.SOAP_BINDING_ID, endpoint.getBinding().getBindingId());
+        assertEquals(SoapHttpTransport.SOAP11_HTTP_BINDING, endpoint.getBinding().getBindingId());
         assertEquals("http://localhost:8080/xfire/services/Echo", endpoint.getAddress());
     }
     
@@ -107,7 +108,7 @@ public class WrappedWSDLTest
         assertEquals(new QName("urn:Echo", "echo2Response"), part.getName());
         
         // Is the SOAP binding stuff around?
-        SoapBinding binding = (SoapBinding) service.getBinding(new QName("urn:Echo", "EchoHttpBinding"));
+        AbstractSoapBinding binding = (AbstractSoapBinding) service.getBinding(new QName("urn:Echo", "EchoHttpBinding"));
         assertNotNull(binding);
         assertEquals("literal", binding.getUse());
         //assertEquals("urn:Echo/echo2", binding.getSoapAction(opInfo));

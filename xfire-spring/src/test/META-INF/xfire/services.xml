@@ -24,7 +24,7 @@
       </inHandlers>
       
       <outHandlers>
-        <handler>org.codehaus.xfire.addressing.AddressingInHandler</handler>
+        <handler>org.codehaus.xfire.addressing.AddressingOutHandler</handler>
       </outHandlers>
     </service>
 

@@ -5,7 +5,7 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
@@ -33,7 +33,7 @@ public class SoapActionOutHandler
         if (service == null) return;
         
         OperationInfo op = context.getExchange().getOperation();
-        SoapBinding binding = (SoapBinding) context.getBinding();
+        AbstractSoapBinding binding = (AbstractSoapBinding) context.getBinding();
         
         String action = binding.getSoapAction(op);
         if (action != null)

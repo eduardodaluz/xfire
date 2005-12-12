@@ -2,6 +2,10 @@ package org.codehaus.xfire.transport;
 
 import java.util.List;
 
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.Service;
+
 /**
  * Wraps another channel so it is easy to provide custom functionality to any transport - such
  * as reliable messaging.
@@ -67,5 +71,10 @@ public class DelegatedTransport
     public String[] getSupportedBindings()
     {
         return transport.getSupportedBindings();
+    }
+
+    public Binding findBinding(MessageContext context, Service service)
+    {
+        return findBinding(context, service);
     }
 }

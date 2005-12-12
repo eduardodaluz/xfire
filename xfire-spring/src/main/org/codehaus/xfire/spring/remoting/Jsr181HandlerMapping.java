@@ -85,8 +85,8 @@ public class Jsr181HandlerMapping
                 ServiceInfo service = endpoint.getServiceInfo();
                 if (logger.isInfoEnabled())
                 {
-                    logger.info("Exposing SOAP v." + endpoint.getSoapVersion().getVersion() + " service " +
-                                endpoint.getName() + " to " + urlPrefix + endpoint.getSimpleName());
+                    logger.info("Exposing  service " + endpoint.getName() + 
+                                " to " + urlPrefix + endpoint.getSimpleName());
                 }
                 
                 xFire.getServiceRegistry().register(endpoint);

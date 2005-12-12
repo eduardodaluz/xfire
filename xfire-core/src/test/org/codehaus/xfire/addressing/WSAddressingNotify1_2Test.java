@@ -8,7 +8,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.TestWSAServiceImpl;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -45,7 +44,6 @@ public class WSAddressingNotify1_2Test
                 return op;
             }
         };
-        factory.setSoapVersion(Soap12.getInstance());
         service = factory.create(TestWSAServiceImpl.class);
         service.addInHandler(new WSATestHandler(data));
         if (getXFire().getInHandlers().size() < 3)

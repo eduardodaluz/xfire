@@ -49,16 +49,6 @@ public abstract class Binding
         return bindingId;
     }
 
-    public Transport getTransport()
-    {
-        return transport;
-    }
-
-    public void setTransport(Transport transport)
-    {
-        this.transport = transport;
-    }
-
     public abstract javax.wsdl.Binding createBinding(WSDLBuilder builder, PortType portType);
 
     public abstract Port createPort(WSDLBuilder builder, javax.wsdl.Binding wbinding);

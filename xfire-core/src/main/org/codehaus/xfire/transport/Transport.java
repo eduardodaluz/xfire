@@ -1,6 +1,9 @@
 package org.codehaus.xfire.transport;
 
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.HandlerSupport;
+import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.Service;
 
 /**
  * Transport
@@ -15,4 +18,6 @@ public interface Transport
     String[] getSupportedBindings();
     
     void dispose();
+
+    Binding findBinding(MessageContext context, Service service);
 }

@@ -28,13 +28,14 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 
 public class SoapBindingAnnotator extends BindingAnnotator
 {
-    private SoapBinding soapBinding;
+    private AbstractSoapBinding soapBinding;
     private boolean useSet = false;
     
     protected org.codehaus.xfire.service.Binding getBinding()
@@ -42,12 +43,12 @@ public class SoapBindingAnnotator extends BindingAnnotator
         return soapBinding;
     }
 
-    public SoapBinding getSoapBinding()
+    public AbstractSoapBinding getSoapBinding()
     {
         return soapBinding;
     }
 
-    public void setSoapBinding(SoapBinding soapBinding)
+    public void setSoapBinding(AbstractSoapBinding soapBinding)
     {
         this.soapBinding = soapBinding;
     }
@@ -56,10 +57,8 @@ public class SoapBindingAnnotator extends BindingAnnotator
     {
         SOAPBinding sbind = DefinitionsHelper.getSOAPBinding(wbinding);
 
-        soapBinding = new SoapBinding(wbinding.getQName(), getService());
-        soapBinding.setTransportURI(sbind.getTransportURI());
-        soapBinding.setTransport(getTransportManager().getTransport(sbind.getTransportURI()));
-        
+        soapBinding = new Soap11Binding(wbinding.getQName(), sbind.getTransportURI(), getService());
+
         getService().addBinding(soapBinding);
         
         soapBinding.setStyle(null);
@@ -114,7 +113,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
     {
         SOAPOperation soapOp = DefinitionsHelper.getSOAPOperation(operation);
         
-        SoapBinding binding = getSoapBinding();
+        AbstractSoapBinding binding = getSoapBinding();
         
         binding.setSoapAction(opInfo, soapOp.getSoapActionURI());
 
@@ -124,7 +123,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
             setStyle(style);
         }
 
-        binding.setSerializer(opInfo, SoapBinding.getSerializer(binding.getStyle(), binding.getUse()));
+        binding.setSerializer(opInfo, AbstractSoapBinding.getSerializer(binding.getStyle(), binding.getUse()));
     }
 
     protected void setStyle(String style)

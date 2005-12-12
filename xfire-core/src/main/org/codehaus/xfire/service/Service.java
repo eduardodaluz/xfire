@@ -1,10 +1,12 @@
 package org.codehaus.xfire.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,8 +16,6 @@ import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.soap.SoapVersion;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**
@@ -46,7 +46,6 @@ public class Service
     private Object executor;
     private MessageSerializer faultSerializer;
     private WSDLWriter wsdlWriter;
-    private SoapVersion soapVersion;
 
     private Map endpoints = new HashMap();
     private Map bindingToEndpoint = new HashMap();
@@ -114,7 +113,6 @@ public class Service
     {
         this.faultSerializer = faultSerializer;
     }
-
 
     /**
      * Returns the qualified name of the service descriptor.
@@ -185,16 +183,6 @@ public class Service
         this.wsdlWriter = wsdlWriter;
     }
 
-    public SoapVersion getSoapVersion()
-    {
-        return soapVersion;
-    }
-
-    public void setSoapVersion(SoapVersion soapVersion)
-    {
-        this.soapVersion = soapVersion;
-    }
-    
     public void addBinding(Binding binding)
     {
         bindings.put(binding.getName(), binding);
@@ -212,12 +200,12 @@ public class Service
         return Collections.unmodifiableCollection(bindings.values());
     }
 
-    public Binding getBinding(Transport t)
+    public Binding getBinding(String id)
     {
         for (Iterator itr = bindings.values().iterator(); itr.hasNext();)
         {
             Binding binding = (Binding) itr.next();
-            if (binding.getTransport() != null && binding.getTransport().equals(t))
+            if (binding.getBindingId().equals(id))
             {
                 return binding;
             }
@@ -268,10 +256,17 @@ public class Service
         addEndpoint(new Endpoint(name, binding, address));
     }
 
-    public Collection getEndpoints(QName binding)
+    public Collection getEndpoints(QName name2)
     {
-        // TODO Auto-generated method stub
-        return null;
+        List eps = new ArrayList();
+        for (Iterator itr = endpoints.values().iterator(); itr.hasNext();)
+        {
+            Endpoint ep = (Endpoint) itr.next();
+            if (ep.getBinding().getName().equals(name2))
+            {
+                eps.add(ep);
+            }
+        }
+        return eps;
     }
-
 }

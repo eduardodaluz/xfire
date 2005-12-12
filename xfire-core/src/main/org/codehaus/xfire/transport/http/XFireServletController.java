@@ -1,5 +1,6 @@
 package org.codehaus.xfire.transport.http;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -21,12 +22,17 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.Channel;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -38,18 +44,55 @@ import org.codehaus.xfire.util.STAXUtils;
  */
 public class XFireServletController
 {
+    
     private static ThreadLocal requests = new ThreadLocal();
     private static ThreadLocal responses = new ThreadLocal();
     private final static Log logger = LogFactory.getLog(XFireServletController.class);
     
     protected XFire xfire;
 
-    protected Transport transport;
+    protected SoapHttpTransport transport;
 
+    private final static MimeTypeHandler mimeHandler = new MimeTypeHandler();
+    
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
-        this.transport = getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        
+        // Create a SOAP Http transport with all the servlet addons
+        transport = new SoapHttpTransport() 
+        {
+            public String getServiceURL(Service service)
+            {
+                HttpServletRequest req = XFireServletController.getRequest();
+
+                if (req == null) return super.getServiceURL(service);
+                
+                StringBuffer output = new StringBuffer( 128 );
+
+                output.append( req.getScheme() );
+                output.append( "://" );
+                output.append( req.getServerName() );
+
+                if ( req.getServerPort() != 80 &&
+                     req.getServerPort() != 443 &&
+                     req.getServerPort() != 0 )
+                {
+                    output.append( ':' );
+                    output.append( req.getServerPort() );
+                }
+
+                output.append( req.getRequestURI() );
+
+                return output.toString();
+            }
+        };
+        
+        transport.addFaultHandler(new FaultResponseCodeHandler());
+        transport.addFaultHandler(mimeHandler);
+        transport.addOutHandler(mimeHandler);
+        
+        getTransportManager().register(transport);
     }
 
     public static HttpServletRequest getRequest()
@@ -318,5 +361,68 @@ public class XFireServletController
     public ServiceRegistry getServiceRegistry()
     {
         return xfire.getServiceRegistry();
+    }
+    
+    public static class FaultResponseCodeHandler
+        extends AbstractHandler
+    {        
+       public String getPhase()
+       {
+           return Phase.TRANSPORT;
+       }
+    
+       /**
+        * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
+        * @param context
+        */
+       public void invoke(MessageContext context)
+       {
+           HttpServletResponse response = XFireServletController.getResponse();
+           if ( response != null )
+               response.setStatus(500);
+       }    
+    }
+
+    public static class MimeTypeHandler
+        extends AbstractHandler
+    {
+        public String getPhase()
+        {
+            return Phase.TRANSPORT;
+        }
+
+        /**
+         * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
+         * @param context
+         */
+        public void invoke(MessageContext context)
+        {
+            HttpServletResponse response = XFireServletController.getResponse();
+            if (response != null)
+            {
+                AbstractMessage msg = context.getOutMessage();
+
+                if (msg == null)
+                    msg = context.getExchange().getFaultMessage();
+
+                if (msg == null)
+                    return;
+
+                SoapVersion soap = msg.getSoapVersion();
+
+                String encoding = msg.getEncoding();
+                if (encoding == null || encoding.length() == 0)
+                    encoding = "UTF-8";
+
+                if (soap instanceof Soap11)
+                {
+                    response.setContentType("text/xml; charset=" + encoding);
+                }
+                else if (soap instanceof Soap12)
+                {
+                    response.setContentType("application/soap+xml; charset=" + encoding);
+                }
+            }
+        }
     }
 }

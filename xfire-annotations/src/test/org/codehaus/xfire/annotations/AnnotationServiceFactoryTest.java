@@ -15,7 +15,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.easymock.MockControl;
 
@@ -235,7 +235,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
-        SoapBinding binding = (SoapBinding) service.getBindings().iterator().next();
+        AbstractSoapBinding binding = (AbstractSoapBinding) service.getBindings().iterator().next();
         
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         assertNotNull(op);

@@ -1,7 +1,6 @@
 package org.codehaus.xfire.soap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,17 +22,11 @@ import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.AbstractBinding;
-import org.codehaus.xfire.service.binding.DocumentBinding;
-import org.codehaus.xfire.service.binding.MessageBinding;
-import org.codehaus.xfire.service.binding.RPCBinding;
-import org.codehaus.xfire.service.binding.WrappedBinding;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -49,97 +42,24 @@ import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
  * A SOAP Binding which contains information on how SOAP is mapped to the service model.
  * @author Dan Diephouse
  */
-public class SoapBinding extends Binding
+public class Soap11Binding extends AbstractSoapBinding
 {
-    public static final String SOAP_BINDING_ID = "http://schemas.xmlsoap.org/wsdl/soap/";
 
-    private String transportURI;
-    private String style = SoapConstants.STYLE_DOCUMENT;
-    private String use = SoapConstants.USE_LITERAL;
-    
-    private Map op2action = new HashMap();
-    private Map action2Op = new HashMap();
-    
-    public SoapBinding(QName name, Service serviceInfo)
-    {
-        super(name, SOAP_BINDING_ID, serviceInfo);
-    }
-
-    public SoapBinding(QName name, String bindingId, Service serviceInfo)
+    public Soap11Binding(QName name, String bindingId, Service serviceInfo)
     {
         super(name, bindingId, serviceInfo);
     }
     
-    public String getStyle()
-    {
-        return style;
-    }
-
-    public String getStyle(OperationInfo operation)
-    {
-        return style;
-    }
     
-    public OperationInfo getOperationByAction(String action)
+    public SoapVersion getSoapVersion()
     {
-        OperationInfo op = (OperationInfo) action2Op.get(action);
-        
-        if (op == null)
-        {
-            op = (OperationInfo) action2Op.get("*");
-        }
-        
-        return op;
-    }
-    
-    /**
-     * Get the soap action for an operation. Will never return null.
-     * @param operation
-     * @return
-     */
-    public String getSoapAction(OperationInfo operation)
-    {
-        String action = (String) op2action.get(operation);
-        
-        if (action == null) action = "";
-        
-        return action;
-    }
-    
-    public void setSoapAction(OperationInfo operation, String action)
-    {
-        op2action.put(operation, action);
-        action2Op.put(action, operation);
-    }
-    
-    public String getUse()
-    {
-        return use;
+        return Soap11.getInstance();
     }
 
-    public void setStyle(String style)
-    {
-        this.style = style;
-    }
-
-    public void setUse(String use)
-    {
-        this.use = use;
-    }
-
-    public String getTransportURI()
-    {
-        return transportURI;
-    }
-
-    public void setTransportURI(String transportURI)
-    {
-        this.transportURI = transportURI;
-    }
 
     public javax.wsdl.Binding createBinding(WSDLBuilder builder, PortType portType)
     {
-        Transport t = getTransport();
+        Transport t = builder.getTransportManager().getTransport(getBindingId());
         if (!(t instanceof WSDL11Transport)) return null;
         
         Definition def = builder.getDefinition();
@@ -275,8 +195,9 @@ public class SoapBinding extends Binding
 
     protected SOAPFault createSoapFault( Service endpoint )
     {
+        String use = getUse();
         SOAPFault fault = new SOAPFaultImpl();
-        fault.setUse( use ); 
+        fault.setUse(use); 
 
         if ( getStyle().equals( SoapConstants.STYLE_RPC ) )
         {
@@ -286,7 +207,7 @@ public class SoapBinding extends Binding
         if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
-            encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
+            encodingStyles.add( getSoapVersion().getSoapEncodingStyle() );
             
             fault.setEncodingStyles(encodingStyles);
         }
@@ -296,6 +217,7 @@ public class SoapBinding extends Binding
     
     protected SOAPHeader createSoapHeader( Service endpoint )
     {
+        String use = getUse();
         SOAPHeader header = new SOAPHeaderImpl();
         header.setUse( use ); 
 
@@ -307,7 +229,7 @@ public class SoapBinding extends Binding
         if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
-            encodingStyles.add( endpoint.getSoapVersion().getSoapEncodingStyle() );
+            encodingStyles.add( getSoapVersion().getSoapEncodingStyle() );
             
             header.setEncodingStyles(encodingStyles);
         }
@@ -323,13 +245,14 @@ public class SoapBinding extends Binding
         if (style.equals(SoapConstants.STYLE_WRAPPED)) style = SoapConstants.STYLE_DOCUMENT;
         
         soapBind.setStyle( style );
-        soapBind.setTransportURI( getTransport().getSupportedBindings()[0] );
+        soapBind.setTransportURI( getBindingId() );
 
         return soapBind;
     }
 
     protected SOAPBody createSoapBody(Service service)
     {
+        String use = getUse();
         SOAPBody body = new SOAPBodyImpl();
         body.setUse( use ); 
 
@@ -341,7 +264,7 @@ public class SoapBinding extends Binding
         if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
-            encodingStyles.add( service.getSoapVersion().getSoapEncodingStyle() );
+            encodingStyles.add( getSoapVersion().getSoapEncodingStyle() );
             
             body.setEncodingStyles(encodingStyles);
         }
@@ -364,7 +287,7 @@ public class SoapBinding extends Binding
     
     public Port createPort(WSDLBuilder builder, javax.wsdl.Binding wbinding)
     {
-        Transport t = getTransport();
+        Transport t = builder.getTransportManager().getTransport(getBindingId());
         if (!(t instanceof WSDL11Transport)) return null;
         
         WSDL11Transport transport = (WSDL11Transport) t;
@@ -378,35 +301,5 @@ public class SoapBinding extends Binding
         port.addExtensibilityElement( add );
        
         return port;
-    }
-
-    public static AbstractBinding getSerializer(String style, String use)
-    {
-        if (style.equals(SoapConstants.STYLE_WRAPPED) && use.equals(SoapConstants.USE_LITERAL))
-        {
-            return new WrappedBinding();
-        }
-        else if (style.equals(SoapConstants.STYLE_DOCUMENT)
-                && use.equals(SoapConstants.USE_LITERAL))
-        {
-            return new DocumentBinding();
-        }
-        else if (style.equals(SoapConstants.STYLE_RPC) && use.equals(SoapConstants.USE_LITERAL))
-        {
-            return new RPCBinding();
-        }
-        else if (style.equals(SoapConstants.STYLE_RPC) && use.equals(SoapConstants.USE_ENCODED))
-        {
-            return new RPCBinding();
-        }
-        else if (style.equals(SoapConstants.STYLE_MESSAGE) && use.equals(SoapConstants.USE_LITERAL))
-        {
-            return new MessageBinding();
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Service style/use not supported: " + style
-                    + "/" + use);
-        }
     }
 }

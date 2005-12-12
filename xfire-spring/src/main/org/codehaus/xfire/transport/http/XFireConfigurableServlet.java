@@ -1,6 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import java.net.URL;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
@@ -8,7 +7,6 @@ import javax.servlet.ServletException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.spring.XFireConfigLoader;
-import org.codehaus.xfire.util.XMLServiceBuilder;
 
 /**
  * XFire Servlet as Dispatcher including a configuration<br>
@@ -24,17 +22,10 @@ public class XFireConfigurableServlet
 
     private final static String PARAM_CONFIG="config";
     
-    private final static String PARAM_USE_NEW_CONFIG="useNewConfig";
     /**
      * Path to configuration file 
      */
     private String configPath;
-    
-    /**
-     * Determine if new xbean config should be used.
-     */
-    private boolean useNewConfig;
-
     
     /**
      * @return
@@ -54,11 +45,6 @@ public class XFireConfigurableServlet
     public void init()
         throws ServletException
     {
-        String useNewConfigStr = getInitParameter(PARAM_USE_NEW_CONFIG);
-        
-        if (useNewConfigStr == null) useNewConfigStr = "true";
-        
-        useNewConfig = Boolean.valueOf(useNewConfigStr).booleanValue();
         configPath = getInitParameter(PARAM_CONFIG);
         Enumeration en ;
         
@@ -73,27 +59,19 @@ public class XFireConfigurableServlet
             
             log.debug("Found services.xml at "+getConfigPath());
             
-            if (!useNewConfig)
+            if (en.hasMoreElements())
             {
-                super.init();
-                
-                configureXFire(en);
+                XFireConfigLoader loader = new XFireConfigLoader();
+                xfire = loader.loadConfig(getConfigPath());
             }
             else
             {
-                if (en.hasMoreElements())
-                {
-                    configureXFireNew();
-                }
-                else
-                {
-                    xfire = createXFire();
-                }
-                
-                controller = createController();
+                xfire = createXFire();
             }
+            
+            controller = createController();
 
-            log.debug("Loading configuration done.");
+            log.debug("Done loading configuration.");
         }
         catch (Exception e)
         {
@@ -101,28 +79,4 @@ public class XFireConfigurableServlet
         }
     }
 
-    /**
-     * @throws Exception
-     */
-    protected void configureXFire(Enumeration en)
-        throws Exception
-    {
-        XMLServiceBuilder builder = new XMLServiceBuilder(getXFire());
-        
-        while (en.hasMoreElements())
-        {
-            URL resource = (URL) en.nextElement();
-            builder.buildServices(resource.openStream());
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected void configureXFireNew()
-        throws Exception
-    {
-        XFireConfigLoader loader = new XFireConfigLoader();
-        xfire = loader.loadConfig(getConfigPath());
-    }
 }

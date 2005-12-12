@@ -5,6 +5,7 @@ import org.codehaus.xfire.service.BadEcho;
 import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractServletTest;
 import org.codehaus.xfire.transport.Transport;
@@ -31,7 +32,9 @@ public class XFireServletTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(EchoImpl.class);
+        ObjectServiceFactory osf = (ObjectServiceFactory) getServiceFactory();
+        osf.addSoap12Transport(SoapHttpTransport.SOAP12_HTTP_BINDING);
+        Service service = osf.create(EchoImpl.class);
         WSDLWriter writer = new ResourceWSDL(getClass().getResource("/org/codehaus/xfire/echo11.wsdl"));
         service.setWSDLWriter(writer);
 
@@ -43,7 +46,7 @@ public class XFireServletTest
         getServiceRegistry().register(faultService);
         
         // Asynchronous service
-        Service asyncService = getServiceFactory().create(AsyncService.class);
+        Service asyncService = osf.create(AsyncService.class);
         OperationInfo op = asyncService.getServiceInfo().getOperation("echo");
         op.setMEP(SoapConstants.MEP_IN);
         op.setOutputMessage(null);

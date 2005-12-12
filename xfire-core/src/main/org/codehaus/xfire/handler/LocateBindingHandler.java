@@ -35,14 +35,11 @@ public class LocateBindingHandler
         
         Transport t = context.getInMessage().getChannel().getTransport();
         Service service = context.getService();
-
+        
         // find a binding with that soap binding id
         // set the binding
-        Binding binding = service.getBinding(t);
-        if (binding != null)
-        {
-            context.setBinding(binding);
-            return;
-        }
+        Binding binding = t.findBinding(context, service);
+        
+        context.setBinding(binding);
     }
 }

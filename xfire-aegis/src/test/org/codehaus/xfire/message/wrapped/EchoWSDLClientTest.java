@@ -20,7 +20,7 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.local.LocalTransport;
@@ -70,7 +70,7 @@ public class EchoWSDLClientTest
         
         Service service = (Service) builder.getServices().iterator().next();
         assertTrue(service.getBindingProvider() instanceof AegisBindingProvider);
-        SoapBinding binding = (SoapBinding) service.getBindings().iterator().next();
+        AbstractSoapBinding binding = (AbstractSoapBinding) service.getBindings().iterator().next();
         
         Client client = new Client(binding, "xfire.local://" + service.getSimpleName());
         client.setXFire(getXFire());

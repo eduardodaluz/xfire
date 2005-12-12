@@ -7,7 +7,6 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.test.EchoImpl;
 import org.jdom.Document;
@@ -45,7 +44,6 @@ public class WSAddresingEcho1_1Test
                 return op;
             }
         };
-        factory.setSoapVersion(Soap11.getInstance());
         service = factory.create(EchoImpl.class);
         service.addInHandler(new WSATestHandler(data));
         if (getXFire().getInHandlers().size() < 3)

@@ -1,12 +1,11 @@
 package org.codehaus.xfire.xmpp;
 
-import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapSerializer;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
@@ -42,6 +41,7 @@ public class TransportTest
         
         transport1 = new XMPPTransport(getXFire(), server, "xfireTestClient", "password2");
 
+        ((ObjectServiceFactory) getServiceFactory()).addSoap11Transport(XMPPTransport.BINDING_ID);
         echo = getServiceFactory().create(Echo.class);
 
         getServiceRegistry().register(echo);
@@ -101,7 +101,7 @@ public class TransportTest
         
         Channel channel2 = transport2.createChannel("Echo");
 
-        Binding binding = echo.getBinding(transport2);
+        Binding binding = echo.getBinding(XMPPTransport.BINDING_ID);
         assertNotNull(binding);
         
         // Document to send
@@ -135,7 +135,7 @@ public class TransportTest
 
         assertValid("//wsdl:binding[@name='EchoXMPPBinding'][@type='tns:EchoPortType']", wsdl);
         assertValid("//wsdl:binding[@name='EchoXMPPBinding']/swsdl:binding[@transport='" +
-                    XMPPTransport.XMPP_TRANSPORT_NS + "']", wsdl);
+                    XMPPTransport.BINDING_ID + "']", wsdl);
 
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']", wsdl);
         assertValid("//wsdl:service/wsdl:port[@binding='tns:EchoXMPPBinding'][@name='EchoXMPPPort']" +

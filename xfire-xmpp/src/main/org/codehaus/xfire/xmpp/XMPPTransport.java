@@ -22,7 +22,7 @@ public class XMPPTransport
     private static final Log log = LogFactory.getLog(XMPPTransport.class);
     
     public final static String NAME = "XMPP";
-    public final static String XMPP_TRANSPORT_NS = "http://jabber.org/protocol/soap";
+    public final static String BINDING_ID = "http://jabber.org/protocol/soap";
 
     private XFire xfire;
     private String username;
@@ -77,7 +77,7 @@ public class XMPPTransport
      */
     public String getTransportURI(Service service)
     {
-        return XMPP_TRANSPORT_NS;
+        return BINDING_ID;
     }
 
     protected Channel createNewChannel(String uri)
@@ -117,7 +117,7 @@ public class XMPPTransport
 
     public String[] getSupportedBindings()
     {
-        return new String[] { XMPP_TRANSPORT_NS };
+        return new String[] { BINDING_ID };
     }
 
     public String[] getKnownUriSchemes()

@@ -15,8 +15,9 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.spring.config.AbstractSoapBinding;
+import org.codehaus.xfire.spring.config.Soap11Binding;
+import org.codehaus.xfire.spring.config.Soap12Binding;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -60,6 +61,8 @@ public class ServiceBean
 
     private Object service;
 
+    private List bindings;
+
     private List inHandlers;
 
     private List outHandlers;
@@ -74,7 +77,7 @@ public class ServiceBean
 
     /** Some properties to make it easier to work with ObjectServiceFactory */
 
-    protected SoapVersion soapVersion = Soap11.getInstance();
+    protected boolean createDefaultBindings;
 
     protected String use;
 
@@ -115,7 +118,27 @@ public class ServiceBean
         
         // Lets set up some properties for the service
         Map properties = new HashMap();
-        properties.put(ObjectServiceFactory.SOAP_VERSION, soapVersion);
+        
+        if (bindings != null)
+        {
+            ArrayList s11Bindings = new ArrayList();
+            ArrayList s12Bindings = new ArrayList();
+            
+            for (Iterator itr = bindings.iterator(); itr.hasNext();)
+            {
+                AbstractSoapBinding o = (AbstractSoapBinding) itr.next();
+                if (o instanceof Soap11Binding)
+                    s11Bindings.add(o.getTransport());
+                else if (o instanceof Soap12Binding)
+                    s12Bindings.add(o.getTransport());
+            }
+            
+            properties.put(ObjectServiceFactory.SOAP11_TRANSPORTS, s11Bindings);
+            properties.put(ObjectServiceFactory.SOAP12_TRANSPORTS, s12Bindings);
+        }
+        
+        if (createDefaultBindings)
+            properties.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.TRUE);
         
         if (style != null)
             properties.put(ObjectServiceFactory.STYLE, style);
@@ -134,8 +157,7 @@ public class ServiceBean
 
         if (logger.isInfoEnabled())
         {
-            logger.info("Exposing SOAP v." + xfireService.getSoapVersion().getVersion()
-                    + " service with name " + xfireService.getSimpleName());
+            logger.info("Exposing service with name " + xfireService.getName());
         }
 
         // Register the service
@@ -345,16 +367,6 @@ public class ServiceBean
         this.use = use;
     }
 
-    public SoapVersion getSoapVersion()
-    {
-        return soapVersion;
-    }
-
-    public void setSoapVersion(SoapVersion soapVersion)
-    {
-        this.soapVersion = soapVersion;
-    }
-
     public List getSchemas()
     {
         return schemas;
@@ -387,6 +399,30 @@ public class ServiceBean
         throws BeansException
     {
         xFire = (XFire) ctx.getBean("xfire");
+    }
+
+
+    public List getBindings()
+    {
+        return bindings;
+    }
+
+
+    public void setBindings(List bindings)
+    {
+        this.bindings = bindings;
+    }
+
+
+    public boolean isCreateDefaultBindings()
+    {
+        return createDefaultBindings;
+    }
+
+
+    public void setCreateDefaultBindings(boolean createDefaultBindings)
+    {
+        this.createDefaultBindings = createDefaultBindings;
     }
 
 }

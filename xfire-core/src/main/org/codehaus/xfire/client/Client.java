@@ -29,7 +29,7 @@ import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
@@ -64,22 +64,26 @@ public class Client
         addFaultHandler(new ClientFaultConverter());
     }
     
-    public Client(Endpoint endpoint)
+    public Client(Transport t, Endpoint endpoint)
     {
-        this(endpoint.getBinding(), endpoint.getAddress());
+        this(endpoint.getBinding(), t, endpoint.getBinding().getService(), endpoint.getAddress(), null);
+    }
+
+    public Client( Binding binding, String url)
+    {
+        this(binding, 
+             XFireFactory.newInstance().getXFire().getTransportManager().getTransport(binding.getBindingId()), 
+             binding.getService(), url, null);
     }
     
-    public Client(Binding binding, String url)
+    public Client(Transport t, Binding binding, String url)
     {
-        this(binding.getTransport(), binding.getService(), url);
-        this.binding = binding;
+        this(binding, t, binding.getService(), url, null);
     }
     
     public Client(Transport transport, Service service, String url)
     {
         this(transport, service, url, null);
-        
-        findBinding(transport, service);       
     }
     
     public Client(Transport transport, Service service, String url, String endpointUri)
@@ -94,19 +98,34 @@ public class Client
 
         this.binding = findBinding(transport, service);
     }
+    
+    public Client(Binding binding, Transport transport, Service service, String url, String endpointUri)
+    {
+        this();
+        this.transport = transport;
+        this.url = url;
+        this.endpointUri = endpointUri;
+
+        // Create a service clone
+        setService(service);
+
+        this.binding = binding;
+    }
 
     public Client(Definition definition, Class serviceClass) throws Exception
     {
     	this();
-		Transport transport = xfire.getTransportManager().getTransportForUri(SoapHttpTransport.WSDL_SOAP_BINDING);
-    	initFromDefinition(transport, definition, serviceClass);
+        
+		Transport transport = xfire.getTransportManager().getTransportForUri(SoapHttpTransport.SOAP11_HTTP_BINDING);
+    	initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, definition, serviceClass);
     }
     
-    public Client(Transport transport, Definition definition, Class serviceClass) throws Exception
+    /*public Client(Transport transport, Definition definition, Class serviceClass) throws Exception
     {
     	this();
+        
     	initFromDefinition(transport, definition, serviceClass);
-    }
+    }*/
     
     public Client(URL wsdlLocation) throws Exception
     {
@@ -116,13 +135,14 @@ public class Client
     public Client(URL wsdlLocation, Class serviceClass) throws Exception
     {
     	this();
+        
     	InputStream is = wsdlLocation.openStream();
     	try 
     	{
     		InputSource src = new InputSource(is);
     		Definition def = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, src);
-    		Transport transport = xfire.getTransportManager().getTransport(SoapHttpTransport.WSDL_SOAP_BINDING);
-    		initFromDefinition(transport, def, serviceClass);
+    		Transport transport = xfire.getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+    		initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, def, serviceClass);
     	}
     	finally
     	{
@@ -134,27 +154,29 @@ public class Client
     {
         this.service = service;
         this.service.setFaultSerializer(service.getFaultSerializer());
-        this.service.setSoapVersion(service.getSoapVersion());
     }
     
-    protected void initFromDefinition(Transport transport, Definition definition, Class serviceClass) throws Exception
+    protected void initFromDefinition(String binding, Definition definition, Class serviceClass) throws Exception
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(definition);
         builder.setTransportManager(xfire.getTransportManager());
         builder.walkTree();
         
-        Endpoint ep = findEndpoint(transport, builder.getServices());
+        Endpoint ep = findEndpoint(binding, builder.getServices());
         
         this.url = ep.getAddress();
         this.binding = ep.getBinding();
-        this.transport = ep.getBinding().getTransport();
-        if (serviceClass != null) {
+        this.transport = getXFire().getTransportManager().getTransport(binding);
+        
+        if (serviceClass != null)
+        {
             ep.getBinding().getService().getServiceInfo().setServiceClass(serviceClass);
         }
+        
         setService(ep.getBinding().getService());
     }
     
-    public Endpoint findEndpoint(Transport transport, Collection services)
+    public Endpoint findEndpoint(String binding, Collection services)
     {
         for (Iterator itr = services.iterator(); itr.hasNext();)
         {
@@ -164,7 +186,7 @@ public class Client
             {
                 Endpoint ep = (Endpoint) eitr.next();
                 
-                if (ep.getBinding().getTransport() != null && ep.getBinding().getTransport().equals(transport))
+                if (ep.getBinding().getBindingId().equals(binding))
                 {
                     return ep;
                 }
@@ -175,10 +197,11 @@ public class Client
 
     private Binding findBinding(Transport transport, Service service)
     {
-        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        String[] ids = transport.getSupportedBindings();
+        for (int i = 0; i < ids.length; i++)
         {
-            Binding b = (Binding) itr.next();
-            if (b.getTransport() != null && b.getTransport().equals(transport))
+            Binding b = service.getBinding(ids[i]);
+            if (b != null)
             {
                 return b;
             }
@@ -188,14 +211,14 @@ public class Client
         // throw new IllegalStateException("Couldn't find an appropriate binding for the selected transport.");
     }
 
-    private SoapBinding findSoapBinding(Service service)
+    private AbstractSoapBinding findSoapBinding(Service service)
     {
         for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
         {
             Object o = itr.next();
-            if (o instanceof SoapBinding)
+            if (o instanceof AbstractSoapBinding)
             {
-                return (SoapBinding) o;
+                return (AbstractSoapBinding) o;
             }
         }
         return null;

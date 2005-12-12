@@ -27,8 +27,10 @@
     <use>literal</use>
     <serviceClass>org.codehaus.xfire.test.EchoImpl</serviceClass>
 
-    <soapVersion>1.2</soapVersion>
-
+    <bindings>
+  	  <soap12Binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+  	</bindings>
+  	
     <inHandlers>
       <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler">
 		  <before>
@@ -38,7 +40,7 @@
     </inHandlers>
 
     <outHandlers>
-      <handler handlerClass="org.codehaus.xfire.addressing.AddressingInHandler" />
+      <handler handlerClass="org.codehaus.xfire.addressing.AddressingOutHandler" />
     </outHandlers>
   </service>
 

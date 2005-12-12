@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.transport.TransportManager;
 
 /**
  * Creates a WSDLBuilder for a service.
@@ -36,11 +37,11 @@ public class DefaultWSDLBuilderFactory
         this.schemaLocations = schemaLocations;
     }
 
-    public WSDLBuilder createWSDLBuilder(Service service)
+    public WSDLBuilder createWSDLBuilder(Service service, TransportManager transportManager)
     {
         try
         {
-            WSDLBuilder builder = new WSDLBuilder(service);
+            WSDLBuilder builder = new WSDLBuilder(service, transportManager);
             
             if (getSchemaLocations() != null)
                 builder.addSchemas(getSchemaLocations());

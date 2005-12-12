@@ -117,7 +117,6 @@ public class DefaultServiceDeployer
             ObjectServiceFactory osf = (ObjectServiceFactory) factory;
             osf.setStyle(configuration.getChild("style").getValue("wrapped"));
             osf.setUse(configuration.getChild("use").getValue("wrapped"));
-            osf.setSoapVersion(getSoapVersion(configuration.getChild("soapVersion")));
         }
 
         final Configuration[] properties = configuration.getChildren("property");

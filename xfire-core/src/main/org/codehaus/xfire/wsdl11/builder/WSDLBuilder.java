@@ -29,6 +29,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.jdom.Attribute;
@@ -49,10 +50,25 @@ public class WSDLBuilder
 
     private List declaredParameters = new ArrayList();
 
-    public WSDLBuilder(Service service) throws WSDLException
+    private TransportManager transportManager;
+    
+    public WSDLBuilder(Service service, TransportManager transportManager) throws WSDLException
     {
         super(service);
+        this.transportManager = transportManager;
     }
+
+    public TransportManager getTransportManager()
+    {
+        return transportManager;
+    }
+
+
+    public void setTransportManager(TransportManager transportManager)
+    {
+        this.transportManager = transportManager;
+    }
+
 
     public void write(OutputStream out) throws IOException
     {

@@ -10,7 +10,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 
@@ -63,7 +63,7 @@ public class WSDLServiceBuilderTest
         assertEquals(new QName("urn:Echo", "echoResponse"), part.getName());
         
         // Is the SOAP binding stuff around?
-        SoapBinding soapOp = (SoapBinding) service.getBindings().iterator().next();
+        AbstractSoapBinding soapOp = (AbstractSoapBinding) service.getBindings().iterator().next();
         assertNotNull(soapOp);
         assertEquals("literal", soapOp.getUse());
         assertEquals("", soapOp.getSoapAction(opInfo));

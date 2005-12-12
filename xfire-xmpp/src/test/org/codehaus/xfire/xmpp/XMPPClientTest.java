@@ -4,7 +4,6 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.test.Echo;
@@ -41,8 +40,9 @@ public class XMPPClientTest
         
         getXFire().getTransportManager().register(serverTrans);
 
-        ServiceFactory factory = getServiceFactory();
-
+        ObjectServiceFactory factory = (ObjectServiceFactory) getServiceFactory();
+        factory.addSoap11Transport(XMPPTransport.BINDING_ID);
+        
         Service service = factory.create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         getServiceRegistry().register(service);
@@ -66,10 +66,12 @@ public class XMPPClientTest
         TransportManager tm = new DefaultTransportManager();
         tm.register(clientTrans);
         
-        Service serviceModel = new ObjectServiceFactory(tm).create(Echo.class);
+        ObjectServiceFactory sf = new ObjectServiceFactory(tm);
+        sf.addSoap11Transport(XMPPTransport.BINDING_ID);
+        Service serviceModel = sf.create(Echo.class);
         Client client = new Client(clientTrans, serviceModel, id + "/Echo");
         client.setTimeout(10000);
-        
+     
         OperationInfo op = serviceModel.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {"hello"});
 

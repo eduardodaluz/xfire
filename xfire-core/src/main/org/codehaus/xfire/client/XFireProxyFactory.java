@@ -59,37 +59,20 @@ public class XFireProxyFactory
         if (transports.size() == 0)
             throw new XFireRuntimeException("No Transport is available for url " + url);
         
-        Binding lastChoice = null;
-        Binding firstChoice = null;
-        Transport t = null;
-        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        Binding binding = null;
+        Transport transport = null;
+        for (Iterator itr = transports.iterator(); itr.hasNext();)
         {
-            Binding binding = (Binding) itr.next();
-            if (binding.getTransport() == null) 
+            transport = (Transport) itr.next();
+            for (int i = 0; i < transport.getSupportedBindings().length; i++)
             {
-                lastChoice = binding;
+                binding = service.getBinding(transport.getSupportedBindings()[i]);
+                
+                if (binding != null) break;
             }
-            else if (transports.contains(binding.getTransport()))
-            {
-                firstChoice = binding;
-                t = binding.getTransport();
-                break;
-            }
-        }
-        
-        if (firstChoice == null && lastChoice == null)
-        {
-            throw new XFireRuntimeException("Could not find binding for url " + url);
-        }
-        
-        if (firstChoice == null)
-        {
-            firstChoice = lastChoice;
-            t = (Transport) transports.iterator().next();
         }
 
-        Client client = new Client(firstChoice, url);
-        client.setTransport(t);
+        Client client = new Client(transport, binding, url);
         return create(client);
     }
     
@@ -127,19 +110,30 @@ public class XFireProxyFactory
     public Object create(Endpoint endpoint)
         throws MalformedURLException
     {
-        return create(new Client(endpoint));
+        Binding binding = endpoint.getBinding();
+        Transport t = xfire.getTransportManager().getTransport(binding.getBindingId());
+        
+        if (t == null)
+        {
+            throw new XFireRuntimeException("Could not find transport for binding " + 
+                                            binding.getBindingId());
+        }
+        
+        return create(new Client(t, endpoint));
     }
         
     public Object create(Binding binding, String address)
         throws MalformedURLException
     {
-        Transport transport = binding.getTransport();
+        Transport t = xfire.getTransportManager().getTransport(binding.getBindingId());
         
-        if (transport == null)
+        if (t == null)
         {
-            throw new IllegalStateException("No such transport for binding.");
+            throw new XFireRuntimeException("Could not find transport for binding " + 
+                                            binding.getBindingId());
         }
         
-        return create(binding.getService(), transport, address);
+        Client client = new Client(t, binding, address);
+        return create(client);
     }
 }

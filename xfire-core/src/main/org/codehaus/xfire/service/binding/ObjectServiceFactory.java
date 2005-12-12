@@ -3,10 +3,13 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,13 +30,16 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.soap.Soap11Binding;
+import org.codehaus.xfire.soap.Soap12Binding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.transport.http.SoapHttpTransport;
+import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -56,19 +62,22 @@ public class ObjectServiceFactory
     public static final String PORT_TYPE = "objectServiceFactory.portType";
     public static final String STYLE = "sobjectServiceFactory.tyle";
     public static final String USE = "objectServiceFactory.use";
-    public static final String SOAP_VERSION = "objectServiceFactory.soapVersion";
-    public static final String CREATE_BINDINGS =  "objectServiceFactory.createBindings";
-    
+    public static final String CREATE_DEFAULT_BINDINGS =  "objectServiceFactory.createDefaultBindings";
+    public static final String SOAP11_TRANSPORTS =  "objectServiceFactory.soap11Transports";
+    public static final String SOAP12_TRANSPORTS =  "objectServiceFactory.soap12Transports";
+
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
     private String style;
     private String use;
     private Set ignoredClasses = new HashSet();
-    private SoapVersion soapVersion = Soap11.getInstance();
     private boolean voidOneWay;
     private WSDLBuilderFactory wsdlBuilderFactory = new DefaultWSDLBuilderFactory();
     private boolean customFaultsEnabled = true;
     private boolean bindingCreationEnabled = true;
+    
+    private List soap11Transports = new ArrayList();
+    private List soap12Transports = new ArrayList();
     
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
@@ -101,6 +110,11 @@ public class ObjectServiceFactory
         this.transportManager = transportManager;
         setStyle(SoapConstants.STYLE_WRAPPED);
         setUse(SoapConstants.USE_LITERAL);
+        
+        soap11Transports.add(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        soap11Transports.add(LocalTransport.BINDING_ID);
+        soap12Transports.add(LocalTransport.BINDING_ID);
+
         ignoredClasses.add("java.lang.Object");
         ignoredClasses.add("java.lang.Throwable");
         ignoredClasses.add("org.omg.CORBA_2_3.portable.ObjectImpl");
@@ -111,7 +125,7 @@ public class ObjectServiceFactory
 
     public ObjectServiceFactory(BindingProvider bp)
     {
-        this(null, bp);
+        this(XFireFactory.newInstance().getXFire().getTransportManager(), bp);
     }
     
     public BindingProvider getBindingProvider()
@@ -140,7 +154,7 @@ public class ObjectServiceFactory
     {
         if (properties == null) properties = new HashMap();
         
-        properties.put(CREATE_BINDINGS, Boolean.FALSE);
+        properties.put(CREATE_DEFAULT_BINDINGS, Boolean.FALSE);
         
         Service service = create(clazz, properties);
         service.setName(name);
@@ -164,7 +178,6 @@ public class ObjectServiceFactory
         return service;
     }
     
-
     /**
      * Creates a service from the specified class. The service name will be the 
      * unqualified class name. The namespace will be based on the package. 
@@ -232,16 +245,18 @@ public class ObjectServiceFactory
         String theStyle = null;
         String theUse = null;
         QName portType = null;
+        List s11Bindings = null;
+        List s12Bindings = null;
         
         if (properties != null)
         {
-            theVersion = (SoapVersion) properties.get(SOAP_VERSION);
             theStyle = (String) properties.get(STYLE);
             theUse = (String) properties.get(USE);
             portType = (QName) properties.get(PORT_TYPE);
+            s11Bindings = (List) properties.get(SOAP11_TRANSPORTS);
+            s12Bindings = (List) properties.get(SOAP12_TRANSPORTS);
         }
         
-        if (theVersion == null) theVersion = soapVersion;
         if (theStyle == null) theStyle = style;
         if (theUse == null) theUse = use;
         if (portType == null) portType = new QName(theNamespace, theName + "PortType");
@@ -254,12 +269,11 @@ public class ObjectServiceFactory
         Service endpoint = new Service(serviceInfo);
         endpoint.setName(qName);
         setProperties(endpoint, properties);
-        endpoint.setSoapVersion(theVersion);
 
         endpoint.setInvoker(new ObjectInvoker());
         endpoint.setFaultSerializer(new SoapFaultSerializer());
 
-        endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilderFactory(), endpoint));
+        endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilderFactory(), endpoint, transportManager));
  
         initializeOperations(endpoint, theStyle);
 
@@ -267,15 +281,21 @@ public class ObjectServiceFactory
         endpoint.setProperty(USE, theUse);
         
         boolean buildBindings = bindingCreationEnabled;
-        if (properties != null && properties.containsKey(CREATE_BINDINGS))
+        if (properties != null && properties.containsKey(CREATE_DEFAULT_BINDINGS))
         {
-            buildBindings = ((Boolean) properties.get(CREATE_BINDINGS)).booleanValue();
+            buildBindings = ((Boolean) properties.get(CREATE_DEFAULT_BINDINGS)).booleanValue();
         }
+        
+        if (s11Bindings == null) s11Bindings = new ArrayList();
+        if (s12Bindings == null) s12Bindings = new ArrayList();
         
         if (buildBindings)
         {
-            createBindings(endpoint);
+            s11Bindings.addAll(getSoap11Transports());
+            s12Bindings.addAll(getSoap12Transports());
         }
+        
+        createBindings(endpoint, s11Bindings, s12Bindings);
         
         try
         {
@@ -300,22 +320,42 @@ public class ObjectServiceFactory
                 clazz.getName(), "http");
     }
 
-    protected void createBindings(Service service)
+    /**
+     * Get a list of Transports which are enabled over SOAP 1.1.
+     * @return
+     */
+    public Collection getSoap11Transports()
+    {
+        return soap11Transports;
+    }
+    
+    public void addSoap11Transport(String id)
+    {
+        soap11Transports.add(id);
+    }
+
+    /**
+     * Get a list of Transports which are enabled over SOAP 1.2.
+     * @return
+     */
+    public Collection getSoap12Transports()
+    {
+        return soap12Transports;
+    }
+    
+    public void addSoap12Transport(String id)
+    {
+        soap12Transports.add(id);
+    }
+    
+    protected void createBindings(Service service, List s11, List s12)
     {
         QName name = service.getName();
-        
-        if (transportManager == null)
-        {
-            QName bindingName = new QName(name.getNamespaceURI(), 
-                                          name.getLocalPart() + "SoapBinding");
 
-            createSoapBinding(service, name);
-            return;
-        }
-        
-        for (Iterator itr = transportManager.getTransports().iterator(); itr.hasNext();)
+        for (Iterator itr = s11.iterator(); itr.hasNext();)
         {
-            Transport t = (Transport) itr.next();
+            String bindingId = (String) itr.next();
+            Transport t = transportManager.getTransport(bindingId);
 
             if (t instanceof SoapTransport)
             {
@@ -323,29 +363,61 @@ public class ObjectServiceFactory
                 QName bindingName = new QName(name.getNamespaceURI(), 
                                               name.getLocalPart() + st.getName() + "Binding");
 
-                createSoapBinding(service, bindingName, st);
+                createSoap11Binding(service, bindingName, bindingId);
+            }
+            else
+            {
+                            
+            }
+        }
+        
+        for (Iterator itr = s12.iterator(); itr.hasNext();)
+        {
+            String bindingId = (String) itr.next();
+            Transport t = transportManager.getTransport(bindingId);
+
+            if (t instanceof SoapTransport)
+            {
+                SoapTransport st = (SoapTransport) t;
+                QName bindingName = new QName(name.getNamespaceURI(), 
+                                              name.getLocalPart() + st.getName() + "12Binding");
+
+                createSoap12Binding(service, bindingName, bindingId);
+            }
+            else
+            {
+            
             }
         }
     }
 
-    public SoapBinding createSoapBinding(Service service, QName name, SoapTransport transport)
+    private Soap12Binding createSoap12Binding(Service service, QName bindingName, String bindingId)
     {
-        SoapBinding binding = createSoapBinding(service, name);
-        binding.setTransport(transport);
-    
+        Soap12Binding binding = new Soap12Binding(bindingName, bindingId, service);
+        
+        createSoapBinding(service, binding);
+           
         return binding;
     }
-    
-    public SoapBinding createSoapBinding(Service service, QName name)
+
+    public Soap11Binding createSoap11Binding(Service service, QName bindingName, String bindingId)
+    {
+        Soap11Binding binding = new Soap11Binding(bindingName, bindingId, service);
+     
+        createSoapBinding(service, binding);
+        
+        return binding;
+    }
+
+    protected void createSoapBinding(Service service, AbstractSoapBinding binding)
     {
         ServiceInfo serviceInfo = service.getServiceInfo();
 
-        SoapBinding binding = new SoapBinding(name, service);
         String style = (String) service.getProperty(STYLE);
         String use = (String) service.getProperty(USE);
         binding.setStyle(style);
         binding.setUse(use);
-        binding.setSerializer(SoapBinding.getSerializer(style, use));
+        binding.setSerializer(AbstractSoapBinding.getSerializer(style, use));
         
         // Create SOAP metadata for the binding operation
         for (Iterator itr = serviceInfo.getOperations().iterator(); itr.hasNext();)
@@ -356,10 +428,9 @@ public class ObjectServiceFactory
         }
     
         service.addBinding(binding);
-        return binding;
     }
 
-    protected void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
+    protected void createBindingOperation(Service service, AbstractSoapBinding binding, OperationInfo op)
     {
         binding.setSoapAction(op, getAction(op));
         createMessageBinding(binding, op.getInputMessage());
@@ -377,7 +448,7 @@ public class ObjectServiceFactory
         }
     }
 
-    private void createMessageBinding(SoapBinding binding, MessageInfo msg)
+    private void createMessageBinding(AbstractSoapBinding binding, MessageInfo msg)
     {
         Method method = msg.getOperation().getMethod();
         Class[] paramClasses = method.getParameterTypes();
@@ -682,16 +753,6 @@ public class ObjectServiceFactory
     public void setUse(String use)
     {
         this.use = use;
-    }
-
-    public SoapVersion getSoapVersion()
-    {
-        return soapVersion;
-    }
-
-    public void setSoapVersion(SoapVersion soapVersion)
-    {
-        this.soapVersion = soapVersion;
     }
 
     public boolean isVoidOneWay()

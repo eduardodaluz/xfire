@@ -13,7 +13,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.TestWSAServiceImpl;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -60,7 +59,6 @@ public class WSAddresingEcho1_2Test
                 return new QName("http://example.org/echo", "echo");
             }
         };
-        factory.setSoapVersion(Soap12.getInstance());
         factory.setStyle("document");
         service = factory.create(TestWSAServiceImpl.class);
         service.addInHandler(new WSATestHandler(data));

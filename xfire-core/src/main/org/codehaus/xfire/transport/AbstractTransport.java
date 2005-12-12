@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
+import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.util.UID;
 
 /**
@@ -74,5 +77,10 @@ public abstract class AbstractTransport
         }
         
         return false;
+    }
+
+    public Binding findBinding(MessageContext context, Service service)
+    {
+        return service.getBinding(getSupportedBindings()[0]);
     }
 }
