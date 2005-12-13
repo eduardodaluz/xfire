@@ -97,9 +97,33 @@ public class WSDLServiceBuilderTest
         assertEquals(1, operations.size());
     }
     
-    public void testClient()
+    public void testSimpleVisitor()
         throws Exception
     {
-        //Client client = new Client(new URL("echo.wsdl"));
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoSimple.wsdl"));
+        builder.setBindingProvider(new MessageBindingProvider());
+        builder.walkTree();
+        
+        Collection services = builder.getServices();        
+        assertEquals(1, services.size());
+        
+        Service service = (Service) services.iterator().next();
+        
+        QName name = service.getName();
+        assertNotNull(name);
+        assertEquals(new QName("urn:Echo", "Echo"), name);
+        
+        Collection operations = service.getServiceInfo().getOperations();
+        assertEquals(1, operations.size());
+        
+        OperationInfo opInfo = (OperationInfo) operations.iterator().next();
+        assertEquals("echo", opInfo.getName());
+        
+        // Check the input message
+        MessageInfo message = opInfo.getInputMessage();
+        assertNotNull(message);
+        
+        Collection parts = message.getMessageParts();
+        assertEquals(1, parts.size());
     }
 }

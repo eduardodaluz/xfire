@@ -224,6 +224,8 @@ public class WSDLServiceBuilder
     {
         schemas = new XmlSchemaCollection();
 
+        if (types == null) return;
+        
         for (Iterator itr = types.getExtensibilityElements().iterator(); itr.hasNext();)
         {
             ExtensibilityElement ee = (ExtensibilityElement) itr.next();
