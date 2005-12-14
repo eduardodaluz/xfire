@@ -14,7 +14,9 @@ import org.codehaus.xfire.gen.GeneratorPlugin;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.soap.Soap11Binding;
+import org.codehaus.xfire.soap.Soap12Binding;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.local.LocalTransport;
@@ -54,8 +56,9 @@ public class PortGenerator
         if (service.getEndpoints().size() == 0) return;
         
         // hack to get local support
-        SoapBinding localBind = new SoapBinding(new QName(ns, name + "LocalBinding"), service);
-        localBind.setTransportURI(LocalTransport.BINDING_ID);
+        Soap11Binding localBind = new Soap11Binding(new QName(ns, name + "LocalBinding"), 
+                                                    LocalTransport.BINDING_ID, 
+                                                    service);
         service.addBinding(localBind);
         service.addEndpoint(new QName(ns, name + "LocalPort"), localBind, "xfire.local://" + name);
         
@@ -81,7 +84,7 @@ public class PortGenerator
         JType asfType = model._ref(AnnotationServiceFactory.class);
         JType jsr181Type = model._ref(Jsr181WebAnnotations.class);
         JType tmType = model._ref(TransportManager.class);
-        JType soapBindingType = model._ref(SoapBinding.class);
+        JType abSoapBindingType = model._ref(AbstractSoapBinding.class);
         JType qnameType = model._ref(QName.class);
         JType soapTransType = model._ref(SoapTransport.class);
         
@@ -106,24 +109,31 @@ public class PortGenerator
         for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
         {
             Binding binding = (Binding) itr.next();
-            if (!(binding instanceof SoapBinding)) continue;
+            if (!(binding instanceof AbstractSoapBinding)) continue;
             
-            SoapBinding soapBinding = (SoapBinding) binding;
+            AbstractSoapBinding soapBinding = (AbstractSoapBinding) binding;
 
             JBlock block = create.body().block();
             
-            JInvocation createBinding = asfVar.invoke("createSoapBinding");
+            JInvocation createBinding;
+            if (soapBinding instanceof Soap12Binding)
+            {
+                createBinding = asfVar.invoke("createSoap12Binding");
+            }
+            else
+            {
+                createBinding = asfVar.invoke("createSoap11Binding");
+            }
+            
             createBinding.arg(serviceVar);
             
             JInvocation newQN = JExpr._new(qnameType);
             newQN.arg(soapBinding.getName().getNamespaceURI());
             newQN.arg(soapBinding.getName().getLocalPart());
             createBinding.arg(newQN);
+            createBinding.arg(soapBinding.getBindingId());
 
-            createBinding.arg(JExpr.cast(soapTransType, tmVar.invoke("getTransport").arg(soapBinding.getTransportURI())));
-            
-            JVar sbVar = block.decl(soapBindingType, "soapBinding", createBinding);
-            block.add(sbVar.invoke("setTransportURI").arg(soapBinding.getTransportURI()));
+            JVar sbVar = block.decl(abSoapBindingType, "soapBinding", createBinding);
         }
         
         /**
@@ -158,7 +168,7 @@ public class PortGenerator
         
         JInvocation createProxy = pfVar.invoke("create");
         createProxy.arg(JExpr.direct(epVar.name()).invoke("getBinding"));
-        createProxy.arg(JExpr.direct(epVar.name()).invoke("getAddress"));
+        createProxy.arg(JExpr.direct(epVar.name()).invoke("getUrl"));
         
         tryBlock.body()._return(JExpr.cast(serviceIntf, createProxy));
         
@@ -240,7 +250,7 @@ public class PortGenerator
  
             addEndpointInv.arg(newQN);
             addEndpointInv.arg(bindingQN);
-            addEndpointInv.arg(endpoint.getAddress());
+            addEndpointInv.arg(endpoint.getUrl());
             
             consBody.add(addEndpointInv);
             

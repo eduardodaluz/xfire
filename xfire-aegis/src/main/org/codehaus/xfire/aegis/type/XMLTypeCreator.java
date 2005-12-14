@@ -98,9 +98,62 @@ public class XMLTypeCreator extends AbstractTypeCreator
         return null;
     }
 
+    
+    
+    protected boolean isEnum(Class javaType)
+    {
+        Element mapping = findMapping(javaType);
+        if (mapping != null)
+        {
+            return super.isEnum(javaType);
+        }
+        else
+        {
+            return nextCreator.isEnum(javaType); 
+        }
+    }
+
+
+
+    public Type createEnumType(TypeClassInfo info)
+    {
+        Element mapping = findMapping(info.getTypeClass());
+        if (mapping != null)
+        {
+            return super.createEnumType(info);
+        }
+        else
+        {
+            return nextCreator.createEnumType(info); 
+        }
+    }
+
+
+    protected Type createMapType(TypeClassInfo info)
+    {
+        Element mapping = findMapping(info.getTypeClass());
+        if (mapping != null)
+        {
+            return super.createMapType(info);
+        }
+        else
+        {
+            return nextCreator.createMapType(info); 
+        }
+    }
+
+
     public Type createCollectionType(TypeClassInfo info)
     {
-        return super.createCollectionType(info, (Class)info.getGenericType());
+        Element mapping = findMapping(info.getTypeClass());
+        if (mapping != null)
+        {
+            return super.createCollectionType(info, (Class)info.getGenericType());
+        }
+        else
+        {
+            return nextCreator.createCollectionType(info); 
+        }
     }
 
     public TypeClassInfo createClassInfo(PropertyDescriptor pd)

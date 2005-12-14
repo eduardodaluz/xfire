@@ -15,7 +15,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JAnnotationUse;
@@ -77,9 +77,9 @@ public class ServiceInterfaceGenerator
     
     protected void annotate(GenerationContext context, OperationInfo op, JMethod method, Binding binding)
     {
-        if (binding instanceof SoapBinding)
+        if (binding instanceof AbstractSoapBinding)
         {
-            String action = ((SoapBinding) binding).getSoapAction(op);
+            String action = ((AbstractSoapBinding) binding).getSoapAction(op);
 
             if (action != null) wmAnn.param("action", action);
         }
