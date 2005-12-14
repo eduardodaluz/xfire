@@ -9,6 +9,7 @@ import org.codehaus.xfire.service.TestWSAServiceImpl;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.jdom.Document;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -60,5 +61,6 @@ public class WSAddressingNotify1_1Test
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
 
     }
-
+    
+    
 }

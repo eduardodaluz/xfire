@@ -72,7 +72,8 @@ public abstract class AbstactAddressingHeadersFactory2005
         if( list!= null ){
             if(list.size()> 1){
                 
-                XFireFault fault = new XFireFault("Invalid header",new QName("Sender"));
+                XFireFault fault = new XFireFault("Invalid header",new QName(wsa.getURI(),"Sender"));
+                fault.addNamespace("wsa",wsa.getURI());
                 fault.setSubCode(new QName(wsa.getURI(),"InvalidAddressingHeader"));
                 Element detail = new Element("ProblemHeaderQName",wsa);
                 detail.addContent(tagName);
@@ -236,4 +237,5 @@ public abstract class AbstactAddressingHeadersFactory2005
         }
     }
 
+    
 }

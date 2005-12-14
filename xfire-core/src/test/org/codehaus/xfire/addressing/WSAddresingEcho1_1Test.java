@@ -14,14 +14,14 @@ import org.jdom.output.XMLOutputter;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
 public class WSAddresingEcho1_1Test
     extends AbstractXFireTest
 {
 
-    private static final String SERVICE_NAME="EchoImpl";
-    
+    private static final String SERVICE_NAME = "EchoImpl";
+
     private AddressingInData data = null;
 
     protected void setUp()
@@ -56,20 +56,43 @@ public class WSAddresingEcho1_1Test
     }
 
     public void test1131()
-    throws Exception
-{
-    // A sends a message to B.
-    // /soap12:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/echoIn
-    // B sends a reply to A.
-    // /soap12:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/echoOut
+        throws Exception
+    {
+        // A sends a message to B.
+        // /soap12:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/echoIn
+        // B sends a reply to A.
+        // /soap12:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/echoOut
 
-    Document doc = invokeService(SERVICE_NAME,
-                                 "/org/codehaus/xfire/addressing/testcases/echo/soap11/message1.xml");
+        Document doc = invokeService(SERVICE_NAME,
+                                     "/org/codehaus/xfire/addressing/testcases/echo/soap11/message1.xml");
 
-    assertEquals(data.getInHeaders().getAction(), "http://example.org/action/echoIn");
-    assertEquals(data.getOutHeaders().getAction(), "http://example.org/action/echoOut");
+        assertEquals(data.getInHeaders().getAction(), "http://example.org/action/echoIn");
+        assertEquals(data.getOutHeaders().getAction(), "http://example.org/action/echoOut");
 
-    XMLOutputter output = new XMLOutputter();
-    output.output(doc, System.out);
-}
+        XMLOutputter output = new XMLOutputter();
+        output.output(doc, System.out);
+    }
+
+    public void test1150()
+        throws Exception
+    {
+
+        // A sends a message to B.
+        // soap11:Envelope/soap11:Header/wsa:Action =
+        // 'http://example.org/action/echoIn'
+        // soap11:Envelope/soap11:Header/wsa:ReplyTo/wsa:Address
+        // not(soap11:Envelope/soap11:Header/wsa:ReplyTo/wsa:Address = '')
+        // not(soap11:Envelope/soap11:Header/wsa:ReplyTo/wsa:Address =
+        // 'http://www.w3.org/2005/08/addressing/anonymous')
+        // B sends a reply to A.
+        // soap11:Envelope/soap11:Header/wsa:Action =
+        // 'http://example.org/action/echoOut'
+
+       /* Document doc = invokeService(SERVICE_NAME,
+                                     "/org/codehaus/xfire/addressing/testcases/echo/soap11/test1150request.xml");*/
+
+        // assertValid()
+
+    }
+
 }

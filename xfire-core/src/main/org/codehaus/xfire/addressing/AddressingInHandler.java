@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
@@ -59,6 +60,7 @@ public class AddressingInHandler
             if (factory.hasHeaders(header))
             {
 
+                try{
                 AddressingHeaders headers = factory.createHeaders(header);
                 msg.setProperty(ADRESSING_HEADERS, headers);
                 msg.setProperty(ADRESSING_FACTORY, factory);
@@ -88,7 +90,7 @@ public class AddressingInHandler
 
                 MessageExchange exchange = context.getExchange();
                 exchange.setOperation(op.getOperationInfo());
-                
+
                 EndpointReference faultTo = headers.getFaultTo();
                 OutMessage faultMsg = null;
                 if (faultTo != null)
@@ -112,6 +114,19 @@ public class AddressingInHandler
                     outMessage = createDefaultMessage(context, op, headers, factory);
                 }
                 exchange.setOutMessage(outMessage);
+                }catch(XFireFault fault ){
+        
+                    AbstractMessage faultMsg = context.getExchange().getFaultMessage();
+                    AddressingHeaders headers = (AddressingHeaders) faultMsg.getProperty(ADRESSING_HEADERS);
+                    if (headers == null)
+                    {
+                        headers = new AddressingHeaders();
+                        headers.setAction(WSAConstants.WSA_200508_FAULT_ACTION);
+                        faultMsg.setProperty(ADRESSING_HEADERS, headers);
+                        faultMsg.setProperty(ADRESSING_FACTORY, factory);
+                    }
+                    throw fault;
+                }
             }
         }
     }
@@ -163,7 +178,7 @@ public class AddressingInHandler
     {
         String addr = epr.getAddress();
         OutMessage outMessage = null;
-        
+
         boolean isFault = epr.getName().equals(WSAConstants.WSA_FAULT_TO);
         Transport t = null;
         if (addr == null)
@@ -199,11 +214,16 @@ public class AddressingInHandler
 
         AddressingHeaders headers = new AddressingHeaders();
         // Fault can have only refrenceFaprameters
-        if(!isFault ){
-        headers.setTo(addr);
-        headers.setAction(aoi.getOutAction());
+        if (!isFault)
+        {
+            headers.setTo(addr);
+            headers.setAction(aoi.getOutAction());
         }
-        headers.setMessageID("urn:uuid:"+guidGenerator.toString());
+        else
+        {
+            headers.setAction(WSAConstants.WSA_200508_FAULT_ACTION);
+        }
+        headers.setMessageID("urn:uuid:" + guidGenerator.toString());
 
         Element refParam = epr.getReferenceParametersElement();
         if (refParam != null)
@@ -221,7 +241,6 @@ public class AddressingInHandler
                     params.add(e);
                 }
 
-                
             }
             headers.setReferenceParameters(params);
         }
@@ -249,4 +268,6 @@ public class AddressingInHandler
 
         return context.getXFire().getServiceRegistry().getService(serviceName);
     }
+
+
 }

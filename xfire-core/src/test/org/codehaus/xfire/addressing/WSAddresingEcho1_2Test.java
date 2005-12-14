@@ -234,6 +234,44 @@ public class WSAddresingEcho1_2Test
         Document doc = invokeService(SERVICE_NAME,
                                      "/org/codehaus/xfire/addressing/testcases/echo/soap12/duplicateFaultToRequest.xml");
 
-      
+        // todo : don't know how to check if 2 wsa:To headers are present :/
+        addNamespace("wsa", "http://www.w3.org/2005/08/addressing");
+        assertValid("/soap:Envelope/soap:Header/wsa:Action[text()='http://www.w3.org/2005/08/addressing/fault']",
+                    doc);
+        assertValid("/soap:Envelope/soap:Body/soap:Fault/soap:Code/soap:Value[text()='ns1:Sender']",
+                    doc);
+        assertValid("/soap:Envelope/soap:Body/soap:Fault/soap:Code/soap:SubCode/soap:Value[text()='ns1:InvalidAddressingHeader']",
+                    doc);
+    }
+
+    public void test1250()
+        throws Exception
+    {
+
+        // Two-way message exchange containing an Action and a ReplyTo
+        // identifying an endpoint. All other fields are defaulted.
+
+        // SOAP12-HTTP-In-Out-Callback
+        // A sends a message to B.
+        // soap12:Envelope/soap12:Header/wsa:Action =
+        // 'http://example.org/action/echoIn'
+        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address
+        // not(soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address = '')
+        // not(soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address =
+        // 'http://www.w3.org/2005/08/addressing/anonymous')
+        // B sends a reply to A.
+        // soap12:Envelope/soap12:Header/wsa:Action =
+        // 'http://example.org/action/echoOut'
+        /*Document doc = invokeService(SERVICE_NAME,
+                                     "/org/codehaus/xfire/addressing/testcases/echo/soap12/test1250request.xml");
+        
+        XMLOutputter output = new XMLOutputter();
+        output.output(doc, System.out);
+        assertEquals(data.getInHeaders().getAction(),"http://example.org/action/echoIn");
+        assertTrue(data.getInHeaders().getReplyTo().getAddress() != null);
+        assertTrue(data.getInHeaders().getReplyTo().getAddress().length() > 0);
+        assertTrue(!data.getInHeaders().getReplyTo().getAddress().equals("http://www.w3.org/2005/08/addressing/anonymous"));
+
+        assertEquals(data.getOutHeaders().getAction(), "http://example.org/action/echoOut");*/
     }
 }

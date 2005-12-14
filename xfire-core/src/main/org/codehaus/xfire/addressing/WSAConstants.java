@@ -14,6 +14,8 @@ public interface WSAConstants
     
     String WSA_200408_ANONYMOUS_URI = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
 
+    String WSA_200508_FAULT_ACTION="http://www.w3.org/2005/08/addressing/fault";
+    
     String WSA_PREFIX = "wsa";
     
     String WSA_ACTION = "Action";
