@@ -13,6 +13,7 @@ public class XmlBeansServiceFactory
 {
     public XmlBeansServiceFactory()
     {
+        super();
         AegisBindingProvider provider = new AegisBindingProvider(new XmlBeansTypeRegistry());
         setBindingProvider(provider);
         

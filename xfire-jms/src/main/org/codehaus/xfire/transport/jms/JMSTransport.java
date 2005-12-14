@@ -21,7 +21,7 @@ public class JMSTransport
     
     public final static String NAME = "JMS";
     
-    private static final String BINDING_ID = "urn:xfire:jms";
+    public static final String BINDING_ID = "urn:xfire:transport:jms";
     private static final String URI_PREFIX = "";
 
     private ConnectionFactory connectionFactory;

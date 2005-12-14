@@ -3,7 +3,6 @@ package org.codehaus.xfire.service.binding;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +22,8 @@ import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.CustomFaultHandler;
 import org.codehaus.xfire.handler.OutMessageSender;
+import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
@@ -51,7 +52,8 @@ import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceConfigurator;
 
 /**
- * Java objects-specific implementation of the {@link ServiceFactory} interface.
+ * Creates Services from java objects. This class is meant to be easily overridable
+ * so you can customize how your services are created. 
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
@@ -76,8 +78,8 @@ public class ObjectServiceFactory
     private boolean customFaultsEnabled = true;
     private boolean bindingCreationEnabled = true;
     
-    private List soap11Transports = new ArrayList();
-    private List soap12Transports = new ArrayList();
+    private Set soap11Transports = new HashSet();
+    private Set soap12Transports = new HashSet();
     
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
@@ -245,8 +247,8 @@ public class ObjectServiceFactory
         String theStyle = null;
         String theUse = null;
         QName portType = null;
-        List s11Bindings = null;
-        List s12Bindings = null;
+        Collection s11Bindings = null;
+        Collection s12Bindings = null;
         
         if (properties != null)
         {
@@ -286,8 +288,8 @@ public class ObjectServiceFactory
             buildBindings = ((Boolean) properties.get(CREATE_DEFAULT_BINDINGS)).booleanValue();
         }
         
-        if (s11Bindings == null) s11Bindings = new ArrayList();
-        if (s12Bindings == null) s12Bindings = new ArrayList();
+        if (s11Bindings == null) s11Bindings = new HashSet();
+        if (s12Bindings == null) s12Bindings = new HashSet();
         
         if (buildBindings)
         {
@@ -348,7 +350,7 @@ public class ObjectServiceFactory
         soap12Transports.add(id);
     }
     
-    protected void createBindings(Service service, List s11, List s12)
+    protected void createBindings(Service service, Collection s11, Collection s12)
     {
         QName name = service.getName();
 
@@ -359,15 +361,11 @@ public class ObjectServiceFactory
 
             if (t instanceof SoapTransport)
             {
-                SoapTransport st = (SoapTransport) t;
-                QName bindingName = new QName(name.getNamespaceURI(), 
-                                              name.getLocalPart() + st.getName() + "Binding");
-
-                createSoap11Binding(service, bindingName, bindingId);
+                createSoap11Binding(service, null, bindingId);
             }
             else
             {
-                            
+                throw new XFireRuntimeException("Binding " + bindingId + " is not a SoapTransport!");            
             }
         }
         
@@ -378,21 +376,53 @@ public class ObjectServiceFactory
 
             if (t instanceof SoapTransport)
             {
-                SoapTransport st = (SoapTransport) t;
-                QName bindingName = new QName(name.getNamespaceURI(), 
-                                              name.getLocalPart() + st.getName() + "12Binding");
-
-                createSoap12Binding(service, bindingName, bindingId);
+                createSoap12Binding(service, null, bindingId);
             }
             else
             {
-            
+                throw new XFireRuntimeException("Binding " + bindingId + " is not a SoapTransport!");            
             }
         }
     }
 
-    private Soap12Binding createSoap12Binding(Service service, QName bindingName, String bindingId)
+    /**
+     * Creates an endpoint for a service.  Additionally it opens a channel for this endpoint
+     * as well.
+     * 
+     * @param service
+     * @param name
+     * @param url
+     * @param binding
+     * @return
+     * @throws Exception 
+     */
+    public Endpoint createEndpoint(Service service, QName name, String url, Binding binding) 
+        throws Exception
     {
+        Endpoint endpoint = service.addEndpoint(name, binding, url);
+        
+        getTransportManager().getTransport(binding.getBindingId()).createChannel(url);
+        
+        return endpoint;
+    }
+    
+    /**
+     * Create a SOAP 1.2 binding for the specified binding id.
+     * 
+     * @param service
+     * @param bindingName The name of the binding. If null, one will be created.
+     * @param bindingId
+     * @return
+     */
+    public Soap12Binding createSoap12Binding(Service service, QName bindingName, String bindingId)
+    {
+        if (bindingName == null)
+        {
+            SoapTransport st = (SoapTransport) transportManager.getTransport(bindingId);
+            bindingName = new QName(service.getTargetNamespace(), 
+                                    service.getSimpleName() + st.getName() + "12Binding");
+        }
+        
         Soap12Binding binding = new Soap12Binding(bindingName, bindingId, service);
         
         createSoapBinding(service, binding);
@@ -400,8 +430,23 @@ public class ObjectServiceFactory
         return binding;
     }
 
+    /**
+    * Create a SOAP 1.1 binding for the specified binding id.
+    * 
+    * @param service
+    * @param bindingName The name of the binding. If null, one will be created.
+    * @param bindingId
+    * @return
+    */
     public Soap11Binding createSoap11Binding(Service service, QName bindingName, String bindingId)
     {
+        if (bindingName == null)
+        {
+            SoapTransport st = (SoapTransport) transportManager.getTransport(bindingId);
+            bindingName = new QName(service.getTargetNamespace(), 
+                                    service.getSimpleName() + st.getName() + "Binding");
+        }
+
         Soap11Binding binding = new Soap11Binding(bindingName, bindingId, service);
      
         createSoapBinding(service, binding);

@@ -65,7 +65,7 @@ public class WrappedWSDLTest
         Endpoint endpoint = (Endpoint) endpoints.iterator().next();
         assertEquals(new QName("urn:Echo", "EchoHttpPort"), endpoint.getName());
         assertEquals(SoapHttpTransport.SOAP11_HTTP_BINDING, endpoint.getBinding().getBindingId());
-        assertEquals("http://localhost:8080/xfire/services/Echo", endpoint.getAddress());
+        assertEquals("http://localhost:8080/xfire/services/Echo", endpoint.getUrl());
     }
     
     public void testBadWrapped()

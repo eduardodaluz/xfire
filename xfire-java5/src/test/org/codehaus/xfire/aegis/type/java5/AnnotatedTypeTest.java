@@ -8,6 +8,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.XMLTypeCreator;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -33,7 +34,7 @@ public class AnnotatedTypeTest
 
     public void testTM()
     {
-        assertTrue( tm.getTypeCreator() instanceof Java5TypeCreator );
+        assertTrue( tm.getTypeCreator() instanceof XMLTypeCreator );
     }
     
     public void testType()
@@ -56,6 +57,18 @@ public class AnnotatedTypeTest
         assertTrue(atts.hasNext());
         QName att = (QName) atts.next();
         assertFalse(atts.hasNext());
+    }
+
+    public void testAegisType()
+    {
+        BeanType type = (BeanType) tm.getTypeCreator().createType(AnnotatedBean3.class);
+
+        assertFalse(type.getTypeInfo().getAttributes().hasNext());
+        
+        Iterator itr = type.getTypeInfo().getElements();
+        assertTrue(itr.hasNext());
+        QName q = (QName) itr.next();
+        assertEquals("attProp", q.getLocalPart());
     }
 
     public void testWSDL() throws Exception

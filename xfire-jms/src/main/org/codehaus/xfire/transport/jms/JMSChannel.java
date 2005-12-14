@@ -126,7 +126,7 @@ public class JMSChannel
             InMessage in = new InMessage(reader, getUri());
     
             MessageContext context = new MessageContext(); 
-            context.setService(getService());
+            context.setService(((JMSTransport) getTransport()).getXFire().getServiceRegistry().getService(getQueueName(getUri())));
             context.setProperty(REPLY_TO, message.getJMSReplyTo());
             context.setXFire(((JMSTransport) getTransport()).getXFire());
             
@@ -147,17 +147,7 @@ public class JMSChannel
         }
         catch(JMSException e)
         {
-            log.error("Error closing jms", e);
+            log.error("Error closing jms connection.", e);
         }
-    }
-
-    public Service getService()
-    {
-        return service;
-    }
-
-    public void setService(Service service)
-    {
-        this.service = service;
     }
 }

@@ -15,9 +15,10 @@ import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.spring.config.AbstractSoapBinding;
-import org.codehaus.xfire.spring.config.Soap11Binding;
-import org.codehaus.xfire.spring.config.Soap12Binding;
+import org.codehaus.xfire.spring.config.AbstractSoapBindingBean;
+import org.codehaus.xfire.spring.config.EndpointBean;
+import org.codehaus.xfire.spring.config.Soap11BindingBean;
+import org.codehaus.xfire.spring.config.Soap12BindingBean;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -119,24 +120,6 @@ public class ServiceBean
         // Lets set up some properties for the service
         Map properties = new HashMap();
         
-        if (bindings != null)
-        {
-            ArrayList s11Bindings = new ArrayList();
-            ArrayList s12Bindings = new ArrayList();
-            
-            for (Iterator itr = bindings.iterator(); itr.hasNext();)
-            {
-                AbstractSoapBinding o = (AbstractSoapBinding) itr.next();
-                if (o instanceof Soap11Binding)
-                    s11Bindings.add(o.getTransport());
-                else if (o instanceof Soap12Binding)
-                    s12Bindings.add(o.getTransport());
-            }
-            
-            properties.put(ObjectServiceFactory.SOAP11_TRANSPORTS, s11Bindings);
-            properties.put(ObjectServiceFactory.SOAP12_TRANSPORTS, s12Bindings);
-        }
-        
         if (createDefaultBindings)
             properties.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.TRUE);
         
@@ -155,6 +138,11 @@ public class ServiceBean
         
         xfireService = serviceFactory.create(intf, name, namespace, properties);
 
+        if (bindings != null && serviceFactory instanceof ObjectServiceFactory)
+        {
+            initializeBindings();
+        }
+        
         if (logger.isInfoEnabled())
         {
             logger.info("Exposing service with name " + xfireService.getName());
@@ -197,7 +185,35 @@ public class ServiceBean
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
     }
-    
+
+    protected void initializeBindings()
+        throws Exception
+    {
+        ObjectServiceFactory osf = (ObjectServiceFactory) serviceFactory;
+
+        for (Iterator itr = bindings.iterator(); itr.hasNext();)
+        {
+            AbstractSoapBindingBean o = (AbstractSoapBindingBean) itr.next();
+            org.codehaus.xfire.soap.AbstractSoapBinding binding = null;
+            if (o instanceof Soap11BindingBean)
+            {
+                binding = osf.createSoap11Binding(xfireService, o.getName(), o.getTransport());
+            }
+            else if (o instanceof Soap12BindingBean)
+            {
+                binding = osf.createSoap12Binding(xfireService, o.getName(), o.getTransport());
+            }
+            
+            binding.setUndefinedEndpointAllowed(o.isAllowUndefinedEndpoints());
+            
+            for (Iterator eitr = o.getEndpoints().iterator(); eitr.hasNext();)
+            {
+                EndpointBean ep = (EndpointBean)  eitr.next();
+                
+                osf.createEndpoint(xfireService, ep.getName(), ep.getUrl(), binding);
+            }
+        }
+    }
 
     /**
      * @return

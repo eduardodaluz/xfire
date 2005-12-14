@@ -8,7 +8,6 @@ import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.exchange.MessageSerializer;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 
 public abstract class Binding
@@ -17,11 +16,8 @@ public abstract class Binding
     private QName name;
 
     private String bindingId;
-
+    private boolean undefinedEndpointAllowed = true;
     private Service service;
-
-    private Transport transport;
-
     private Map op2serializer = new HashMap();
     private Map msg2parts = new HashMap();
     
@@ -47,6 +43,16 @@ public abstract class Binding
     public String getBindingId()
     {
         return bindingId;
+    }
+
+    public boolean isUndefinedEndpointAllowed()
+    {
+        return undefinedEndpointAllowed;
+    }
+
+    public void setUndefinedEndpointAllowed(boolean undefinedEndpointAllowed)
+    {
+        this.undefinedEndpointAllowed = undefinedEndpointAllowed;
     }
 
     public abstract javax.wsdl.Binding createBinding(WSDLBuilder builder, PortType portType);

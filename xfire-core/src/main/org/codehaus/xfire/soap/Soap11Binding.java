@@ -50,12 +50,10 @@ public class Soap11Binding extends AbstractSoapBinding
         super(name, bindingId, serviceInfo);
     }
     
-    
     public SoapVersion getSoapVersion()
     {
         return Soap11.getInstance();
     }
-
 
     public javax.wsdl.Binding createBinding(WSDLBuilder builder, PortType portType)
     {
@@ -275,7 +273,7 @@ public class Soap11Binding extends AbstractSoapBinding
     public Port createPort(Endpoint endpoint, WSDLBuilder builder, javax.wsdl.Binding wbinding)
     {
         SOAPAddressImpl add = new SOAPAddressImpl();
-        add.setLocationURI(endpoint.getAddress());
+        add.setLocationURI(endpoint.getUrl());
         
         Port port = builder.getDefinition().createPort();
         port.setBinding( wbinding );

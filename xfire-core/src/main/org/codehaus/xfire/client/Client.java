@@ -66,7 +66,7 @@ public class Client
     
     public Client(Transport t, Endpoint endpoint)
     {
-        this(endpoint.getBinding(), t, endpoint.getBinding().getService(), endpoint.getAddress(), null);
+        this(endpoint.getBinding(), t, endpoint.getBinding().getService(), endpoint.getUrl(), null);
     }
 
     public Client( Binding binding, String url)
@@ -164,7 +164,7 @@ public class Client
         
         Endpoint ep = findEndpoint(binding, builder.getServices());
         
-        this.url = ep.getAddress();
+        this.url = ep.getUrl();
         this.binding = ep.getBinding();
         this.transport = getXFire().getTransportManager().getTransport(binding);
         
@@ -266,6 +266,9 @@ public class Client
         
         Object[] localResponse = response;
         response = null;
+        
+        //getTransport().close(getOutChannel());
+        
         return localResponse;
     }
     

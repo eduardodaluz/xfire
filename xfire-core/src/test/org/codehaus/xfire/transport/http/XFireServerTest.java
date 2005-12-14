@@ -16,6 +16,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Transport;
 import org.jdom.Element;
@@ -26,6 +27,7 @@ public class XFireServerTest
     private Service service;
     private XFireHttpServer server;
     private Service asyncService;
+    private Soap11Binding binding;
     
     public void setUp() throws Exception
     {
@@ -33,14 +35,18 @@ public class XFireServerTest
         
         ObjectServiceFactory osf = (ObjectServiceFactory) getServiceFactory();
         osf.setVoidOneWay(true);
+        osf.setBindingCreationEnabled(false);
         
         service = getServiceFactory().create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         
         service.setBindingProvider(new MessageBindingProvider());
 
+        binding = osf.createSoap11Binding(service, null, SoapHttpTransport.SOAP11_HTTP_BINDING);
+        
         getServiceRegistry().register(service);
 
+        osf.setBindingCreationEnabled(true);
         asyncService = getServiceFactory().create(AsyncService.class);
         
         server = new XFireHttpServer();
@@ -80,6 +86,31 @@ public class XFireServerTest
         Element e = (Element) response[0];
 
         assertEquals(root.getName(), e.getName());
+    }
+    
+    public void testUndefinedEndpoint()
+        throws Exception
+    {
+        binding.setUndefinedEndpointAllowed(false);
+        
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
+
+        Transport transport = getTransportManager()
+                .getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+
+        Client client = new Client(transport, service, "http://localhost:8391/Echo");
+
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
+        try
+        {
+            Object[] response = client.invoke(op, new Object[] { root });
+            fail("Invalid endpoint should not be invoked.");
+        }
+        catch (XFireFault f)
+        {
+            assertEquals("Invalid endpoint for service.", f.getMessage());
+        }
     }
     
     public void testAsync()

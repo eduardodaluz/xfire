@@ -3,8 +3,8 @@ package org.codehaus.xfire.transport.jms;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 
@@ -23,8 +23,9 @@ public class ClientTest
     {
         super.setUp();
 
-        ServiceFactory factory = getServiceFactory();
-
+        ObjectServiceFactory factory = (ObjectServiceFactory) getServiceFactory();
+        factory.addSoap11Transport(JMSTransport.BINDING_ID);
+        
         service = factory.create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
         getServiceRegistry().register(service);
@@ -34,8 +35,7 @@ public class ClientTest
             throws Exception
     {
         JMSChannel serverChannel = (JMSChannel) getTransport().createChannel("jms://Echo");
-        serverChannel.setService(service);
-        
+ 
         Client client = new Client(getTransport(), service, "jms://Echo", "jms://Peer1");
 
         OperationInfo op = service.getServiceInfo().getOperation("echo");

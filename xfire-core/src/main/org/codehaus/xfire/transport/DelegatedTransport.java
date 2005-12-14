@@ -75,6 +75,11 @@ public class DelegatedTransport
 
     public Binding findBinding(MessageContext context, Service service)
     {
-        return findBinding(context, service);
+        return transport.findBinding(context, service);
+    }
+
+    public void close(Channel c)
+    {
+        transport.close(c);
     }
 }

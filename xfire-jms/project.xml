@@ -26,6 +26,15 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-spring</artifactId>
+            <version>${pom.currentVersion}</version>
+            <url>${pom.url}</url>
+            <properties>
+                <eclipse.dependency>true</eclipse.dependency>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>activemq</groupId>
             <artifactId>activemq</artifactId>
             <version>3.0</version>
@@ -55,6 +64,26 @@
             <groupId>concurrent</groupId>
             <artifactId>concurrent</artifactId>
             <version>1.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>1.2.4</version>
+            <url>http://www.springframework.org</url>
+        </dependency>
+        <dependency> 
+            <groupId>springframework</groupId> 
+            <artifactId>spring-mock</artifactId> 
+            <version>1.2.1</version> 
+            <url>http://www.springframework.org</url> 
+            <properties>
+              <scope>test</scope>
+            </properties>
+        </dependency> 
+        <dependency>
+            <groupId>xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 </project>

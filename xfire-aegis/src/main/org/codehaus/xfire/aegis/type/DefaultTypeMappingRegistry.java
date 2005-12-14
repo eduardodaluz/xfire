@@ -82,15 +82,24 @@ public class DefaultTypeMappingRegistry
 
     private TypeMapping defaultTM;
 
+    private TypeCreator typeCreator;
+    
     public DefaultTypeMappingRegistry()
     {
-        registry = new Hashtable();
+        this(false);
     }
 
     public DefaultTypeMappingRegistry(boolean createDefault)
     {
+        this(null, createDefault);
+    }
+    
+    public DefaultTypeMappingRegistry(TypeCreator typeCreator, boolean createDefault)
+    {
         registry = new Hashtable();
-
+        
+        this.typeCreator = typeCreator;
+        
         if (createDefault)
         {
             createDefaultMappings();
@@ -157,9 +166,24 @@ public class DefaultTypeMappingRegistry
     {
         CustomTypeMapping tm = new CustomTypeMapping(parent);
         
-        if (autoTypes) tm.setTypeCreator(createTypeCreator());
+        if (autoTypes) tm.setTypeCreator(getTypeCreator());
         
         return tm;
+    }
+
+    public TypeCreator getTypeCreator()
+    {
+        if (typeCreator == null)
+        {
+            typeCreator = createTypeCreator(); 
+        }
+        
+        return typeCreator;
+    }
+
+    public void setTypeCreator(TypeCreator typeCreator)
+    {
+        this.typeCreator = typeCreator;
     }
 
     protected TypeCreator createTypeCreator()
@@ -176,8 +200,9 @@ public class DefaultTypeMappingRegistry
                 Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
                 
                 AbstractTypeCreator j5Creator = (AbstractTypeCreator) clazz.newInstance();
-                j5Creator.setNextCreator(xmlCreator);
-                return j5Creator;
+                j5Creator.setNextCreator(new DefaultTypeCreator());
+                
+                xmlCreator.setNextCreator(j5Creator);
             }
             catch (Throwable t)
             {
@@ -185,8 +210,6 @@ public class DefaultTypeMappingRegistry
                 
                 if (!(t instanceof ClassNotFoundException))
                     logger.debug("Error loading Java 5 module", t);
-                
-                return xmlCreator;
             }
         }
         

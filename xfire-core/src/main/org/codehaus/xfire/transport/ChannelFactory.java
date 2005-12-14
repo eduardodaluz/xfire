@@ -25,4 +25,6 @@ public interface ChannelFactory
      * @throws Exception Occurs if there was an exception creating or opening the channel.
      */
     Channel createChannel(String uri) throws Exception;
+    
+    void close(Channel c);
 }

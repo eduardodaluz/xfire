@@ -251,9 +251,13 @@ public class Service
         addEndpoint(new Endpoint(name, binding, address));
     }
     
-    public void addEndpoint(QName name, Binding binding, String address)
+    public Endpoint addEndpoint(QName name, Binding binding, String address)
     {
-        addEndpoint(new Endpoint(name, binding, address));
+        Endpoint endpoint = new Endpoint(name, binding, address);
+        
+        addEndpoint(endpoint);
+        
+        return endpoint;
     }
 
     public Collection getEndpoints(QName name2)

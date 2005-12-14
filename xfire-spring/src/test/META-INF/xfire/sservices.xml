@@ -10,7 +10,7 @@
   		<handler handlerClass="org.codehaus.xfire.spring.TestHandler"/>
   	</faultHandlers>
   </xfire>
-  <service>
+  <service xmlns:t="urn:my:namespace">
   	<name>testservice</name>
   	<serviceClass>org.codehaus.xfire.spring.TestService</serviceClass>
   	<implementationClass>
@@ -23,7 +23,11 @@
   	<scope>session</scope>
   	
   	<bindings>
-  	  <soap12Binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+  	  <soap12Binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+  	    <endpoints>
+  	      <endpoint url="http://localhost/TestService" name="t:TestServicePort"/>
+  	    </endpoints>
+  	  </soap12Binding>
   	</bindings>
   	
   	<properties>

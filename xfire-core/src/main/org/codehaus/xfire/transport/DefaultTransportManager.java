@@ -44,7 +44,20 @@ public class DefaultTransportManager
         register(new SoapHttpTransport());
         register(new HttpTransport());
     }
-
+    
+    /**
+     * Disposes and unregisters each transport.
+     */
+    public void dispose()
+    {
+        for (Iterator itr = transports.iterator(); itr.hasNext();)
+        {
+            Transport t = (Transport) itr.next();
+            
+            t.dispose();
+            unregister(t);
+        }
+    }
 
     public void register(Transport transport)
     {

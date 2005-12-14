@@ -6,7 +6,7 @@ public class Endpoint extends Extensible
 {
     private QName name;
     private Binding binding;
-    private String address;
+    private String url;
 
     public Endpoint(QName name, Binding binding)
     {
@@ -14,12 +14,12 @@ public class Endpoint extends Extensible
         this.name = name;
     }
     
-    public Endpoint(QName name, Binding binding, String address)
+    public Endpoint(QName name, Binding binding, String url)
     {
         if (name == null) throw new IllegalStateException("Endpoint name cannot be null.");
         if (binding == null) throw new IllegalStateException("Binding cannot be null.");
         
-        this.address = address;
+        this.url = url;
         this.binding = binding;
         this.name = name;
     }
@@ -29,9 +29,9 @@ public class Endpoint extends Extensible
         return name;
     }
     
-    public String getAddress()
+    public String getUrl()
     {
-        return address;
+        return url;
     }
 
     public Binding getBinding()

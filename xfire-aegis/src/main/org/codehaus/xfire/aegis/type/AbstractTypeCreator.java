@@ -33,6 +33,8 @@ public abstract class AbstractTypeCreator implements TypeCreator
     public void setTypeMapping(TypeMapping typeMapping)
     {
         this.tm = typeMapping;
+        
+        if (nextCreator != null) nextCreator.setTypeMapping(tm);
     }
 
     public void setNextCreator(AbstractTypeCreator creator)

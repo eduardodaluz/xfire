@@ -1,0 +1,57 @@
+<!-- START SNIPPET: simple -->
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+
+  <!-- 
+    Register the JMS transport. Note: this needs to happen *before* we
+    create our service.
+    -->
+  <xfire>
+    <transports>
+      <bean id="jmsTransport" 
+            class="org.codehaus.xfire.transport.jms.JMSTransport" 
+            xmlns="http://xbean.org/schemas/spring/1.0">
+        <constructor-arg ref="xfire"/>
+        <constructor-arg ref="connectionFactory"/>
+      </bean>
+    </transports>
+  </xfire>
+  
+  <service xmlns:e="urn:Echo">
+    <name>Echo</name>
+    <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+    <implementationClass>org.codehaus.xfire.test.EchoImpl</implementationClass>
+    <bindings>
+      <soap11Binding name="e:EchoJMSBinding" transport="urn:xfire:transport:jms">
+        <endpoints>
+          <endpoint name="e:EchoJMSEndpoint" url="jms://Echo" />
+        </endpoints>
+      </soap11Binding>
+    </bindings>
+  </service>
+  
+  <bean id="connectionFactory" 
+        class="javax.jms.QueueConnectionFactory"
+        factory-bean="context"
+        factory-method="lookup"
+        singleton="true"
+        xmlns="http://xbean.org/schemas/spring/1.0/">
+    <constructor-arg value="QueueConnectionFactory" type="java.lang.String"/>
+  </bean>
+  
+  <bean id="context" 
+        class="javax.naming.InitialContext"
+        xmlns="http://xbean.org/schemas/spring/1.0/" />
+  
+  <bean id="broker" 
+    class="org.activemq.broker.impl.BrokerContainerImpl"
+    init-method="start"
+    xmlns="http://xbean.org/schemas/spring/1.0">
+    <constructor-arg value="vm://localhost"/>
+    
+    <property name="persistenceAdapter">
+      <bean class="org.activemq.store.vm.VMPersistenceAdapter"/>
+    </property>
+  </bean>
+  
+</beans>
+<!-- END SNIPPET: simple -->

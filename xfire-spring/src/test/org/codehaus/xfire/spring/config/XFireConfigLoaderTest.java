@@ -2,11 +2,10 @@ package org.codehaus.xfire.spring.config;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.handler.Handler;
+import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.spring.AbstractXFireSpringTest;
 import org.codehaus.xfire.spring.TestHandler;
 import org.codehaus.xfire.spring.XFireConfigLoader;
@@ -41,6 +40,11 @@ public class XFireConfigLoaderTest
         assertEquals(4, service.getBindings().size());
         assertNotNull(service.getBinding(SoapHttpTransport.SOAP11_HTTP_BINDING));
         assertNotNull(service.getBinding(SoapHttpTransport.SOAP12_HTTP_BINDING));
+        
+        assertEquals(1, service.getEndpoints().size());
+        Endpoint ep = (Endpoint) service.getEndpoints().iterator().next();
+        assertNotNull(ep);
+        assertEquals("http://localhost/TestService", ep.getUrl());
         
         assertEquals(2, service.getInHandlers().size());
         Handler testHandler = (Handler) service.getInHandlers().get(1); 

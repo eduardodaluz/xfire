@@ -29,6 +29,7 @@ public abstract class AbstractTransport
         {
             Channel channel = (Channel) itr.next();
             channel.close();
+            itr.remove();
         }
     }
 
@@ -53,6 +54,13 @@ public abstract class AbstractTransport
         return c;
     }
 
+    public void close(Channel c)
+    {
+        c.close();
+        
+        channels.remove(c.getUri());
+    }
+    
     protected Map getChannelMap()
     {
         return channels;
