@@ -18,6 +18,11 @@ public class TestService
         return trouble;
     }
     
+    public TroubleDocument ThrowFault() throws CustomFault
+    {
+        throw new CustomFault();
+    }
+    
     public ResponseDocument mixedRequest(String string, RequestDocument req)
     {
         Assert.assertEquals("foo", string);

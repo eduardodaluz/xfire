@@ -52,6 +52,17 @@ public class WrappedStyleTest
         assertValid("//t:mixedRequestResponse/x:response/x:form", response);
     }
     
+    public void testFault() throws Exception
+    {
+        Document response = invokeService("TestService", "/org/codehaus/xfire/xmlbeans/FaultRequest.xml");
+        
+        assertNotNull(response);
+
+        addNamespace("t", "urn:TestService");
+        addNamespace("x", "http://xmlbeans.xfire.codehaus.org");
+        assertValid("//detail/t:CustomFault/x:extraInfo", response);
+    }
+    
     public void testWSDL() throws Exception
     {
         Document wsdl = getWSDLDocument("TestService");
@@ -63,5 +74,9 @@ public class WrappedStyleTest
         assertValid("//xsd:schema[@targetNamespace='urn:TestService']" +
                     "/xsd:element[@name='mixedRequest']" +
                     "//xsd:element[@ref='ns1:request']", wsdl);
+        assertValid("//xsd:schema[@targetNamespace='http://xmlbeans.xfire.codehaus.org']" +
+                    "/xsd:complexType[@name='CustomFault']" +
+                    "//xsd:element[@name='extraInfo']", wsdl);
+        
     }
 }
