@@ -11,7 +11,6 @@ import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.DefaultTransportManager;
 import org.codehaus.xfire.transport.Transport;
-import org.codehaus.xfire.transport.TransportManager;
 
 
 /**
@@ -63,9 +62,10 @@ public class XMPPClientTest
     {
         Channel serverChannel = serverTrans.createChannel("Echo");
 
-        TransportManager tm = new DefaultTransportManager();
+        DefaultTransportManager tm = new DefaultTransportManager();
+        tm.initialize();
         tm.register(clientTrans);
-        
+       
         ObjectServiceFactory sf = new ObjectServiceFactory(tm);
         sf.addSoap11Transport(XMPPTransport.BINDING_ID);
         Service serviceModel = sf.create(Echo.class);
