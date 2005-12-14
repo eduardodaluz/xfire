@@ -225,7 +225,9 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
         if (mapping != null || mappings.size() > 0 )
         {
-            String typeNameAtt = mapping.getAttributeValue("name");
+            String typeNameAtt = null;
+            if (mapping != null) typeNameAtt = mapping.getAttributeValue("name");
+            
             String defaultNS = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
             QName name = null;
             if (typeNameAtt != null)
