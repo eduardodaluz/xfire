@@ -20,7 +20,9 @@ public class TestService
     
     public TroubleDocument ThrowFault() throws CustomFault
     {
-        throw new CustomFault();
+        CustomFault fault = new CustomFault();
+        fault.setExtraInfo("extra");
+        throw fault;
     }
     
     public ResponseDocument mixedRequest(String string, RequestDocument req)

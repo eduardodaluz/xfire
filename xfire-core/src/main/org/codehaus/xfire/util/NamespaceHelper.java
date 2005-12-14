@@ -191,4 +191,25 @@ public class NamespaceHelper
         
         return new QName(ns, localName, prefix);
     }
+    
+    public static QName createQName(Element e, String value, String defaultNamespace)
+    {
+        if (value == null) return null;
+        
+        int index = value.indexOf(":");
+        
+        if (index == -1)
+        {
+            return new QName(defaultNamespace, value);
+        }
+        
+        String prefix = value.substring(0, index);
+        String localName = value.substring(index+1);
+        String ns = e.getNamespace(prefix).getURI();
+        
+        if (ns == null || localName == null)
+            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
+        
+        return new QName(ns, localName, prefix);
+    }
 }

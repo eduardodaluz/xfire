@@ -55,7 +55,7 @@ public class DefaultTransportManager
             Transport t = (Transport) itr.next();
             
             t.dispose();
-            unregister(t);
+            itr.remove();
         }
     }
 

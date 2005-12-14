@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.jdom.Element;
 
 public class XMLBeanTypeInfo
@@ -18,29 +19,15 @@ public class XMLBeanTypeInfo
 {
     private static final Log logger = LogFactory.getLog(XMLBeanTypeInfo.class);
     private List mappings;
-    private Element topMapping;
-    private QName name;
     private Map name2Nillable = new HashMap();
  
     public XMLBeanTypeInfo(Class typeClass,
-                           Element mapping,
                            List mappings,
-                           String defaultNamespace)
+                           String defaultNS)
     {
-        super(typeClass, defaultNamespace);
+        super(typeClass, defaultNS);
 
         this.mappings = mappings;
-        this.topMapping = mapping;
-    }
-
-    public QName getSchemaType()
-    {
-        if (name == null && topMapping != null)
-        {
-            name = createQName(topMapping, topMapping.getAttributeValue("name"), getDefaultNamespace());
-        }
-        
-        return name;
     }
 
     protected boolean registerType(PropertyDescriptor desc)
@@ -66,7 +53,7 @@ public class XMLBeanTypeInfo
             logger.debug("Found mapping for property " + pd.getName());
 
             style = e.getAttributeValue("style");
-            mappedName = createQName(e, e.getAttributeValue("mappedName"), getDefaultNamespace());
+            mappedName = NamespaceHelper.createQName(e, e.getAttributeValue("mappedName"), getDefaultNamespace());
         }
         
         if (style == null) style = "element";
@@ -74,7 +61,7 @@ public class XMLBeanTypeInfo
         
         if (e != null)
         {
-            QName mappedType = createQName(e, e.getAttributeValue("typeName"), getDefaultNamespace());
+            QName mappedType = NamespaceHelper.createQName(e, e.getAttributeValue("typeName"), getDefaultNamespace());
             if (mappedType != null) mapTypeName(mappedName, mappedType);
             
             String nillableVal = e.getAttributeValue("nillable");
@@ -122,27 +109,6 @@ public class XMLBeanTypeInfo
         }
         
         return null;
-    }
-
-    protected QName createQName(Element e, String value, String defaultNamespace)
-    {
-        if (value == null) return null;
-        
-        int index = value.indexOf(":");
-        
-        if (index == -1)
-        {
-            return new QName(defaultNamespace, value);
-        }
-        
-        String prefix = value.substring(0, index);
-        String localName = value.substring(index+1);
-        String ns = e.getNamespace(prefix).getURI();
-        
-        if (ns == null || localName == null)
-            throw new XFireRuntimeException("Invalid QName in mapping: " + value);
-        
-        return new QName(ns, localName, prefix);
     }
 
     public boolean isNillable(QName name)

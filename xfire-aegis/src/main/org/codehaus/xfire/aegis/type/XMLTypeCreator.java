@@ -225,26 +225,23 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
         if (mapping != null || mappings.size() > 0 )
         {
-            QName typeName = info.getTypeName();
-            String defaultNS;
-            if (typeName != null)
+            String typeNameAtt = mapping.getAttributeValue("name");
+            String defaultNS = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
+            QName name = null;
+            if (typeNameAtt != null)
             {
-                defaultNS = typeName.getNamespaceURI();
-            }
-            else
-            {
-                defaultNS = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
+                name = NamespaceHelper.createQName(mapping, typeNameAtt, defaultNS);
+                
+                defaultNS = name.getNamespaceURI();
             }
             
             XMLBeanTypeInfo btinfo = new XMLBeanTypeInfo(info.getTypeClass(), 
-                                                         mapping, 
                                                          mappings,
                                                          defaultNS);
             btinfo.setTypeMapping(getTypeMapping());
             
             BeanType type = new BeanType(btinfo);
             
-            QName name = btinfo.getSchemaType();
             if (name == null) name = createQName(info.getTypeClass());
             
             type.setSchemaType(name);
