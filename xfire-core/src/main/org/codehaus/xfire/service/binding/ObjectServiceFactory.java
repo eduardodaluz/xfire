@@ -363,6 +363,10 @@ public class ObjectServiceFactory
             {
                 createSoap11Binding(service, null, bindingId);
             }
+            else if (t == null)
+            {
+                throw new XFireRuntimeException("Could not find binding " + bindingId );   
+            }
             else
             {
                 throw new XFireRuntimeException("Binding " + bindingId + " is not a SoapTransport!");            
@@ -377,6 +381,10 @@ public class ObjectServiceFactory
             if (t instanceof SoapTransport)
             {
                 createSoap12Binding(service, null, bindingId);
+            }
+            else if (t == null)
+            {
+                throw new XFireRuntimeException("Could not find binding " + bindingId );   
             }
             else
             {
