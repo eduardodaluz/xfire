@@ -57,6 +57,9 @@
     <name>EchoWithBean</name>
     <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
     <serviceBean>#EchoBean</serviceBean>
+    <bindings>
+      <soap12Binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    </bindings>
   </service>
 
   <bean name="EchoBean" class="org.codehaus.xfire.test.EchoImpl"/>

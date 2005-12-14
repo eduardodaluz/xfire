@@ -9,7 +9,7 @@
 
   <bean id="xfire.transportManager"
     class="org.codehaus.xfire.transport.DefaultTransportManager"
-    singleton="true" init-method="initialize" dispose-method="dispose">
+    singleton="true" init-method="initialize" destroy-method="dispose">
   </bean>
 
   <bean id="xfire" class="org.codehaus.xfire.DefaultXFire"

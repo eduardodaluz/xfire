@@ -205,10 +205,12 @@ public class ServiceBean
             }
             
             binding.setUndefinedEndpointAllowed(o.isAllowUndefinedEndpoints());
+
+            if (o.getEndpoints() == null) continue;
             
             for (Iterator eitr = o.getEndpoints().iterator(); eitr.hasNext();)
             {
-                EndpointBean ep = (EndpointBean)  eitr.next();
+                EndpointBean ep = (EndpointBean) eitr.next();
                 
                 osf.createEndpoint(xfireService, ep.getName(), ep.getUrl(), binding);
             }

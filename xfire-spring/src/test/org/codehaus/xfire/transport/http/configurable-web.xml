@@ -12,10 +12,10 @@
     <servlet-class>
         org.codehaus.xfire.transport.http.XFireConfigurableServlet
     </servlet-class>
-    <init-param>
-      <param-name>useNewConfig</param-name>
-      <param-value>false</param-value>
-    </init-param> 
+	 <init-param>
+      <param-name>config</param-name>
+      <param-value>META-INF/xfire/services-new.xml</param-value>
+    </init-param>	  
   </servlet>
 
   <servlet-mapping>

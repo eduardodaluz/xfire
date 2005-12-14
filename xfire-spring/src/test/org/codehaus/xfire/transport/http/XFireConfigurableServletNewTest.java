@@ -7,8 +7,6 @@ import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.test.AbstractServletTest;
 
 import com.meterware.httpunit.HttpNotFoundException;
-import com.meterware.httpunit.HttpUnitOptions;
-import com.meterware.servletunit.ServletRunner;
 
 public class XFireConfigurableServletNewTest
     extends AbstractServletTest
@@ -23,7 +21,7 @@ public class XFireConfigurableServletNewTest
         catch(HttpNotFoundException e) {}
         
         ServiceRegistry reg = getXFire().getServiceRegistry();
-        
+
         assertTrue(reg.hasService("Echo"));
         Service echo = reg.getService("Echo");
         assertNotNull(echo.getName());
@@ -44,14 +42,7 @@ public class XFireConfigurableServletNewTest
 
     protected String getConfiguration()
     {
-        return "/org/codehaus/xfire/transport/http/configurable-web-new.xml";
+        return "/org/codehaus/xfire/transport/http/configurable-web.xml";
     }
 
-    public void setUp()
-        throws Exception
-    {
-        HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
-        
-        sr = new ServletRunner( getResourceAsStream(getConfiguration()) );
-    }
 }

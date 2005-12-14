@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.spring.XFireConfigLoader;
 
 /**
@@ -38,11 +39,8 @@ public class XFireConfigurableServlet
         }
         return configPath;
     }
-    
-    /**
-     * @see javax.servlet.Servlet#init()
-     */
-    public void init()
+
+    public XFire createXFire()
         throws ServletException
     {
         configPath = getInitParameter(PARAM_CONFIG);
@@ -59,6 +57,7 @@ public class XFireConfigurableServlet
             
             log.debug("Found services.xml at "+getConfigPath());
             
+            XFire xfire;
             if (en.hasMoreElements())
             {
                 XFireConfigLoader loader = new XFireConfigLoader();
@@ -66,17 +65,19 @@ public class XFireConfigurableServlet
             }
             else
             {
-                xfire = createXFire();
+                xfire = super.createXFire();
             }
-            
-            controller = createController();
 
             log.debug("Done loading configuration.");
+            
+            return xfire;
         }
         catch (Exception e)
         {
             log.error("Couldn't configure XFire", e);
+            throw new ServletException("Coudln't configure XFire.", e);
         }
     }
 
+    
 }
