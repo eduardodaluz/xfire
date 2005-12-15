@@ -162,8 +162,12 @@ public class BeanType
             Method m = desc.getWriteMethod();
             
             if (m == null) throw new XFireFault("No write method for property " + name + " in " + object.getClass(), XFireFault.SENDER);
-            
-            m.invoke(object, new Object[] {property});
+
+            Class propertyType = desc.getPropertyType();
+            if ((property == null && !propertyType.isPrimitive()) || (property != null))
+            {
+                m.invoke(object, new Object[] { property });
+            }
         }
         catch (Exception e)
         {
