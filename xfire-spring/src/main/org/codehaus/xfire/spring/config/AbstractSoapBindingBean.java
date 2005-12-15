@@ -9,7 +9,7 @@ public abstract class AbstractSoapBindingBean
     private String transport;
     private List endpoints;
     private QName name;
-    private boolean allowUndefinedEndpoints;
+    private boolean allowUndefinedEndpoints = true;
     
     public boolean isAllowUndefinedEndpoints()
     {
