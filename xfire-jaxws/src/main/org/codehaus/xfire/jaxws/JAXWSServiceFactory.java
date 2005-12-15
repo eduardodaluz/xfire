@@ -11,7 +11,6 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
 import org.codehaus.xfire.fault.FaultSender;
-import org.codehaus.xfire.handler.CustomFaultHandler;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.jaxws.handler.WebFaultHandler;
@@ -19,8 +18,7 @@ import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
-import org.codehaus.xfire.soap.SoapBinding;
-import org.codehaus.xfire.soap.SoapTransport;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.transport.TransportManager;
 
 /**
@@ -75,20 +73,18 @@ public class JAXWSServiceFactory
     }
 
     /**
-     * Creates a SoapBinding using the JAXWSBinding as the serializer.
+     * Creates an AbstractSoapBinding using the JAXWSBinding as the serializer.
      */
     @Override
-    public SoapBinding createSoapBinding(Service service, QName name, SoapTransport transport)
+    protected void createSoapBinding(Service service, AbstractSoapBinding binding)
     {
-       SoapBinding binding = super.createSoapBinding(service, name, transport);
-       
-       binding.setSerializer(new JAXWSBinding(binding.getSerializer()));
-       
-       return binding;
+        super.createSoapBinding(service, binding);
+        
+        binding.setSerializer(new JAXWSBinding(binding.getSerializer()));
     }
 
     @Override
-    public void createBindingOperation(Service service, SoapBinding binding, OperationInfo op)
+    public void createBindingOperation(Service service, AbstractSoapBinding binding, OperationInfo op)
     {
         super.createBindingOperation(service, binding, op);
 

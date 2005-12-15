@@ -110,7 +110,7 @@ public class ServiceDelegate
         }
         catch (MalformedURLException e)
         {
-            throw new WebServiceException("Invalid url: " + endpoint.getAddress(), e);
+            throw new WebServiceException("Invalid url: " + endpoint.getUrl(), e);
         }
     }
 
@@ -159,8 +159,8 @@ public class ServiceDelegate
             }
             
             Endpoint ep = service.getEndpoint(port);
-            transport = ep.getBinding().getTransport();
-            address = ep.getAddress();
+            transport = jaxWsHelper.getTransportManager().getTransport(ep.getBinding().getBindingId());
+            address = ep.getUrl();
         }
         
         Client client = new Client(transport,

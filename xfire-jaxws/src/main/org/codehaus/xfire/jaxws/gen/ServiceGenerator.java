@@ -21,7 +21,7 @@ import org.codehaus.xfire.gen.jsr181.ServiceInterfaceGenerator;
 import org.codehaus.xfire.gen.jsr181.ServiceStubGenerator;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.soap.SoapBinding;
+import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.transport.local.LocalTransport;
 
 import com.sun.codemodel.JAnnotationUse;
@@ -33,7 +33,6 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
-import com.sun.codemodel.JMods;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
@@ -134,8 +133,9 @@ public class ServiceGenerator
             // hack to get local support
             if (!addedLocal)
             {
-                SoapBinding localBind = new SoapBinding(new QName(ns, name + "LocalBinding"), service);
-                localBind.setTransportURI(LocalTransport.BINDING_ID);
+                Soap11Binding localBind = new Soap11Binding(new QName(ns, name + "LocalBinding"), 
+                                                            LocalTransport.BINDING_ID,
+                                                            service);
                 service.addBinding(localBind);
                 service.addEndpoint(new QName(ns, name + "LocalPort"), localBind, "xfire.local://" + name);
                 

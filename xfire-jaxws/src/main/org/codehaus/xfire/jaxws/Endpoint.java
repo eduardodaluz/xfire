@@ -19,8 +19,6 @@ public class Endpoint
     extends javax.xml.ws.Endpoint
 {
     private JAXWSHelper jaxWsHelper = JAXWSHelper.getInstance();
-    private TransportManager transportManager = jaxWsHelper.getTransportManager();
-
     private AbstractBinding binding;
     private Object implementor;
     private boolean published;
@@ -59,9 +57,6 @@ public class Endpoint
         
         this.service = jaxWsHelper.getServiceFactory().create(implementor.getClass());
         this.service.setInvoker(new BeanInvoker(implementor));
-        
-        transportManager = jaxWsHelper.getXFire().getTransportManager();
-        
     }
 
     @Override
@@ -85,9 +80,7 @@ public class Endpoint
         }
         
         jaxWsHelper.getXFire().getServiceRegistry().register(service);
-        transportManager.disableAll(service);
-        transportManager.enable(binding.getTransport(), service);
-        
+
         published = true;
     }
 
@@ -107,8 +100,8 @@ public class Endpoint
     {
         if (published)
         {
-            transportManager.disable(binding.getTransport(), service);
-            
+            jaxWsHelper.getXFire().getServiceRegistry().unregister(service);
+
             published = false;
         }
     }

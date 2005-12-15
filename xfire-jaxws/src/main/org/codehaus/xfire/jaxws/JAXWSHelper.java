@@ -41,9 +41,9 @@ public class JAXWSHelper
     
     protected JAXWSHelper() 
     { 
-        createSoapBinding(SoapHttpTransport.WSDL_SOAP_BINDING);
-        createSoapBinding(SoapHttpTransport.SOAP12_HTTP_BINDING);
-        createSoapBinding(LocalTransport.BINDING_ID);
+        createSoapBinding(SoapHttpTransport.SOAP11_HTTP_BINDING, SOAPBinding.SOAP11HTTP_BINDING);
+        createSoapBinding(SoapHttpTransport.SOAP12_HTTP_BINDING, SOAPBinding.SOAP12HTTP_BINDING);
+        createSoapBinding(LocalTransport.BINDING_ID, LocalTransport.BINDING_ID);
         
         Transport http = tManager.getTransport(HttpTransport.HTTP_BINDING);
         HTTPBinding binding = new HTTPBinding(http);
@@ -51,17 +51,17 @@ public class JAXWSHelper
         transport2Binding.put(http, binding);
         
         Map props = new HashMap();
-        props.put(ObjectServiceFactory.CREATE_BINDINGS, Boolean.TRUE);
+        props.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.TRUE);
         props.put(ObjectServiceFactory.STYLE, SoapConstants.STYLE_DOCUMENT);
         
         sourceService = new ObjectServiceFactory().create(SourceService.class, props);
     }
     
-    public void createSoapBinding(String id)
+    public void createSoapBinding(String id, String jaxId)
     {
         Transport localSoap = tManager.getTransport(id);
         AbstractBinding binding = new SOAPBinding(localSoap);
-        bindings.put(id, binding);
+        bindings.put(jaxId, binding);
         transport2Binding.put(localSoap, binding);
     }
     
