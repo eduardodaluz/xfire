@@ -1,7 +1,7 @@
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
  <env:Header/>
  <env:Body xmlns="http://services.xfire.codehaus.org">
-  <addin0>1</addin0>
-  <addin1>1</addin1>
+  <one>1</one>
+  <two>1</two>
  </env:Body>
 </env:Envelope>

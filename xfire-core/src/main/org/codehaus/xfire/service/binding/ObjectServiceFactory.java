@@ -44,6 +44,7 @@ import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.ParamReader;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
@@ -751,10 +752,19 @@ public class ObjectServiceFactory
         if (suggestion != null) return suggestion;
         
         String paramName = "";
-        if (doc)
-            paramName = method.getName();
+        String[] names = ParamReader.getParameterNamesFromDebugInfo(method); 
+        
+        //get the spcific parameter name from the parameter Number
+        if (names != null && names[paramNumber] != null)
+        {
+            paramName = names[paramNumber];
+        }
+        else
+        {
+            paramName = "in" + paramNumber;        
+        }
 
-        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), paramName + "in" + paramNumber);
+        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), paramName);
     }
 
     protected QName getOutParameterName(final Service endpoint, 
@@ -766,11 +776,9 @@ public class ObjectServiceFactory
         
         if (suggestion != null) return suggestion;
         
-        String outName = "";
-        if (doc)
-            outName = method.getName();
-
-        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), outName + "out");
+        String pName = (doc) ? method.getName() : "";
+        
+        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), pName + "out");
     }
 
     public TransportManager getTransportManager()

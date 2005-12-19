@@ -2,8 +2,8 @@
  <env:Header/>
  <env:Body>
   <add xmlns="http://services.xfire.codehaus.org">
-    <in0>1</in0>
-    <in1>1</in1>
+    <one>1</one>
+    <two>1</two>
   </add>
  </env:Body>
 </env:Envelope>

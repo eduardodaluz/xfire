@@ -44,7 +44,7 @@ public class BeanServiceTest
         ServiceInfo info = service.getServiceInfo();
         OperationInfo o = info.getOperation("getSubmitBean");
         MessageInfo inMsg = o.getInputMessage();
-        MessagePartInfo p = inMsg.getMessagePart(new QName("urn:Bean", "getSubmitBeanin0"));
+        MessagePartInfo p = inMsg.getMessagePart(new QName("urn:Bean", "bean"));
         p.setSchemaType(type);
         
         o = info.getOperation("getSimpleBean");

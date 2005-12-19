@@ -2,7 +2,7 @@
  <env:Header/>
  <env:Body xmlns="urn:TestService">
 	<mixedRequest>
-      <in0>foo</in0>
+      <string>foo</string>
       <request xmlns="http://codehaus.org/xfire/xmlbeans">
         <sessionId>foo</sessionId>
       </request>

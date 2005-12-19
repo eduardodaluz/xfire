@@ -5,9 +5,6 @@ package org.codehaus.xfire.services;
  */
 public class PrimitiveService
 {
-    private int intType;
-    private Integer integerType;
-
     public Integer echoInteger( Integer integer )
     {
         return integer;

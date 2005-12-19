@@ -56,37 +56,4 @@ public class DocumentServiceTest
         assertValid("//d:getString3out", response);
         assertValid("//d:getString3out[text()=\"blehbleh2\"]", response);
     }     
-    /*
-    public void testBeanServiceWSDL() throws Exception
-    {
-        // Test WSDL generation
-        Document doc = getWSDLDocument( "Bean" );
-
-        addNamespace( "wsdl", WSDL.WSDL11_NS );
-        addNamespace( "wsdlsoap", WSDL.WSDL11_SOAP_NS );
-        addNamespace( "xsd", SOAPConstants.XSD );
-
-        assertValid( "/wsdl:definitions/wsdl:types", doc );
-        assertValid( "/wsdl:definitions/wsdl:types/xsd:schema", doc );
-        assertValid( "/wsdl:definitions/wsdl:types" +
-                "/xsd:schema[@targetNamespace='http://test.java.xfire.codehaus.org']" +
-                "/xsd:complexType", doc );
-        assertValid( "/wsdl:definitions/wsdl:types" +
-                "/xsd:schema[@targetNamespace='http://test.java.xfire.codehaus.org']" +
-                "/xsd:complexType", doc );
-        assertValid( "/wsdl:definitions/wsdl:types" +
-                "/xsd:schema[@targetNamespace='http://test.java.xfire.codehaus.org']" +
-                "/xsd:complexType[@name=\"SimpleBean\"]", doc );
-        assertValid( "/wsdl:definitions/wsdl:types" +
-                "/xsd:schema[@targetNamespace='http://test.java.xfire.codehaus.org']" +
-                "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@name=\"bleh\"]", doc );
-        assertValid( "/wsdl:definitions/wsdl:types" +
-                "/xsd:schema[@targetNamespace='http://test.java.xfire.codehaus.org']" +
-                "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@name=\"howdy\"]", doc );
-        assertValid( "/wsdl:definitions/wsdl:types" +
-                "/xsd:schema[@targetNamespace='http://test.java.xfire.codehaus.org']" +
-                "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@type=\"xsd:string\"]", doc );
-
-        assertValid( "/wsdl:definitions/wsdl:service/wsdl:port/wsdlsoap:address[@location=\"http://localhost/services/Bean\"]", doc );
-    }*/
 }

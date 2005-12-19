@@ -50,14 +50,14 @@ public class RPCEncodedTest
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);
         addNamespace("xsd", SoapConstants.XSD);
-/*
+
         assertValid("/wsdl:definitions/wsdl:message[@name='echoRequest']", doc);
         assertValid("/wsdl:definitions/wsdl:message[@name='echoRequest']" +
-                    "/wsdl:part[@element='xsd:string'][@name='in0']", doc);
+                    "/wsdl:part[@type='xsd:string'][@name='echo']", doc);
         assertValid("/wsdl:definitions/wsdl:message[@name='echoResponse']", doc);
         assertValid("/wsdl:definitions/wsdl:message[@name='echoResponse']" +
-                    "/wsdl:part[@element='xsd:string'][@name='out']", doc);
-*/        assertValid("//wsdl:binding/wsdl:operation[@name='echo']", doc);
+                    "/wsdl:part[@type='xsd:string'][@name='out']", doc);
+        assertValid("//wsdl:binding/wsdl:operation[@name='echo']", doc);
 
         assertValid("//wsdl:binding/wsdl:operation/wsdl:input[@name='echoRequest']" +
                     "/wsdlsoap:body", doc);

@@ -65,10 +65,10 @@ public class CustomTypeTest
                 "//xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']/xsd:element[@name='getSubmitBean']",
                 doc);
         assertValid(
-                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='in1'][@type='xsd:string']",
+                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='bleh'][@type='xsd:string']",
                 doc);
         assertValid(
-                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='in0'][@type='ns1:SimpleBean']",
+                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='bean'][@type='ns1:SimpleBean']",
                 doc);
 
         assertValid("/wsdl:definitions/wsdl:types" +

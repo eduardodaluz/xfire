@@ -158,7 +158,7 @@ public class ObjectServiceFactoryTest
         assertEquals(1, inMsg.getMessageParts().size());
         
         AbstractSoapBinding soapOp = (AbstractSoapBinding) service.getBindings().iterator().next();
-        MessagePartInfo part = soapOp.getHeaders(inMsg).getMessagePart(new QName(service.getName().getNamespaceURI(), "in1"));
+        MessagePartInfo part = soapOp.getHeaders(inMsg).getMessagePart(new QName(service.getName().getNamespaceURI(), "header"));
         assertNotNull(part);
     }
     

@@ -42,6 +42,6 @@ public class DocumentStyleTest
 
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:schema[@targetNamespace='urn:TestService']" +
-                "/xsd:element[@name='mixedRequestin0'][@type='xsd:string']", wsdl);
+                "/xsd:element[@name='string'][@type='xsd:string']", wsdl);
     }
 }

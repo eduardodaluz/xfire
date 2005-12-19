@@ -5,11 +5,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-
-
 /**
- * Contains type mappings for java/qname pairs and 
- * Serializer/Deserializer factories.
+ * Contains type mappings for java/qname pairs.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 21, 2004
@@ -32,7 +29,7 @@ public class CustomTypeMapping
     public CustomTypeMapping( TypeMapping defaultTM )
     {
         this();
-        
+
         this.defaultTM = defaultTM;
     }
     
@@ -106,7 +103,7 @@ public class CustomTypeMapping
     public Type getType(Class javaType)
     {
         Type type = (Type) class2Type.get( javaType );
-        
+
         if ( type == null && defaultTM != null )
         {
             type = defaultTM.getType( javaType );
@@ -161,5 +158,10 @@ public class CustomTypeMapping
         this.typeCreator = typeCreator;
         
         typeCreator.setTypeMapping(this);
+    }
+    
+    public TypeMapping getParent()
+    {
+        return defaultTM;
     }
 }

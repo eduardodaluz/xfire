@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+  targetNamespace="http://localhost:8080/axis/NHLService.jws"
+  xmlns:apachesoap="http://xml.apache.org/xml-soap"
+  xmlns:impl="http://localhost:8080/axis/NHLService.jws"
+  xmlns:intf="http://localhost:8080/axis/NHLService.jws"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--WSDL created by Apache Axis version: 1.2.1
+    Built on Jun 14, 2005 (09:15:57 EDT)-->
+
+  <wsdl:message name="getCurrentPositionResponse">
+
+    <wsdl:part name="getCurrentPositionReturn" type="xsd:string" />
+
+  </wsdl:message>
+
+  <wsdl:message name="getCurrentPositionRequest">
+
+    <wsdl:part name="division" type="xsd:string" />
+
+    <wsdl:part name="team" type="xsd:string" />
+
+  </wsdl:message>
+
+  <wsdl:portType name="NHLService">
+
+    <wsdl:operation name="getCurrentPosition"
+      parameterOrder="division team">
+
+      <wsdl:input message="impl:getCurrentPositionRequest"
+        name="getCurrentPositionRequest" />
+
+      <wsdl:output message="impl:getCurrentPositionResponse"
+        name="getCurrentPositionResponse" />
+
+    </wsdl:operation>
+
+  </wsdl:portType>
+
+  <wsdl:binding name="NHLServiceSoapBinding" type="impl:NHLService">
+
+    <wsdlsoap:binding style="rpc"
+      transport="http://schemas.xmlsoap.org/soap/http" />
+
+    <wsdl:operation name="getCurrentPosition">
+
+      <wsdlsoap:operation soapAction="" />
+
+      <wsdl:input name="getCurrentPositionRequest">
+
+        <wsdlsoap:body
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://DefaultNamespace" use="encoded" />
+
+      </wsdl:input>
+
+      <wsdl:output name="getCurrentPositionResponse">
+
+        <wsdlsoap:body
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://localhost:8080/axis/NHLService.jws"
+          use="encoded" />
+
+      </wsdl:output>
+
+    </wsdl:operation>
+
+  </wsdl:binding>
+
+  <wsdl:service name="NHLServiceService">
+
+    <wsdl:port binding="impl:NHLServiceSoapBinding" name="NHLService">
+
+      <wsdlsoap:address
+        location="http://localhost:8080/axis/NHLService.jws" />
+
+    </wsdl:port>
+
+  </wsdl:service>
+
+</wsdl:definitions>

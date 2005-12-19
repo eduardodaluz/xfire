@@ -31,7 +31,7 @@ public class ProviderServiceTest
                 invokeService("ProviderService", "/org/codehaus/xfire/message/document/document11-2.xml");
 
         addNamespace("d", "urn:Doc");
-        assertValid("//s:Body/d:getString2in0", response);
+        assertValid("//s:Body/d:bleh", response);
     }
 
     /*

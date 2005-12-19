@@ -48,7 +48,7 @@ public class HeaderBindingTest
         assertNotNull(HeaderService.b);
         assertEquals("b", HeaderService.b.getName());
         assertNotNull(HeaderService.header);
-        assertEquals("in1", HeaderService.header.getName());
+        assertEquals("header", HeaderService.header.getName());
     }
     
     public static class HeaderService

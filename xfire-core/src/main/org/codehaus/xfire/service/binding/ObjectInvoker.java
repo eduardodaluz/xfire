@@ -4,14 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Session;
+import org.codehaus.xfire.util.ServiceUtils;
 
 /**
  * An invoker which instantiates classes automatically based on the Service's scope.
@@ -24,8 +22,6 @@ import org.codehaus.xfire.transport.Session;
 public class ObjectInvoker
         implements Invoker
 {
-    private static final Log logger = LogFactory.getLog(ObjectInvoker.class.getName());
-
     /**
      * Scope to denote that a single implementation instance should exist for the lifetime
      * of this invoker and should be reused for every request.

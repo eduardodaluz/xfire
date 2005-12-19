@@ -52,11 +52,11 @@ public class ListTest
         p.setSchemaType(strings);
 
         o = service.getOperation("receiveDoubles");
-        p = o.getInputMessage().getMessagePart(new QName(endpoint.getTargetNamespace(), "in0"));
+        p = o.getInputMessage().getMessagePart(new QName(endpoint.getTargetNamespace(), "doubles"));
         p.setSchemaType(doubles);
 
         o = service.getOperation("receiveStrings");
-        p = o.getInputMessage().getMessagePart(new QName(endpoint.getTargetNamespace(), "in0"));
+        p = o.getInputMessage().getMessagePart(new QName(endpoint.getTargetNamespace(), "strings"));
         p.setSchemaType(strings);
     }
 

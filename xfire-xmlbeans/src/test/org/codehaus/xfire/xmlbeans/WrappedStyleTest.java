@@ -70,7 +70,7 @@ public class WrappedStyleTest
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:schema[@targetNamespace='urn:TestService']" +
                 "/xsd:element[@name='mixedRequest']" +
-                "//xsd:element[@name='in0'][@type='xsd:string']", wsdl);
+                "//xsd:element[@name='string'][@type='xsd:string']", wsdl);
         assertValid("//xsd:schema[@targetNamespace='urn:TestService']" +
                     "/xsd:element[@name='mixedRequest']" +
                     "//xsd:element[@ref='ns1:request']", wsdl);

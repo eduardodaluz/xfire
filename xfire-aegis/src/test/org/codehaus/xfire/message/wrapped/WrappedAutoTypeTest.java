@@ -57,10 +57,10 @@ public class WrappedAutoTypeTest
                 "//xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']/xsd:element[@name='getSubmitBean']",
                 doc);
         assertValid(
-                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='in1'][@type='xsd:string']",
+                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='bleh'][@type='xsd:string']",
                 doc);
         assertValid(
-                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='in0'][@type='tns:SimpleBean']",
+                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='bean'][@type='tns:SimpleBean']",
                 doc);
 
         assertValid("/wsdl:definitions/wsdl:types" +
@@ -134,10 +134,10 @@ public class WrappedAutoTypeTest
         assertValid("/wsdl:definitions/wsdl:types/xsd:schema[@targetNamespace='urn:Array']", doc);
         assertValid("//xsd:schema[@targetNamespace='urn:Array']/xsd:element[@name='SubmitBeanArray']", doc);
         assertValid(
-                "//xsd:element[@name='SubmitStringArray']/xsd:complexType/xsd:sequence/xsd:element[@name='in0'][@type='tns:ArrayOfString']",
+                "//xsd:element[@name='SubmitStringArray']/xsd:complexType/xsd:sequence/xsd:element[@name='array'][@type='tns:ArrayOfString']",
                 doc);
         assertValid(
-                "//xsd:element[@name='SubmitBeanArray']/xsd:complexType/xsd:sequence/xsd:element[@name='in0'][@type='ns1:ArrayOfSimpleBean']",
+                "//xsd:element[@name='SubmitBeanArray']/xsd:complexType/xsd:sequence/xsd:element[@name='array'][@type='ns1:ArrayOfSimpleBean']",
                 doc);
     }
 }

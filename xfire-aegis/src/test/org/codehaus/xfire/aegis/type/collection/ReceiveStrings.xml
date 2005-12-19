@@ -2,9 +2,9 @@
  <env:Header/>
  <env:Body>
   <receiveStrings xmlns="http://collection.type.aegis.xfire.codehaus.org">
-    <in0 xmlns:s="urn:string">
+    <strings xmlns:s="urn:string">
       <s:string>1.0</s:string>
-    </in0>
+    </strings>
   </receiveStrings>
  </env:Body>
 </env:Envelope>

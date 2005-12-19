@@ -6,7 +6,7 @@
     <serviceBean>#echoBean</serviceBean>
   </service>
 
-  <bean id="echoBean" class="org.codehaus.xfire.test.Echo"/>
+  <bean id="echoBean" class="org.codehaus.xfire.services.Echo"/>
   
 </beans>
 <!-- END SNIPPET: mixed -->

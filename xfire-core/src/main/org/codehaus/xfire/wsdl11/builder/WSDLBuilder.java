@@ -28,6 +28,7 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl.SchemaType;
@@ -48,10 +49,10 @@ public class WSDLBuilder
 
     private Map wsdlOps = new HashMap();
 
-    private List declaredParameters = new ArrayList();
-
     private TransportManager transportManager;
     
+    private Map declaredParameters = new HashMap();
+
     public WSDLBuilder(Service service, TransportManager transportManager) throws WSDLException
     {
         super(service);
@@ -68,7 +69,6 @@ public class WSDLBuilder
     {
         this.transportManager = transportManager;
     }
-
 
     public void write(OutputStream out) throws IOException
     {
@@ -234,10 +234,60 @@ public class WSDLBuilder
 
     public Part createPart(MessagePartInfo part)
     {
-        return createPart(part.getName(), part.getTypeClass(), part.getSchemaType());
+        String style = (String) getService().getProperty(ObjectServiceFactory.STYLE);
+        if (style != null && style.equals(SoapConstants.STYLE_RPC))
+        {
+            return createRpcLitPart(part.getName(), part.getTypeClass(), part.getSchemaType());
+        }
+        else
+        {
+            return createDocLitPart(part.getName(), part.getTypeClass(), part.getSchemaType());
+        }
     }
 
-    public Part createPart(QName pName, Class clazz, SchemaType type)
+    /**
+     * Creates a wsdl:message part without creating a global schema
+     * element.
+     * @param pName
+     * @param clazz
+     * @param type
+     * @return
+     */
+    public Part createRpcLitPart(QName pName, Class clazz, SchemaType type)
+    {
+        addDependency(type);
+
+        QName schemaTypeName = type.getSchemaType();
+
+        Part part = getDefinition().createPart();
+        part.setName(pName.getLocalPart());
+
+        String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+        addNamespace(prefix, schemaTypeName.getNamespaceURI());
+        
+        if (!type.isAbstract())
+        {
+            part.setElementName(schemaTypeName);
+        }
+        else
+        {
+            
+            part.setTypeName(schemaTypeName);
+        }
+        
+        return part;
+    }
+    
+    /**
+     * Creates a wsdl:message part and a global schema element for it if it is
+     * abstract.
+     * 
+     * @param pName
+     * @param clazz
+     * @param type
+     * @return
+     */
+    public Part createDocLitPart(QName pName, Class clazz, SchemaType type)
     {
         addDependency(type);
 
@@ -256,7 +306,8 @@ public class WSDLBuilder
             return part;
         }
 
-        if (!declaredParameters.contains(pName))
+        SchemaType regdType = (SchemaType) declaredParameters.get(pName);
+        if (regdType == null)
         {
             Element schemaEl = createSchemaType(getTargetNamespace());
 
@@ -273,13 +324,23 @@ public class WSDLBuilder
                                                    prefix + ":" + schemaTypeName.getLocalPart()));
             }
 
-            declaredParameters.add(pName);
+            declaredParameters.put(pName, type);
+        }
+        else
+        {
+            if (!regdType.equals(type))
+            {
+                throw new XFireRuntimeException("Cannot create two schema elements with the same name " +
+                                                "and of different types: " + pName);
+                                                
+            }
         }
 
         part.setElementName(pName);
 
         return part;
     }
+
 
     public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res, List faultMessages)
     {
@@ -363,8 +424,8 @@ public class WSDLBuilder
     }
 
     protected QName createDocumentType(MessageInfo message, 
-                                     Part part,
-                                     String opName)
+                                       Part part,
+                                       String opName)
     {
         Element element = new Element("element", AbstractWSDL.XSD_NS);
         element.setAttribute(new Attribute("name", opName));

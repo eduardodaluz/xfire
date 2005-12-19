@@ -1,0 +1,21 @@
+<!-- START SNIPPET: mixed -->
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+
+  <!-- This calls initializeTypes before your service is created -->
+  <bean id="TypeRegistrar" init-method="initializeTypes" 
+    class="org.codehaus.xfire.spring.examples.TypeRegistrar"
+    xmlns="http://xbean.org/schemas/spring/1.0/">
+    <property name="typeMappingRegistry" ref="xfire.typeMappingRegistry" />
+  </bean>
+  
+  <service>
+    <name>Echo</name>
+    <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+    <serviceBean>#echoBean</serviceBean>
+  </service>
+
+  <bean id="echoBean" class="org.codehaus.xfire.test.EchoImpl" 
+    xmlns="http://xbean.org/schemas/spring/1.0/"/>
+  
+</beans>
+<!-- END SNIPPET: mixed -->

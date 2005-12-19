@@ -197,11 +197,6 @@ public class Soap11Binding extends AbstractSoapBinding
         SOAPFault fault = new SOAPFaultImpl();
         fault.setUse(use); 
 
-        if ( getStyle().equals( SoapConstants.STYLE_RPC ) )
-        {
-            fault.setNamespaceURI( endpoint.getTargetNamespace() );
-        }
-        
         if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();
@@ -219,11 +214,6 @@ public class Soap11Binding extends AbstractSoapBinding
         SOAPHeader header = new SOAPHeaderImpl();
         header.setUse( use ); 
 
-        if ( getStyle().equals( SoapConstants.STYLE_RPC ) )
-        {
-            header.setNamespaceURI( endpoint.getTargetNamespace() );
-        }
-        
         if ( use.equals( SoapConstants.USE_ENCODED ) )
         {
             List encodingStyles = new ArrayList();

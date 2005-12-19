@@ -416,9 +416,9 @@ public class ServiceBean
     public void setApplicationContext(ApplicationContext ctx)
         throws BeansException
     {
-        xFire = (XFire) ctx.getBean("xfire");
+        if (xFire == null) xFire = (XFire) ctx.getBean("xfire");
+        if (serviceFactory == null) serviceFactory = (ServiceFactory) ctx.getBean("xfire.serviceFactory");
     }
-
 
     public List getBindings()
     {

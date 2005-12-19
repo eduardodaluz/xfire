@@ -61,13 +61,11 @@ public class AegisBindingProvider
     {
         return registry;
     }
-    
 
     public void setTypeMappingRegistry(TypeMappingRegistry registry)
     {
         this.registry = registry;
     }
-    
 
     /**
      * Creates a type mapping for this class and registers it with the TypeMappingRegistry. This needs to be called
@@ -296,6 +294,7 @@ public class AegisBindingProvider
         if (type == null)
         {
             ObjectType ot = new ObjectType();
+            ot.setTypeMapping(tm);
             ot.setSchemaType(name);
             type = ot;
         }

@@ -3,9 +3,13 @@ package org.codehaus.xfire.service.binding;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -32,17 +36,7 @@ public class RPCBinding
         
         String opName = dr.getLocalName();
         OperationInfo operation = endpoint.getServiceInfo().getOperation( opName );
-        if (operation == null)
-        {
-            // Determine the operation name which is in the form of:
-            // xxxxRequest where xxxx is the operation.
-            int index = opName.indexOf("Request");
-            if (index > 0)
-            {
-                operation = endpoint.getServiceInfo().getOperation( opName.substring(0, index) );
-            }
-        }
-        
+
         if (operation == null)
             throw new XFireFault("Could not find appropriate operation!", XFireFault.SENDER);
         
@@ -56,22 +50,56 @@ public class RPCBinding
             throw new XFireFault("Invalid operation.", XFireFault.SENDER);
         }
 
+        Service service = context.getService();
+        
+        MessageInfo msg;
+        if (isClientModeOn(context))
+            msg = operation.getOutputMessage();
+        else
+            msg = operation.getInputMessage();
+        
         while(STAXUtils.toNextElement(dr))
         {
-            MessagePartInfo p = operation.getInputMessage().getMessagePart(dr.getName());
+            MessagePartInfo p = (MessagePartInfo) msg.getMessageParts().get(parameters.size());
 
             if (p == null)
             {
                 throw new XFireFault("Parameter " + dr.getName() + " does not exist!", 
                                      XFireFault.SENDER);
             }
-
+            
+            QName name;
+            if (p.getSchemaType().isAbstract())
+            {
+                name = new QName(service.getTargetNamespace(), dr.getLocalName());
+            }
+            else
+            {
+                name = dr.getName();
+            }
+            
+            if (!p.getName().equals(name))
+            {
+                throw new XFireFault("Parameter " + dr.getName() + " does not exist!", 
+                                     XFireFault.SENDER);
+            }
+            
             parameters.add( endpoint.getBindingProvider().readParameter(p, dr, context) );
         }
         
         context.getInMessage().setBody(parameters);
     }
 
+    protected void writeParameter(XMLStreamWriter writer,
+                                  MessageContext context,
+                                  Service endpoint,
+                                  Object value,
+                                  MessagePartInfo outParam)
+        throws XFireFault
+    {
+        endpoint.getBindingProvider().writeParameter(outParam, writer, context, value);
+    }
+    
     public Object clone()
     {
         return new RPCBinding();

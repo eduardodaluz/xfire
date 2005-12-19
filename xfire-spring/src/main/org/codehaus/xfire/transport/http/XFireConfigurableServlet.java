@@ -48,7 +48,6 @@ public class XFireConfigurableServlet
         
         try
         {
-            
             en = getClass().getClassLoader().getResources(getConfigPath());
             if (!en.hasMoreElements())
             {
