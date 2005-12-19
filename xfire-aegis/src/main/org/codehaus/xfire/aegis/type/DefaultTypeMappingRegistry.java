@@ -26,6 +26,7 @@ import org.codehaus.xfire.aegis.type.basic.IntType;
 import org.codehaus.xfire.aegis.type.basic.LongType;
 import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.aegis.type.basic.ShortType;
+import org.codehaus.xfire.aegis.type.basic.SqlDateType;
 import org.codehaus.xfire.aegis.type.basic.StringType;
 import org.codehaus.xfire.aegis.type.basic.TimeType;
 import org.codehaus.xfire.aegis.type.basic.TimestampType;
@@ -279,6 +280,7 @@ public class DefaultTypeMappingRegistry
         tm.register(Float.class, XSD_FLOAT, new FloatType());
         tm.register(Long.class, XSD_LONG, new LongType());
         tm.register(Date.class, XSD_DATETIME, new DateTimeType());
+        tm.register(java.sql.Date.class, XSD_DATETIME, new SqlDateType());
         tm.register(Time.class, XSD_TIME, new TimeType());
         tm.register(Timestamp.class, XSD_DATETIME, new TimestampType());
         tm.register(Calendar.class, XSD_DATETIME, new CalendarType());
@@ -311,6 +313,7 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Float.class, ENCODED_FLOAT, new FloatType());
         soapTM.register(Long.class, ENCODED_LONG, new LongType());
         soapTM.register(Date.class, ENCODED_DATETIME, new DateTimeType());
+        soapTM.register(java.sql.Date.class, ENCODED_DATETIME, new SqlDateType());
         soapTM.register(Calendar.class, ENCODED_DATETIME, new CalendarType());
         soapTM.register(byte[].class, ENCODED_BASE64, new Base64Type());
         soapTM.register(BigDecimal.class, ENCODED_DECIMAL, new BigDecimalType());
@@ -329,6 +332,7 @@ public class DefaultTypeMappingRegistry
         soapTM.register(Float.class, XSD_FLOAT, new FloatType());
         soapTM.register(Long.class, XSD_LONG, new LongType());
         soapTM.register(Date.class, XSD_DATETIME, new DateTimeType());
+        soapTM.register(java.sql.Date.class, XSD_DATETIME, new SqlDateType());
         soapTM.register(Time.class, XSD_TIME, new TimeType());
         soapTM.register(Timestamp.class, XSD_DATETIME, new TimestampType());
         soapTM.register(Calendar.class, XSD_DATETIME, new CalendarType());
