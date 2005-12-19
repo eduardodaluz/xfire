@@ -68,7 +68,8 @@ public class ObjectServiceFactory
     public static final String CREATE_DEFAULT_BINDINGS =  "objectServiceFactory.createDefaultBindings";
     public static final String SOAP11_TRANSPORTS =  "objectServiceFactory.soap11Transports";
     public static final String SOAP12_TRANSPORTS =  "objectServiceFactory.soap12Transports";
-
+    public static final String SCOPE = "objectServiceFactory.scope";
+    
     private BindingProvider bindingProvider;
     private TransportManager transportManager;
     private String style;
@@ -250,6 +251,7 @@ public class ObjectServiceFactory
         QName portType = null;
         Collection s11Bindings = null;
         Collection s12Bindings = null;
+        String theScope="";
         
         if (properties != null)
         {
@@ -258,11 +260,13 @@ public class ObjectServiceFactory
             portType = (QName) properties.get(PORT_TYPE);
             s11Bindings = (List) properties.get(SOAP11_TRANSPORTS);
             s12Bindings = (List) properties.get(SOAP12_TRANSPORTS);
+            theScope = (String) properties.get(SCOPE);
         }
         
         if (theStyle == null) theStyle = style;
         if (theUse == null) theUse = use;
         if (portType == null) portType = new QName(theNamespace, theName + "PortType");
+        if (theScope == null) theScope = "";
         
         ServiceInfo serviceInfo = new ServiceInfo(portType, clazz);
 
@@ -273,7 +277,15 @@ public class ObjectServiceFactory
         endpoint.setName(qName);
         setProperties(endpoint, properties);
 
-        endpoint.setInvoker(new ObjectInvoker());
+        ObjectInvoker invoker = new ObjectInvoker();
+        if (theScope.equals("request"))
+            invoker.setScope(ObjectInvoker.SCOPE_REQUEST);
+        else if (theScope.equals("application"))
+            invoker.setScope(ObjectInvoker.SCOPE_APPLICATION);
+        else if (theScope.equals("session"))
+            invoker.setScope(ObjectInvoker.SCOPE_SESSION);
+        
+        endpoint.setInvoker(invoker);
         endpoint.setFaultSerializer(new SoapFaultSerializer());
 
         endpoint.setWSDLWriter(new WSDLBuilderAdapter(getWsdlBuilderFactory(), endpoint, transportManager));

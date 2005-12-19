@@ -127,6 +127,8 @@ public class ServiceBean
             properties.put(ObjectServiceFactory.STYLE, style);
         if (use != null)
             properties.put(ObjectServiceFactory.USE, use);
+        if (scope != null)
+            properties.put(ObjectServiceFactory.SCOPE, scope);
         
         if (implementationClass != null)
         {
