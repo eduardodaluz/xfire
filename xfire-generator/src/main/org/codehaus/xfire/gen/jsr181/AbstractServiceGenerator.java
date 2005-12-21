@@ -192,7 +192,7 @@ public abstract class AbstractServiceGenerator
             FaultInfo faultInfo = (FaultInfo) itr.next();
             
             List messageParts = faultInfo.getMessageParts();
-            if (messageParts.size() > 0)
+            if (messageParts.size() > 1)
             {
                 throw new GenerationException("Operation " + op.getName() + " has a fault " + faultInfo.getName() + 
                                               " with multiple parts. This is not supported at this time.");
