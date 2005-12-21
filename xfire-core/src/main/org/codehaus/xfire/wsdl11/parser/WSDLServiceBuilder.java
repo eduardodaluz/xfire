@@ -417,9 +417,6 @@ public class WSDLServiceBuilder
         {
             if (hasAttributes((XmlSchemaComplexType) reqSchemaEl.getSchemaType()))
                 return false;
-            
-            if (!hasOneElement((XmlSchemaComplexType) reqSchemaEl.getSchemaType()))
-                return false;
         }
         
         if (resSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
@@ -441,16 +438,19 @@ public class WSDLServiceBuilder
         {
             XmlSchemaSequence seq = (XmlSchemaSequence) type.getParticle();
             XmlSchemaObjectCollection items = seq.getItems();
-            
-            if (items.getCount() != 1) return false;
-            
+
+            if (items.getCount() == 0) 
+                return true;
+            else if (items.getCount() > 1) 
+                return false;
+             
             XmlSchemaObject o = items.getItem(0);
             if (!(o instanceof XmlSchemaElement)) return false;
             
             XmlSchemaElement el = (XmlSchemaElement) o;
             
             if (el.getMaxOccurs() > 1) return false;
-            
+
             return true;
         }
         

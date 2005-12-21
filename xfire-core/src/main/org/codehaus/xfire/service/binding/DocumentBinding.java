@@ -51,7 +51,7 @@ public class DocumentBinding
         for(Iterator itr = msgInfo.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo outParam = (MessagePartInfo) itr.next();
-            
+
             context.getService().getBindingProvider().writeParameter(outParam, writer, context, values[i]);
             i++;
         }

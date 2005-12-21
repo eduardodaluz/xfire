@@ -127,27 +127,32 @@ public class Client
     	initFromDefinition(transport, definition, serviceClass);
     }*/
     
+    public Client(InputStream is, Class serviceClass) throws Exception
+    {
+        this();
+        
+        try 
+        {
+            InputSource src = new InputSource(is);
+            Definition def = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, src);
+            Transport transport = xfire.getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+            initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, def, serviceClass);
+        }
+        finally
+        {
+            is.close();
+        }
+    }
+    
+    
     public Client(URL wsdlLocation) throws Exception
     {
-    	this(wsdlLocation, null);
+    	this(wsdlLocation.openStream(), null); 
     }
     
     public Client(URL wsdlLocation, Class serviceClass) throws Exception
     {
-    	this();
-        
-    	InputStream is = wsdlLocation.openStream();
-    	try 
-    	{
-    		InputSource src = new InputSource(is);
-    		Definition def = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, src);
-    		Transport transport = xfire.getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
-    		initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, def, serviceClass);
-    	}
-    	finally
-    	{
-    		is.close();
-    	}
+        this(wsdlLocation.openStream(), serviceClass);
     }
     
     private void setService(Service service)

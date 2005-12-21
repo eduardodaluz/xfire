@@ -19,6 +19,7 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.Base64;
 import org.jdom.Attribute;
 import org.jdom.Element;
+import org.w3c.dom.Document;
 
 /**
  * Type for runtime inspection of types. Looks as the class to be written, and looks to see if there is a type for that
@@ -37,12 +38,14 @@ public class ObjectType extends Type
     private static final QName XSI_TYPE = new QName( SoapConstants.XSI_NS, "type" );
     private static final QName XSI_NIL = new QName( SoapConstants.XSI_NS, "nil" );
 
-    private final Set dependencies;
-    private final boolean serializeWhenUnknown;
-
+    private Set dependencies;
+    private boolean serializedWhenUnknown;
+    private boolean readToDocument = false;
+    
     public ObjectType()
     {
         this( Collections.EMPTY_SET );
+        readToDocument = true;
     }
 
     public ObjectType( Set dependencies )
@@ -58,7 +61,7 @@ public class ObjectType extends Type
     public ObjectType( Set dependencies, boolean serializeWhenUnknown )
     {
         this.dependencies = dependencies;
-        this.serializeWhenUnknown = serializeWhenUnknown;
+        this.serializedWhenUnknown = serializeWhenUnknown;
     }
 
     public Object readObject( MessageReader reader, MessageContext context ) throws XFireFault
@@ -74,25 +77,39 @@ public class ObjectType extends Type
 
         MessageReader typeReader = reader.getAttributeReader( XSI_TYPE );
 
-        if( null == typeReader )
+        if( null == typeReader && !readToDocument )
         {
             throw new XFireFault( "Missing 'xsi:type' attribute", XFireFault.SENDER );
         }
 
         String typeName = typeReader.getValue();
 
-        if( null == typeName )
+        if( null == typeName  && !readToDocument )
         {
             throw new XFireFault( "Missing 'xsi:type' attribute value", XFireFault.SENDER);
         }
 
-        QName typeQName = extractQName( reader, typeName );
-        Type type = getTypeMapping().getType( typeQName );
+        Type type;
+        QName typeQName = reader.getName();
+        if (typeName != null)
+        {
+            typeQName = extractQName(typeReader, typeName);
+            type = getTypeMapping().getType(Document.class);
+        }
+        else 
+        {
+            type = getTypeMapping().getType( typeQName );
+            
+            if (type == null && readToDocument)
+            {
+                type = getTypeMapping().getType(Document.class);
+            }
+        }
 
         if( null == type )
         {
             //TODO should check namespace as well..
-            if( serializeWhenUnknown && "serializedJavaObject".equals( typeQName.getLocalPart() ) )
+            if( serializedWhenUnknown && "serializedJavaObject".equals( typeQName.getLocalPart() ) )
             {
                 return reconstituteJavaObject( reader );
             }
@@ -215,7 +232,7 @@ public class ObjectType extends Type
 
     private void handleNullType( Object object, MessageWriter writer ) throws XFireFault
     {
-        if( !serializeWhenUnknown )
+        if( !serializedWhenUnknown )
         {
             throw new XFireFault( "Unable to write '" + object + "' [" + object.getClass().getName() + "]",
                                   XFireFault.RECEIVER );
@@ -243,6 +260,31 @@ public class ObjectType extends Type
         writer.writeValue( Base64.encode( out.toByteArray() ) );
     }
 
+    public boolean isReadToDocument()
+    {
+        return readToDocument;
+    }
+
+    public void setReadToDocument(boolean readToDocument)
+    {
+        this.readToDocument = readToDocument;
+    }
+
+    public boolean isSerializedWhenUnknown()
+    {
+        return serializedWhenUnknown;
+    }
+
+    public void setSerializedWhenUnknown(boolean serializedWhenUnknown)
+    {
+        this.serializedWhenUnknown = serializedWhenUnknown;
+    }
+
+    public void setDependencies(Set dependencies)
+    {
+        this.dependencies = dependencies;
+    }
+
     public Set getDependencies()
     {
         return dependencies;
@@ -255,7 +297,7 @@ public class ObjectType extends Type
 
     public void writeSchema( Element root )
     {
-        if( serializeWhenUnknown )
+        if( serializedWhenUnknown )
         {
             Element simple = new Element( "simpleType", SoapConstants.XSD_PREFIX, SoapConstants.XSD );
             simple.setAttribute( new Attribute( "name", "serializedJavaObject" ) );
