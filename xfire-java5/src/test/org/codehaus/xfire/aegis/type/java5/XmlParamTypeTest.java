@@ -1,10 +1,6 @@
 package org.codehaus.xfire.aegis.type.java5;
 
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -12,9 +8,6 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
-import org.codehaus.xfire.aegis.type.collection.MapType;
-import org.codehaus.xfire.aegis.type.java5.dto.MapDTO;
-import org.codehaus.xfire.aegis.type.java5.dto.MapDTOService;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.jdom.Document;
@@ -57,7 +50,7 @@ public class XmlParamTypeTest
         
         Document wsdl = getWSDLDocument(service.getSimpleName());
         addNamespace("xsd", SoapConstants.XSD);
-        assertValid("//xsd:element[@name='in0'][@type='ns1:custom']", wsdl);
+        assertValid("//xsd:element[@name='s'][@type='ns1:custom']", wsdl);
     }
     
     public class CustomTypeService

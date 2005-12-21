@@ -82,13 +82,13 @@ public class HeaderServiceTest
         }
         
         @WebMethod
-        public void doSomethingAuthenticated(@WebParam(name="header", header=true) UserToken authHeader) 
+        public void doSomethingAuthenticated(@WebParam(name="authHeader", header=true) UserToken authHeader) 
         {
             HeaderService.authHeader = authHeader;
         }
         
         @WebMethod
-        public void doSomethingAuthenticated2(@WebParam(name="header", header=true) UserToken authHeader) 
+        public void doSomethingAuthenticated2(@WebParam(name="authHeader", header=true) UserToken authHeader) 
         {
             HeaderService.authHeader = authHeader;
         }
