@@ -1,8 +1,5 @@
 package jsr181.jaxb.globalweather;
 
-import net.webservicex.GetWeather;
-import net.webservicex.GetWeatherResponse;
-
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
@@ -50,9 +47,6 @@ public class WeatherTest
         
         GlobalWeatherSoap client = service.getGlobalWeatherLocalPort();
         
-        GetWeather weather = new GetWeather();
-        weather.setCityName("Grand Rapids");
-        GetWeatherResponse response = client.GetWeather(weather);
-        assertEquals("foo", response.getGetWeatherResult());
+        assertEquals("foo", client.GetWeather("foo", "bar"));
     }
 }

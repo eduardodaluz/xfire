@@ -3,25 +3,29 @@ package jsr181.jaxb.globalweather;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
+import javax.jws.soap.SOAPBinding.Style;
+import javax.jws.soap.SOAPBinding.Use;
 
-import net.webservicex.GetCitiesByCountryResponse;
-import net.webservicex.GetWeatherResponse;
+import org.codehaus.xfire.fault.XFireFault;
 
-@WebService(endpointInterface = "jsr181.jaxb.globalweather.GlobalWeatherSoap", serviceName = "GlobalWeather", targetNamespace = "http://www.webserviceX.NET")
-@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE, style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL)
+@WebService(serviceName = "GlobalWeather", targetNamespace = "http://www.webserviceX.NET", endpointInterface = "jsr181.jaxb.globalweather.GlobalWeatherSoap")
+@SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL, parameterStyle = ParameterStyle.WRAPPED)
 public class GlobalWeatherCustomImpl
     implements GlobalWeatherSoap
 {
 
-
-    public GetCitiesByCountryResponse GetCitiesByCountry(net.webservicex.GetCitiesByCountry GetCitiesByCountry) {
-        throw new UnsupportedOperationException();
+    public String GetCitiesByCountry(String CountryName)
+        throws XFireFault
+    {
+        return null;
     }
 
-    public GetWeatherResponse GetWeather(net.webservicex.GetWeather GetWeather) {
-        GetWeatherResponse response = new GetWeatherResponse();
-        response.setGetWeatherResult("foo");
-        return response;
+    public String GetWeather(String CityName, String CountryName)
+        throws XFireFault
+    {
+        return "foo";
     }
+
 
 }

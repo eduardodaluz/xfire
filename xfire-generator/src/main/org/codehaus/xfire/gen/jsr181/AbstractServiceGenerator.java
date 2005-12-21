@@ -13,6 +13,7 @@ import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.GeneratorPlugin;
 import org.codehaus.xfire.gen.SchemaSupport;
 import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -178,9 +179,14 @@ public abstract class AbstractServiceGenerator
             }
         }
         
+        generateFaults(context, op, method);
+    }
+
+    protected void generateFaults(GenerationContext context, OperationInfo op, JMethod method)
+        throws GenerationException
+    {
         method._throws(XFireFault.class);
-        
-        /*
+       
         for (Iterator itr = op.getFaults().iterator(); itr.hasNext();)
         {
             FaultInfo faultInfo = (FaultInfo) itr.next();
@@ -194,11 +200,12 @@ public abstract class AbstractServiceGenerator
             
             MessagePartInfo part = (MessagePartInfo) messageParts.get(0);
             
-            generateExceptionClass(context, part);
-        }*/
+            generateExceptionClass(context, part, method);
+        }
     }
 
-    protected void generateExceptionClass(GenerationContext context, MessagePartInfo part)
+    protected void generateExceptionClass(GenerationContext context, MessagePartInfo part, JMethod method)
+        throws GenerationException
     {
         // TODO Auto-generated method stub
         
