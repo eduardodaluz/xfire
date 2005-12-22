@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
@@ -13,6 +12,8 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
@@ -90,16 +91,15 @@ public class RPCBinding
         context.getInMessage().setBody(parameters);
     }
 
-    protected void writeParameter(XMLStreamWriter writer,
-                                  MessageContext context,
-                                  Service endpoint,
-                                  Object value,
-                                  MessagePartInfo outParam)
-        throws XFireFault
+    protected String getBoundNamespace(MessageContext context, MessagePartInfo p)
     {
-        endpoint.getBindingProvider().writeParameter(outParam, writer, context, value);
+        if (p.isSchemaElement() ||
+                ((AbstractSoapBinding) context.getBinding()).getUse().equals(SoapConstants.USE_ENCODED))
+            return p.getName().getNamespaceURI();
+        else
+            return "";
     }
-    
+
     public Object clone()
     {
         return new RPCBinding();

@@ -2,11 +2,14 @@ package org.codehaus.xfire.handler;
 
 import java.util.Iterator;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.util.stax.ElementStreamWriter;
 
 /**
@@ -50,7 +53,14 @@ public class CustomFaultHandler
     {
         ElementStreamWriter writer = new ElementStreamWriter(fault.getDetail());
         
-        context.getService().getBindingProvider().writeParameter(faultPart, writer, context, cause);
+        try
+        {
+            AbstractBinding.writeParameter(writer, context, cause, faultPart, faultPart.getName().getNamespaceURI());
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireFault("Could not write to outgoing stream.", e, XFireFault.RECEIVER);
+        }
     }
 
     /**

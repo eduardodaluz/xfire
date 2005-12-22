@@ -1,5 +1,7 @@
 package org.codehaus.xfire.service.binding;
 
+import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -25,12 +28,25 @@ import org.jdom.Element;
 import org.w3c.dom.Document;
 
 public class MessageBindingProvider
-    implements BindingProvider
+    extends AbstractBindingProvider
 {
     private static final Log logger = LogFactory.getLog(MessageBindingProvider.class);
-    
-    public void initialize(Service newParam)
+
+    protected void initializeMessage(Service service, MessagePartContainer container, int type)
     {
+        for (Iterator itr = container.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo part = (MessagePartInfo) itr.next();
+            
+            if (part.getSchemaType() == null)
+            {
+                SimpleSchemaType st = new SimpleSchemaType();
+                st.setAbstract(false);
+                st.setNillable(false);
+                
+                part.setSchemaType(st);
+            }
+        }
     }
 
     public Object readParameter(MessagePartInfo p, XMLStreamReader reader, MessageContext context)
@@ -129,5 +145,4 @@ public class MessageBindingProvider
         
         return st;
     }
-    
 }

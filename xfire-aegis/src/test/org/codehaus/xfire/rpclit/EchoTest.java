@@ -31,7 +31,7 @@ public class EchoTest
 
         addNamespace("e", "urn:xfire:echo");
         
-        //assertValid("//out[text()='yo']", response);
+        assertValid("//out[text()='Yo Yo']", response);
     }
     
     public void testWSDL() throws Exception

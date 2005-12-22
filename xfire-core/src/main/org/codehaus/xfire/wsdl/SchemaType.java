@@ -51,4 +51,6 @@ public interface SchemaType
      * @return
      */
     QName getSchemaType();
+
+    boolean isWriteOuter();
 }

@@ -21,6 +21,7 @@ public class MessagePartInfo
     private MessagePartContainer container;
     private SchemaType schemaType;
     private int index;
+    private boolean schemaElement = true;
     
     MessagePartInfo(QName name, Class typeClass, MessagePartContainer container)
     {
@@ -79,6 +80,24 @@ public class MessagePartInfo
     {
         this.schemaType = schemaType;
     }
+
+    /**
+     * Is this message part a concrete type declared in a schema? Or are
+     * we referencing an abstract schema type?
+     * 
+     * @return True if this is a concrete type.
+     */
+    public boolean isSchemaElement()
+    {
+        return schemaElement;
+    }
+    
+
+    public void setSchemaElement(boolean schemaElement)
+    {
+        this.schemaElement = schemaElement;
+    }
+    
 
     /**
      * Acceps the given visitor.

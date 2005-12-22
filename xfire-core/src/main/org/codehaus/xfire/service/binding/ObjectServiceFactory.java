@@ -27,6 +27,7 @@ import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -615,7 +616,9 @@ public class ObjectServiceFactory
             if (!paramClasses[j].equals(MessageContext.class) && !isHeader(method, j))
             {
                 final QName q = getInParameterName(endpoint, op, method, j, isDoc);
-                inMsg.addMessagePart(q, paramClasses[j]).setIndex(j);
+                MessagePartInfo part = inMsg.addMessagePart(q, paramClasses[j]);
+                part.setIndex(j);
+                part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
             }
         }
 
@@ -631,7 +634,9 @@ public class ObjectServiceFactory
             if (!returnType.isAssignableFrom(void.class) && !isHeader(method, -1))
             {
                 final QName q = getOutParameterName(endpoint, op, method, isDoc);
-                outMsg.addMessagePart(q, method.getReturnType()).setIndex(-1);
+                MessagePartInfo part = outMsg.addMessagePart(q, method.getReturnType());
+                part.setIndex(-1);
+                part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
             }
         }
 

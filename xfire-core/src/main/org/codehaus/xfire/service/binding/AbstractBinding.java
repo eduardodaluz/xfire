@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -20,6 +21,7 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
@@ -204,7 +206,72 @@ public abstract class AbstractBinding
         
         context.getInMessage().setBody(parameters);
     }
-    
+
+    public static void writeParameter(XMLStreamWriter writer, 
+                                      MessageContext context, 
+                                      Object value, 
+                                      MessagePartInfo p,
+                                      String ns)
+        throws XFireFault, XMLStreamException
+    {
+        
+        // write the parameter's start element
+        if (p.getSchemaType().isWriteOuter())
+        {     
+            if (ns.length() > 0)
+            {
+                String prefix = writer.getPrefix(ns);
+                boolean declare = false;
+                if (prefix == null)
+                {
+                    prefix = "";
+                    declare = true;
+                }
+                
+                writer.writeStartElement(prefix, p.getName().getLocalPart(), ns);
+                if (declare) writer.writeDefaultNamespace(ns);
+            }
+            else
+            {
+                writer.writeStartElement(p.getName().getLocalPart());
+                writer.writeDefaultNamespace("");
+            }
+        }
+        
+        if (p.getSchemaType().isNillable() && value == null)
+        {
+            String xsiPref = NamespaceHelper.getUniquePrefix(writer, SoapConstants.XSI_NS, true);
+            
+            writer.writeAttribute(SoapConstants.XSI_NS, "true", xsiPref);
+        }
+        else
+        {
+            context.getService().getBindingProvider().writeParameter(p, writer, context, value);
+        }
+        
+        // write the parameter's end element
+        if (p.getSchemaType().isWriteOuter())
+        {     
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     * Get the namespace for a particular part. This will change depending on if
+     * we're doc/lit or rpc/lit or if the MessagePartInfo is a concrete type.
+     * 
+     * @param context
+     * @param p
+     * @return
+     */
+    protected String getBoundNamespace(MessageContext context, MessagePartInfo p)
+    {
+        if (p.isSchemaElement())
+            return p.getName().getNamespaceURI();
+        else
+            return context.getService().getTargetNamespace();
+    }
+
     public boolean isClientModeOn(MessageContext context)
     {
         Boolean on = (Boolean) context.getProperty(Client.CLIENT_MODE);

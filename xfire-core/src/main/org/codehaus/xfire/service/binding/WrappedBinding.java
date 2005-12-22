@@ -80,7 +80,7 @@ public class WrappedBinding
             {
                 MessagePartInfo outParam = (MessagePartInfo) itr.next();
     
-                endpoint.getBindingProvider().writeParameter(outParam, writer, context, values[i]);
+                writeParameter(writer, context, values[i], outParam, getBoundNamespace(context, outParam));
                 i++;
             }
     
@@ -91,14 +91,21 @@ public class WrappedBinding
             throw new XFireRuntimeException("Couldn't write start element.", e);
         }
     }
-    
+
     public void writeStartElement(XMLStreamWriter writer, String name, String namespace) 
         throws XMLStreamException
     {
         String prefix = "";
-        
-        writer.setPrefix(prefix, namespace);
-        writer.writeStartElement(prefix, name, namespace);
-        writer.writeNamespace(prefix, namespace);
+
+        if (namespace.length() > 0)
+        {
+            writer.writeStartElement(prefix, name, namespace);
+            writer.writeNamespace(prefix, namespace);
+        }
+        else
+        {
+            writer.writeStartElement(name);
+            writer.writeDefaultNamespace("");
+        }
     }
 }

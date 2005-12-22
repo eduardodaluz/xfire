@@ -14,9 +14,20 @@ public class SimpleSchemaType
     private boolean nillable;
     private Set dependencies;
     private QName schemaType;
-
+    private boolean writeOuter;
+    
     public void writeSchema(Element element)
     {
+    }
+    
+    public boolean isWriteOuter()
+    {
+        return writeOuter;
+    }
+    
+    public void setWriteOuter(boolean writeOuter)
+    {
+        this.writeOuter = writeOuter;
     }
 
     public boolean isAbstract()

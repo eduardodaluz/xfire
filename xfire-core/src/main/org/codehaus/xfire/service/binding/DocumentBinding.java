@@ -3,6 +3,7 @@ package org.codehaus.xfire.service.binding;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
@@ -52,7 +53,15 @@ public class DocumentBinding
         {
             MessagePartInfo outParam = (MessagePartInfo) itr.next();
 
-            context.getService().getBindingProvider().writeParameter(outParam, writer, context, values[i]);
+            try
+            {
+                writeParameter(writer, context, values[i], outParam, getBoundNamespace(context, outParam));
+            }
+            catch (XMLStreamException e)
+            {
+                throw new XFireFault("Could not write to outgoing stream.", e, XFireFault.RECEIVER);
+            }
+            
             i++;
         }
     }

@@ -9,7 +9,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -18,13 +17,11 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.Binding;
-import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.service.binding.AbstractBindingProvider;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.SchemaType;
 
@@ -34,15 +31,11 @@ import org.codehaus.xfire.wsdl.SchemaType;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class AegisBindingProvider
-    implements BindingProvider
+    extends AbstractBindingProvider
 {
     public static final String TYPE_MAPPING_KEY = "type.mapping";
     public static final String ENCODING_URI_KEY = "type.encodingUri";
-    
-    private static final int IN_PARAM = 0;
-    private static final int OUT_PARAM = 1;
-    private static final int FAULT_PARAM = 2;
-    
+
     private TypeMappingRegistry registry;
 
     private Map part2type = new HashMap();
@@ -65,71 +58,6 @@ public class AegisBindingProvider
     public void setTypeMappingRegistry(TypeMappingRegistry registry)
     {
         this.registry = registry;
-    }
-
-    /**
-     * Creates a type mapping for this class and registers it with the TypeMappingRegistry. This needs to be called
-     * before initializeOperations().
-     */
-    public void initialize(Service endpoint)
-    {
-        for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
-        {
-            OperationInfo opInfo = (OperationInfo) itr.next();
-            try
-            {
-                initializeMessage(endpoint, opInfo.getInputMessage(), IN_PARAM);
-            }
-            catch(XFireRuntimeException e)
-            {
-                e.prepend("Error initializing parameters for method " + opInfo.getMethod());
-                throw e;
-            }
-            
-            try
-            {
-                if (opInfo.hasOutput())
-                    initializeMessage(endpoint, opInfo.getOutputMessage(), OUT_PARAM);
-            }
-            catch(XFireRuntimeException e)
-            {
-                e.prepend("Error initializing return value for method " + opInfo.getMethod());
-                throw e;
-            }
-            
-            try
-            {
-                for (Iterator faultItr = opInfo.getFaults().iterator(); faultItr.hasNext();)
-                {
-                    FaultInfo info = (FaultInfo) faultItr.next();
-                    initializeMessage(endpoint, info, FAULT_PARAM);
-                }
-            }
-            catch(XFireRuntimeException e)
-            {
-                e.prepend("Error initializing fault for method " + opInfo.getMethod());
-                throw e;
-            }
-            
-            try
-            {
-                for (Iterator bItr = endpoint.getBindings().iterator(); bItr.hasNext();)
-                {
-                    Binding binding = (Binding) bItr.next();
-                    initializeMessage(endpoint, binding.getHeaders(opInfo.getInputMessage()), IN_PARAM);
-                    
-                    if (opInfo.hasOutput())
-                    {
-                        initializeMessage(endpoint, binding.getHeaders(opInfo.getOutputMessage()), OUT_PARAM);
-                    }
-                }
-            }
-            catch(XFireRuntimeException e)
-            {
-                e.prepend("Error initializing fault for method " + opInfo.getMethod());
-                throw e;
-            }
-        }
     }
 
     protected void initializeMessage(Service service, MessagePartContainer container, int type)
@@ -163,27 +91,8 @@ public class AegisBindingProvider
     {
         Type type = (Type) p.getSchemaType();
 
-        boolean writeOuter = type.isWriteOuter();
-        if (writeOuter)
-        {
-            MessageWriter mw = new ElementWriter(writer, p.getName());
-            
-            if (p.getSchemaType().isNillable() && value == null)
-            {
-                mw.writeXsiNil();
-            }
-            else
-            {
-                type.writeObject(value, mw, context);
-            }
-            
-            mw.close();
-        }
-        else
-        {
-            MessageWriter mw = new ElementWriter(writer);
-            type.writeObject(value, mw, context);
-        }
+        MessageWriter mw = new ElementWriter(writer);
+        type.writeObject(value, mw, context);
     }
 
     public QName getSuggestedName(Service service, OperationInfo op, int param)
