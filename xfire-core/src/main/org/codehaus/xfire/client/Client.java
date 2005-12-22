@@ -120,12 +120,12 @@ public class Client
     	initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, definition, serviceClass);
     }
     
-    /*public Client(Transport transport, Definition definition, Class serviceClass) throws Exception
+    public Client(String binding, Definition definition, Class serviceClass) throws Exception
     {
     	this();
         
-    	initFromDefinition(transport, definition, serviceClass);
-    }*/
+    	initFromDefinition(binding, definition, serviceClass);
+    }
     
     public Client(InputStream is, Class serviceClass) throws Exception
     {
