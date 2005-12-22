@@ -41,6 +41,7 @@ public class STAXUtilsTest
         doEbayDoc();
         doAmazonDoc2();
         doDOMWrite();
+        doDOMWrite2();
         doDOMRead();
     }
     
@@ -55,6 +56,7 @@ public class STAXUtilsTest
         doEbayDoc();
         doAmazonDoc2();
         doDOMWrite();
+        doDOMWrite2();
         doDOMRead();
     }
     
@@ -155,6 +157,20 @@ public class STAXUtilsTest
         addNamespace("a", "http://xml.amazon.com/AWSECommerceService/2004-08-01");
         assertValid("//a:ItemLookup", testDoc);
         assertValid("//a:ItemLookup/a:Request", testDoc);
+    }
+    
+    public void doDOMWrite2() throws Exception
+    {
+        org.w3c.dom.Document doc = DOMUtils.readXml(getResourceAsStream("nowhitespace.xml"));
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
+        
+        STAXUtils.writeElement(doc.getDocumentElement(), writer);
+        
+        writer.close();
+        
+        Document testDoc = readDocument(bos.toString(), ifactory);
     }
     
     public void doDOMRead() throws Exception

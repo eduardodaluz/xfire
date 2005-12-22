@@ -293,22 +293,25 @@ public class STAXUtils
 
             if (attrPrefix.equals("xmlns"))
             {
-                writer.writeNamespace(attrPrefix, attr.getNamespaceURI());
-                
-                if (attrPrefix.equals(prefix) && attr.getNamespaceURI().equals(ns))
+            	writer.writeNamespace(name, attr.getNodeValue());
+                if (name.equals(prefix) && attr.getNodeValue().equals(ns))
                 {
                     declareNamespace = false;
                 }
             }
             else
             {
-                if ( attrPrefix == null )
-                {
-                    writer.writeAttribute(attr.getNamespaceURI(), name, attr.getNodeValue());
-                }
-                else
-                {
-                    writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), name, attr.getNodeValue());
+            	if (name.equals("xmlns") && attrPrefix.equals(""))
+            	{
+            		writer.writeNamespace("", attr.getNodeValue());
+            		if (attr.getNodeValue().equals(ns)) 
+            		{
+            			declareNamespace = false;
+            		}
+            	} 
+            	else
+            	{
+            		writer.writeAttribute(attrPrefix, attr.getNamespaceURI(), name, attr.getNodeValue());
                 }
             }
         }
