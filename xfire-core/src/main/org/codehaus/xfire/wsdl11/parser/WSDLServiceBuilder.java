@@ -492,7 +492,7 @@ public class WSDLServiceBuilder
             {
                 QName partName = new QName(getTargetNamespace(), entry.getName());
                 MessagePartInfo part = info.addMessagePart(typeName, null);
-                
+                part.setSchemaElement(false);
                 part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
             }
 
