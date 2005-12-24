@@ -6,7 +6,6 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
 
 public abstract class AbstractMessageSender
@@ -20,8 +19,8 @@ public abstract class AbstractMessageSender
         this.context = context;
     }
     
-    public abstract void open() throws IOException, XFireFault;
-    public abstract void send() throws IOException, XFireFault;
+    public abstract void open() throws IOException, XFireException;
+    public abstract void send() throws IOException, XFireException;
     public abstract void close() throws XFireException;
     public abstract boolean hasResponse();
     

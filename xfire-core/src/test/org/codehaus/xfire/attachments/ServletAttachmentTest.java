@@ -9,7 +9,6 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 
-import org.codehaus.xfire.service.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.test.AbstractServletTest;
 
@@ -30,7 +29,7 @@ public class ServletAttachmentTest
     {
         super.setUp();
 
-        Service service = getServiceFactory().create(EchoImpl.class);
+        Service service = getServiceFactory().create(AttachmentEcho.class);
 
         getServiceRegistry().register(service);
     }
@@ -39,10 +38,11 @@ public class ServletAttachmentTest
             throws Exception
     {
         WebRequest req = getRequestMessage();
-
         WebResponse response = newClient().getResponse(req);
 
-        System.out.println(response.getText());
+        // NOTE: At this point I would test that the response attachment
+        // was sent successfully, but HttpUnit doesn't seem to preserve
+        // the content type correctly :-(
     }
 
     public WebRequest getRequestMessage()
@@ -63,7 +63,7 @@ public class ServletAttachmentTest
 
         InputStream is = new ByteArrayInputStream(bos.toByteArray());
 
-        PostMethodWebRequest req = new PostMethodWebRequest("http://localhost/services/EchoImpl",
+        PostMethodWebRequest req = new PostMethodWebRequest("http://localhost/services/AttachmentEcho",
                                                             is,
                                                             sendAtts.getContentType());
 
@@ -75,7 +75,7 @@ public class ServletAttachmentTest
     {
         File f = getTestFile(name);
         FileDataSource fs = new FileDataSource(f);
-
+        
         return new DataHandler(fs);
     }
 }

@@ -13,7 +13,7 @@ public class FaultSoapSerializerHandler
 {
     public String getPhase()
     {
-        return Phase.TRANSPORT;
+        return Phase.POST_INVOKE;
     }
 
     /**

@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.stream.XMLStreamException;
+import javax.mail.MessagingException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -21,9 +21,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.attachments.Attachments;
+import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -55,7 +56,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     }
     
     public void open()
-        throws IOException, XFireFault
+        throws IOException, XFireException
     {
         client = new HttpClient();
         
@@ -86,16 +87,26 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                                           new UsernamePasswordCredentials(username, password));
         }
         
-        postMethod.setRequestHeader("Content-Type", "text/xml; charset="+getEncoding());
-
         if (getSoapAction() != null)
         {
             postMethod.setRequestHeader("SOAPAction", getQuotedSoapAction());
         }
+        
+        Attachments atts = getMessage().getAttachments();
+        if (atts != null && atts.size() > 0)
+        {
+            HttpChannel.writeAttachmentBody(context, getMessage());
+            
+            postMethod.setRequestHeader("Content-Type", atts.getContentType());
+        }
+        else
+        {
+            postMethod.setRequestHeader("Content-Type", HttpChannel.getSoapMimeType(getMessage()));
+        }
     }
 
     public void send()
-        throws HttpException, IOException
+        throws HttpException, IOException, XFireException
     {
         RequestEntity requestEntity;
         
@@ -103,7 +114,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
          * Lots of HTTP servers don't handle chunking correctly, so its turned off by default.
          */
         boolean chunkingOn = Boolean.valueOf((String) getMessageContext()
-                .getProperty(HttpTransport.CHUNKING_ENABLED)).booleanValue();
+                .getContextualProperty(HttpTransport.CHUNKING_ENABLED)).booleanValue();
         if (!chunkingOn)
         {
             requestEntity = getByteArrayRequestEntity();
@@ -139,36 +150,53 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     }
 
     private RequestEntity getByteArrayRequestEntity()
-        throws IOException
+        throws IOException, XFireException
     {
         OutMessage message = getMessage();
+        MessageContext context = getMessageContext();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, message.getEncoding());
-        try
-        {
-            message.getSerializer().writeMessage(message, writer, getMessageContext());
-            writer.close();
-            bos.close();
 
-            return new ByteArrayRequestEntity(bos.toByteArray());
-        }
-        catch (XFireFault e)
+        Attachments atts = message.getAttachments();
+        if (atts != null && atts.size() > 0)
         {
-            log.error("Couldn't send message.", e);
-            throw new IOException(e.getMessage());
+            atts.write(bos);
         }
-        catch (XMLStreamException e)
+        else
         {
-            log.error("Couldn't send message.", e);
-            throw new IOException(e.getMessage());
+            HttpChannel.writeWithoutAttachments(context, message, bos);
         }
+        
+        return new ByteArrayRequestEntity(bos.toByteArray());
     }
     
     public InMessage getInMessage()
         throws IOException
     {
+        String ct = postMethod.getResponseHeader("Content-Type").getValue();
         InputStream in = postMethod.getResponseBodyAsStream();
-        return new InMessage(STAXUtils.createXMLStreamReader(in, getEncoding()), getUri());
+        if (ct.toLowerCase().indexOf("multipart/related") != -1)
+        {
+            try
+            {
+                Attachments atts = new JavaMailAttachments(in, ct);
+
+                InputStream msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
+                InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding()), getUri());
+                msg.setAttachments(atts);
+                return msg;
+            }
+            catch (MessagingException e)
+            {
+                log.error(e);
+                throw new IOException(e.getMessage());
+            }
+        }
+        else
+        {
+            return new InMessage(STAXUtils.createXMLStreamReader(in, getEncoding()), getUri());
+        }
+        
     }
 
     public PostMethod getMethod()

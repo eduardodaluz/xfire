@@ -1,6 +1,7 @@
 package org.codehaus.xfire.attachments;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +36,29 @@ public class JavaMailAttachments
         parts = new HashMap();
     }
     
+    public JavaMailAttachments(InputStream is, String contentType) 
+        throws MessagingException, IOException
+    {
+        this();
+        
+        Session session = Session.getDefaultInstance(new Properties());
+        MimeMessage inMsg = new MimeMessage(session, is);
+        inMsg.addHeaderLine("Content-Type: " + contentType);
+
+        final Object content = inMsg.getContent();
+
+        if (content instanceof MimeMultipart)
+        {
+            MimeMultipart inMP = (MimeMultipart) content;
+
+            initMultipart(inMP);
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     /**
      * Create Attachments from the MimeMultipart message.
      * 
@@ -46,6 +70,11 @@ public class JavaMailAttachments
     {
         this();
         
+        initMultipart(multipart);   
+    }
+    
+    private void initMultipart(MimeMultipart multipart) throws MessagingException
+    {
         this.mimeMP = multipart;
         
         MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(0);
@@ -54,7 +83,14 @@ public class JavaMailAttachments
         for ( int i = 1; i < multipart.getCount(); i++ )
         {
             part = (MimeBodyPart) multipart.getBodyPart(i);
-            addPart(new SimpleAttachment(part.getContentID(), part.getDataHandler()));
+
+            String id = part.getContentID();
+            if (id.startsWith("<"))
+            {
+                id = id.substring(1, id.length() - 1);
+            }
+            
+            addPart(new SimpleAttachment(id, part.getDataHandler()));
         }
     }
     
@@ -115,7 +151,7 @@ public class JavaMailAttachments
     {
         if ( mimeMP == null )
         {
-            mimeMP = new MimeMultipart("related; type=\"text/xml\";start=\"<"
+            mimeMP = new MimeMultipart("related; type=\"text/xml\"; start=\"<"
                     + getSoapMessage().getId() + ">\"");
            
             try

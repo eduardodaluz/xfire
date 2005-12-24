@@ -1,10 +1,13 @@
 package org.codehaus.xfire.transport.http;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 
+import javax.activation.DataHandler;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.logging.Log;
@@ -13,7 +16,13 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
+import org.codehaus.xfire.attachments.ByteDataSource;
+import org.codehaus.xfire.attachments.SimpleAttachment;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.ClassLoaderUtils;
@@ -45,35 +54,95 @@ public class HttpChannel
                 throw new XFireRuntimeException("No backchannel exists for message");
             }
             
-            Attachments atts = message.getAttachments();
-            if (atts != null && atts.size() > 0)
-            {
-                throw new UnsupportedOperationException("Sending attachments isn't supported at this time.");
-            }
-
             try
             {
-                OutputStream out = response.getOutputStream();
-                XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
-                
-                message.getSerializer().writeMessage(message, writer, context);
-                
-                out.flush();
-                out.close();
+                Attachments atts = message.getAttachments();
+                if (atts != null && atts.size() > 0)
+                {
+                    HttpChannel.writeAttachmentBody(context, message);
+                    response.setContentType(atts.getContentType());
+
+                    atts.write(response.getOutputStream());
+                }
+                else
+                {
+                    HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
+                    
+                    response.setContentType(getSoapMimeType(message));
+                }
             }
-            catch (Exception e)
+            catch (IOException e)
             {
-                if (e instanceof XFireException)
-                    throw (XFireException) e;
-                
-                if (e instanceof XFireRuntimeException)
-                    throw (XFireRuntimeException) e;
                 throw new XFireException("Couldn't send message.", e);
             }
         }
         else
         {
             sendViaClient(context, message);
+        }
+    }
+
+    static void writeWithoutAttachments(MessageContext context, OutMessage message, OutputStream out) 
+        throws XFireException
+    {
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+        
+        message.getSerializer().writeMessage(message, writer, context);
+        
+        try
+        {
+            writer.flush();
+        }
+        catch (XMLStreamException e)
+        {
+            log.error(e);
+            throw new XFireException("Couldn't send message.", e);
+        }
+    }
+
+    static void writeAttachmentBody(MessageContext context, OutMessage message) 
+        throws XFireException
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        writeWithoutAttachments(context, message, bos);
+        
+        Attachments atts = message.getAttachments();
+        
+        ByteDataSource ds = new ByteDataSource(bos.toByteArray());
+        ds.setContentType(getSoapMimeType(message));
+        DataHandler dh = new DataHandler(ds);        
+        
+        SimpleAttachment att = new SimpleAttachment("soap-message.xml", dh);
+       
+        atts.setSoapMessage(att);
+    }
+
+    static String getMimeType(AbstractMessage msg)
+    {
+        if (msg.getAttachments() != null && msg.getAttachments().size() > 0)
+        {
+            return msg.getAttachments().getContentType();
+        }
+        else
+        {
+            return getSoapMimeType(msg);
+        }
+    }
+    
+    static String getSoapMimeType(AbstractMessage msg)
+    {
+        SoapVersion soap = msg.getSoapVersion();
+        if (soap instanceof Soap11)
+        {
+            return "text/xml; charset=" + msg.getEncoding();
+        }
+        else if (soap instanceof Soap12)
+        {
+             return "application/soap+xml; charset=" +  msg.getEncoding();
+        }
+        else
+        {
+            return "text/xml; charset=" + msg.getEncoding();
         }
     }
 

@@ -245,6 +245,15 @@ public class STAXUtils
         }
     }
 
+    public static void writeDocument( Document d, XMLStreamWriter writer ) 
+        throws XMLStreamException
+    {
+        writer.writeStartDocument();
+        Element root = d.getDocumentElement();
+        writeElement(root, writer);
+        writer.writeEndDocument();
+    }
+
     /**
      * Writes an Element to an XMLStreamWriter.  The writer must already
      * have started the doucment (via writeStartDocument()). Also, this probably

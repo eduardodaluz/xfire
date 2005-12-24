@@ -13,6 +13,7 @@ import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.EntityReference;
 import org.w3c.dom.NamedNodeMap;
@@ -33,6 +34,30 @@ public class W3CDOMStreamReader
 
     private Map attributes = new HashMap();
     
+    private Document document;
+    
+    /**
+     * @param element
+     */
+    public W3CDOMStreamReader(Element element)
+    {
+        super(new ElementFrame(element));
+
+        this.document = element.getOwnerDocument();
+        
+        processNamespaces(element);
+    }
+    
+    /**
+     * Get the document associated with this stream.
+     * @return
+     */
+    public Document getDocument()
+    {
+        return document;
+    }
+
+
     /**
      *  Find name spaces declaration in atrributes and move them to separate collection. 
      */
@@ -90,20 +115,9 @@ public class W3CDOMStreamReader
                 nodes.removeNamedItem(rNode.getNodeName());
             }
         }
-
-        
-        
     }
 
-    /**
-     * @param element
-     */
-    public W3CDOMStreamReader(Element element)
-    {
-        super(new ElementFrame(element));
 
-        processNamespaces(element);
-    }
 
     protected void endElement()
     {

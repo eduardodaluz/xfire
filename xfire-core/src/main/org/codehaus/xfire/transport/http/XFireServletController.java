@@ -2,14 +2,9 @@ package org.codehaus.xfire.transport.http;
 
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Properties;
 
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
@@ -28,10 +24,7 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
@@ -178,7 +171,6 @@ public class XFireServletController
 
     protected void generateService(HttpServletResponse response, String serviceName)
             throws ServletException, IOException
-
     {
         response.setContentType("text/html");
         Service endpoint = getServiceRegistry().getService(serviceName);
@@ -263,13 +255,17 @@ public class XFireServletController
         {
             try
             {
-                InputStream stream = createMIMERequest(request, context);
+                Attachments atts = new JavaMailAttachments(request.getInputStream(), 
+                                                           request.getContentType());
                 
                 XMLStreamReader reader = 
-                    STAXUtils.createXMLStreamReader(stream, request.getCharacterEncoding());
+                    STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
+                                                    request.getCharacterEncoding());
                 InMessage message = new InMessage(reader, request.getRequestURI());
                 message.setProperty(SoapConstants.SOAP_ACTION, 
                                     request.getHeader(SoapConstants.SOAP_ACTION));
+                message.setAttachments(atts);
+                
                 channel.receive(context, message);
             }
             catch (MessagingException e)
@@ -285,31 +281,6 @@ public class XFireServletController
             
             InMessage message = new InMessage(reader, request.getRequestURI());
             channel.receive(context, message);
-        }
-    }
-
-    protected InputStream createMIMERequest(HttpServletRequest request, MessageContext context)
-            throws MessagingException, IOException
-    {
-        Session session = Session.getDefaultInstance(new Properties(), null);
-        MimeMessage inMsg = new MimeMessage(session, request.getInputStream());
-        inMsg.addHeaderLine("Content-Type: " + request.getContentType());
-
-        final Object content = inMsg.getContent();
-
-        if (content instanceof MimeMultipart)
-        {
-            MimeMultipart inMP = (MimeMultipart) content;
-
-            JavaMailAttachments atts = new JavaMailAttachments(inMP);
-            context.setProperty(JavaMailAttachments.ATTACHMENTS_KEY, atts);
-
-            return atts.getSoapMessage().getDataHandler().getInputStream();
-        }
-        else
-        {
-            throw new UnsupportedOperationException();
-            //TODO set 500 and bail
         }
     }
 
@@ -404,28 +375,9 @@ public class XFireServletController
             HttpServletResponse response = XFireServletController.getResponse();
             if (response != null)
             {
-                AbstractMessage msg = context.getOutMessage();
+                AbstractMessage msg = context.getCurrentMessage();
 
-                if (msg == null)
-                    msg = context.getExchange().getFaultMessage();
-
-                if (msg == null)
-                    return;
-
-                SoapVersion soap = msg.getSoapVersion();
-
-                String encoding = msg.getEncoding();
-                if (encoding == null || encoding.length() == 0)
-                    encoding = "UTF-8";
-
-                if (soap instanceof Soap11)
-                {
-                    response.setContentType("text/xml; charset=" + encoding);
-                }
-                else if (soap instanceof Soap12)
-                {
-                    response.setContentType("application/soap+xml; charset=" + encoding);
-                }
+                //response.setContentType(HttpChannel.getMimeType(msg));    
             }
         }
     }

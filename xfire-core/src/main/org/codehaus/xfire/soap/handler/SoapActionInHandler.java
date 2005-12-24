@@ -2,6 +2,7 @@ package org.codehaus.xfire.soap.handler;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.LocateBindingHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -20,7 +21,7 @@ public class SoapActionInHandler
     {
         super();
 
-        before(ReadHeadersHandler.class.getName());
+        after(LocateBindingHandler.class.getName());
     }
 
     public String getPhase()

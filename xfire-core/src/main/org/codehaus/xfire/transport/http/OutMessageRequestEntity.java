@@ -3,16 +3,13 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.exchange.OutMessage;
-import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.util.STAXUtils;
 
 public class OutMessageRequestEntity
     implements RequestEntity
@@ -36,21 +33,19 @@ public class OutMessageRequestEntity
     public void writeRequest(OutputStream out)
         throws IOException
     {
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, getContentType());
         try
         {
-            message.getSerializer().writeMessage(message, writer, context);
-            
-            writer.close();
-            
-            out.flush();
+            Attachments atts = message.getAttachments();
+            if (atts != null && atts.size() > 0)
+            {
+                atts.write(out);
+            }
+            else
+            {
+                HttpChannel.writeWithoutAttachments(context, message, out);
+            }
         }
-        catch (XFireFault e)
-        {
-            log.error("Couldn't send message.", e);
-            throw new IOException(e.getMessage());
-        }
-        catch (XMLStreamException e)
+        catch (XFireException e)
         {
             log.error("Couldn't send message.", e);
             throw new IOException(e.getMessage());
@@ -65,6 +60,6 @@ public class OutMessageRequestEntity
 
     public String getContentType()
     {
-        return "text/xml; charset=" + this.message.getEncoding();
+        return HttpChannel.getSoapMimeType(message);
     }
 }
