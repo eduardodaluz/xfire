@@ -100,6 +100,7 @@ public class XMPPChannel
 
     public void close()
     {
-        conn.close();
+        if (conn != null)
+            conn.close();
     }
 }
