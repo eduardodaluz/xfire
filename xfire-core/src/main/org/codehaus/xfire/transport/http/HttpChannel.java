@@ -66,9 +66,9 @@ public class HttpChannel
                 }
                 else
                 {
-                    HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
-                    
                     response.setContentType(getSoapMimeType(message));
+
+                    HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
                 }
             }
             catch (IOException e)
