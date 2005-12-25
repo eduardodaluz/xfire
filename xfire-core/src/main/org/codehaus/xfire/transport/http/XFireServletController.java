@@ -18,7 +18,6 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
-import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
@@ -47,8 +46,6 @@ public class XFireServletController
 
     protected SoapHttpTransport transport;
 
-    private final static MimeTypeHandler mimeHandler = new MimeTypeHandler();
-    
     public XFireServletController(XFire xfire)
     {
         this.xfire = xfire;
@@ -83,8 +80,6 @@ public class XFireServletController
         };
         
         transport.addFaultHandler(new FaultResponseCodeHandler());
-        transport.addFaultHandler(mimeHandler);
-        transport.addOutHandler(mimeHandler);
         
         Transport oldSoap = getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
         
@@ -356,29 +351,5 @@ public class XFireServletController
            if ( response != null )
                response.setStatus(500);
        }    
-    }
-
-    public static class MimeTypeHandler
-        extends AbstractHandler
-    {
-        public String getPhase()
-        {
-            return Phase.TRANSPORT;
-        }
-
-        /**
-         * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
-         * @param context
-         */
-        public void invoke(MessageContext context)
-        {
-            HttpServletResponse response = XFireServletController.getResponse();
-            if (response != null)
-            {
-                AbstractMessage msg = context.getCurrentMessage();
-
-                //response.setContentType(HttpChannel.getMimeType(msg));    
-            }
-        }
     }
 }
