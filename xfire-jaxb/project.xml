@@ -30,22 +30,22 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>jaxb</groupId>
+            <groupId>xfire</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>jaxb</groupId>
+            <groupId>xfire</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>1.0.5</version>
         </dependency>
         <dependency>
-            <groupId>jaxb</groupId>
+            <groupId>xfire</groupId>
             <artifactId>jaxb-xjc</artifactId>
             <version>1.0.5</version>
         </dependency>
         <dependency>
-            <groupId>jaxb</groupId>
+            <groupId>xfire</groupId>
             <artifactId>jaxb-libs</artifactId>
             <version>1.0.5</version>
         </dependency>
