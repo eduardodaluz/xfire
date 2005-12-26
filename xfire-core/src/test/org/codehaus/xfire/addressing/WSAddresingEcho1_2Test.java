@@ -86,8 +86,6 @@ public class WSAddresingEcho1_2Test
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/echoIn");
         assertEquals(data.getOutHeaders().getAction(), "http://example.org/action/echoOut");
 
-        XMLOutputter output = new XMLOutputter();
-        output.output(doc, System.out);
     }
 
     public void test1231()
@@ -95,6 +93,9 @@ public class WSAddresingEcho1_2Test
     {
         // A sends a message to B.
         // /soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/echoIn
+        // /soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address
+        // ='http://www.w3.org/2005/08/addressing/anonymous'
+        // /soap12:Envelope/soap12:Header/wsa:MessageID
         // B sends a reply to A.
         // /soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/echoOut
 
@@ -102,6 +103,9 @@ public class WSAddresingEcho1_2Test
                       "/org/codehaus/xfire/addressing/testcases/echo/soap12/message1.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/echoIn");
+        assertEquals(data.getInHeaders().getReplyTo().getAddress(),
+                     "http://www.w3.org/2005/08/addressing/anonymous");
+        assertNotNull(data.getInHeaders().getMessageID());
         assertEquals(data.getOutHeaders().getAction(), "http://example.org/action/echoOut");
 
     }
@@ -149,6 +153,8 @@ public class WSAddresingEcho1_2Test
         // /soap12:Envelope/soap12:Header/wsa:FaultTo/wsa:ReferenceParameters/customer:CustomerKey{match}Fault#123456789
         // /soap12:Envelope/soap12:Header/wsa:FaultTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/anonymous
         // B sends a fault to A.
+        // /soap12:Envelope/soap12:Header/wsa:Action =
+        // 'http://www.w3.org/2005/08/addressing/fault'
         // /soap12:Envelope/soap12:Header/customer:CustomerKey{match}Fault#123456789
         // /soap12:Envelope/soap12:Header/customer:CustomerKey/@wsa:isReferenceParameter{bool}true
         // /soap12:Envelope/soap12:Body/soap12:Fault/soap12:Code/soap12:Value{qname}echo:EmptyEchoString
@@ -156,8 +162,6 @@ public class WSAddresingEcho1_2Test
         Document doc = invokeService(SERVICE_NAME,
                                      "/org/codehaus/xfire/addressing/testcases/echo/soap12/message8.xml");
 
-        XMLOutputter output = new XMLOutputter();
-        output.output(doc, System.out);
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/echoIn");
         assertEquals(data.getInHeaders().getReplyTo().getAddress(),
                      "http://www.w3.org/2005/08/addressing/anonymous");
@@ -175,11 +179,14 @@ public class WSAddresingEcho1_2Test
 
         addNamespace("customer", "http://example.org/customer");
         addNamespace("wsa", "http://www.w3.org/2005/08/addressing");
+        assertValid("/soap:Envelope/soap:Header/wsa:Action[text()='http://www.w3.org/2005/08/addressing/fault']",
+                    doc);
+
         assertValid("/soap:Envelope/soap:Header/customer:CustomerKey[text()='Fault#123456789']",
                     doc);
         assertValid("/soap:Envelope/soap:Header/customer:CustomerKey[@wsa:isReferenceParameter='true']",
                     doc);
-        // TODO : check for value
+
         assertValid("/soap:Envelope/soap:Body/soap:Fault/soap:Code/soap:Value[text()='echo:EmptyEchoString']",
                     doc);
 
@@ -193,6 +200,7 @@ public class WSAddresingEcho1_2Test
         // /soap12:Envelope/soap12:Header/wsa:To{match}http://www.w3.org/2005/08/addressing/anonymous
         // /soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:ReferenceParameters/customer:CustomerKey{match}Key#123456789
         // B sends a fault to A.
+        // /soap12:Envelope/soap12:Header/wsa:Action = 'http://www.w3.org/2005/08/addressing/fault'
         // /soap12:Envelope/soap12:Header/customer:CustomerKey{match}Fault#123456789
         // /soap12:Envelope/soap12:Header/customer:CustomerKey/@wsa:isReferenceParameter{bool}true
         // /soap12:Envelope/soap12:Body/soap12:Fault/soap12:Code/soap12:Value{qname}echo:EmptyEchoString
@@ -209,6 +217,8 @@ public class WSAddresingEcho1_2Test
 
         addNamespace("customer", "http://example.org/customer");
         addNamespace("wsa", "http://www.w3.org/2005/08/addressing");
+        assertValid("/soap:Envelope/soap:Header/wsa:Action[text()='http://www.w3.org/2005/08/addressing/fault']",
+                    doc);
         assertValid("/soap:Envelope/soap:Header/customer:CustomerKey[text()='Fault#123456789']",
                     doc);
         assertValid("/soap:Envelope/soap:Header/customer:CustomerKey[@wsa:isReferenceParameter='true']",
@@ -223,7 +233,7 @@ public class WSAddresingEcho1_2Test
         throws Exception
     {
         // A sends a message to B.
-        // count(/soap12:Envelope/soap12:Header/wsa:To){match}2
+        
         // B sends a fault to A.
         // soap12:Envelope/soap12:Header/wsa:Action{match}http://www.w3.org/2005/08/addressing/fault
         // soap12:Envelope/soap12:Body/wsa:Fault/soap12:Code/soap12:Value{qname}soap12:Sender
@@ -234,7 +244,9 @@ public class WSAddresingEcho1_2Test
         Document doc = invokeService(SERVICE_NAME,
                                      "/org/codehaus/xfire/addressing/testcases/echo/soap12/duplicateFaultToRequest.xml");
 
-        // todo : don't know how to check if 2 wsa:To headers are present :/
+        
+        XMLOutputter output = new XMLOutputter(); 
+        output.output(doc, System.out);
         addNamespace("wsa", "http://www.w3.org/2005/08/addressing");
         assertValid("/soap:Envelope/soap:Header/wsa:Action[text()='http://www.w3.org/2005/08/addressing/fault']",
                     doc);
@@ -242,6 +254,8 @@ public class WSAddresingEcho1_2Test
                     doc);
         assertValid("/soap:Envelope/soap:Body/soap:Fault/soap:Code/soap:SubCode/soap:Value[text()='ns1:InvalidAddressingHeader']",
                     doc);
+        
+        // TODO : implement optional part ( ProblemHeader )
     }
 
     public void test1250()
@@ -262,16 +276,20 @@ public class WSAddresingEcho1_2Test
         // B sends a reply to A.
         // soap12:Envelope/soap12:Header/wsa:Action =
         // 'http://example.org/action/echoOut'
-        /*Document doc = invokeService(SERVICE_NAME,
-                                     "/org/codehaus/xfire/addressing/testcases/echo/soap12/test1250request.xml");
-        
-        XMLOutputter output = new XMLOutputter();
-        output.output(doc, System.out);
-        assertEquals(data.getInHeaders().getAction(),"http://example.org/action/echoIn");
-        assertTrue(data.getInHeaders().getReplyTo().getAddress() != null);
-        assertTrue(data.getInHeaders().getReplyTo().getAddress().length() > 0);
-        assertTrue(!data.getInHeaders().getReplyTo().getAddress().equals("http://www.w3.org/2005/08/addressing/anonymous"));
-
-        assertEquals(data.getOutHeaders().getAction(), "http://example.org/action/echoOut");*/
+        /*
+         * Document doc = invokeService(SERVICE_NAME,
+         * "/org/codehaus/xfire/addressing/testcases/echo/soap12/test1250request.xml");
+         * 
+         * XMLOutputter output = new XMLOutputter(); output.output(doc,
+         * System.out);
+         * assertEquals(data.getInHeaders().getAction(),"http://example.org/action/echoIn");
+         * assertTrue(data.getInHeaders().getReplyTo().getAddress() != null);
+         * assertTrue(data.getInHeaders().getReplyTo().getAddress().length() >
+         * 0);
+         * assertTrue(!data.getInHeaders().getReplyTo().getAddress().equals("http://www.w3.org/2005/08/addressing/anonymous"));
+         * 
+         * assertEquals(data.getOutHeaders().getAction(),
+         * "http://example.org/action/echoOut");
+         */
     }
 }

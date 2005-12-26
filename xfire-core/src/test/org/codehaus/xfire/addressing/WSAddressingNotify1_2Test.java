@@ -43,12 +43,16 @@ public class WSAddressingNotify1_2Test
 
                 return op;
             }
+
         };
+        factory.setStyle("document");
         service = factory.create(TestWSAServiceImpl.class);
+
         service.addInHandler(new WSATestHandler(data));
         if (getXFire().getInHandlers().size() < 3)
         {
             ((DefaultXFire) getXFire()).addInHandler(new AddressingInHandler());
+            ((DefaultXFire) getXFire()).addFaultHandler(new AddressingOutHandler());
         }
 
         getServiceRegistry().register(service);
@@ -57,7 +61,7 @@ public class WSAddressingNotify1_2Test
     public void test1200()
         throws Exception
     {
-        // /soap12:Envelope/soap11:Header/wsa:Action{match}http://example.org/action/notify
+        // /soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/notify
 
         invokeService(SERVICE_NAME,
                       "/org/codehaus/xfire/addressing/testcases/notify/soap12/message0.xml");
@@ -76,12 +80,13 @@ public class WSAddressingNotify1_2Test
                       "/org/codehaus/xfire/addressing/testcases/notify/soap12/message1.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
-        // TODO: change to regexp check
-        assertEquals(data.getInHeaders().getMessageID(),
-                     "urn:uuid:279372E6-3CD2-11DA-9ADE-001124761548");
+        assertNotNull(data.getInHeaders().getMessageID());
 
     }
 
+    /**
+     * @throws Exception
+     */
     public void test1202()
         throws Exception
     {
@@ -97,6 +102,9 @@ public class WSAddressingNotify1_2Test
 
     }
 
+    /**
+     * @throws Exception
+     */
     public void test1203()
         throws Exception
     {
@@ -112,6 +120,9 @@ public class WSAddressingNotify1_2Test
 
     }
 
+    /**
+     * @throws Exception
+     */
     public void test1204()
         throws Exception
     {
@@ -123,9 +134,9 @@ public class WSAddressingNotify1_2Test
                       "/org/codehaus/xfire/addressing/testcases/notify/soap12/message4.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
-        assertEquals(data.getInHeaders().getFaultTo().getAddress(),
-                     "http://www.w3.org/2005/08/addressing/none");
         assertEquals(data.getInHeaders().getReplyTo().getAddress(),
+                     "http://www.w3.org/2005/08/addressing/none");
+        assertEquals(data.getInHeaders().getFaultTo().getAddress(),
                      "http://www.w3.org/2005/08/addressing/none");
 
     }
@@ -229,8 +240,12 @@ public class WSAddressingNotify1_2Test
         assertEquals(data.getInHeaders().getReplyTo().getAddress(),
                      "http://www.w3.org/2005/08/addressing/none");
         Element params = data.getInHeaders().getReplyTo().getReferenceParametersElement();
-        Element customerKey = params.getChild("CustomerKey", Namespace
-                .getNamespace("customer", "http://example.org/customer"));
+        final Namespace customerNamespace = Namespace.getNamespace("customer",
+                                                                   "http://example.org/customer");
+        Attribute level = params.getAttribute("level", customerNamespace);
+        assertNotNull(level);
+        assertEquals(level.getValue(), "premium");
+        Element customerKey = params.getChild("CustomerKey", customerNamespace);
         assertNotNull(customerKey);
         assertEquals(customerKey.getValue(), "Key#123456789");
 
@@ -247,39 +262,4 @@ public class WSAddressingNotify1_2Test
 
     }
 
-    public void test1230()
-        throws Exception
-    {
-        // soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/notify
-        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Address{match}http://www.w3.org/2005/08/addressing/none
-        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:ReferenceParameters/@customer:level{match}premium
-        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:ReferenceParameters/customer:CustomerKey{match}Key#123456789
-        // soap12:Envelope/soap12:Header/wsa:ReplyTo/wsa:Metadata/@customer:total{match}1
-        // soap12:Envelope/soap12:Header/wsa:ReplyTo/customer:Metadata{exists}
-
-        invokeService(SERVICE_NAME,
-
-        "/org/codehaus/xfire/addressing/testcases/notify/soap12/message9.xml");
-
-        assertEquals(data.getInHeaders().getAction(), "http://example.org/action/notify");
-        assertEquals(data.getInHeaders().getReplyTo().getAddress(),
-                     "http://www.w3.org/2005/08/addressing/none");
-        Element params = data.getInHeaders().getReplyTo().getReferenceParametersElement();
-        Element customerKey = params.getChild("CustomerKey", Namespace
-                .getNamespace("customer", "http://example.org/customer"));
-        assertNotNull(customerKey);
-        assertEquals(customerKey.getValue(), "Key#123456789");
-
-        Element metadata = data.getInHeaders().getReplyTo().getMetadataElement();
-        assertNotNull(metadata);
-        Attribute total = metadata.getAttribute("total", Namespace
-                .getNamespace("customer", "http://example.org/customer"));
-        assertNotNull(total);
-        assertEquals(total.getValue(), "1");
-        Element meta = data.getInHeaders().getReplyTo()
-                .getChild("Metadata",
-                          Namespace.getNamespace("customer", "http://example.org/customer"));
-        assertNotNull(meta);
-
-    }
 }
