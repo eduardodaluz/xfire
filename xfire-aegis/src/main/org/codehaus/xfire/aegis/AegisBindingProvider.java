@@ -79,6 +79,12 @@ public class AegisBindingProvider
         Type type = (Type) p.getSchemaType();
 
         MessageReader reader = new ElementReader(xsr);
+
+        if (reader.isXsiNil()) 
+        {
+            reader.readToEnd();
+            return null;
+        }
         
         return type.readObject(reader, context);
     }
@@ -92,6 +98,13 @@ public class AegisBindingProvider
         Type type = (Type) p.getSchemaType();
 
         MessageWriter mw = new ElementWriter(writer);
+        
+        if (type.isNillable() && value == null)
+        {
+            mw.writeXsiNil();
+            return;
+        }
+        
         type.writeObject(value, mw, context);
     }
 
