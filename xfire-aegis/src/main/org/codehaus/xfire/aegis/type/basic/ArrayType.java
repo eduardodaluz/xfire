@@ -48,7 +48,16 @@ public class ArrayType
             
             while ( reader.hasMoreElementReaders() )
             {
-                values.add( compType.readObject(reader.getNextElementReader(), context) );
+                MessageReader creader = reader.getNextElementReader();
+                if (creader.isXsiNil())
+                {    
+                    values.add(null);
+                    creader.readToEnd();
+                }
+                else
+                {
+                    values.add( compType.readObject(creader, context) );
+                }
             }
             
             return makeArray(getComponentType().getTypeClass(), values);

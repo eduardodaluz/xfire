@@ -51,4 +51,6 @@ public interface MessageReader
     public String getNamespaceForPrefix( String prefix );
 
     public XMLStreamReader getXMLStreamReader();
+
+    public void readToEnd();
 }

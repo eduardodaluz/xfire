@@ -36,7 +36,7 @@ public class IntEchoTest
         Transport transport = getTransportManager().getTransport(LocalTransport.BINDING_ID);
         Client client = new Client(transport, service, "xfire.log://Echo");
         client.setXFire(getXFire());
-        
+
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] { null });
         assertNotNull("response from client invoke is null", response);

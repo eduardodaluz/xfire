@@ -42,9 +42,10 @@ public class ArrayTypeTest
         ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/strings.xml"));
         
         String[] strings = (String[]) type.readObject(reader, new MessageContext());
-        assertEquals(2, strings.length);
+        assertEquals(3, strings.length);
         assertEquals("foo", strings[0]);
         assertEquals(null, strings[1]);
+        assertEquals("", strings[2]);
         reader.getXMLStreamReader().close();
         
         // Test writing

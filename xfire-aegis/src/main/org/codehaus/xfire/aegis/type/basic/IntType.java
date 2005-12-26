@@ -25,14 +25,7 @@ public class IntType
 
     public Object readObject(MessageReader reader, MessageContext context)
     {
-        if( null == reader.getValue() )
-        {
-            return null;
-        }
-        else
-        {
-            return new Integer( reader.getValueAsInt() );
-        }
+        return new Integer( reader.getValueAsInt() );
     }
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)

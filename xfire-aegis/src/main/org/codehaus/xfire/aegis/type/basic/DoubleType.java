@@ -30,6 +30,13 @@ public class DoubleType
 
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
     {
-        writer.writeValueAsDouble( (Double) object );
+        if (object instanceof Double)
+        {
+            writer.writeValueAsDouble( (Double) object );
+        }
+        else
+        {
+            writer.writeValueAsDouble(new Double(((Number)object).doubleValue()));
+        }
     }
 }

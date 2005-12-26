@@ -120,12 +120,12 @@ public class BeanType
                                     XFireFault.SENDER);
 
                         }
-                        readToEnd(childReader);
+                        childReader.readToEnd();
                     }
                 }
                 else
                 {
-                    readToEnd(childReader);
+                    childReader.readToEnd();
                 }
             }
             
@@ -139,14 +139,6 @@ public class BeanType
 		{
             throw new XFireFault("Couldn't instantiate class. " + e.getMessage(), e, XFireFault.SENDER);
 		}
-    }
-
-    private void readToEnd(MessageReader childReader)
-    {
-        while (childReader.hasMoreElementReaders())
-        {
-            readToEnd(childReader.getNextElementReader());
-        }
     }
 
     /**

@@ -2,4 +2,5 @@
 <t:strings xmlns:t="urn:test">
   <t:string>foo</t:string>
   <t:string xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  <t:string/>
 </t:strings>

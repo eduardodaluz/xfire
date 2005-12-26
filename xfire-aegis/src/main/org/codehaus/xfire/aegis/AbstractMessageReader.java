@@ -20,6 +20,19 @@ public abstract class AbstractMessageReader
     {
     }
 
+    public void readToEnd()
+    {
+        readToEnd(this);
+    }
+    
+    private void readToEnd(MessageReader childReader)
+    {
+        while (childReader.hasMoreElementReaders())
+        {
+            readToEnd(childReader.getNextElementReader());
+        }
+    }
+    
     public boolean isXsiNil()
     {
         MessageReader nilReader = getAttributeReader(XSI_NIL);
@@ -31,7 +44,6 @@ public abstract class AbstractMessageReader
         
         return nil;
     }
-
 
     public boolean hasValue()
     {

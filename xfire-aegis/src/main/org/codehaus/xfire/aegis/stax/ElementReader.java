@@ -84,7 +84,7 @@ public class ElementReader
         }
 
         if (value == null)
-            return null;
+            return "";
         
         return value.toString().trim();
     }
