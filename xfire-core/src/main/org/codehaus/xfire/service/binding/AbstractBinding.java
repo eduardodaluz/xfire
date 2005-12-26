@@ -237,18 +237,9 @@ public abstract class AbstractBinding
                 writer.writeDefaultNamespace("");
             }
         }
-        
-        if (p.getSchemaType().isNillable() && value == null)
-        {
-            String xsiPref = NamespaceHelper.getUniquePrefix(writer, SoapConstants.XSI_NS, true);
-            
-            writer.writeAttribute(SoapConstants.XSI_NS, "true", xsiPref);
-        }
-        else
-        {
-            context.getService().getBindingProvider().writeParameter(p, writer, context, value);
-        }
-        
+
+        context.getService().getBindingProvider().writeParameter(p, writer, context, value);
+
         // write the parameter's end element
         if (p.getSchemaType().isWriteOuter())
         {     

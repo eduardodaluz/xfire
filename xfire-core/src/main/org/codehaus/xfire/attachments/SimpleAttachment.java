@@ -1,5 +1,8 @@
 package org.codehaus.xfire.attachments;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.activation.DataHandler;
 
 /**
@@ -10,6 +13,7 @@ public class SimpleAttachment
 {
     private DataHandler handler;
     private	String id;
+    private Map headers = new HashMap();
     
     public SimpleAttachment(String id, DataHandler handler)
     {
@@ -26,4 +30,23 @@ public class SimpleAttachment
     {
         return handler;
     }
+
+    public void setHeader(String name, String value)
+    {
+        headers.put(name, value);
+    }
+    
+    public String getHeader(String name)
+    {
+        return (String) headers.get(name);
+    }
+
+    public boolean isXOP()
+    {
+        String ct = getHeader("Content-Type");
+        
+        return (ct != null && ct.equals("application/xop+xml"));
+    }
+    
+    
 }

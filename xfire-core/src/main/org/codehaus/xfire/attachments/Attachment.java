@@ -15,4 +15,7 @@ public interface Attachment
      * @return The attachment id.
      */
     public String getId();
+    
+    public String getHeader(String name);
+    public boolean isXOP();
 }
