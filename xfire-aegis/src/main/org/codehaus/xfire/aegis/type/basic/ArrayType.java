@@ -233,8 +233,11 @@ public class ArrayType
     {
         MessageWriter cwriter = writer.getElementWriter(name, ns);
         
-        type.writeObject( value, cwriter, context );
-        
+        if (value==null && type.isNillable())
+            cwriter.writeXsiNil();
+        else
+            type.writeObject( value, cwriter, context );
+
         cwriter.close();
     }
     

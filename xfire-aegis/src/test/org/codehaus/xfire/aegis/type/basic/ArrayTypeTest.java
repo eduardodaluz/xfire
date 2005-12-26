@@ -30,7 +30,36 @@ public class ArrayTypeTest
         mapping = reg.createTypeMapping(true);
     }
 
-    public void testBean()
+    public void testStrings()
+        throws Exception
+    {
+        ArrayType type = new ArrayType();
+        type.setTypeClass(String[].class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:test", "strings"));
+    
+        // Test reading
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/strings.xml"));
+        
+        String[] strings = (String[]) type.readObject(reader, new MessageContext());
+        assertEquals(2, strings.length);
+        assertEquals("foo", strings[0]);
+        assertEquals(null, strings[1]);
+        reader.getXMLStreamReader().close();
+        
+        // Test writing
+        Element element = new Element("strings", "t", "urn:test");
+        Document doc = new Document(element);
+        JDOMWriter writer = new JDOMWriter(element);
+        type.writeObject(strings, writer, new MessageContext());
+        writer.close();
+    
+        addNamespace("xsi", SoapConstants.XSI_NS);
+        assertValid("/t:strings/t:string[text()='" + strings[0] +"']", element);
+        assertValid("/t:strings/t:string[@xsi:nil='true']", element);
+    }
+        
+    public void testInts()
         throws Exception
     {
         ArrayType type = new ArrayType();
