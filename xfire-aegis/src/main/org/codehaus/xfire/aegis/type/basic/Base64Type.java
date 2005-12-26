@@ -51,6 +51,11 @@ public class Base64Type
                     break;
             }
             
+            while (reader.getEventType() != XMLStreamReader.END_ELEMENT) reader.next();
+            
+            // Advance just past the end element
+            reader.next();
+            
             return bos.toByteArray();
         }
         catch (IOException e)
