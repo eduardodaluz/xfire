@@ -80,7 +80,7 @@ public class MessageBindingProvider
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
 
-                return STAXUtils.read(builder, reader);
+                return STAXUtils.read(builder, reader, true);
             }
             catch(Exception e)
             {

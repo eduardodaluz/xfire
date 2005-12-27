@@ -355,12 +355,12 @@ public class STAXUtils
         writer.writeEndElement();
     }
 
-    public static Document read(DocumentBuilder builder, XMLStreamReader reader)
+    public static Document read(DocumentBuilder builder, XMLStreamReader reader, boolean repairing)
         throws XMLStreamException
     {
         Document doc = builder.newDocument();
 
-        readDocElements(doc, reader);
+        readDocElements(doc, reader, repairing);
         
         return doc;
     }
@@ -380,15 +380,24 @@ public class STAXUtils
      * @return
      * @throws XMLStreamException
      */
-    private static Element startElement(Node parent, XMLStreamReader reader)
+    private static Element startElement(Node parent, XMLStreamReader reader, boolean repairing)
         throws XMLStreamException
     {
         Document doc = getDocument(parent);
         
         Element e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
         e.setPrefix(reader.getPrefix());
+        parent.appendChild(e);
         
         declareNamespaces(reader, e);
+        
+        if (repairing)
+        {
+            if (!isDeclared(e, reader.getNamespaceURI(), reader.getPrefix()))
+            {
+                declare(e, reader.getNamespaceURI(), reader.getPrefix());
+            }
+        }
         
         for (int i = 0; i < reader.getAttributeCount(); i++)
         {
@@ -397,22 +406,42 @@ public class STAXUtils
             attr.setValue(reader.getAttributeValue(i));
             e.setAttributeNode(attr);
         }
-
-        parent.appendChild(e);
         
         reader.next();
         
-        readDocElements(e, reader);
+        readDocElements(e, reader, repairing);
         
         return e;
     }
+
+    private static boolean isDeclared(Element e, String namespaceURI, String prefix)
+    {
+        Attr att;
+        if (prefix != null && prefix.length() > 0)
+        {
+            att = e.getAttributeNodeNS(XML_NS, "xmlns:" + prefix);
+        }
+        else 
+        {
+            att = e.getAttributeNode("xmlns");
+        }
+        
+        if (att != null && att.getNodeValue().equals(namespaceURI))
+            return true;
+        
+        if (e.getParentNode() instanceof Element)
+            return isDeclared((Element) e.getParentNode(), namespaceURI, prefix);
+        
+        return false;
+    }
+    
 
     /**
      * @param parent
      * @param reader
      * @throws XMLStreamException
      */
-    public static void readDocElements(Node parent, XMLStreamReader reader)
+    public static void readDocElements(Node parent, XMLStreamReader reader, boolean repairing)
         throws XMLStreamException
     {
         Document doc = getDocument(parent);
@@ -423,7 +452,7 @@ public class STAXUtils
             switch (event)
             {
             case XMLStreamConstants.START_ELEMENT:
-                startElement(parent, reader);
+                startElement(parent, reader, repairing);
 
                 if (parent instanceof Document) 
                 {
@@ -466,16 +495,21 @@ public class STAXUtils
             String uri = reader.getNamespaceURI(i);
             String prefix = reader.getNamespacePrefix(i);
             
-            if (prefix != null && prefix.length() > 0)
+            declare(node, uri, prefix);
+        }
+    }
+
+    private static void declare(Element node, String uri, String prefix)
+    {
+        if (prefix != null && prefix.length() > 0)
+        {
+            node.setAttributeNS(XML_NS, "xmlns:" + prefix, uri);
+        }
+        else
+        {
+            if (uri != null && uri.length() > 0)
             {
-                node.setAttributeNS(XML_NS, "xmlns:" + prefix, uri);
-            }
-            else
-            {
-                if (uri != null && uri.length() > 0)
-                {
-                    node.setAttribute("xmlns", uri);
-                }
+                node.setAttribute("xmlns", uri);
             }
         }
     }

@@ -38,7 +38,7 @@ public class DOMInHandler
         Document doc = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
-        doc = STAXUtils.read(dbf.newDocumentBuilder(), context.getInMessage().getXMLStreamReader());
+        doc = STAXUtils.read(dbf.newDocumentBuilder(), context.getInMessage().getXMLStreamReader(), false);
 
         context.getInMessage().setProperty(DOM_MESSAGE, doc);
         context.getInMessage().setXMLStreamReader(new W3CDOMStreamReader(doc.getDocumentElement()));

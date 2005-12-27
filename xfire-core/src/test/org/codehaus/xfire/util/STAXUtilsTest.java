@@ -180,7 +180,7 @@ public class STAXUtilsTest
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         
-        org.w3c.dom.Document doc = STAXUtils.read(builder, reader);
+        org.w3c.dom.Document doc = STAXUtils.read(builder, reader, true);
         
         /*DOMUtils.writeXml(doc, System.out);
         DOMReader domReader = new DOMReader();

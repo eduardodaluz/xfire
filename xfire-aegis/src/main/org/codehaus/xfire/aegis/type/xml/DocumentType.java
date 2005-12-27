@@ -54,7 +54,7 @@ public class DocumentType
         try
         {
             XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
-            return STAXUtils.read(builder, new FragmentStreamReader(reader));
+            return STAXUtils.read(builder, new FragmentStreamReader(reader), true);
         }
         catch (XMLStreamException e)
         {
