@@ -488,6 +488,11 @@ public class WSDLBuilder
                 element.setAttribute(new Attribute("ref",  prefix + ":" + schemaType.getLocalPart()));
             }
 
+            if (type.isNillable())
+            {
+                element.setAttribute(new Attribute("nillable", "true"));
+            }
+            
             element.setAttribute(new Attribute("minOccurs", "1"));
             element.setAttribute(new Attribute("maxOccurs", "1"));
         }

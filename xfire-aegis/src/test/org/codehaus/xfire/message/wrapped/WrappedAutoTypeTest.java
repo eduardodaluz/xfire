@@ -57,10 +57,12 @@ public class WrappedAutoTypeTest
                 "//xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']/xsd:element[@name='getSubmitBean']",
                 doc);
         assertValid(
-                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='bleh'][@type='xsd:string']",
+                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence" +
+                "/xsd:element[@name='bleh'][@type='xsd:string'][@nillable='true']",
                 doc);
         assertValid(
-                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence/xsd:element[@name='bean'][@type='tns:SimpleBean']",
+                "//xsd:element[@name='getSubmitBean']/xsd:complexType/xsd:sequence" +
+                "/xsd:element[@name='bean'][@type='tns:SimpleBean'][@nillable='true']",
                 doc);
 
         assertValid("/wsdl:definitions/wsdl:types" +
@@ -71,10 +73,10 @@ public class WrappedAutoTypeTest
                     "/xsd:complexType[@name=\"SimpleBean\"]", doc);
         assertValid("/wsdl:definitions/wsdl:types" +
                     "/xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']" +
-                    "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@name=\"bleh\"]", doc);
+                    "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@name=\"bleh\"][@nillable='true']", doc);
         assertValid("/wsdl:definitions/wsdl:types" +
                     "/xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']" +
-                    "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@name=\"howdy\"]", doc);
+                    "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@name=\"howdy\"][@nillable='true']", doc);
         assertValid("/wsdl:definitions/wsdl:types" +
                     "/xsd:schema[@targetNamespace='http://services.xfire.codehaus.org']" +
                     "/xsd:complexType[@name=\"SimpleBean\"]/xsd:sequence/xsd:element[@type=\"xsd:string\"]", doc);

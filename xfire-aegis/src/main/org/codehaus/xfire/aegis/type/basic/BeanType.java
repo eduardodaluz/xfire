@@ -356,6 +356,7 @@ public class BeanType
         {
             element.setAttribute(new Attribute("name", nameWithPrefix));
             element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
+            element.setAttribute(new Attribute("minOccurs", "0"));
             
             if (getTypeInfo().isNillable(name))
             {

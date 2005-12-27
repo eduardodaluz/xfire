@@ -19,6 +19,8 @@ import org.w3c.dom.Document;
 public class DOMInHandler
     extends AbstractHandler
 {
+    public static final String DOM_MESSAGE = "dom.message";
+    
     public DOMInHandler()
     {
         super();
@@ -38,6 +40,7 @@ public class DOMInHandler
         dbf.setNamespaceAware(true);
         doc = STAXUtils.read(dbf.newDocumentBuilder(), context.getInMessage().getXMLStreamReader());
 
+        context.getInMessage().setProperty(DOM_MESSAGE, doc);
         context.getInMessage().setXMLStreamReader(new W3CDOMStreamReader(doc.getDocumentElement()));
     }
 }
