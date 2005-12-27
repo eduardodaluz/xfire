@@ -391,18 +391,19 @@ public class STAXUtils
         
         declareNamespaces(reader, e);
         
-        if (repairing)
+        if (repairing && !isDeclared(e, reader.getNamespaceURI(), reader.getPrefix()))
         {
-            if (!isDeclared(e, reader.getNamespaceURI(), reader.getPrefix()))
-            {
-                declare(e, reader.getNamespaceURI(), reader.getPrefix());
-            }
+            declare(e, reader.getNamespaceURI(), reader.getPrefix());
         }
         
         for (int i = 0; i < reader.getAttributeCount(); i++)
         {
-            Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i), reader
-                    .getAttributeLocalName(i));
+            String name = reader.getAttributeLocalName(i);
+            String prefix = reader.getAttributePrefix(i);
+            if (prefix != null && prefix.length() > 0)
+                name = prefix + ":" + name;
+            
+            Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i), name);
             attr.setValue(reader.getAttributeValue(i));
             e.setAttributeNode(attr);
         }
@@ -494,7 +495,7 @@ public class STAXUtils
         {
             String uri = reader.getNamespaceURI(i);
             String prefix = reader.getNamespacePrefix(i);
-            
+
             declare(node, uri, prefix);
         }
     }
