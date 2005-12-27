@@ -38,7 +38,7 @@ public class DOMSerializer
     {
         try
         {
-            STAXUtils.writeDocument(doc, writer);
+            STAXUtils.writeDocument(doc, writer, false);
             writer.flush();
         }
         catch (Exception e)

@@ -149,7 +149,7 @@ public class STAXUtilsTest
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
         
-        STAXUtils.writeElement(doc.getDocumentElement(), writer);
+        STAXUtils.writeElement(doc.getDocumentElement(), writer, false);
         
         writer.close();
         
@@ -166,7 +166,7 @@ public class STAXUtilsTest
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
         
-        STAXUtils.writeElement(doc.getDocumentElement(), writer);
+        STAXUtils.writeElement(doc.getDocumentElement(), writer, false);
         
         writer.close();
         

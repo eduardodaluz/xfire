@@ -70,7 +70,8 @@ public class DocumentType
         try
         {
             STAXUtils.writeElement(doc.getDocumentElement(), 
-                                   ((ElementWriter) writer).getXMLStreamWriter());
+                                   ((ElementWriter) writer).getXMLStreamWriter(), 
+                                   false);
         }
         catch (XMLStreamException e)
         {

@@ -16,6 +16,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -245,12 +246,12 @@ public class STAXUtils
         }
     }
 
-    public static void writeDocument( Document d, XMLStreamWriter writer ) 
+    public static void writeDocument( Document d, XMLStreamWriter writer, boolean repairing ) 
         throws XMLStreamException
     {
         writer.writeStartDocument();
         Element root = d.getDocumentElement();
-        writeElement(root, writer);
+        writeElement(root, writer, repairing);
         writer.writeEndDocument();
     }
 
@@ -264,7 +265,7 @@ public class STAXUtils
      * @param writer
      * @throws XMLStreamException
      */
-    public static void writeElement( Element e, XMLStreamWriter writer ) 
+    public static void writeElement( Element e, XMLStreamWriter writer, boolean repairing ) 
         throws XMLStreamException
     {
         String prefix = e.getPrefix();
@@ -275,7 +276,6 @@ public class STAXUtils
         
         String decUri = writer.getNamespaceContext().getNamespaceURI(prefix);
         boolean declareNamespace = (decUri == null || !decUri.equals(ns));
-        
 
         if (ns == null || ns.length() == 0)
         {
@@ -325,7 +325,7 @@ public class STAXUtils
             }
         }
 
-        if (declareNamespace)
+        if (declareNamespace && repairing)
         {
             writer.writeNamespace(prefix, ns);
         }
@@ -336,7 +336,7 @@ public class STAXUtils
             Node n = nodes.item(i);
             if ( n instanceof Element )
             {
-                writeElement((Element)n, writer);
+                writeElement((Element)n, writer, repairing);
             }
             else if ( n instanceof Text )
             {
@@ -345,6 +345,10 @@ public class STAXUtils
             else if ( n instanceof CDATASection )
             {
                 writer.writeCData(((CDATASection) n).getData());
+            }
+            else if ( n instanceof Comment )
+            {
+                writer.writeComment(((Comment) n).getData());
             }
         }
 
@@ -437,6 +441,13 @@ public class STAXUtils
                 }
 
                 break;
+            case XMLStreamConstants.COMMENT:
+                if (parent != null)
+                {
+                    parent.appendChild(doc.createComment(reader.getText()));
+                }
+
+                break;
             default:
                 break;
             }
@@ -454,13 +465,16 @@ public class STAXUtils
         {
             String uri = reader.getNamespaceURI(i);
             String prefix = reader.getNamespacePrefix(i);
-            // TODO : i'm not sure about skiping parent namespaces, so i comment it for a while
-            if (prefix != null && prefix.length()>0 /* && !uri.equals(node.getNamespaceURI()) */)
+            
+            if (prefix != null && prefix.length() > 0)
             {
-                node.setAttributeNS(XML_NS,"xmlns:"+prefix, uri);
-            }else{
-                if( uri != null && uri.length()>0){
-                    node.setAttribute("xmlns",uri);
+                node.setAttributeNS(XML_NS, "xmlns:" + prefix, uri);
+            }
+            else
+            {
+                if (uri != null && uri.length() > 0)
+                {
+                    node.setAttribute("xmlns", uri);
                 }
             }
         }

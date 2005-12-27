@@ -87,7 +87,7 @@ public class SourceType
                                      " was not understood.", XFireFault.RECEIVER);
             }
            
-            STAXUtils.writeElement(element, writer);
+            STAXUtils.writeElement(element, writer, false);
         }
     }
 }
