@@ -11,7 +11,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityEngine;
+import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityProcessorBuilder;
@@ -47,7 +49,6 @@ public class WSS4JInSecurityProcessor
             builder.build(this);
             isInitialized = true;
         }
-
     }
 
     public Map getPasswords()
@@ -92,6 +93,8 @@ public class WSS4JInSecurityProcessor
             throw new RuntimeException(ex);
         }
         InSecurityResult result = new InSecurityResult();
+        result.setUser(((WSUsernameTokenPrincipal)((WSSecurityEngineResult)wsResult.get(0)).getPrincipal()).getName());
+        result.setPassword(((WSUsernameTokenPrincipal)((WSSecurityEngineResult)wsResult.get(0)).getPrincipal()).getPassword());
         result.setDocument(document);
         return result;
     }

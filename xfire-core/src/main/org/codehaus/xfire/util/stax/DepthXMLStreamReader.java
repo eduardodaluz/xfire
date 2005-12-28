@@ -117,19 +117,16 @@ public class DepthXMLStreamReader
 
     public int getNamespaceCount()
     {
-
         return reader.getNamespaceCount();
     }
 
     public String getNamespacePrefix(int arg0)
     {
-
         return reader.getNamespacePrefix(arg0);
     }
 
     public String getNamespaceURI()
     {
-
         return reader.getNamespaceURI();
     }
 
@@ -141,25 +138,21 @@ public class DepthXMLStreamReader
 
     public String getNamespaceURI(String arg0)
     {
-
         return reader.getNamespaceURI(arg0);
     }
 
     public String getPIData()
     {
-
         return reader.getPIData();
     }
 
     public String getPITarget()
     {
-
         return reader.getPITarget();
     }
 
     public String getPrefix()
     {
-
         return reader.getPrefix();
     }
 

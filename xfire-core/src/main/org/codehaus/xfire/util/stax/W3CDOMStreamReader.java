@@ -1,9 +1,6 @@
 package org.codehaus.xfire.util.stax;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -23,16 +20,7 @@ import org.w3c.dom.Text;
 public class W3CDOMStreamReader
     extends DOMStreamReader
 {
-    /**
-     * TODO: use property from superclass
-     */
     private Node content;
-
-    private List uris = new ArrayList();
-
-    private List prefixes = new ArrayList();
-
-    private Map attributes = new HashMap();
     
     private Document document;
     
@@ -44,8 +32,6 @@ public class W3CDOMStreamReader
         super(new ElementFrame(element));
 
         this.document = element.getOwnerDocument();
-        
-        processNamespaces(element);
     }
     
     /**
@@ -57,29 +43,25 @@ public class W3CDOMStreamReader
         return document;
     }
 
-
     /**
      *  Find name spaces declaration in atrributes and move them to separate collection. 
      */
-    private void processNamespaces(Element element)
+    protected void newFrame(ElementFrame frame)
     {
-        uris.clear();
-        prefixes.clear();
-        
+        Element element = getCurrentElement();
+        frame.uris = new ArrayList();
+        frame.prefixes = new ArrayList();
+        frame.attributes = new ArrayList();
+
         NamedNodeMap nodes = element.getAttributes();
-        List nodeToRemove = new ArrayList();
-        
         
         String nsURI = element.getNamespaceURI();
         String ePrefix = element.getPrefix();
-        if(ePrefix == null ){
+        if (ePrefix == null)
+        {
             ePrefix = "";
         }
-        if( nsURI != null ){
-            uris.add(nsURI);
-            prefixes.add(ePrefix);
-        }
-        
+
         for (int i = 0; i < nodes.getLength(); i++)
         {
             Node node = nodes.item(i);
@@ -88,36 +70,25 @@ public class W3CDOMStreamReader
             String value = node.getNodeValue();
             String name = node.getNodeName();
             String uri = node.getNamespaceURI();
-            // HACK!!! for xmlns="value" attribute
-            // TODO: REIMPLEMENT THIS
-            if (prefix == null && ("xmlns".equals(name) || "xmlns".equals(localName)))
-            {
-                prefix = "xmls";
-                localName = "";
-            }
-            if (prefix != null && !prefixes.contains(localName))
-            {
-                uris.add(uri);
-                prefixes.add(prefix);
-                
-            }
-        }
 
-        for (int j = 0; j < nodeToRemove.size(); j++)
-        {
-            Node rNode = (Node) nodeToRemove.get(j);
-            if (rNode.getNamespaceURI() != null)
+            if (prefix == null) prefix = "";
+            
+            if (localName.equals("xmlns"))
             {
-                nodes.removeNamedItemNS(rNode.getNamespaceURI(), rNode.getLocalName());
+                frame.uris.add(value);
+                frame.prefixes.add("");
+            }
+            else if (prefix.length() > 0 && prefix.equals("xmlns"))
+            {
+                frame.uris.add(value);
+                frame.prefixes.add(localName);
             }
             else
             {
-                nodes.removeNamedItem(rNode.getNodeName());
+                frame.attributes.add(node);
             }
         }
     }
-
-
 
     protected void endElement()
     {
@@ -146,12 +117,9 @@ public class W3CDOMStreamReader
         if (content instanceof Text)
             return CHARACTERS;
         else if (content instanceof Element)
-        {
-            processNamespaces((Element) content);
             return START_ELEMENT;
-        }
         else if (content instanceof CDATASection)
-                    return CHARACTERS;
+            return CHARACTERS;
         else if (content instanceof Comment)
             return CHARACTERS;
         else if (content instanceof EntityReference)
@@ -168,10 +136,10 @@ public class W3CDOMStreamReader
 
     public String getNamespaceURI(String prefix)
     {
-        int index = prefixes.indexOf(prefix);
+        int index = getCurrentFrame().prefixes.indexOf(prefix);
         if (index == -1) return null;
         
-        return (String) uris.get(index);
+        return (String) getCurrentFrame().uris.get(index);
     }
 
     public String getAttributeValue(String ns, String local)
@@ -194,7 +162,7 @@ public class W3CDOMStreamReader
 
     Attr getAttribute(int i)
     {
-        return (Attr) getCurrentElement().getAttributes().item(i);
+        return (Attr) getCurrentFrame().attributes.get(i);
     }
     
     private String getLocalName(Attr attr ){
@@ -266,17 +234,17 @@ public class W3CDOMStreamReader
 
     public int getNamespaceCount()
     {
-        return uris.size();
+        return getCurrentFrame().uris.size();
     }
 
     public String getNamespacePrefix(int i)
     {
-        return (String) prefixes.get(i);
+        return (String) getCurrentFrame().prefixes.get(i);
     }
 
     public String getNamespaceURI(int i)
     {
-        return (String) uris.get(i);
+        return (String) getCurrentFrame().uris.get(i);
     }
 
     public NamespaceContext getNamespaceContext()

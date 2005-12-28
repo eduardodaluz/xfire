@@ -1,6 +1,7 @@
 package org.codehaus.xfire.util.stax;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.Location;
@@ -48,6 +49,10 @@ public abstract class DOMStreamReader
         int currentAttribute = -1;
 
         int currentNamespace = -1;
+        
+        List uris;
+        List prefixes;
+        List attributes;
     }
 
     /**
@@ -57,6 +62,7 @@ public abstract class DOMStreamReader
     {
         this.frame = frame;
         frames.push(this.frame);
+        newFrame(frame);
     }
 
     protected ElementFrame getCurrentFrame()
@@ -122,6 +128,8 @@ public abstract class DOMStreamReader
                 frame = newFrame;
                 frames.push(this.frame);
                 currentEvent = START_ELEMENT;
+                
+                newFrame(newFrame);
             }
         }
         else
@@ -131,6 +139,10 @@ public abstract class DOMStreamReader
             endElement();
         }
         return currentEvent;
+    }
+
+    protected void newFrame(ElementFrame newFrame)
+    {
     }
 
     protected void endElement()

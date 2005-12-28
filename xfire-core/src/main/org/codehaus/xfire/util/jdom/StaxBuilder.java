@@ -147,12 +147,12 @@ public class StaxBuilder
         xifactory = XMLInputFactory.newInstance();
     }
 
-    
     public StaxBuilder(Map namespaces)
     {
         xifactory = XMLInputFactory.newInstance();
         this.additionalNamespaces = namespaces;
     }
+    
     public StaxBuilder(XMLInputFactory xifactory)
     {
         this.xifactory = xifactory;

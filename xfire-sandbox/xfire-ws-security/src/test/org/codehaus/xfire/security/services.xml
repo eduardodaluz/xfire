@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+  
+  <service>
+    <name>echo</name>
+    <serviceClass>org.codehaus.xfire.security.UsernamePasswordEchoService</serviceClass>
+    <implementationClass>org.codehaus.xfire.security.UsernamePasswordEchoServiceImpl</implementationClass>
+    <namespace>urn:Echo</namespace>
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler"/>
+      <handler handlerClass="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler"/>
+    </inHandlers>
+  </service>
+  
+</beans>
