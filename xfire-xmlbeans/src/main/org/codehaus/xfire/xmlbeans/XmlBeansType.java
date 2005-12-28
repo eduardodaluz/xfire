@@ -1,5 +1,6 @@
 package org.codehaus.xfire.xmlbeans;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
@@ -34,6 +36,8 @@ import org.jdom.Element;
 public class XmlBeansType 
     extends Type
 {
+    public static final String XMLBEANS_NAMESPACE_HACK = "xmlbeans-namespace-hack";
+    
     private SchemaType schemaType;
 
     public XmlBeansType()
@@ -135,6 +139,7 @@ public class XmlBeansType
             XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
             XmlObject parsed = XmlObject.Factory.parse(reader);
             
+           
             /* Add namespace declarations from the XMLStreamReader NamespaceContext.
              * This is important when values reference QNames. For instance, 
              * xsi:type="xsd:string". If the xsd namespace is declared on the SOAP
@@ -145,10 +150,16 @@ public class XmlBeansType
             {
                 cursor.toFirstContentToken();
                 Map namespaces = (Map) context.getProperty(ReadHeadersHandler.DECLARED_NAMESPACES);
+                
+                Map decNamespaces = new HashMap();
+                cursor.getAllNamespaces(namespaces);
+                
                 for (Iterator itr = namespaces.entrySet().iterator(); itr.hasNext();)
                 {
                     Map.Entry entry = (Map.Entry) itr.next();
-                    cursor.insertNamespace((String) entry.getKey(), (String) entry.getValue());
+                   
+                    if (!decNamespaces.containsKey(entry.getKey()))
+                        cursor.insertNamespace((String) entry.getKey(), (String) entry.getValue());
                 }
             }
             finally
@@ -171,10 +182,18 @@ public class XmlBeansType
         {
             XmlObject obj = (XmlObject) value; 
        
-            XmlCursor cursor = obj.newCursor();
-            
-            STAXUtils.copy(cursor.newXMLStreamReader(), 
-                            ((ElementWriter) writer).getXMLStreamWriter());
+            XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
+            if (Boolean.valueOf((String) context.getContextualProperty(XMLBEANS_NAMESPACE_HACK)).booleanValue())
+            {
+                STAXUtils.writeElement((org.w3c.dom.Element) obj.getDomNode(), xsw, false);
+            }
+            else
+            {
+                XmlCursor cursor = obj.newCursor();
+                
+                STAXUtils.copy(cursor.newXMLStreamReader(), 
+                                ((ElementWriter) writer).getXMLStreamWriter());
+            }
         } 
         catch (XMLStreamException e)
         {
