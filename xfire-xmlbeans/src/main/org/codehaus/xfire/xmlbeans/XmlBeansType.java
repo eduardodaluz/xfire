@@ -28,6 +28,7 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.util.STAXUtils;
 import org.jdom.Element;
+import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -185,7 +186,7 @@ public class XmlBeansType
             XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
             if (Boolean.valueOf((String) context.getContextualProperty(XMLBEANS_NAMESPACE_HACK)).booleanValue())
             {
-                STAXUtils.writeElement((org.w3c.dom.Element) obj.getDomNode(), xsw, false);
+                STAXUtils.writeElement(((Document) obj.newDomNode()).getDocumentElement(), xsw, false);
             }
             else
             {
