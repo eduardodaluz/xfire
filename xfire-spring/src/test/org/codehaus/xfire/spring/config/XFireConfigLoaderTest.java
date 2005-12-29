@@ -75,6 +75,9 @@ public class XFireConfigLoaderTest
         
         ServiceBean serviceBean = (ServiceBean) getBean("EchoWithServiceFactory");
         assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
+        
+        serviceBean = (ServiceBean) getBean("EchoWithBeanServiceFactory");
+        assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
     }
 
     protected ApplicationContext createContext()
