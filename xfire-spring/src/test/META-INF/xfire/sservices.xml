@@ -69,6 +69,13 @@
     <serviceBean>#EchoBean</serviceBean>
   </service>
 
+
+  <service id="EchoWithServiceFactory">
+    <name>EchoWithServiceFactory</name>
+    <serviceBean>#EchoBean</serviceBean>
+    <serviceFactory>org.codehaus.xfire.spring.config.CustomServiceFactory</serviceFactory>
+  </service>
+  
   <service>
     <name>EchoWithSchemas</name>
     <serviceBean>#EchoBean</serviceBean>

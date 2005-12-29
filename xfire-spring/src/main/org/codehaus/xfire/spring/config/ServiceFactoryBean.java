@@ -24,8 +24,6 @@ public class ServiceFactoryBean
 
     private String name;
 
-    private BindingProvider bindingProvider;
-
     private TransportManager transportManager;
 
     ObjectServiceFactory factory;
@@ -43,16 +41,6 @@ public class ServiceFactoryBean
     public void setTransportManager(TransportManager transportManager)
     {
         this.transportManager = transportManager;
-    }
-
-    public BindingProvider getBindingProvider()
-    {
-        return bindingProvider;
-    }
-
-    public void setBindingProvider(BindingProvider bindingProvider)
-    {
-        this.bindingProvider = bindingProvider;
     }
 
     public String getName()
@@ -73,6 +61,11 @@ public class ServiceFactoryBean
     public Object getObject()
         throws Exception
     {
+        if (factory == null)
+        {
+            initialize();
+        }
+        
         return factory;
     }
 
@@ -85,9 +78,9 @@ public class ServiceFactoryBean
     {
         String serviceFactory = name;
         if (JSR181_FACTORY.equals(serviceFactory) || COMMONS_FACTORY.equals(serviceFactory))
-            factory = getAnnotationServiceFactory(serviceFactory, bindingProvider);
+            factory = getAnnotationServiceFactory(serviceFactory);
         else
-            factory = loadServiceFactory(serviceFactory, bindingProvider);
+            factory = loadServiceFactory(serviceFactory);
     }
 
     /*
@@ -111,8 +104,7 @@ public class ServiceFactoryBean
      * @return
      * @throws Exception
      */
-    protected ObjectServiceFactory getAnnotationServiceFactory(String annotationType,
-                                                               BindingProvider bindingProvider)
+    protected ObjectServiceFactory getAnnotationServiceFactory(String annotationType)
         throws Exception
     {
         Class annotsClz = null;
@@ -133,7 +125,7 @@ public class ServiceFactoryBean
                 BindingProvider.class });
 
         return (ObjectServiceFactory) con.newInstance(new Object[] { annotsClz.newInstance(),
-                getTransportManager(), bindingProvider });
+                getTransportManager(), null });
     }
 
     /**
@@ -141,8 +133,7 @@ public class ServiceFactoryBean
      * @param serviceFactoryName
      * @return
      */
-    protected ObjectServiceFactory loadServiceFactory(String serviceFactoryName,
-                                                      BindingProvider bindingProvider)
+    protected ObjectServiceFactory loadServiceFactory(String serviceFactoryName)
     {
         ObjectServiceFactory factory = null;
         if (serviceFactoryName.length() > 0)
@@ -160,7 +151,7 @@ public class ServiceFactoryBean
                 {
                     con = clz.getConstructor(new Class[] { TransportManager.class,
                             BindingProvider.class });
-                    arguments = new Object[] { tman, bindingProvider };
+                    arguments = new Object[] { tman, null };
                 }
                 catch (NoSuchMethodException e)
                 {
@@ -176,7 +167,7 @@ public class ServiceFactoryBean
                     }
                 }
 
-                return (ObjectServiceFactory) con.newInstance(arguments);
+                factory = (ObjectServiceFactory) con.newInstance(arguments);
             }
             catch (Exception e)
             {
@@ -186,7 +177,7 @@ public class ServiceFactoryBean
         }
         else
         {
-            factory = new ObjectServiceFactory(getTransportManager(), bindingProvider);
+            throw new XFireRuntimeException("serviceFactory element cannot be empty.");
         }
 
         return factory;

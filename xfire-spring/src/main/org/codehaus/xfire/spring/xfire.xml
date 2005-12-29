@@ -68,9 +68,6 @@
     class="org.springframework.beans.factory.config.CustomEditorConfigurer">
     <property name="customEditors">
       <map>
-        <entry key="org.codehaus.xfire.soap.SoapVersion">
-          <bean class="org.codehaus.xfire.spring.editors.SoapVersionPropertyEditor" />
-        </entry>
         <entry key="org.codehaus.xfire.service.ServiceFactory">
           <bean class="org.codehaus.xfire.spring.editors.ServiceFactoryEditor" />
         </entry>

@@ -7,6 +7,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.BeanInvoker;
 import org.codehaus.xfire.service.binding.Invoker;
 import org.codehaus.xfire.spring.AbstractXFireSpringTest;
+import org.codehaus.xfire.spring.ServiceBean;
 import org.codehaus.xfire.spring.TestHandler;
 import org.codehaus.xfire.spring.XFireConfigLoader;
 import org.codehaus.xfire.test.Echo;
@@ -71,6 +72,9 @@ public class XFireConfigLoaderTest
         assertEquals(EchoImpl.class, service.getServiceInfo().getServiceClass());
         
         service = xfire.getServiceRegistry().getService("EchoWithSchemas");
+        
+        ServiceBean serviceBean = (ServiceBean) getBean("EchoWithServiceFactory");
+        assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
     }
 
     protected ApplicationContext createContext()

@@ -24,7 +24,7 @@ public class ServiceFactoryEditor
         }
         catch (Exception e)
         {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
         setValue(factory);
     }
