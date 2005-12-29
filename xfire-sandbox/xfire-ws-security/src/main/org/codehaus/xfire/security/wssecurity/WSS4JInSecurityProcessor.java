@@ -92,9 +92,16 @@ public class WSS4JInSecurityProcessor
             ex.printStackTrace();
             throw new RuntimeException(ex);
         }
+
         InSecurityResult result = new InSecurityResult();
-        result.setUser(((WSUsernameTokenPrincipal)((WSSecurityEngineResult)wsResult.get(0)).getPrincipal()).getName());
-        result.setPassword(((WSUsernameTokenPrincipal)((WSSecurityEngineResult)wsResult.get(0)).getPrincipal()).getPassword());
+        if (wsResult != null)
+        {
+            WSSecurityEngineResult wsr = ((WSSecurityEngineResult)wsResult.get(0));
+
+            result.setUser(((WSUsernameTokenPrincipal)wsr.getPrincipal()).getName());
+            result.setPassword(((WSUsernameTokenPrincipal)((WSSecurityEngineResult)wsResult.get(0)).getPrincipal()).getPassword());
+        }
+        
         result.setDocument(document);
         return result;
     }

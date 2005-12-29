@@ -6,7 +6,9 @@
     <serviceClass>org.codehaus.xfire.security.UsernamePasswordEchoService</serviceClass>
     <implementationClass>org.codehaus.xfire.security.UsernamePasswordEchoServiceImpl</implementationClass>
     <namespace>urn:Echo</namespace>
+
     <inHandlers>
+      <!--<handler handlerClass="org.codehaus.xfire.util.LoggingHandler"/>-->
       <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler"/>
       <handler handlerClass="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler"/>
     </inHandlers>

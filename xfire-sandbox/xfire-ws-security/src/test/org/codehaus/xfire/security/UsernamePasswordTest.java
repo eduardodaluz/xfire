@@ -12,10 +12,8 @@ import org.xbean.spring.context.ClassPathXmlApplicationContext;
 public class UsernamePasswordTest
     extends AbstractXFireSpringTest
 {
-
     protected ApplicationContext createContext()
     {
-
         return new ClassPathXmlApplicationContext(
                 new String[] { "org/codehaus/xfire/security/services.xml",
                         "org/codehaus/xfire/spring/xfire.xml" });
@@ -25,9 +23,10 @@ public class UsernamePasswordTest
         throws Exception
     {
         Service service = getXFire().getServiceRegistry().getService("echo");
-        System.out.println(service.getServiceInfo());
-        Document document = invokeService("echo","sample-wsse-request.xml");
-        assertXPathEquals("/echo/username", "username", document);
 
+        Document document = invokeService("echo","sample-wsse-request.xml");
+        assertNotNull(document);
+        addNamespace("e", "urn:Echo");
+        assertValid("//e:echoResponse", document);
     }
 }

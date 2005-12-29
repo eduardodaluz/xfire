@@ -2,11 +2,16 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.io.InputStream;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import junit.framework.TestCase;
 
 import org.codehaus.xfire.security.InSecurityResult;
 import org.codehaus.xfire.util.DOMUtils;
+import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -41,7 +46,10 @@ public class WSS4jInSecurityProcessorTest
     {
 
         InputStream inStream = getClass().getResourceAsStream("sample-wsse-request.xml");
-        Document doc = DOMUtils.readXml(inStream);
+        Document doc = STAXUtils.read(DocumentBuilderFactory.newInstance().newDocumentBuilder(),
+                                      STAXUtils.createXMLStreamReader(inStream, null),
+                                      false);
+
         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
         Document decrypted = null;
         InSecurityResult result = processor.process(doc);

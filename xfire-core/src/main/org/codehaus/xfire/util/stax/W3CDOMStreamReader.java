@@ -72,7 +72,7 @@ public class W3CDOMStreamReader
             String uri = node.getNamespaceURI();
 
             if (prefix == null) prefix = "";
-            
+
             if (name != null && name.equals("xmlns"))
             {
                 frame.uris.add(value);
@@ -82,6 +82,12 @@ public class W3CDOMStreamReader
             {
                 frame.uris.add(value);
                 frame.prefixes.add(localName);
+            }
+            else if (name.startsWith("xmlns:"))
+            {
+                prefix = name.substring(6);
+                frame.uris.add(value);
+                frame.prefixes.add(prefix);
             }
             else
             {

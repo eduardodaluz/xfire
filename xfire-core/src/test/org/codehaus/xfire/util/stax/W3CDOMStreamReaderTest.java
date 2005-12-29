@@ -75,7 +75,7 @@ public class W3CDOMStreamReaderTest
         attr.setValue("value2");
         attr.setPrefix("p");
         
-        e.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:p", "urn:test2");
+        e.setAttribute("xmlns:p", "urn:test2");
         
         e.setAttributeNode(attr);
         DOMUtils.writeXml(doc,System.out);
@@ -91,7 +91,7 @@ public class W3CDOMStreamReaderTest
         Element e = doc.createElementNS("urn:test","root");
         e.setAttribute("xmlns", "urn:test");
         Element child =  doc.createElementNS("urn:test2","child");
-        child.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:a", "urn:test2");
+        child.setAttribute("xmlns:a", "urn:test2");
         
         child.setPrefix("a");
         e.appendChild(child);
