@@ -69,7 +69,9 @@
     <property name="customEditors">
       <map>
         <entry key="org.codehaus.xfire.service.ServiceFactory">
-          <bean class="org.codehaus.xfire.spring.editors.ServiceFactoryEditor" />
+          <bean class="org.codehaus.xfire.spring.editors.ServiceFactoryEditor">
+            <property name="transportManager" ref="xfire.transportManager" />
+          </bean>
         </entry>
       </map>
     </property>
