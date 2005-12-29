@@ -17,6 +17,8 @@ public abstract class AbstractStreamReaderTest
         assertTrue(reader.hasNext());
         assertEquals(XMLStreamReader.START_ELEMENT, reader.next());
         assertTrue(reader.hasNext());
+        assertEquals("root", reader.getLocalName());
+        assertEquals(1, reader.getNamespaceCount());
         assertEquals(XMLStreamReader.NAMESPACE, reader.next());
         
         assertEquals(1, reader.getNamespaceCount());

@@ -73,7 +73,7 @@ public class W3CDOMStreamReader
 
             if (prefix == null) prefix = "";
             
-            if (localName.equals("xmlns"))
+            if (name != null && name.equals("xmlns"))
             {
                 frame.uris.add(value);
                 frame.prefixes.add("");
@@ -119,7 +119,7 @@ public class W3CDOMStreamReader
         else if (content instanceof Element)
             return START_ELEMENT;
         else if (content instanceof CDATASection)
-            return CHARACTERS;
+            return CDATA;
         else if (content instanceof Comment)
             return CHARACTERS;
         else if (content instanceof EntityReference)
@@ -157,7 +157,7 @@ public class W3CDOMStreamReader
 
     public int getAttributeCount()
     {
-        return getCurrentElement().getAttributes().getLength();
+        return getCurrentFrame().attributes.size();
     }
 
     Attr getAttribute(int i)
@@ -234,7 +234,7 @@ public class W3CDOMStreamReader
 
     public int getNamespaceCount()
     {
-        return getCurrentFrame().uris.size();
+        return getCurrentFrame().prefixes.size();
     }
 
     public String getNamespacePrefix(int i)

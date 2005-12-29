@@ -23,8 +23,10 @@ public class W3CDOMStreamReaderTest
     {
         Document doc = getDocument();
         Element e = doc.createElementNS("urn:test","root");
+        e.setAttribute("xmlns", "urn:test");
         doc.appendChild(e);
         
+        assertEquals(1, e.getAttributes().getLength());
         System.out.println("start: " + XMLStreamReader.START_ELEMENT);
         System.out.println("attr: " + XMLStreamReader.ATTRIBUTE);
         System.out.println("ns: " + XMLStreamReader.NAMESPACE);
@@ -48,6 +50,7 @@ public class W3CDOMStreamReaderTest
     {
         Document doc = getDocument();
         Element e = doc.createElementNS( "urn:test","root");
+        e.setAttribute("xmlns", "urn:test");
         doc.appendChild(e);
         Node text = doc.createTextNode("Hello World");
         e.appendChild(text);
@@ -64,11 +67,16 @@ public class W3CDOMStreamReaderTest
         Document doc = getDocument();
         
         Element e = doc.createElementNS("urn:test","root");
+        e.setAttribute("xmlns", "urn:test");
         doc.appendChild(e);
         e.setAttribute("att1", "value1");
-        Attr attr =doc.createAttributeNS("urn:test2","att2");
+        
+        Attr attr = doc.createAttributeNS("urn:test2","att2");
         attr.setValue("value2");
         attr.setPrefix("p");
+        
+        e.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:p", "urn:test2");
+        
         e.setAttributeNode(attr);
         DOMUtils.writeXml(doc,System.out);
         
@@ -81,7 +89,10 @@ public class W3CDOMStreamReaderTest
     {
         Document doc = getDocument();
         Element e = doc.createElementNS("urn:test","root");
+        e.setAttribute("xmlns", "urn:test");
         Element child =  doc.createElementNS("urn:test2","child");
+        child.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:a", "urn:test2");
+        
         child.setPrefix("a");
         e.appendChild(child);
         doc.appendChild(e);
