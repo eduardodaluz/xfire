@@ -1,0 +1,9 @@
+<!-- START SNIPPET: services -->
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+  <service>
+    <serviceClass>org.codehaus.xfire.xmlbeans.example.OrderService</serviceClass>
+    <implementationClass>org.codehaus.xfire.xmlbeans.example.OrderServiceImpl</implementationClass>
+    <serviceFactory>org.codehaus.xfire.xmlbeans.XmlBeansServiceFactory</serviceFactory>
+  </service>
+</beans>
+<!-- END SNIPPET: services -->

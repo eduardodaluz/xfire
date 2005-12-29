@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://acme.com/purchase-order/2005/08"
+  xmlns:tns="http://acme.com/purchase-order/2005/08"
+  elementFormDefault="qualified">
+ 
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+     Purchase order schema for Acme.com.
+     Copyright 2005 Acme.com. All rights reserved.
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="PurchaseOrder" type="tns:PurchaseOrderType"/>
+
+  <xsd:element name="Comment" type="xsd:string"/>
+
+  <xsd:element name="PurchaseOrderId" type="xsd:long"/>
+  
+  <xsd:complexType name="PurchaseOrderType">
+    <xsd:sequence>
+      <xsd:element ref="tns:PurchaseOrderId"/>
+      <xsd:element name="ShipTo" type="tns:Address"/>
+      <xsd:element name="BillTo" type="tns:Address"/>
+      <xsd:element minOccurs="0" ref="tns:Comment"/>
+      <xsd:element name="Items" type="tns:Items"/>
+    </xsd:sequence>
+    <xsd:attribute name="orderDate" type="xsd:date"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Address">
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:string"/>
+      <xsd:element name="Street" type="xsd:string"/>
+      <xsd:element name="City" type="xsd:string"/>
+      <xsd:element name="State" type="xsd:string"/>
+      <xsd:element name="PostalCode" type="xsd:decimal"/>
+    </xsd:sequence>
+    <xsd:attribute fixed="US" name="Country" type="xsd:NMTOKEN"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Items">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="item">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="ProductName" type="xsd:string"/>
+            <xsd:element name="Quantity">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:positiveInteger">
+                  <xsd:maxExclusive value="100"/>
+                </xsd:restriction>
+              </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="USPrice" type="xsd:decimal"/>
+            <xsd:element minOccurs="0" ref="tns:Comment"/>
+            <xsd:element minOccurs="0" name="ShipDate" type="xsd:date"/>
+          </xsd:sequence>
+          <xsd:attribute name="PartNum" type="tns:SKU" use="required"/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- Stock Keeping Unit, a code for identifying products -->
+  <xsd:simpleType name="SKU">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="\d{3}-[A-Z]{2}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>
