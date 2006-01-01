@@ -218,7 +218,8 @@ public class XsDateTimeFormat
                 offset = parseInt(pString, offset, digits);
                 if (digits.length() > 0)
                 {
-                    millis = Integer.parseInt(digits.toString());
+                    int cut = Math.min(3, digits.length());
+                    millis = Integer.parseInt(digits.substring(0, cut).toString());
                 }
                 else
                 {
