@@ -10,6 +10,7 @@
     <artifactId>xfire-annotations</artifactId>
     <name>XFire Annotations</name>
     <version>1.0-SNAPSHOT</version>
+    <description>Annotation support for XFire</description>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -66,6 +67,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.0</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -92,9 +94,19 @@
                 </executions>
             </plugin>
 
+            <!--  uncomment the executions section to see the error -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                      <goal>javadoc</goal>
+                    </goals>
+                  </execution>
+                </executions>
                 <configuration>
                     <additionalparam>
                         -J-Dorg.apache.commons.attributes.javadoc.CATaglet.sources=${basedir}
@@ -102,32 +114,15 @@
                     <taglet>
                         org.apache.commons.attributes.javadoc.CATaglet
                     </taglet>
-                    <!-- optional -->
                     <tagletpath>
                         ${ant.home}/lib/commons-attributes-compiler-2.1.jar
                     </tagletpath>
                     <verbose>true</verbose>
-                    <!--  <fileset dir="${basedir}/" includes="**/*.java" />   -->
+                    <fileset dir="${basedir}/" includes="**/*.java" />
                 </configuration>
             </plugin>
+            -->
 
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude implementation="java.lang.String">
-                            **/*Test.java
-                        </exclude>
-                    </excludes>
-                    <!--
-                      <excludes>
-                      <exclude implementation="java.lang.String">**/Backport175WebAnnotationsTest.java</exclude>
-                      </excludes>
-                    -->
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
