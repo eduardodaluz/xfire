@@ -37,7 +37,7 @@ public class ServiceFactoryEditor
         }
         catch (Exception e)
         {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException(e.getMessage());
         }
         setValue(factory);
     }
