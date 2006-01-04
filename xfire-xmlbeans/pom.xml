@@ -22,19 +22,12 @@
       <version>2.0.0</version>
     </dependency>
   </dependencies>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>snapshot</id>
-      <name>Snapshot repository</name>
-      <url>http://snapshots.maven.codehaus.org/maven2/</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>xmlbeans-maven-plugin</artifactId>
-        <version>2.0-beta-2-SNAPSHOT</version>
+        <version>2.0</version>
 
         <executions>
           <execution>
