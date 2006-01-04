@@ -285,11 +285,20 @@
         <module>xfire-xmpp</module>
         <module>xfire-jaxb</module>
         <module>xfire-annotations</module>
-        <module>xfire-java5</module>
         <module>xfire-xmlbeans</module>
         <!-- module>xfire-picocontainer</module>-->
     </modules>
-
+    <profiles>
+        <profile>
+            <id>jdk1.5</id>
+            <activation>
+                <jdk>1.5</jdk>
+            </activation>
+            <modules>
+                <module>xfire-java5</module>
+            </modules>
+        </profile>
+    </profiles>
     <reporting>
         <plugins>
             <plugin>
