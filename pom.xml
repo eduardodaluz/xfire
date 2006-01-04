@@ -286,7 +286,7 @@
         <module>xfire-jaxb</module>
         <module>xfire-annotations</module>
         <module>xfire-xmlbeans</module>
-        <!-- module>xfire-picocontainer</module>-->
+        <module>xfire-picocontainer</module>
     </modules>
     <profiles>
         <profile>
