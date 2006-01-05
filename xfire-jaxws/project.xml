@@ -79,9 +79,10 @@
       <url>${pom.url}</url>
     </dependency>
     <dependency>
-      <groupId>beehive</groupId>
-      <artifactId>wsm</artifactId>
-      <version>1.0-alpha</version>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-jsr181-api</artifactId>
+      <version>1.0-M1</version>
+      <url>${pom.url}</url>
     </dependency>
     <dependency>
       <groupId>sun</groupId>
