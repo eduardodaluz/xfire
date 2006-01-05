@@ -1,10 +1,6 @@
 package org.codehaus.xfire.annotations.jsr181;
 
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
 
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.service.Service;
@@ -45,11 +41,18 @@ public class HeaderServiceTest
         assertEquals("two", HeaderService.header);
     }
     
+    public void testAuth()
+        throws Exception
+    {
+        Document response = invokeService("HeaderService", "/org/codehaus/xfire/annotations/jsr181/authMessage.xml");
+        
+        assertNotNull(HeaderService.authHeader);
+        assertEquals("dan", HeaderService.authHeader.getUsername());
+    }
+    /*
     public void testWSDL() throws Exception
     {
         Document wsdl = getWSDLDocument("HeaderService");
-        
-        //printNode(wsdl);
 
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);
@@ -60,39 +63,7 @@ public class HeaderServiceTest
         assertValid("//wsdlsoap:header[@message='tns:doSomethingRequestHeaders'][@part='header'][@use='literal']", wsdl);
         assertValid("//xsd:element[@name='header']", wsdl);
         assertInvalid("//xsd:element[@name='header'][2]", wsdl);
-    }
-    
-    @WebService(name="HeaderService", targetNamespace="urn:HeaderService")
-    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.WRAPPED)
-    public static class HeaderService
-    {
-        static String a;
-        static String b;
-        static String header;
-        static UserToken authHeader;
-        
-        @WebMethod
-        public void doSomething(@WebParam(name="a") String a,
-                                @WebParam(name="header", header=true) String header,
-                                @WebParam(name="b") String b) 
-        {
-            HeaderService.a = a;
-            HeaderService.b = b;
-            HeaderService.header = header;
-        }
-        
-        @WebMethod
-        public void doSomethingAuthenticated(@WebParam(name="authHeader", header=true) UserToken authHeader) 
-        {
-            HeaderService.authHeader = authHeader;
-        }
-        
-        @WebMethod
-        public void doSomethingAuthenticated2(@WebParam(name="authHeader", header=true) UserToken authHeader) 
-        {
-            HeaderService.authHeader = authHeader;
-        }
-    }
+    }*/
     
     public static class UserToken
     {

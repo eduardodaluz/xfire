@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
@@ -51,6 +52,7 @@ public class ServiceInvocationHandler
             {
                 MessagePartInfo header = (MessagePartInfo) itr.next();
                 BindingProvider provider = context.getService().getBindingProvider();
+
                 XMLStreamReader headerReader = getXMLStreamReader(context.getInMessage(), header);
 
                 Object headerVal = null;
@@ -127,7 +129,18 @@ public class ServiceInvocationHandler
         
         if (el == null) return null;
         
-        return new JDOMStreamReader(el);
+        JDOMStreamReader reader = new JDOMStreamReader(el);
+        
+        try
+        {
+            // position at start_element
+            reader.next();
+        }
+        catch (XMLStreamException e)
+        {
+        }
+        
+        return reader;
     }
 
 }

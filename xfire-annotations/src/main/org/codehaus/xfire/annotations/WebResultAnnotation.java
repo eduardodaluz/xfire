@@ -10,7 +10,29 @@ package org.codehaus.xfire.annotations;
 public class WebResultAnnotation
 {
     private String name = "return";
+    private String partName = "return";
     private String targetNamespace = "";
+    private boolean header;
+    
+    public String getPartName()
+    {
+        return partName;
+    }
+
+    public void setPartName(String partName)
+    {
+        this.partName = partName;
+    }
+
+    public boolean isHeader()
+    {
+        return header;
+    }
+
+    public void setHeader(boolean header)
+    {
+        this.header = header;
+    }
 
     /**
      * Returns the name of the return value as it appears in the WSDL and messages on the wire. For RPC bindings, this

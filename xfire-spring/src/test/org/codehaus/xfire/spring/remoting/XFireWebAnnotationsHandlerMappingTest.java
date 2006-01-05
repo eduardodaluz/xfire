@@ -54,6 +54,8 @@ public class XFireWebAnnotationsHandlerMappingTest
         serviceAnnotation.setServiceName("EchoService");
         webAnnotations.getWebServiceAnnotation(EchoImpl.class);
         control.setReturnValue(serviceAnnotation);
+        webAnnotations.getWebServiceAnnotation(EchoImpl.class);
+        control.setReturnValue(serviceAnnotation);
         
         Method echoMethod = EchoImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);

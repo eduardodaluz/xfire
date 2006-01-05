@@ -1,0 +1,11 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:HeaderService">
+ <env:Header>
+  <UserToken xmlns:u="http://jsr181.annotations.xfire.codehaus.org">
+    <u:username>dan</u:username>
+    <u:password>dan</u:password>
+  </UserToken>
+ </env:Header>
+ <env:Body>
+  <doSomethingAuthenticated/>
+ </env:Body>
+</env:Envelope>

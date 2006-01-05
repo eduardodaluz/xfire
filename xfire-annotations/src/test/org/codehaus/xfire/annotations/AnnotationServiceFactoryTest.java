@@ -42,21 +42,21 @@ public class AnnotationServiceFactoryTest
             throws Exception
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(true);
 
         WebServiceAnnotation annotation = new WebServiceAnnotation();
         annotation.setServiceName("EchoService");
         annotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(annotation);
+        webAnnotationsControl.setDefaultReturnValue(annotation);
 
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(true);
         
         webAnnotations.hasWebMethodAnnotation(echoMethod);
         webAnnotationsControl.setDefaultReturnValue(true);
@@ -74,7 +74,7 @@ public class AnnotationServiceFactoryTest
 
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotationsControl.replay();
 
@@ -92,10 +92,10 @@ public class AnnotationServiceFactoryTest
     public void testNoWebServiceAnnotation()
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
         webAnnotationsControl.replay();
 
         try
@@ -113,16 +113,18 @@ public class AnnotationServiceFactoryTest
             throws SecurityException, NoSuchMethodException
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
-        webAnnotationsControl.setReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(true);
 
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("not used");
         implAnnotation.setEndpointInterface(EchoService.class.getName());
 
+        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(implAnnotation);
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(implAnnotation);
 
@@ -135,12 +137,28 @@ public class AnnotationServiceFactoryTest
         intfAnnotation.setEndpointInterface(EchoService.class.getName());
 
         webAnnotations.getWebServiceAnnotation(EchoService.class);
-        webAnnotationsControl.setReturnValue(intfAnnotation);
+        webAnnotationsControl.setDefaultReturnValue(intfAnnotation);
 
-        Method echoMethod = EchoService.class.getMethod("echo", new Class[]{String.class});
+        Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[]{});
+
+        webAnnotations.hasWebMethodAnnotation(asyncMethod);
+        webAnnotationsControl.setReturnValue(false);
         
+        Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
+
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setDefaultReturnValue(true);
+        webAnnotationsControl.setReturnValue(false);
+        
+        echoMethod = EchoService.class.getMethod("echo", new Class[]{String.class});
+        System.out.println(echoMethod);
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        webAnnotationsControl.setReturnValue(true);
 
         WebMethodAnnotation wma = new WebMethodAnnotation();
         wma.setAction("test");
@@ -154,7 +172,7 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
+        webAnnotationsControl.setDefaultReturnValue(false);
         webAnnotationsControl.replay();
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -179,6 +197,8 @@ public class AnnotationServiceFactoryTest
         implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
 
+        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(implAnnotation);
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(implAnnotation);
 
@@ -223,6 +243,8 @@ public class AnnotationServiceFactoryTest
         webservice.setServiceName("EchoService");
         webservice.setTargetNamespace("http://xfire.codehaus.org/EchoService");
 
+        webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setReturnValue(webservice);
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(webservice);
 

@@ -35,10 +35,9 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>beehive</groupId>
-            <artifactId>wsm</artifactId>
-            <version>1.0-alpha</version>
-            <url>http://incubator.apache.org/beehive/</url>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-jsr181-api</artifactId>
+            <version>1.0-M1</version>
         </dependency>
         <!--
         

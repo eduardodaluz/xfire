@@ -11,9 +11,10 @@ public class WebParamAnnotation
 {
     private String name = "";
     private String targetNamespace = "";
+    private String partName = "";
     private boolean header = false;
     private int mode = MODE_IN;
-
+    
     /**
      * Constant used to specify that a parameter flows inwards. This is the default mode.
      */
@@ -26,6 +27,16 @@ public class WebParamAnnotation
      * Constant used to specify that a parameter flows outwards.
      */
     public final static int MODE_OUT = 2;
+
+    public String getPartName()
+    {
+        return partName;
+    }
+
+    public void setPartName(String partName)
+    {
+        this.partName = partName;
+    }
 
     /**
      * Returns the name of the parameter as it appears in the WSDL. For RPC bindings, this is name of the wsdl:part

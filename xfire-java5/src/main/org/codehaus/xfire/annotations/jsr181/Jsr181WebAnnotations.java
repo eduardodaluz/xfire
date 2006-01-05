@@ -12,12 +12,12 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
 import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
-import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
 public class Jsr181WebAnnotations
         implements WebAnnotations
@@ -37,7 +37,8 @@ public class Jsr181WebAnnotations
             annotation.setName(webService.name());
             annotation.setServiceName(webService.serviceName());
             annotation.setTargetNamespace(webService.targetNamespace());
-
+            annotation.setPortName(webService.portName());
+            
             return annotation;
         }
         else
@@ -82,7 +83,9 @@ public class Jsr181WebAnnotations
             WebResultAnnotation annot = new WebResultAnnotation();
             annot.setName(webResult.name());
             annot.setTargetNamespace(webResult.targetNamespace());
-
+            annot.setHeader(webResult.header());
+            annot.setPartName(webResult.partName());
+            
             return annot;
         }
         else
@@ -135,7 +138,8 @@ public class Jsr181WebAnnotations
             annot.setName(webParam.name());
             annot.setTargetNamespace(webParam.targetNamespace());
             annot.setHeader(webParam.header());
-
+            annot.setPartName(webParam.partName());
+            
             if (webParam.mode() == WebParam.Mode.IN)
             {
                 annot.setMode(WebParamAnnotation.MODE_IN);

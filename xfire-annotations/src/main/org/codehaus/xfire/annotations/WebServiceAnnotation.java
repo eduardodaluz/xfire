@@ -13,6 +13,17 @@ public class WebServiceAnnotation
     private String name = "";
     private String serviceName = "";
     private String targetNamespace = "";
+    private String portName = "";
+    
+    public String getPortName()
+    {
+        return portName;
+    }
+
+    public void setPortName(String portName)
+    {
+        this.portName = portName;
+    }
 
     /**
      * Returns the name of the Web Service. Used as the name of the wsdl:portType when mapped to WSDL 1.1.  Defaults to

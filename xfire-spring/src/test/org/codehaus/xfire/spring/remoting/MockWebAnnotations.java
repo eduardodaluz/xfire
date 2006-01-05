@@ -3,12 +3,12 @@ package org.codehaus.xfire.spring.remoting;
 import java.lang.reflect.Method;
 
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
 import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
-import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.test.EchoImpl;
 
 public class MockWebAnnotations implements WebAnnotations

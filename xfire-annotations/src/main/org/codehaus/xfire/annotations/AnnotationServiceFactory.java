@@ -1,6 +1,7 @@
 package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,6 +87,8 @@ public class AnnotationServiceFactory
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
+         
+            assertValidImplementationClass(clazz, webAnnotations);
             
             name = createServiceName(clazz, webServiceAnnotation, name);
          
@@ -150,6 +153,39 @@ public class AnnotationServiceFactory
         else
         {
             throw new AnnotationException("Class " + clazz.getName() + " does not have a WebService annotation");
+        }
+    }
+
+    private void assertValidImplementationClass(Class clazz, WebAnnotations webAnnotations2)
+    {
+        if (Modifier.isAbstract(clazz.getModifiers()))
+        {
+            throw new AnnotationException("Service class cannot be abstract: " + clazz.getName());
+        }
+        
+        if (Modifier.isFinal(clazz.getModifiers()))
+        {
+            throw new AnnotationException("Service class cannot be final: " + clazz.getName());
+        }
+        
+        if (clazz.isMemberClass() || !Modifier.isPublic(clazz.getModifiers()))
+        {
+            throw new AnnotationException("Service class must be an outter public class: " + clazz.getName());
+        }
+        
+        WebServiceAnnotation wsAnn = webAnnotations2.getWebServiceAnnotation(clazz);
+        if (wsAnn.getEndpointInterface().length() > 0)
+        {
+            Method[] methods = clazz.getMethods();
+            for (int i = 0; i < methods.length; i++)
+            {
+                if (methods[i].getDeclaringClass().equals(clazz) 
+                        && webAnnotations2.hasWebMethodAnnotation(methods[i]))
+                {
+                    throw new AnnotationException("@WebMethod attributes are only allowed on the endpointInterface! " +
+                            "Offending class: " + clazz.getName());
+                }
+            }
         }
     }
 
@@ -315,7 +351,15 @@ public class AnnotationServiceFactory
 
     protected boolean isAsync(Method method)
     {
-        return webAnnotations.hasOnewayAnnotation(method);
+        boolean oneway = webAnnotations.hasOnewayAnnotation(method);
+        
+        if (oneway && !method.getReturnType().equals(void.class))
+        {
+            throw new AnnotationException("Method " + method.getName() + 
+                                          " is marked as Oneway, but does not return void!");
+        }
+        
+        return oneway;
     }
 
     protected String getMEP(Method method)
@@ -327,5 +371,4 @@ public class AnnotationServiceFactory
         
         return super.getMEP(method);
     }
-
 }

@@ -13,12 +13,12 @@ import javax.jws.WebService;
  * @author Arjen Poutsma
  */
 @WebService(name = "EchoService", targetNamespace = "http://www.openuri.org/2004/04/HelloWorld")
-        public class Jsr181EchoService
+public class Jsr181EchoService
 {
     @WebMethod(operationName = "echoString", action = "urn:EchoString")
-            @WebResult(name = "echoResult")
-            @Oneway
-            public String echo(@WebParam(name = "echoParam", header = true) String input)
+    @WebResult(name = "echoResult")
+    @Oneway
+    public String echo(@WebParam(name = "echoParam", header = true) String input)
     {
         return input;
     }
