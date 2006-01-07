@@ -45,10 +45,6 @@ public class Java5TypeCreator
                                              xmlParam.name(),
                                              xmlParam.namespace()));
             }
-            else
-            {
-                info.setTypeName(createQName(m.getParameterTypes()[index]));
-            }
             
             return info;
         }
@@ -78,10 +74,6 @@ public class Java5TypeCreator
                 info.setTypeName(createQName(m.getReturnType(),
                                              xmlParam.name(),
                                              xmlParam.namespace()));
-            }
-            else
-            {
-                info.setTypeName(createQName(m.getReturnType()));
             }
             
             return info;

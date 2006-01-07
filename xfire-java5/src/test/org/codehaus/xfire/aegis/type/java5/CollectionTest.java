@@ -41,7 +41,10 @@ public class CollectionTest
         assertTrue( type instanceof CollectionType );
         
         CollectionType colType = (CollectionType) type;
-        QName componentName = colType.getComponentName();
+        QName componentName = colType.getSchemaType();
+     
+        assertEquals("ArrayOfString", componentName.getLocalPart());
+        assertEquals("ArrayOfString", componentName.getLocalPart());
         
         type = colType.getComponentType();
         assertNotNull(type);
@@ -74,7 +77,7 @@ public class CollectionTest
         Set deps = dto.getDependencies();
         
         Type type = (Type) deps.iterator().next();
-        System.out.println(type.getClass().getName());
+
         assertTrue( type instanceof CollectionType );
         
         CollectionType colType = (CollectionType) type;
@@ -91,12 +94,12 @@ public class CollectionTest
         Service service = getServiceFactory().create(DTOService.class);
         getServiceRegistry().register(service);
         
-        printNode(invokeService(service.getSimpleName(), "/org/codehaus/xfire/aegis/type/java5/dto/GetDTO.xml"));
+        //printNode(invokeService(service.getSimpleName(), "/org/codehaus/xfire/aegis/type/java5/dto/GetDTO.xml"));
     }
     
     public void testCollectionServiceWSDL() throws Exception
     {
-        Service service = getServiceFactory().create(DTOService.class);
+        Service service = getServiceFactory().create(CollectionService.class);
         getServiceRegistry().register(service);
         
         printNode(getWSDLDocument(service.getSimpleName()));
