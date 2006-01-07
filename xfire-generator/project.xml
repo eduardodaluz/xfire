@@ -64,6 +64,11 @@
       </properties>
     </dependency>
     <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>xfire-jsr181-api</artifactId>
+      <version>1.0-M1</version>
+    </dependency>
+    <dependency>
       <groupId>xmlbeans</groupId>
       <artifactId>xbean</artifactId>
       <version>2.0.0</version>
@@ -87,11 +92,6 @@
       <groupId>xfire</groupId>
       <artifactId>XmlSchema</artifactId>
       <version>20051110</version>
-    </dependency>
-    <dependency>
-      <groupId>beehive</groupId>
-      <artifactId>wsm</artifactId>
-      <version>1.0-alpha</version>
     </dependency>
     <dependency>
       <groupId>ant</groupId>
