@@ -1,6 +1,7 @@
 package org.codehaus.xfire.service.binding;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -62,7 +63,8 @@ public class WrappedBinding
             String name;
 
             MessageInfo msgInfo;
-            if (isClientModeOn(context))
+            boolean client = isClientModeOn(context);
+            if (client)
             {
                 name = op.getName();
                 msgInfo = op.getInputMessage();
@@ -75,13 +77,17 @@ public class WrappedBinding
 
             writeStartElement(writer, name, msgInfo.getName().getNamespaceURI());
             
-            int i = 0;
             for(Iterator itr = msgInfo.getMessageParts().iterator(); itr.hasNext();)
             {
                 MessagePartInfo outParam = (MessagePartInfo) itr.next();
-    
-                writeParameter(writer, context, values[i], outParam, getBoundNamespace(context, outParam));
-                i++;
+                
+                Object value;
+                if (client) 
+                    value = getClientParam(values, outParam, context);
+                else 
+                    value = getParam(values, outParam, context);
+                
+                writeParameter(writer, context, value, outParam, getBoundNamespace(context, outParam));
             }
     
             writer.writeEndElement();
@@ -90,6 +96,20 @@ public class WrappedBinding
         {
             throw new XFireRuntimeException("Couldn't write start element.", e);
         }
+    }
+
+    private Object getParam(Object[] values, MessagePartInfo outParam, MessageContext context)
+    {
+        int index = outParam.getIndex();
+        if (index == -1) return values[0];
+        
+        List inParams = (List) context.getInMessage().getBody();
+        return inParams.get(index);
+    }
+
+    private Object getClientParam(Object[] values, MessagePartInfo outParam, MessageContext context)
+    {
+        return values[outParam.getIndex()];
     }
 
     public void writeStartElement(XMLStreamWriter writer, String name, String namespace) 

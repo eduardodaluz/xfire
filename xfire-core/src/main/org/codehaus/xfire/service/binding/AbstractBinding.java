@@ -21,7 +21,6 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
@@ -29,9 +28,6 @@ public abstract class AbstractBinding
     implements MessageSerializer
 {
     private static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType", SoapConstants.XSD_PREFIX);
-
-    public static final String RESPONSE_VALUE = "xfire.java.response";
-    public static final String RESPONSE_PIPE = "xfire.java.responsePipe";
 
     public void setOperation(OperationInfo operation, MessageContext context)
     {
@@ -149,20 +145,22 @@ public abstract class AbstractBinding
         Binding binding = context.getBinding();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
         int param = 0;
+        boolean clientMode = isClientModeOn(context);
         while (STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p;
             
-            if (opInfo != null && isClientModeOn(context))
+            if (opInfo != null && clientMode)
             {
                 p = (MessagePartInfo) opInfo.getOutputMessage().getMessageParts().get(param);
             }
-            else if (opInfo != null && !isClientModeOn(context))
+            else if (opInfo != null && !clientMode)
             {
                 p = (MessagePartInfo) opInfo.getInputMessage().getMessageParts().get(param);
             }
             else
             {
+                // Try to intelligently find the right part if we don't know the operation yet.
                 p = findMessagePart(context, operations, dr.getName(), param);
             }
             
@@ -177,7 +175,7 @@ public abstract class AbstractBinding
             parameters.add( context.getService().getBindingProvider().readParameter(p, dr, context) );
         }
 
-        if (opInfo == null && !isClientModeOn(context))
+        if (opInfo == null && !clientMode)
         {
             opInfo = findOperation(operations, parameters);
 
@@ -263,10 +261,40 @@ public abstract class AbstractBinding
             return context.getService().getTargetNamespace();
     }
 
-    public boolean isClientModeOn(MessageContext context)
+    public static boolean isClientModeOn(MessageContext context)
     {
         Boolean on = (Boolean) context.getProperty(Client.CLIENT_MODE);
         
         return (on != null && on.booleanValue());
+    }
+    
+    public static MessageInfo getIncomingMessageInfo(MessageContext context)
+    {
+        MessageInfo msgInfo;
+        if (isClientModeOn(context))
+        {
+            msgInfo = context.getExchange().getOperation().getOutputMessage();
+        }
+        else
+        {
+            msgInfo = context.getExchange().getOperation().getInputMessage();
+        }
+        
+        return msgInfo;
+    }
+    
+    public static MessageInfo getOutgoingMessageInfo(MessageContext context)
+    {
+        MessageInfo msgInfo;
+        if (isClientModeOn(context))
+        {
+            msgInfo = context.getExchange().getOperation().getInputMessage();
+        }
+        else
+        {
+            msgInfo = context.getExchange().getOperation().getOutputMessage();
+        }
+        
+        return msgInfo;
     }
 }

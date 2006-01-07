@@ -17,8 +17,11 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Binding;
+import org.codehaus.xfire.service.MessageInfo;
+import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.util.stax.ElementStreamWriter;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -119,8 +122,31 @@ public class ServiceInvocationHandler
             outMsg.setSerializer(context.getBinding().getSerializer(operation));
             context.getOutPipeline().invoke(context);
         }
+        
+        // writeHeaders(context);
     }
     
+    public static void writeHeaders(MessageContext context) throws XFireFault, XMLStreamException
+    {
+        MessageInfo msgInfo = AbstractBinding.getOutgoingMessageInfo(context);
+        MessagePartContainer headers = context.getBinding().getHeaders(msgInfo);
+       
+        Object[] body = (Object[]) context.getOutMessage().getBody();
+
+        for (Iterator itr = headers.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo part = (MessagePartInfo) itr.next();
+            
+            BindingProvider provider = context.getService().getBindingProvider();
+            
+            AbstractBinding.writeParameter(new ElementStreamWriter(context.getOutMessage().getHeader()),
+                                           context,
+                                           body[part.getIndex()],
+                                           part,
+                                           part.getName().getNamespaceURI());
+        }
+    }
+
     private XMLStreamReader getXMLStreamReader(AbstractMessage msg, MessagePartInfo header)
     {
         QName name = header.getName();

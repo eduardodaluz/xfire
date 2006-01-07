@@ -29,6 +29,7 @@ import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
@@ -253,6 +254,8 @@ public class Client
             outPipe.addHandlers(transport.getOutHandlers());
             context.setOutPipeline(outPipe);
 
+            ServiceInvocationHandler.writeHeaders(context);
+            
             outPipe.invoke(context);
         }
         catch (Exception e1)
