@@ -17,6 +17,10 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.XMLTypeCreator;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
+import org.codehaus.xfire.soap.SoapConstants;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
 public class DescriptorTest
     extends AbstractXFireAegisTest
@@ -28,7 +32,8 @@ public class DescriptorTest
     {
         super.setUp();
 
-        tm = new CustomTypeMapping();
+        DefaultTypeMappingRegistry reg = new DefaultTypeMappingRegistry(true);
+        tm = (CustomTypeMapping) reg.getDefaultTypeMapping();
         XMLTypeCreator creator = new XMLTypeCreator();
         creator.setNextCreator(new DefaultTypeCreator());
         tm.setTypeCreator(creator);
@@ -223,5 +228,36 @@ public class DescriptorTest
 
         Iterator attItr = info.getAttributes();
         assertFalse(attItr.hasNext());
+    }
+    
+    public void testCustomName() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:custom-ns");
+
+        BeanType type = (BeanType) tm.getTypeCreator().createType(MyBean.class);
+        
+        assertEquals(new QName("urn:Bean", "Bean"), type.getSchemaType());
+        
+        BeanTypeInfo info = type.getTypeInfo();
+        assertEquals("urn:Bean", info.getDefaultNamespace());
+        
+        Iterator elItr = info.getElements();
+        assertTrue(elItr.hasNext());
+
+        QName prop1 = (QName) elItr.next();
+        assertEquals(new QName("urn:Bean", "prop1"), prop1);
+
+        System.out.println(info.getType(prop1));
+        assertTrue(info.getType(prop1) instanceof StringType);
+        
+        Element root = new Element("root", Namespace.getNamespace("xsd", SoapConstants.XSD));
+        new Document(root);
+        Element schema = new Element("schema", Namespace.getNamespace("xsd", SoapConstants.XSD));
+        root.addContent(schema);
+        type.writeSchema(schema);
+        
+        printNode(root);
+        addNamespace("xsd", SoapConstants.XSD);
+        assertValid("//xsd:element[@name='prop1'][@type='xsd:string']", root);
     }
 }

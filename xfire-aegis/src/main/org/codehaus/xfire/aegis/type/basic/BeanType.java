@@ -297,12 +297,7 @@ public class BeanType
             Type type = getType(info, name);
             
             String nameNS = name.getNamespaceURI(); 
-            String nameWithPrefix = name.getLocalPart();
-            if (!nameNS.equals(getSchemaType().getNamespaceURI()))
-            {
-                nameWithPrefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), nameNS)
-                    + ":" + nameWithPrefix;
-            }
+            String nameWithPrefix = getNameWithPrefix(root, nameNS, name.getLocalPart());
             
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
@@ -323,18 +318,24 @@ public class BeanType
             Type type = getType(info, name);
 
             String nameNS = name.getNamespaceURI(); 
-            String nameWithPrefix = name.getLocalPart();
-            if (!nameNS.equals(getSchemaType().getNamespaceURI()))
-            {
-                nameWithPrefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), nameNS)
-                    + ":" + nameWithPrefix;
-            }
+            String nameWithPrefix = getNameWithPrefix(root, nameNS, name.getLocalPart());
 
             String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), 
                                                             type.getSchemaType().getNamespaceURI() );
             element.setAttribute(new Attribute("name", nameWithPrefix));
             element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
         }
+    }
+
+    private String getNameWithPrefix(Element root, String nameNS, String localName)
+    {
+        if (!nameNS.equals(getSchemaType().getNamespaceURI()))
+        {
+            String prefix = NamespaceHelper.getUniquePrefix((Element) root.getParent(), nameNS);
+            if (prefix != null && prefix.length() > 0) 
+                return prefix + ":" + localName;
+        }
+        return localName;
     }
 
     private Type getType(BeanTypeInfo info, QName name)

@@ -34,4 +34,6 @@
   <mapping uri="urn:xfire:custom-type">
     <property name="prop1" type="org.codehaus.xfire.aegis.type.basic.MyStringType"/>
   </mapping>
+  
+  <mapping uri="urn:xfire:custom-ns" xmlns:t="urn:Bean" name="t:Bean"/>
 </mappings>
