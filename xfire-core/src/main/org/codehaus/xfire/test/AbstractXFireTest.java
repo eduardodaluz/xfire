@@ -39,6 +39,7 @@ import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 /**
@@ -65,7 +66,7 @@ public abstract class AbstractXFireTest
     protected void printNode(Document node)
         throws Exception
     {
-        XMLOutputter writer = new XMLOutputter();
+        XMLOutputter writer = new XMLOutputter(Format.getPrettyFormat());
 
         writer.output(node, System.out);
     }
@@ -73,7 +74,7 @@ public abstract class AbstractXFireTest
     protected void printNode(Element node)
             throws Exception
     {
-        XMLOutputter writer = new XMLOutputter();
+        XMLOutputter writer = new XMLOutputter(Format.getPrettyFormat());
 
         writer.output(node, System.out);
     }
