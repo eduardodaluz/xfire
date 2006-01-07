@@ -255,8 +255,7 @@ public class DescriptorTest
         Element schema = new Element("schema", Namespace.getNamespace("xsd", SoapConstants.XSD));
         root.addContent(schema);
         type.writeSchema(schema);
-        
-        printNode(root);
+
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:element[@name='prop1'][@type='xsd:string']", root);
     }
