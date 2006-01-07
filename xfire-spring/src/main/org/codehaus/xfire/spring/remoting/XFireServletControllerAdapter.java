@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.http.XFireServletController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -33,6 +34,16 @@ public class XFireServletControllerAdapter
         this.serviceName = serviceName;
     }
 
+    /**
+     * Initializes a new instance of the adapter with the given XFire instance.
+     *
+     * @param xfire       the XFire instance
+     */
+    public XFireServletControllerAdapter(XFire xfire)
+    {
+      this(xfire, null);
+    }
+    
     protected String getService(HttpServletRequest request)
     {
         return serviceName.getLocalPart();
@@ -51,5 +62,15 @@ public class XFireServletControllerAdapter
     {
         doService(request, response);
         return null;
+    }
+    
+    protected Service getService(String name)
+    {
+        return getServiceRegistry().getService(serviceName);
+    }
+
+    public void setServiceName(QName serviceName)
+    {
+        this.serviceName = serviceName;
     }
 }

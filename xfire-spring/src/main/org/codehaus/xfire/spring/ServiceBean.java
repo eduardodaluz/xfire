@@ -114,7 +114,7 @@ public class ServiceBean
                 throw new RuntimeException("Error creating service " + name +
                         ". The service class or the service bean must be set!");
             
-            intf = getServiceBean().getClass();
+            intf = SpringUtils.getUserTarget(getServiceBean()).getClass();
         }
         
         // Lets set up some properties for the service
