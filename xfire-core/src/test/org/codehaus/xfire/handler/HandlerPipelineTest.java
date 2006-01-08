@@ -60,6 +60,16 @@ public class HandlerPipelineTest
         assertTrue(handlers.get(0) == handler2);
         assertTrue(handlers.get(1) == handler1);
         
+        // try inserting in reverse
+        handlerPipeline = new HandlerPipeline(phases);
+        handlerPipeline.addHandler(handler2);
+        handlerPipeline.addHandler(handler1);
+
+        handlers = handlerPipeline.getPhase(Phase.TRANSPORT).getHandlers();
+        
+        assertTrue(handlers.get(0) == handler2);
+        assertTrue(handlers.get(1) == handler1);
+        
         // try reverse ordering
         handlerPipeline = new HandlerPipeline(phases);
 

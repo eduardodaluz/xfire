@@ -332,7 +332,8 @@ public class Client
         if (!exchange.getOperation().hasOutput()) return;
         
         exchange.setInMessage(msg);
-
+        context.setCurrentMessage(msg);
+        
         try
         {
             HandlerPipeline inPipe = new HandlerPipeline(xfire.getInPhases());

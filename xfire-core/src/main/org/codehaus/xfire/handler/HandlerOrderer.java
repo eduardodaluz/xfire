@@ -14,20 +14,19 @@ public class HandlerOrderer
         
         Collection before = handler.getBefore();
         Collection after = handler.getAfter();
-        
+
         for (int i = 0; i < handlers.size(); i++)
         {
             Handler cmp = (Handler) handlers.get(i);
-            
+
             if (before.contains(cmp.getClass().getName()))
             {
-                if (i > handlers.size()) begin = i;
+                if (i < end) end = i;
             }
 
             if (cmp.getBefore().contains(handler.getClass().getName()))
             {
-                int place = i-1;
-                if (place < end) end = place;                
+                if (i > begin) begin = i;            
             }
             
             if (after.contains(cmp.getClass().getName()))
@@ -42,7 +41,7 @@ public class HandlerOrderer
         }
 
         if (end < begin+1)
-            throw new IllegalStateException("Invalid ordering!");
+            throw new IllegalStateException("Invalid ordering for handler " + handler.getClass().getName());
         
         handlers.add(begin+1, handler);
     }
