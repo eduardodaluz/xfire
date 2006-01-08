@@ -162,9 +162,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
     
     protected void visit(BindingOutput bindingOutput, Output output, MessageInfo msg)
     {
-        SOAPBody body = DefinitionsHelper.getSOAPBody(bindingOutput.getExtensibilityElements());
-        
-        setUse(msg, body.getUse());
+        visitMessage(msg, bindingOutput.getExtensibilityElements());
     }
 
     protected boolean isUnderstood(Binding op)
