@@ -15,8 +15,8 @@ public class Tester
     {
         UsernamePasswordEchoService echoUsernamePasswordService = new UsernamePasswordEchoServiceImpl();
         MessageContext messageContext = new MessageContext();
-        messageContext.setProperty("username", "brian");
-        messageContext.setProperty("password", "bonner");
+        messageContext.setProperty(SecurityConstants.SECURITY_IN_USER_NAME_CONTEXT_KEY , "brian");
+        messageContext.setProperty(SecurityConstants.SECURITY_IN_USER_PASS_CONTEXT_KEY, "bonner");
         System.out.println(echoUsernamePasswordService.echo("test", messageContext));
     }
 }

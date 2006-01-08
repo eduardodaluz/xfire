@@ -4,6 +4,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityResult;
+import org.codehaus.xfire.security.SecurityConstants;
 import org.codehaus.xfire.util.dom.DOMInHandler;
 import org.codehaus.xfire.util.stax.W3CDOMStreamReader;
 import org.w3c.dom.Document;
@@ -30,8 +31,8 @@ public class InSecurityHandler
         InSecurityResult result = getProcessor().process(doc);
         doc = result.getDocument();
 
-        context.setProperty("user", result.getUser());
-        context.setProperty("password", result.getPassword());
+        context.setProperty(SecurityConstants.SECURITY_IN_USER_NAME_CONTEXT_KEY, result.getUser());
+        context.setProperty(SecurityConstants.SECURITY_IN_USER_PASS_CONTEXT_KEY, result.getPassword());
         
         context.getInMessage().setXMLStreamReader(new W3CDOMStreamReader(doc.getDocumentElement()));
         context.setProperty(DOMInHandler.DOM_MESSAGE, doc);

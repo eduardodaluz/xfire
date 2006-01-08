@@ -12,7 +12,7 @@ import org.codehaus.xfire.security.impl.SecurityFileConfigurer;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
 public class WSS4JOutProcessorBuilder
     extends SecurityFileConfigurer
@@ -28,17 +28,22 @@ public class WSS4JOutProcessorBuilder
         WSS4JOutSecurityProcessor wss4jProcessor = (WSS4JOutSecurityProcessor) processor;
 
         Properties props = loadConfigFile(CFG_FILE);
-        
+
         Properties wss4j = WSS4JPropertiesHelper.buildWSS4JProps(props);
         String alias = props.getProperty(PROP_KEY_ALIAS);
-
+        String userName = props.getProperty(PROP_USER_NAME);
+        String userPassword = props.getProperty(PROP_USER_PASSWORD);
         Crypto crypto = CryptoFactory
                 .getInstance("org.apache.ws.security.components.crypto.Merlin", wss4j);
 
         wss4jProcessor.setAlias(alias);
         wss4jProcessor.setCrypto(crypto);
+        if (userName != null)
+        {
+            wss4jProcessor.setUsername(userName);
+            wss4jProcessor.setUserPassword(userPassword);
+        }
 
     }
 
-   
 }

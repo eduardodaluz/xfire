@@ -14,19 +14,29 @@ public class UsernamePasswordTest
 {
     protected ApplicationContext createContext()
     {
-        return new ClassPathXmlApplicationContext(
-                new String[] { "org/codehaus/xfire/security/services.xml",
-                        "org/codehaus/xfire/spring/xfire.xml" });
+        return new ClassPathXmlApplicationContext(new String[] {
+                "org/codehaus/xfire/spring/xfire.xml",
+                "org/codehaus/xfire/security/services-attr.xml" });
     }
 
     public void testService()
         throws Exception
     {
-        Service service = getXFire().getServiceRegistry().getService("echo");
 
-        Document document = invokeService("echo","sample-wsse-request.xml");
+        Document document = invokeService("echo", "sample-wsse-request.xml");
         assertNotNull(document);
         addNamespace("e", "urn:Echo");
         assertValid("//e:echoResponse", document);
+    }
+
+    public void testUsernameResponse()
+        throws Exception
+    {
+
+        Document document = invokeService("echo", "sample-wsse-request.xml");
+        assertNotNull(document);
+        addNamespace("e", "urn:Echo");
+        assertValid("//e:echoResponse", document);
+
     }
 }

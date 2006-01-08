@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Properties;
 
@@ -34,6 +33,11 @@ public class SecurityFileConfigurer {
 	public static final String PROP_ENC_ALG = "xfire.security.encrypt.key.algoritm";
 
 	public static final String PROP_SYM_ALG = "xfire.security.symmetric.key.algoritm";
+    
+    public static final String PROP_USER_NAME="xfire.security.user.name";
+    
+    public static final String PROP_USER_PASSWORD="xfire.security.user.password";
+        
 
 	
 	/**

@@ -17,7 +17,12 @@ import org.jdom.output.XMLOutputter;
  */
 
 public class UsernamePasswordEchoServiceImpl implements UsernamePasswordEchoService
+
 {
+	
+	public UsernamePasswordEchoServiceImpl(){
+		int z=0;
+	}
     public String echo(String inDocument ){
         System.out.println("test");
         return "test";
