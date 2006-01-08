@@ -6,91 +6,121 @@ import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
-public class DebugOutSecurityProcesor implements OutSecurityProcessor {
+public class DebugOutSecurityProcesor
+    implements OutSecurityProcessor
+{
 
-	private String encCipherName;
+    private String encCipherName;
 
-	private String symmetricCipherName;
+    private String symmetricCipherName;
 
-	private Key encryptionKey;
+    private Key encryptionKey;
 
-	private Key symmetricKey;
+    private Key symmetricKey;
 
-	private String username;
+    private String username;
 
-	private String userPassword;
+    private String userPassword;
 
-	private OutSecurityProcessorBuilder builder;
+    private boolean usePlainUserPass;
 
-	public void setEncCipherName(String name) {
-		encCipherName = name;
+    private OutSecurityProcessorBuilder builder;
 
-	}
+    public void setEncCipherName(String name)
+    {
+        encCipherName = name;
 
-	public void setSymmetricCipherName(String name) {
-		symmetricCipherName = name;
+    }
 
-	}
+    public void setSymmetricCipherName(String name)
+    {
+        symmetricCipherName = name;
 
-	public void setEncryptionKey(Key encKey) {
-		encryptionKey = encKey;
+    }
 
-	}
+    public void setEncryptionKey(Key encKey)
+    {
+        encryptionKey = encKey;
 
-	public void setSymmetricKey(Key symmetricKey) {
-		this.symmetricKey = symmetricKey;
+    }
 
-	}
+    public void setSymmetricKey(Key symmetricKey)
+    {
+        this.symmetricKey = symmetricKey;
 
-	public void setUsername(String user) {
-		this.username = user;
+    }
 
-	}
+    public void setUsername(String user)
+    {
+        this.username = user;
 
-	public void setUserPassword(String password) {
-		this.userPassword = password;
+    }
 
-	}
+    public void setUserPassword(String password)
+    {
+        this.userPassword = password;
 
-	public void setBuilder(OutSecurityProcessorBuilder builder) {
-		this.builder = builder;
+    }
 
-	}
+    public void setBuilder(OutSecurityProcessorBuilder builder)
+    {
+        this.builder = builder;
 
-	public Document process(Document document) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    }
 
-	public String getEncCipherName() {
+    public Document process(Document document)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-		return encCipherName;
-	}
+    public String getEncCipherName()
+    {
 
-	public String getSymmetricCipherName() {
-		return symmetricCipherName;
-	}
+        return encCipherName;
+    }
 
-	public Key getEncryptionKey() {
+    public String getSymmetricCipherName()
+    {
+        return symmetricCipherName;
+    }
 
-		return encryptionKey;
-	}
+    public Key getEncryptionKey()
+    {
 
-	public Key getSymmetricKey() {
+        return encryptionKey;
+    }
 
-		return symmetricKey;
-	}
+    public Key getSymmetricKey()
+    {
 
-	public String getUsername() {
+        return symmetricKey;
+    }
 
-		return username;
-	}
+    public String getUsername()
+    {
 
-	public String getUserPassword() {
+        return username;
+    }
 
-		return userPassword;
-	}
+    public String getUserPassword()
+    {
+
+        return userPassword;
+    }
+
+    public void setUsePlainUserPassword(boolean usePlain)
+    {
+        usePlainUserPass = usePlain;
+
+    }
+
+    public boolean usePlainUserPassword()
+    {
+
+        return usePlainUserPass;
+    }
 
 }

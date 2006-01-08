@@ -33,6 +33,7 @@ public class WSS4JOutProcessorBuilder
         String alias = props.getProperty(PROP_KEY_ALIAS);
         String userName = props.getProperty(PROP_USER_NAME);
         String userPassword = props.getProperty(PROP_USER_PASSWORD);
+        String usePlainPass = props.getProperty(PROP_USER_PASSWORD_USE_PLAIN);
         Crypto crypto = CryptoFactory
                 .getInstance("org.apache.ws.security.components.crypto.Merlin", wss4j);
 
@@ -42,6 +43,9 @@ public class WSS4JOutProcessorBuilder
         {
             wss4jProcessor.setUsername(userName);
             wss4jProcessor.setUserPassword(userPassword);
+            if( usePlainPass != null && !"false".equals(usePlainPass.toLowerCase())){
+                wss4jProcessor.setUsePlainUserPassword(true);
+            }
         }
 
     }
