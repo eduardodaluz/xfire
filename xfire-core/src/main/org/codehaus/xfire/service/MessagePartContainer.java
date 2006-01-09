@@ -117,4 +117,9 @@ public abstract class MessagePartContainer
     {
         return Collections.unmodifiableList(messagePartList);
     }
+    
+    public int size()
+    {
+        return messageParts.size();
+    }
 }

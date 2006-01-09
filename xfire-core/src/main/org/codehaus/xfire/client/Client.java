@@ -27,6 +27,7 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
+import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
@@ -248,6 +249,7 @@ public class Client
             MessageExchange exchange = new MessageExchange(context);
             exchange.setOperation(op);
             exchange.setOutMessage(msg);
+            context.setCurrentMessage(msg);
             
             HandlerPipeline outPipe = new HandlerPipeline(xfire.getOutPhases());
             outPipe.addHandlers(getOutHandlers());
@@ -342,6 +344,11 @@ public class Client
             recvContext.setInPipeline(inPipe);
             
             inPipe.invoke(context);
+            
+            MessageInfo msgInfo = exchange.getOperation().getOutputMessage();
+            ServiceInvocationHandler.readHeaders(context, 
+                                                 binding.getHeaders(msgInfo), 
+                                                 (Object[]) context.getOutMessage().getBody());
             
             finishReadingMessage(msg, context);
             

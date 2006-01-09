@@ -9,7 +9,9 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.Holder;
 import org.codehaus.xfire.aegis.type.basic.ArrayType;
+import org.codehaus.xfire.aegis.type.basic.HolderType;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.aegis.type.collection.MapType;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -66,7 +68,11 @@ public abstract class AbstractTypeCreator implements TypeCreator
         {
             return createUserType(info);
         }
-        if(isArray(javaType))
+        else if(isHolder(javaType))
+        {
+            return createHolderType(info);
+        }
+        else if(isArray(javaType))
         {
             return createArrayType(info);
         }
@@ -94,7 +100,28 @@ public abstract class AbstractTypeCreator implements TypeCreator
         }
     }
 
-    private boolean isArray(Class javaType)
+    protected boolean isHolder(Class javaType)
+    {
+        return javaType.equals(Holder.class);
+    }
+
+    protected Type createHolderType(TypeClassInfo info)
+    {
+        if (info.getGenericType() == null)
+        {
+            throw new UnsupportedOperationException("To use holder types " +
+                    "you must have an XML descriptor declaring the component type.");
+        }
+        
+        Class heldCls = (Class) info.getGenericType();
+        info.setTypeClass(heldCls);
+        
+        Type delegate = createType(heldCls);
+        HolderType type = new HolderType(delegate);
+        return type;
+    }
+
+    protected boolean isArray(Class javaType)
     {
         return javaType.isArray() && !javaType.equals(byte[].class);
     }

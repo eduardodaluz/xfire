@@ -19,12 +19,17 @@
   	  	
   	<ant:taskdef name="wsgen" classname="org.codehaus.xfire.gen.WsGenTask" classpathref="wsgen.path"/>
   	  		
-  	<!-- JAXB -->
+  	<!-- Build stubs and clients for tests -->
 	<wsgen outputDirectory="${maven.build.dir}/test-services"
 	  wsdl="${basedir}/src/wsdl/echo.wsdl"
 	  package="services.echo"
 	  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
   	
+  	<wsgen outputDirectory="${maven.build.dir}/test-services"
+  		  wsdl="${basedir}/src/wsdl/headerout.wsdl"
+  		  package="services.headerout"
+  		  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
+  	  	
   	<ant:path id="test.services" location="${maven.build.dir}/test-services"/>
 
   	<maven:addPath id="maven.test.compile.src.set" refid="test.services"/>

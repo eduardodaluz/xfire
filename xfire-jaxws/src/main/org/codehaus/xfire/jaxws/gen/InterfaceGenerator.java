@@ -1,10 +1,13 @@
 package org.codehaus.xfire.jaxws.gen;
 
+import javax.xml.ws.Holder;
+
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.jsr181.ServiceInterfaceGenerator;
 import org.codehaus.xfire.service.MessagePartInfo;
 
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
@@ -38,10 +41,18 @@ public class InterfaceGenerator
         }
         catch (JClassAlreadyExistsException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new GenerationException(e);
         }
         
     }
 
+    protected JType getHolderType(GenerationContext context, MessagePartInfo part)
+        throws GenerationException
+    {
+        JType genericType = super.getHolderType(context, part);
+        
+        JClass holder = context.getCodeModel().ref(Holder.class);
+        holder = holder.narrow((JClass) genericType);
+        return holder;
+    }
 }

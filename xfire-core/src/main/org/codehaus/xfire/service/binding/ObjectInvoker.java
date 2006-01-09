@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
@@ -83,7 +84,7 @@ public class ObjectInvoker
                     }
                 }
             }
-            
+
             Method m = matchMethod(method, serviceObject);
             return m.invoke(serviceObject, newParams);
         }

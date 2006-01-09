@@ -33,6 +33,7 @@ import org.codehaus.xfire.wsdl.SchemaType;
 public class AegisBindingProvider
     extends AbstractBindingProvider
 {
+    public static final String CURRENT_MESSAGE_PART = "currentMessagePart";
     public static final String TYPE_MAPPING_KEY = "type.mapping";
     public static final String ENCODING_URI_KEY = "type.encodingUri";
 
@@ -86,6 +87,7 @@ public class AegisBindingProvider
             return null;
         }
         
+        context.setProperty(CURRENT_MESSAGE_PART, p);
         return type.readObject(reader, context);
     }
     
@@ -104,7 +106,7 @@ public class AegisBindingProvider
             mw.writeXsiNil();
             return;
         }
-        
+
         type.writeObject(value, mw, context);
     }
 

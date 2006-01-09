@@ -262,7 +262,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
     public TypeClassInfo createClassInfo(Method m, int index)
     {
         Element mapping = findMapping(m.getDeclaringClass());
-        
+
         if(mapping == null) return nextCreator.createClassInfo(m, index);
         
         //find the elements that apply to the specified method
@@ -282,6 +282,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             }
             //pick the best matching node
             Element bestMatch = getBestMatch(mapping, m, nodes);
+
             if(bestMatch == null)
             {
                 //no mapping for this method

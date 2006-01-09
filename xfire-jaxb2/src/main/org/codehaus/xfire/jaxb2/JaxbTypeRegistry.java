@@ -11,6 +11,11 @@ public class JaxbTypeRegistry
         super(true);
     }
 
+    public JaxbTypeRegistry(TypeCreator typeCreator, boolean createDefault)
+    {
+        super(typeCreator, createDefault);
+    }
+
     protected TypeCreator createTypeCreator()
     {
         return new JaxbTypeCreator(super.createTypeCreator());

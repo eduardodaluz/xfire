@@ -500,13 +500,8 @@ public class ObjectServiceFactory
     protected void createBindingOperation(Service service, AbstractSoapBinding binding, OperationInfo op)
     {
         binding.setSoapAction(op, getAction(op));
-        createMessageBinding(binding, op.getInputMessage());
-        
-        if (op.hasOutput())
-        {
-            createMessageBinding(binding, op.getOutputMessage());
-        }
-        
+        createMessageBinding(binding, op);
+
         for (Iterator fitr = op.getFaults().iterator(); fitr.hasNext();)
         {
             FaultInfo fault = (FaultInfo) fitr.next();
@@ -515,19 +510,30 @@ public class ObjectServiceFactory
         }
     }
 
-    private void createMessageBinding(AbstractSoapBinding binding, MessageInfo msg)
+    private void createMessageBinding(AbstractSoapBinding binding, OperationInfo op)
     {
-        Method method = msg.getOperation().getMethod();
+        Method method = op.getMethod();
         Class[] paramClasses = method.getParameterTypes();
         boolean isDoc = binding.getStyle().equals(SoapConstants.STYLE_DOCUMENT);
         
-        MessagePartContainer parts = binding.getHeaders(msg);
+        MessagePartContainer inParts = binding.getHeaders(op.getInputMessage());
+        MessagePartContainer outParts = null;
+        if (op.hasOutput()) outParts = binding.getHeaders(op.getOutputMessage());
+
         for (int j = 0; j < paramClasses.length; j++)
         {
             if (!paramClasses[j].equals(MessageContext.class) && isHeader(method, j))
             {
-                final QName q = getInParameterName(binding.getService(), msg.getOperation(), method, j, isDoc);
-                parts.addMessagePart(q, paramClasses[j]).setIndex(j);
+                final QName q = getInParameterName(binding.getService(), op, method, j, isDoc);
+                
+                if (isOutParam(method, j))
+                {
+                    outParts.addMessagePart(q, paramClasses[j]).setIndex(j);
+                }
+                else
+                {
+                    inParts.addMessagePart(q, paramClasses[j]).setIndex(j);
+                }
             }
         }
     }
@@ -613,7 +619,9 @@ public class ObjectServiceFactory
 
         for (int j = 0; j < paramClasses.length; j++)
         {
-            if (!paramClasses[j].equals(MessageContext.class) && !isHeader(method, j))
+            if (!paramClasses[j].equals(MessageContext.class) && 
+                    !isHeader(method, j) &&
+                    !isOutParam(method, j))
             {
                 final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 MessagePartInfo part = inMsg.addMessagePart(q, paramClasses[j]);
@@ -638,6 +646,19 @@ public class ObjectServiceFactory
                 part.setIndex(-1);
                 part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
             }
+            
+            for (int j = 0; j < paramClasses.length; j++)
+            {
+                if (!paramClasses[j].equals(MessageContext.class) && 
+                        !isHeader(method, j) &&
+                        isOutParam(method, j))
+                {
+                    final QName q = getInParameterName(endpoint, op, method, j, isDoc);
+                    MessagePartInfo part = outMsg.addMessagePart(q, paramClasses[j]);
+                    part.setIndex(j);
+                    part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
+                }
+            }
         }
 
         if (isCustomFaultsEnabled())
@@ -646,6 +667,11 @@ public class ObjectServiceFactory
         op.setAsync(isAsync(method));
         
         return op;
+    }
+
+    protected boolean isOutParam(Method method, int j)
+    {
+        return false;
     }
 
     protected QName createInputMessageName(final OperationInfo op)

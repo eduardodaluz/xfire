@@ -39,6 +39,11 @@ public class LocateBindingHandler
         Channel c = context.getInMessage().getChannel();
         Service service = context.getService();
         
+        if (service == null) 
+        {
+            throw new XFireFault("Could not find a service to invoke.", XFireFault.SENDER);
+        }
+        
         // find a binding with that soap binding id
         // set the binding
         Binding binding =  c.getTransport().findBinding(context, service);

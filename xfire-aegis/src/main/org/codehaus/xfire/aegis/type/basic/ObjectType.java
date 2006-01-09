@@ -195,7 +195,8 @@ public class ObjectType extends Type
         TypeMapping mapping = getTypeMapping();
         Type type = mapping.getType( clazz );
 
-        if( null != type ) {
+        if (null != type) 
+        {
             return type;
         }
 

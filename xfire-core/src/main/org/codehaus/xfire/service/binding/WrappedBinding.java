@@ -103,8 +103,8 @@ public class WrappedBinding
         int index = outParam.getIndex();
         if (index == -1) return values[0];
         
-        List inParams = (List) context.getInMessage().getBody();
-        return inParams.get(index);
+        Object[] inParams = (Object[]) context.getInMessage().getBody();
+        return inParams[index];
     }
 
     private Object getClientParam(Object[] values, MessagePartInfo outParam, MessageContext context)

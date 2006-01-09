@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,29 +51,24 @@ public class ServiceInvocationHandler
 
             // read in the headers
             Binding binding = context.getBinding();
-            final List headerInfos = binding.getHeaders(operation.getInputMessage()).getMessageParts();
-            for (Iterator itr = headerInfos.iterator(); itr.hasNext();)
-            {
-                MessagePartInfo header = (MessagePartInfo) itr.next();
-                BindingProvider provider = context.getService().getBindingProvider();
-
-                XMLStreamReader headerReader = getXMLStreamReader(context.getInMessage(), header);
-
-                Object headerVal = null;
-                if (headerReader != null)
-                {
-                    headerVal = provider.readParameter(header, headerReader, context);
-                }
-                
-                params.add(header.getIndex(), headerVal);
-            }
+            
+            MessageInfo msg = AbstractBinding.getIncomingMessageInfo(context);
+            MessageInfo outMsg = AbstractBinding.getOutgoingMessageInfo(context);
+            MessagePartContainer headerMsg = binding.getHeaders(msg);
+            MessagePartContainer outHeaderMsg = null;
+            if (outMsg != null) outHeaderMsg = binding.getHeaders(outMsg);
+            
+            final Object[] paramArray = fillInHolders(context, operation, msg, outMsg, headerMsg, outHeaderMsg, params);
+            context.getInMessage().setBody(paramArray);
+            
+            readHeaders(context, headerMsg, paramArray);
 
             final Invoker invoker = context.getService().getInvoker();
             
             // invoke the service method...
             if (!operation.isAsync())
             {
-                sendMessage(context, params, operation, invoker);
+                sendMessage(context, paramArray, operation, invoker);
             }
             else
             {
@@ -82,7 +78,7 @@ public class ServiceInvocationHandler
                     {
                         try
                         {
-                            sendMessage(context, params, operation, invoker);
+                            sendMessage(context, paramArray, operation, invoker);
                         }
                         catch (Exception e)
                         {
@@ -104,42 +100,129 @@ public class ServiceInvocationHandler
         }
     }
 
+    public static void readHeaders(final MessageContext context, 
+                                   MessagePartContainer headerMsg, 
+                                   final Object[] paramArray)
+        throws XFireFault
+    {
+        final List headerInfos = headerMsg.getMessageParts();
+        for (Iterator itr = headerInfos.iterator(); itr.hasNext();)
+        {
+            MessagePartInfo header = (MessagePartInfo) itr.next();
+
+            BindingProvider provider = context.getService().getBindingProvider();
+
+            XMLStreamReader headerReader = getXMLStreamReader(context.getInMessage(), header);
+            // check to see if there is a header to read
+            if (headerReader == null) continue;
+            
+            Object headerVal = provider.readParameter(header, headerReader, context);
+
+            // why the null check? In case there is a Holder class of some sort there.
+            if (paramArray[header.getIndex()] == null)
+            {
+                paramArray[header.getIndex()] = headerVal;
+            }
+        }
+    }
+
+    /**
+     * Looks for holders, instantiates them, then inserts them into the parameters.
+     * @return
+     */
+    protected Object[] fillInHolders(MessageContext context,
+                                     OperationInfo opInfo, 
+                                     MessageInfo inMsg, 
+                                     MessageInfo outMsg, 
+                                     MessagePartContainer headerMsg, 
+                                     MessagePartContainer outHeaderMsg, 
+                                     List params)
+    {
+        // Gross hack to calculate the size of the method parameters, minus special
+        // parameters like MessageContext.
+        int outSize = 0;
+        if (outMsg != null)
+        {
+            outSize = outHeaderMsg.size() + ((outMsg.size() == 0) ? 0 : outMsg.size() - 1);
+        }
+        
+        int total = inMsg.size() + headerMsg.size() + outSize;
+        
+        if (total == params.size()) return params.toArray();
+        
+        Object[] newParams = new Object[total];
+        List parts = inMsg.getMessageParts();
+        for (int i = 0; i < parts.size(); i++)
+        {
+            MessagePartInfo part = (MessagePartInfo) parts.get(i);
+            newParams[part.getIndex()] = params.get(i);
+        }
+        
+        // Case for filling in holders - in server mode
+        if (!AbstractBinding.isClientModeOn(context))
+        {
+            fillInHolders(outMsg, newParams);
+            fillInHolders(outHeaderMsg, newParams);
+        }
+        
+        return newParams;
+    }
+
+    private void fillInHolders(MessagePartContainer msg, Object[] newParams)
+    {
+        for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
+        {
+            MessagePartInfo part = (MessagePartInfo) itr.next();
+ 
+            if (part.getIndex() >= 0)
+            {
+                try
+                {
+                    Object holder = part.getTypeClass().newInstance();
+                    newParams[part.getIndex()] = holder;
+                }
+                catch (Exception e)
+                {
+                    throw new XFireRuntimeException("Could not instantiate holder class.", e);
+                }
+            }  
+        }
+    }
+    
     protected void sendMessage(final MessageContext context,
-                               final List params,
+                               final Object[] params,
                                final OperationInfo operation,
                                final Invoker invoker)
         throws Exception
     {
         final Object value = invoker.invoke(operation.getMethod(),
-                                            params.toArray(),
+                                            params,
                                             context);
 
         if (context.getExchange().hasOutMessage())
         {
             OutMessage outMsg = context.getExchange().getOutMessage();
+            writeHeaders(context);
             context.setCurrentMessage(outMsg);
             outMsg.setBody(new Object[] {value});
             outMsg.setSerializer(context.getBinding().getSerializer(operation));
             context.getOutPipeline().invoke(context);
         }
-        
-        // writeHeaders(context);
     }
     
     public static void writeHeaders(MessageContext context) throws XFireFault, XMLStreamException
     {
         MessageInfo msgInfo = AbstractBinding.getOutgoingMessageInfo(context);
         MessagePartContainer headers = context.getBinding().getHeaders(msgInfo);
-       
-        Object[] body = (Object[]) context.getOutMessage().getBody();
+        Object[] body = (Object[]) context.getCurrentMessage().getBody();
 
+        ElementStreamWriter writer = new ElementStreamWriter(context.getOutMessage().getHeader());
         for (Iterator itr = headers.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
-            
             BindingProvider provider = context.getService().getBindingProvider();
-            
-            AbstractBinding.writeParameter(new ElementStreamWriter(context.getOutMessage().getHeader()),
+
+            AbstractBinding.writeParameter(writer,
                                            context,
                                            body[part.getIndex()],
                                            part,
@@ -147,7 +230,7 @@ public class ServiceInvocationHandler
         }
     }
 
-    private XMLStreamReader getXMLStreamReader(AbstractMessage msg, MessagePartInfo header)
+    private static XMLStreamReader getXMLStreamReader(AbstractMessage msg, MessagePartInfo header)
     {
         QName name = header.getName();
         Element el = 

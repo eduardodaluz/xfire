@@ -130,6 +130,11 @@ public class ServiceGenerator
                                                 javify(serviceIntf.name()),
                                                 JExpr.dotclass(serviceIntf));
 
+            JFieldVar implClass = servCls.field(JMod.STATIC + JMod.PUBLIC,
+                                                Class.class,
+                                                javify(serviceImpl.name() + "_BINDING"),
+                                                JExpr.dotclass(serviceImpl));
+
             // hack to get local support
             if (!addedLocal)
             {
@@ -158,12 +163,12 @@ public class ServiceGenerator
                 JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "get" + endpoint.getName().getLocalPart());
                 JBlock geBody = getFooEndpoint.body();
     
-                geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke("getPort").arg(newQN).arg(intfClass)));
+                geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke("getPort").arg(newQN).arg(implClass)));
                 
                 JAnnotationUse weAnn = getFooEndpoint.annotate(WebEndpoint.class);
                 weAnn.param("name", endpoint.getName().getLocalPart());
                 
-                staticBlock.add(portsVar.invoke("put").arg(newQN).arg(intfClass));
+                staticBlock.add(portsVar.invoke("put").arg(newQN).arg(implClass));
             }
         }
     }

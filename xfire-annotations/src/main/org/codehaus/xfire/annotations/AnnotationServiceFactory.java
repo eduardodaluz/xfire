@@ -304,6 +304,20 @@ public class AnnotationServiceFactory
 
         return super.isHeader(method, paramNumber);
     }
+    
+    protected boolean isOutParam(Method method, int j)
+    {
+        if (webAnnotations.hasWebParamAnnotation(method, j))
+        {
+            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
+
+            return webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT;
+        }
+        else
+        {
+            return super.isOutParam(method, j);
+        }
+    }
 
     protected QName getInParameterName(Service endpoint, OperationInfo op, Method method, int paramNumber, boolean doc)
     {

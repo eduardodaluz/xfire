@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -283,6 +284,11 @@ public abstract class AbstractXFireTest
         this.factory = factory;
     }
 
+    protected XFireProxyFactory getXFireProxyFactory()
+    {
+        return new XFireProxyFactory(getXFire());
+    }
+    
     protected InputStream getResourceAsStream(String resource)
     {
         return getClass().getResourceAsStream(resource);

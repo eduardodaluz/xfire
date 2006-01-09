@@ -1,0 +1,10 @@
+<mappings
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://xfire.codehaus.org/schemas/1.0/mapping.xsd">
+  <mapping>
+    <method name="echo">
+      <parameter index="1" componentType="java.lang.String" />
+      <parameter index="2" componentType="java.lang.String" />
+    </method>
+  </mapping>
+</mappings>

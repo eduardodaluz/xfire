@@ -75,7 +75,7 @@ public abstract class AbstractBindingProvider
             }
             catch(XFireRuntimeException e)
             {
-                e.prepend("Error initializing fault for method " + opInfo.getMethod());
+                e.prepend("Error initializing headers for method " + opInfo.getMethod());
                 throw e;
             }
         }

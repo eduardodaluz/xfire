@@ -149,6 +149,13 @@ public class Java5TypeCreator
     public Type createCollectionType(TypeClassInfo info)
     {
         Object genericType = info.getGenericType();
+        Class paramClass = getComponentType(genericType);
+
+        return super.createCollectionType(info, paramClass);
+    }
+
+    protected Class getComponentType(Object genericType)
+    {
         Class paramClass = Object.class;
         if (genericType instanceof ParameterizedType)
         {
@@ -159,8 +166,7 @@ public class Java5TypeCreator
                 paramClass = (Class) type.getActualTypeArguments()[0];
             }
         }
-
-        return super.createCollectionType(info, paramClass);
+        return paramClass;
     }
 
     @Override

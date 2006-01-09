@@ -62,7 +62,6 @@ public class ServiceInterfaceGenerator
     {
         JAnnotationUse ann = jc.annotate(WebService.class);
         
-        // TODO: technically, this needs to be the port type name instead
         ann.param("name", service.getServiceInfo().getPortType().getLocalPart());
         ann.param("targetNamespace", service.getTargetNamespace());
         
@@ -101,7 +100,6 @@ public class ServiceInterfaceGenerator
         wpann.param("mode", WebParam.Mode.OUT);
         wpann.param("header", true);
     }
-
 
     protected void annotateReturnType(JMethod method, MessagePartInfo returnPart)
     {

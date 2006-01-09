@@ -108,8 +108,7 @@ public abstract class AbstractServiceGenerator
         {
             MessagePartInfo part = (MessagePartInfo) pitr.next();
             
-            String varName = part.getName().getLocalPart();
-            varName = getUniqueName(varName, partNames);
+            String varName = getUniqueName(part.getName().getLocalPart(), partNames);
             partNames.add(varName);
 
             JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
@@ -129,9 +128,9 @@ public abstract class AbstractServiceGenerator
             {
                 MessagePartInfo part = (MessagePartInfo) bitr.next(); 
                 
-                String varName = part.getName().getLocalPart();
-                varName = getUniqueName(varName, partNames);
-                
+                String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+                partNames.add(varName);
+
                 JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
                 JVar jvar = method.param(0, paramType, varName);
                 
@@ -151,13 +150,16 @@ public abstract class AbstractServiceGenerator
             {
                 annotateReturnType(method, returnPart, (Binding) itr.next());
             }
-            
+
             while (rtitr.hasNext())
             {
                 MessagePartInfo part = (MessagePartInfo) rtitr.next();
                 
-                JType paramType = schema.getType(context, part.getName(), null);
-                JVar jvar = method.param(0, paramType, part.getName().getLocalPart());
+                String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+                partNames.add(varName);
+
+                JType paramType = getHolderType(context, part);
+                JVar jvar = method.param(0, paramType, varName);
                 
                 annotateOutParam(part, jvar);
             } 
@@ -171,15 +173,24 @@ public abstract class AbstractServiceGenerator
                 {
                     MessagePartInfo part = (MessagePartInfo) bitr.next(); 
                     
-                    JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
-                    JVar jvar = method.param(0, paramType, part.getName().getLocalPart());
-                    
+                    String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+                    partNames.add(varName);
+
+                    JType paramType = getHolderType(context, part);
+                    JVar jvar = method.param(0, paramType, varName);
+
                     annotateOutParam(part, jvar, binding);
                 }
             }
         }
         
         generateFaults(context, op, method);
+    }
+
+    protected JType getHolderType(GenerationContext context,MessagePartInfo part)
+        throws GenerationException
+    {
+        return context.getSchemaGenerator().getType(context, part.getName(), null);
     }
 
     protected void generateFaults(GenerationContext context, OperationInfo op, JMethod method)

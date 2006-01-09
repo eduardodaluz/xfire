@@ -27,6 +27,7 @@
       <arg value="${maven.build.dir}/xfire-xmlbeans-test"/>
       <arg value="${basedir}/src/test-schemas/WeatherForecast.xsd"/>
       <arg value="${basedir}/src/test-schemas/anyschema.xsd"/>
+      <arg value="${basedir}/src/test-schemas/idref.xsd"/>
       <arg value="${basedir}/src/test-schemas/Base.xsd"/>
       <arg value="${basedir}/src/test-schemas/Request.xsd"/>
       <arg value="${basedir}/src/test-schemas/Response.xsd"/>

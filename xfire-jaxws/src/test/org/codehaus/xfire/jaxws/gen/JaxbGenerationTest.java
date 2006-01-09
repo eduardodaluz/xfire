@@ -9,7 +9,7 @@ import com.sun.codemodel.JDefinedClass;
 public class JaxbGenerationTest
     extends AbstractJAXWSTest
 {
-    public void testEcho() throws Exception
+    public void testGlobalWeather() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl("src/wsdl/globalweather-twoporttypes.wsdl");
@@ -23,8 +23,23 @@ public class JaxbGenerationTest
         JDefinedClass echo = model._getClass("services.global.GlobalWeatherService");
         assertNotNull(echo);
     }
+    
+    public void testEchoHeader() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl("src/wsdl/headerout.wsdl");
+        generator.setOutputDirectory("target/test-services");
+        generator.setDestinationPackage("services.headerout");
+        generator.setProfile(JAXWSProfile.class.getName());
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("services.headerout.EchoPortType");
+        assertNotNull(echo);
+    }
 
-    public void testWeather() throws Exception
+    public void testEcho() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl("src/wsdl/echo.wsdl");

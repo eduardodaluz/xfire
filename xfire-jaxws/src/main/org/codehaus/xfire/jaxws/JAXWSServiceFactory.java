@@ -12,8 +12,8 @@ import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.handler.OutMessageSender;
-import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.jaxws.handler.WebFaultHandler;
+import org.codehaus.xfire.jaxws.type.JAXWSTypeRegistry;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -33,7 +33,7 @@ public class JAXWSServiceFactory
     {
         super(new Jsr181WebAnnotations(), 
               transportManager, 
-              new AegisBindingProvider(new JaxbTypeRegistry()));
+              new AegisBindingProvider(new JAXWSTypeRegistry()));
     }
     
     protected void registerHandlers(Service service)
