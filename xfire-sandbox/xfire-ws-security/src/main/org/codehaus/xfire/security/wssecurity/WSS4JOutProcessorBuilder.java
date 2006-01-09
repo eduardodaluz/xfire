@@ -47,6 +47,12 @@ public class WSS4JOutProcessorBuilder
                 wss4jProcessor.setUsePlainUserPassword(true);
             }
         }
+        
+        String ttlStr = props.getProperty(PROP_TIME_TO_LIVE);
+        if( ttlStr != null ){
+            int ttl =  Integer.parseInt(ttlStr);
+            wss4jProcessor.setTTL(ttl);
+        }
 
     }
 

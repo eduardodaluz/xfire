@@ -39,11 +39,11 @@ public class UsernamePasswordEchoServiceImpl implements UsernamePasswordEchoServ
         Element echo = new Element("echo");
         document.addContent(0, echo);
         Element username = new Element("username");
-        username.setText((String) messageContext.getProperty("username"));
+        username.setText((String) messageContext.getProperty(SecurityConstants.SECURITY_IN_USER_NAME_CONTEXT_KEY));
         echo.addContent(username);
         
         Element password = new Element("password");
-        password.setText((String) messageContext.getProperty("password"));
+        password.setText((String) messageContext.getProperty(SecurityConstants.SECURITY_IN_USER_PASS_CONTEXT_KEY));
         echo.addContent(password);
         
         XMLOutputter outputter = new XMLOutputter();

@@ -38,6 +38,9 @@ public interface OutSecurityProcessor
     void setUsePlainUserPassword(boolean usePlain);
     
     boolean usePlainUserPassword();
+    
+    int getTTL();
+    void setTTL(int ttl);
 
     void setBuilder(OutSecurityProcessorBuilder builder);
 

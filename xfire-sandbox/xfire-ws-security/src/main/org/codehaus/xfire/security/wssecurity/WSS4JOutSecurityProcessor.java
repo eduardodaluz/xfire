@@ -7,6 +7,7 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
+import org.apache.ws.security.message.WSAddTimestamp;
 import org.apache.ws.security.message.WSEncryptBody;
 import org.apache.ws.security.message.WSSAddUsernameToken;
 import org.apache.ws.security.util.WSSecurityUtil;
@@ -32,6 +33,8 @@ public class WSS4JOutSecurityProcessor
     private boolean initialized = false;
 
     private boolean userPasswordUsePlain = false;
+
+    private int ttl = -1;
 
     private void checkInitialized()
     {
@@ -74,6 +77,7 @@ public class WSS4JOutSecurityProcessor
         }
 
         document = addUserToken(document);
+        document = addTimestamp(document);
         return document;
     }
 
@@ -95,6 +99,20 @@ public class WSS4JOutSecurityProcessor
         }
         return doc;
 
+    }
+
+    /**
+     * @param doc
+     * @return
+     */
+    private Document addTimestamp(Document doc)
+    {
+        if (getTTL() == -1)
+        {
+            return doc;
+        }
+        WSAddTimestamp TTLBuilder = new WSAddTimestamp();
+        return TTLBuilder.build(doc, getTTL());
     }
 
     public String getAlias()
@@ -127,6 +145,17 @@ public class WSS4JOutSecurityProcessor
     {
 
         return this.userPasswordUsePlain;
+    }
+
+    public int getTTL()
+    {
+        return ttl;
+    }
+
+    public void setTTL(int ttl)
+    {
+        this.ttl = ttl;
+
     }
 
 }

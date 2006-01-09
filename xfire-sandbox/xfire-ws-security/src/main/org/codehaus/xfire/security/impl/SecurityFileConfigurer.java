@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
+ * TODO : add validation if property file contains only valid values
  */
 public class SecurityFileConfigurer
 {
@@ -40,10 +41,12 @@ public class SecurityFileConfigurer
     public static final String PROP_USER_PASSWORD = "xfire.security.user.password";
 
     public static final String PROP_USER_PASSWORD_USE_PLAIN = "xfire.security.user.password.use.plain";
+    
+    public static final String PROP_TIME_TO_LIVE = "xfire.security.time.to.live";
 
     public static final String[] ALL_PROPS = { PROP_USER_PASSWORD_USE_PLAIN, PROP_USER_PASSWORD,
             PROP_USER_NAME, PROP_SYM_ALG, PROP_CERT_FILE, PROP_KEY_PASS, PROP_KEY_ALIAS,
-            PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, };
+            PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, PROP_TIME_TO_LIVE, };
 
     /**
      * @param path

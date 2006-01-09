@@ -28,6 +28,8 @@ public class DebugOutSecurityProcesor
 
     private OutSecurityProcessorBuilder builder;
 
+    private int ttl;
+
     public void setEncCipherName(String name)
     {
         encCipherName = name;
@@ -121,6 +123,17 @@ public class DebugOutSecurityProcesor
     {
 
         return usePlainUserPass;
+    }
+
+    public int getTTL()
+    {
+        return ttl;
+    }
+
+    public void setTTL(int ttl)
+    {
+        this.ttl = ttl;
+
     }
 
 }
