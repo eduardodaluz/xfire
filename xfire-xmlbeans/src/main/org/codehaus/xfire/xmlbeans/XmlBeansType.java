@@ -56,7 +56,7 @@ public class XmlBeansType
         setTypeClass(schemaType.getJavaClass());
         options.setDocumentType(schemaType);
         
-        if (!schemaType.isDocumentType() && !isAbstract())
+        if (!schemaType.isDocumentType() && !schemaType.isAbstract())
         {
             setWriteOuter(true);
         }
@@ -71,6 +71,15 @@ public class XmlBeansType
         this.schemaType = XmlBeans.typeForClass(clazz);
         setTypeClass(clazz);
         options.setDocumentType(schemaType);
+        
+        if (!schemaType.isDocumentType() && !schemaType.isAbstract())
+        {
+            setWriteOuter(true);
+        }
+        else
+        {
+            setWriteOuter(false);
+        }
     }
 
     public void writeSchema(Element root)
