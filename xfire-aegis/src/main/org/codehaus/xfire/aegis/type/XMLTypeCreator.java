@@ -148,7 +148,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         Element mapping = findMapping(info.getTypeClass());
         if (mapping != null)
         {
-            return super.createCollectionType(info, (Class)info.getGenericType());
+            return createCollectionType(info, (Class)info.getGenericType());
         }
         else
         {
