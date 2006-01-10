@@ -334,25 +334,31 @@ public class STAXUtils
         for ( int i = 0; i < nodes.getLength(); i++ )
         {
             Node n = nodes.item(i);
-            if ( n instanceof Element )
-            {
-                writeElement((Element)n, writer, repairing);
-            }
-            else if ( n instanceof Text )
-            {
-                writer.writeCharacters(((Text) n).getNodeValue());
-            }
-            else if ( n instanceof CDATASection )
-            {
-                writer.writeCData(((CDATASection) n).getData());
-            }
-            else if ( n instanceof Comment )
-            {
-                writer.writeComment(((Comment) n).getData());
-            }
+            writeNode(n, writer, repairing);
         }
 
         writer.writeEndElement();
+    }
+
+    public static void writeNode(Node n, XMLStreamWriter writer, boolean repairing)
+        throws XMLStreamException
+    {
+        if ( n instanceof Element )
+        {
+            writeElement((Element)n, writer, repairing);
+        }
+        else if ( n instanceof Text )
+        {
+            writer.writeCharacters(((Text) n).getNodeValue());
+        }
+        else if ( n instanceof CDATASection )
+        {
+            writer.writeCData(((CDATASection) n).getData());
+        }
+        else if ( n instanceof Comment )
+        {
+            writer.writeComment(((Comment) n).getData());
+        }
     }
 
     public static Document read(DocumentBuilder builder, XMLStreamReader reader, boolean repairing)
