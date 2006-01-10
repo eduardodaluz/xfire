@@ -50,7 +50,7 @@ public class XFireExporter
     protected Object getProxyForService()
     {
         ProxyFactory proxyFactory = new ProxyFactory();
-        proxyFactory.addInterface(getServiceClass());
+        proxyFactory.addInterface(getXFireService().getServiceInfo().getServiceClass());
 
         proxyFactory.setTarget(getServiceBean());
         return proxyFactory.getProxy();
