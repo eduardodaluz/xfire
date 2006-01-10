@@ -17,6 +17,7 @@ import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.MessageReader;
@@ -29,6 +30,9 @@ import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.util.STAXUtils;
 import org.jdom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -40,7 +44,8 @@ public class XmlBeansType
     public static final String XMLBEANS_NAMESPACE_HACK = "xmlbeans-namespace-hack";
     
     private SchemaType schemaType;
-
+    private XmlOptions options = new XmlOptions();
+    
     public XmlBeansType()
     {
     }
@@ -49,12 +54,23 @@ public class XmlBeansType
     {
         this.schemaType = schemaType;
         setTypeClass(schemaType.getJavaClass());
+        options.setDocumentType(schemaType);
+        
+        if (!schemaType.isDocumentType() && !isAbstract())
+        {
+            setWriteOuter(true);
+        }
+        else
+        {
+            setWriteOuter(false);
+        }
     }
 
     public XmlBeansType(Class clazz)
     {
         this.schemaType = XmlBeans.typeForClass(clazz);
         setTypeClass(clazz);
+        options.setDocumentType(schemaType);
     }
 
     public void writeSchema(Element root)
@@ -69,11 +85,6 @@ public class XmlBeansType
     public boolean isAbstract()
     {
         return schemaType.isAbstract();
-    }
-
-    public boolean isWriteOuter()
-    {
-        return false;
     }
 
     public Set getDependencies()
@@ -138,7 +149,7 @@ public class XmlBeansType
         try
         {
             XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
-            XmlObject parsed = XmlObject.Factory.parse(reader);
+            XmlObject parsed = XmlObject.Factory.parse(reader, options);
             
            
             /* Add namespace declarations from the XMLStreamReader NamespaceContext.
@@ -167,7 +178,8 @@ public class XmlBeansType
             {
                 cursor.dispose();
             }
-
+            
+            
             return parsed;
         }
         catch( XmlException e )
@@ -182,11 +194,32 @@ public class XmlBeansType
         try
         {
             XmlObject obj = (XmlObject) value; 
-       
+
             XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
             if (Boolean.valueOf((String) context.getContextualProperty(XMLBEANS_NAMESPACE_HACK)).booleanValue())
             {
-                STAXUtils.writeElement(((Document) obj.newDomNode()).getDocumentElement(), xsw, false);
+                Object o = obj.newDomNode();
+                if (o instanceof Document)
+                {
+                    org.w3c.dom.Element e = ((Document) o).getDocumentElement();
+                    STAXUtils.writeElement(e, xsw, false);
+                }
+                else if (o instanceof DocumentFragment)
+                {
+                    DocumentFragment frag = (DocumentFragment) o;
+                    
+                    NodeList nodes = frag.getChildNodes();
+                    Node node = nodes.item(0);
+                    nodes = node.getChildNodes();
+                    for (int i = 0; i < nodes.getLength(); i++)
+                    {
+                        STAXUtils.writeNode(nodes.item(i), xsw, false);
+                    }
+                }
+                else
+                {
+                    throw new XFireRuntimeException("Invalid document type returned: " + o);
+                }
             }
             else
             {
@@ -200,5 +233,15 @@ public class XmlBeansType
         {
             throw new XFireFault("Could not write response.", e, XFireFault.SENDER);
         }
+    }
+
+    public XmlOptions getOptions()
+    {
+        return options;
+    }
+
+    public void setOptions(XmlOptions options)
+    {
+        this.options = options;
     }
 }
