@@ -2,6 +2,7 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.io.IOException;
 import java.security.Key;
+import java.security.Principal;
 import java.util.Map;
 import java.util.Vector;
 
@@ -9,6 +10,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityEngineResult;
@@ -79,6 +81,7 @@ public class WSS4JInSecurityProcessor
     }
 
     public InSecurityResult process(Document document)
+        throws org.codehaus.xfire.security.exceptions.WSSecurityException
     {
         Vector wsResult = null;
 
@@ -89,19 +92,18 @@ public class WSS4JInSecurityProcessor
         }
         catch (WSSecurityException ex)
         {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
+            throw ExceptionConverter.convert(ex);
+            // throw new RuntimeException(ex);
         }
 
         InSecurityResult result = new InSecurityResult();
         if (wsResult != null)
         {
-            WSSecurityEngineResult wsr = ((WSSecurityEngineResult)wsResult.get(0));
+            SecurityResultHandler handler = new SecurityResultHandler(result);
+            result = handler.process(wsResult);
 
-            result.setUser(((WSUsernameTokenPrincipal)wsr.getPrincipal()).getName());
-            result.setPassword(((WSUsernameTokenPrincipal)((WSSecurityEngineResult)wsResult.get(0)).getPrincipal()).getPassword());
         }
-        
+
         result.setDocument(document);
         return result;
     }

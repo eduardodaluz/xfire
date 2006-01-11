@@ -1,5 +1,8 @@
 package org.codehaus.xfire.security;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.w3c.dom.Document;
 
 /**
@@ -13,8 +16,34 @@ public class InSecurityResult {
 	private String user;
 
 	private String password;
+    
+    private Calendar tsCreated;
+    
+    private Calendar tsExpire;
+    
+    
 
-	public Document getDocument() {
+	public Calendar getTsCreated()
+    {
+        return tsCreated;
+    }
+
+    public void setTsCreated(Calendar tsCreated)
+    {
+        this.tsCreated = tsCreated;
+    }
+
+    public Calendar getTsExpire()
+    {
+        return tsExpire;
+    }
+
+    public void setTsExpire(Calendar tsExpire)
+    {
+        this.tsExpire = tsExpire;
+    }
+
+    public Document getDocument() {
 		return document;
 	}
 
