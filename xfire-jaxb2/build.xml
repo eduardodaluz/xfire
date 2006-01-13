@@ -38,6 +38,7 @@
         <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="build.classpath"/>
 
         <mkdir dir="${target.dir}/generated-test"/>
+        <mkdir dir="${testclassesdir}"/>
 
         <xjc target="${target.dir}/generated-test">
             <schema dir="src/test-schemas" includes="*.xsd"/>
