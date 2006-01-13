@@ -150,13 +150,16 @@ public class Java5TypeCreator
     {
         Object genericType = info.getGenericType();
         Class paramClass = getComponentType(genericType);
-
-        return super.createCollectionType(info, paramClass);
+        if(paramClass != null){
+            return super.createCollectionType(info, paramClass);
+        } else {
+            return nextCreator.createCollectionType(info); 
+        }
     }
 
     protected Class getComponentType(Object genericType)
     {
-        Class paramClass = Object.class;
+        Class paramClass = null;
         if (genericType instanceof ParameterizedType)
         {
             ParameterizedType type = (ParameterizedType) genericType;

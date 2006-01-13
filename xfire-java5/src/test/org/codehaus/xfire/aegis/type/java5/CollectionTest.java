@@ -12,10 +12,10 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
-import org.codehaus.xfire.aegis.type.java5.Java5TypeCreator;
 import org.codehaus.xfire.aegis.type.java5.dto.CollectionDTO;
 import org.codehaus.xfire.aegis.type.java5.dto.DTOService;
 import org.codehaus.xfire.service.Service;
+import org.jdom.Document;
 
 public class CollectionTest
     extends AbstractXFireAegisTest
@@ -105,6 +105,14 @@ public class CollectionTest
         printNode(getWSDLDocument(service.getSimpleName()));
     }
     
+    public void testUnannotatedStrings() throws Exception {
+        Service endpoint = getServiceFactory().create(CollectionService.class);
+        getServiceRegistry().register(endpoint);
+        Document doc = getWSDLDocument("CollectionService");
+        printNode(doc);
+        assertValid("//xsd:element[@name='getUnannotaedStringsResponse']/xsd:complexType/xsd:sequence/xsd:element[@type='tns:ArrayOfString']", doc);
+    }
+    
     public class CollectionService
     {
         public Collection<String> getStrings() 
@@ -114,6 +122,10 @@ public class CollectionTest
         
         public void setLongs(Collection<Long> longs) 
         {
+        }
+        
+        public Collection getUnannotaedStrings(){
+            return null;
         }
     }
 }
