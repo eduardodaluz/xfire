@@ -77,6 +77,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
     
     protected Document getDocument(Class clazz)
     {
+        if(clazz == null) return null;
         Document doc = (Document) documents.get(clazz.getName());
         if(doc != null)
         {
@@ -146,7 +147,11 @@ public class XMLTypeCreator extends AbstractTypeCreator
     public Type createCollectionType(TypeClassInfo info)
     {
         Element mapping = findMapping(info.getTypeClass());
-        if (mapping != null)
+        Element componentMapping = null;
+        if(info.getGenericType() instanceof Class){
+            componentMapping = findMapping((Class)info.getGenericType());
+        }
+        if ((mapping != null) || (componentMapping != null))
         {
             return createCollectionType(info, (Class)info.getGenericType());
         }
