@@ -1,0 +1,7 @@
+<mappings>
+	<mapping>
+		<method name="getBeanList">
+			<return-type componentType="org.codehaus.xfire.aegis.type.basic.RenamedBean"/>
+		</method>
+	</mapping>
+</mappings>

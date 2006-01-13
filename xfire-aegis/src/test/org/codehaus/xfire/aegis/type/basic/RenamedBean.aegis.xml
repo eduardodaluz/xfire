@@ -1,0 +1,3 @@
+<mappings xmlns:newName="http://new.name">
+	<mapping name="newName:NewBean"/>
+</mappings>
