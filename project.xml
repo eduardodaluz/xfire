@@ -172,7 +172,7 @@
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
       <version>1.0</version>
-      <url>http://yom.codehaus.org</url>
+      <url>http://www.jdom.org/</url>
     </dependency>
     <dependency>
       <groupId>servletapi</groupId>
