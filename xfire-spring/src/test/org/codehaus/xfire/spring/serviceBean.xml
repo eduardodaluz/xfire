@@ -17,6 +17,8 @@
     
     <bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingInHandler"/>
 
+    <!-- END SNIPPET: xfire -->
+    
     <bean id="changedPhaseHandler" class="org.codehaus.xfire.addressing.AddressingInHandler">
     	<property name="phase"><value>pre-invoke</value></property>
     </bean>
@@ -63,6 +65,5 @@
     
     <bean id="secondHandler2" class="org.codehaus.xfire.spring.TestHandler2"/>
     
-    <!-- END SNIPPET: xfire -->
 </beans>
 
