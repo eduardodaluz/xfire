@@ -89,32 +89,28 @@ public class ObjectType extends Type
             throw new XFireFault( "Missing 'xsi:type' attribute value", XFireFault.SENDER);
         }
 
-        Type type;
-        QName typeQName = reader.getName();
-        if (typeName != null)
+        Type type = null;
+		QName typeQName = null;
+		if (typeName != null)
         {
-            typeQName = extractQName(typeReader, typeName);
-            type = getTypeMapping().getType(Document.class);
-        }
-        else 
-        {
+            typeQName = extractQName(reader, typeName);
             type = getTypeMapping().getType( typeQName );
-            
-            if (type == null && readToDocument)
-            {
-                type = getTypeMapping().getType(Document.class);
-            }
         }
+
+		if (type == null && readToDocument)
+		{
+			type = getTypeMapping().getType(Document.class);
+		}
 
         if( null == type )
         {
             //TODO should check namespace as well..
-            if( serializedWhenUnknown && "serializedJavaObject".equals( typeQName.getLocalPart() ) )
+            if( serializedWhenUnknown && "serializedJavaObject".equals( typeName ) )
             {
                 return reconstituteJavaObject( reader );
             }
 
-            throw new XFireFault( "No mapped type for '" + typeQName + "'", XFireFault.SENDER);
+            throw new XFireFault( "No mapped type for '" + typeName + "' (" + typeQName + ")", XFireFault.SENDER);
         }
 
         return type.readObject( reader, context );
