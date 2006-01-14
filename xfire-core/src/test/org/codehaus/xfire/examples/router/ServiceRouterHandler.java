@@ -14,9 +14,11 @@ public class ServiceRouterHandler
     public final static String VERSION_NS = "http://xfire.codehaus.org/examples/router";
     public final static String VERSION_NAME = "Version";
 
-    public String getPhase()
+    
+    public ServiceRouterHandler() 
     {
-        return Phase.PRE_DISPATCH;
+        super();
+        setPhase(Phase.PRE_DISPATCH);
     }
 
     public void invoke(MessageContext context)

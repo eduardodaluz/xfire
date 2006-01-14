@@ -20,9 +20,10 @@ import org.codehaus.xfire.util.stax.ElementStreamWriter;
 public class CustomFaultHandler
     extends AbstractHandler
 {    
-    public String getPhase()
-    {
-        return Phase.USER;
+    
+    public CustomFaultHandler() {
+        super();
+        setPhase(Phase.USER);
     }
 
     public void invoke(MessageContext context)

@@ -32,12 +32,8 @@ public class DOMOutHandler
     public DOMOutHandler()
     {
         super();
+        setPhase(Phase.POST_INVOKE);
         after(SoapSerializerHandler.class.getName());
-    }
-
-    public String getPhase()
-    {
-        return Phase.POST_INVOKE;
     }
 
     public void invoke(MessageContext context)

@@ -336,11 +336,12 @@ public class XFireServletController
     public static class FaultResponseCodeHandler
         extends AbstractHandler
     {        
-       public String getPhase()
-       {
-           return Phase.TRANSPORT;
-       }
-    
+
+        public FaultResponseCodeHandler() {
+            super();
+            setPhase(Phase.TRANSPORT);
+        }
+
        /**
         * @see org.codehaus.xfire.handler.Handler#invoke(org.codehaus.xfire.MessageContext)
         * @param context

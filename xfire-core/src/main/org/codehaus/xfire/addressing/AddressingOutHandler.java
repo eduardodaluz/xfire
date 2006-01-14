@@ -14,11 +14,8 @@ public class AddressingOutHandler
     
     public AddressingOutHandler()
     {
-    }
-
-    public String getPhase()
-    {
-        return Phase.TRANSPORT;
+        super();
+        setPhase(Phase.TRANSPORT);
     }
 
     public void invoke(MessageContext context)

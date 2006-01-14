@@ -22,13 +22,8 @@ public class LocateBindingHandler
     public LocateBindingHandler()
     {
         super();
-
+        setPhase(Phase.DISPATCH);
         after(ReadHeadersHandler.class.getName());
-    }
-
-    public String getPhase()
-    {
-        return Phase.DISPATCH;
     }
 
     public void invoke(MessageContext context)

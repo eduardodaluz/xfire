@@ -55,7 +55,7 @@ public class HandlerPipelineTest
         handlerPipeline.addHandler(handler1);
         handlerPipeline.addHandler(handler2);
 
-        List handlers = handlerPipeline.getPhase(Phase.TRANSPORT).getHandlers();
+        List handlers = handlerPipeline.getPhaseHandlers(Phase.TRANSPORT).getHandlers();
         
         assertTrue(handlers.get(0) == handler2);
         assertTrue(handlers.get(1) == handler1);
@@ -65,7 +65,7 @@ public class HandlerPipelineTest
         handlerPipeline.addHandler(handler2);
         handlerPipeline.addHandler(handler1);
 
-        handlers = handlerPipeline.getPhase(Phase.TRANSPORT).getHandlers();
+        handlers = handlerPipeline.getPhaseHandlers(Phase.TRANSPORT).getHandlers();
         
         assertTrue(handlers.get(0) == handler2);
         assertTrue(handlers.get(1) == handler1);
@@ -80,7 +80,7 @@ public class HandlerPipelineTest
         handlerPipeline.addHandler(handler1);
         handlerPipeline.addHandler(handler2);
 
-        handlers = handlerPipeline.getPhase(Phase.TRANSPORT).getHandlers();
+        handlers = handlerPipeline.getPhaseHandlers(Phase.TRANSPORT).getHandlers();
         
         assertTrue(handlers.get(0) == handler1);
         assertTrue(handlers.get(1) == handler2);
@@ -101,7 +101,7 @@ public class HandlerPipelineTest
         handlerPipeline.addHandler(new LocateBindingHandler());
         handlerPipeline.addHandler(new SoapBodyHandler());
 
-        List handlers = handlerPipeline.getPhase(Phase.DISPATCH).getHandlers();
+        List handlers = handlerPipeline.getPhaseHandlers(Phase.DISPATCH).getHandlers();
         
         assertTrue(handlers.get(0) instanceof LocateBindingHandler);
         assertTrue(handlers.get(1) instanceof SoapBodyHandler);
@@ -148,12 +148,12 @@ public class HandlerPipelineTest
         
     public class PhaseHandler extends AbstractHandler 
     {
-        private String phase;
         private boolean invoked = false;
         
         public PhaseHandler(String phase)
         {
-            this.phase = phase;
+            super();
+            setPhase(phase);
         }
         
         public void invoke(MessageContext context)
@@ -167,20 +167,16 @@ public class HandlerPipelineTest
             return invoked;
         }
 
-        public String getPhase()
-        {
-            return phase;
-        }
     }
     
     public class PhaseHandler2 extends AbstractHandler 
     {
-        private String phase;
         private boolean invoked = false;
         
         public PhaseHandler2(String phase)
         {
-            this.phase = phase;
+            super();
+            setPhase(phase);
         }
         
         public void invoke(MessageContext context)
@@ -194,9 +190,5 @@ public class HandlerPipelineTest
             return invoked;
         }
 
-        public String getPhase()
-        {
-            return phase;
-        }
     }
 }

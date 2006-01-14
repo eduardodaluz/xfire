@@ -16,6 +16,53 @@
     <bean id="echo" class="org.codehaus.xfire.test.EchoImpl"/>
     
     <bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingInHandler"/>
+
+    <bean id="changedPhaseHandler" class="org.codehaus.xfire.addressing.AddressingInHandler">
+    	<property name="phase"><value>pre-invoke</value></property>
+    </bean>
+    
+    <bean name="firstBeforeSecond" class="org.codehaus.xfire.spring.ServiceBean">
+        <property name="serviceBean" ref="echo"/>
+        <property name="serviceClass" value="org.codehaus.xfire.test.Echo"/>
+        <property name="inHandlers">
+          <list>
+            <ref bean="firstHandler"/>
+            <ref bean="secondHandler"/>
+          </list>
+        </property>
+    </bean>
+    
+    <bean id="firstHandler" class="org.codehaus.xfire.spring.TestHandler">
+    	<property name="before">
+    		<list>
+	    		<value>org.codehaus.xfire.spring.TestHandler2</value>
+	    	</list>
+    	</property>
+    </bean>
+    
+    <bean id="secondHandler" class="org.codehaus.xfire.spring.TestHandler2"/>
+    
+    <bean name="firstAfterSecond" class="org.codehaus.xfire.spring.ServiceBean">
+        <property name="serviceBean" ref="echo"/>
+        <property name="serviceClass" value="org.codehaus.xfire.test.Echo"/>
+        <property name="inHandlers">
+          <list>
+            <ref bean="firstHandler2"/>
+            <ref bean="secondHandler2"/>
+          </list>
+        </property>
+    </bean>
+    
+    <bean id="firstHandler2" class="org.codehaus.xfire.spring.TestHandler">
+    	<property name="after">
+    		<list>
+	    		<value>org.codehaus.xfire.spring.TestHandler2</value>
+	    	</list>
+    	</property>
+    </bean>
+    
+    <bean id="secondHandler2" class="org.codehaus.xfire.spring.TestHandler2"/>
+    
     <!-- END SNIPPET: xfire -->
 </beans>
 

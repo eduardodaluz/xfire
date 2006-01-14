@@ -1,6 +1,6 @@
 package org.codehaus.xfire.handler;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -63,7 +63,7 @@ public interface Handler
      */
     void handleFault(XFireFault fault, MessageContext context);
     
-    public Collection getAfter();
+    public List getAfter();
     
-    public Collection getBefore();
+    public List getBefore();
 }

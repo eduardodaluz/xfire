@@ -12,9 +12,12 @@ import org.codehaus.xfire.soap.SoapSerializer;
 public class SoapSerializerHandler
     extends AbstractHandler
 {
-    public String getPhase()
+
+    
+    public SoapSerializerHandler() 
     {
-        return Phase.POST_INVOKE;
+        super();
+        setPhase(Phase.POST_INVOKE);
     }
 
     /**

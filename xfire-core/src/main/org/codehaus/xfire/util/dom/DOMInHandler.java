@@ -24,12 +24,8 @@ public class DOMInHandler
     public DOMInHandler()
     {
         super();
+        setPhase(Phase.PARSE);
         before(ReadHeadersHandler.class.getName());
-    }
-
-    public String getPhase()
-    {
-        return Phase.PARSE;
     }
 
     public void invoke(MessageContext context)

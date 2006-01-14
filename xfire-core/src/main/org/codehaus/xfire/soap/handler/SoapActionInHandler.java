@@ -20,13 +20,8 @@ public class SoapActionInHandler
     public SoapActionInHandler()
     {
         super();
-
+        setPhase(Phase.DISPATCH);
         after(LocateBindingHandler.class.getName());
-    }
-
-    public String getPhase()
-    {
-        return Phase.DISPATCH;
     }
 
     public void invoke(MessageContext context)

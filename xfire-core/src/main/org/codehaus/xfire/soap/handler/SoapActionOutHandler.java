@@ -19,11 +19,7 @@ public class SoapActionOutHandler
     public SoapActionOutHandler()
     {
         super();
-    }
-
-    public String getPhase()
-    {
-        return Phase.TRANSPORT;
+        setPhase(Phase.TRANSPORT);
     }
 
     public void invoke(MessageContext context)

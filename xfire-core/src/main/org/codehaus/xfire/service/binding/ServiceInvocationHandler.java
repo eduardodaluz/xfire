@@ -32,11 +32,12 @@ public class ServiceInvocationHandler
 {
     private static final Log logger = LogFactory.getLog(AbstractBinding.class.getName());
     
-    public String getPhase()
+    public ServiceInvocationHandler() 
     {
-        return Phase.SERVICE;
+        super();
+        setPhase(Phase.SERVICE);
     }
-    
+
     public void invoke(final MessageContext context)
         throws Exception
     {

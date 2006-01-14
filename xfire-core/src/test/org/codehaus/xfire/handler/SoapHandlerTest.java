@@ -52,7 +52,11 @@ public class SoapHandlerTest
         assertValid("/s:Envelope/s:Header/e:echo", response);
     }
 
- 
+    public void testPhaseOfHandler() throws Exception
+    {
+        AbstractHandler handler = new EchoHeaderHandler();
+        assertEquals("user", handler.getPhase());
+    }
     
     public class CheckpointHandler
             extends AbstractHandler

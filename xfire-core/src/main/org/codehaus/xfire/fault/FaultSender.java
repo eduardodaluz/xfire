@@ -19,9 +19,10 @@ public class FaultSender
 {
     private static final Log logger = LogFactory.getLog(FaultSender.class);
 
-    public String getPhase()
+    public FaultSender() 
     {
-        return Phase.SEND;
+        super();
+        setPhase(Phase.SEND);
     }
 
     public void invoke(MessageContext context)

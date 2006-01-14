@@ -18,8 +18,15 @@ public abstract class AbstractHandler
 {
     private List before = new ArrayList();
     private List after = new ArrayList();
+    private String phase;
     
-	/**
+	public AbstractHandler() 
+    {
+        super();
+        phase = Phase.USER;
+    }
+    
+    /**
      * Returns null by default, indicating that no headers
      * were understood.
      * 
@@ -35,9 +42,19 @@ public abstract class AbstractHandler
         return null;
     }
     
-    public String getPhase()
+    public final String getPhase()
     {
-        return Phase.USER;
+        return phase;
+    }
+    
+    /**
+     * Allow user to set the phase of a handler 
+     * i.e. via Spring setter injection (XFIRE-226)
+     * @param phase
+     */
+    public void setPhase(String phase)
+    {
+        this.phase = phase;
     }
     
     /**
@@ -59,13 +76,42 @@ public abstract class AbstractHandler
         before.add(handler);
     }
 
-    public Collection getAfter()
+    public List getAfter()
     {
         return after;
     }
 
-    public Collection getBefore()
+    public List getBefore()
     {
         return before;
     }
+
+    /**
+     * @param after The after to set.
+     */
+    public void setAfter(List after) {
+        if(this.after == null)
+        {
+            this.after = after;
+        }
+        else
+        {
+            this.after.addAll(after);
+        }
+    }
+
+    /**
+     * @param before The before to set.
+     */
+    public void setBefore(List before) {
+        if(this.before == null)
+        {
+            this.before = before;
+        }
+        else
+        {
+            this.before.addAll(before);
+        }
+    }
+    
 }

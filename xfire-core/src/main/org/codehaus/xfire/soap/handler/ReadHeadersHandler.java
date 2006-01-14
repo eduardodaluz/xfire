@@ -20,10 +20,11 @@ public class ReadHeadersHandler
     extends AbstractHandler
 {
     public static final String DECLARED_NAMESPACES = "declared.namespaces";
-
-    public String getPhase()
+    
+    public ReadHeadersHandler() 
     {
-        return Phase.PARSE;
+        super();
+        setPhase(Phase.PARSE);
     }
 
     public void invoke(MessageContext context)

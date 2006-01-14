@@ -32,6 +32,8 @@ public class AddressingInHandler
 
     public AddressingInHandler()
     {
+        super();
+        setPhase(Phase.PRE_DISPATCH);
         createFactories();
     }
 
@@ -40,11 +42,6 @@ public class AddressingInHandler
         factories.add(new AddressingHeadersFactory200508());
         factories.add(new AddressingHeadersFactory200408());
 
-    }
-
-    public String getPhase()
-    {
-        return Phase.PRE_DISPATCH;
     }
 
     public void invoke(MessageContext context)

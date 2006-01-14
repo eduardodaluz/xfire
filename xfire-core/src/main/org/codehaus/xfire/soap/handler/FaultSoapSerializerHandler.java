@@ -11,9 +11,11 @@ import org.codehaus.xfire.soap.SoapSerializer;
 public class FaultSoapSerializerHandler
     extends AbstractHandler
 {
-    public String getPhase()
+
+    public FaultSoapSerializerHandler() 
     {
-        return Phase.POST_INVOKE;
+        super();
+        setPhase(Phase.POST_INVOKE);
     }
 
     /**

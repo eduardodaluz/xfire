@@ -12,6 +12,7 @@ public class WSATestHandler
 
     public WSATestHandler(AddressingInData data)
     {
+        super();
         this.data = data;
     }
 

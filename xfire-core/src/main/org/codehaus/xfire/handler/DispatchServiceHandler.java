@@ -17,12 +17,8 @@ public class DispatchServiceHandler
     public DispatchServiceHandler()
     {
         super();
+        setPhase(Phase.DISPATCH);
         after(SoapBodyHandler.class.getName());
-    }
-
-    public String getPhase()
-    {
-        return Phase.DISPATCH;
     }
 
     public void invoke(MessageContext context)

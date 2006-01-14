@@ -21,9 +21,11 @@ import org.jdom.Namespace;
 public class ValidateHeadersHandler
     extends AbstractHandler
 {
-    public String getPhase()
+    
+    public ValidateHeadersHandler() 
     {
-        return Phase.PRE_INVOKE;
+        super();
+        setPhase(Phase.PRE_INVOKE);
     }
 
     /**

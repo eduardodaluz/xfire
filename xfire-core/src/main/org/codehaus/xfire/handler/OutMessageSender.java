@@ -12,9 +12,10 @@ import org.codehaus.xfire.fault.XFireFault;
 public class OutMessageSender
     extends AbstractHandler
 {
-    public String getPhase()
-    {
-        return Phase.SEND;
+    
+    public OutMessageSender() {
+        super();
+        setPhase(Phase.SEND);
     }
 
     public void invoke(MessageContext context)

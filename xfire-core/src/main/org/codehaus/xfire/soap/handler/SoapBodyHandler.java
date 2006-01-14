@@ -20,14 +20,10 @@ public class SoapBodyHandler
     public SoapBodyHandler()
     {
         super();
+        setPhase(Phase.DISPATCH);
         
         after(LocateBindingHandler.class.getName());
         before(DispatchServiceHandler.class.getName());
-    }
-
-    public String getPhase()
-    {
-        return Phase.DISPATCH;
     }
 
     public void invoke(MessageContext context)

@@ -29,6 +29,9 @@ public class HandlerPipeline
 
     public HandlerPipeline(List phases)
     {
+        super();
+        setPhase(Phase.USER);
+        
         handlers = new HashMap();
 
         // Order the phases correctly based on priority
@@ -57,7 +60,7 @@ public class HandlerPipeline
 
     public void addHandler(Handler handler)
     {
-        HandlerOrderer phaseHandlers = getPhase(handler.getPhase());
+        HandlerOrderer phaseHandlers = getPhaseHandlers(handler.getPhase());
         
         if (phaseHandlers == null) 
             throw new XFireRuntimeException("Invalid phase: " + handler.getPhase());
@@ -65,7 +68,7 @@ public class HandlerPipeline
         phaseHandlers.insertHandler(handler);
     }
 
-    public HandlerOrderer getPhase(String phase)
+    public HandlerOrderer getPhaseHandlers(String phase)
     {
         return (HandlerOrderer) handlers.get(phase);
     }
@@ -86,7 +89,7 @@ public class HandlerPipeline
         {
             Phase phase = (Phase) itr.next();
             
-            List phaseHandlers = getPhase(phase.getName()).getHandlers();
+            List phaseHandlers = getPhaseHandlers(phase.getName()).getHandlers();
             for (int i = 0; i < phaseHandlers.size(); i++ )
             {
                 Handler h = (Handler) phaseHandlers.get(i);
@@ -137,7 +140,7 @@ public class HandlerPipeline
         {
             Phase phase = (Phase) itr.next();
             
-            List phaseHandlers = getPhase(phase.getName()).getHandlers();
+            List phaseHandlers = getPhaseHandlers(phase.getName()).getHandlers();
             for (int i = 0; i < phaseHandlers.size(); i++ )
             {
                 Handler h = (Handler) phaseHandlers.get(i);
