@@ -14,6 +14,7 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.aegis.type.java5.dto.CollectionDTO;
 import org.codehaus.xfire.aegis.type.java5.dto.DTOService;
+import org.codehaus.xfire.aegis.type.java5.dto.ObjectDTO;
 import org.codehaus.xfire.service.Service;
 import org.jdom.Document;
 
@@ -87,6 +88,30 @@ public class CollectionTest
         
         Type comType = colType.getComponentType();
         assertEquals(String.class, comType.getTypeClass());
+    }
+
+    public void testObjectDTO()
+    {
+        CustomTypeMapping tm = new CustomTypeMapping();
+        Java5TypeCreator creator = new Java5TypeCreator();
+        tm.setTypeCreator(creator);
+        
+        Type dto = creator.createType(ObjectDTO.class);
+        Set deps = dto.getDependencies();
+                               
+        assertFalse( deps.isEmpty() );
+
+        Type type = (Type) deps.iterator().next();
+
+        assertTrue( type instanceof CollectionType );
+        
+        CollectionType colType = (CollectionType) type;
+        
+        deps = dto.getDependencies();
+        assertEquals(1, deps.size());
+        
+        Type comType = colType.getComponentType();
+        assertEquals(Object.class, comType.getTypeClass());
     }
     
     public void testCollectionDTOService() throws Exception

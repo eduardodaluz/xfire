@@ -4,6 +4,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.WildcardType;
+import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
@@ -160,13 +162,23 @@ public class Java5TypeCreator
     protected Class getComponentType(Object genericType)
     {
         Class paramClass = null;
+
         if (genericType instanceof ParameterizedType)
         {
             ParameterizedType type = (ParameterizedType) genericType;
-            
+
             if (type.getActualTypeArguments()[0] instanceof Class)
             {
                 paramClass = (Class) type.getActualTypeArguments()[0];
+            }
+            else if (type.getActualTypeArguments()[0] instanceof WildcardType )
+            {
+                WildcardType wildcardType = (WildcardType) type.getActualTypeArguments()[0];
+
+                if( wildcardType.getUpperBounds()[0] instanceof Class )
+                {
+                   paramClass = (Class) wildcardType.getUpperBounds()[0];
+                }
             }
         }
         return paramClass;
