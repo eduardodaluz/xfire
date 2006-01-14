@@ -6,6 +6,7 @@
   <path id="module.classpath">
     <fileset dir="${master.basedir}">
       <include name="xfire-core/target/*.jar" />
+      <include name="xfire-core/target/lib/*.jar" />
     </fileset>
   </path>
 
