@@ -33,10 +33,11 @@ public abstract class DOMStreamReader
      */
     public static class ElementFrame
     {
-        public ElementFrame(Object element) 
+        public ElementFrame(Object element, ElementFrame parent)
         {
             this.element = element;
-        }
+			this.parent = parent;
+		}
 
         Object element;
 
@@ -53,7 +54,9 @@ public abstract class DOMStreamReader
         List uris;
         List prefixes;
         List attributes;
-    }
+
+		final ElementFrame parent;
+	}
 
     /**
      * @param element

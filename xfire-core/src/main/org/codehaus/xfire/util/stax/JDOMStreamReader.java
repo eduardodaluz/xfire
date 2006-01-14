@@ -62,7 +62,7 @@ public class JDOMStreamReader
      */
     public JDOMStreamReader(Element element)
     {
-        super(new ElementFrame(element));
+        super(new ElementFrame(element, null));
         
         setupNamespaces(element);
     }
@@ -146,7 +146,7 @@ public class JDOMStreamReader
 
     protected ElementFrame getChildFrame(int currentChild)
     {
-        return new ElementFrame(getCurrentElement().getContent(currentChild));
+        return new ElementFrame(getCurrentElement().getContent(currentChild), getCurrentFrame());
     }
 
     protected int getChildCount()

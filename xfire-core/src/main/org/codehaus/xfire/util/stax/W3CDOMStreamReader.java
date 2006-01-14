@@ -29,7 +29,7 @@ public class W3CDOMStreamReader
      */
     public W3CDOMStreamReader(Element element)
     {
-        super(new ElementFrame(element));
+        super(new ElementFrame(element, null));
 
         this.document = element.getOwnerDocument();
     }
@@ -108,7 +108,7 @@ public class W3CDOMStreamReader
 
     protected ElementFrame getChildFrame(int currentChild)
     {
-        return new ElementFrame(getCurrentElement().getChildNodes().item(currentChild));
+        return new ElementFrame(getCurrentElement().getChildNodes().item(currentChild), getCurrentFrame());
     }
 
     protected int getChildCount()
@@ -142,11 +142,20 @@ public class W3CDOMStreamReader
 
     public String getNamespaceURI(String prefix)
     {
-        int index = getCurrentFrame().prefixes.indexOf(prefix);
-        if (index == -1) return null;
-        
-        return (String) getCurrentFrame().uris.get(index);
-    }
+		ElementFrame frame = getCurrentFrame();
+
+		while( null != frame )
+		{
+			int index = frame.prefixes.indexOf(prefix);
+			if ( index != -1 ) {
+				return (String) frame.uris.get(index);
+			}
+
+			frame = frame.parent;
+		}
+
+		return null;
+	}
 
     public String getAttributeValue(String ns, String local)
     {
