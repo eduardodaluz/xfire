@@ -98,6 +98,9 @@ public class DOMStreamWriterHelper
         {
             Node node = attrs.item(i);
             String localName = node.getLocalName();
+            if( localName == null ){
+                localName = node.getNodeName();
+            }
             String nodeUri = node.getNamespaceURI();
             String nodePrefix = node.getPrefix();
             String nodeValue = node.getNodeValue();
