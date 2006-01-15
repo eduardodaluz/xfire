@@ -26,7 +26,7 @@ public class WSS4JPropertiesHelper
         wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.password", keyStorePass);
         String keyAlias = props.getProperty(SecurityFileConfigurer.PROP_KEY_ALIAS);
         wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.alias", keyAlias);
-        String keyPass = props.getProperty(SecurityFileConfigurer.PROP_KEY_PASS);
+        String keyPass = props.getProperty(SecurityFileConfigurer.PROP_PRIVATE_PASSWORD);
         if (keyPass != null)
         {
             wss4jProps.put("org.apache.ws.security.crypto.merlin.alias.password", keyPass);

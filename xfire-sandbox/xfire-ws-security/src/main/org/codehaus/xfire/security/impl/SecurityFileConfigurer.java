@@ -26,9 +26,9 @@ public class SecurityFileConfigurer
 
     public static final String PROP_KEYSTORE_FILE = "xfire.security.keystore.file";
 
-    public static final String PROP_KEY_ALIAS = "xfire.security.key.alias";
+    public static final String PROP_KEY_ALIAS = "xfire.security.public.alias";
 
-    public static final String PROP_KEY_PASS = "xfire.security.key.password";
+    //public static final String PROP_KEY_PASS = "xfire.security.key.password";
 
     public static final String PROP_CERT_FILE = "xfire.security.cert.file";
 
@@ -41,12 +41,19 @@ public class SecurityFileConfigurer
     public static final String PROP_USER_PASSWORD = "xfire.security.user.password";
 
     public static final String PROP_USER_PASSWORD_USE_PLAIN = "xfire.security.user.password.use.plain";
-    
+
     public static final String PROP_TIME_TO_LIVE = "xfire.security.time.to.live";
 
+    public static final String PROP_ACTIONS = "xfire.security.actions";
+
+    public static final String PROP_PRIVATE_ALIAS = "xfire.security.private.alias";
+
+    public static final String PROP_PRIVATE_PASSWORD = "xfire.security.private.password";
+
     public static final String[] ALL_PROPS = { PROP_USER_PASSWORD_USE_PLAIN, PROP_USER_PASSWORD,
-            PROP_USER_NAME, PROP_SYM_ALG, PROP_CERT_FILE, PROP_KEY_PASS, PROP_KEY_ALIAS,
-            PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, PROP_TIME_TO_LIVE, };
+            PROP_USER_NAME, PROP_SYM_ALG, PROP_CERT_FILE, PROP_KEY_ALIAS,
+            PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, PROP_TIME_TO_LIVE,
+            PROP_ACTIONS, PROP_PRIVATE_ALIAS, PROP_PRIVATE_PASSWORD, };
 
     /**
      * @param path

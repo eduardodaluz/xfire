@@ -30,6 +30,10 @@ public class DebugOutSecurityProcesor
 
     private int ttl;
 
+    private String privateAlias;
+
+    private String privatePassword;
+
     public void setEncCipherName(String name)
     {
         encCipherName = name;
@@ -134,6 +138,30 @@ public class DebugOutSecurityProcesor
     {
         this.ttl = ttl;
 
+    }
+
+    public void setPrivateAlias(String alias)
+    {
+        this.privateAlias = alias;
+        
+    }
+
+    public String getPrivateAlias()
+    {
+
+        return privateAlias;
+    }
+
+    public void setPrivatePassword(String pass)
+    {
+        this.privatePassword = pass;
+        
+    }
+
+    public String getPrivatePassword()
+    {
+
+        return privatePassword;
     }
 
 }

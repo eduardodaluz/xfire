@@ -33,7 +33,8 @@ public class OutSecuritySerializer
 
     public OutSecuritySerializer(MessageSerializer serializer, OutSecurityProcessor processor)
     {
-
+        this.serializer = serializer;
+        this.processor = processor;
     }
 
     public void readMessage(InMessage message, MessageContext context)

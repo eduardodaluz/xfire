@@ -34,7 +34,7 @@ public class WSS4JInSecurityBuilder
 
         Properties wss4j = WSS4JPropertiesHelper.buildWSS4JProps(props);
         String alias = props.getProperty(PROP_KEY_ALIAS);
-        String password = props.getProperty(PROP_KEY_PASS);
+        String password = props.getProperty(PROP_PRIVATE_PASSWORD);
         Map pass = new HashMap();
         pass.put(alias, password);
 

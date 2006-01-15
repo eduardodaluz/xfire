@@ -2,6 +2,8 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
@@ -10,10 +12,12 @@ import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.message.WSAddTimestamp;
 import org.apache.ws.security.message.WSEncryptBody;
 import org.apache.ws.security.message.WSSAddUsernameToken;
+import org.apache.ws.security.message.WSSignEnvelope;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.codehaus.xfire.security.BaseOutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
+import org.codehaus.xfire.security.SecurityActions;
 import org.w3c.dom.Document;
 
 /**
@@ -24,6 +28,8 @@ public class WSS4JOutSecurityProcessor
     extends BaseOutSecurityProcessor
     implements OutSecurityProcessor
 {
+    private static final Log LOG = LogFactory.getLog(WSS4JOutSecurityProcessor.class);
+
     private OutSecurityProcessorBuilder builder = new WSS4JOutProcessorBuilder();
 
     private Crypto crypto;
@@ -35,6 +41,12 @@ public class WSS4JOutSecurityProcessor
     private boolean userPasswordUsePlain = false;
 
     private int ttl = -1;
+
+    private String[] actions;
+
+    private String privateAlias;
+
+    private String privatePassword;
 
     private void checkInitialized()
     {
@@ -55,6 +67,66 @@ public class WSS4JOutSecurityProcessor
     {
 
         checkInitialized();
+        for (int i = 0; i < actions.length; i++)
+        {
+            String action = actions[i];
+            if (SecurityActions.AC_ENCRYPT.equals(action))
+            {
+                LOG.debug("Encrypting document");
+                document = encryptDocument(document);
+                continue;
+            }
+            if (SecurityActions.AC_SIGNATURE.equals(action))
+            {
+                LOG.debug("Signing document");
+                document = signDocument(document);
+                continue;
+            }
+
+            if (SecurityActions.AC_TIMESTAMP.equals(action))
+            {
+                LOG.debug("Adding timestamp");
+                document = addTimestamp(document);
+                continue;
+            }
+
+            if (SecurityActions.AC_USERTOKEN.equals(action))
+            {
+                LOG.debug("Adding usertoken");
+                document = addUserToken(document);
+                continue;
+            }
+        }
+
+        return document;
+    }
+
+    /**
+     * @param document
+     * @return
+     */
+    private Document signDocument(Document document)
+    {
+        WSSignEnvelope signer = new WSSignEnvelope();
+        try
+        {
+            signer.setUserInfo(getPrivateAlias(), getPrivatePassword());
+            document = signer.build(document, crypto);
+        }
+        catch (WSSecurityException e)
+        {
+            throw ExceptionConverter.convert(e);
+        }
+
+        return document;
+    }
+
+    /**
+     * @param document
+     * @return
+     */
+    private Document encryptDocument(Document document)
+    {
         SOAPConstants soapConstants = WSSecurityUtil
                 .getSOAPConstants(document.getDocumentElement());
         WSEncryptBody encryptor = new WSEncryptBody();
@@ -64,20 +136,27 @@ public class WSS4JOutSecurityProcessor
                 "Content");
 
         parts.add(part);
-        encryptor.setParts(parts); // this is optional since the body is
-        // encrypted by default
-        encryptor.setUserInfo(alias);
+        encryptor.setParts(parts);
+
+        // if alias for public key is not provided, use private key intead
+        if (alias != null)
+        {
+            encryptor.setUserInfo(alias);
+        }
+        else
+        {
+            encryptor.setUserInfo(getPrivateAlias());
+        }
         try
         {
             document = encryptor.build(document, crypto);
         }
         catch (WSSecurityException e)
         {
-            throw new RuntimeException("Can't encrypt document", e);
-        }
+            LOG.error(e);
+            throw ExceptionConverter.convert(e);
 
-        document = addUserToken(document);
-        document = addTimestamp(document);
+        }
         return document;
     }
 
@@ -156,6 +235,37 @@ public class WSS4JOutSecurityProcessor
     {
         this.ttl = ttl;
 
+    }
+
+    public void setActions(String[] actionsArray)
+    {
+        actions = actionsArray;
+
+    }
+
+    public String[] getActions()
+    {
+        return actions;
+    }
+
+    public String getPrivateAlias()
+    {
+        return privateAlias;
+    }
+
+    public void setPrivateAlias(String signatureAlias)
+    {
+        this.privateAlias = signatureAlias;
+    }
+
+    public String getPrivatePassword()
+    {
+        return privatePassword;
+    }
+
+    public void setPrivatePassword(String signaturePassword)
+    {
+        this.privatePassword = signaturePassword;
     }
 
 }

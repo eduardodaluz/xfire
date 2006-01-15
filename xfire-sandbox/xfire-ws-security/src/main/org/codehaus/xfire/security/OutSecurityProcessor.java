@@ -34,13 +34,22 @@ public interface OutSecurityProcessor
     void setUserPassword(String passord);
 
     String getUserPassword();
-    
+
     void setUsePlainUserPassword(boolean usePlain);
-    
+
     boolean usePlainUserPassword();
-    
+
     int getTTL();
+
     void setTTL(int ttl);
+
+    void setPrivateAlias(String alias);
+
+    String getPrivateAlias();
+
+    void setPrivatePassword(String pass);
+
+    String getPrivatePassword();
 
     void setBuilder(OutSecurityProcessorBuilder builder);
 
