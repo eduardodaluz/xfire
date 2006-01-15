@@ -37,6 +37,9 @@ public class OutSecuritySerializer
         this.processor = processor;
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.exchange.MessageSerializer#readMessage(org.codehaus.xfire.exchange.InMessage, org.codehaus.xfire.MessageContext)
+     */
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
     {
@@ -44,6 +47,12 @@ public class OutSecuritySerializer
 
     }
 
+    /**
+     * @param message
+     * @param context
+     * @return
+     * @throws Exception
+     */
     private byte[] getMessageBytes(OutMessage message, MessageContext context)
         throws Exception
     {
@@ -55,6 +64,9 @@ public class OutSecuritySerializer
         return outputStream.toByteArray();
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.exchange.MessageSerializer#writeMessage(org.codehaus.xfire.exchange.OutMessage, javax.xml.stream.XMLStreamWriter, org.codehaus.xfire.MessageContext)
+     */
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
     {

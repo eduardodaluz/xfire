@@ -29,7 +29,18 @@ public class WSS4JOutProcessorBuilder
     private static final String CFG_FILE = "META-INF/xfire/outsecurity.properties";
 
     private static final Log LOG = LogFactory.getLog(WSS4JOutProcessorBuilder.class);
+    
+    private static Map actionsMap = new HashMap();
 
+    static {
+        for (int a = 0; a < SecurityActions.ALL_ACTIONS.length; a++)
+        {
+            actionsMap.put(SecurityActions.ALL_ACTIONS[a], Boolean.TRUE);
+        }
+    }
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.security.OutSecurityProcessorBuilder#build(org.codehaus.xfire.security.OutSecurityProcessor)
+     */
     public void build(OutSecurityProcessor processor)
     {
         WSS4JOutSecurityProcessor wss4jProcessor = (WSS4JOutSecurityProcessor) processor;
@@ -99,28 +110,122 @@ public class WSS4JOutProcessorBuilder
     /**
      * @param props
      */
+
     /**
      * @param props
      */
     private void validateProperties(Properties props)
     {
-        Map actionsMap = new HashMap();
-        for (int a = 0; a < SecurityActions.ALL_ACTIONS.length; a++)
+        
+        
+        if (props.getProperty(PROP_ACTIONS) == null)
         {
-            actionsMap.put(SecurityActions.ALL_ACTIONS[a], Boolean.TRUE);
+            throw new ConfigValidationException("", "Missing '" + PROP_ACTIONS + "' property ");
         }
-
+        // Check if all specified actions are known
         String[] actions = actionsToArray(props.getProperty(PROP_ACTIONS));
         for (int i = 0; i < actions.length; i++)
         {
             String action = actions[i];
             if (actionsMap.get(action) == null)
             {
-                LOG.error("Unknown action found : "+ action);
+                LOG.error("Unknown action found : " + action);
                 throw new ConfigValidationException(action, "Unknown action.");
             }
+            if (SecurityActions.AC_ENCRYPT.equals(action))
+            {
+                validateEncryptCfg(props);
+                continue;
+            }
+
+            if (SecurityActions.AC_SIGNATURE.equals(action))
+            {
+                validateSignatureCfg(props);
+                continue;
+            }
+
+            if (SecurityActions.AC_TIMESTAMP.equals(action))
+            {
+                validateTimestampCfg(props);
+                continue;
+            }
+
+            if (SecurityActions.AC_USERTOKEN.equals(action))
+            {
+                validateUsertokenCfg(props);
+                continue;
+            }
+
         }
 
     }
 
+    /**
+     * @param action
+     * @param properties
+     * @param props
+     */
+    private void checkRequiredProperty(String action, String[] properties, Properties props)
+    {
+        // TODO : cumulate problems, so user can see all of them at once
+        for (int i = 0; i < properties.length; i++)
+        {
+            if (props.get(properties[i]) == null)
+            {
+                throw new ConfigValidationException(action,
+                        "Missing required property : '" + props.get(properties[i]) + "'");
+            }
+        }
+    }
+
+    /**
+     * @param props
+     */
+    private void validateUsertokenCfg(Properties props)
+    {
+        checkRequiredProperty(SecurityActions.AC_USERTOKEN,new String[]{PROP_USER_PASSWORD,PROP_USER_NAME,},props);
+         String usePlain=(String) props.get(PROP_USER_PASSWORD_USE_PLAIN);
+         if( usePlain != null && "true".equals(usePlain.toLowerCase())){
+             LOG.warn("Property '"+PROP_USER_PASSWORD_USE_PLAIN+"' value is not a boolen value");
+         }
+
+    }
+
+    /**
+     * @param props
+     */
+    private void validateTimestampCfg(Properties props)
+    {
+        
+        checkRequiredProperty(SecurityActions.AC_TIMESTAMP,new String[]{PROP_TIME_TO_LIVE,},props);
+        try{
+          Long.parseLong((String) props.get(PROP_TIME_TO_LIVE));
+        }catch(Throwable ex){
+            throw new ConfigValidationException(SecurityActions.AC_TIMESTAMP,
+                                                "Property : '" + PROP_TIME_TO_LIVE + "' is not a digit");
+        }
+
+    }
+
+    /**
+     * @param props
+     */
+    private void validateSignatureCfg(Properties props)
+    {
+        checkRequiredProperty(SecurityActions.AC_SIGNATURE,new String[]{PROP_PRIVATE_ALIAS , PROP_PRIVATE_PASSWORD,},props);
+    }
+
+    /**
+     * @param props
+     */
+    private void validateEncryptCfg(Properties props)
+    {
+        
+        checkRequiredProperty(SecurityActions.AC_ENCRYPT,new String[]{PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS,PROP_KEYSTORE_TYPE},props);
+        // PROP_PRIVATE_ALIAS, PROP_KEY_ALIAS,
+        // PROP_SYM_ALG, PROP_CERT_FILE, ,
+        // 
+    }
+
+    
 }

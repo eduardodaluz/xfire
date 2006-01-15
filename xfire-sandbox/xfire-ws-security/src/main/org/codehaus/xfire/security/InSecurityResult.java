@@ -1,7 +1,6 @@
 package org.codehaus.xfire.security;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import org.w3c.dom.Document;
 
