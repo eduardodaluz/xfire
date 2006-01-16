@@ -21,14 +21,8 @@ public abstract class AbstractJAXWSHandler
     public AbstractJAXWSHandler(ServiceDelegate service)
     {
         super();
-        
+        setPhase(Phase.USER);
         this.service = service;
-    }
-
-    @Override
-    public String getPhase()
-    {
-        return Phase.USER;
     }
 
     public void invoke(MessageContext context)

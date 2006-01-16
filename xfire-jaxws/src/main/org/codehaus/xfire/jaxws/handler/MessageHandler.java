@@ -14,12 +14,7 @@ public class MessageHandler
     public MessageHandler(ServiceDelegate service)
     {
         super(service);
-    }
-
-    @Override
-    public String getPhase()
-    {
-        return Phase.USER;
+        setPhase(Phase.USER);
     }
 
     protected void invokeHandler(SOAPMessageContext soapContext, Handler handler)
