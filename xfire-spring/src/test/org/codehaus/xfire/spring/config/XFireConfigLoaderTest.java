@@ -55,8 +55,8 @@ public class XFireConfigLoaderTest
         
         assertEquals(service.getOutHandlers().size(),1);
         
-        assertEquals(service.getProperty("myKey"),"value");
-        assertEquals(service.getProperty("myKey1"),"value1");
+        assertEquals("value", service.getProperty("myKey"));
+        assertEquals("value1", service.getProperty("myKey1"));
 
         service = xfire.getServiceRegistry().getService("EchoWithJustImpl");
         assertEquals(EchoImpl.class, service.getServiceInfo().getServiceClass());

@@ -15,8 +15,8 @@
       org.codehaus.xfire.test.EchoImpl
     </implementationClass>
     <properties>
-      <property key="foo" value="bar" />
-      <property key="cheese" value="baz" />
+      <property key="foo">bar</property>
+      <property key="cheese">baz</property>
     </properties>
   </service>
 

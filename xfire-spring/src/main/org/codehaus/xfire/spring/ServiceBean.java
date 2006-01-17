@@ -1,6 +1,5 @@
 package org.codehaus.xfire.spring;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -74,7 +73,7 @@ public class ServiceBean
     
     protected Class implementationClass;
 
-    private List properties = new ArrayList();
+    private Map properties = new HashMap();
 
     /** Some properties to make it easier to work with ObjectServiceFactory */
 
@@ -118,8 +117,6 @@ public class ServiceBean
         }
         
         // Lets set up some properties for the service
-        Map properties = new HashMap();
-        
         if (createDefaultBindings)
             properties.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.TRUE);
         
@@ -134,10 +131,7 @@ public class ServiceBean
         {
             properties.put(ObjectInvoker.SERVICE_IMPL_CLASS, implementationClass);
         }
-        
-        // Set the properties 
-        copyProperties(properties);
-        
+
         xfireService = serviceFactory.create(intf, name, namespace, properties);
 
         if (bindings != null && serviceFactory instanceof ObjectServiceFactory)
@@ -346,13 +340,17 @@ public class ServiceBean
     {
         this.implementationClass = implementationClass;
     }
-
-    public List getProperties()
+    
+    /**
+     * @org.xbean.Map entryName="property" keyName="key"
+     * @return
+     */
+    public Map getProperties()
     {
         return properties;
     }
 
-    public void setProperties(List properties)
+    public void setProperties(Map properties)
     {
         this.properties = properties;
     }
@@ -396,20 +394,7 @@ public class ServiceBean
     {
         this.schemas = schemas;
     }
-
-    protected void copyProperties(Map properties)
-    {
-        Service service = getXFireService();
-        for (Iterator iter = getProperties().iterator(); iter.hasNext();)
-        {
-            Object[] keyval = (Object[]) iter.next();
-            String key = (String) keyval[0];
-            Object value = keyval[1];
-            
-            properties.put(key, value);
-        }
-    }
-
+    
     /*
      * (non-Javadoc)
      * 
