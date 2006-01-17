@@ -112,7 +112,7 @@
 		<c:forEach items="${modules}" var="module">
 			<copy toDir="${maven.build.dir}/dist" file="${basedir}/../${module.artifactId}/target/${module.artifactId}-${module.currentVersion}.jar"/>
 			<c:forEach items="${module.artifacts}" var="dependency">
-				<c:if test="${dependency.dependency.groupId != 'xfire'}">
+				<c:if test="${!dependency.dependency.artifactId.startsWith('xfire')}">
 					<c:if test="${dependency.dependency.type != 'plugin'}">
 						<c:set var="scope" value="${dependency.dependency.getProperty('scope')} "/>
 						<c:if test="${scope == ' '}">
@@ -124,8 +124,6 @@
 			</c:forEach>
 			<copy tofile="${maven.build.dir}/dist/libs/README.txt" file="${basedir}/libs-README.txt"/>
 		</c:forEach>
-		
-		<copy toDir="${maven.build.dir}/dist/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar"/>
 	</goal>
 
 </project>
