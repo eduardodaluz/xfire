@@ -137,7 +137,10 @@ public class WSS4JInSecurityProcessor
             for (int i = 0; i < callbacks.length; i++)
             {
                 WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
-                pc.setPassword((String) passwords.get(pc.getIdentifer()));
+                String pass = (String) passwords.get(pc.getIdentifer());
+                if( pass != null ){
+                  pc.setPassword(pass);
+                }
             }
         }
 

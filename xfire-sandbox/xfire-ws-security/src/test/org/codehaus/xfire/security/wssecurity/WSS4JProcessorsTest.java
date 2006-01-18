@@ -86,9 +86,9 @@ public class WSS4JProcessorsTest
         WSS4JInProcessorBuilder inBuilder = (WSS4JInProcessorBuilder) processor.getBuilder();
         inBuilder.setConfigFile("META-INF/xfire/insecurity_ut.properties");
         InSecurityResult result = processor.process(doc);
-        String usr = result.getUser();
-        String pass = result.getPassword();
-
+       
+        assertEquals(result.getUser(),"userName");
+        assertEquals(result.getPassword(),"userSecretePass");
     }
 
 }
