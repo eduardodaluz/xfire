@@ -6,7 +6,7 @@ import org.codehaus.xfire.security.impl.SecurityFileConfigurer;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
 public class WSS4JPropertiesHelper
 {
@@ -24,7 +24,12 @@ public class WSS4JPropertiesHelper
         wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
         String keyStorePass = props.getProperty(SecurityFileConfigurer.PROP_KEYSTORE_PASS);
         wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.password", keyStorePass);
-        String keyAlias = props.getProperty(SecurityFileConfigurer.PROP_KEY_ALIAS);
+        String keyAlias = null;
+        keyAlias = props.getProperty(SecurityFileConfigurer.PROP_PRIVATE_ALIAS);
+        if (keyAlias == null)
+        {
+            keyAlias = props.getProperty(SecurityFileConfigurer.PROP_PUBLIC_ALIAS);
+        }
         wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.alias", keyAlias);
         String keyPass = props.getProperty(SecurityFileConfigurer.PROP_PRIVATE_PASSWORD);
         if (keyPass != null)

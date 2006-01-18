@@ -21,7 +21,7 @@ public class WSS4JInSecurityBuilderTest
     {
 
         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
-        WSS4JInSecurityBuilder builder = new WSS4JInSecurityBuilder();
+        WSS4JInProcessorBuilder builder = new WSS4JInProcessorBuilder();
         builder.build(processor);
         assertNotNull(processor.getCrypto());
         assertNotNull(processor.getPasswords());

@@ -16,6 +16,8 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.security.OutSecurityProcessor;
 import org.codehaus.xfire.util.DOMUtils;
+import org.codehaus.xfire.util.STAXUtils;
+import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Document;
 
 /**
@@ -76,7 +78,10 @@ public class OutSecuritySerializer
                                                                                      context));
             Document doc = DOMUtils.readXml(inStream);
             doc = processor.process(doc);
+            DOMUtils outputer = new DOMUtils (); 
+            outputer.writeXml(doc, System.out);
             org.codehaus.xfire.util.stax.DOMStreamWriterHelper.write(writer, doc);
+            
             inStream.close();
             writer.close();
 
@@ -95,3 +100,4 @@ public class OutSecuritySerializer
     }
 
 }
+ 

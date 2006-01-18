@@ -6,6 +6,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
 
+import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityResult;
 import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.STAXUtils;
@@ -41,7 +42,19 @@ public class WSS4jInSecurityProcessorTest
 //        DOMUtils.writeXml(decrypted.getDocumentElement(), System.out);
 //    }
 //    
-     public  void testUserNameTokenProcessor()
+    private Document readDocument(String file) throws Exception{
+        InputStream inStream = getClass().getResourceAsStream(file);
+        
+        DOMUtils utils = new DOMUtils ();
+        Document doc = utils.readXml(inStream);
+        /*Document doc = STAXUtils.read(DocumentBuilderFactory.newInstance().newDocumentBuilder(),
+                                      STAXUtils.createXMLStreamReader(inStream, null),
+                                      false);*/
+        inStream.close();
+        
+        return doc;
+    }
+     /*public  void testUserNameTokenProcessor()
         throws Exception
     {
 
@@ -58,4 +71,29 @@ public class WSS4jInSecurityProcessorTest
         decrypted = result.getDocument();
         DOMUtils.writeXml(decrypted.getDocumentElement(), System.out);
     }
+*/     
+     /*public void testSignature() throws Exception{
+         Document doc = readDocument("wsse-request-sign.xml");
+         
+         WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor ();
+         doc = outProcessor.process(doc);
+         DOMUtils utils  = new DOMUtils ();
+         utils.writeXml(doc, System.out);
+         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
+         InSecurityResult result = processor.process(doc);
+         int z=0; 
+     }*/
+     
+     public void testEncryption() throws Exception{
+         Document doc = readDocument("wsse-request-enc.xml");
+         
+         /*WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor ();
+         doc = outProcessor.process(doc);
+         DOMUtils utils  = new DOMUtils ();
+         utils.writeXml(doc, System.out);*/
+         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
+         InSecurityResult result = processor.process(doc);
+         int z=0; 
+     }
+     
 }

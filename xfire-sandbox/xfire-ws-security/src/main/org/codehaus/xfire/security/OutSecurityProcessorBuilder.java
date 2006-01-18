@@ -6,5 +6,14 @@ package org.codehaus.xfire.security;
  */
 public interface OutSecurityProcessorBuilder {
 
-	void build(OutSecurityProcessor processor);
+	
+
+    void build(OutSecurityProcessor processor);
+
+    /**
+     * @return
+     */
+    public String getConfigFile();
+
+    public void setConfigFile(String configFile);
 }

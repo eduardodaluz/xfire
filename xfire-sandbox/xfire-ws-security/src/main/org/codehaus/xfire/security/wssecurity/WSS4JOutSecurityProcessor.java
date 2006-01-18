@@ -2,6 +2,8 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.util.Vector;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.SOAPConstants;
@@ -18,6 +20,7 @@ import org.codehaus.xfire.security.BaseOutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
+import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -110,8 +113,39 @@ public class WSS4JOutSecurityProcessor
         WSSignEnvelope signer = new WSSignEnvelope();
         try
         {
+            SOAPConstants soapConstants = WSSecurityUtil
+            .getSOAPConstants(document.getDocumentElement());
             signer.setUserInfo(getPrivateAlias(), getPrivatePassword());
+            signer.setSigCanonicalization(WSConstants.C14N_EXCL_OMIT_COMMENTS);
+            signer.setSignatureAlgorithm(WSConstants.RSA);
+            //signer.setUseSingleCertificate(true);
+            signer.setKeyIdentifierType(WSConstants.ISSUER_SERIAL);
+            
+            Vector parts = new Vector();
+            WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants.getEnvelopeURI(),
+                    "Content");
+
+            parts.add(part);
+            signer.setParts(parts);
+            DOMUtils util = new DOMUtils ();
+            try
+            {
+                util.writeXml(document, System.out);
+            }
+            catch (TransformerException e)
+            {
+                e.printStackTrace();
+            }
             document = signer.build(document, crypto);
+           
+            try
+            {
+                util.writeXml(document, System.out);
+            }
+            catch (TransformerException e)
+            {
+                e.printStackTrace();
+            }
         }
         catch (WSSecurityException e)
         {
@@ -266,6 +300,16 @@ public class WSS4JOutSecurityProcessor
     public void setPrivatePassword(String signaturePassword)
     {
         this.privatePassword = signaturePassword;
+    }
+
+    public OutSecurityProcessorBuilder getBuilder()
+    {
+        return builder;
+    }
+
+    public void setBuilder(OutSecurityProcessorBuilder builder)
+    {
+        this.builder = builder;
     }
 
 }

@@ -26,34 +26,39 @@ public class WSS4JOutProcessorBuilder
     implements OutSecurityProcessorBuilder
 {
 
-    private static final String CFG_FILE = "META-INF/xfire/outsecurity.properties";
+    
+    
+    public static final String CFG_FILE = "META-INF/xfire/outsecurity.properties";
 
     private static final Log LOG = LogFactory.getLog(WSS4JOutProcessorBuilder.class);
-    
+
     private static Map actionsMap = new HashMap();
 
-    static {
+    static
+    {
         for (int a = 0; a < SecurityActions.ALL_ACTIONS.length; a++)
         {
             actionsMap.put(SecurityActions.ALL_ACTIONS[a], Boolean.TRUE);
         }
     }
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codehaus.xfire.security.OutSecurityProcessorBuilder#build(org.codehaus.xfire.security.OutSecurityProcessor)
      */
     public void build(OutSecurityProcessor processor)
     {
         WSS4JOutSecurityProcessor wss4jProcessor = (WSS4JOutSecurityProcessor) processor;
 
-        Properties props = loadConfigFile(CFG_FILE);
+        Properties props = loadConfigFile(getConfigFile());
         validateProperties(props);
-        Properties wss4j = WSS4JPropertiesHelper.buildWSS4JProps(props);
-        String alias = props.getProperty(PROP_KEY_ALIAS);
+
+        String alias = props.getProperty(PROP_PUBLIC_ALIAS);
         String userName = props.getProperty(PROP_USER_NAME);
         String userPassword = props.getProperty(PROP_USER_PASSWORD);
         String usePlainPass = props.getProperty(PROP_USER_PASSWORD_USE_PLAIN);
-        Crypto crypto = CryptoFactory
-                .getInstance("org.apache.ws.security.components.crypto.Merlin", wss4j);
+        Crypto crypto = createCrypto(props);
 
         wss4jProcessor.setAlias(alias);
         wss4jProcessor.setCrypto(crypto);
@@ -77,18 +82,9 @@ public class WSS4JOutProcessorBuilder
         String actionsStr = props.getProperty(PROP_ACTIONS);
 
         wss4jProcessor.setActions(actionsToArray(actionsStr));
-
-        String privAlias = props.getProperty(PROP_PRIVATE_ALIAS);
-        String privPass = props.getProperty(PROP_PRIVATE_PASSWORD);
-        if (privAlias != null)
-        {
-            wss4jProcessor.setPrivateAlias(privAlias);
-        }
-        if (privPass != null)
-        {
-            wss4jProcessor.setPrivatePassword(privPass);
-        }
-
+        
+        wss4jProcessor.setPrivateAlias(props.getProperty(PROP_PRIVATE_ALIAS));
+        wss4jProcessor.setPrivatePassword(props.getProperty(PROP_PRIVATE_PASSWORD));
     }
 
     /**
@@ -114,9 +110,9 @@ public class WSS4JOutProcessorBuilder
     /**
      * @param props
      */
-    private void validateProperties(Properties props)
+    protected void validateProperties(Properties props)
     {
-        
+        super.validateProperties(props);
         
         if (props.getProperty(PROP_ACTIONS) == null)
         {
@@ -160,34 +156,20 @@ public class WSS4JOutProcessorBuilder
 
     }
 
-    /**
-     * @param action
-     * @param properties
-     * @param props
-     */
-    private void checkRequiredProperty(String action, String[] properties, Properties props)
-    {
-        // TODO : cumulate problems, so user can see all of them at once
-        for (int i = 0; i < properties.length; i++)
-        {
-            if (props.get(properties[i]) == null)
-            {
-                throw new ConfigValidationException(action,
-                        "Missing required property : '" + props.get(properties[i]) + "'");
-            }
-        }
-    }
+ 
 
     /**
      * @param props
      */
     private void validateUsertokenCfg(Properties props)
     {
-        checkRequiredProperty(SecurityActions.AC_USERTOKEN,new String[]{PROP_USER_PASSWORD,PROP_USER_NAME,},props);
-         String usePlain=(String) props.get(PROP_USER_PASSWORD_USE_PLAIN);
-         if( usePlain != null && "true".equals(usePlain.toLowerCase())){
-             LOG.warn("Property '"+PROP_USER_PASSWORD_USE_PLAIN+"' value is not a boolen value");
-         }
+        checkRequiredProperty(SecurityActions.AC_USERTOKEN, new String[] { PROP_USER_PASSWORD,
+                PROP_USER_NAME, }, props);
+        String usePlain = (String) props.get(PROP_USER_PASSWORD_USE_PLAIN);
+        if (usePlain != null && "true".equals(usePlain.toLowerCase()))
+        {
+            LOG.warn("Property '" + PROP_USER_PASSWORD_USE_PLAIN + "' value is not a boolen value");
+        }
 
     }
 
@@ -196,13 +178,18 @@ public class WSS4JOutProcessorBuilder
      */
     private void validateTimestampCfg(Properties props)
     {
-        
-        checkRequiredProperty(SecurityActions.AC_TIMESTAMP,new String[]{PROP_TIME_TO_LIVE,},props);
-        try{
-          Long.parseLong((String) props.get(PROP_TIME_TO_LIVE));
-        }catch(Throwable ex){
-            throw new ConfigValidationException(SecurityActions.AC_TIMESTAMP,
-                                                "Property : '" + PROP_TIME_TO_LIVE + "' is not a digit");
+
+        checkRequiredProperty(SecurityActions.AC_TIMESTAMP,
+                              new String[] { PROP_TIME_TO_LIVE, },
+                              props);
+        try
+        {
+            Long.parseLong((String) props.get(PROP_TIME_TO_LIVE));
+        }
+        catch (Throwable ex)
+        {
+            throw new ConfigValidationException(SecurityActions.AC_TIMESTAMP, "Property : '"
+                    + PROP_TIME_TO_LIVE + "' is not a digit");
         }
 
     }
@@ -212,7 +199,8 @@ public class WSS4JOutProcessorBuilder
      */
     private void validateSignatureCfg(Properties props)
     {
-        checkRequiredProperty(SecurityActions.AC_SIGNATURE,new String[]{PROP_PRIVATE_ALIAS , PROP_PRIVATE_PASSWORD,},props);
+        checkRequiredProperty(SecurityActions.AC_SIGNATURE, new String[] { PROP_PRIVATE_ALIAS,
+                PROP_PRIVATE_PASSWORD, }, props);
     }
 
     /**
@@ -220,12 +208,17 @@ public class WSS4JOutProcessorBuilder
      */
     private void validateEncryptCfg(Properties props)
     {
-        
-        checkRequiredProperty(SecurityActions.AC_ENCRYPT,new String[]{PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS,PROP_KEYSTORE_TYPE},props);
+
+        checkRequiredProperty(SecurityActions.AC_ENCRYPT, new String[] { PROP_KEYSTORE_FILE,
+                PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE }, props);
         // PROP_PRIVATE_ALIAS, PROP_KEY_ALIAS,
         // PROP_SYM_ALG, PROP_CERT_FILE, ,
         // 
     }
 
-    
+    protected String getDefaultConfigFile()
+    {
+        return CFG_FILE;
+    }
+
 }

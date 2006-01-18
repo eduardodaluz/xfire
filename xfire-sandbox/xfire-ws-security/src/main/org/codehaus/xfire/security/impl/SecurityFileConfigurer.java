@@ -9,13 +9,17 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.security.components.crypto.Crypto;
+import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.codehaus.xfire.security.exceptions.ConfigValidationException;
+import org.codehaus.xfire.security.wssecurity.WSS4JPropertiesHelper;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
  * TODO : add validation if property file contains only valid values
  */
-public class SecurityFileConfigurer
+public abstract class SecurityFileConfigurer
 {
 
     private static final Log LOG = LogFactory.getLog(SecurityFileConfigurer.class);
@@ -26,9 +30,9 @@ public class SecurityFileConfigurer
 
     public static final String PROP_KEYSTORE_FILE = "xfire.security.keystore.file";
 
-    public static final String PROP_KEY_ALIAS = "xfire.security.public.alias";
+    public static final String PROP_PUBLIC_ALIAS = "xfire.security.public.alias";
 
-    //public static final String PROP_KEY_PASS = "xfire.security.key.password";
+    // public static final String PROP_KEY_PASS = "xfire.security.key.password";
 
     public static final String PROP_CERT_FILE = "xfire.security.cert.file";
 
@@ -51,9 +55,13 @@ public class SecurityFileConfigurer
     public static final String PROP_PRIVATE_PASSWORD = "xfire.security.private.password";
 
     public static final String[] ALL_PROPS = { PROP_USER_PASSWORD_USE_PLAIN, PROP_USER_PASSWORD,
-            PROP_USER_NAME, PROP_SYM_ALG, PROP_CERT_FILE, PROP_KEY_ALIAS,
-            PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, PROP_TIME_TO_LIVE,
-            PROP_ACTIONS, PROP_PRIVATE_ALIAS, PROP_PRIVATE_PASSWORD, };
+            PROP_USER_NAME, PROP_SYM_ALG, PROP_CERT_FILE, PROP_PUBLIC_ALIAS, PROP_KEYSTORE_FILE,
+            PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, PROP_TIME_TO_LIVE, PROP_ACTIONS,
+            PROP_PRIVATE_ALIAS, PROP_PRIVATE_PASSWORD, };
+
+    private String configFile;
+
+    protected abstract String getDefaultConfigFile();
 
     /**
      * @param path
@@ -140,5 +148,48 @@ public class SecurityFileConfigurer
         throws Exception
     {
         return keystore.getCertificate(alias);
+    }
+
+    public void setConfigFile(String configFile)
+    {
+        this.configFile = configFile;
+    }
+
+    public String getConfigFile()
+    {
+        return (configFile == null ? getDefaultConfigFile() : configFile);
+    }
+
+    protected Crypto createCrypto(Properties props)
+    {
+        Properties wss4j = WSS4JPropertiesHelper.buildWSS4JProps(props);
+        Crypto crypto = CryptoFactory
+                .getInstance("org.apache.ws.security.components.crypto.Merlin", wss4j);
+        return crypto;
+    }
+    
+    protected void validateProperties(Properties props){
+        //String certFile = (String) props.get(PROP_CERT_FILE);
+        String keystore = props.getProperty(PROP_KEYSTORE_FILE);
+        String keystorePass = props.getProperty(PROP_KEYSTORE_PASS);
+        checkRequiredProperty("",new String[]{PROP_KEYSTORE_FILE,PROP_KEYSTORE_PASS,},props);
+    }
+    
+    /**
+     * @param action
+     * @param properties
+     * @param props
+     */
+    protected void checkRequiredProperty(String action, String[] properties, Properties props)
+    {
+        // TODO : cumulate problems, so user can see all of them at once
+        for (int i = 0; i < properties.length; i++)
+        {
+            if (props.get(properties[i]) == null)
+            {
+                throw new ConfigValidationException(action, "Missing required property : '"
+                        + props.get(properties[i]) + "'");
+            }
+        }
     }
 }

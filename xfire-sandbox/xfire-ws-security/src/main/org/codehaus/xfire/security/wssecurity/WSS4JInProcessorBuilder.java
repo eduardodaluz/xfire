@@ -12,15 +12,20 @@ import org.codehaus.xfire.security.impl.SecurityFileConfigurer;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
-public class WSS4JInSecurityBuilder
+public class WSS4JInProcessorBuilder
     extends SecurityFileConfigurer
     implements InSecurityProcessorBuilder
 {
 
     private static final String CFG_FILE = "META-INF/xfire/insecurity.properties";
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.xfire.security.InSecurityProcessorBuilder#build(org.codehaus.xfire.security.InSecurityProcessor)
+     */
     public void build(InSecurityProcessor processor)
     {
         if (!(processor instanceof WSS4JInSecurityProcessor))
@@ -30,19 +35,28 @@ public class WSS4JInSecurityBuilder
         }
         WSS4JInSecurityProcessor wss4jProcessor = (WSS4JInSecurityProcessor) processor;
 
-        Properties props = loadConfigFile(CFG_FILE);
+        Properties props = loadConfigFile(getConfigFile());
 
-        Properties wss4j = WSS4JPropertiesHelper.buildWSS4JProps(props);
-        String alias = props.getProperty(PROP_KEY_ALIAS);
+               
+        String alias = props.getProperty(PROP_PRIVATE_ALIAS);
         String password = props.getProperty(PROP_PRIVATE_PASSWORD);
         Map pass = new HashMap();
         pass.put(alias, password);
 
-        Crypto crypto = CryptoFactory
-                .getInstance("org.apache.ws.security.components.crypto.Merlin", wss4j);
+        Crypto crypto = createCrypto(props);
 
         wss4jProcessor.setCrypto(crypto);
         wss4jProcessor.setPasswords(pass);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.xfire.security.impl.SecurityFileConfigurer#getDefaultConfigFile()
+     */
+    protected String getDefaultConfigFile()
+    {
+        return CFG_FILE;
     }
 
 }

@@ -2,7 +2,6 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.io.IOException;
 import java.security.Key;
-import java.security.Principal;
 import java.util.Map;
 import java.util.Vector;
 
@@ -10,12 +9,9 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityEngine;
-import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
-import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityProcessorBuilder;
@@ -34,7 +30,7 @@ public class WSS4JInSecurityProcessor
 
     private Crypto crypto;
 
-    private InSecurityProcessorBuilder builder = new WSS4JInSecurityBuilder();
+    private InSecurityProcessorBuilder builder = new WSS4JInProcessorBuilder();
 
     private CallbackHandler cbHandler;
 
@@ -43,6 +39,11 @@ public class WSS4JInSecurityProcessor
     private Map passwords;
 
     private boolean isInitialized = false;
+
+    public InSecurityProcessorBuilder getBuilder()
+    {
+        return builder;
+    }
 
     void checkInitialized()
     {
@@ -88,13 +89,15 @@ public class WSS4JInSecurityProcessor
         checkInitialized();
         try
         {
-            wsResult = secEngine.processSecurityHeader(document, "", cbHandler, null, crypto);
+            wsResult = secEngine.processSecurityHeader(document, "", cbHandler, crypto, crypto);
         }
         catch (WSSecurityException ex)
         {
+            
             throw ExceptionConverter.convert(ex);
-            // throw new RuntimeException(ex);
+           
         }
+        
 
         InSecurityResult result = new InSecurityResult();
         if (wsResult != null)
