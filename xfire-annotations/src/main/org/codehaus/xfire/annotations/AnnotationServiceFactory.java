@@ -168,7 +168,7 @@ public class AnnotationServiceFactory
             throw new AnnotationException("Service class cannot be final: " + clazz.getName());
         }
         
-        if (clazz.isMemberClass() || !Modifier.isPublic(clazz.getModifiers()))
+        if (/*clazz.isMemberClass() ||*/ !Modifier.isPublic(clazz.getModifiers()))
         {
             throw new AnnotationException("Service class must be an outter public class: " + clazz.getName());
         }
