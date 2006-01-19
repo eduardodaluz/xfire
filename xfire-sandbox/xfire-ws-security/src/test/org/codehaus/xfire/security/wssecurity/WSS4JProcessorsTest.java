@@ -159,4 +159,19 @@ public class WSS4JProcessorsTest
         assertTrue("Exipire mechanism failed", false);
     }
 
+    /**
+     * @throws Exception
+     */
+    public void testEncryptTimestampUTValid()
+    throws Exception
+{
+
+    InSecurityResult result = processRequest("META-INF/xfire/outsecurity_mix.properties",
+                                             "META-INF/xfire/insecurity_mix.properties");
+
+    assertNotNull(result.getTsExpire());
+    assertEquals(result.getUser(), "userName");
+    assertNotNull(result.getPassword());
+    assertTrue(result.isPasswordHashed());
+}
 }
