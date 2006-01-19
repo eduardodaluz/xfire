@@ -16,6 +16,8 @@ public class InSecurityResult {
 
 	private String password;
     
+    private boolean isPasswordHashed;
+    
     private Calendar tsCreated;
     
     private Calendar tsExpire;
@@ -65,5 +67,15 @@ public class InSecurityResult {
 	public void setUser(String user) {
 		this.user = user;
 	}
+
+    public boolean isPasswordHashed()
+    {
+        return isPasswordHashed;
+    }
+
+    public void setPasswordHashed(boolean isPasswordHashed)
+    {
+        this.isPasswordHashed = isPasswordHashed;
+    }
 
 }

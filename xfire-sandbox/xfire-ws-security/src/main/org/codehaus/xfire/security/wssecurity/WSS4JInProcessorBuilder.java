@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.ws.security.components.crypto.Crypto;
-import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityProcessorBuilder;
+import org.codehaus.xfire.security.SecurityActions;
+import org.codehaus.xfire.security.WSPasswordCallback;
+import org.codehaus.xfire.security.exceptions.ConfigValidationException;
 import org.codehaus.xfire.security.impl.SecurityFileConfigurer;
 
 /**
@@ -37,16 +38,45 @@ public class WSS4JInProcessorBuilder
 
         Properties props = loadConfigFile(getConfigFile());
 
-               
-        String alias = props.getProperty(PROP_PRIVATE_ALIAS);
-        String password = props.getProperty(PROP_PRIVATE_PASSWORD);
-        Map pass = new HashMap();
-        pass.put(alias, password);
+        String actionsStr = props.getProperty(PROP_ACTIONS);
+        String actions[] = actionsToArray(actionsStr);
+        for (int i = 0; i < actions.length; i++)
+        {
+            String action = actions[i];
+            if (SecurityActions.AC_ENCRYPT.equals(action)
+                    || SecurityActions.AC_SIGNATURE.equals(action))
+            {
+                wss4jProcessor.setCrypto(createCrypto(props));
+                break;
+            }
+        }
 
-        Crypto crypto = createCrypto(props);
+        String callbackClassStr = props.getProperty(PROP_PASSWORD_CALLBACK);
+        if (callbackClassStr != null)
+        {
+            try
+            {
+                Class callbackClass = Class.forName(callbackClassStr);
 
-        wss4jProcessor.setCrypto(crypto);
-        wss4jProcessor.setPasswords(pass);
+                wss4jProcessor.setCallback((WSPasswordCallback) callbackClass.newInstance());
+
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new ConfigValidationException("", "Can't load class : " + callbackClassStr);
+            }
+            catch (InstantiationException e)
+            {
+                throw new ConfigValidationException("", "Can't create instance of class : "
+                        + callbackClassStr);
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new ConfigValidationException("", "Can't create instance of class : "
+                        + callbackClassStr);
+            }
+        }
+
     }
 
     /*

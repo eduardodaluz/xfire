@@ -59,8 +59,11 @@ public class SecurityResultHandler
      */
     private void handleUsernameToken(WSSecurityEngineResult wsRes, InSecurityResult result)
     {
-        result.setUser(((WSUsernameTokenPrincipal) wsRes.getPrincipal()).getName());
-        result.setPassword(((WSUsernameTokenPrincipal) wsRes.getPrincipal()).getPassword());
+        WSUsernameTokenPrincipal principal =(WSUsernameTokenPrincipal) wsRes.getPrincipal(); 
+        result.setUser(principal.getName());
+        result.setPassword(principal.getPassword());
+        result.setPasswordHashed(WSConstants.PASSWORD_DIGEST.equals(principal.getPasswordType()));
+        
 
     }
 

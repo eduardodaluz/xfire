@@ -34,11 +34,11 @@ public class WSS4JInSecurityProcessor
 
     private CallbackHandler cbHandler;
 
-    private Key decryptionKey;
-
-    private Map passwords;
+   private Key decryptionKey;
 
     private boolean isInitialized = false;
+
+    private org.codehaus.xfire.security.WSPasswordCallback callback;
 
     public InSecurityProcessorBuilder getBuilder()
     {
@@ -54,17 +54,9 @@ public class WSS4JInSecurityProcessor
         }
     }
 
-    public Map getPasswords()
-    {
-        return passwords;
-    }
+   
 
-    public void setPasswords(Map passwords)
-    {
-        this.passwords = passwords;
-        cbHandler = new CBPasswordHandler(passwords);
-    }
-
+   
     public Crypto getCrypto()
     {
         return crypto;
@@ -75,12 +67,18 @@ public class WSS4JInSecurityProcessor
         this.crypto = crypto;
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.security.InSecurityProcessor#setDecryptionKey(java.security.Key)
+     */
     public void setDecryptionKey(Key decryptionKey)
     {
         this.decryptionKey = decryptionKey;
 
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.security.InSecurityProcessor#process(org.w3c.dom.Document)
+     */
     public InSecurityResult process(Document document)
         throws org.codehaus.xfire.security.exceptions.WSSecurityException
     {
@@ -93,11 +91,10 @@ public class WSS4JInSecurityProcessor
         }
         catch (WSSecurityException ex)
         {
-            
+
             throw ExceptionConverter.convert(ex);
-           
+
         }
-        
 
         InSecurityResult result = new InSecurityResult();
         if (wsResult != null)
@@ -111,6 +108,9 @@ public class WSS4JInSecurityProcessor
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see org.codehaus.xfire.security.InSecurityProcessor#setBuilder(org.codehaus.xfire.security.InSecurityProcessorBuilder)
+     */
     public void setBuilder(InSecurityProcessorBuilder builder)
     {
         this.builder = builder;
@@ -124,25 +124,41 @@ public class WSS4JInSecurityProcessor
     private static class CBPasswordHandler
         implements CallbackHandler
     {
-        private Map passwords = null;
+        private org.codehaus.xfire.security.WSPasswordCallback passwords = null;
 
-        public CBPasswordHandler(Map passwords)
+        public CBPasswordHandler(org.codehaus.xfire.security.WSPasswordCallback passwords)
         {
             this.passwords = passwords;
         }
 
+        /* (non-Javadoc)
+         * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
+         */
         public void handle(Callback[] callbacks)
             throws IOException, UnsupportedCallbackException
         {
             for (int i = 0; i < callbacks.length; i++)
             {
                 WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
-                String pass = (String) passwords.get(pc.getIdentifer());
-                if( pass != null ){
-                  pc.setPassword(pass);
+                String pass = (String) passwords.handle(pc.getIdentifer(),pc.getPasswordType()!=null,pc.getUsage());
+                if (pass != null)
+                {
+                    pc.setPassword(pass);
                 }
             }
         }
+
+    }
+
+    public org.codehaus.xfire.security.WSPasswordCallback getCallback()
+    {
+        return callback;
+    }
+
+    public void setCallback(org.codehaus.xfire.security.WSPasswordCallback callback)
+    {
+        this.callback = callback;
+        cbHandler = new CBPasswordHandler(callback);
 
     }
 }

@@ -17,5 +17,7 @@ public interface InSecurityProcessor {
 	
 	void setBuilder(InSecurityProcessorBuilder builder);
 	
-
+    WSPasswordCallback getCallback();
+    
+    void setCallback(WSPasswordCallback callback);
 }

@@ -5,12 +5,18 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.codehaus.xfire.security.SecurityActions;
 import org.codehaus.xfire.security.exceptions.ConfigValidationException;
 import org.codehaus.xfire.security.wssecurity.WSS4JPropertiesHelper;
 
@@ -53,14 +59,32 @@ public abstract class SecurityFileConfigurer
     public static final String PROP_PRIVATE_ALIAS = "xfire.security.private.alias";
 
     public static final String PROP_PRIVATE_PASSWORD = "xfire.security.private.password";
+    
+    public static final String PROP_PASSWORD_CALLBACK = "xfire.security.password.callback";
 
     public static final String[] ALL_PROPS = { PROP_USER_PASSWORD_USE_PLAIN, PROP_USER_PASSWORD,
             PROP_USER_NAME, PROP_SYM_ALG, PROP_CERT_FILE, PROP_PUBLIC_ALIAS, PROP_KEYSTORE_FILE,
             PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE, PROP_TIME_TO_LIVE, PROP_ACTIONS,
-            PROP_PRIVATE_ALIAS, PROP_PRIVATE_PASSWORD, };
+            PROP_PRIVATE_ALIAS, PROP_PRIVATE_PASSWORD, PROP_PASSWORD_CALLBACK,};
 
+    
+    protected static Map actionsMap = new HashMap();
+
+    static
+    {
+        for (int a = 0; a < SecurityActions.ALL_ACTIONS.length; a++)
+        {
+            actionsMap.put(SecurityActions.ALL_ACTIONS[a], Boolean.TRUE);
+        }
+    }
+
+    
+    
     private String configFile;
 
+    
+    
+    
     protected abstract String getDefaultConfigFile();
 
     /**
@@ -155,11 +179,18 @@ public abstract class SecurityFileConfigurer
         this.configFile = configFile;
     }
 
+    /**
+     * @return
+     */
     public String getConfigFile()
     {
         return (configFile == null ? getDefaultConfigFile() : configFile);
     }
 
+    /**
+     * @param props
+     * @return
+     */
     protected Crypto createCrypto(Properties props)
     {
         Properties wss4j = WSS4JPropertiesHelper.buildWSS4JProps(props);
@@ -168,7 +199,10 @@ public abstract class SecurityFileConfigurer
         return crypto;
     }
     
-    protected void validateProperties(Properties props){
+    /**
+     * @param props
+     */
+    protected void validateKeystore(Properties props){
         //String certFile = (String) props.get(PROP_CERT_FILE);
         String keystore = props.getProperty(PROP_KEYSTORE_FILE);
         String keystorePass = props.getProperty(PROP_KEYSTORE_PASS);
@@ -191,5 +225,21 @@ public abstract class SecurityFileConfigurer
                         + props.get(properties[i]) + "'");
             }
         }
+    }
+    
+    /**
+     * @param actionsStr
+     * @return
+     */
+    protected String[] actionsToArray(String actionsStr)
+    {
+        StringTokenizer tokenizer = new StringTokenizer(actionsStr);
+        Collection actions = new ArrayList();
+        while (tokenizer.hasMoreTokens())
+        {
+            actions.add(((String) tokenizer.nextToken()).toLowerCase());
+        }
+        return (String[]) actions.toArray(new String[actions.size()]);
+
     }
 }
