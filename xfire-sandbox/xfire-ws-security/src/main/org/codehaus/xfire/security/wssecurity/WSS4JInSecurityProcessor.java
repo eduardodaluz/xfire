@@ -1,8 +1,6 @@
 package org.codehaus.xfire.security.wssecurity;
 
 import java.io.IOException;
-import java.security.Key;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.security.auth.callback.Callback;
@@ -14,7 +12,6 @@ import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.codehaus.xfire.security.InSecurityProcessor;
-import org.codehaus.xfire.security.InSecurityProcessorBuilder;
 import org.codehaus.xfire.security.InSecurityResult;
 import org.w3c.dom.Document;
 
@@ -30,33 +27,10 @@ public class WSS4JInSecurityProcessor
 
     private Crypto crypto;
 
-    private InSecurityProcessorBuilder builder = new WSS4JInProcessorBuilder();
-
     private CallbackHandler cbHandler;
-
-   private Key decryptionKey;
-
-    private boolean isInitialized = false;
 
     private org.codehaus.xfire.security.WSPasswordCallback callback;
 
-    public InSecurityProcessorBuilder getBuilder()
-    {
-        return builder;
-    }
-
-    void checkInitialized()
-    {
-        if (!isInitialized)
-        {
-            builder.build(this);
-            isInitialized = true;
-        }
-    }
-
-   
-
-   
     public Crypto getCrypto()
     {
         return crypto;
@@ -67,16 +41,9 @@ public class WSS4JInSecurityProcessor
         this.crypto = crypto;
     }
 
-    /* (non-Javadoc)
-     * @see org.codehaus.xfire.security.InSecurityProcessor#setDecryptionKey(java.security.Key)
-     */
-    public void setDecryptionKey(Key decryptionKey)
-    {
-        this.decryptionKey = decryptionKey;
-
-    }
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codehaus.xfire.security.InSecurityProcessor#process(org.w3c.dom.Document)
      */
     public InSecurityResult process(Document document)
@@ -84,7 +51,6 @@ public class WSS4JInSecurityProcessor
     {
         Vector wsResult = null;
 
-        checkInitialized();
         try
         {
             wsResult = secEngine.processSecurityHeader(document, "", cbHandler, crypto, crypto);
@@ -108,15 +74,6 @@ public class WSS4JInSecurityProcessor
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.codehaus.xfire.security.InSecurityProcessor#setBuilder(org.codehaus.xfire.security.InSecurityProcessorBuilder)
-     */
-    public void setBuilder(InSecurityProcessorBuilder builder)
-    {
-        this.builder = builder;
-
-    }
-
     /**
      * @author Tomasz Sztelak
      * 
@@ -131,7 +88,9 @@ public class WSS4JInSecurityProcessor
             this.passwords = passwords;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
          */
         public void handle(Callback[] callbacks)
@@ -140,7 +99,9 @@ public class WSS4JInSecurityProcessor
             for (int i = 0; i < callbacks.length; i++)
             {
                 WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
-                String pass = (String) passwords.handle(pc.getIdentifer(),pc.getPasswordType()!=null,pc.getUsage());
+                String pass = (String) passwords.handle(pc.getIdentifer(),
+                                                        pc.getPasswordType() != null,
+                                                        pc.getUsage());
                 if (pass != null)
                 {
                     pc.setPassword(pass);

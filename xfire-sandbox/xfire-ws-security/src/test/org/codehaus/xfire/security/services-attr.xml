@@ -3,6 +3,7 @@
   xmlns:tns="http://xfire.codehaus.org/config/1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   >
+
   <tns:service
     name="echo"
     serviceClass="org.codehaus.xfire.security.UsernamePasswordEchoService"
@@ -10,7 +11,7 @@
     namespace="urn:Echo">
 
     <tns:inHandlers>
-      <tns:handler handlerClass="org.codehaus.xfire.util.LoggingHandler"/>
+      <!--  tns:handler handlerClass="org.codehaus.xfire.util.LoggingHandler"/ -->
       <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
       <tns:handler handlerClass="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler"></tns:handler>
     </tns:inHandlers>
@@ -18,6 +19,20 @@
     <tns:outHandlers>
        <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMOutHandler" />
        <tns:handler handlerClass="org.codehaus.xfire.security.wssecurity.WSS4JOutSecurityHandler"></tns:handler>
+       <!--  bean class="org.codehaus.xfire.security.wssecurity.WSS4JOutSecurityHandler" >
+        <property name="configuration" >
+          <map>
+      		<entry>
+		        <key><value>xfire.security.actions</value></key>
+		        <value>encrypt timestamp usertoken</value>
+	       </entry>
+	       <entry>
+	          <key><value>xfire.security.keystore.password</value></key>
+	          <value>keystorePass</value>
+	       </entry>
+	      </map>
+        </property>
+       </bean -->   
     </tns:outHandlers>
   </tns:service>
 </beans>

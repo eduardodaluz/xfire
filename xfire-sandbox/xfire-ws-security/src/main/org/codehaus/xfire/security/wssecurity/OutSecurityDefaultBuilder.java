@@ -1,9 +1,6 @@
 package org.codehaus.xfire.security.wssecurity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,21 +8,18 @@ import org.codehaus.xfire.security.OutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
 import org.codehaus.xfire.security.exceptions.ConfigValidationException;
-import org.codehaus.xfire.security.impl.SecurityFileConfigurer;
+import org.codehaus.xfire.security.impl.SecurityConfigurationWorker;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
  */
-public class WSS4JOutProcessorBuilder
-    extends SecurityFileConfigurer
+public class OutSecurityDefaultBuilder
+    extends SecurityConfigurationWorker
     implements OutSecurityProcessorBuilder
 {
 
-    private static final Log LOG = LogFactory.getLog(WSS4JOutProcessorBuilder.class);
-    
-    public static final String CFG_FILE = "META-INF/xfire/outsecurity.properties";
-    
+    private static final Log LOG = LogFactory.getLog(OutSecurityDefaultBuilder.class);
 
     /*
      * (non-Javadoc)
@@ -36,17 +30,16 @@ public class WSS4JOutProcessorBuilder
     {
         WSS4JOutSecurityProcessor wss4jProcessor = (WSS4JOutSecurityProcessor) processor;
 
-        Properties props = loadConfigFile(getConfigFile());
-        validateProperties(props);
+        validateProperties(configuration);
 
-        String actionsStr = props.getProperty(PROP_ACTIONS);
+        String actionsStr = (String) configuration.get(PROP_ACTIONS);
         String actions[] = actionsToArray(actionsStr);
         wss4jProcessor.setActions(actions);
 
-        String alias = props.getProperty(PROP_PUBLIC_ALIAS);
-        String userName = props.getProperty(PROP_USER_NAME);
-        String userPassword = props.getProperty(PROP_USER_PASSWORD);
-        String usePlainPass = props.getProperty(PROP_USER_PASSWORD_USE_PLAIN);
+        String alias = (String) configuration.get(PROP_PUBLIC_ALIAS);
+        String userName = (String) configuration.get(PROP_USER_NAME);
+        String userPassword = (String) configuration.get(PROP_USER_PASSWORD);
+        String usePlainPass = (String) configuration.get(PROP_USER_PASSWORD_USE_PLAIN);
 
         wss4jProcessor.setAlias(alias);
         for (int i = 0; i < actions.length; i++)
@@ -55,7 +48,7 @@ public class WSS4JOutProcessorBuilder
             if (SecurityActions.AC_ENCRYPT.equals(action)
                     || SecurityActions.AC_SIGNATURE.equals(action))
             {
-                wss4jProcessor.setCrypto(createCrypto(props));
+                wss4jProcessor.setCrypto(createCrypto(configuration));
                 break;
             }
         }
@@ -70,31 +63,29 @@ public class WSS4JOutProcessorBuilder
             }
         }
 
-        String ttlStr = props.getProperty(PROP_TIME_TO_LIVE);
+        String ttlStr = (String) configuration.get(PROP_TIME_TO_LIVE);
         if (ttlStr != null)
         {
             int ttl = Integer.parseInt(ttlStr);
             wss4jProcessor.setTTL(ttl);
         }
 
-        wss4jProcessor.setPrivateAlias(props.getProperty(PROP_PRIVATE_ALIAS));
-        wss4jProcessor.setPrivatePassword(props.getProperty(PROP_PRIVATE_PASSWORD));
+        wss4jProcessor.setPrivateAlias((String) configuration.get(PROP_PRIVATE_ALIAS));
+        wss4jProcessor.setPrivatePassword((String) configuration.get(PROP_PRIVATE_PASSWORD));
     }
-
-   
 
     /**
      * @param props
      */
-    protected void validateProperties(Properties props)
+    protected void validateProperties(Map props)
     {
 
-        if (props.getProperty(PROP_ACTIONS) == null)
+        if (props.get(PROP_ACTIONS) == null)
         {
             throw new ConfigValidationException("", "Missing '" + PROP_ACTIONS + "' property ");
         }
         // Check if all specified actions are known
-        String[] actions = actionsToArray(props.getProperty(PROP_ACTIONS));
+        String[] actions = actionsToArray((String) props.get(PROP_ACTIONS));
         for (int i = 0; i < actions.length; i++)
         {
             String action = actions[i];
@@ -134,7 +125,7 @@ public class WSS4JOutProcessorBuilder
     /**
      * @param props
      */
-    private void validateUsertokenCfg(Properties props)
+    private void validateUsertokenCfg(Map props)
     {
         checkRequiredProperty(SecurityActions.AC_USERTOKEN, new String[] { PROP_USER_PASSWORD,
                 PROP_USER_NAME, }, props);
@@ -149,7 +140,7 @@ public class WSS4JOutProcessorBuilder
     /**
      * @param props
      */
-    private void validateTimestampCfg(Properties props)
+    private void validateTimestampCfg(Map props)
     {
 
         checkRequiredProperty(SecurityActions.AC_TIMESTAMP,
@@ -170,7 +161,7 @@ public class WSS4JOutProcessorBuilder
     /**
      * @param props
      */
-    private void validateSignatureCfg(Properties props)
+    private void validateSignatureCfg(Map props)
     {
         validateKeystore(props);
         checkRequiredProperty(SecurityActions.AC_SIGNATURE, new String[] { PROP_PRIVATE_ALIAS,
@@ -180,7 +171,7 @@ public class WSS4JOutProcessorBuilder
     /**
      * @param props
      */
-    private void validateEncryptCfg(Properties props)
+    private void validateEncryptCfg(Map props)
     {
         validateKeystore(props);
         checkRequiredProperty(SecurityActions.AC_ENCRYPT, new String[] { PROP_KEYSTORE_FILE,
@@ -188,11 +179,6 @@ public class WSS4JOutProcessorBuilder
         // PROP_PRIVATE_ALIAS, PROP_KEY_ALIAS,
         // PROP_SYM_ALG, PROP_CERT_FILE, ,
         // 
-    }
-
-    protected String getDefaultConfigFile()
-    {
-        return CFG_FILE;
     }
 
 }

@@ -16,7 +16,6 @@ import org.apache.ws.security.message.WSEncryptBody;
 import org.apache.ws.security.message.WSSAddUsernameToken;
 import org.apache.ws.security.message.WSSignEnvelope;
 import org.apache.ws.security.util.WSSecurityUtil;
-import org.codehaus.xfire.security.BaseOutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
@@ -28,18 +27,14 @@ import org.w3c.dom.Document;
  * 
  */
 public class WSS4JOutSecurityProcessor
-    extends BaseOutSecurityProcessor
+
     implements OutSecurityProcessor
 {
     private static final Log LOG = LogFactory.getLog(WSS4JOutSecurityProcessor.class);
 
-    private OutSecurityProcessorBuilder builder = new WSS4JOutProcessorBuilder();
-
     private Crypto crypto;
 
     private String alias;
-
-    private boolean initialized = false;
 
     private boolean userPasswordUsePlain = false;
 
@@ -51,15 +46,11 @@ public class WSS4JOutSecurityProcessor
 
     private String privatePassword;
 
-    private void checkInitialized()
-    {
-        if (!initialized)
-        {
-            builder.build(this);
-            initialized = true;
-        }
+    private String username;
 
-    }
+    private String userPassword;
+
+    private OutSecurityProcessorBuilder builder;
 
     /*
      * (non-Javadoc)
@@ -69,7 +60,7 @@ public class WSS4JOutSecurityProcessor
     public Document process(Document document)
     {
 
-        checkInitialized();
+        // checkInitialized();
         for (int i = 0; i < actions.length; i++)
         {
             String action = actions[i];
@@ -113,34 +104,26 @@ public class WSS4JOutSecurityProcessor
         WSSignEnvelope signer = new WSSignEnvelope();
         try
         {
-            SOAPConstants soapConstants = WSSecurityUtil
-            .getSOAPConstants(document.getDocumentElement());
+            SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(document
+                    .getDocumentElement());
             signer.setUserInfo(getPrivateAlias(), getPrivatePassword());
             signer.setSigCanonicalization(WSConstants.C14N_EXCL_OMIT_COMMENTS);
             signer.setSignatureAlgorithm(WSConstants.RSA);
-            //signer.setUseSingleCertificate(true);
+            // signer.setUseSingleCertificate(true);
             signer.setKeyIdentifierType(WSConstants.ISSUER_SERIAL);
-            
+
             Vector parts = new Vector();
             WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants.getEnvelopeURI(),
                     "Content");
 
             parts.add(part);
             signer.setParts(parts);
-            DOMUtils util = new DOMUtils ();
-            try
-            {
-                util.writeXml(document, System.out);
-            }
-            catch (TransformerException e)
-            {
-                e.printStackTrace();
-            }
+
             document = signer.build(document, crypto);
-           
+
             try
             {
-                util.writeXml(document, System.out);
+                DOMUtils.writeXml(document, System.out);
             }
             catch (TransformerException e)
             {
@@ -302,14 +285,34 @@ public class WSS4JOutSecurityProcessor
         this.privatePassword = signaturePassword;
     }
 
-    public OutSecurityProcessorBuilder getBuilder()
+    public void setUsername(String user)
     {
-        return builder;
+        this.username = user;
+
+    }
+
+    public void setUserPassword(String password)
+    {
+        this.userPassword = password;
+
     }
 
     public void setBuilder(OutSecurityProcessorBuilder builder)
     {
         this.builder = builder;
+
+    }
+
+    public String getUsername()
+    {
+
+        return username;
+    }
+
+    public String getUserPassword()
+    {
+
+        return userPassword;
     }
 
 }

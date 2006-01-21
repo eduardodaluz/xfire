@@ -1,19 +1,18 @@
 package org.codehaus.xfire.security;
 
+import java.util.Map;
+
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
-public interface OutSecurityProcessorBuilder {
-
-	
+public interface OutSecurityProcessorBuilder
+{
 
     void build(OutSecurityProcessor processor);
 
-    /**
-     * @return
-     */
-    public String getConfigFile();
+    public Map getConfiguration();
 
-    public void setConfigFile(String configFile);
+    public void setConfiguration(Map configuration);
+
 }

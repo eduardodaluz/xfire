@@ -19,7 +19,7 @@ public class WSS4JOutProcessBuilderTest
         throws Exception
     {
         WSS4JOutSecurityProcessor processor = new WSS4JOutSecurityProcessor();
-        WSS4JOutProcessorBuilder builder = new WSS4JOutProcessorBuilder();
+        OutSecurityDefaultBuilder builder = new OutSecurityDefaultBuilder();
         builder.build(processor);
         assertNotNull(processor.getCrypto());
         assertNotNull(processor.getAlias());

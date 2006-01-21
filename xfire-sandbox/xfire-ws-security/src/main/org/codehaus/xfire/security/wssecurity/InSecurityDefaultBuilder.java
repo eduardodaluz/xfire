@@ -1,26 +1,22 @@
 package org.codehaus.xfire.security.wssecurity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
 import org.codehaus.xfire.security.WSPasswordCallback;
 import org.codehaus.xfire.security.exceptions.ConfigValidationException;
-import org.codehaus.xfire.security.impl.SecurityFileConfigurer;
+import org.codehaus.xfire.security.impl.SecurityConfigurationWorker;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
  */
-public class WSS4JInProcessorBuilder
-    extends SecurityFileConfigurer
+public class InSecurityDefaultBuilder
+    extends SecurityConfigurationWorker
     implements InSecurityProcessorBuilder
 {
 
-    private static final String CFG_FILE = "META-INF/xfire/insecurity.properties";
+    
 
     /*
      * (non-Javadoc)
@@ -36,9 +32,7 @@ public class WSS4JInProcessorBuilder
         }
         WSS4JInSecurityProcessor wss4jProcessor = (WSS4JInSecurityProcessor) processor;
 
-        Properties props = loadConfigFile(getConfigFile());
-
-        String actionsStr = props.getProperty(PROP_ACTIONS);
+        String actionsStr = (String) configuration.get(PROP_ACTIONS);
         String actions[] = actionsToArray(actionsStr);
         for (int i = 0; i < actions.length; i++)
         {
@@ -46,12 +40,12 @@ public class WSS4JInProcessorBuilder
             if (SecurityActions.AC_ENCRYPT.equals(action)
                     || SecurityActions.AC_SIGNATURE.equals(action))
             {
-                wss4jProcessor.setCrypto(createCrypto(props));
+                wss4jProcessor.setCrypto(createCrypto(configuration));
                 break;
             }
         }
 
-        String callbackClassStr = props.getProperty(PROP_PASSWORD_CALLBACK);
+        String callbackClassStr = (String) configuration.get(PROP_PASSWORD_CALLBACK);
         if (callbackClassStr != null)
         {
             try
@@ -79,14 +73,6 @@ public class WSS4JInProcessorBuilder
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.codehaus.xfire.security.impl.SecurityFileConfigurer#getDefaultConfigFile()
-     */
-    protected String getDefaultConfigFile()
-    {
-        return CFG_FILE;
-    }
+    
 
 }

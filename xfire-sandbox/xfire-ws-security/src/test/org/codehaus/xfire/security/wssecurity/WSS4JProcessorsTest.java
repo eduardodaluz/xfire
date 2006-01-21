@@ -2,10 +2,13 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.io.InputStream;
 
+import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.InSecurityProcessorBuilder;
 import org.codehaus.xfire.security.InSecurityResult;
+import org.codehaus.xfire.security.OutSecurityProcessor;
 import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
 import org.codehaus.xfire.security.exceptions.WSSecurityException;
+import org.codehaus.xfire.security.impl.PropertiesLoader;
 import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Document;
 
@@ -33,20 +36,23 @@ public class WSS4JProcessorsTest
      * @param builder
      * @param path
      */
-    private void setupConfigFile(OutSecurityProcessorBuilder builder, String path)
+    private void setupConfigFile(OutSecurityProcessor processor, String path)
     {
-        WSS4JOutProcessorBuilder outBuilder = (WSS4JOutProcessorBuilder) builder;
-        outBuilder.setConfigFile(path);
+
+        OutSecurityDefaultBuilder outBuilder = new OutSecurityDefaultBuilder();
+        outBuilder.setConfiguration(new PropertiesLoader().loadConfigFile(path));
+        outBuilder.build(processor);
     }
 
     /**
      * @param builder
      * @param path
      */
-    private void setupConfigFile(InSecurityProcessorBuilder builder, String path)
+    private void setupConfigFile(InSecurityProcessor processor, String path)
     {
-        WSS4JInProcessorBuilder outBuilder = (WSS4JInProcessorBuilder) builder;
-        outBuilder.setConfigFile(path);
+        InSecurityDefaultBuilder outBuilder = new InSecurityDefaultBuilder();
+        outBuilder.setConfiguration(new PropertiesLoader().loadConfigFile(path));
+        outBuilder.build(processor);
     }
 
     /**
@@ -61,11 +67,11 @@ public class WSS4JProcessorsTest
         Document doc = readDocument("wsse-request-clean.xml");
 
         WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor();
-        setupConfigFile(outProcessor.getBuilder(), outConfig);
+        setupConfigFile(outProcessor, outConfig);
         doc = outProcessor.process(doc);
         assertNotNull(doc);
         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
-        setupConfigFile(processor.getBuilder(), inConfig);
+        setupConfigFile(processor, inConfig);
         InSecurityResult result = processor.process(doc);
         return result;
     }
@@ -141,13 +147,12 @@ public class WSS4JProcessorsTest
         Document doc = readDocument("wsse-request-clean.xml");
 
         WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor();
-        setupConfigFile(outProcessor.getBuilder(),
-                        "META-INF/xfire/outsecurity_timestamp.properties");
+        setupConfigFile(outProcessor, "META-INF/xfire/outsecurity_timestamp.properties");
         doc = outProcessor.process(doc);
         assertNotNull(doc);
         Thread.sleep(2000);
         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
-        setupConfigFile(processor.getBuilder(), "META-INF/xfire/insecurity_timestamp.properties");
+        setupConfigFile(processor, "META-INF/xfire/insecurity_timestamp.properties");
         try
         {
             processor.process(doc);
@@ -163,15 +168,19 @@ public class WSS4JProcessorsTest
      * @throws Exception
      */
     public void testEncryptTimestampUTValid()
-    throws Exception
-{
+        throws Exception
+    {
 
-    InSecurityResult result = processRequest("META-INF/xfire/outsecurity_mix.properties",
-                                             "META-INF/xfire/insecurity_mix.properties");
+        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_mix.properties",
+                                                 "META-INF/xfire/insecurity_mix.properties");
 
-    assertNotNull(result.getTsExpire());
-    assertEquals(result.getUser(), "userName");
-    assertNotNull(result.getPassword());
-    assertTrue(result.isPasswordHashed());
-}
+        assertNotNull(result.getTsExpire());
+        assertEquals(result.getUser(), "userName");
+        assertNotNull(result.getPassword());
+        assertTrue(result.isPasswordHashed());
+    }
+    
+    public void testService(){
+        assertTrue(true);
+    }
 }

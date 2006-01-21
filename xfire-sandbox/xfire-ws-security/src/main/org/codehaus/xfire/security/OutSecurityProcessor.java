@@ -1,7 +1,5 @@
 package org.codehaus.xfire.security;
 
-import java.security.Key;
-
 import org.w3c.dom.Document;
 
 /**
@@ -10,22 +8,6 @@ import org.w3c.dom.Document;
  */
 public interface OutSecurityProcessor
 {
-
-    void setEncCipherName(String name);
-
-    String getEncCipherName();
-
-    void setSymmetricCipherName(String name);
-
-    String getSymmetricCipherName();
-
-    void setEncryptionKey(Key encKey);
-
-    Key getEncryptionKey();
-
-    void setSymmetricKey(Key symmetricKey);
-
-    Key getSymmetricKey();
 
     void setUsername(String user);
 
@@ -50,8 +32,6 @@ public interface OutSecurityProcessor
     void setPrivatePassword(String pass);
 
     String getPrivatePassword();
-
-    void setBuilder(OutSecurityProcessorBuilder builder);
 
     public Document process(Document document);
 

@@ -80,7 +80,8 @@ public class OutSecuritySerializer
             doc = processor.process(doc);
             DOMUtils outputer = new DOMUtils (); 
             outputer.writeXml(doc, System.out);
-            org.codehaus.xfire.util.stax.DOMStreamWriterHelper.write(writer, doc);
+            STAXUtils.writeElement(doc.getDocumentElement(), writer, false);
+            //org.codehaus.xfire.util.stax.DOMStreamWriterHelper.write(writer, doc);
             
             inStream.close();
             writer.close();

@@ -23,7 +23,7 @@ public class InSecurityTest
     {
         Service service = getXFire().getServiceRegistry().getService("echo");
 
-        Document document = invokeService("echo", "wsse-request-sign.xml");
+        Document document = invokeService("echo", "aftersign.xml");
         XMLOutputter outputer = new XMLOutputter();
         outputer.output(document, System.out);
         assertNotNull(document);
