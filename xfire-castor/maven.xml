@@ -1,0 +1,44 @@
+<project
+        default="jar:install"
+        xmlns:j="jelly:core"
+        xmlns:ant="jelly:ant"
+        xmlns:maven="jelly:maven"
+        xmlns:i="jelly:interaction">
+
+    <ant:path id="castor.class.path">
+        <ant:path refid="maven.dependency.classpath"/>
+        <ant:pathelement path="${maven.build.dest}"/>
+        <ant:pathelement path="${maven.test.dest}"/>
+    </ant:path>
+
+    <ant:taskdef name="castor-srcgen"
+                classname="org.exolab.castor.tools.ant.taskdefs.CastorSourceGenTask"
+                classpathref="castor.class.path"/>
+
+    <!--
+     Generate castor objects for all the schemas in src/test-schemas
+     and make the WeatherService
+    -->
+    <goal name="generate-test">
+
+        <ant:delete dir="${maven.build.dir}/generated-test"/>
+        <ant:mkdir dir="${maven.build.dir}/generated-test"/>
+
+        <castor-srcgen file="src/test-schemas/WeatherForecast.xsd"
+        			  package="net.webservicex"
+                      todir="${maven.build.dir}/generated-test"
+                      types="j2" 
+                      warnings="false" />
+
+        <ant:path id="xfire.castor.generated.test"
+                  location="${maven.build.dir}/generated-test"/>
+
+        <maven:addPath id="maven.test.compile.src.set"
+                       refid="xfire.castor.generated.test"/>
+    </goal>
+
+    <preGoal name="test:compile">
+        <attainGoal name="generate-test"/>
+    </preGoal>
+
+</project>
