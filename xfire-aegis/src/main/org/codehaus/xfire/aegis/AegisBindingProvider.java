@@ -107,6 +107,7 @@ public class AegisBindingProvider
             return;
         }
 
+        context.setProperty(CURRENT_MESSAGE_PART, p);
         type.writeObject(value, mw, context);
     }
 
