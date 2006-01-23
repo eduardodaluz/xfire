@@ -288,6 +288,16 @@ public class XFireServletController
     protected void generateWSDL(HttpServletResponse response, String service)
             throws ServletException, IOException
     {
+        
+        Service userService = getXFire().getServiceRegistry().getService(service);
+        Object value = userService.getProperty(Service.DISABLE_WSDL_GENERATION);
+        boolean isWSDLDisabled = "true".equalsIgnoreCase((value!=null?value.toString():null));
+        if( isWSDLDisabled ){
+            logger.warn("WSDL generation disabled for service :"+ service);
+            response.sendError(404, "No wsdl is avaiable for this service");
+            return ;
+        }
+        
         response.setStatus(200);
         response.setContentType("text/xml");
 

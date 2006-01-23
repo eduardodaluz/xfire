@@ -111,6 +111,12 @@
             <groupId>easymock</groupId>
             <artifactId>easymock</artifactId>
         </dependency>
+         <dependency>
+	      <groupId>nekohtml</groupId>
+	      <artifactId>nekohtml</artifactId>
+	      <version>0.9.5</version>
+	    </dependency>
+        
     </dependencies>
 
     <build>

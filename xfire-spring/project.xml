@@ -79,5 +79,10 @@
 	      <artifactId>qdox</artifactId>
 	      <version>1.5</version>
 	    </dependency>
+	    <dependency>
+	      <groupId>nekohtml</groupId>
+	      <artifactId>nekohtml</artifactId>
+	      <version>0.9.5</version>
+	    </dependency>
     </dependencies>
 </project>

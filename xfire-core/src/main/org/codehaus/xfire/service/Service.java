@@ -37,6 +37,8 @@ public class Service
 {
     public final static String ROLE = Service.class.getName();
 
+    public final static String DISABLE_WSDL_GENERATION="wsdl.generation.disabled";
+    
     private QName name;
     
     private ServiceInfo service;

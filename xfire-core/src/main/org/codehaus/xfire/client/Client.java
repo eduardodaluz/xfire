@@ -252,8 +252,10 @@ public class Client
             context.setCurrentMessage(msg);
             
             HandlerPipeline outPipe = new HandlerPipeline(xfire.getOutPhases());
+            outPipe.addHandlers(xfire.getOutHandlers());
             outPipe.addHandlers(getOutHandlers());
             outPipe.addHandlers(transport.getOutHandlers());
+            
             context.setOutPipeline(outPipe);
 
             ServiceInvocationHandler.writeHeaders(context);

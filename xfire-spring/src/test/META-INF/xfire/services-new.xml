@@ -15,6 +15,7 @@
       org.codehaus.xfire.test.EchoImpl
     </implementationClass>
     <properties>
+      <property key="wsdl.generation.disabled">true</property>
       <property key="foo">bar</property>
       <property key="cheese">baz</property>
     </properties>
