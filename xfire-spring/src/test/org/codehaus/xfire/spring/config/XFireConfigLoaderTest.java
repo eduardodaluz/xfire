@@ -1,6 +1,9 @@
 package org.codehaus.xfire.spring.config;
 
+import javax.servlet.ServletContext;
+
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
@@ -14,6 +17,8 @@ import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.springframework.context.ApplicationContext;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.WebApplicationContext;
 import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
 /**
@@ -27,7 +32,25 @@ public class XFireConfigLoaderTest
         throws Exception
     {
         XFireConfigLoader configLoader = new XFireConfigLoader();
-        XFire xfire = configLoader.loadConfig(new String[] {"META-INF/xfire/sservices.xml"});
+        XFire xfire = configLoader.loadConfig("META-INF/xfire/sservices.xml", null);
+        
+        doAssertions(xfire);
+    }
+    
+    public void testConfigLoaderWithParentContext() throws Exception 
+    {
+    	ServletContext servletCtx = new MockServletContext();
+    	ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext(new String[] {"org/codehaus/xfire/spring/xfire.xml"});
+    	Object obj =  appCtx.getBean("xfire.serviceFactory");
+    	servletCtx.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, appCtx);
+    	
+        XFireConfigLoader configLoader = new XFireConfigLoader();
+        XFire xfire = configLoader.loadConfig("META-INF/xfire/sservices.xml", servletCtx);
+
+        doAssertions(xfire);
+    }
+
+    private void doAssertions(XFire xfire){
         
         assertNotNull(xfire);
         assertEquals(2, xfire.getInHandlers().size());
@@ -79,7 +102,7 @@ public class XFireConfigLoaderTest
         serviceBean = (ServiceBean) getBean("EchoWithBeanServiceFactory");
         assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
     }
-
+    
     protected ApplicationContext createContext()
     {
         return new ClassPathXmlApplicationContext(new String[] {

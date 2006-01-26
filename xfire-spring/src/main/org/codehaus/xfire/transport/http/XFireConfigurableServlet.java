@@ -7,7 +7,10 @@ import javax.servlet.ServletException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.spring.XFireConfigLoader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * XFire Servlet as Dispatcher including a configuration<br>
@@ -40,42 +43,25 @@ public class XFireConfigurableServlet
         return configPath;
     }
 
-    public XFire createXFire()
-        throws ServletException
-    {
+	public XFire createXFire() throws ServletException 
+	{
         configPath = getInitParameter(PARAM_CONFIG);
-        Enumeration en ;
-        
-        try
+        XFire xfire;
+        XFireConfigLoader loader = new XFireConfigLoader();
+        try 
         {
-            en = getClass().getClassLoader().getResources(getConfigPath());
-            if (!en.hasMoreElements())
-            {
-                log.warn("Can't find any configuration file : " + getConfigPath());
-            }
-            
-            log.debug("Found services.xml at "+getConfigPath());
-            
-            XFire xfire;
-            if (en.hasMoreElements())
-            {
-                XFireConfigLoader loader = new XFireConfigLoader();
-                xfire = loader.loadConfig(getConfigPath());
-            }
-            else
-            {
-                xfire = super.createXFire();
-            }
+			xfire = loader.loadConfig(getConfigPath(), getServletContext());
+		} 
+		catch (XFireException e) 
+		{
+			throw new ServletException(e);
+		}
+        if(xfire == null || xfire.getServiceRegistry() == null || xfire.getServiceRegistry().getServices() == null || xfire.getServiceRegistry().getServices().size() == 0)
+        {
+            xfire = super.createXFire();
+        }
 
-            log.debug("Done loading configuration.");
-            
-            return xfire;
-        }
-        catch (Exception e)
-        {
-            log.error("Couldn't configure XFire", e);
-            throw new ServletException("Coudln't configure XFire.", e);
-        }
+        return xfire;
     }
 
     

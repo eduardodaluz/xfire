@@ -3,6 +3,8 @@
 
 <beans>
 
+  <import resource="customEditors.xml"/>
+  
   <bean id="xfire.serviceRegistry"
     class="org.codehaus.xfire.service.DefaultServiceRegistry"
     singleton="true" />
@@ -64,18 +66,6 @@
   <bean id="xfire.messageBindingProvider"
     class="org.codehaus.xfire.service.binding.MessageBindingProvider" />
 
-  <bean id="customEditorConfigurer"
-    class="org.springframework.beans.factory.config.CustomEditorConfigurer">
-    <property name="customEditors">
-      <map>
-        <entry key="org.codehaus.xfire.service.ServiceFactory">
-          <bean class="org.codehaus.xfire.spring.editors.ServiceFactoryEditor">
-            <property name="transportManager" ref="xfire.transportManager" />
-          </bean>
-        </entry>
-      </map>
-    </property>
-  </bean>
   <!-- 
   <bean id="commons-attributes"
     class="org.codehaus.xfire.spring.config.ServiceFactoryBean">
