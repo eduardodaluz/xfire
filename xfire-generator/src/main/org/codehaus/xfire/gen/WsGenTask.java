@@ -1,5 +1,8 @@
 package org.codehaus.xfire.gen;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
@@ -15,8 +18,13 @@ public class WsGenTask extends MatchingTask
     public void execute()
         throws BuildException
     {
+
         super.execute();
         
+        // Ugly fix for XFIRE-245: wsgen can't find XMLInputFactory
+    	ClassLoader wsdl11ClassLoader = Wsdl11Generator.class.getClassLoader();
+    	Thread.currentThread().setContextClassLoader(wsdl11ClassLoader);
+    	
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setDestinationPackage(_package);
         generator.setOutputDirectory(outputDirectory);
