@@ -75,7 +75,7 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>XmlSchema</artifactId>
-      <version>20051110</version>
+      <version>20060128-patched</version>
       <url>${pom.url}</url>
     </dependency>
     <dependency>
