@@ -245,6 +245,20 @@ public abstract class AbstractBinding
         }
     }
 
+    protected Object getParam(Object[] values, MessagePartInfo outParam, MessageContext context)
+    {
+        int index = outParam.getIndex();
+        if (index == -1) return values[0];
+        
+        Object[] inParams = (Object[]) context.getInMessage().getBody();
+        return inParams[index];
+    }
+
+    protected Object getClientParam(Object[] values, MessagePartInfo outParam, MessageContext context)
+    {
+        return values[outParam.getIndex()];
+    }
+
     /**
      * Get the namespace for a particular part. This will change depending on if
      * we're doc/lit or rpc/lit or if the MessagePartInfo is a concrete type.

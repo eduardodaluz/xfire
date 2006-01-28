@@ -40,7 +40,8 @@ public class DocumentBinding
         int i = 0;
         
         MessageInfo msgInfo = null;
-        if (isClientModeOn(context))
+        boolean client = isClientModeOn(context);
+        if (client)
         {
             msgInfo = op.getInputMessage();
         }
@@ -55,7 +56,13 @@ public class DocumentBinding
 
             try
             {
-                writeParameter(writer, context, values[i], outParam, getBoundNamespace(context, outParam));
+                Object value;
+                if (client) 
+                    value = getClientParam(values, outParam, context);
+                else 
+                    value = getParam(values, outParam, context);
+                
+                writeParameter(writer, context, value, outParam, getBoundNamespace(context, outParam));
             }
             catch (XMLStreamException e)
             {

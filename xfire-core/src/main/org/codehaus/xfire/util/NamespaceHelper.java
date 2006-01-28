@@ -58,6 +58,25 @@ public class NamespaceHelper
             return null;
     }
     
+    public static void getPrefixes(Element element, String namespaceURI, List prefixes)
+    {
+        if (element.getNamespaceURI().equals(namespaceURI)) 
+            prefixes.add(element.getNamespacePrefix());
+        
+        List namespaces = element.getAdditionalNamespaces();
+        
+        for (Iterator itr = namespaces.iterator(); itr.hasNext();)
+        {
+            Namespace ns = (Namespace) itr.next();
+            
+            if (ns.getURI().equals(namespaceURI)) 
+                prefixes.add(ns.getPrefix());
+        }
+        
+        if (element.getParentElement() != null)
+            getPrefixes(element.getParentElement(), namespaceURI, prefixes);
+    }
+    
     private static String getUniquePrefix(Element el)
     {
         int n = 1;

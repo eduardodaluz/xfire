@@ -179,10 +179,63 @@ public class ObjectServiceFactory
             throw new XFireRuntimeException("Couldn't configure service.", e);
         }
         
+        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        {
+            Binding b = (Binding) itr.next();
+            
+            for (Iterator oitr = service.getServiceInfo().getOperations().iterator(); oitr.hasNext();)
+            {
+                OperationInfo op = (OperationInfo) oitr.next();
+                
+                MessagePartContainer inHeaders = b.getHeaders(op.getInputMessage());
+                
+                configureHeaders(service, op, b);
+            }
+        }
+        
+        service.getBindingProvider().initialize(service);
         
         return service;
     }
     
+    protected void configureHeaders(Service service, OperationInfo op, Binding b)
+    {
+        Method method = op.getMethod();
+        Class[] paramClasses = method.getParameterTypes();
+        MessagePartContainer inHeaders = b.getHeaders(op.getInputMessage());
+        MessagePartContainer outHeaders = null;
+        if (op.hasOutput()) outHeaders = b.getHeaders(op.getOutputMessage());
+        
+        for (int j = 0; j < paramClasses.length; j++)
+        {
+            if (!paramClasses[j].equals(MessageContext.class) && isHeader(method, j))
+            {
+                final QName q = getInParameterName(service, op, method, j, false);
+                
+                if (isOutParam(method, j))
+                {
+                    MessagePartInfo part = outHeaders.getMessagePart(q);
+                    if (part == null)
+                        throw new XFireRuntimeException("Could not find header " + q + " in wsdl for operation " + op.getName());
+                    
+                    part.setTypeClass(paramClasses[j]);
+                    part.setIndex(j);
+                    part.setSchemaType(null);
+                }
+                else
+                {
+                    MessagePartInfo part = inHeaders.getMessagePart(q);
+                    if (part == null)
+                        throw new XFireRuntimeException("Could not find header " + q + " in wsdl for operation " + op.getName());
+                    
+                    part.setTypeClass(paramClasses[j]);
+                    part.setIndex(j);
+                    part.setSchemaType(null);
+                }
+            }
+        }
+    }
+
     /**
      * Creates a service from the specified class. The service name will be the 
      * unqualified class name. The namespace will be based on the package. 

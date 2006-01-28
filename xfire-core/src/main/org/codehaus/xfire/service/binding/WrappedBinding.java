@@ -98,20 +98,6 @@ public class WrappedBinding
         }
     }
 
-    private Object getParam(Object[] values, MessagePartInfo outParam, MessageContext context)
-    {
-        int index = outParam.getIndex();
-        if (index == -1) return values[0];
-        
-        Object[] inParams = (Object[]) context.getInMessage().getBody();
-        return inParams[index];
-    }
-
-    private Object getClientParam(Object[] values, MessagePartInfo outParam, MessageContext context)
-    {
-        return values[outParam.getIndex()];
-    }
-
     public void writeStartElement(XMLStreamWriter writer, String name, String namespace) 
         throws XMLStreamException
     {

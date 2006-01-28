@@ -292,6 +292,30 @@ public class ObjectType extends Type
         return true;
     }
 
+    public boolean isAbstract()
+    {
+        // TODO Auto-generated method stub
+        return super.isAbstract();
+    }
+
+    public boolean isNillable()
+    {
+        // TODO Auto-generated method stub
+        return super.isNillable();
+    }
+
+    public boolean isWriteOuter()
+    {
+        // TODO Auto-generated method stub
+        return super.isWriteOuter();
+    }
+
+    public void setNillable(boolean nillable)
+    {
+        // TODO Auto-generated method stub
+        super.setNillable(nillable);
+    }
+
     public void writeSchema( Element root )
     {
         if( serializedWhenUnknown )

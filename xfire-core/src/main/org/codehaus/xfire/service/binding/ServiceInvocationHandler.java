@@ -149,6 +149,7 @@ public class ServiceInvocationHandler
         
         int total = inMsg.size() + headerMsg.size() + outSize;
         
+        // there are no holder classes to fill in
         if (total == params.size()) return params.toArray();
         
         Object[] newParams = new Object[total];

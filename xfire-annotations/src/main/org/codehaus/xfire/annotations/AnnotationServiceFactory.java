@@ -326,6 +326,11 @@ public class AnnotationServiceFactory
             final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, paramNumber);
 
             String name = webParamAnnotation.getName();
+            if (name == null || name.length() == 0)
+            {
+                name = super.getInParameterName(endpoint, op, method, paramNumber, doc).getLocalPart();
+            }
+            
             String ns = webParamAnnotation.getTargetNamespace();
 
             if (ns == null || ns.length() == 0) 
@@ -348,6 +353,11 @@ public class AnnotationServiceFactory
             final WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
 
             String name = webResultAnnotation.getName();
+            if (name == null || name.length() == 0)
+            {
+                name = super.getOutParameterName(endpoint, op, method, doc).getLocalPart();
+            }
+            
             String ns = webResultAnnotation.getTargetNamespace();
 
             if (ns == null || ns.length() == 0)

@@ -1,10 +1,14 @@
 package org.codehaus.xfire.aegis.type.xml;
 
+import javanet.staxutils.ContentHandlerToXMLStreamWriter;
+
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
@@ -88,6 +92,16 @@ public class SourceType
             }
            
             STAXUtils.writeElement(element, writer, false);
+        }
+        else if (object instanceof SAXSource)
+        {
+            SAXSource source = (SAXSource) object;
+      
+            
+        }
+        else if (object instanceof StreamSource)
+        {
+            
         }
     }
 }

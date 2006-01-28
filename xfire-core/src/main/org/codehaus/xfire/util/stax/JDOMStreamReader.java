@@ -57,6 +57,8 @@ public class JDOMStreamReader
     
     private Map prefix2decNs;
     
+    private JDOMNamespaceContext namespaceContext;
+    
     /**
      * @param element
      */
@@ -64,11 +66,14 @@ public class JDOMStreamReader
     {
         super(new ElementFrame(element, null));
         
+        namespaceContext = new JDOMNamespaceContext();
         setupNamespaces(element);
     }
 
     private void setupNamespaces(Element element)
     {
+        namespaceContext.setElement(element);
+        
         if (prefix2decNs != null)
         {
             namespaceStack.push(prefix2decNs);
@@ -260,7 +265,7 @@ public class JDOMStreamReader
 
     public NamespaceContext getNamespaceContext()
     {
-        throw new UnsupportedOperationException();
+        return namespaceContext;
     }
 
     public String getText()

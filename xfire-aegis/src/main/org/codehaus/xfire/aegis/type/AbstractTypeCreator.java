@@ -115,7 +115,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
         
         Class heldCls = (Class) info.getGenericType();
         info.setTypeClass(heldCls);
-        
+
         Type delegate = createType(heldCls);
         HolderType type = new HolderType(delegate);
         return type;

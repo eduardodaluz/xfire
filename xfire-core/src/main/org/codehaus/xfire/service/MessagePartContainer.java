@@ -120,6 +120,6 @@ public abstract class MessagePartContainer
     
     public int size()
     {
-        return messageParts.size();
+        return messagePartList.size();
     }
 }

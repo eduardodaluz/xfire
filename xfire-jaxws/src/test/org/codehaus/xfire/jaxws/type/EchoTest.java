@@ -37,8 +37,8 @@ public class EchoTest
         Echo echoHeader = new Echo();
         echoHeader.setText("header");
         
-        assertEquals("echo", client.echo(echo, echoHeader, out2, outHeader));
-        assertEquals("hi", out2.value);
-        assertEquals("header", outHeader.value);
+        assertEquals("hi", client.echo(echo, echoHeader, out2, outHeader).getText());
+        assertEquals("header", outHeader.value.getText());
+        assertEquals("hi", out2.value.getText());
     }
 }
