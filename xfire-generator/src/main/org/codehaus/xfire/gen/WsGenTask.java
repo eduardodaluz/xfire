@@ -22,8 +22,8 @@ public class WsGenTask extends MatchingTask
         super.execute();
         
         // Ugly fix for XFIRE-245: wsgen can't find XMLInputFactory
-    	ClassLoader wsdl11ClassLoader = Wsdl11Generator.class.getClassLoader();
-    	Thread.currentThread().setContextClassLoader(wsdl11ClassLoader);
+        ClassLoader originalCL = Thread.currentThread().getContextClassLoader();
+    	Thread.currentThread().setContextClassLoader(Wsdl11Generator.class.getClassLoader());
     	
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setDestinationPackage(_package);
@@ -40,6 +40,8 @@ public class WsGenTask extends MatchingTask
         {
             throw new BuildException(e);
         }
+        
+    	Thread.currentThread().setContextClassLoader(originalCL);
     }
 
     public String getPackage()
