@@ -26,6 +26,7 @@ import com.sun.codemodel.JType;
 import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
+import com.sun.tools.xjc.api.TypeAndAnnotation;
 import com.sun.tools.xjc.api.XJC;
 
 public class JAXBSchemaSupport implements SchemaSupport
@@ -100,6 +101,7 @@ public class JAXBSchemaSupport implements SchemaSupport
         throws GenerationException
     {
         JCodeModel codeModel = context.getCodeModel();
+
         Mapping mapping = model.get(concreteType);
         
         if (mapping == null)
@@ -112,6 +114,19 @@ public class JAXBSchemaSupport implements SchemaSupport
         if (mapping != null)
         {
             typeClass = mapping.getType().getTypeClass();
+        }
+        
+        if(typeClass == null)
+        {
+        	TypeAndAnnotation def = model.getJavaType(concreteType);
+        	if(def == null)
+        	{
+        		def = model.getJavaType(schemaType);
+        	}
+        	if(def != null)
+        	{
+        		return def.getTypeClass();
+        	}
         }
         
         if (typeClass == null)
