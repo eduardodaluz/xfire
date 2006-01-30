@@ -5,18 +5,18 @@ import java.util.Vector;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
-import org.codehaus.xfire.security.InSecurityResult;
+import org.codehaus.xfire.security.SecurityResult;
 
 public class SecurityResultHandler
 {
-    InSecurityResult result = new InSecurityResult();
+    SecurityResult result = new SecurityResult();
 
     public SecurityResultHandler()
     {
 
     }
 
-    public SecurityResultHandler(InSecurityResult res)
+    public SecurityResultHandler(SecurityResult res)
     {
         result = res;
     }
@@ -25,7 +25,7 @@ public class SecurityResultHandler
      * @param wsResult
      * @return
      */
-    public InSecurityResult process(Vector wsResult)
+    public SecurityResult process(Vector wsResult)
     {
 
         for (int i = 0; i < wsResult.size(); i++)
@@ -46,7 +46,7 @@ public class SecurityResultHandler
         return result;
     }
 
-    private void handleTimeStamp(WSSecurityEngineResult r, InSecurityResult result)
+    private void handleTimeStamp(WSSecurityEngineResult r, SecurityResult result)
     {
         result.setTsCreated(r.getTimestamp().getCreated());
         result.setTsExpire(r.getTimestamp().getExpires());
@@ -57,7 +57,7 @@ public class SecurityResultHandler
      * @param userToken
      * @param result
      */
-    private void handleUsernameToken(WSSecurityEngineResult wsRes, InSecurityResult result)
+    private void handleUsernameToken(WSSecurityEngineResult wsRes, SecurityResult result)
     {
         WSUsernameTokenPrincipal principal =(WSUsernameTokenPrincipal) wsRes.getPrincipal(); 
         result.setUser(principal.getName());

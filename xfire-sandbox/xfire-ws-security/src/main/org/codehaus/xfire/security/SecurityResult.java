@@ -6,25 +6,34 @@ import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
- *
+ * 
  */
-public class InSecurityResult {
+public class SecurityResult
+{
 
-	private Document document;
+    private Document document;
 
-	private String user;
+    private String user;
 
-	private String password;
-    
+    private String password;
+
     private boolean isPasswordHashed;
-    
-    private Calendar tsCreated;
-    
-    private Calendar tsExpire;
-    
-    
 
-	public Calendar getTsCreated()
+    private Calendar tsCreated;
+
+    private Calendar tsExpire;
+
+    public SecurityResult()
+    {
+
+    }
+
+    public SecurityResult(Document doc)
+    {
+        document = doc;
+    }
+
+    public Calendar getTsCreated()
     {
         return tsCreated;
     }
@@ -44,29 +53,35 @@ public class InSecurityResult {
         this.tsExpire = tsExpire;
     }
 
-    public Document getDocument() {
-		return document;
-	}
+    public Document getDocument()
+    {
+        return document;
+    }
 
-	public void setDocument(Document document) {
-		this.document = document;
-	}
+    public void setDocument(Document document)
+    {
+        this.document = document;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword()
+    {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
 
-	public String getUser() {
-		return user;
-	}
+    public String getUser()
+    {
+        return user;
+    }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+    public void setUser(String user)
+    {
+        this.user = user;
+    }
 
     public boolean isPasswordHashed()
     {

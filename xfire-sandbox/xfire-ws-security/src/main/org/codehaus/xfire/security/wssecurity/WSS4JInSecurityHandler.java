@@ -2,6 +2,8 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.security.handlers.InSecurityHandler;
 import org.codehaus.xfire.security.impl.PropertiesLoader;
 
@@ -12,13 +14,15 @@ import org.codehaus.xfire.security.impl.PropertiesLoader;
 public class WSS4JInSecurityHandler
     extends InSecurityHandler
 {
+    private static final String CFG_FILE = "META-INF/xfire/insecurity.properties";
 
-    private String configFile;
+    private String configFile=CFG_FILE;
 
     public WSS4JInSecurityHandler()
     {
         super();
         setProcessor(new WSS4JInSecurityProcessor());
+       // setConfigFile(configFile);
 
     }
 
@@ -26,6 +30,7 @@ public class WSS4JInSecurityHandler
     {
         this();
         setConfiguration(props);
+        
     }
 
     public WSS4JInSecurityHandler(String file)
@@ -49,4 +54,9 @@ public class WSS4JInSecurityHandler
 
     }
 
+    public QName[] getUnderstoodHeaders()
+    {
+     
+        return new QName[]{new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd","Security")};
+    }
 }

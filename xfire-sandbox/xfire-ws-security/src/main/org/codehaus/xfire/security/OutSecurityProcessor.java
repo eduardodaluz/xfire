@@ -1,12 +1,11 @@
 package org.codehaus.xfire.security;
 
-import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
  */
-public interface OutSecurityProcessor
+public interface OutSecurityProcessor extends SecurityProcessor
 {
 
     void setUsername(String user);
@@ -33,6 +32,6 @@ public interface OutSecurityProcessor
 
     String getPrivatePassword();
 
-    public Document process(Document document);
+    
 
 }

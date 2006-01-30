@@ -6,10 +6,10 @@ import java.util.Map;
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
  */
-public interface OutSecurityProcessorBuilder
+public interface SecurityProcessorBuilder
 {
 
-    void build(OutSecurityProcessor processor);
+    void build(SecurityProcessor processor);
 
     public Map getConfiguration();
 

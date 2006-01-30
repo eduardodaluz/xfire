@@ -1,18 +1,14 @@
 package org.codehaus.xfire.security.wssecurity;
 
 import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.codehaus.xfire.security.InSecurityProcessor;
-import org.codehaus.xfire.security.InSecurityResult;
+import org.codehaus.xfire.security.SecurityResult;
+import org.codehaus.xfire.security.impl.PropertiesLoader;
 import org.codehaus.xfire.util.DOMUtils;
-import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -46,7 +42,7 @@ public class WSS4jInSecurityProcessorTest
         InputStream inStream = getClass().getResourceAsStream(file);
         
         DOMUtils utils = new DOMUtils ();
-        Document doc = utils.readXml(inStream);
+        Document doc = utils.readXml2(inStream);
         /*Document doc = STAXUtils.read(DocumentBuilderFactory.newInstance().newDocumentBuilder(),
                                       STAXUtils.createXMLStreamReader(inStream, null),
                                       false);*/
@@ -85,15 +81,23 @@ public class WSS4jInSecurityProcessorTest
      }*/
      
      public void testEncryption() throws Exception{
-         Document doc = readDocument("wsse-request-enc.xml");
-         
+         Document doc = readDocument("tcpmon.xml");
+         PropertiesLoader a  = new PropertiesLoader ();
+         Map map = a.loadConfigFile("META-INF/xfire/insecurity.properties");
          /*WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor ();
          doc = outProcessor.process(doc);
          DOMUtils utils  = new DOMUtils ();
          utils.writeXml(doc, System.out);*/
-         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
-         InSecurityResult result = processor.process(doc);
+         
+         InSecurityDefaultBuilder builder = new InSecurityDefaultBuilder ();
+         builder.setConfiguration(map);
+         
+         WSS4JInSecurityProcessor
+         processor = new WSS4JInSecurityProcessor();
+         builder.build(processor);
+         SecurityResult result = processor.process(doc);
          int z=0; 
+         DOMUtils.writeXml(result.getDocument(), System.out);
      }
      
 }

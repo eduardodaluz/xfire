@@ -77,7 +77,7 @@ public class OutSecuritySerializer
             ByteArrayInputStream inStream = new ByteArrayInputStream(getMessageBytes(message,
                                                                                      context));
             Document doc = DOMUtils.readXml(inStream);
-            doc = processor.process(doc);
+            doc = processor.process(doc).getDocument();
             DOMUtils outputer = new DOMUtils (); 
             outputer.writeXml(doc, System.out);
             STAXUtils.writeElement(doc.getDocumentElement(), writer, false);

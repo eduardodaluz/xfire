@@ -17,8 +17,9 @@ import org.apache.ws.security.message.WSSAddUsernameToken;
 import org.apache.ws.security.message.WSSignEnvelope;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.codehaus.xfire.security.OutSecurityProcessor;
-import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
+import org.codehaus.xfire.security.SecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
+import org.codehaus.xfire.security.SecurityResult;
 import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Document;
 
@@ -50,14 +51,14 @@ public class WSS4JOutSecurityProcessor
 
     private String userPassword;
 
-    private OutSecurityProcessorBuilder builder;
+    private SecurityProcessorBuilder builder;
 
     /*
      * (non-Javadoc)
      * 
      * @see org.codehaus.xfire.security.OutSecurityProcessor#process(org.w3c.dom.Document)
      */
-    public Document process(Document document)
+    public SecurityResult process(Document document)
     {
 
         // checkInitialized();
@@ -92,7 +93,7 @@ public class WSS4JOutSecurityProcessor
             }
         }
 
-        return document;
+        return new SecurityResult(document);
     }
 
     /**
@@ -120,15 +121,7 @@ public class WSS4JOutSecurityProcessor
             signer.setParts(parts);
 
             document = signer.build(document, crypto);
-
-            try
-            {
-                DOMUtils.writeXml(document, System.out);
-            }
-            catch (TransformerException e)
-            {
-                e.printStackTrace();
-            }
+           
         }
         catch (WSSecurityException e)
         {
@@ -297,7 +290,7 @@ public class WSS4JOutSecurityProcessor
 
     }
 
-    public void setBuilder(OutSecurityProcessorBuilder builder)
+    public void setBuilder(SecurityProcessorBuilder builder)
     {
         this.builder = builder;
 

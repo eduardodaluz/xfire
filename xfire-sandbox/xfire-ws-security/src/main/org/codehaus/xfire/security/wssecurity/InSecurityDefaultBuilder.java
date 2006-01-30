@@ -1,8 +1,8 @@
 package org.codehaus.xfire.security.wssecurity;
 
-import org.codehaus.xfire.security.InSecurityProcessor;
-import org.codehaus.xfire.security.InSecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
+import org.codehaus.xfire.security.SecurityProcessor;
+import org.codehaus.xfire.security.SecurityProcessorBuilder;
 import org.codehaus.xfire.security.WSPasswordCallback;
 import org.codehaus.xfire.security.exceptions.ConfigValidationException;
 import org.codehaus.xfire.security.impl.SecurityConfigurationWorker;
@@ -13,7 +13,7 @@ import org.codehaus.xfire.security.impl.SecurityConfigurationWorker;
  */
 public class InSecurityDefaultBuilder
     extends SecurityConfigurationWorker
-    implements InSecurityProcessorBuilder
+    implements SecurityProcessorBuilder
 {
 
     
@@ -23,7 +23,7 @@ public class InSecurityDefaultBuilder
      * 
      * @see org.codehaus.xfire.security.InSecurityProcessorBuilder#build(org.codehaus.xfire.security.InSecurityProcessor)
      */
-    public void build(InSecurityProcessor processor)
+    public void build(SecurityProcessor processor)
     {
         if (!(processor instanceof WSS4JInSecurityProcessor))
         {

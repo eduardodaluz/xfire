@@ -11,8 +11,9 @@ import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
-import org.codehaus.xfire.security.InSecurityProcessor;
-import org.codehaus.xfire.security.InSecurityResult;
+import org.codehaus.xfire.security.CallbackInfo;
+import org.codehaus.xfire.security.SecurityProcessor;
+import org.codehaus.xfire.security.SecurityResult;
 import org.w3c.dom.Document;
 
 /**
@@ -20,7 +21,7 @@ import org.w3c.dom.Document;
  * 
  */
 public class WSS4JInSecurityProcessor
-    implements InSecurityProcessor
+    implements SecurityProcessor
 {
 
     protected static final WSSecurityEngine secEngine = WSSecurityEngine.getInstance();
@@ -46,7 +47,7 @@ public class WSS4JInSecurityProcessor
      * 
      * @see org.codehaus.xfire.security.InSecurityProcessor#process(org.w3c.dom.Document)
      */
-    public InSecurityResult process(Document document)
+    public SecurityResult process(Document document)
         throws org.codehaus.xfire.security.exceptions.WSSecurityException
     {
         Vector wsResult = null;
@@ -62,7 +63,7 @@ public class WSS4JInSecurityProcessor
 
         }
 
-        InSecurityResult result = new InSecurityResult();
+        SecurityResult result = new SecurityResult();
         if (wsResult != null)
         {
             SecurityResultHandler handler = new SecurityResultHandler(result);
@@ -99,9 +100,11 @@ public class WSS4JInSecurityProcessor
             for (int i = 0; i < callbacks.length; i++)
             {
                 WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
-                String pass = (String) passwords.handle(pc.getIdentifer(),
-                                                        pc.getPasswordType() != null,
-                                                        pc.getUsage());
+                CallbackInfo info = new CallbackInfo();
+                info.setId(pc.getIdentifer());
+                info.setUsage(pc.getUsage());
+
+                String pass = (String) passwords.handle(info);
                 if (pass != null)
                 {
                     pc.setPassword(pass);

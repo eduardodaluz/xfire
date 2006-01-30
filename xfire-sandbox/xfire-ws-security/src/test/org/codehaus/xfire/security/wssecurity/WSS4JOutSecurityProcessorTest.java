@@ -30,7 +30,7 @@ public class WSS4JOutSecurityProcessorTest
         Document doc = DOMUtils.readXml(inStream);
         WSS4JOutSecurityProcessor processor = new WSS4JOutSecurityProcessor();
 
-        Document encrypted = processor.process(doc);
+        Document encrypted = processor.process(doc).getDocument();
         NodeList list = encrypted
                 .getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                         "Security");
@@ -48,7 +48,7 @@ public class WSS4JOutSecurityProcessorTest
         WSS4JOutSecurityProcessor processor = new WSS4JOutSecurityProcessor();
         processor.setUsername("userName");
         processor.setUserPassword("userNamePass");
-        Document encrypted = processor.process(doc);
+        Document encrypted = processor.process(doc).getDocument();
         NodeList list = encrypted
                 .getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                         "Security");

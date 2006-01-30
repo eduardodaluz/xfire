@@ -4,9 +4,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.security.OutSecurityProcessor;
-import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
+import org.codehaus.xfire.security.SecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
+import org.codehaus.xfire.security.SecurityProcessor;
 import org.codehaus.xfire.security.exceptions.ConfigValidationException;
 import org.codehaus.xfire.security.impl.SecurityConfigurationWorker;
 
@@ -16,7 +16,7 @@ import org.codehaus.xfire.security.impl.SecurityConfigurationWorker;
  */
 public class OutSecurityDefaultBuilder
     extends SecurityConfigurationWorker
-    implements OutSecurityProcessorBuilder
+    implements SecurityProcessorBuilder
 {
 
     private static final Log LOG = LogFactory.getLog(OutSecurityDefaultBuilder.class);
@@ -26,7 +26,7 @@ public class OutSecurityDefaultBuilder
      * 
      * @see org.codehaus.xfire.security.OutSecurityProcessorBuilder#build(org.codehaus.xfire.security.OutSecurityProcessor)
      */
-    public void build(OutSecurityProcessor processor)
+    public void build(SecurityProcessor processor)
     {
         WSS4JOutSecurityProcessor wss4jProcessor = (WSS4JOutSecurityProcessor) processor;
 

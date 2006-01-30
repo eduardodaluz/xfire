@@ -6,6 +6,6 @@ package org.codehaus.xfire.security;
  */
 public interface WSPasswordCallback
 {
-    String handle(String id,boolean hashed, int usg);
+    String handle(CallbackInfo info);
 
 }

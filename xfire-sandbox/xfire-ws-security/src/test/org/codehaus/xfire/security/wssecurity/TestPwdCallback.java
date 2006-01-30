@@ -3,6 +3,7 @@ package org.codehaus.xfire.security.wssecurity;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.xfire.security.CallbackInfo;
 import org.codehaus.xfire.security.WSPasswordCallback;
 
 public class TestPwdCallback
@@ -18,9 +19,9 @@ public class TestPwdCallback
 
     }
 
-    public String handle(String id, boolean hashed, int usg)
+    public String handle(CallbackInfo info)
     {
-        return (String) passwords.get(id);
+        return (String) passwords.get(info.getId());
 
     }
 

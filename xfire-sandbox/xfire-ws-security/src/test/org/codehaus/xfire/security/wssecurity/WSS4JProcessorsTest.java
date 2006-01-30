@@ -2,17 +2,15 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.io.InputStream;
 
+import junit.framework.TestCase;
+
 import org.codehaus.xfire.security.InSecurityProcessor;
-import org.codehaus.xfire.security.InSecurityProcessorBuilder;
-import org.codehaus.xfire.security.InSecurityResult;
-import org.codehaus.xfire.security.OutSecurityProcessor;
-import org.codehaus.xfire.security.OutSecurityProcessorBuilder;
+import org.codehaus.xfire.security.SecurityProcessor;
+import org.codehaus.xfire.security.SecurityResult;
 import org.codehaus.xfire.security.exceptions.WSSecurityException;
 import org.codehaus.xfire.security.impl.PropertiesLoader;
 import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Document;
-
-import junit.framework.TestCase;
 
 public class WSS4JProcessorsTest
     extends TestCase
@@ -36,7 +34,7 @@ public class WSS4JProcessorsTest
      * @param builder
      * @param path
      */
-    private void setupConfigFile(OutSecurityProcessor processor, String path)
+    private void setupOutConfigFile(SecurityProcessor processor, String path)
     {
 
         OutSecurityDefaultBuilder outBuilder = new OutSecurityDefaultBuilder();
@@ -44,16 +42,15 @@ public class WSS4JProcessorsTest
         outBuilder.build(processor);
     }
 
-    /**
-     * @param builder
-     * @param path
-     */
-    private void setupConfigFile(InSecurityProcessor processor, String path)
+    
+    private void setupInConfigFile(SecurityProcessor processor, String path)
     {
+
         InSecurityDefaultBuilder outBuilder = new InSecurityDefaultBuilder();
         outBuilder.setConfiguration(new PropertiesLoader().loadConfigFile(path));
         outBuilder.build(processor);
     }
+  
 
     /**
      * @param outConfig
@@ -61,18 +58,18 @@ public class WSS4JProcessorsTest
      * @return
      * @throws Exception
      */
-    protected InSecurityResult processRequest(String outConfig, String inConfig)
+    protected SecurityResult processRequest(String outConfig, String inConfig)
         throws Exception
     {
         Document doc = readDocument("wsse-request-clean.xml");
 
         WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor();
-        setupConfigFile(outProcessor, outConfig);
-        doc = outProcessor.process(doc);
+        setupOutConfigFile(outProcessor, outConfig);
+        doc = outProcessor.process(doc).getDocument();
         assertNotNull(doc);
         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
-        setupConfigFile(processor, inConfig);
-        InSecurityResult result = processor.process(doc);
+        setupInConfigFile(processor, inConfig);
+        SecurityResult result = processor.process(doc);
         return result;
     }
 
@@ -82,7 +79,7 @@ public class WSS4JProcessorsTest
     public void testSignatureFull()
         throws Exception
     {
-        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_sign.properties",
+        SecurityResult result = processRequest("META-INF/xfire/outsecurity_sign.properties",
                                                  "META-INF/xfire/insecurity_sign.properties");
 
     }
@@ -93,7 +90,7 @@ public class WSS4JProcessorsTest
     public void testEncryptionFull()
         throws Exception
     {
-        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_enc.properties",
+        SecurityResult result = processRequest("META-INF/xfire/outsecurity_enc.properties",
                                                  "META-INF/xfire/insecurity_enc.properties");
 
     }
@@ -104,7 +101,7 @@ public class WSS4JProcessorsTest
     public void testUserTokenPlain()
         throws Exception
     {
-        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_ut.properties",
+        SecurityResult result = processRequest("META-INF/xfire/outsecurity_ut.properties",
                                                  "META-INF/xfire/insecurity_ut.properties");
 
         assertEquals(result.getUser(), "userName");
@@ -118,7 +115,7 @@ public class WSS4JProcessorsTest
     public void testUserTokenDigestedValid()
         throws Exception
     {
-        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_ut_dig.properties",
+        SecurityResult result = processRequest("META-INF/xfire/outsecurity_ut_dig.properties",
                                                  "META-INF/xfire/insecurity_ut_dig.properties");
         assertEquals(result.getUser(), "userName");
         assertNotNull(result.getPassword());
@@ -132,7 +129,7 @@ public class WSS4JProcessorsTest
         throws Exception
     {
 
-        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_timestamp.properties",
+        SecurityResult result = processRequest("META-INF/xfire/outsecurity_timestamp.properties",
                                                  "META-INF/xfire/insecurity_timestamp.properties");
 
         assertNotNull(result.getTsExpire());
@@ -147,12 +144,12 @@ public class WSS4JProcessorsTest
         Document doc = readDocument("wsse-request-clean.xml");
 
         WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor();
-        setupConfigFile(outProcessor, "META-INF/xfire/outsecurity_timestamp.properties");
-        doc = outProcessor.process(doc);
+        setupOutConfigFile(outProcessor, "META-INF/xfire/outsecurity_timestamp.properties");
+        doc = outProcessor.process(doc).getDocument();
         assertNotNull(doc);
         Thread.sleep(2000);
         WSS4JInSecurityProcessor processor = new WSS4JInSecurityProcessor();
-        setupConfigFile(processor, "META-INF/xfire/insecurity_timestamp.properties");
+        setupInConfigFile(processor, "META-INF/xfire/insecurity_timestamp.properties");
         try
         {
             processor.process(doc);
@@ -171,7 +168,7 @@ public class WSS4JProcessorsTest
         throws Exception
     {
 
-        InSecurityResult result = processRequest("META-INF/xfire/outsecurity_mix.properties",
+        SecurityResult result = processRequest("META-INF/xfire/outsecurity_mix.properties",
                                                  "META-INF/xfire/insecurity_mix.properties");
 
         assertNotNull(result.getTsExpire());
