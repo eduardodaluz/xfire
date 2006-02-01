@@ -296,6 +296,7 @@
             </activation>
             <modules>
                 <module>xfire-java5</module>
+                <module>xfire-jaxb2</module>
             </modules>
         </profile>
     </profiles>

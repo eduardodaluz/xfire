@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.codehaus.xfire</groupId>
+        <artifactId>xfire-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>xfire-jaxb2</artifactId>
+    <name>XFire Jaxb 2.0 Support</name>
+    <version>1.0-SNAPSHOT</version>
+    <repositories>
+        <!-- this is where we get the jaxb libs from -->
+        <repository>
+            <id>java.net</id>
+            <layout>legacy</layout>
+            <url>https://maven-repository.dev.java.net/nonav/repository</url>
+            <name>java.net public repo</name>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-aegis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-java5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>jaxb-api</artifactId>
+             <version>2.0-ea3</version>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>jaxb-impl</artifactId>
+             <version>2.0-ea3</version>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+             <version>2.0-ea3</version>
+        </dependency>
+    </dependencies>
+     <build>
+        <plugins>
+            <!--  using antrun to call the commons-attributes pre-compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="depClasspath"
+                                          refid="maven.dependency.classpath"/>
+                                <taskdef name="xjc" 
+                                  classname="com.sun.tools.xjc.XJCTask" 
+                                  classpathref="maven.dependency.classpath"/>
+                              <mkdir dir="target/generated-source"/>
+                              <xjc target="target/generated-source">
+                                <schema dir="src/test-schemas" includes="*.xsd"/>
+                              </xjc>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>build-helper-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>add-test-source</id>
+                  <phase>generate-sources</phase>
+                  <goals>
+                    <goal>add-test-source</goal>
+                  </goals>
+                  <configuration>
+                    <sources>
+                      <source>target/generated-source</source>
+                    </sources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
