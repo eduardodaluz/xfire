@@ -286,7 +286,11 @@ public class Client
     
     public Object[] invoke(String name, Object[] params) throws Exception
     {
-        return invoke(service.getServiceInfo().getOperation(name), params);
+        OperationInfo op = service.getServiceInfo().getOperation(name);
+        if (op == null)
+            throw new XFireRuntimeException("Could not find operation with name " + name);
+        
+        return invoke(op, params);
     }
 
     /**
