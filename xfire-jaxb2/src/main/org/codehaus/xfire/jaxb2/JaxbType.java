@@ -1,8 +1,7 @@
 package org.codehaus.xfire.jaxb2;
 
-import java.lang.annotation.Annotation;
-
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -15,7 +14,6 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
-import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
@@ -33,6 +31,7 @@ public class JaxbType
         initType();
     }
 
+    @SuppressWarnings("unchecked")
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
@@ -41,7 +40,15 @@ public class JaxbType
             JAXBContext jc = getJAXBContext();
 
             Unmarshaller u = jc.createUnmarshaller();
-            return u.unmarshal(((ElementReader) reader).getXMLStreamReader());
+            if (isAbstract()) 
+            {
+                 JAXBElement element = u.unmarshal(reader.getXMLStreamReader(), getTypeClass());
+                 return element.getValue();
+            }
+            else
+            {
+                return u.unmarshal(reader.getXMLStreamReader());
+            }
         }
         catch (JAXBException e)
         {
@@ -94,7 +101,8 @@ public class JaxbType
     {
         return super.getSchemaType();
     }
-
+    
+    @SuppressWarnings("unchecked")
     public void initType()
     {
         Class clazz = getTypeClass();
