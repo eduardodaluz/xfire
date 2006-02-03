@@ -4,6 +4,7 @@ import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -134,43 +135,52 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
     protected Type createMapType(TypeClassInfo info)
     {
-        Element mapping = findMapping(info.getTypeClass());
-        Element componentMapping = null;
-        Element keyMapping = null;
-        if(info.getKeyType() instanceof Class)
-        {
-        	keyMapping = findMapping((Class)info.getKeyType());
-        }
         if(info.getGenericType() instanceof Class)
         {
-        	componentMapping = findMapping((Class)info.getGenericType());
+        	Collection componentMappings = findMappings((Class)info.getGenericType());
+        	if((componentMappings != null) && (componentMappings.size() > 0))
+        	{
+        		return super.createMapType(info);
+        	}
         }
-        if ((mapping != null) || (keyMapping != null) || (componentMapping != null))
+        
+        if(info.getKeyType() instanceof Class)
         {
-            return super.createMapType(info);
+        	Collection keyMappings = findMappings((Class)info.getKeyType());
+        	if((keyMappings != null) && (keyMappings.size() > 0))
+        	{
+            	return super.createMapType(info);
+        	}
         }
-        else
+
+        Element mapping = findMapping(info.getTypeClass());
+        if(mapping != null)
         {
-            return nextCreator.createMapType(info); 
+        	return super.createMapType(info);
         }
+        
+        return nextCreator.createMapType(info); 
     }
 
 
     public Type createCollectionType(TypeClassInfo info)
     {
-        Element mapping = findMapping(info.getTypeClass());
-        Element componentMapping = null;
-        if(info.getGenericType() instanceof Class){
-            componentMapping = findMapping((Class)info.getGenericType());
+        if(info.getGenericType() instanceof Class)
+        {
+            Element componentMapping = findMapping((Class)info.getGenericType());
+            if(componentMapping != null)
+            {
+            	return createCollectionType(info, (Class)info.getGenericType());
+            }
         }
-        if ((mapping != null) || (componentMapping != null))
+
+        Element mapping = findMapping(info.getTypeClass());
+        if(mapping != null)
         {
             return createCollectionType(info, (Class)info.getGenericType());
         }
-        else
-        {
-            return nextCreator.createCollectionType(info); 
-        }
+
+        return nextCreator.createCollectionType(info); 
     }
 
     public TypeClassInfo createClassInfo(PropertyDescriptor pd)

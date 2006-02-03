@@ -1,0 +1,12 @@
+<mappings>
+  <mapping>
+    <method name="getInheritedBeanCollection">
+      <return-type componentType="org.codehaus.xfire.aegis.type.collection.InheritanceTestBean" />
+    </method>
+    <method name="getInheritedBeanMap">
+      <return-type 
+      		componentType="org.codehaus.xfire.aegis.type.collection.InheritanceTestBean" 
+      		keyType="java.lang.String" />
+    </method>
+  </mapping>
+</mappings>
