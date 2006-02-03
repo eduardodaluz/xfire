@@ -59,6 +59,8 @@ import org.jdom.xpath.XPath;
  * @author Hani Suleiman
  *         Date: Jun 14, 2005
  *         Time: 7:47:56 PM
+ * @author <a href="mailto:mikagoeckel@codehaus.org">Mika Göckel</a>
+ * @author Øyvind Matheson Wergeland 
  */
 public class XMLTypeCreator extends AbstractTypeCreator
 {
@@ -133,7 +135,17 @@ public class XMLTypeCreator extends AbstractTypeCreator
     protected Type createMapType(TypeClassInfo info)
     {
         Element mapping = findMapping(info.getTypeClass());
-        if (mapping != null)
+        Element componentMapping = null;
+        Element keyMapping = null;
+        if(info.getKeyType() instanceof Class)
+        {
+        	keyMapping = findMapping((Class)info.getKeyType());
+        }
+        if(info.getGenericType() instanceof Class)
+        {
+        	componentMapping = findMapping((Class)info.getGenericType());
+        }
+        if ((mapping != null) || (keyMapping != null) || (componentMapping != null))
         {
             return super.createMapType(info);
         }
