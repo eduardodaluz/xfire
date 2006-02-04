@@ -21,6 +21,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 
 import com.sun.codemodel.ClassType;
+import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
@@ -272,20 +273,24 @@ public abstract class AbstractServiceGenerator
     {
     }
     
+    /**
+     * Find the return type for the operation. If there is no output message void is returned.
+     */
     protected JType getReturnType(GenerationContext context, SchemaSupport schema, OperationInfo op)
         throws GenerationException
     {
         JType returnType;
-        Iterator rtitr = op.getOutputMessage().getMessageParts().iterator();
-        if (rtitr.hasNext())
+        if (op.hasOutput() && op.getOutputMessage().size() > 0)
         {
-            MessagePartInfo returnPart = (MessagePartInfo) rtitr.next();
+            MessagePartInfo returnPart = 
+                (MessagePartInfo) op.getOutputMessage().getMessageParts().iterator().next();
             
-            returnType = schema.getType(context, returnPart.getName(), returnPart.getSchemaType().getSchemaType());
+            returnType = schema.getType(context, 
+                    returnPart.getName(), returnPart.getSchemaType().getSchemaType());
         }
         else
         {
-            returnType = context.getCodeModel().ref(void.class);
+            returnType = context.getCodeModel().VOID;
         }
         
         return returnType;

@@ -68,6 +68,10 @@
 	  	  	  	       wsdl="${basedir}/src/wsdl/globalweather.wsdl"
 	  	  	  	       package="jsr181.jaxb.globalweather"/>	
   	
+  	<wsgen outputDirectory="${maven.build.dir}/test-services"
+  		  	  	  	       wsdl="${basedir}/src/wsdl/oneway.wsdl"
+  		  	  	  	       package="jsr181.jaxb.oneway"/>	
+  	  	
   	<ant:path id="test.services" location="${maven.build.dir}/test-services"/>
 
   	<maven:addPath id="maven.test.compile.src.set" refid="test.services"/>

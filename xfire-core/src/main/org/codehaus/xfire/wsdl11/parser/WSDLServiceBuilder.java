@@ -278,7 +278,8 @@ public class WSDLServiceBuilder
             }
             {
                 Output output = operation.getOutput();
-                visit(output);
+                if (output != null)
+                    visit(output);
             }
             
             Collection faults = operation.getFaults().values();
@@ -389,8 +390,10 @@ public class WSDLServiceBuilder
     {
         Input input = op.getInput();
         Output output = op.getOutput();
+        if (output == null || output.getMessage().getParts() == null) return false;
+        
         if (input.getMessage().getParts().size() != 1 || 
-                output.getMessage().getParts().size() != 1) 
+            output.getMessage().getParts().size() != 1) 
             return false;
         
         Part inPart = (Part) input.getMessage().getParts().values().iterator().next();

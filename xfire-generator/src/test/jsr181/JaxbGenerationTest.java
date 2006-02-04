@@ -4,12 +4,25 @@ import org.codehaus.xfire.gen.Wsdl11Generator;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JMethod;
-import com.sun.codemodel.JType;
 
 public class JaxbGenerationTest
     extends GenerationTestSupport
 {
+    public void testOneWay() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/oneway.wsdl"));
+        generator.setOutputDirectory("target/test-services");
+        generator.setDestinationPackage("jsr181.jaxb.oneway");
+        generator.setBinding("jaxb");
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("jsr181.jaxb.oneway.SendMessagePortType");
+        assertNotNull(echo);
+    }
+    
     public void testGlobalWeather() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
