@@ -24,7 +24,6 @@ public class EchoImpl
                              Echo echo2, 
                              Holder<EchoResponse> echoResponse, 
                              Holder<EchoResponse> echoResponse2)
-        throws XFireFault
     {
         EchoResponse response = new EchoResponse();
         response.setText(echo.getText());

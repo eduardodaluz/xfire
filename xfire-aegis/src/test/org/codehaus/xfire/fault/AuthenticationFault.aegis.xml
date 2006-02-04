@@ -1,0 +1,3 @@
+<mappings xmlns:f="urn:xfire:authenticate:fault">
+	<mapping name="f:AuthenticationFault"/>
+</mappings>

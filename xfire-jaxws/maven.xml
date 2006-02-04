@@ -29,6 +29,11 @@
   		  wsdl="${basedir}/src/wsdl/headerout.wsdl"
   		  package="services.headerout"
   		  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
+  	
+	<wsgen outputDirectory="${maven.build.dir}/test-services"
+	  wsdl="${basedir}/src/wsdl/auth.wsdl"
+	  package="services.auth"
+	  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
   	  	
   	<ant:path id="test.services" location="${maven.build.dir}/test-services"/>
 

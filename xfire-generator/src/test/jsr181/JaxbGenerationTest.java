@@ -8,6 +8,21 @@ import com.sun.codemodel.JDefinedClass;
 public class JaxbGenerationTest
     extends GenerationTestSupport
 {
+    public void testFault() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/auth.wsdl"));
+        generator.setOutputDirectory("target/test-services");
+        generator.setDestinationPackage("jsr181.jaxb.auth");
+        generator.setBinding("jaxb");
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("jsr181.jaxb.auth.AuthServicePortType");
+        assertNotNull(echo);
+    }
+    
     public void testOneWay() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();

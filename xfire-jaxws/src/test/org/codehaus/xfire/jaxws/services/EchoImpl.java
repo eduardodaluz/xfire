@@ -18,7 +18,6 @@ public class EchoImpl
 
 
     public String echo(String text)
-        throws XFireFault
     {
         return text;
     }

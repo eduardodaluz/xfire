@@ -1,0 +1,9 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <e:authenticate xmlns:e="urn:xfire:authenticate">
+    <e:in0>dan</e:in0>
+    <e:in1>pass</e:in1>
+  </e:authenticate>
+ </env:Body>
+</env:Envelope>

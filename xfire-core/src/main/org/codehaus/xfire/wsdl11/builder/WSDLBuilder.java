@@ -64,7 +64,6 @@ public class WSDLBuilder
         return transportManager;
     }
 
-
     public void setTransportManager(TransportManager transportManager)
     {
         this.transportManager = transportManager;
@@ -216,7 +215,7 @@ public class WSDLBuilder
         faultMsg.setQName(new QName(getTargetNamespace(), faultInfo.getName()));
         faultMsg.setUndefined(false);
         getDefinition().addMessage(faultMsg);
-        
+       
         Fault fault = getDefinition().createFault();
         fault.setName(faultInfo.getName());
         fault.setMessage(faultMsg);
@@ -225,6 +224,9 @@ public class WSDLBuilder
         {
             MessagePartInfo info = (MessagePartInfo) itr.next();
             
+            String uri = info.getName().getNamespaceURI();
+            addNamespace(getNamespacePrefix(uri), uri);
+
             Part part = createPart(info);
             faultMsg.addPart(part);
         }
@@ -309,7 +311,7 @@ public class WSDLBuilder
         SchemaType regdType = (SchemaType) declaredParameters.get(pName);
         if (regdType == null)
         {
-            Element schemaEl = createSchemaType(getTargetNamespace());
+            Element schemaEl = createSchemaType(pName.getNamespaceURI());
 
             Element element = new Element("element", XSD_NS);
             schemaEl.addContent(element);

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.client;
 
+import java.lang.reflect.Constructor;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
@@ -26,20 +27,16 @@ public class ClientFaultConverter extends AbstractHandler
     {
         XFireFault fault = (XFireFault) context.getExchange().getFaultMessage().getBody();
         
-        Element detail = fault.getDetail();
-        if (detail != null)
+        if (fault.getDetail() != null && fault.getDetail().getContentSize() > 0)
         {
-            processFaultDetail(context, detail);
+            processFaultDetail(fault, context);
         }
     }
 
-    protected void processFaultDetail(MessageContext context, Element detail)
+    protected void processFaultDetail(XFireFault fault, MessageContext context)
         throws Exception
     {
-        if (detail.getContentSize() == 0)
-            return;
-        
-        Element exDetail = (Element) detail.getContent().get(0);
+        Element exDetail = (Element) fault.getDetail().getContent().get(0);
         
         MessagePartInfo faultPart = getFaultPart(context.getExchange().getOperation(),
                                                  exDetail);
@@ -51,7 +48,14 @@ public class ClientFaultConverter extends AbstractHandler
         JDOMStreamReader reader = new JDOMStreamReader(exDetail);
         reader.nextTag();
         
-        Exception e = (Exception) provider.readParameter(faultPart, reader, context);
+        Object e = (Object) provider.readParameter(faultPart, reader, context);
+        if (!(e instanceof Exception))
+        {
+            Class exClass = ((FaultInfo) faultPart.getContainer()).getExceptionClass();
+            
+            Constructor constructor = exClass.getConstructor(new Class[] {String.class, faultPart.getTypeClass()});
+            e = constructor.newInstance(new Object[] {fault.getMessage(), e});
+        }
         
         context.getExchange().getFaultMessage().setBody(e);
     }

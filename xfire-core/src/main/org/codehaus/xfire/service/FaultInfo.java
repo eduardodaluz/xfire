@@ -14,7 +14,8 @@ public class FaultInfo
         implements Visitable
 {
     private String name;
-
+    private Class exceptionClass;
+    
     /**
      * Initializes a new instance of the <code>FaultInfo</code> class with the given name and operation
      *
@@ -66,5 +67,15 @@ public class FaultInfo
             messagePartInfo.accept(visitor);
         }
         visitor.endFault(this);
+    }
+
+    public Class getExceptionClass()
+    {
+        return exceptionClass;
+    }
+
+    public void setExceptionClass(Class exceptionClass)
+    {
+        this.exceptionClass = exceptionClass;
     }
 }

@@ -12,11 +12,13 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.jdom.Element;
 
 public class JaxbType
@@ -66,6 +68,14 @@ public class JaxbType
 
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            
+            if (isAbstract())
+            {
+                MessagePartInfo part = (MessagePartInfo) 
+                    context.getProperty(AegisBindingProvider.CURRENT_MESSAGE_PART);
+                object = new JAXBElement(part.getName(), getTypeClass(), object);
+            }
+            
             m.marshal(object, ((ElementWriter) writer).getXMLStreamWriter());
         }
         catch (JAXBException e)

@@ -17,6 +17,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.fault.FaultInfoException;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
 import org.codehaus.xfire.fault.XFireFault;
@@ -766,19 +767,62 @@ public class ObjectServiceFactory
         }
     }
 
-    protected FaultInfo addFault(final Service service, final OperationInfo op, Class exClazz)
+    protected FaultInfo addFault(final Service service, final OperationInfo op, Class exClass)
     {
-        QName name = getFaultName(service, op, exClazz);
+        Class beanClass = exClass;
+        if (isFaultInfoClass(exClass))
+        {
+            Method method;
+            try
+            {
+                method = exClass.getMethod("getFaultInfo", new Class[0]);
+            }
+            catch (SecurityException e)
+            {
+                throw new XFireRuntimeException("Couldn't access getFaultInfo method.", e);
+            }
+            catch (NoSuchMethodException e)
+            {
+                throw new XFireRuntimeException("Custom faults need a getFaultInfo method.", e);
+            }
+            beanClass = method.getReturnType();
+        }
         
+        QName name = getFaultName(service, op, exClass, beanClass);
+
         FaultInfo info = op.addFault(name.getLocalPart());
-        info.addMessagePart(name, exClazz);
+        info.setExceptionClass(exClass);
+        info.addMessagePart(name, beanClass);
         
         return info;
     }
 
-    protected QName getFaultName(Service service, OperationInfo o, Class exClazz)
+    protected boolean isFaultInfoClass(Class exClass)
     {
-        String name = ServiceUtils.makeServiceNameFromClassName(exClazz);
+        return FaultInfoException.class.isAssignableFrom(exClass);
+    }
+
+    protected QName getFaultName(Service service, OperationInfo o, Class exClass, Class beanClass)
+    {
+        if (FaultInfoException.class.isAssignableFrom(exClass))
+        {
+            Method method;
+            try
+            {
+                method = exClass.getMethod("getFaultName", new Class[0]);
+                QName name = (QName) method.invoke(null, new Object[0]);
+                return name;
+            }
+            catch (NoSuchMethodException e)
+            {
+            }
+            catch (Exception e)
+            {
+                throw new XFireRuntimeException("Couldn't access getFaultName method.", e);
+            }
+        }
+        
+        String name = ServiceUtils.makeServiceNameFromClassName(beanClass);
         return new QName(service.getTargetNamespace(), name);
     }
     

@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.fault.FaultInfoException;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.GeneratorPlugin;
@@ -21,8 +23,12 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 
 import com.sun.codemodel.ClassType;
+import com.sun.codemodel.JClass;
+import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JType;
@@ -109,7 +115,7 @@ public abstract class AbstractServiceGenerator
         {
             MessagePartInfo part = (MessagePartInfo) pitr.next();
             
-            String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+            String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
             partNames.add(varName);
 
             JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
@@ -129,7 +135,7 @@ public abstract class AbstractServiceGenerator
             {
                 MessagePartInfo part = (MessagePartInfo) bitr.next(); 
                 
-                String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+                String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
                 partNames.add(varName);
 
                 JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
@@ -156,7 +162,7 @@ public abstract class AbstractServiceGenerator
             {
                 MessagePartInfo part = (MessagePartInfo) rtitr.next();
                 
-                String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+                String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
                 partNames.add(varName);
 
                 JType paramType = getHolderType(context, part);
@@ -174,7 +180,7 @@ public abstract class AbstractServiceGenerator
                 {
                     MessagePartInfo part = (MessagePartInfo) bitr.next(); 
                     
-                    String varName = getUniqueName(part.getName().getLocalPart(), partNames);
+                    String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
                     partNames.add(varName);
 
                     JType paramType = getHolderType(context, part);
@@ -197,8 +203,6 @@ public abstract class AbstractServiceGenerator
     protected void generateFaults(GenerationContext context, OperationInfo op, JMethod method)
         throws GenerationException
     {
-        method._throws(XFireFault.class);
-       
         for (Iterator itr = op.getFaults().iterator(); itr.hasNext();)
         {
             FaultInfo faultInfo = (FaultInfo) itr.next();
@@ -212,15 +216,58 @@ public abstract class AbstractServiceGenerator
             
             MessagePartInfo part = (MessagePartInfo) messageParts.get(0);
             
-            generateExceptionClass(context, part, method);
+            JClass exCls = generateExceptionClass(context, part, method);
+            
+            method._throws(exCls);
         }
     }
 
-    protected void generateExceptionClass(GenerationContext context, MessagePartInfo part, JMethod method)
+    protected JClass generateExceptionClass(GenerationContext context, MessagePartInfo part, JMethod method)
         throws GenerationException
     {
-        // TODO Auto-generated method stub
+        JCodeModel model = context.getCodeModel();
+        SchemaSupport schema = context.getSchemaGenerator();
         
+        String name = javify(part.getName().getLocalPart());
+        JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
+
+        String clsName = context.getDestinationPackage() + "." + name + "_Exception";
+        JDefinedClass exCls;
+        try 
+        {
+            exCls = model._class(clsName);
+            
+        } 
+        catch (JClassAlreadyExistsException e) {
+            return model.ref(clsName);
+        }
+        
+        exCls._extends(FaultInfoException.class);
+        
+        JFieldVar faultInfoVar = exCls.field(JMod.PRIVATE, paramType, "faultInfo");
+        
+        JMethod getFaultInfo = exCls.method(JMod.PUBLIC, paramType, "getFaultInfo");
+        getFaultInfo.body()._return(JExpr.ref("faultInfo"));
+
+        JMethod cons = exCls.constructor(JMod.PUBLIC);
+        cons.param(String.class, "message");
+        cons.param(paramType, "faultInfo");
+        cons.body().invoke("super").arg(JExpr.ref("message"));
+        cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
+        
+        cons = exCls.constructor(JMod.PUBLIC);
+        cons.param(String.class, "message");
+        cons.param(Throwable.class, "t");
+        cons.param(paramType, "faultInfo");
+        cons.body().invoke("super").arg(JExpr.ref("message")).arg(JExpr.ref("t"));
+        cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
+                
+        JClass qType = model.ref(QName.class);
+        JMethod getName = exCls.method(JMod.PUBLIC + JMod.STATIC, qType, "getFaultName");
+        getName.body()._return(
+                JExpr._new(qType).arg(part.getName().getNamespaceURI()).arg(part.getName().getLocalPart()));
+
+        return exCls;
     }
 
     private String getUniqueName(String varName, List<String> partNames)

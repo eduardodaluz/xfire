@@ -62,9 +62,15 @@ public class JAXWSServiceFactory
 
     @SuppressWarnings("unchecked")
     @Override
-    protected QName getFaultName(Service service, OperationInfo o, Class exClazz)
+    protected boolean isFaultInfoClass(Class exClass) {
+        return exClass.isAnnotationPresent(WebFault.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected QName getFaultName(Service service, OperationInfo o, Class exClass, Class beanClass)
     {
-        WebFault webFault = (WebFault) exClazz.getAnnotation(WebFault.class);
+        WebFault webFault = (WebFault) exClass.getAnnotation(WebFault.class);
         
         String ns = webFault.targetNamespace();
         if (ns == null) ns = service.getTargetNamespace();

@@ -8,6 +8,9 @@ public class AbstractPlugin
     
     protected String javify(String name)
     {
+        if (name.equals("null"))
+            return "_null";
+        
         return name;
     }
 
