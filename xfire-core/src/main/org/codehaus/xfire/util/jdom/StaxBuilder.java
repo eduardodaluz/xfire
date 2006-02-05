@@ -284,7 +284,16 @@ public class StaxBuilder
                 return;
 
             case XMLStreamConstants.END_ELEMENT:
-                current = current.getParentElement();
+                /**
+                 * If current.getParentElement() previously
+                 * returned null and we get this event
+                 * again we shouldn't bail out with a
+                 * NullPointerException
+                 */
+                if(current != null)
+                {
+                    current = current.getParentElement();
+                }
                 noadd = true;
                 break;
 
