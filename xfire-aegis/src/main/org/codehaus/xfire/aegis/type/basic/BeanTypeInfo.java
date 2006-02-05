@@ -255,7 +255,7 @@ public class BeanTypeInfo
         {
             if (beanClass.isInterface() || beanClass.isPrimitive())
             {
-                beanInfo = Introspector.getBeanInfo(beanClass);
+                descriptors = getInterfacePropertyDescriptors(beanClass);
             }
             else if (beanClass == Object.class || beanClass == Throwable.class)
             {
@@ -291,6 +291,40 @@ public class BeanTypeInfo
         if (descriptors == null)
         {
             descriptors = new PropertyDescriptor[0];
+        }
+    }
+
+    public PropertyDescriptor[] getInterfacePropertyDescriptors(Class clazz)
+    {
+        try
+        {
+            Class[] interfaces = clazz.getInterfaces();
+            List list = new ArrayList();
+            /**
+             * add base interface information
+             */
+            BeanInfo info = Introspector.getBeanInfo(clazz);
+            for (int j = 0; j < info.getPropertyDescriptors().length; j++)
+            {
+                list.add(info.getPropertyDescriptors()[j]);
+            }
+            /**
+             * add extended interface information
+             */
+            for (int i = 0; i < interfaces.length; i++)
+            {
+                BeanInfo superInfo = Introspector.getBeanInfo(interfaces[i]);
+
+                for (int j = 0; j < superInfo.getPropertyDescriptors().length; j++)
+                {
+                    list.add(superInfo.getPropertyDescriptors()[j]);
+                }
+            }
+            return (PropertyDescriptor[]) list.toArray(new PropertyDescriptor[list.size()]);
+        }
+        catch (IntrospectionException e)
+        {
+            return null;
         }
     }
 
