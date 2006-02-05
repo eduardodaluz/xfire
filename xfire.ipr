@@ -233,18 +233,19 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/root.iml" filepath="$PROJECT_DIR$/root.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-aegis/xfire-aegis.iml" filepath="$PROJECT_DIR$/xfire-aegis/xfire-aegis.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-annotations/xfire-annotations.iml" filepath="$PROJECT_DIR$/xfire-annotations/xfire-annotations.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-core/xfire-core.iml" filepath="$PROJECT_DIR$/xfire-core/xfire-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-java5/xfire-java5.iml" filepath="$PROJECT_DIR$/xfire-java5/xfire-java5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-aegis/aegis.iml" filepath="$PROJECT_DIR$/xfire-aegis/aegis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-annotations/annotations.iml" filepath="$PROJECT_DIR$/xfire-annotations/annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base.iml" filepath="$PROJECT_DIR$/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-core/core.iml" filepath="$PROJECT_DIR$/xfire-core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-java5/java5.iml" filepath="$PROJECT_DIR$/xfire-java5/java5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-loom/loom.iml" filepath="$PROJECT_DIR$/xfire-loom/loom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-picocontainer/picocontainer.iml" filepath="$PROJECT_DIR$/xfire-picocontainer/picocontainer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-plexus/plexus.iml" filepath="$PROJECT_DIR$/xfire-plexus/plexus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-spring/spring.iml" filepath="$PROJECT_DIR$/xfire-spring/spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-jaxb/xfire-jaxb.iml" filepath="$PROJECT_DIR$/xfire-jaxb/xfire-jaxb.iml" />
       <module fileurl="file://$PROJECT_DIR$/xfire-jaxb2/xfire-jaxb2.iml" filepath="$PROJECT_DIR$/xfire-jaxb2/xfire-jaxb2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-loom/xfire-loom.iml" filepath="$PROJECT_DIR$/xfire-loom/xfire-loom.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-picocontainer/xfire-picocontainer.iml" filepath="$PROJECT_DIR$/xfire-picocontainer/xfire-picocontainer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-plexus/xfire-plexus.iml" filepath="$PROJECT_DIR$/xfire-plexus/xfire-plexus.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-spring/xfire-spring.iml" filepath="$PROJECT_DIR$/xfire-spring/xfire-spring.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-xmlbeans/xfire-xmlbeans.iml" filepath="$PROJECT_DIR$/xfire-xmlbeans/xfire-xmlbeans.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xfire-xmpp/xfire-xmpp.iml" filepath="$PROJECT_DIR$/xfire-xmpp/xfire-xmpp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-xmlbeans/xmlbeans.iml" filepath="$PROJECT_DIR$/xfire-xmlbeans/xmlbeans.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-xmpp/xmpp.iml" filepath="$PROJECT_DIR$/xfire-xmpp/xmpp.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.4" />
@@ -255,25 +256,37 @@
     <option name="GENERATE_IIOP_STUBS" value="false" />
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
+  <component name="XSLT-Support.FileAssociationsManager" />
   <component name="libraryTable">
-    <library name="core">
+    <library name="javamail">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/activation-1.0.2.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/javamail-1.3.2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/wsdl4j-1.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/jdom-1.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/httpunit-1.5.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/stax-api-1.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/stax-1.1.2-dev.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="core-jars">
+      <CLASSES>
         <root url="jar://$PROJECT_DIR$/target/lib/commons-logging-1.0.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/commons-httpclient-3.0-rc4.jar!/" />
         <root url="jar://$PROJECT_DIR$/target/lib/servletapi-2.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/commons-codec-1.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../junit3.8.1/junit.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/httpunit-1.5.1.jar!/" />
         <root url="jar://$PROJECT_DIR$/target/lib/xmlunit-1.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/junit-3.8.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/wstx-asl-2.0.3.jar!/" />
         <root url="jar://$PROJECT_DIR$/target/lib/easymock-1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/jaxen-1.1-beta-5.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/wsdl4j-1.5.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/jaxen-1.1-beta-8.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/jdom-1.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/commons-httpclient-3.0-rc4.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/commons-codec-1.3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="stax">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/target/lib/stax-api-1.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/wstx-asl-2.0.3.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
