@@ -71,7 +71,7 @@
   </wsdl:binding>
   <wsdl:service name="AuthService">
     <wsdl:port binding="tns:AuthServiceHttpBinding" name="AuthServiceHttpPort">
-      <wsdlsoap:address location="http://localhost/services/AuthService" />
+      <wsdlsoap:address location="http://localhost:8191/AuthService" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
