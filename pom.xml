@@ -227,18 +227,6 @@
                 </configuration>
             </plugin>
 
-            <!--  this surefire section had to be included because org.codehaus.xfire.service.TestWSAService and TestWSAServiceImpl names start with Test :(  -->
-            <!--  if they didn't start with Test, this config could be removed -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include implementation="java.lang.String">**/*Test.java **/*TestCase.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>

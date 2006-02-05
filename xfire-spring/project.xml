@@ -73,16 +73,25 @@
             <groupId>annogen</groupId>
             <artifactId>annogen</artifactId>
             <version>0.1.0</version>
+            <properties>
+              <scope>build</scope>
+            </properties>
         </dependency>
         <dependency>
 	      <groupId>qdox</groupId>
 	      <artifactId>qdox</artifactId>
 	      <version>1.5</version>
+          <properties>
+            <scope>build</scope>
+          </properties>
 	    </dependency>
 	    <dependency>
 	      <groupId>nekohtml</groupId>
 	      <artifactId>nekohtml</artifactId>
 	      <version>0.9.5</version>
+          <properties>
+            <scope>build</scope>
+          </properties>
 	    </dependency>
     </dependencies>
 </project>

@@ -93,7 +93,7 @@
   </goal>
 		
 	<goal name="dist:prepare">
-		<mkdir dir="${maven.build.dir}/modules"/>
+		<mkdir dir="${maven.build.dir}/dist/modules"/>
 		<mkdir dir="${maven.build.dir}/dist/libs"/>
 		<mkdir dir="${maven.build.dir}/dist/manual"/>
 		
@@ -115,12 +115,9 @@
 				file="${basedir}/../${module.artifactId}/target/${module.artifactId}-${module.currentVersion}.jar"/>
 			<c:forEach items="${module.artifacts}" var="dependency">
 				<c:if test="${!dependency.dependency.artifactId.startsWith('xfire')}">
-					<c:if test="${dependency.dependency.type != 'plugin'}">
-						<c:set var="scope" value="${dependency.dependency.getProperty('scope')} "/>
-						<c:if test="${scope == ' '}">
-							<c:set var="scope" value="runtime"/>
-						</c:if>
-						<copy toDir="${maven.build.dir}/dist/libs/${scope.trim()}" file="${dependency.path}"/>
+					<c:set var="scope" value="${dependency.dependency.getProperty('scope')} "/>
+					<c:if test="${scope == ' '}">
+						<copy toDir="${maven.build.dir}/dist/libs/" file="${dependency.path}"/>
 					</c:if>
 				</c:if>
 			</c:forEach>
