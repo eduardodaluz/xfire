@@ -1,6 +1,8 @@
 package org.codehaus.xfire.jaxb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.webservicex.ObjectFactory;
 
@@ -10,7 +12,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.jdom.Document;
 
 /**
@@ -32,14 +33,15 @@ public class WeatherServiceTest
                                            new AegisBindingProvider(new JaxbTypeRegistry(objectFactory)));
         ArrayList schemas = new ArrayList();
         schemas.add("src/test-schemas/WeatherForecast.xsd");
-
-        builder.setWsdlBuilderFactory(new DefaultWSDLBuilderFactory(schemas));
+        Map props = new HashMap();
+        props.put(ObjectServiceFactory.SCHEMAS, schemas);
+        
         builder.setStyle(SoapConstants.STYLE_DOCUMENT);
 
         endpoint = builder.create(WeatherServiceImpl.class,
                 "WeatherService",
                 "urn:WeatherService",
-                null);
+                props);
 
         getServiceRegistry().register(endpoint);
     }

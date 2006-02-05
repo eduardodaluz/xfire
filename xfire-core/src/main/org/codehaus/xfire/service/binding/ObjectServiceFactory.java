@@ -65,12 +65,13 @@ public class ObjectServiceFactory
         implements ServiceFactory
 {
     public static final String PORT_TYPE = "objectServiceFactory.portType";
-    public static final String STYLE = "sobjectServiceFactory.tyle";
+    public static final String STYLE = "objectServiceFactory.style";
     public static final String USE = "objectServiceFactory.use";
     public static final String CREATE_DEFAULT_BINDINGS =  "objectServiceFactory.createDefaultBindings";
     public static final String SOAP11_TRANSPORTS =  "objectServiceFactory.soap11Transports";
     public static final String SOAP12_TRANSPORTS =  "objectServiceFactory.soap12Transports";
     public static final String SCOPE = "objectServiceFactory.scope";
+    public static final String SCHEMAS = "objectServiceFactory.schemas";
     
     private BindingProvider bindingProvider;
     private TransportManager transportManager;

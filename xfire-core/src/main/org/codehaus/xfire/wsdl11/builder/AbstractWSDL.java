@@ -19,6 +19,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -111,6 +112,9 @@ public abstract class AbstractWSDL
 
         String cleanImpProp = (String) service.getProperty(CLEAN_IMPORTS);
         if (cleanImpProp != null) cleanImports = Boolean.valueOf(cleanImpProp).booleanValue();
+        
+        List schemas = (List) service.getProperty(ObjectServiceFactory.SCHEMAS);
+        if (schemas != null) addSchemas(schemas);
     }
 
     protected void writeDocument()

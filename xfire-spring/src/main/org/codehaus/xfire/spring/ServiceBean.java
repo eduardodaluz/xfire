@@ -18,7 +18,6 @@ import org.codehaus.xfire.spring.config.AbstractSoapBindingBean;
 import org.codehaus.xfire.spring.config.EndpointBean;
 import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
-import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -132,6 +131,11 @@ public class ServiceBean
             properties.put(ObjectInvoker.SERVICE_IMPL_CLASS, implementationClass);
         }
 
+        if (schemas != null)
+        {
+            properties.put(ObjectServiceFactory.SCHEMAS, schemas);
+        }
+        
         xfireService = serviceFactory.create(intf, name, namespace, properties);
 
         if (bindings != null && serviceFactory instanceof ObjectServiceFactory)
@@ -152,15 +156,6 @@ public class ServiceBean
         if (serviceBean != null)
         {
             xfireService.setInvoker(new BeanInvoker(serviceBean));
-        }
-
-        if (schemas != null)
-        {
-            ObjectServiceFactory osf = (ObjectServiceFactory) serviceFactory;
-            
-            DefaultWSDLBuilderFactory wbf = 
-                (DefaultWSDLBuilderFactory) osf.getWsdlBuilderFactory();
-            wbf.setSchemaLocations(schemas);
         }
 
         // set up in handlers

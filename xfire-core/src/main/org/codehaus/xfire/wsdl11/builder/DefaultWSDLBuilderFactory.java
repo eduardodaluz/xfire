@@ -18,35 +18,11 @@ public class DefaultWSDLBuilderFactory
     {
     }
 
-    public DefaultWSDLBuilderFactory(List schemas)
-    {
-        setSchemaLocations(schemas);
-    }
-
-    /**
-     * A List of Strings which designate schema locations on the filesystem or classpath.
-     * @return
-     */
-    public List getSchemaLocations()
-    {
-        return schemaLocations;
-    }
-
-    public void setSchemaLocations(List schemaLocations)
-    {
-        this.schemaLocations = schemaLocations;
-    }
-
     public WSDLBuilder createWSDLBuilder(Service service, TransportManager transportManager)
     {
         try
         {
-            WSDLBuilder builder = new WSDLBuilder(service, transportManager);
-            
-            if (getSchemaLocations() != null)
-                builder.addSchemas(getSchemaLocations());
-            
-            return builder;
+            return new WSDLBuilder(service, transportManager);
         }
         catch (XFireRuntimeException e)
         {
