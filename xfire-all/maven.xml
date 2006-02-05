@@ -93,6 +93,7 @@
   </goal>
 		
 	<goal name="dist:prepare">
+		<mkdir dir="${maven.build.dir}/modules"/>
 		<mkdir dir="${maven.build.dir}/dist/libs"/>
 		<mkdir dir="${maven.build.dir}/dist/manual"/>
 		
@@ -108,9 +109,10 @@
 		<maven:reactor goals="jar:jar" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
 		
 		<!-- Collect data -->
-		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml"/>
+		<maven:reactor collectionVar="modules" collectOnly="true" basedir="${basedir}/.." includes="${maven.multiproject.includes}" excludes="${maven.multiproject.excludes},xfire-all/project.xml,xfire-plexus/project.xml,xfire-picocontainer/project.xml,xfire-loom/project.xml"/>
 		<c:forEach items="${modules}" var="module">
-			<copy toDir="${maven.build.dir}/dist" file="${basedir}/../${module.artifactId}/target/${module.artifactId}-${module.currentVersion}.jar"/>
+			<copy toDir="${maven.build.dir}/dist/modules" 
+				file="${basedir}/../${module.artifactId}/target/${module.artifactId}-${module.currentVersion}.jar"/>
 			<c:forEach items="${module.artifacts}" var="dependency">
 				<c:if test="${!dependency.dependency.artifactId.startsWith('xfire')}">
 					<c:if test="${dependency.dependency.type != 'plugin'}">
@@ -123,6 +125,10 @@
 				</c:if>
 			</c:forEach>
 			<copy tofile="${maven.build.dir}/dist/libs/README.txt" file="${basedir}/libs-README.txt"/>
+			<copy tofile="${maven.build.dir}/NOTICE.txt" file="${basedir}/NOTICE.txt"/>
+			<copy toDir="${maven.build.dir}/dist/libs/">
+              <fileset dir="${basedir}/licenses" includes="**/*"/>
+		    </copy>
 		</c:forEach>
 	</goal>
 

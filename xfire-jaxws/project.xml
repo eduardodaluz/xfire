@@ -74,12 +74,6 @@
     </dependency>
     <dependency>
       <groupId>xfire</groupId>
-      <artifactId>XmlSchema</artifactId>
-      <version>20060128-patched</version>
-      <url>${pom.url}</url>
-    </dependency>
-    <dependency>
-      <groupId>xfire</groupId>
       <artifactId>xfire-jsr181-api</artifactId>
       <version>1.0-M1</version>
       <url>${pom.url}</url>
@@ -119,15 +113,6 @@
       <artifactId>org.mortbay.jetty</artifactId>
       <version>5.1.3</version>
       <url>http://jetty.mortbay.org</url>
-    </dependency>
-    <dependency>
-      <id>commons-httpclient</id>
-      <version>3.0-rc3</version>
-      <url>http://jakarta.apache.org/commons/httpclient/3.0/</url>
-    </dependency>
-    <dependency>
-      <id>commons-codec</id>
-      <version>1.3</version>
     </dependency>
   </dependencies>
 </project>

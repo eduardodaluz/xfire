@@ -37,12 +37,6 @@
       </properties>
     </dependency>
     <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>XmlSchema</artifactId>
-      <version>20051110</version>
-      <url>${pom.url}</url>
-    </dependency>
-    <dependency>
       <groupId>opensaml</groupId>
       <artifactId>opensaml</artifactId>
       <version>1.0.1</version>

@@ -108,12 +108,12 @@
             <dependency>
                 <groupId>wsdl4j</groupId>
                 <artifactId>wsdl4j</artifactId>
-                <version>1.5.1</version>
+                <version>1.5.2</version>
             </dependency>
             <dependency>
                 <groupId>woodstox</groupId>
                 <artifactId>wstx-asl</artifactId>
-                <version>2.0.3</version>
+                <version>2.9</version>
             </dependency>
             <dependency>
                 <groupId>jdom</groupId>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
-                <version>3.0-rc4</version>
+                <version>3.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -284,6 +284,7 @@
         <module>xfire-spring</module>
         <module>xfire-xmpp</module>
         <module>xfire-jaxb</module>
+        <module>xfire-castor</module>
         <module>xfire-annotations</module>
         <module>xfire-xmlbeans</module>
         <module>xfire-picocontainer</module>

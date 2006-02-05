@@ -73,10 +73,6 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <echo>${project.version}</echo>
-                                <property name="depClasspath"
-                                          refid="maven.dependency.classpath"/>
-                                <echo>${depClasspath}</echo>
                                 <!--  resource="org/apache/commons/attributes/anttasks.properties" -->
                                 <taskdef name="attribute-compiler"
                                          classname="org.apache.commons.attributes.compiler.AttributeCompiler"
