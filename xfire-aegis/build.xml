@@ -10,6 +10,10 @@
     </fileset>
   </path>
 
+    <target name="get-deps" depends="xfire.get-deps">
+        <get-dep artifact="stax-utils" version="snapshot-20040917" group="stax-utils"/>
+    </target>
+    
   <target name="init" depends="xfire.init">
     <check-dep module="xfire-core" />
   </target>

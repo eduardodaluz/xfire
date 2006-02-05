@@ -24,13 +24,13 @@
     <target name="get-deps" depends="xfire.get-deps">
         <get-dep artifact="commons-beanutils" version="1.7.0"/>
         <get-dep artifact="commons-logging" version="1.0.3"/>
-        <get-dep artifact="spring" group="springframework" version="1.2.4"/>
-        <get-dep artifact="spring-mock" group="springframework" version="1.1.5"/>
-        <get-dep artifact="aopalliance" version="1.0"/>
+        <get-dep artifact="spring" group="springframework" version="1.2.6"/>
+        <get-dep artifact="spring-mock" group="springframework" version="1.2.6"/>
+        <get-dep artifact="nekohtml" version="0.9.5"/>
         <get-dep artifact="annogen" version="0.1.0"/>
         <get-dep artifact="qdox" version="1.5"/>
         <get-dep artifact="servletapi" version="2.3"/>
-        <get-dep artifact="xbean-spring" group="xbean" version="2.2-SNAPSHOT"/>
+        <get-dep artifact="xbean-spring" group="xbean" version="2.2-SNAPSHOT" repository="http://dist.codehaus.org/"/>
     </target>
 
     <target name="init" depends="xfire.init">

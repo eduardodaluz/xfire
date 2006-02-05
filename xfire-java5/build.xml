@@ -15,7 +15,7 @@
   </path>
 
   <target name="get-deps" depends="xfire.get-deps">
-    <get-dep artifact="wsm" group="beehive" version="1.0-alpha" />
+    <get-dep artifact="xfire-jsr181-api" group="xfire" version="1.0-M1" repository="http://dist.codehaus.org"/>
   </target>
 
   <target name="init" depends="xfire.init">
