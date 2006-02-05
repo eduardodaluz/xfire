@@ -2,8 +2,6 @@ target
 *~
 *.log*
 junit*.properties
-*.iml
-*.ipr
 *.iws
 .classpath
 .project
