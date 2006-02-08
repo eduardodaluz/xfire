@@ -1,11 +1,9 @@
 package org.codehaus.xfire.inout;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.Holder;
-import org.codehaus.xfire.client.XFireProxy;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessagePartContainer;
@@ -15,8 +13,6 @@ import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
-import org.codehaus.xfire.util.LoggingHandler;
-import org.codehaus.xfire.util.dom.DOMInHandler;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.jdom.Document;
 
@@ -43,6 +39,13 @@ public class MultipleOutServiceTest
                 return super.isOutParam(method, j);
             }
 
+            protected boolean isInParam(Method method, int j)
+            {
+                if (j >= 1) return false;
+                
+                return super.isInParam(method, j);
+            }
+            
             protected boolean isHeader(Method method, int j)
             {
                 if (j == 2) return true;
