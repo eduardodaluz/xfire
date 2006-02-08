@@ -47,7 +47,8 @@ public class Wsdl11Generator
             }
         }
 
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(new FileInputStream(wsdl));
+       // WSDLServiceBuilder builder = new WSDLServiceBuilder(new FileInputStream(wsdl));
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(new WSDLInputStreamLoader().getInputStream(wsdl));
         builder.setBindingProvider(support.getBindingProvider());
         builder.walkTree();
         
