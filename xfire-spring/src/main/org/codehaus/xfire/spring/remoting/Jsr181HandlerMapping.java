@@ -67,6 +67,8 @@ public class Jsr181HandlerMapping
         // Take any bean name or alias that has a web service annotation
         for (int i = 0; i < beanNames.length; i++)
         {
+            if (!beanFactory.isSingleton(beanNames[i])) continue;
+            
             Class clazz;
             Object bean;
             try
