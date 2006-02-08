@@ -72,7 +72,7 @@ public class StaxSerializer
             String attPrefix= attr.getNamespacePrefix();
             String attUri = attr.getNamespaceURI();
 
-            if (attUri == null)
+            if (attUri == null || attUri.equals(""))
             {
                 writer.writeAttribute(attr.getName(), attr.getValue());
             }
