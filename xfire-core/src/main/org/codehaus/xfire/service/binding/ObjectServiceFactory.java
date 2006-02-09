@@ -224,7 +224,8 @@ public class ObjectServiceFactory
                     part.setIndex(j);
                     part.setSchemaType(null);
                 }
-                else
+
+                if (isInParam(method, j))
                 {
                     MessagePartInfo part = inHeaders.getMessagePart(q);
                     if (part == null)
@@ -585,7 +586,8 @@ public class ObjectServiceFactory
                 {
                     outParts.addMessagePart(q, paramClasses[j]).setIndex(j);
                 }
-                else
+                
+                if (isInParam(method, j))
                 {
                     inParts.addMessagePart(q, paramClasses[j]).setIndex(j);
                 }
@@ -676,7 +678,7 @@ public class ObjectServiceFactory
         {
             if (!paramClasses[j].equals(MessageContext.class) && 
                     !isHeader(method, j) &&
-                    !isOutParam(method, j))
+                    isInParam(method, j))
             {
                 final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 MessagePartInfo part = inMsg.addMessagePart(q, paramClasses[j]);
@@ -729,6 +731,11 @@ public class ObjectServiceFactory
         return false;
     }
 
+    protected boolean isInParam(Method method, int j)
+    {
+        return true;
+    }
+    
     protected QName createInputMessageName(final OperationInfo op)
     {
         return new QName(op.getService().getPortType().getNamespaceURI(), op.getName() + "Request");
