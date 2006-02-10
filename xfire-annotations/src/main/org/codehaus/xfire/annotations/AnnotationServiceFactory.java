@@ -305,13 +305,29 @@ public class AnnotationServiceFactory
         return super.isHeader(method, paramNumber);
     }
     
+    protected boolean isInParam(Method method, int j)
+    {
+        if (webAnnotations.hasWebParamAnnotation(method, j))
+        {
+            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
+
+            return webParamAnnotation.getMode() == WebParamAnnotation.MODE_IN ||
+                webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT;
+        }
+        else
+        {
+            return super.isOutParam(method, j);
+        }
+    }
+    
     protected boolean isOutParam(Method method, int j)
     {
         if (webAnnotations.hasWebParamAnnotation(method, j))
         {
             final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
 
-            return webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT;
+            return webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT ||
+                webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT;
         }
         else
         {
