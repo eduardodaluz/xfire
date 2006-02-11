@@ -22,7 +22,7 @@ public class ServiceStarterTest extends TestCase
 
         // Create a client proxy
         XFireProxyFactory proxyFactory = new XFireProxyFactory();
-        Echo echo = (Echo) proxyFactory.create(serviceModel, "http://localhost:8080/Echo");
+        Echo echo = (Echo) proxyFactory.create(serviceModel, "http://localhost:8191/Echo");
         
         System.out.println(echo.echo("Hello World"));
         

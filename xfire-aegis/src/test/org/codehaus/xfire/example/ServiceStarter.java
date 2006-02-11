@@ -31,7 +31,7 @@ public class ServiceStarter
         
         // Start the HTTP server
         server = new XFireHttpServer();
-        server.setPort(8080);
+        server.setPort(8191);
         server.start();
     }
     

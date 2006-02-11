@@ -89,10 +89,10 @@ public class EchoWSDLClientTest
     public void testHTTPInvoke() throws Exception
     {
         XFireHttpServer server = new XFireHttpServer();
-        server.setPort(8080);
+        server.setPort(8191);
         server.start();
         
-        Client client = new Client(new URL("http://localhost:8080/Echo?wsdl"));
+        Client client = new Client(new URL("http://localhost:8191/Echo?wsdl"));
         
         OperationInfo op = client.getService().getServiceInfo().getOperation("echo");
 
