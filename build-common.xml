@@ -186,8 +186,9 @@
   <target name="get-deps" depends="init, setproxy" description="download dependencies">
     <mkdir dir="${master.libdir}" />
     <mkdir dir="${libdir}" />
-    <get-dep artifact="wstx-asl" group="woodstox" version="2.0.3" dir="${master.libdir}"/>
-    <get-dep artifact="stax" version="1.1.2-dev" dir="${master.libdir}"/>
+    <get-dep artifact="geronimo-spec-activation" group="geronimo-spec" version="1.0.2-rc4" dir="${master.libdir}"/>
+  	<get-dep artifact="wstx-asl" group="woodstox" version="2.9" dir="${master.libdir}"/>
+  	<get-dep artifact="stax" version="1.1.2-dev" dir="${master.libdir}"/>
     <get-dep artifact="stax-api" group="stax" version="1.0" dir="${master.libdir}"/>
     <get-dep artifact="jdom" version="1.0" dir="${master.libdir}"/>
     <get-dep artifact="wsdl4j" version="1.5.1" dir="${master.libdir}"/>

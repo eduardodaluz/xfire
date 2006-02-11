@@ -64,8 +64,6 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <property name="depClasspath"
-                                          refid="maven.dependency.classpath"/>
                                 <taskdef name="xjc" 
                                   classname="com.sun.tools.xjc.XJCTask" 
                                   classpathref="maven.dependency.classpath"/>
