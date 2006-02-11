@@ -23,7 +23,7 @@ import org.jdom.Element;
 public class Soap11FaultSerializer
     implements MessageSerializer
 {
-    private StaxBuilder builder = new StaxBuilder();
+  //  private StaxBuilder builder = new StaxBuilder();
     
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
@@ -64,6 +64,7 @@ public class Soap11FaultSerializer
                         }
                         else if (reader.getLocalName().equals("detail"))
                         {
+                            StaxBuilder builder = new StaxBuilder();
                             fault.setDetail(builder.build(new FragmentStreamReader(reader)).getRootElement());
                         }
                         break;
@@ -106,7 +107,7 @@ public class Soap11FaultSerializer
             }
             else if (faultCode.equals(XFireFault.SENDER))
             {
-                codeString = "soap:Server";
+                codeString = "soap:Client";
             }
             else if (faultCode.equals(XFireFault.VERSION_MISMATCH))
             {
