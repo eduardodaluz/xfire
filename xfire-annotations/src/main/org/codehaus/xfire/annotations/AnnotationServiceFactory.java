@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.OperationInfo;
@@ -30,6 +32,8 @@ public class AnnotationServiceFactory
         extends ObjectServiceFactory
         implements ServiceFactory
 {
+    private Log log = LogFactory.getLog(AnnotationServiceFactory.class);
+    
     private WebAnnotations webAnnotations;
 
     public AnnotationServiceFactory(WebAnnotations webAnnotations,
@@ -139,6 +143,11 @@ public class AnnotationServiceFactory
             if (!properties.containsKey(USE))
             {
 	            properties.put(USE, use);
+            }
+            
+            if (webAnnotations.hasHandlerChainAnnotation(clazz))
+            {
+                log.error("@HandlerChain attributes are not supported yet!");
             }
             
             Service service = super.create(endpointInterface, name, namespace, properties);
