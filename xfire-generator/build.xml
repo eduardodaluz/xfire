@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <target name="wsgen">
+
+    <delete dir="${basedir}/target/test-services"/>
+    <mkdir dir="${basedir}/target/test-services"/>
+  
+    <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
+          classpathref="maven.dependency.classpath"
+          fork="true">
+      <arg value="-d"/>
+      <arg value="${basedir}/target/test-services"/>
+      <arg value="${basedir}/src/wsdl/echo.wsdl"/>
+      <arg value="${basedir}/src/wsdl/echoWrapped.wsdl"/>
+      <arg value="${basedir}/src/wsdl/globalweather-twoporttypes.wsdl"/>
+    </java>
+  	
+
+  	<copy todir="${basedir}/target/test-classes">
+      <fileset dir="${basedir}/target/test-services/"/>
+    </copy>
+
+    <path id="wsgen.classpath">
+      <pathelement path="${basedir}/target/test-classes"/>
+      <path refid="maven.dependency.classpath" />
+    </path>
+  	
+    <taskdef name="wsgen" classname="org.codehaus.xfire.gen.WsGenTask" 
+         classpathref="wsgen.classpath"/>
+  		
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/echo.wsdl" package="jsr181.echo.bare"
+      binding="xmlbeans" />
+
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/echoWrapped.wsdl"
+      package="jsr181.echo.wrapped" binding="xmlbeans" />
+
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/globalweather-twoporttypes.wsdl"
+      package="jsr181.echo.globalweather" binding="xmlbeans" />
+
+    <!-- JAXB -->
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/globalweather.wsdl"
+      package="jsr181.jaxb.globalweather" />
+
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/oneway.wsdl"
+      package="jsr181.jaxb.oneway" />
+
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/auth.wsdl" package="jsr181.jaxb.auth" />
+
+  </target>
+</project>
