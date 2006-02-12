@@ -293,6 +293,7 @@
                 <directory>src/test</directory>
                 <includes>
                     <include>**/*.xml</include>
+                    <include>**/*.properties</include>
                     <include>**/*.wsdl</include>
                 </includes>
             </testResource>
@@ -310,16 +311,18 @@
     </repositories>
 
     <modules>
-        <module>xfire-core</module>
         <module>xfire-aegis</module>
+        <module>xfire-annotations</module>
+        <module>xfire-castor</module>
+        <module>xfire-core</module>
+        <module>xfire-loom</module>
+        <module>xfire-jaxb</module>
+        <module>xfire-jms</module>
+        <module>xfire-picocontainer</module>
         <module>xfire-plexus</module>
         <module>xfire-spring</module>
-        <module>xfire-xmpp</module>
-        <module>xfire-jaxb</module>
-        <module>xfire-castor</module>
-        <module>xfire-annotations</module>
         <module>xfire-xmlbeans</module>
-        <module>xfire-picocontainer</module>
+        <module>xfire-xmpp</module>
     </modules>
     <profiles>
         <profile>
