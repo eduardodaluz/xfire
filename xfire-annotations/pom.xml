@@ -67,7 +67,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.0</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -77,11 +76,12 @@
                                 <taskdef name="attribute-compiler"
                                          classname="org.apache.commons.attributes.compiler.AttributeCompiler"
                                          classpathref="maven.dependency.classpath"/>
-                                <attribute-compiler destdir="target/generated-source">
-                                    <fileset dir="src/main" includes="**/*.java"/>
-                                    <fileset dir="src/test" includes="**/*.java"/>
+                                <attribute-compiler destdir="${project.build.directory}/generated-source">
+                                    <fileset dir="${basedir}/src/main" includes="**/*.java"/>
+                                    <fileset dir="${basedir}/src/test" includes="**/*.java"/>
                                 </attribute-compiler>
                             </tasks>
+                            <testSourceRoot>${project.build.directory}/generated-source</testSourceRoot>
                         </configuration>
                         <goals>
                             <goal>run</goal>

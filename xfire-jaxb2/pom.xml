@@ -67,9 +67,9 @@
                                 <taskdef name="xjc" 
                                   classname="com.sun.tools.xjc.XJCTask" 
                                   classpathref="maven.dependency.classpath"/>
-                              <mkdir dir="target/generated-source"/>
-                              <xjc target="target/generated-source">
-                                <schema dir="src/test-schemas" includes="*.xsd"/>
+                              <mkdir dir="${project.build.directory}/generated-source"/>
+                              <xjc target="${project.build.directory}/generated-source">
+                                <schema dir="${basedir}/src/test-schemas" includes="*.xsd"/>
                               </xjc>
                             </tasks>
                             <testSourceRoot>${project.build.directory}/generated-source</testSourceRoot>

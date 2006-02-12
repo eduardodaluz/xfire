@@ -13,9 +13,7 @@
     <repositories>
         <!-- this is where we get the jaxb libs from -->
         <repository>
-            <id>
-                java.net
-            </id>
+            <id>java.net</id>
             <layout>legacy</layout>
             <url>
                 https://maven-repository.dev.java.net/nonav/repository
@@ -74,7 +72,6 @@
         <testSourceDirectory>
             /none/
         </testSourceDirectory>
-
     </build>
 </project>
 

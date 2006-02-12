@@ -32,7 +32,7 @@ public class WeatherServiceTest
         builder = new ObjectServiceFactory(getXFire().getTransportManager(),
                 new AegisBindingProvider(registry));
         ArrayList schemas = new ArrayList();
-        schemas.add("src/test-schemas/WeatherForecast.xsd");
+        schemas.add(getTestFile("src/test-schemas/WeatherForecast.xsd").getAbsolutePath());
         Map props = new HashMap();
         props.put(ObjectServiceFactory.SCHEMAS, schemas);
         
