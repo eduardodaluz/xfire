@@ -38,6 +38,19 @@
           <verbose>true</verbose>
           <schemaDirectory>src/test-schemas</schemaDirectory>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.1.2-dev</version>
+            <exclusions>
+              <exclusion>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xmlbeans-jsr173-api</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
     <finalName>${artifactId}</finalName>
