@@ -23,8 +23,16 @@
       <url>https://cvs.xfire.codehaus.org/viewrep/xfire</url>
     </scm>
     <ciManagement>
-        <system>Continuum</system>
-        <url>unknown</url>
+      <system>Continuum</system>
+      <url>unknown</url>
+      <notifiers>
+        <notifier>
+          <type>mail</type>
+          <configuration>
+            <address>dev@xfire.codehaus.org</address>
+          </configuration>
+        </notifier>
+      </notifiers>
     </ciManagement>
     <dependencyManagement>
         <dependencies>
