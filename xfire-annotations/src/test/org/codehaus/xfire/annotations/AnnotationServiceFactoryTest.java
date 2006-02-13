@@ -47,6 +47,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(true);
 
+        webAnnotations.hasHandlerChainAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(false);
+        
         WebServiceAnnotation annotation = new WebServiceAnnotation();
         annotation.setServiceName("EchoService");
         annotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
@@ -118,6 +121,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(true);
 
+        webAnnotations.hasHandlerChainAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(false);
+        
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("not used");
@@ -193,6 +199,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(true);
 
+        webAnnotations.hasHandlerChainAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(false);
+        
         WebServiceAnnotation implAnnotation = new WebServiceAnnotation();
         implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
@@ -230,6 +239,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(true);
 
+        webAnnotations.hasHandlerChainAnnotation(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(false);
+        
         SOAPBindingAnnotation soapBinding = new SOAPBindingAnnotation();
         soapBinding.setUse(SOAPBindingAnnotation.USE_LITERAL);
 
