@@ -46,6 +46,8 @@ public class XFireWebAnnotationsHandlerMappingTest
 
         webAnnotations.hasWebServiceAnnotation(EchoImpl.class);
         control.setReturnValue(true);
+        webAnnotations.hasHandlerChainAnnotation(EchoImpl.class);
+        control.setReturnValue(false);
         webAnnotations.hasSOAPBindingAnnotation(EchoImpl.class);
         control.setReturnValue(false);
         webAnnotations.hasWebServiceAnnotation(EchoImpl.class);
