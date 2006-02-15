@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * @org.xbean.XBean element="xfire"
+ * @org.apache.xbean.XBean element="xfire"
  */
 public class XFireBean implements InitializingBean, ApplicationContextAware
 {

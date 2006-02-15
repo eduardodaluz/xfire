@@ -4,7 +4,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * @author tomeks
- * @org.xbean.XBean element="handlerName"
+ * @org.apache.xbean.XBean element="handlerName"
  */
 public class HandlerNameBean
     implements FactoryBean

@@ -164,6 +164,7 @@ public abstract class AbstractXFireTest
     {
         super.setUp();
 
+        System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory");
         addNamespace( "s", Soap11.getInstance().getNamespace() );
         addNamespace( "soap12", Soap12.getInstance().getNamespace() );
 

@@ -3,7 +3,7 @@ package org.codehaus.xfire.spring.config;
 import javax.xml.namespace.QName;
 
 /**
- * @org.xbean.XBean element="endpoint"
+ * @org.apache.xbean.XBean element="endpoint"
  */
 public class EndpointBean
 {

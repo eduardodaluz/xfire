@@ -5,7 +5,7 @@ import org.springframework.beans.factory.FactoryBean;
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * @org.xbean.XBean element="schema" contentProperty="location" 
+ * @org.apache.xbean.XBean element="schema" contentProperty="location" 
  * 
  */
 public class SchemaBean

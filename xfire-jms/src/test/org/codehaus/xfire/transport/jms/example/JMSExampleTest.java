@@ -10,7 +10,7 @@ import org.codehaus.xfire.spring.AbstractXFireSpringTest;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.transport.jms.JMSTransport;
 import org.springframework.context.ApplicationContext;
-import org.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 
 public class JMSExampleTest
     extends AbstractXFireSpringTest

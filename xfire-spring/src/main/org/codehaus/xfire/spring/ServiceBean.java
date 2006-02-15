@@ -43,7 +43,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * @org.xbean.XBean element="service"
+ * @org.apache.xbean.XBean element="service"
  */
 public class ServiceBean
     implements InitializingBean, ApplicationContextAware

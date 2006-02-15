@@ -77,7 +77,7 @@ public class JMSChannel
         throws XFireFault
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding(), context);
 
         message.getSerializer().writeMessage(message, writer, context);
         
@@ -122,14 +122,15 @@ public class JMSChannel
         try
         {
             String text = ((TextMessage)message).getText();
-            XMLStreamReader reader = STAXUtils.createXMLStreamReader(new StringReader(text));
-            InMessage in = new InMessage(reader, getUri());
-    
+            
             MessageContext context = new MessageContext(); 
             context.setService(((JMSTransport) getTransport()).getXFire().getServiceRegistry().getService(getQueueName(getUri())));
             context.setProperty(REPLY_TO, message.getJMSReplyTo());
             context.setXFire(((JMSTransport) getTransport()).getXFire());
             
+            XMLStreamReader reader = STAXUtils.createXMLStreamReader(new StringReader(text), context);
+            InMessage in = new InMessage(reader, getUri());
+    
             receive(context, in);
         }
         catch(JMSException e)

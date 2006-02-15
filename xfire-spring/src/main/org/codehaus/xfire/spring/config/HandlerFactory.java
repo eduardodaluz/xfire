@@ -11,7 +11,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * @org.xbean.XBean element="handler"
+ * @org.apache.xbean.XBean element="handler"
  */
 public class HandlerFactory
     implements FactoryBean, InitializingBean
