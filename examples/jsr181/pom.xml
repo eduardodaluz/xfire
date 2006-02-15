@@ -4,51 +4,36 @@
   http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>xfire</groupId>
-  <artifactId>xfire-spring-example</artifactId>
+  <artifactId>jsr181-example</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
-  <name>Spring XFire Example</name>
+  <name></name>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-aegis</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-spring</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-jaxb2</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-java5</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.3</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
-    <defaultGoal>war</defaultGoal>
-    <sourceDirectory>${basedir}/src/main</sourceDirectory>
-
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -57,10 +42,39 @@
           <warSourceDirectory>${basedir}/src/webapp</warSourceDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
     </plugins>
+    <sourceDirectory>src/main</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.xsd</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.properties</include>
+          <include>**/*.wsdl</include>
+        </includes>
+      </testResource>
+    </testResources>
   </build>
 
-
+  <!--  needed for XmlSchema -->
   <repositories>
     <repository>
       <id>codehaus</id>
@@ -69,5 +83,6 @@
       <layout>legacy</layout>
     </repository>
   </repositories>
-  
+
+
 </project>

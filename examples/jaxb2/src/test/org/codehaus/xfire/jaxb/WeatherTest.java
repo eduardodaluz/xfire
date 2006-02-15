@@ -3,7 +3,7 @@ package org.codehaus.xfire.jaxb;
 import org.codehaus.xfire.spring.AbstractXFireSpringTest;
 import org.jdom.Document;
 import org.springframework.context.ApplicationContext;
-import org.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 
 public class WeatherTest 
     extends AbstractXFireSpringTest
