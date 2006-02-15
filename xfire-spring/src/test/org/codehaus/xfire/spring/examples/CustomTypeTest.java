@@ -1,5 +1,6 @@
 package org.codehaus.xfire.spring.examples;
 
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMapping;
@@ -10,7 +11,6 @@ import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.spring.AbstractXFireSpringTest;
 import org.springframework.context.ApplicationContext;
-import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
 public class CustomTypeTest
     extends AbstractXFireSpringTest

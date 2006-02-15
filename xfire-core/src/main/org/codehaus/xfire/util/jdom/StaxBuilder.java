@@ -65,9 +65,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.util.STAXUtils;
 import org.jdom.Attribute;
 import org.jdom.Content;

@@ -39,6 +39,18 @@
       <artifactId>stax-utils</artifactId>
       <version>snapshot-20040917</version>
     </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+      <version>1.1.2-dev</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xmlbeans</groupId>
+          <artifactId>xmlbeans-jsr173-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>
@@ -62,7 +74,9 @@
                   todir="${project.build.directory}/generated-test"
                   types="j2" warnings="false" />
               </tasks>
-              <testSourceRoot>${project.build.directory}/generated-test</testSourceRoot>
+              <testSourceRoot>
+                ${project.build.directory}/generated-test
+              </testSourceRoot>
             </configuration>
             <goals>
               <goal>run</goal>

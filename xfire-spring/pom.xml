@@ -82,12 +82,10 @@
                 <exclusion>
                     <groupId>springframework</groupId>
                     <artifactId>spring-dao</artifactId>
-
                 </exclusion>
                 <exclusion>
                     <groupId>springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-
                 </exclusion>
             </exclusions>
         </dependency>
@@ -103,7 +101,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>xbean</groupId>
+            <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
         </dependency>
         <dependency>
@@ -144,7 +142,7 @@
                         <configuration>
                             <tasks>
                                 <taskdef
-                                        classname="org.xbean.spring.generator.MappingGeneratorTask"
+                                        classname="org.apache.xbean.spring.generator.MappingGeneratorTask"
                                         name="mapping">
                                     <classpath>
                                         <pathelement path="${basedir}/target/classes"></pathelement>

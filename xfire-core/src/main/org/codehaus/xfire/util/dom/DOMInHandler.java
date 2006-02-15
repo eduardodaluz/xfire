@@ -7,7 +7,7 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.handler.ReadHeadersHandler;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.util.stax.W3CDOMStreamReader2;
+import org.codehaus.xfire.util.stax.W3CDOMStreamReader;
 import org.w3c.dom.Document;
 
 /**
@@ -40,10 +40,8 @@ public class DOMInHandler
         dbf.setCoalescing(false);
         
         doc = STAXUtils.read(dbf.newDocumentBuilder(), context.getInMessage().getXMLStreamReader(), false);
-
-        
         
         context.getInMessage().setProperty(DOM_MESSAGE, doc);
-        context.getInMessage().setXMLStreamReader(new W3CDOMStreamReader2(doc.getDocumentElement()));
+        context.getInMessage().setXMLStreamReader(new W3CDOMStreamReader(doc.getDocumentElement()));
     }
 }

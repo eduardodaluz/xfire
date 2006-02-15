@@ -2,8 +2,8 @@ package org.codehaus.xfire.spring.examples;
 // START SNIPPET: load
 import junit.framework.TestCase;
 
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
 public class XBeanExampleTest
     extends TestCase

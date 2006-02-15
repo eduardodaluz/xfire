@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -17,10 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.transport.http.XFireServlet;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -563,17 +559,23 @@ public class STAXUtils
      */
     public static XMLOutputFactory getXMLOutputFactory(MessageContext ctx)
     {
+        if (ctx == null) return XMLOutputFactory.newInstance();
+        
+        Class outFactory = null;
+        XFire xfire = ctx.getXFire();
 
-        XFire xfire = XFireFactory.newInstance().getXFire();
-        Class outFactory = (Class) xfire.getProperty(XFire.STAX_OUTPUT_FACTORY);
-            if( outFactory == null && ctx!= null ){
-                //Object obj1 = ctx.getService().getProperty(XFire.STAX_INPUT_FACTORY);
-                Service s = ctx.getService();
-                Object obj = s.getProperty(XFire.STAX_OUTPUT_FACTORY);
-                outFactory = (Class) obj;
-            }
-            
-        if( outFactory != null ){
+        if (ctx.getService() != null)
+        {
+            outFactory = (Class) ctx.getService().getProperty(XFire.STAX_OUTPUT_FACTORY);
+        }
+        
+        if (outFactory == null && xfire != null)
+        {
+            outFactory = (Class) xfire.getProperty(XFire.STAX_OUTPUT_FACTORY);
+        }
+ 
+        if (outFactory != null)
+        {
             return (XMLOutputFactory) createFactory(outFactory);
         }
 
@@ -585,12 +587,21 @@ public class STAXUtils
      */
     public static XMLInputFactory getXMLInputFactory(MessageContext ctx)
     {
-        XFire xfire = XFireFactory.newInstance().getXFire();
-        Class inFactory = (Class) xfire.getProperty(XFire.STAX_INPUT_FACTORY);
-        if (inFactory == null && ctx != null)
+        if (ctx == null) return XMLInputFactory.newInstance();;
+        
+        Class inFactory = null;
+        XFire xfire = ctx.getXFire();
+        
+        if (ctx.getService() != null)
         {
             inFactory = (Class) ctx.getService().getProperty(XFire.STAX_INPUT_FACTORY);
         }
+
+        if (inFactory == null && xfire != null)
+        {
+            inFactory = (Class) xfire.getProperty(XFire.STAX_INPUT_FACTORY);
+        }
+        
         if (inFactory != null)
         {
             return (XMLInputFactory) createFactory(inFactory);

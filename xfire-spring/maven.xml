@@ -1,6 +1,6 @@
 <project default="jar:install" xmlns:ant="jelly:ant" xmlns:maven="jelly:maven">
 
-	<ant:taskdef name="mapping" classname="org.xbean.spring.generator.MappingGeneratorTask">
+	<ant:taskdef name="mapping" classname="org.apache.xbean.spring.generator.MappingGeneratorTask">
       <ant:classpath>
       	<ant:pathelement path="${maven.build.dest}"/>
       	<ant:pathelement path="${maven.test.dest}"/>

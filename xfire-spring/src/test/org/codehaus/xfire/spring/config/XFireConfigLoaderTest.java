@@ -1,9 +1,10 @@
 package org.codehaus.xfire.spring.config;
 
+
 import javax.servlet.ServletContext;
 
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
@@ -19,7 +20,6 @@ import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
-import org.xbean.spring.context.ClassPathXmlApplicationContext;
 
 /**
  * @author tomeks
