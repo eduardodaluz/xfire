@@ -658,13 +658,18 @@ public class STAXUtils
         }
     }
 
+    public static XMLStreamReader createXMLStreamReader(Reader reader)
+    {
+        return createXMLStreamReader(reader, null);
+    }
+    
     /**
      * @param reader
      * @return
      */
-    public static XMLStreamReader createXMLStreamReader(Reader reader)
+    public static XMLStreamReader createXMLStreamReader(Reader reader, MessageContext context)
     {
-        XMLInputFactory factory = getXMLInputFactory(null);
+        XMLInputFactory factory = getXMLInputFactory(context);
         
         try
         {
