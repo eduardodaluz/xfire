@@ -1,15 +1,16 @@
 package org.codehaus.xfire.aegis.stax;
 
+import java.io.InputStream;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AbstractMessageReader;
 import org.codehaus.xfire.aegis.MessageReader;
+import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
 
 /**
  * Reads literal encoded messages.
@@ -56,8 +57,9 @@ public class ElementReader
     public ElementReader(InputStream is) 
         throws XMLStreamException
     {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader xmlReader = factory.createXMLStreamReader(is);
+        //XMLInputFactory factory = XMLInputFactory.newInstance();
+        //XMLStreamReader xmlReader = factory.createXMLStreamReader(is);
+        XMLStreamReader xmlReader = STAXUtils.createXMLStreamReader(is,null,null);
 
         while( xmlReader.getEventType() != XMLStreamReader.START_ELEMENT )
         {

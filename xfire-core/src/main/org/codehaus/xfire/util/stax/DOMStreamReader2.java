@@ -17,7 +17,7 @@ import org.codehaus.xfire.util.FastStack;
  * 
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  */
-public abstract class DOMStreamReader
+public abstract class DOMStreamReader2
     implements XMLStreamReader
 {
     public Map properties = new HashMap();
@@ -51,11 +51,11 @@ public abstract class DOMStreamReader
 
         int currentNamespace = -1;
         
-        int currentElement = -1;
+        
         List uris;
         List prefixes;
         List attributes;
-        List allAttributes;
+       
 
 		final ElementFrame parent;
 	}
@@ -63,7 +63,7 @@ public abstract class DOMStreamReader
     /**
      * @param element
      */
-    public DOMStreamReader(ElementFrame frame)
+    public DOMStreamReader2(ElementFrame frame)
     {
         this.frame = frame;
         frames.push(this.frame);

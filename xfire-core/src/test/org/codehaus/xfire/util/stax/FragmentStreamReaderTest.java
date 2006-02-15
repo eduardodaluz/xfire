@@ -19,7 +19,7 @@ public class FragmentStreamReaderTest
     
     public void testReader() throws Exception
     {
-        XMLInputFactory ifactory = XMLInputFactory.newInstance();
+        XMLInputFactory ifactory = STAXUtils.getXMLInputFactory(null);
         XMLStreamReader reader = 
             ifactory.createXMLStreamReader(getClass().getResourceAsStream("/org/codehaus/xfire/util/amazon.xml"));
         

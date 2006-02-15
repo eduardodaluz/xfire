@@ -4,11 +4,11 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.util.STAXUtils;
 
 /**
  * Provides a basic HTML description of a {@link Service}.
@@ -31,9 +31,9 @@ public class HtmlServiceWriter
     public void write(OutputStream out, Collection services)
             throws XMLStreamException
     {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        XMLStreamWriter writer = factory.createXMLStreamWriter(out);
-
+        //XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        //XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, null,null);
         writer.writeStartDocument();
         writePreamble(writer, "XFire Services");
 
@@ -70,9 +70,9 @@ public class HtmlServiceWriter
     public void write(OutputStream out, Service service)
             throws XMLStreamException
     {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        XMLStreamWriter writer = factory.createXMLStreamWriter(out);
-
+        /*XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        XMLStreamWriter writer = factory.createXMLStreamWriter(out);*/
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, null,null);
         writer.writeStartDocument();
         String title = service.getSimpleName() + " Web Service";
         writePreamble(writer, title);

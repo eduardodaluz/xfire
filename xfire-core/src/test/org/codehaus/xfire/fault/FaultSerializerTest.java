@@ -50,7 +50,7 @@ public class FaultSerializerTest
 
         OutMessage message = new OutMessage("urn:bleh");
         message.setBody(fault);
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8");
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8",null);
         writer.writeStartDocument();
         writer.writeStartElement("soap", "Body", Soap12.getInstance().getNamespace());
         writer.writeNamespace("soap", Soap12.getInstance().getNamespace());
@@ -119,7 +119,7 @@ public class FaultSerializerTest
         OutMessage message = new OutMessage("urn:bleh");
         message.setBody(fault);
         
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8");
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8",null);
         writer.writeStartDocument();
         writer.writeStartElement("soap", "Body", Soap11.getInstance().getNamespace());
         writer.writeNamespace("soap", Soap11.getInstance().getNamespace());
@@ -152,7 +152,7 @@ public class FaultSerializerTest
 
     private XMLStreamReader readerForString(String string) throws XMLStreamException
     {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
+        XMLInputFactory factory = STAXUtils.getXMLInputFactory(null);
         return factory.createXMLStreamReader(new StringReader(string));
     }
 }

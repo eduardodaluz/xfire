@@ -65,6 +65,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.util.STAXUtils;
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Document;
@@ -139,17 +143,19 @@ public class StaxBuilder
     }
 
 
+    
+    
     /**
      * Default constructor.
      */
     public StaxBuilder()
     {
-        xifactory = XMLInputFactory.newInstance();
+        xifactory = STAXUtils.getXMLInputFactory(null);
     }
 
     public StaxBuilder(Map namespaces)
     {
-        xifactory = XMLInputFactory.newInstance();
+        xifactory = STAXUtils.getXMLInputFactory(null);
         this.additionalNamespaces = namespaces;
     }
     

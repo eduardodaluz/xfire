@@ -71,7 +71,7 @@ public class SimpleMessageSender extends AbstractMessageSender
             }
         }
 
-        return new InMessage(STAXUtils.createXMLStreamReader(is, getEncoding()), getUri());
+        return new InMessage(STAXUtils.createXMLStreamReader(is, getEncoding(),getMessageContext()), getUri());
     }
 
     public void close() throws XFireException
@@ -109,7 +109,7 @@ public class SimpleMessageSender extends AbstractMessageSender
     {
         OutputStream out = getOutputStream();
         OutMessage message = getMessage();
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding(),null);
 
         message.getSerializer().writeMessage(message, writer, getMessageContext());
         

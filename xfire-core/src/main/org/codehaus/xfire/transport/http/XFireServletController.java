@@ -255,7 +255,7 @@ public class XFireServletController
                 
                 XMLStreamReader reader = 
                     STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
-                                                    request.getCharacterEncoding());
+                                                    request.getCharacterEncoding(),context);
                 InMessage message = new InMessage(reader, request.getRequestURI());
                 message.setProperty(SoapConstants.SOAP_ACTION, 
                                     request.getHeader(SoapConstants.SOAP_ACTION));
@@ -272,7 +272,7 @@ public class XFireServletController
         {
             XMLStreamReader reader = 
                 STAXUtils.createXMLStreamReader(request.getInputStream(), 
-                                                request.getCharacterEncoding());
+                                                request.getCharacterEncoding(),context);
             
             InMessage message = new InMessage(reader, request.getRequestURI());
             channel.receive(context, message);

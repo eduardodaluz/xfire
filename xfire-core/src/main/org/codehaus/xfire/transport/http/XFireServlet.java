@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 
@@ -24,12 +26,20 @@ public class XFireServlet
 
     protected XFireServletController controller;
 
+    private final static Log logger = LogFactory.getLog(XFireServlet.class);
+    
     public void init() 
         throws ServletException
     {
+        try{
         super.init();
         xfire = createXFire();
         controller = createController();
+        }catch(Throwable tx){
+            //log.er
+            logger.error("Error initializing XFireServlet.",tx);
+            throw new ServletException("Error initializing XFireServlet.",tx);
+        }
     }
 
     /**

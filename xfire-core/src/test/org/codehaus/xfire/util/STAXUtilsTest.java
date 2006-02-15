@@ -62,7 +62,8 @@ public class STAXUtilsTest
     
     public void doSkipTest() throws Exception
     {
-        XMLStreamReader reader = ifactory.createXMLStreamReader(getClass().getResourceAsStream("/org/codehaus/xfire/util/nowhitespace.xml"));
+        XMLStreamReader reader = STAXUtils.createXMLStreamReader(getClass().getResourceAsStream("/org/codehaus/xfire/util/nowhitespace.xml"),null,null);
+        //XMLStreamReader reader = ifactory.createXMLStreamReader(getClass().getResourceAsStream("/org/codehaus/xfire/util/nowhitespace.xml"));
         
         DepthXMLStreamReader dr = new DepthXMLStreamReader(reader);
         STAXUtils.toNextElement(dr);

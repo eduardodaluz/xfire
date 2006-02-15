@@ -1,7 +1,6 @@
 package org.codehaus.xfire.aegis.stax;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -9,6 +8,7 @@ import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.jdom.Document;
 
@@ -32,9 +32,10 @@ public class ReaderTest
     private ElementReader getStreamReader(String resource)
         throws FactoryConfigurationError, XMLStreamException
     {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
+        /*XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader reader = factory.createXMLStreamReader( 
-                getResourceAsStream(resource));
+                getResourceAsStream(resource));*/
+        XMLStreamReader reader = STAXUtils.createXMLStreamReader(getResourceAsStream(resource),null,null);
         
         while ( reader.getEventType() != XMLStreamReader.START_ELEMENT )
             reader.next();

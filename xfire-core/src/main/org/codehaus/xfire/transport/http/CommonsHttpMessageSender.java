@@ -155,7 +155,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         OutMessage message = getMessage();
         MessageContext context = getMessageContext();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, message.getEncoding());
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, message.getEncoding(),context);
 
         Attachments atts = message.getAttachments();
         if (atts != null && atts.size() > 0)
@@ -182,7 +182,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 Attachments atts = new JavaMailAttachments(in, ct);
 
                 InputStream msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
-                InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding()), getUri());
+                InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding(),getMessageContext()), getUri());
                 msg.setAttachments(atts);
                 return msg;
             }
@@ -194,7 +194,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         }
         else
         {
-            return new InMessage(STAXUtils.createXMLStreamReader(in, getEncoding()), getUri());
+            return new InMessage(STAXUtils.createXMLStreamReader(in, getEncoding(),getMessageContext()), getUri());
         }
         
     }

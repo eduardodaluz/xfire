@@ -17,6 +17,7 @@ import org.codehaus.xfire.util.STAXUtils;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -49,7 +50,7 @@ public class LocalChannel
             final OutputStream out = (OutputStream)context.getProperty( Channel.BACKCHANNEL_URI );
             if( out != null )
             {
-                final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter( out, message.getEncoding() );
+                final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter( out, message.getEncoding(),context );
 
                 message.getSerializer().writeMessage( message, writer, context );
             }
@@ -127,7 +128,7 @@ public class LocalChannel
                     try
                     {
                         final XMLStreamWriter writer =
-                            STAXUtils.createXMLStreamWriter( outStream, message.getEncoding() );
+                            STAXUtils.createXMLStreamWriter( outStream, message.getEncoding(),context );
                         message.getSerializer().writeMessage( message, writer, context );
 
                         writer.close();
@@ -149,7 +150,7 @@ public class LocalChannel
                 {
                     try
                     {
-                        final XMLStreamReader reader = STAXUtils.createXMLStreamReader( stream, message.getEncoding() );
+                        final XMLStreamReader reader = STAXUtils.createXMLStreamReader((InputStream) stream, message.getEncoding(),context );
                         final InMessage inMessage = new InMessage( reader, uri );
                         inMessage.setEncoding( message.getEncoding() );
 

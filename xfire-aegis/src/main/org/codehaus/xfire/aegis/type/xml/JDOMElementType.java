@@ -23,7 +23,7 @@ import org.jdom.Element;
 public class JDOMElementType
     extends Type
 {
-    private static final StaxBuilder builder = new StaxBuilder();
+   // private static final StaxBuilder builder = new StaxBuilder();
     private static final StaxSerializer serializer = new StaxSerializer();
     
     public JDOMElementType()
@@ -34,6 +34,7 @@ public class JDOMElementType
     public Object readObject(MessageReader mreader, MessageContext context)
         throws XFireFault
     {
+        StaxBuilder builder = new StaxBuilder();
         try
         {
             XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();

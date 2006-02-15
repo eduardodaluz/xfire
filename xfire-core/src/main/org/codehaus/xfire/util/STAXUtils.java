@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -12,7 +13,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.transport.http.XFireServlet;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -33,7 +41,8 @@ import org.w3c.dom.Text;
 public class STAXUtils
 {
     private static final String XML_NS = "http://www.w3.org/2000/xmlns/";
-
+  
+    private final static Log logger = LogFactory.getLog(STAXUtils.class);
     /**
      * Returns true if currently at the start of an element, otherwise move forwards to the next
      * element start and return true, otherwise false is returned if the end of the stream is reached.
@@ -165,8 +174,10 @@ public class STAXUtils
         {
             if (prefix.length() == 0) 
             { 
-                writer.writeStartElement(local); 
+                
+                writer.writeStartElement(local);
                 writer.setDefaultNamespace(uri); 
+                
             } 
             else 
             { 
@@ -514,18 +525,25 @@ public class STAXUtils
         }
         else
         {
-            if (uri != null && uri.length() > 0)
+            if (uri != null /*&& uri.length() > 0*/)
             {
                 node.setAttribute("xmlns", uri);
             }
         }
     }
-
-    public static XMLStreamWriter createXMLStreamWriter(OutputStream out, String encoding)
+    
+   
+    /**
+     * @param out
+     * @param encoding
+     * @return
+     */
+    public static XMLStreamWriter createXMLStreamWriter(OutputStream out, String encoding,MessageContext ctx)
     {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        XMLOutputFactory factory = getXMLOutputFactory(ctx);
 
         if (encoding == null) encoding = "UTF-8";
+        
         
         try
         {
@@ -538,10 +556,84 @@ public class STAXUtils
             throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
-
-    public static XMLStreamReader createXMLStreamReader(InputStream in, String encoding)
+    
+    
+    /**
+     * @return
+     */
+    public static XMLOutputFactory getXMLOutputFactory(MessageContext ctx)
     {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
+
+        XFire xfire = XFireFactory.newInstance().getXFire();
+        Class outFactory = (Class) xfire.getProperty(XFire.STAX_OUTPUT_FACTORY);
+            if( outFactory == null && ctx!= null ){
+                //Object obj1 = ctx.getService().getProperty(XFire.STAX_INPUT_FACTORY);
+                Service s = ctx.getService();
+                Object obj = s.getProperty(XFire.STAX_OUTPUT_FACTORY);
+                outFactory = (Class) obj;
+            }
+            
+        if( outFactory != null ){
+            return (XMLOutputFactory) createFactory(outFactory);
+        }
+
+        return XMLOutputFactory.newInstance();
+    }
+    
+    /**
+     * @return
+     */
+    public static XMLInputFactory getXMLInputFactory(MessageContext ctx)
+    {
+        XFire xfire = XFireFactory.newInstance().getXFire();
+        Class inFactory = (Class) xfire.getProperty(XFire.STAX_INPUT_FACTORY);
+        if (inFactory == null && ctx != null)
+        {
+            inFactory = (Class) ctx.getService().getProperty(XFire.STAX_INPUT_FACTORY);
+        }
+        if (inFactory != null)
+        {
+            return (XMLInputFactory) createFactory(inFactory);
+        }
+
+        return XMLInputFactory.newInstance();
+    }
+    
+    
+    /**
+     * @param factoryClass
+     * @return
+     */
+    private static Object createFactory(Class factoryClass )
+    {
+        try
+        {
+            return  factoryClass.newInstance();
+        }
+        catch (InstantiationException e)
+        {
+            logger.error("Can't create XMLOutputFactor for class : " + factoryClass, e);
+            throw new XFireRuntimeException("Can't create XMLFactor for class : "
+                    + factoryClass.getName());
+        }
+        catch (IllegalAccessException e)
+        {
+            logger.error("Can't create XMLOutputFactor for class : " + factoryClass, e);
+            throw new XFireRuntimeException("Can't create XMLFactor for class : "
+                    + factoryClass.getName());
+        }
+    }
+
+    /**
+     * @param in
+     * @param encoding
+     * @param ctx
+     * @return
+     */
+    public static XMLStreamReader createXMLStreamReader(InputStream in, String encoding, MessageContext ctx)
+    {
+        
+        XMLInputFactory factory = getXMLInputFactory(ctx);
 
         if (encoding == null) encoding = "UTF-8";
         
@@ -555,10 +647,14 @@ public class STAXUtils
         }
     }
 
+    /**
+     * @param reader
+     * @return
+     */
     public static XMLStreamReader createXMLStreamReader(Reader reader)
     {
-        XMLInputFactory factory = XMLInputFactory.newInstance();
- 
+        XMLInputFactory factory = getXMLInputFactory(null);
+        
         try
         {
             return factory.createXMLStreamReader(reader);

@@ -61,7 +61,7 @@ public class Base64Test
         fos.close();
         
         FileInputStream fis = new FileInputStream(file);
-        XMLStreamReader reader = STAXUtils.createXMLStreamReader(fis, null);
+        XMLStreamReader reader = STAXUtils.createXMLStreamReader(fis, null,null);
         reader.next();
         reader.next();
         assertEquals("base64", reader.getLocalName());

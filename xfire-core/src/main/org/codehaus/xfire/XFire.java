@@ -21,6 +21,9 @@ public interface XFire extends HandlerSupport
 {
     final public static String ROLE = XFire.class.getName();
 
+    
+    final public static String STAX_INPUT_FACTORY="xfire.stax.input.factory";
+    final public static String STAX_OUTPUT_FACTORY="xfire.stax.output.factory";
     /**
      * Generate WSDL for a service.
      *
@@ -45,4 +48,7 @@ public interface XFire extends HandlerSupport
 
     List getFaultPhases();
     
+    Object getProperty(String key);
+    
+    void setProperty(String key, Object value);
 }

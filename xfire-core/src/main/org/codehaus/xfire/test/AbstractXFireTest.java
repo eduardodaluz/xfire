@@ -90,7 +90,7 @@ public abstract class AbstractXFireTest
             throws Exception
     {
 		InputStream stream = getResourceAsStream(document);
-		return invokeService( service, STAXUtils.createXMLStreamReader( stream, "UTF-8" ) );
+		return invokeService( service, STAXUtils.createXMLStreamReader( stream, "UTF-8" ,null) );
 	}
 
 	/**

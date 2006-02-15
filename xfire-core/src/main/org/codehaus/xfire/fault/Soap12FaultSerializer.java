@@ -25,7 +25,7 @@ import org.jdom.Element;
 public class Soap12FaultSerializer
     implements MessageSerializer
 {
-    private StaxBuilder builder = new StaxBuilder();
+    //private StaxBuilder builder = new StaxBuilder();
     
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
@@ -89,6 +89,7 @@ public class Soap12FaultSerializer
                         }
                         else if (reader.getLocalName().equals("Detail"))
                         {
+                            StaxBuilder builder = new StaxBuilder();
                             fault.setDetail(builder.build(new FragmentStreamReader(reader)).getRootElement());
                         }
                         break;

@@ -114,7 +114,7 @@ public class SourceType
         else if (object instanceof StreamSource)
         {
             StreamSource ss = (StreamSource) object;
-            XMLStreamReader reader = STAXUtils.createXMLStreamReader(ss.getInputStream(), null);
+            XMLStreamReader reader = STAXUtils.createXMLStreamReader(ss.getInputStream(), null,null);
             STAXUtils.copy(reader, writer);
         }
     }

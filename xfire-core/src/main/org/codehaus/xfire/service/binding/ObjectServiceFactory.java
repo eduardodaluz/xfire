@@ -57,7 +57,7 @@ import org.codehaus.xfire.wsdl11.parser.WSDLServiceConfigurator;
 /**
  * Creates Services from java objects. This class is meant to be easily overridable
  * so you can customize how your services are created. 
- *
+ *  
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */

@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -15,6 +13,7 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.util.STAXUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -28,10 +27,10 @@ public class TypeTest
 {
     public void testBeanType() throws Exception
     {
-        XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
+        //XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
-
+        //XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, null,null);
         TypeMappingRegistry tmr = new DefaultTypeMappingRegistry(true);
         TypeMapping tm = tmr.createTypeMapping(true);
         
@@ -50,8 +49,9 @@ public class TypeTest
         writer.close();
         
         System.out.println(bos.toString());
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader reader = factory.createXMLStreamReader( new StringReader(bos.toString()) );
+        //XMLInputFactory factory = XMLInputFactory.newInstance();
+        //XMLStreamReader reader = factory.createXMLStreamReader( new StringReader(bos.toString()) );
+        XMLStreamReader reader = STAXUtils.createXMLStreamReader(new StringReader(bos.toString()));
         while ( reader.getEventType() != XMLStreamReader.START_ELEMENT )
             reader.next();
                 
@@ -91,10 +91,10 @@ public class TypeTest
     
     public void testArrayType() throws Exception
     {
-        XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
+  //      XMLOutputFactory ofactory = XMLOutputFactory.newInstance();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
-
+//        XMLStreamWriter writer = ofactory.createXMLStreamWriter(bos);
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, null,null);
         TypeMappingRegistry tmr = new DefaultTypeMappingRegistry(true);
         TypeMapping tm = tmr.createTypeMapping(true);
         

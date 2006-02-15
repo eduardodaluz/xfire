@@ -12,6 +12,7 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.handler.SoapSerializerHandler;
 import org.codehaus.xfire.util.DOMUtils;
+import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -44,16 +45,17 @@ public class DOMOutHandler
         Document doc = DOMUtils.readXml(inStream);
         
         message.setProperty(DOM_MESSAGE, doc);
-
         message.setSerializer(new DOMSerializer(doc));
     }
 
     private byte[] getMessageBytes(OutMessage message, MessageContext context)
         throws Exception
     {
-        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        //XMLOutputFactory factory = XMLOutputFactory.newInstance();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        XMLStreamWriter byteArrayWriter = factory.createXMLStreamWriter(outputStream);
+        
+        //XMLStreamWriter byteArrayWriter = factory.createXMLStreamWriter(outputStream);
+        XMLStreamWriter byteArrayWriter =  STAXUtils.createXMLStreamWriter(outputStream, null,context);
         message.getSerializer().writeMessage(message, byteArrayWriter, context);
         byteArrayWriter.flush();
         return outputStream.toByteArray();
