@@ -1,8 +1,10 @@
 package org.codehaus.xfire.spring.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.transport.Transport;
@@ -27,6 +29,8 @@ public class XFireBean implements InitializingBean, ApplicationContextAware
     private List transports = new ArrayList();
 
     protected XFire xFire;
+    
+    private Map properties = new HashMap();
     
     public List getFaultHandlers()
     {
@@ -81,11 +85,29 @@ public class XFireBean implements InitializingBean, ApplicationContextAware
             
             xFire.getTransportManager().register(t);
         }
+        
+        for(Iterator iter = properties.keySet().iterator();iter.hasNext();){
+            Object key = iter.next();
+            xFire.setProperty(key.toString(), properties.get(key));
+        }
+        
     }
 
     public void setApplicationContext(ApplicationContext ctx)
         throws BeansException
     {
         xFire = (XFire) ctx.getBean("xfire");
-    } 
+    }
+
+    public Map getProperties()
+    {
+        return properties;
+    }
+
+    public void setProperties(Map properties)
+    {
+        this.properties = properties;
+    }
+    
+    
 }

@@ -86,7 +86,7 @@ public class PlexusXFireTest
             context.setService(getServiceRegistry().getService(service));
         
         InputStream stream = getResourceAsStream(document); 
-        InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(stream, "UTF-8"));
+        InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(stream, "UTF-8",null));
 
         Transport t = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
         Channel c = t.createChannel();

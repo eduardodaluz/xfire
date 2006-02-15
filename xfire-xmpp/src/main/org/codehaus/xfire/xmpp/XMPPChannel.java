@@ -60,7 +60,7 @@ public class XMPPChannel
         try
         {
             context.setProperty(SoapSerializer.SERIALIZE_PROLOG, Boolean.FALSE);
-            final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding());
+            final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding(),context);
             
             message.getSerializer().writeMessage(message, writer, context);
             
