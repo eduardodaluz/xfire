@@ -11,12 +11,20 @@
     <description>A Java SOAP framework.</description>
     <packaging>pom</packaging>
     <distributionManagement>
-        <repository>
-            <id>repo1</id>
-            <name>Maven Repository</name>
-            <url>scp://xfire.codehaus.org/dist</url>
-            <layout>legacy</layout>
-        </repository>
+      <repository>
+        <id>xfire</id>
+        <name>XFire Central Repository</name>
+        <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2</url>
+      </repository>
+      <snapshotRepository>
+        <id>xfire</id>
+        <name>XFire Central Development Repository</name>
+        <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2-snapshot</url>
+      </snapshotRepository>
+      <site>
+        <id>xfire</id>
+        <url>scpexe://xfire.codehaus.org/home/projects/xfire/public_html/maven/</url>
+      </site>
     </distributionManagement>
     <scm>
       <connection>scm:cvs:pserver:anonymous:@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</connection>
@@ -40,6 +48,11 @@
             <dependency>
                 <groupId>org.codehaus.xfire</groupId>
                 <artifactId>xfire-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.xfire</groupId>
+                <artifactId>xfire-all</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -184,6 +197,7 @@
                 <groupId>jetty</groupId>
                 <artifactId>org.mortbay.jetty</artifactId>
                 <version>5.1.3</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>commons-httpclient</groupId>
@@ -209,11 +223,26 @@
                 <groupId>httpunit</groupId>
                 <artifactId>httpunit</artifactId>
                 <version>1.5.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.xbean</groupId>
                 <artifactId>xbean-spring</artifactId>
                 <version>2.2</version>
+                <exclusions>
+                  <exclusion>
+                    <groupId>mx4j</groupId>
+                    <artifactId>mx4j</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>ant</groupId>
+                    <artifactId>ant</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>backport-util-concurrent</groupId>
+                    <artifactId>backport-util-concurrent</artifactId>
+                  </exclusion>
+                </exclusions>
             </dependency>
 
             <!--
@@ -291,6 +320,22 @@
                 <artifactId>maven-site-plugin</artifactId>
                 <version>2.0-beta-4</version>
             </plugin>
+            
+            <plugin>
+              <artifactId>maven-one-plugin</artifactId>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>install-maven-one-repository</goal>
+                    <goal>deploy-maven-one-repository</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+              <remoteRepositoryId>xfire</remoteRepositoryId>
+                    <remoteRepositoryUrl>scp://xfire.codehaus.org/dist</remoteRepositoryUrl>
+              </configuration>
+            </plugin>
         </plugins>
 
         <sourceDirectory>src/main</sourceDirectory>
@@ -327,6 +372,7 @@
 
     <modules>
         <module>xfire-aegis</module>
+        <module>xfire-all</module>
         <module>xfire-annotations</module>
         <module>xfire-castor</module>
         <module>xfire-core</module>
@@ -338,6 +384,7 @@
         <module>xfire-spring</module>
         <module>xfire-xmlbeans</module>
         <module>xfire-xmpp</module>
+        <module>maven-bundle-plugin</module>
     </modules>
     <profiles>
         <profile>

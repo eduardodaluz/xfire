@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>xfire-all</artifactId>
-  <name>XFire Distro</name>
+  <name>XFire All Jar</name>
   <version>1.0-SNAPSHOT</version>
   <repositories>
     <!-- this is where we get the jaxb libs from -->
@@ -35,6 +35,7 @@
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-castor</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -52,21 +53,25 @@
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-jaxb2</artifactId>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.codehaus.xfire</groupId>-->
-    <!--      <artifactId>xfire-jms</artifactId>-->
-    <!--    </dependency>-->
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-jms</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-loom</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-picocontainer</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-plexus</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -87,13 +92,19 @@
 
     <plugins>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptor>assembly.xml</descriptor>
-          <finalName>xfire</finalName>
-          <outputDirectory>target/distro</outputDirectory>
-          <workDirectory>target/work</workDirectory>
-        </configuration>
+        <groupId>org.codehaus.mojo.xfire</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>createbundle</goal>
+            </goals>
+            <configuration>
+              <excludes>xfire-jsr181-api</excludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

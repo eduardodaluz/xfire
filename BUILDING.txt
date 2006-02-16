@@ -1,26 +1,20 @@
+[Building XFire]
 Due to the many preferences of people regarding build systems,
 we seem to have ended up with 3: Ant, Maven 1.x, and Maven 2.x.
 Here is a quick lineup of what works and what doesn't with each 
 build:
 
-Maven 1.1-beta-2:
-- This is your best option for building XFire.
-- Everything builds correctly
-- This is the build system we are currently using to make release.
-- It is possible to build a bundled xfire jar which combines all
-  the modules into one. This can be done by doing:
-  
-  cd xfire-all && maven jar:jar
-    
-Maven 1.0.2: 
-- Tests fail because of a bug with the maven class loader. Avoid.
-
 Maven 2.0.2+:
-- All the individual modules build
-- Currently there is no way to build a bundled jar or make a 
-  release.
+- Jars, bundled jar and distribution work correctly.
 
 Ant:
 - This build is the *least supported*, but will work most of the 
   time. However, not all modules currently have ant builds. Use
   at your own risk.
+  
+[Deploying Snapshots and Distributions]
+To the Maven 1 repository:
+$ mvn install one:deploy-maven-one-repository
+
+To the Maven 2 repository:
+$ mvn install deploy
