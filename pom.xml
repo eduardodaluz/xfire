@@ -223,7 +223,6 @@
                 <groupId>httpunit</groupId>
                 <artifactId>httpunit</artifactId>
                 <version>1.5.1</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.xbean</groupId>
@@ -396,6 +395,7 @@
                 <module>xfire-generator</module>
                 <module>xfire-java5</module>
                 <module>xfire-jaxb2</module>
+                <module>xfire-jaxws</module>
             </modules>
         </profile>
     </profiles>
