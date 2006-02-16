@@ -2,7 +2,6 @@ package org.codehaus.xfire.jaxws;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,7 +126,7 @@ public class ServiceDelegate
     }
 
     @Override
-    public void addPort(QName portName, URI bindingUri, String address)
+    public void addPort(QName portName, String bindingUri, String address)
     {
         PortInfo portInfo = new PortInfo(bindingUri, address);
         
@@ -145,7 +144,7 @@ public class ServiceDelegate
         PortInfo portInfo = getPortInfo(port);
         if (portInfo != null)
         {
-            String bindingUri = portInfo.getBindingUri().toASCIIString();
+            String bindingUri = portInfo.getBindingUri();
             transport = jaxWsHelper.getBinding(bindingUri).getTransport();
             address = portInfo.getAddress();
         }
@@ -239,10 +238,10 @@ public class ServiceDelegate
     
     static class PortInfo 
     {
-        private URI bindingUri;
+        private String bindingUri;
         private String address;
         
-        public PortInfo(URI bindingUri, String address2)
+        public PortInfo(String bindingUri, String address2)
         {
             this.bindingUri = bindingUri;
             this.address = address2;
@@ -255,11 +254,11 @@ public class ServiceDelegate
         {
             this.address = address;
         }
-        public URI getBindingUri()
+        public String getBindingUri()
         {
             return bindingUri;
         }
-        public void setBindingUri(URI bindingUri)
+        public void setBindingUri(String bindingUri)
         {
             this.bindingUri = bindingUri;
         }

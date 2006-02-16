@@ -1,6 +1,5 @@
 package org.codehaus.xfire.jaxws.handler;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +55,7 @@ public class SOAPMessageContext
         return soapMessage;
     }
 
-    public Set<URI> getRoles()
+    public Set<String> getRoles()
     {
         // TODO Auto-generated method stub
         return null;

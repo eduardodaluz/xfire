@@ -1,6 +1,5 @@
 package org.codehaus.xfire.jaxws.binding;
 
-import java.net.URI;
 import java.util.Set;
 
 import javax.xml.soap.MessageFactory;
@@ -11,6 +10,7 @@ import org.codehaus.xfire.transport.Transport;
 public class SOAPBinding extends AbstractBinding implements javax.xml.ws.soap.SOAPBinding
 {
     private boolean mtomEnabled = false;
+    private Set<String> roles;
     
     public SOAPBinding(Transport t)
     {
@@ -18,12 +18,6 @@ public class SOAPBinding extends AbstractBinding implements javax.xml.ws.soap.SO
     }
 
     public MessageFactory getMessageFactory()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Set<URI> getRoles()
     {
         // TODO Auto-generated method stub
         return null;
@@ -45,7 +39,13 @@ public class SOAPBinding extends AbstractBinding implements javax.xml.ws.soap.SO
         this.mtomEnabled = mtomEnabled;
     }
 
-    public void setRoles(Set<URI> arg0)
+    public Set<String> getRoles() 
     {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) 
+    {
+        this.roles = roles;
     }
 }

@@ -5,25 +5,21 @@
 
     <delete dir="${basedir}/target/test-services"/>
     <mkdir dir="${basedir}/target/test-services"/>
-
-    <path id="wsgen.classpath">
-      <path refid="maven.test.classpath" />
-    </path>
   	  	
-  	<taskdef name="wsgen" classname="org.codehaus.xfire.gen.WsGenTask" classpathref="wsgen.path"/>
+  	<taskdef name="wsgen" classname="org.codehaus.xfire.gen.WsGenTask" classpathref="maven.test.classpath"/>
   	  		
   	<!-- Build stubs and clients for tests -->
-	<wsgen outputDirectory="${project.build.directory}/test-services"
+	<wsgen outputDirectory="${basedir}/target/test-services"
 	  wsdl="${basedir}/src/wsdl/echo.wsdl"
 	  package="services.echo"
 	  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
   	
-  	<wsgen outputDirectory="${project.build.directory}/test-services"
+  	<wsgen outputDirectory="${basedir}/target/test-services"
   		  wsdl="${basedir}/src/wsdl/headerout.wsdl"
   		  package="services.headerout"
   		  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
   	
-	<wsgen outputDirectory="${project.build.directory}/test-services"
+	<wsgen outputDirectory="${basedir}/target/test-services"
 	  wsdl="${basedir}/src/wsdl/auth.wsdl"
 	  package="services.auth"
 	  profile="org.codehaus.xfire.jaxws.gen.JAXWSProfile"/>	
