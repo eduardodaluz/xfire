@@ -21,8 +21,6 @@ import org.codehaus.plexus.util.FileUtils;
  */
 public class BundleMojo extends AbstractMojo 
 {
-    String excludes = "";
-    
     /**
      * The output directory of the assembled distribution file.
      *
@@ -30,6 +28,13 @@ public class BundleMojo extends AbstractMojo
      * @required
      */
     protected File outputDirectory;
+    
+    /**
+     * Exclusion list
+     *
+     * @parameter
+     */
+    String excludes = "";
     
     /**
      * The Maven Project.
@@ -52,6 +57,9 @@ public class BundleMojo extends AbstractMojo
     {
         String[] exclude = excludes.split(",");
         List excludeList = Arrays.asList(exclude);
+        getLog().info("Exclusions: " + excludeList);
+        getLog().info("OutputDirectory: " + outputDirectory);
+        outputDirectory.mkdirs();
         
         for (Iterator itr = project.getArtifacts().iterator(); itr.hasNext();)
         {
