@@ -29,7 +29,7 @@
         <version>2.0</version>
         <executions>
           <execution>
-            <phase>test</phase>
+            <phase>generate-test-sources</phase>
             <goals>
               <goal>xmlbeans-test</goal>
             </goals>
