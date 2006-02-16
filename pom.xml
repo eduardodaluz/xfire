@@ -28,7 +28,7 @@
     </distributionManagement>
     <scm>
       <connection>scm:cvs:pserver:anonymous:@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</connection>
-      <developerConnection>scm:cvs:extssh:anonymous:@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</developerConnection>
+      <developerConnection>scm:cvs:ext:${maven.username}@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</developerConnection>
       <url>https://cvs.xfire.codehaus.org/viewrep/xfire</url>
     </scm>
     <ciManagement>

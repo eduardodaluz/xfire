@@ -28,14 +28,10 @@
             <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>backport175</groupId>
-            <artifactId>backport175</artifactId>
-            <version>1.0.RC1</version>
-        </dependency>
-        <dependency>
             <groupId>xjavadoc</groupId>
             <artifactId>xjavadoc</artifactId>
             <version>1.1</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>easymock</groupId>
@@ -50,6 +46,7 @@
             <groupId>commons-attributes</groupId>
             <artifactId>commons-attributes-compiler</artifactId>
             <version>2.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <repositories>
@@ -69,13 +66,13 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>generate-test-sources</phase>
                         <configuration>
                             <tasks>
                                 <!--  resource="org/apache/commons/attributes/anttasks.properties" -->
                                 <taskdef name="attribute-compiler"
                                          classname="org.apache.commons.attributes.compiler.AttributeCompiler"
-                                         classpathref="maven.dependency.classpath"/>
+                                         classpathref="maven.test.classpath"/>
                                 <attribute-compiler destdir="${project.build.directory}/generated-source">
                                     <fileset dir="${basedir}/src/main" includes="**/*.java"/>
                                     <fileset dir="${basedir}/src/test" includes="**/*.java"/>
