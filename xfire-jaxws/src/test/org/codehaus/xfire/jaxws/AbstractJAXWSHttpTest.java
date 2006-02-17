@@ -1,6 +1,10 @@
 package org.codehaus.xfire.jaxws;
 
+import javax.xml.stream.XMLInputFactory;
+
 import org.codehaus.xfire.server.http.XFireHttpServer;
+
+import com.ctc.wstx.stax.WstxInputFactory;
 
 /**
  * Starts and Stops the XFireHttpServer.
@@ -16,6 +20,7 @@ public class AbstractJAXWSHttpTest
     protected void setUp()
         throws Exception
     {
+        System.setProperty(XMLInputFactory.class.getName(), WstxInputFactory.class.getName());
         super.setUp();
         
         server = new XFireHttpServer();
