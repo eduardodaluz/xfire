@@ -37,8 +37,8 @@
                   </copy>
                     
                 <echo>Downloading Manual</echo>
-<!--                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" -->
-<!--                  dest="${project.build.directory}/${pom.artifactId}-manual.zip"/>-->
+                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" 
+                  dest="${project.build.directory}/${pom.artifactId}-manual.zip"/>
                 <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip"
                   dest="${project.build.directory}/manual" />
 
