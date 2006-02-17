@@ -1,116 +1,86 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.codehaus.xfire</groupId>
     <artifactId>xfire-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.codehaus.xfire</groupId>
+    <version>1.0-RC1</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-distribution</artifactId>
   <name>XFire Distribution</name>
-  <version>1.0-SNAPSHOT</version>
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-all</artifactId>
-    </dependency>
-  </dependencies>
+  <version>1.0-RC1</version>
   <build>
     <testSourceDirectory>/none/</testSourceDirectory>
-
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
             <phase>install</phase>
-            <configuration>
-              <tasks>
-                <echo>Prepping examples</echo>
-                  <copy todir="${basedir}/target/examples">
-                    <fileset dir="${basedir}/../examples"/>
-                    <filterset>
-                      <filter token="xfire.version" value="${version}"/>
-                    </filterset>
-                  </copy>
-                    
-                <echo>Downloading Manual</echo>
-                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" 
-                  dest="${project.build.directory}/${pom.artifactId}-manual.zip"/>
-                <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip"
-                  dest="${project.build.directory}/manual" />
-
-
-                <javadoc packagenames="org.codehaus.xfire.*"
-                  defaultexcludes="yes"
-                  use="true"
-                  destdir="${project.build.directory}/api" 
-                  author="true"
-                  version="true"
-                  windowtitle="Codehaus XFire ${project.version} API">
-                  <fileset dir="." defaultexcludes="yes">
-                    <include  name="../xfire-annotations/src/main/**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-castor/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-core/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-generator/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-java5/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-jaxb/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-jaxb2/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                 <fileset dir="../xfire-jms/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-loom/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-picocontainer/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-plexus/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-spring/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-xmlbeans/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <fileset dir="../xfire-xmpp/src/main/" defaultexcludes="yes">
-                    <include  name="**/*.java" />
-                  </fileset>
-                  <!-- We aren't including this because no one needs to see it -->
-<!--                  <fileset dir="../xfire-jaxws/src/main/" defaultexcludes="yes">-->
-<!--                    <include  name="**/*.java" />-->
-<!--                  </fileset>-->
-                  <doctitle><![CDATA[<h1>Codehaus XFire</h1>]]></doctitle>
-                  <bottom>
-                    <![CDATA[<i>Copyright &#169; 2004-2006 Envoi Solutions LLC. All Rights Reserved.</i>]]>
-                  </bottom>
-                  <link offline="true"
-                    href="http://java.sun.com/products/jdk/1.2/docs/api/"
-                    packagelistLoc="C:\tmp" />
-                  <link
-                    href="http://developer.java.sun.com/developer/products/xml/docs/api/" />
-                </javadoc>
-              </tasks>
-            </configuration>
             <goals>
               <goal>run</goal>
             </goals>
+            <configuration>
+              <tasks>
+                <echo>Prepping examples</echo>
+                <copy todir="${basedir}/target/examples">
+                  <fileset dir="${basedir}/../examples"></fileset>
+                  <filterset>
+                    <filter value="${version}" token="xfire.version"></filter>
+                  </filterset>
+                </copy>
+                <echo>Downloading Manual</echo>
+                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${project.build.directory}/${pom.artifactId}-manual.zip"></get>
+                <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip" dest="${project.build.directory}/manual"></unzip>
+                <javadoc defaultexcludes="yes" destdir="${project.build.directory}/api" use="true" packagenames="org.codehaus.xfire.*" windowtitle="Codehaus XFire ${project.version} API" author="true" version="true">
+                  <fileset defaultexcludes="yes" dir=".">
+                    <include name="../xfire-annotations/src/main/**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-castor/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-core/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-generator/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-java5/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-jaxb/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-jaxb2/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-jms/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-loom/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-picocontainer/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-plexus/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-spring/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-xmlbeans/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-xmpp/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
+                  <doctitle>&lt;h1>Codehaus XFire&lt;/h1></doctitle>
+                  <bottom>&lt;i>Copyright &amp;#169; 2004-2006 Envoi Solutions LLC. All Rights Reserved.&lt;/i></bottom>
+                  <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp"></link>
+                  <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"></link>
+                </javadoc>
+              </tasks>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -133,5 +103,10 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-all</artifactId>
+    </dependency>
+  </dependencies>
 </project>
-

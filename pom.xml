@@ -1,47 +1,161 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.xfire</groupId>
   <artifactId>xfire-parent</artifactId>
-  <name>XFire</name>
-  <version>1.0-SNAPSHOT</version>
-  <inceptionYear>2004</inceptionYear>
-  <description>A Java SOAP framework.</description>
   <packaging>pom</packaging>
-  <distributionManagement>
-    <repository>
-      <id>xfire</id>
-      <name>XFire Central Repository</name>
-      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2</url>
-    </repository>
-    <snapshotRepository>
-      <id>xfire</id>
-      <name>XFire Central Development Repository</name>
-      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2-snapshot</url>
-    </snapshotRepository>
-    <site>
-      <id>xfire</id>
-      <url>scpexe://xfire.codehaus.org/home/projects/xfire/public_html/maven/</url>
-    </site>
-  </distributionManagement>
-  <scm>
-    <connection>scm:cvs:pserver:anonymous:@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</connection>
-    <developerConnection>scm:cvs:ext:${maven.username}@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</developerConnection>
-    <url>https://cvs.xfire.codehaus.org/viewrep/xfire</url>
-  </scm>
+  <name>XFire</name>
+  <version>1.0-RC1</version>
+  <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
     <url>unknown</url>
     <notifiers>
       <notifier>
-        <type>mail</type>
         <configuration>
           <address>dev@xfire.codehaus.org</address>
         </configuration>
       </notifier>
     </notifiers>
   </ciManagement>
+  <inceptionYear>2004</inceptionYear>
+  <scm>
+    <connection>scm:cvs:pserver:anonymous:@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</connection>
+    <developerConnection>scm:cvs:ext:${maven.username}@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</developerConnection>
+    <url>https://cvs.xfire.codehaus.org/viewrep/xfire</url>
+  </scm>
+  <build>
+    <sourceDirectory>src/main</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.properties</include>
+          <include>**/*.wsdl</include>
+        </includes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-4</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-one-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install-maven-one-repository</goal>
+              <goal>deploy-maven-one-repository</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <remoteRepositoryId>xfire</remoteRepositoryId>
+          <remoteRepositoryUrl>scp://xfire.codehaus.org/dist</remoteRepositoryUrl>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>jdk1.5</id>
+      <activation>
+        <jdk>1.5</jdk>
+      </activation>
+      <modules>
+        <module>xfire-distribution</module>
+        <module>xfire-generator</module>
+        <module>xfire-java5</module>
+        <module>xfire-jaxb2</module>
+        <module>xfire-jaxws</module>
+      </modules>
+    </profile>
+  </profiles>
+  <modules>
+    <module>xfire-aegis</module>
+    <module>xfire-all</module>
+    <module>xfire-annotations</module>
+    <module>xfire-castor</module>
+    <module>xfire-core</module>
+    <module>xfire-loom</module>
+    <module>xfire-jaxb</module>
+    <module>xfire-jms</module>
+    <module>xfire-picocontainer</module>
+    <module>xfire-plexus</module>
+    <module>xfire-spring</module>
+    <module>xfire-xmlbeans</module>
+    <module>xfire-xmpp</module>
+    <module>maven-bundle-plugin</module>
+  </modules>
+  <repositories>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus maven repository</name>
+      <url>http://dist.codehaus.org/</url>
+      <layout>legacy</layout>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>snapshot</id>
+      <name>Snapshot repository</name>
+      <url>http://snapshots.maven.codehaus.org/maven2/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.0-beta-3</version>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+          <verbose>false</verbose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.0-beta-3</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>jdepend-maven-plugin</report>
+              <report>jxr-maven-plugin</report>
+              <report>surefire-report-maven-plugin</report>
+              <report>maven-javadoc-plugin</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+        <version>2.0-beta-1-SNAPSHOT</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+        <version>2.0-beta-2-SNAPSHOT</version>
+      </plugin>
+    </plugins>
+  </reporting>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -151,12 +265,12 @@
         <version>1.0.4</version>
         <exclusions>
           <exclusion>
-            <groupId>avalon-framework</groupId>
             <artifactId>avalon-framework</artifactId>
+            <groupId>avalon-framework</groupId>
           </exclusion>
           <exclusion>
-            <groupId>logkit</groupId>
             <artifactId>logkit</artifactId>
+            <groupId>logkit</groupId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -169,13 +283,13 @@
         <groupId>stax</groupId>
         <artifactId>stax</artifactId>
         <version>1.1.2-dev</version>
+        <scope>test</scope>
         <exclusions>
           <exclusion>
-            <groupId>xmlbeans</groupId>
             <artifactId>xmlbeans-jsr173-api</artifactId>
+            <groupId>xmlbeans</groupId>
           </exclusion>
         </exclusions>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -234,25 +348,19 @@
         <version>2.2</version>
         <exclusions>
           <exclusion>
-            <groupId>mx4j</groupId>
             <artifactId>mx4j</artifactId>
+            <groupId>mx4j</groupId>
           </exclusion>
           <exclusion>
-            <groupId>ant</groupId>
             <artifactId>ant</artifactId>
+            <groupId>ant</groupId>
           </exclusion>
           <exclusion>
-            <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
+            <groupId>backport-util-concurrent</groupId>
           </exclusion>
         </exclusions>
       </dependency>
-
-      <!--
-        
-        Test only dependencies
-        
-      -->
       <dependency>
         <groupId>xalan</groupId>
         <artifactId>xalan</artifactId>
@@ -265,12 +373,12 @@
         <version>1.1-beta-8</version>
         <exclusions>
           <exclusion>
-            <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
+            <groupId>dom4j</groupId>
           </exclusion>
           <exclusion>
-            <groupId>xom</groupId>
             <artifactId>xom</artifactId>
+            <groupId>xom</groupId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -292,161 +400,22 @@
         <version>1.0</version>
         <scope>test</scope>
       </dependency>
-
     </dependencies>
   </dependencyManagement>
-
-  <dependencies></dependencies>
-
-  <!--  needed for plugin snapshots (i.e. jdepend) -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>snapshot</id>
-      <name>Snapshot repository</name>
-      <url>http://snapshots.maven.codehaus.org/maven2/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>2.0-beta-4</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-one-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>install-maven-one-repository</goal>
-              <goal>deploy-maven-one-repository</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <remoteRepositoryId>xfire</remoteRepositoryId>
-          <remoteRepositoryUrl>
-            scp://xfire.codehaus.org/dist
-          </remoteRepositoryUrl>
-        </configuration>
-      </plugin>
-    </plugins>
-
-    <sourceDirectory>src/main</sourceDirectory>
-    <testSourceDirectory>src/test</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>src/main</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>src/test</directory>
-        <includes>
-          <include>**/*.xml</include>
-          <include>**/*.properties</include>
-          <include>**/*.wsdl</include>
-        </includes>
-      </testResource>
-    </testResources>
-  </build>
-
-  <!--  needed for XmlSchema -->
-  <repositories>
+  <distributionManagement>
     <repository>
-      <id>codehaus</id>
-      <name>Codehaus maven repository</name>
-      <url>http://dist.codehaus.org/</url>
-      <layout>legacy</layout>
+      <id>xfire</id>
+      <name>XFire Central Repository</name>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2</url>
     </repository>
-  </repositories>
-
-  <modules>
-    <module>xfire-aegis</module>
-    <module>xfire-all</module>
-    <module>xfire-annotations</module>
-    <module>xfire-castor</module>
-    <module>xfire-core</module>
-    <module>xfire-loom</module>
-    <module>xfire-jaxb</module>
-    <module>xfire-jms</module>
-    <module>xfire-picocontainer</module>
-    <module>xfire-plexus</module>
-    <module>xfire-spring</module>
-    <module>xfire-xmlbeans</module>
-    <module>xfire-xmpp</module>
-    <module>maven-bundle-plugin</module>
-  </modules>
-  <profiles>
-    <profile>
-      <id>jdk1.5</id>
-      <activation>
-        <jdk>1.5</jdk>
-      </activation>
-      <modules>
-        <module>xfire-distribution</module>
-        <module>xfire-generator</module>
-        <module>xfire-java5</module>
-        <module>xfire-jaxb2</module>
-        <module>xfire-jaxws</module>
-      </modules>
-    </profile>
-  </profiles>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-        <version>2.0-beta-1-SNAPSHOT</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jxr-maven-plugin</artifactId>
-        <version>2.0-beta-2-SNAPSHOT</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.0-beta-3</version>
-        <configuration>
-          <minmemory>128m</minmemory>
-          <maxmemory>512</maxmemory>
-          <verbose>false</verbose>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.0-beta-3</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <!-- <report>maven-tasklist-plugin</report> -->
-              <!-- <report>maven-checkstyle-plugin</report>   -->
-              <report>jdepend-maven-plugin</report>
-              <!-- <report>maven-changelog-plugin</report> -->
-              <!-- <report>maven-file-activity-plugin</report>  -->
-              <report>jxr-maven-plugin</report>
-              <report>surefire-report-maven-plugin</report>
-              <report>maven-javadoc-plugin</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
+    <snapshotRepository>
+      <id>xfire</id>
+      <name>XFire Central Development Repository</name>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2-snapshot</url>
+    </snapshotRepository>
+    <site>
+      <id>xfire</id>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/public_html/maven/</url>
+    </site>
+  </distributionManagement>
 </project>

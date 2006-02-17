@@ -1,68 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.codehaus.xfire</groupId>
     <artifactId>xfire-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.codehaus.xfire</groupId>
+    <version>1.0-RC1</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-spring</artifactId>
   <name>XFire Spring Support</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-RC1</version>
   <description>Spring configuration support for XFire.</description>
-  <packaging>jar</packaging>
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-xmlbeans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>1.2.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>easymock</groupId>
-      <artifactId>easymock</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>nekohtml</groupId>
-      <artifactId>nekohtml</artifactId>
-      <version>0.9.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-mock</artifactId>
-      <version>1.2.6</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
   <build>
     <testResources>
       <testResource>
@@ -83,23 +29,14 @@
             </goals>
             <configuration>
               <tasks>
-                <taskdef
-                  classname="org.apache.xbean.spring.generator.MappingGeneratorTask"
-                  name="mapping">
+                <taskdef classname="org.apache.xbean.spring.generator.MappingGeneratorTask" name="mapping">
                   <classpath>
                     <pathelement path="${basedir}/target/classes"></pathelement>
-                    <pathelement
-                      path="${basedir}/target/test-classes">
-                    </pathelement>
+                    <pathelement path="${basedir}/target/test-classes"></pathelement>
                     <path refid="maven.dependency.classpath"></path>
                   </classpath>
                 </taskdef>
-                <mapping
-                  namespace="http://xfire.codehaus.org/config/1.0"
-                  srcdir="src/main"
-                  destFile="target/test-generated/services.xsd"
-                  metaInfDir="${basedir}/target/test-generated/">
-                </mapping>
+                <mapping namespace="http://xfire.codehaus.org/config/1.0" srcdir="src/main" destFile="target/test-generated/services.xsd" metaInfDir="${basedir}/target/test-generated/"></mapping>
                 <copy todir="${basedir}/target/classes">
                   <fileset dir="${basedir}/target/test-generated"></fileset>
                 </copy>
@@ -109,6 +46,55 @@
         </executions>
       </plugin>
     </plugins>
-
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>1.2.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-xmlbeans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.2.6</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>0.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

@@ -1,36 +1,59 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.codehaus.xfire</groupId>
     <artifactId>xfire-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.codehaus.xfire</groupId>
+    <version>1.0-RC1</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-generator</artifactId>
   <name>XFire Generation Support</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-RC1</version>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <ant inheritRefs="true" antfile="${basedir}/build.xml">
+                  <target name="wsgen"></target>
+                </ant>
+              </tasks>
+              <testSourceRoot>${project.build.directory}/test-services</testSourceRoot>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <repositories>
-    <!-- this is where we get the jaxb libs from -->
     <repository>
       <id>java.net</id>
-      <layout>legacy</layout>
-      <url>https://maven-repository.dev.java.net/nonav/repository</url>
       <name>java.net public repo</name>
+      <url>https://maven-repository.dev.java.net/nonav/repository</url>
+      <layout>legacy</layout>
     </repository>
   </repositories>
   <dependencies>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-core</artifactId>
+      <artifactId>xfire-jaxb2</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-aegis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-annotations</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -42,44 +65,11 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-jaxb2</artifactId>
+      <artifactId>xfire-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-core</artifactId>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <!--  using antrun to call the commons-attributes pre-compiler -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-test-sources</phase>
-            <configuration>
-              <tasks>
-                <ant antfile="${basedir}/build.xml"
-                  inheritRefs="true">
-                  <target name="wsgen" />
-                </ant>
-              </tasks>
-              <testSourceRoot>
-                ${project.build.directory}/test-services
-              </testSourceRoot>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
-

@@ -1,27 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.codehaus.xfire</groupId>
     <artifactId>xfire-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.codehaus.xfire</groupId>
+    <version>1.0-RC1</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-xmlbeans</artifactId>
   <name>XFire XMLBeans Support</name>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-aegis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xbean</artifactId>
-    </dependency>
-  </dependencies>
+  <version>1.0-RC1</version>
   <build>
+    <finalName>${artifactId}</finalName>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -35,10 +23,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <verbose>true</verbose>
-          <schemaDirectory>src/test-schemas</schemaDirectory>
-        </configuration>
         <dependencies>
           <dependency>
             <groupId>stax</groupId>
@@ -46,15 +30,27 @@
             <version>1.1.2-dev</version>
             <exclusions>
               <exclusion>
-                <groupId>xmlbeans</groupId>
                 <artifactId>xmlbeans-jsr173-api</artifactId>
+                <groupId>xmlbeans</groupId>
               </exclusion>
             </exclusions>
           </dependency>
         </dependencies>
+        <configuration>
+          <verbose>true</verbose>
+          <schemaDirectory>src/test-schemas</schemaDirectory>
+        </configuration>
       </plugin>
     </plugins>
-    <finalName>${artifactId}</finalName>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-aegis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xbean</artifactId>
+    </dependency>
+  </dependencies>
 </project>
-
