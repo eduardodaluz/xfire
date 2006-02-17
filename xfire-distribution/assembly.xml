@@ -28,7 +28,7 @@
       <outputDirectory>/api</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>../examples</directory>
+      <directory>target/examples</directory>
       <outputDirectory>/examples</outputDirectory>
     </fileSet>
   </fileSets>
