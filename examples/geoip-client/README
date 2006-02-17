@@ -1,0 +1,9 @@
+This example shows how to generate a client and also use it.
+This example requires Maven 2.x to build. To run the 
+client simply do:
+
+$ mvn test
+
+The generated code will be in "target/generated-source" and
+the unit test which shows how to use the code is in
+"src/test/net/webservicex/geoip/GeoIPClientTest".

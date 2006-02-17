@@ -8,7 +8,7 @@
     <serviceBean>#weatherService</serviceBean>
     <serviceFactory>#jaxbServiceFactory</serviceFactory>
     <schemas>
-      <schema>/META-INF/xfire/WeatherForecast.xsd</schema>
+      <schema>META-INF/xfire/WeatherForecast.xsd</schema>
     </schemas>
     <style>document</style>
   </service>

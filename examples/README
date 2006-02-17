@@ -6,3 +6,9 @@ jaxb2: Shows how to do schema-first development with JAXB 2.0
 jsr181: An example service which uses JSR 181 annotations.
 purchase-order: Shows how to do "schema-first" development with XMLBeans with XFire.
 spring: An example showing how to use XFire with the Spring Framework
+
+These examples use Maven 2 to build. Unfortunately due to
+Sun licensing you may need to download some jars for maven by
+hand such as JavaMail. Please see the maven documentation for more detail:
+
+http://maven.apache.org/guides/mini/guide-coping-with-sun-jars.html

@@ -13,10 +13,8 @@ public class GeoIPClientTest extends TestCase
         GeoIPServiceClient service = new GeoIPServiceClient();
         GeoIPServiceSoap geoIPClient = service.getGeoIPServiceSoap();
         
-        GetGeoIP getGeoIP = new GetGeoIP();
-        getGeoIP.setIPAddress("216.73.126.120");
         System.out.println("The country is: " + 
-                           geoIPClient.GetGeoIP(getGeoIP).getGetGeoIPResult().getCountryName());
+                           geoIPClient.GetGeoIP("216.73.126.120").getCountryName());
     }
 }
 // END SNIPPET: client

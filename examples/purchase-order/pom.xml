@@ -3,14 +3,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
   http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>xfire</groupId>
+  <groupId>org.codehaus.xfire</groupId>
   <artifactId>purchase-order</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
   <name>
     Sample Web App Project that uses XmlBeans for the service binding.
   </name>
-
 
   <dependencies>
     <dependency>
@@ -31,6 +30,11 @@
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-xmlbeans</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-java5</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
@@ -55,37 +59,35 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.0</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xmlbeans-maven-plugin</artifactId>
+        <version>2.0</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
-            <configuration>
-              <tasks>
-                <java
-                  classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
-                  fork="yes" dir="${basedir}" failonerror="false">
-                  <classpath refid="maven.dependency.classpath" />
-                  <arg value="-d" />
-                  <arg value="${maven.xmlbeans.targetdir}" />
-                  <arg value="${maven.xmlbeans.schemadir}\po.xsd" />
-                </java>
-                <echo>copy</echo>
-                <copy todir="${basedir}/target/classes">
-                  <fileset dir="${maven.xmlbeans.targetdir}" />
-                </copy>
-
-              </tasks>
-            </configuration>
             <goals>
-              <goal>run</goal>
+              <goal>xmlbeans</goal>
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <verbose>true</verbose>
+          <schemaDirectory>src/main/xsd</schemaDirectory>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.1.2-dev</version>
+            <exclusions>
+              <exclusion>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xmlbeans-jsr173-api</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
       </plugin>
-
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

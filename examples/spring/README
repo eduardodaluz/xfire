@@ -9,3 +9,5 @@ for the service should be viewable at:
 http://yourhost:port/CONTEXT/EchoService?wsdl
 
 where CONTEXT is the name of the context you deployed the war into.
+Since this example uses the Spring dispatching mechanism instead of
+the XFireSpringServlet, you will not be able to get a list of services.
