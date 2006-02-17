@@ -471,11 +471,6 @@ public class Client
         this.timeout = timeout;
     }
 
-    public void receiveFault(XFireFault fault)
-    {
-        this.fault = fault;
-    }
-
     public XFire getXFire()
     {
         return xfire;
