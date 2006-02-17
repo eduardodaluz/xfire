@@ -1,7 +1,7 @@
 This example shows how to use XFire with Spring in a servlet container. 
-You must have maven installed to build this example.  To build type:
+You must have Maven 2.x installed to build this example.  To build type:
 
-$ maven war
+$ mvn install war:war
 
 The resultant war should work in any web application. The WSDL file
 for the service should be viewable at:
