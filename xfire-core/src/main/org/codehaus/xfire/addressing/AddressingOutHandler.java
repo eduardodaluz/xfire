@@ -37,6 +37,6 @@ public class AddressingOutHandler
             return;
         }
         
-        factory.writeHeaders(msg.getHeader(), headers);
+        factory.writeHeaders(msg.getOrCreateHeader(), headers);
     }
 }

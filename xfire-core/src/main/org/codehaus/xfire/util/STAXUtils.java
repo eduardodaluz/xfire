@@ -3,6 +3,8 @@ package org.codehaus.xfire.util;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLInputFactory;
@@ -39,6 +41,12 @@ public class STAXUtils
     private static final String XML_NS = "http://www.w3.org/2000/xmlns/";
   
     private final static Log logger = LogFactory.getLog(STAXUtils.class);
+    
+    private final static XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    private final static XMLOutputFactory xmlOututFactory = XMLOutputFactory.newInstance();
+    
+    private final static Map factories = new HashMap();
+
     /**
      * Returns true if currently at the start of an element, otherwise move forwards to the next
      * element start and return true, otherwise false is returned if the end of the stream is reached.
@@ -539,8 +547,7 @@ public class STAXUtils
         XMLOutputFactory factory = getXMLOutputFactory(ctx);
 
         if (encoding == null) encoding = "UTF-8";
-        
-        
+
         try
         {
             XMLStreamWriter writer = factory.createXMLStreamWriter(out, encoding);
@@ -559,7 +566,7 @@ public class STAXUtils
      */
     public static XMLOutputFactory getXMLOutputFactory(MessageContext ctx)
     {
-        if (ctx == null) return XMLOutputFactory.newInstance();
+        if (ctx == null) return xmlOututFactory;
         
         Class outFactory = null;
         XFire xfire = ctx.getXFire();
@@ -576,10 +583,16 @@ public class STAXUtils
  
         if (outFactory != null)
         {
-            return (XMLOutputFactory) createFactory(outFactory);
+            XMLOutputFactory xif = (XMLOutputFactory) factories.get(outFactory);
+            if (xif == null)
+            {
+                xif = (XMLOutputFactory) createFactory(outFactory);
+                factories.put(outFactory, xif);
+            }
+            return xif;
         }
 
-        return XMLOutputFactory.newInstance();
+        return xmlOututFactory;
     }
     
     /**
@@ -587,7 +600,7 @@ public class STAXUtils
      */
     public static XMLInputFactory getXMLInputFactory(MessageContext ctx)
     {
-        if (ctx == null) return XMLInputFactory.newInstance();;
+        if (ctx == null) return xmlInputFactory;
         
         Class inFactory = null;
         XFire xfire = ctx.getXFire();
@@ -604,18 +617,23 @@ public class STAXUtils
         
         if (inFactory != null)
         {
-            return (XMLInputFactory) createFactory(inFactory);
+            XMLInputFactory xif = (XMLInputFactory) factories.get(inFactory);
+            if (xif == null)
+            {
+                xif = (XMLInputFactory) createFactory(inFactory);
+                factories.put(inFactory, xif);
+            }
+            return xif;
         }
 
-        return XMLInputFactory.newInstance();
+        return xmlInputFactory;
     }
-    
     
     /**
      * @param factoryClass
      * @return
      */
-    private static Object createFactory(Class factoryClass )
+    private static Object createFactory(Class factoryClass)
     {
         try
         {
@@ -643,7 +661,6 @@ public class STAXUtils
      */
     public static XMLStreamReader createXMLStreamReader(InputStream in, String encoding, MessageContext ctx)
     {
-        
         XMLInputFactory factory = getXMLInputFactory(ctx);
 
         if (encoding == null) encoding = "UTF-8";

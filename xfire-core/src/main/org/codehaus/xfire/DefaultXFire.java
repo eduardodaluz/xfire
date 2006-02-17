@@ -3,6 +3,7 @@ package org.codehaus.xfire;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,13 +76,15 @@ public class DefaultXFire
         inPhases.add(new Phase(Phase.USER, 6000));
         inPhases.add(new Phase(Phase.PRE_INVOKE, 7000));
         inPhases.add(new Phase(Phase.SERVICE, 8000));
-
+        Collections.sort(inPhases);
+        
         outPhases = new ArrayList();
         outPhases.add(new Phase(Phase.POST_INVOKE, 1000));
         outPhases.add(new Phase(Phase.POLICY, 2000));
         outPhases.add(new Phase(Phase.USER, 3000));
         outPhases.add(new Phase(Phase.TRANSPORT, 4000));
         outPhases.add(new Phase(Phase.SEND, 5000));
+        Collections.sort(outPhases);
         
         faultPhases = new ArrayList();
         faultPhases.add(new Phase(Phase.POST_INVOKE, 1000));
@@ -89,6 +92,7 @@ public class DefaultXFire
         faultPhases.add(new Phase(Phase.USER, 3000));
         faultPhases.add(new Phase(Phase.TRANSPORT, 4000));
         faultPhases.add(new Phase(Phase.SEND, 5000));
+        Collections.sort(faultPhases);
     }
 
     protected Service findService(final String serviceName)

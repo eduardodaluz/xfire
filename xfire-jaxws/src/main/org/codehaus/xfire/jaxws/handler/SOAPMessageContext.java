@@ -29,6 +29,8 @@ public class SOAPMessageContext
     
     public Object[] getHeaders(QName name, JAXBContext jaxbContext, boolean allRoles)
     {
+        if (context.getInMessage().getHeader() == null) return null;
+        
         List children = context.getInMessage().getHeader().getChildren(name.getLocalPart(), 
                                                        Namespace.getNamespace(name.getNamespaceURI()));
         Object[] headers = new Object[children.size()];

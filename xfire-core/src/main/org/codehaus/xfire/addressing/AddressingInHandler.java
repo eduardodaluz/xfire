@@ -54,7 +54,7 @@ public class AddressingInHandler
             InMessage msg = context.getInMessage();
             Element header = msg.getHeader();
 
-            if (factory.hasHeaders(header))
+            if (header != null && factory.hasHeaders(header))
             {
 
                 try{

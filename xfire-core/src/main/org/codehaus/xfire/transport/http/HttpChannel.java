@@ -85,7 +85,7 @@ public class HttpChannel
     static void writeWithoutAttachments(MessageContext context, OutMessage message, OutputStream out) 
         throws XFireException
     {
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding(),context);
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding(), context);
         
         message.getSerializer().writeMessage(message, writer, context);
         

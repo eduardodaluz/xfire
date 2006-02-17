@@ -75,6 +75,11 @@ public abstract class AbstractMessage
     
     public Element getHeader()
     {
+        return header;
+    }
+    
+    public Element getOrCreateHeader()
+    {
         if (header == null)
         {
             header = new Element("Header", getSoapVersion().getPrefix(), getSoapVersion().getNamespace());

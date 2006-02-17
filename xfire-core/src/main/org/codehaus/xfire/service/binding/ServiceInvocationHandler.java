@@ -216,9 +216,10 @@ public class ServiceInvocationHandler
     {
         MessageInfo msgInfo = AbstractBinding.getOutgoingMessageInfo(context);
         MessagePartContainer headers = context.getBinding().getHeaders(msgInfo);
+        if (headers.size() == 0) return;
         Object[] body = (Object[]) context.getCurrentMessage().getBody();
-
-        ElementStreamWriter writer = new ElementStreamWriter(context.getOutMessage().getHeader());
+        
+        ElementStreamWriter writer = new ElementStreamWriter(context.getOutMessage().getOrCreateHeader());
         for (Iterator itr = headers.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
@@ -234,9 +235,11 @@ public class ServiceInvocationHandler
 
     private static XMLStreamReader getXMLStreamReader(AbstractMessage msg, MessagePartInfo header)
     {
+        if (msg.getHeader() == null) return null;
+        
         QName name = header.getName();
-        Element el = 
-            msg.getHeader().getChild(name.getLocalPart(), Namespace.getNamespace(name.getNamespaceURI()));
+        Element el = msg.getHeader().getChild(name.getLocalPart(), 
+                                              Namespace.getNamespace(name.getNamespaceURI()));
         
         if (el == null) return null;
         

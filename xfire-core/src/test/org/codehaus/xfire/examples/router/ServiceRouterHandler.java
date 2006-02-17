@@ -24,7 +24,7 @@ public class ServiceRouterHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-       Element header = context.getInMessage().getHeader();
+        Element header = context.getInMessage().getHeader();
         if (header == null) return;
         
         Element versionEl = header.getChild(VERSION_NAME, Namespace.getNamespace(VERSION_NS));

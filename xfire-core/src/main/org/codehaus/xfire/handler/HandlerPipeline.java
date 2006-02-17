@@ -1,6 +1,5 @@
 package org.codehaus.xfire.handler;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +34,6 @@ public class HandlerPipeline
         handlers = new HashMap();
 
         // Order the phases correctly based on priority
-        Collections.sort(phases);
         this.phases = phases;
         
         for (Iterator itr = phases.iterator(); itr.hasNext();)
