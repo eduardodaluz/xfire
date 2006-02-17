@@ -3,6 +3,7 @@ package org.codehaus.xfire.gen.jsr181;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -107,6 +108,12 @@ public class ServiceInterfaceGenerator
         
         wrAnn.param("name", returnPart.getName().getLocalPart());
         wrAnn.param("targetNamespace", returnPart.getName().getNamespaceURI());
+    }
+
+    @Override
+    protected void annotateOneWay(JMethod method) 
+    {
+        method.annotate(Oneway.class);
     }
 
     protected void annotate(MessagePartInfo part, JVar jvar)

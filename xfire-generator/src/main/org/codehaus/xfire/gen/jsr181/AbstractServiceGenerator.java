@@ -190,8 +190,16 @@ public abstract class AbstractServiceGenerator
                 }
             }
         }
+        else 
+        {
+            annotateOneWay(method);
+        }
         
         generateFaults(context, op, method);
+    }
+
+    protected void annotateOneWay(JMethod method) 
+    {
     }
 
     protected JType getHolderType(GenerationContext context,MessagePartInfo part)
