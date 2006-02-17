@@ -12,7 +12,7 @@ public class JaxbGenerationTest
     public void testGlobalWeather() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
-        generator.setWsdl("src/wsdl/globalweather-twoporttypes.wsdl");
+        generator.setWsdl(getTestFile("src/wsdl/globalweather-twoporttypes.wsdl").getAbsolutePath());
         generator.setOutputDirectory("target/test-services");
         generator.setDestinationPackage("services.global");
         generator.setProfile(JAXWSProfile.class.getName());
@@ -27,7 +27,7 @@ public class JaxbGenerationTest
     public void testEchoHeader() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
-        generator.setWsdl("src/wsdl/headerout.wsdl");
+        generator.setWsdl(getTestFile("src/wsdl/headerout.wsdl").getAbsolutePath());
         generator.setOutputDirectory("target/test-services");
         generator.setDestinationPackage("services.headerout");
         generator.setProfile(JAXWSProfile.class.getName());
@@ -42,7 +42,7 @@ public class JaxbGenerationTest
     public void testEcho() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
-        generator.setWsdl("src/wsdl/echo.wsdl");
+        generator.setWsdl(getTestFile("src/wsdl/echo.wsdl").getAbsolutePath());
         generator.setOutputDirectory("target/test-services");
         generator.setDestinationPackage("services.echo");
         generator.setProfile(JAXWSProfile.class.getName());
