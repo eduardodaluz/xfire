@@ -559,8 +559,7 @@ public class STAXUtils
             throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
-    
-    
+ 
     /**
      * @return
      */
@@ -568,28 +567,18 @@ public class STAXUtils
     {
         if (ctx == null) return xmlOututFactory;
         
-        Class outFactory = null;
-        XFire xfire = ctx.getXFire();
-
-        if (ctx.getService() != null)
-        {
-            outFactory = (Class) ctx.getService().getProperty(XFire.STAX_OUTPUT_FACTORY);
-        }
+        String outFactory = (String) ctx.getContextualProperty(XFire.STAX_OUTPUT_FACTORY);
+        Object context = null;
         
-        if (outFactory == null && xfire != null)
-        {
-            outFactory = (Class) xfire.getProperty(XFire.STAX_OUTPUT_FACTORY);
-        }
- 
         if (outFactory != null)
         {
-            XMLOutputFactory xif = (XMLOutputFactory) factories.get(outFactory);
-            if (xif == null)
+            XMLOutputFactory xof = (XMLOutputFactory) factories.get(outFactory);
+            if (xof == null)
             {
-                xif = (XMLOutputFactory) createFactory(outFactory);
-                factories.put(outFactory, xif);
+                xof = (XMLOutputFactory) createFactory(outFactory, ctx);
+                factories.put(outFactory, xof);
             }
-            return xif;
+            return xof;
         }
 
         return xmlOututFactory;
@@ -602,25 +591,15 @@ public class STAXUtils
     {
         if (ctx == null) return xmlInputFactory;
         
-        Class inFactory = null;
-        XFire xfire = ctx.getXFire();
-        
-        if (ctx.getService() != null)
-        {
-            inFactory = (Class) ctx.getService().getProperty(XFire.STAX_INPUT_FACTORY);
-        }
-
-        if (inFactory == null && xfire != null)
-        {
-            inFactory = (Class) xfire.getProperty(XFire.STAX_INPUT_FACTORY);
-        }
+        String inFactory = (String) ctx.getContextualProperty(XFire.STAX_INPUT_FACTORY);
+        Object context = null;
         
         if (inFactory != null)
         {
             XMLInputFactory xif = (XMLInputFactory) factories.get(inFactory);
             if (xif == null)
             {
-                xif = (XMLInputFactory) createFactory(inFactory);
+                xif = (XMLInputFactory) createFactory(inFactory, ctx);
                 factories.put(inFactory, xif);
             }
             return xif;
@@ -633,23 +612,19 @@ public class STAXUtils
      * @param factoryClass
      * @return
      */
-    private static Object createFactory(Class factoryClass)
+    private static Object createFactory(String factory, MessageContext ctx)
     {
+        Class factoryClass = null;
         try
         {
-            return  factoryClass.newInstance();
+            factoryClass = ClassLoaderUtils.loadClass(factory, ctx.getClass());
+            return factoryClass.newInstance();
         }
-        catch (InstantiationException e)
+        catch (Exception e)
         {
-            logger.error("Can't create XMLOutputFactor for class : " + factoryClass, e);
-            throw new XFireRuntimeException("Can't create XMLFactor for class : "
-                    + factoryClass.getName());
-        }
-        catch (IllegalAccessException e)
-        {
-            logger.error("Can't create XMLOutputFactor for class : " + factoryClass, e);
-            throw new XFireRuntimeException("Can't create XMLFactor for class : "
-                    + factoryClass.getName());
+            logger.error("Can't create factory for class : " + factory, e);
+            throw new XFireRuntimeException("Can't create factory for class : "
+                    + factory);
         }
     }
 

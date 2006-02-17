@@ -11,6 +11,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 import org.jdom.Document;
@@ -29,6 +31,18 @@ public class STAXUtilsTest
 {
     private XMLInputFactory ifactory;
     private XMLOutputFactory ofactory;
+    
+    public void testFactoryCreation()
+    {
+        MessageContext ctx = new MessageContext();
+        ctx.setProperty(XFire.STAX_INPUT_FACTORY, WstxInputFactory.class.getName());
+        
+        XMLStreamReader reader = STAXUtils.createXMLStreamReader(getResourceAsStream("amazon.xml"), null, ctx);
+        
+        ctx.setProperty(XFire.STAX_OUTPUT_FACTORY, WstxOutputFactory.class.getName());
+        
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(new ByteArrayOutputStream(), null, ctx);
+    }
     
     public void testWSTX() throws Exception
     {
