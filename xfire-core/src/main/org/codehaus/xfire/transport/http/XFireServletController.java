@@ -213,12 +213,8 @@ public class XFireServletController
                           String service)
             throws ServletException, IOException, UnsupportedEncodingException
     {
-        // TODO: Return 500 on a fault
-        // TODO: Determine if the request is a soap request
-        // and if not responsed appropriately
-        
         response.setStatus(200);
-        // response.setBufferSize(1024 * 8);
+        response.setBufferSize(1024 * 8);
 
         XFireHttpSession session = new XFireHttpSession(request);
         MessageContext context = new MessageContext();
@@ -252,7 +248,6 @@ public class XFireServletController
             {
                 Attachments atts = new JavaMailAttachments(request.getInputStream(), 
                                                            request.getContentType());
-                
                 XMLStreamReader reader = 
                     STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
                                                     request.getCharacterEncoding(),context);
@@ -275,6 +270,8 @@ public class XFireServletController
                                                 request.getCharacterEncoding(),context);
             
             InMessage message = new InMessage(reader, request.getRequestURI());
+            message.setProperty(SoapConstants.SOAP_ACTION, 
+                                request.getHeader(SoapConstants.SOAP_ACTION));
             channel.receive(context, message);
         }
     }
