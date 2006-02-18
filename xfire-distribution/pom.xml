@@ -53,6 +53,9 @@
                   <fileset defaultexcludes="yes" dir="../xfire-jaxb2/src/main/">
                     <include name="**/*.java"></include>
                   </fileset>
+                  <fileset defaultexcludes="yes" dir="../xfire-jaxws/src/main/">
+                    <include name="**/*.java"></include>
+                  </fileset>
                   <fileset defaultexcludes="yes" dir="../xfire-jms/src/main/">
                     <include name="**/*.java"></include>
                   </fileset>
