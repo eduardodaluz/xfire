@@ -38,6 +38,15 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <excludes>
+        <exclude>ant:ant</exclude>
+        <exclude>nekohtml:nekohtml</exclude>
+        <exclude>xerces:xerces</exclude>
+        <exclude>xerces:xmlParserAPIs</exclude>
+        <exclude>rhino:js</exclude>
+        <exclude>httpunit:httpunit</exclude>
+        <exclude>jtidy:jtidy</exclude>
+        <exclude>qdox:qdox</exclude>
+
         <exclude>org.codehaus.xfire:xfire-all</exclude>
         <exclude>org.codehaus.xfire:xfire-aegis</exclude>
         <exclude>org.codehaus.xfire:xfire-annotations</exclude>
@@ -47,6 +56,7 @@
         <exclude>org.codehaus.xfire:xfire-java5</exclude>
         <exclude>org.codehaus.xfire:xfire-jaxb</exclude>
         <exclude>org.codehaus.xfire:xfire-jaxb2</exclude>
+        <exclude>org.codehaus.xfire:xfire-jaxws</exclude>
         <exclude>org.codehaus.xfire:xfire-jms</exclude>
         <exclude>org.codehaus.xfire:xfire-loom</exclude>
         <exclude>org.codehaus.xfire:xfire-picocontainer</exclude>
@@ -69,6 +79,7 @@
         <include>org.codehaus.xfire:xfire-java5</include>
         <include>org.codehaus.xfire:xfire-jaxb</include>
         <include>org.codehaus.xfire:xfire-jaxb2</include>
+        <include>org.codehaus.xfire:xfire-jaxws</include>
         <include>org.codehaus.xfire:xfire-jms</include>
         <include>org.codehaus.xfire:xfire-loom</include>
         <include>org.codehaus.xfire:xfire-picocontainer</include>

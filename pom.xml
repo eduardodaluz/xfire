@@ -56,6 +56,16 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/Test*</exclude>
+            <exclude>**/Abstract*</exclude>
+            <exclude>**/HtmlServiceWriterTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <version>2.0-beta-4</version>
       </plugin>
@@ -83,7 +93,7 @@
         <jdk>1.5</jdk>
       </activation>
       <modules>
-        <module>xfire-distribution</module>
+<!--        <module>xfire-distribution</module>-->
         <module>xfire-generator</module>
         <module>xfire-java5</module>
         <module>xfire-jaxb2</module>
@@ -239,9 +249,9 @@
         <version>${version}</version>
       </dependency>
       <dependency>
-        <groupId>geronimo-spec</groupId>
-        <artifactId>geronimo-spec-activation</artifactId>
-        <version>1.0.2-rc4</version>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>1.0.2</version>
       </dependency>
       <dependency>
         <groupId>javax.mail</groupId>
@@ -335,7 +345,66 @@
       <dependency>
         <groupId>httpunit</groupId>
         <artifactId>httpunit</artifactId>
-        <version>1.6</version>
+        <version>1.6.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring</artifactId>
+        <version>1.2.6</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.resource</groupId>
+            <artifactId>connector</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>xdoclet</groupId>
+            <artifactId>xjavadoc</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.servlets</groupId>
+            <artifactId>cos</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>quartz</groupId>
+            <artifactId>quartz</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>oro</groupId>
+            <artifactId>oro</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -349,6 +418,14 @@
           <exclusion>
             <artifactId>ant</artifactId>
             <groupId>ant</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>groovy</artifactId>
+            <groupId>groovy</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>org.springframework</artifactId>
+            <groupId>spring</groupId>
           </exclusion>
           <exclusion>
             <artifactId>backport-util-concurrent</artifactId>

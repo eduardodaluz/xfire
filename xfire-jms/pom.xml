@@ -30,6 +30,7 @@
       <groupId>springframework</groupId>
       <artifactId>spring-mock</artifactId>
       <version>1.2.6</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -41,9 +42,8 @@
       <version>1.1-rc4</version>
     </dependency>
     <dependency>
-      <groupId>springframework</groupId>
+      <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <version>1.2.6</version>
     </dependency>
     <dependency>
       <groupId>geronimo-spec</groupId>
