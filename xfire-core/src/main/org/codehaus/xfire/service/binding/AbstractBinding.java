@@ -224,6 +224,7 @@ public abstract class AbstractBinding
                 {
                     prefix = "";
                     declare = true;
+                    writer.setDefaultNamespace(ns);
                 }
                 
                 writer.writeStartElement(prefix, p.getName().getLocalPart(), ns);
