@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-RC1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-java5</artifactId>
   <name>XFire Java 5 Module</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-RC1</version>
   <build>
     <plugins>
       <plugin>
@@ -23,6 +23,11 @@
           <includes>
             <include implementation="java.lang.String">**/Test.java</include>
           </includes>
+          <excludes>
+            <exclude>**/Test*</exclude>
+            <exclude>**/Abstract*</exclude>
+            <exclude>**/HtmlServiceWriterTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>

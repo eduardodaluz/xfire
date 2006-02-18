@@ -4,7 +4,7 @@
   <artifactId>xfire-parent</artifactId>
   <packaging>pom</packaging>
   <name>XFire</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-RC1</version>
   <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
@@ -93,7 +93,6 @@
         <jdk>1.5</jdk>
       </activation>
       <modules>
-<!--        <module>xfire-distribution</module>-->
         <module>xfire-generator</module>
         <module>xfire-java5</module>
         <module>xfire-jaxb2</module>
@@ -133,7 +132,6 @@
   </pluginRepositories>
   <reporting>
     <plugins>
-
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.0-beta-3</version>
@@ -143,7 +141,6 @@
               <report>jdepend-maven-plugin</report>
               <report>jxr-maven-plugin</report>
               <report>surefire-report-maven-plugin</report>
-<!--              <report>maven-javadoc-plugin</report>-->
             </reports>
           </reportSet>
         </reportSets>
@@ -352,56 +349,56 @@
         <version>1.2.6</version>
         <exclusions>
           <exclusion>
-            <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.resource</groupId>
-            <artifactId>connector</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>aopalliance</groupId>
-            <artifactId>aopalliance</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>xdoclet</groupId>
-            <artifactId>xjavadoc</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.servlets</groupId>
-            <artifactId>cos</artifactId>
-          </exclusion>
-          <exclusion>
             <groupId>javax.servlet</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>jta</artifactId>
+            <groupId>javax.transaction</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>connector</artifactId>
+            <groupId>javax.resource</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>aopalliance</artifactId>
+            <groupId>aopalliance</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>xjavadoc</artifactId>
+            <groupId>xdoclet</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>cos</artifactId>
+            <groupId>com.servlets</groupId>
+          </exclusion>
+          <exclusion>
             <artifactId>jstl</artifactId>
+            <groupId>javax.servlet</groupId>
           </exclusion>
           <exclusion>
-            <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
+            <groupId>taglibs</groupId>
           </exclusion>
           <exclusion>
-            <groupId>quartz</groupId>
             <artifactId>quartz</artifactId>
+            <groupId>quartz</groupId>
           </exclusion>
           <exclusion>
-            <groupId>oro</groupId>
             <artifactId>oro</artifactId>
+            <groupId>oro</groupId>
           </exclusion>
           <exclusion>
-            <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
+            <groupId>commons-collections</groupId>
           </exclusion>
           <exclusion>
-            <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+            <groupId>commons-lang</groupId>
           </exclusion>
           <exclusion>
-            <groupId>ehcache</groupId>
             <artifactId>ehcache</artifactId>
+            <groupId>ehcache</groupId>
           </exclusion>
         </exclusions>
       </dependency>
