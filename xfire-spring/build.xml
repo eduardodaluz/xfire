@@ -30,7 +30,7 @@
         <get-dep artifact="annogen" version="0.1.0"/>
         <get-dep artifact="qdox" version="1.5"/>
         <get-dep artifact="servletapi" version="2.3"/>
-        <get-dep artifact="xbean-spring" group="xbean" version="2.2" repository="http://dist.codehaus.org/"/>
+        <get-dep artifact="xbean-spring" group="org.apache.xbean" version="2.2" repository="http://dist.codehaus.org/"/>
     </target>
 
     <target name="init" depends="xfire.init">
