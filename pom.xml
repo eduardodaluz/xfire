@@ -32,6 +32,9 @@
         <includes>
           <include>**/*.xml</include>
         </includes>
+        <excludes>
+          <exclude>**/package.html</exclude>
+        </excludes>
       </resource>
     </resources>
     <testResources>
@@ -121,15 +124,7 @@
   </pluginRepositories>
   <reporting>
     <plugins>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.0-beta-3</version>
-        <configuration>
-          <minmemory>128m</minmemory>
-          <maxmemory>512</maxmemory>
-          <verbose>false</verbose>
-        </configuration>
-      </plugin>
+
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.0-beta-3</version>
@@ -139,7 +134,7 @@
               <report>jdepend-maven-plugin</report>
               <report>jxr-maven-plugin</report>
               <report>surefire-report-maven-plugin</report>
-              <report>maven-javadoc-plugin</report>
+<!--              <report>maven-javadoc-plugin</report>-->
             </reports>
           </reportSet>
         </reportSets>
