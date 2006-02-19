@@ -112,6 +112,8 @@ public class XFireServletController
             throws ServletException, IOException
     {
         String serviceName = getService(request);
+        if (serviceName == null) serviceName = "";
+        
         ServiceRegistry reg = getServiceRegistry();
 
         response.setHeader("Content-Type", "UTF-8");
@@ -119,11 +121,10 @@ public class XFireServletController
         requests.set(request);
         responses.set(response);
 
-        if (serviceName == null || 
-                serviceName.length() == 0 || 
-                !reg.hasService(serviceName))
+        boolean hasService = reg.hasService(serviceName);
+        if (serviceName.length() == 0 || !hasService)
         {
-            if (!reg.hasService(serviceName))
+            if (!hasService)
             {
                 response.setStatus(404);
             }
