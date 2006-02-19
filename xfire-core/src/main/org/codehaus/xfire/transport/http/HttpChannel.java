@@ -82,7 +82,7 @@ public class HttpChannel
         }
     }
 
-    static void writeWithoutAttachments(MessageContext context, OutMessage message, OutputStream out) 
+    public static void writeWithoutAttachments(MessageContext context, OutMessage message, OutputStream out) 
         throws XFireException
     {
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, message.getEncoding(), context);
@@ -100,7 +100,7 @@ public class HttpChannel
         }
     }
 
-    static void writeAttachmentBody(MessageContext context, OutMessage message) 
+    public static void writeAttachmentBody(MessageContext context, OutMessage message) 
         throws XFireException
     {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -117,7 +117,7 @@ public class HttpChannel
         atts.setSoapMessage(att);
     }
 
-    static String getMimeType(AbstractMessage msg)
+    public static String getMimeType(AbstractMessage msg)
     {
         if (msg.getAttachments() != null && msg.getAttachments().size() > 0)
         {
@@ -129,7 +129,7 @@ public class HttpChannel
         }
     }
     
-    static String getSoapMimeType(AbstractMessage msg)
+    public static String getSoapMimeType(AbstractMessage msg)
     {
         SoapVersion soap = msg.getSoapVersion();
         if (soap instanceof Soap11)
@@ -146,7 +146,7 @@ public class HttpChannel
         }
     }
 
-    private void sendViaClient(MessageContext context, OutMessage message)
+    protected void sendViaClient(MessageContext context, OutMessage message)
         throws XFireException
     {
         AbstractMessageSender sender;

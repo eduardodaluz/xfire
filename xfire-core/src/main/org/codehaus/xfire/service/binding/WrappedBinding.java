@@ -1,7 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
