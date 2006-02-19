@@ -13,8 +13,6 @@ Ant:
   at your own risk.
   
 [Deploying Snapshots and Distributions]
-To the Maven 1 repository:
-$ mvn install one:deploy-maven-one-repository
-
-To the Maven 2 repository:
-$ mvn install deploy
+This should install the xfire jars and distribution to the Maven 
+1 and 2 repositories:
+$ mvn deploy
