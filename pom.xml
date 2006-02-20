@@ -142,9 +142,19 @@
               <report>jdepend-maven-plugin</report>
               <report>jxr-maven-plugin</report>
               <report>surefire-report-maven-plugin</report>
+               <report>maven-javadoc-plugin</report>
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.0-beta-3</version>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+          <verbose>false</verbose>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
