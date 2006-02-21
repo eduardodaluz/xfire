@@ -97,7 +97,7 @@ public class CollectionType
                 MessageWriter cwriter = writer
                         .getElementWriter(type.getSchemaType().getLocalPart(), ns);
 
-                type.writeObject(itr.next(), writer, context);
+                type.writeObject(itr.next(), cwriter, context);
                 cwriter.close();
             }
         }

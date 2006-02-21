@@ -21,8 +21,6 @@ public class BeanCollectionTest
     {
         Document doc =  getWSDLDocument("BeanCollectionService");
         
-        printNode(doc);
-        
         addNamespace("xsd", SoapConstants.XSD);
         assertValid("//xsd:element[@name='strings'][@type='tns:ArrayOfString']", doc);
         assertValid("//xsd:element[@name='doubles'][@type='tns:ArrayOfDouble']", doc);
