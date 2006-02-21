@@ -7,6 +7,8 @@ public class EchoWithFaultImpl implements EchoWithFault
 {
     public String echo( String echo ) throws EchoFault
     {
-        throw new EchoFault(echo);
+        EchoFault fault = new EchoFault("message");
+        fault.setCustomMessage(echo);
+        throw fault;
     }
 }

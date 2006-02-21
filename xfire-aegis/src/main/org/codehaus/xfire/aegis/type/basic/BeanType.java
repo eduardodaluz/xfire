@@ -1,6 +1,8 @@
 package org.codehaus.xfire.aegis.type.basic;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashSet;
@@ -30,6 +32,8 @@ public class BeanType
     extends Type
 {
     private BeanTypeInfo _info;
+    private boolean isInterface = false;
+    private boolean isException = false;
     
     public BeanType()
     {
@@ -52,7 +56,6 @@ public class BeanType
         try
         {
             Class clazz = getTypeClass();
-            boolean isInterface = clazz.isInterface();
             Object object = null;
             InterfaceInvocationHandler delegate = null;
             
@@ -62,6 +65,10 @@ public class BeanType
                 object = Proxy.newProxyInstance(this.getClass().getClassLoader(),
                                                 new Class[] { clazz },
                                                 delegate);
+            }
+            else if (isException)
+            {
+                object = createFromFault(context);
             }
             else
             {
@@ -139,6 +146,64 @@ public class BeanType
 		{
             throw new XFireFault("Couldn't instantiate class. " + e.getMessage(), e, XFireFault.SENDER);
 		}
+        catch (SecurityException e)
+        {
+            throw new XFireFault("Illegal access. " + e.getMessage(), e, XFireFault.RECEIVER);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new XFireFault("Illegal argument. " + e.getMessage(), e, XFireFault.RECEIVER);
+        }
+        catch (InvocationTargetException e)
+        {
+            throw new XFireFault("Couldn't create class: " + e.getMessage(), e, XFireFault.RECEIVER);
+        }
+    }
+
+    /**
+     * If the class is an exception, this will try and instantiate it with information
+     * from the XFireFault (if it exists).
+     */
+    protected Object createFromFault(MessageContext context) 
+        throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+        Class clazz = getTypeClass();
+        Constructor ctr;
+        Object o;
+        Object body = context.getExchange().getFaultMessage().getBody();
+
+        if (!(body instanceof XFireFault)) 
+            return clazz.newInstance();
+        
+        XFireFault fault = (XFireFault) body;
+
+        try
+        {
+            ctr = clazz.getConstructor(new Class[] { String.class, Throwable.class });
+            o = ctr.newInstance(new Object[] {fault.getMessage(), fault});
+        }
+        catch (NoSuchMethodException e)
+        {
+            try
+            {
+                ctr = clazz.getConstructor(new Class[] { String.class, Exception.class });
+                o = ctr.newInstance(new Object[] {fault.getMessage(), fault});
+            }
+            catch (NoSuchMethodException e1)
+            {
+                try
+                {
+                    ctr = clazz.getConstructor(new Class[] { String.class });
+                    o = ctr.newInstance(new Object[] {fault.getMessage()});
+                }
+                catch (NoSuchMethodException e2)
+                {
+                    return clazz.newInstance();
+                }
+            }
+        }
+
+        return o;
     }
 
     /**
@@ -370,6 +435,14 @@ public class BeanType
         }
     }
     
+    public void setTypeClass(Class typeClass)
+    {
+        super.setTypeClass(typeClass);
+        
+        isInterface = typeClass.isInterface();
+        isException = Exception.class.isAssignableFrom(typeClass);
+    }
+
     /**
      * We need to write a complex type schema for Beans, so return true.
      * 

@@ -46,6 +46,7 @@ public class EchoFaultTest
         }
         catch (EchoFault fault)
         {
+            assertEquals("message", fault.getMessage());
             assertEquals("yo", fault.getCustomMessage());
         }
         catch (Throwable e)

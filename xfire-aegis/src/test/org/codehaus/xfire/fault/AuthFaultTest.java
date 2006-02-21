@@ -47,6 +47,7 @@ public class AuthFaultTest
         catch (AuthenticationFault_Exception fault)
         {
             assertEquals("Invalid username/password", fault.getFaultInfo().getMessage());
+            assertEquals("message", fault.getMessage());
         }
     }
     

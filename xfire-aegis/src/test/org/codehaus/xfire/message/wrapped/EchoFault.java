@@ -10,9 +10,14 @@ public class EchoFault
     {
     }
     
-    public EchoFault(String echo)
+    public EchoFault(String msg)
     {
-        setCustomMessage(echo);
+        super(msg);
+    }
+    
+    public EchoFault(String msg, Throwable t)
+    {
+        super(msg, t);
     }
 
     public String getCustomMessage()
