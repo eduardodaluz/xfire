@@ -25,7 +25,7 @@ public class DispatchServiceHandler
         throws XFireFault
     {
         Boolean b = (Boolean) context.getProperty(DefaultEndpoint.SERVICE_HANDLERS_REGISTERED);
-        if (b == null || b.equals(Boolean.FALSE))
+        if ((b == null || b.equals(Boolean.FALSE)) && context.getService() != null)
         {
             context.getInPipeline().addHandlers(context.getService().getInHandlers());
         }
