@@ -1,5 +1,6 @@
 package org.codehaus.xfire.client;
 
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 
 import org.codehaus.xfire.DefaultXFire;
@@ -20,14 +21,17 @@ public class BookClientEnc
 {
     DefaultXFire xfire = (DefaultXFire) XFireFactory.newInstance().getXFire();
 
-    xfire.addOutHandler(new DOMOutHandler());
-
-    xfire.addOutHandler(new WSS4JOutSecurityHandler("org/codehaus/xfire/client/outsecurity.properties"));
-
+    
     Service serviceModel = new ObjectServiceFactory()
             .create(IBook.class, "BookService", "http://xfire.codehaus.org/BookService", null);
 
+    
+
+    
     IBook service = (IBook) new XFireProxyFactory().create(serviceModel, url);
+    Client client = ((XFireProxy)Proxy.getInvocationHandler(service)).getClient();
+    client.addOutHandler(new DOMOutHandler());
+    client.addOutHandler(new WSS4JOutSecurityHandler("org/codehaus/xfire/client/outsecurity.properties"));
     Book b = service.findBook("0123456789");
 
 }
