@@ -1,0 +1,57 @@
+Configuration of WS-Security
+Ws-security can be enabled per service or per XFire instance, to enable it  2 handlers must be add to inHandlers or/and outHandlers of given service or xfire instance.
+For processing incomming security  we must add DOMInHandler and WSS4JInSecurityHandler to inHandlers chain. To secure our outgoing messages we must
+add DOMOutHandler and WSS4JOutSecurityHandler to outHandlers chain.
+One handler is responsible for converting soap message from DOM to stax representation and vice versa ( DOMInHandler/DOMOutHandler).
+Second handler perform real security processing ( WSS4JInSecurityHandler/WSS4JOutSecurityHandler )
+Additionaly security handler must be  configured at creation time. Configuration data can be provided as file ( setting configFile property on handler )
+or as Map object filled with required data ( setting configuration property on handler ).
+Like : 
+  <tns:inHandlers>
+      <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler" class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
+        <property name="configuration" >
+          <map>
+      		<entry>
+		        <key><value>xfire.security.actions</value></key>
+		        <value>usertoken</value>
+	       </entry>
+	      </map>
+        </property>
+      </bean>
+    </tns:inHandlers>
+
+
+Avaiable functionality:
+ - UserToken
+	: adds user and password to soap message. Password can be transmited as plain text or can be hashed.
+  	 To send usertoken, security handler must be setup with following information :
+
+
+xfire.security.actions=usertoken
+xfire.security.user.name=username
+xfire.security.user.password=password
+xfire.security.user.password.use.plain=true
+
+The entry xfire.security.user.password.use.plain determine if password with be send in plain text or hashed form.
+Values of user name and password can also be provided at runtime but specifing following properties on MessageContext 
+
+context.setProperty(SecurityConstants.SECURITY_OUT_USER_NAME_CONTEXT_KEY,userName);
+context.setProperty(SecurityConstants.SECURITY_OUT_USER_PASS_CONTEXT_KEY,password);
+
+To retrive usertoken from incoming message, the security handler must be setuped as follow:
+
+xfire.security.actions=usertoken
+
+If password is send in hashed form, additionaly  one must provide callback object which can retrive orginal password (e.g. from database ), what is required to
+compare hashed values.
+
+xfire.security.password.callback=my.company.users.MyPasswordCallback
+
+where MyPasswordCallback implements org.codehaus.xfire.security.WSPasswordCallback interface.
+
+Username and password retrive from saop message can be accesssed from MessageContext under following keys :
+
+username = context.getProperty(SecurityConstants.SECURITY_OUT_USER_NAME_CONTEXT_KEY);
+password = context.getProperty(SecurityConstants.SECURITY_OUT_USER_PASS_CONTEXT_KEY);
+

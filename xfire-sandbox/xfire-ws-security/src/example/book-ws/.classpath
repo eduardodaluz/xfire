@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry output="target/test-classes" kind="src" path="src/test"/>
+	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-api-1.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/stax/jars/stax-1.1.1-dev.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-1.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/wsdl4j/jars/wsdl4j-qname-1.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/classworlds/jars/classworlds-1.1-alpha-1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/plexus/jars/plexus-servlet-1.0-beta-2-SNAPSHOT.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

@@ -11,7 +11,7 @@ public class WSS4JEncTest
     extends AbstractXFireTest
 {
 
-    private XFire xfire = null;
+    //private XFire xfire = null;
     
     public void testInEncryption() throws Exception{
         
@@ -21,12 +21,12 @@ public class WSS4JEncTest
         
     
     }
-    protected XFire getXFire()
+    /*protected XFire getXFire()
     {
         XFireConfigLoader loader = new XFireConfigLoader();
-        xfire = loader.loadConfig(new String[]{"META-INF/xfire/service_enc.xml"});
+        xfire = loader.loadConfig("",new String[]{"META-INF/xfire/service_enc.xml"});
         return xfire;
     }
     
-    
+*/    
 }

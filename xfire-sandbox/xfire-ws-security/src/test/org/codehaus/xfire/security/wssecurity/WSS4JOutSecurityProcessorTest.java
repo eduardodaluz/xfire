@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
+import org.codehaus.xfire.security.impl.PropertiesLoader;
 import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -29,17 +30,22 @@ public class WSS4JOutSecurityProcessorTest
                 .getResourceAsStream("META-INF/xfire/request.xml");
         Document doc = DOMUtils.readXml(inStream);
         WSS4JOutSecurityProcessor processor = new WSS4JOutSecurityProcessor();
-
+        OutSecurityDefaultBuilder builder = new OutSecurityDefaultBuilder ();
+        builder.setConfiguration(new PropertiesLoader().loadConfigFile("META-INF/xfire/outsecurity_sign.properties"));
+        builder.build(processor);
         Document encrypted = processor.process(doc).getDocument();
         NodeList list = encrypted
                 .getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                         "Security");
         assertTrue(list.getLength() > 0);
-        DOMUtils.writeXml(encrypted.getDocumentElement(), System.out);
+    //    OutputStream os = new FileOutputStream("signout.xml");
+     //   DOM2Writer.serializeAsXML(encrypted.getDocumentElement(), new OutputStreamWriter(os), false);
+
+        //DOMUtils.writeXml(encrypted.getDocumentElement(), System.out);
 
     }
 
-    public void testProcessorUserToken()
+    /*public void testProcessorUserToken()
         throws Exception
     {
         InputStream inStream = getClass().getClassLoader()
@@ -56,4 +62,4 @@ public class WSS4JOutSecurityProcessorTest
         DOMUtils.writeXml(encrypted.getDocumentElement(), System.out);
 
     }
-}
+*/}

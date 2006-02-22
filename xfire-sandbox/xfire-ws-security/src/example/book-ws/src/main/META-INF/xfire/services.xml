@@ -1,0 +1,69 @@
+
+<beans  xmlns:tns="http://xfire.codehaus.org/config/1.0">
+  <tns:service>
+    <tns:name>BookService</tns:name>
+    <tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
+    <tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
+
+  <tns:inHandlers>
+      <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler" class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
+      <!--  configuration can be spefied alose by seting name of property file with config data -->
+        <property name="configuration" >
+          <map>
+      		<entry>
+		        <key><value>xfire.security.actions</value></key>
+		        <value>usertoken</value>
+	       </entry>
+	      </map>
+        </property>
+      </bean>
+         <tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
+    </tns:inHandlers>
+   </tns:service>
+   
+   <tns:service>
+    <tns:name>BookServiceUTHP</tns:name>
+    <tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
+    <tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
+
+  <tns:inHandlers>
+      <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler" class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
+      <!--  configuration can be spefied alose by seting name of property file with config data -->
+        <property name="configuration" >
+          <map>
+      		<entry>
+		        <key><value>xfire.security.actions</value></key>
+		        <value>usertoken</value>
+	       </entry>
+	       
+	       	<entry>
+		        <key><value>xfire.security.password.callback</value></key>
+		        <value>org.codehaus.xfire.demo.BookPasswordCallback</value>
+	       </entry>
+	      </map>
+        </property>
+      </bean>
+         <tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
+    </tns:inHandlers>
+   </tns:service>
+   
+   
+   <tns:service>
+    <tns:name>BookServiceENC</tns:name>
+    <tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
+    <tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
+
+  <tns:inHandlers>
+      <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler" class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
+      <!--  configuration can be spefied alose by seting name of property file with config data -->
+        <property name="configFile"><value>META-INF/xfire/insecurity.properties</value></property>
+          
+      </bean>
+         <tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
+    </tns:inHandlers>
+   </tns:service>
+   
+ </beans>

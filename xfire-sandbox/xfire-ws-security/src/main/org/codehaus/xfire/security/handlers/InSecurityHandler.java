@@ -1,5 +1,8 @@
 package org.codehaus.xfire.security.handlers;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.security.SecurityConstants;
@@ -39,6 +42,12 @@ public class InSecurityHandler  extends SecurityHandler
     {
         super.invoke(context);
         Document doc = (Document) context.getCurrentMessage().getProperty(DOMInHandler.DOM_MESSAGE);
+        OutputStream os = new FileOutputStream("inhandler.xml");
+        
+       // DOM2Writer.serializeAsXML(doc.getDocumentElement(), new OutputStreamWriter(os), false);
+        
+        os.close();
+        
         SecurityResult result = getProcessor().process(doc);
         doc = result.getDocument();
 

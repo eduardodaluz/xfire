@@ -1,10 +1,10 @@
 package org.codehaus.xfire.security.wssecurity;
 
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 
 import junit.framework.TestCase;
 
-import org.codehaus.xfire.security.InSecurityProcessor;
 import org.codehaus.xfire.security.SecurityProcessor;
 import org.codehaus.xfire.security.SecurityResult;
 import org.codehaus.xfire.security.exceptions.WSSecurityException;
@@ -62,7 +62,13 @@ public class WSS4JProcessorsTest
         throws Exception
     {
         Document doc = readDocument("wsse-request-clean.xml");
-
+      //  DOM2Writer wr = new DOM2Writer();
+        OutputStreamWriter ow = new OutputStreamWriter(System.out); 
+       // wr.serializeAsXML(doc.getDocumentElement(), ow, true);
+        
+        
+       
+        System.out.print("\n------------------\n");
         WSS4JOutSecurityProcessor outProcessor = new WSS4JOutSecurityProcessor();
         setupOutConfigFile(outProcessor, outConfig);
         doc = outProcessor.process(doc).getDocument();

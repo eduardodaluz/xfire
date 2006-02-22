@@ -6,6 +6,9 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.security.SecurityProcessor;
 import org.codehaus.xfire.security.SecurityProcessorBuilder;
+import org.codehaus.xfire.security.SecurityResult;
+import org.codehaus.xfire.util.dom.DOMOutHandler;
+import org.w3c.dom.Document;
 
 public class SecurityHandler
     extends AbstractHandler
@@ -28,7 +31,7 @@ public class SecurityHandler
             configureProcessor();
             configured = true;
         }
-
+       
     }
     
     public SecurityProcessorBuilder getBuilder()

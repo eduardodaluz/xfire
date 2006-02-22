@@ -53,8 +53,10 @@ public class OutSecurityHandler
         String userPass = (String) context
                 .getProperty(SecurityConstants.SECURITY_OUT_USER_PASS_CONTEXT_KEY);
         OutSecurityProcessor processor = (OutSecurityProcessor) getProcessor();
-        processor.setUsername(userName);
-        processor.setUserPassword(userPass);
+        if( userName != null ){
+         processor.setUsername(userName);
+         processor.setUserPassword(userPass);
+        }
 
     }
 

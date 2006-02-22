@@ -8,7 +8,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.util.DOMUtils;
-import org.codehaus.xfire.util.stax.W3CDOMStreamReader2;
+import org.codehaus.xfire.util.stax.W3CDOMStreamReader;
 import org.w3c.dom.Document;
 
 import junit.framework.TestCase;
@@ -24,7 +24,7 @@ public class DomTest
         Document doc = DOMUtils.readXml(inStream);
         inStream.close();
 
-        W3CDOMStreamReader2 xmlReader = new W3CDOMStreamReader2(doc.getDocumentElement());
+        W3CDOMStreamReader xmlReader = new W3CDOMStreamReader(doc.getDocumentElement());
         /*
          * XMLStreamReader xmlReader =
          * XMLInputFactory.newInstance().createXMLStreamReader(inStream,

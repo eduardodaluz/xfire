@@ -2,6 +2,9 @@ package org.codehaus.xfire.security.handlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -9,6 +12,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.security.util.DOM2Writer;
+import org.apache.xerces.util.DOMUtil;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
@@ -78,8 +83,15 @@ public class OutSecuritySerializer
                                                                                      context));
             Document doc = DOMUtils.readXml(inStream);
             doc = processor.process(doc).getDocument();
-            DOMUtils outputer = new DOMUtils (); 
-            outputer.writeXml(doc, System.out);
+            System.out.print("\n--------OutSecuirytSerializer -------------------\n");
+            OutputStream os = new FileOutputStream("OutSecuirytSerializer.xml");
+        //    DOM2Writer.serializeAsXML(doc.getDocumentElement(), new OutputStreamWriter(os), false);
+            os.close();
+            os = new FileOutputStream("OutSecuirytSerializer.xml1");
+            DOMUtils.writeXml(doc.getDocumentElement(), os);
+            os.close();
+            System.out.print("\n---------------------------\n");
+            //DOM2Writer.serializeAsXML(doc.getDocumentElement(), writer, false);
             STAXUtils.writeElement(doc.getDocumentElement(), writer, false);
             //org.codehaus.xfire.util.stax.DOMStreamWriterHelper.write(writer, doc);
             

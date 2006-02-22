@@ -2,8 +2,6 @@ package org.codehaus.xfire.security.wssecurity;
 
 import java.util.Vector;
 
-import javax.xml.transform.TransformerException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.security.SOAPConstants;
@@ -17,10 +15,9 @@ import org.apache.ws.security.message.WSSAddUsernameToken;
 import org.apache.ws.security.message.WSSignEnvelope;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.codehaus.xfire.security.OutSecurityProcessor;
-import org.codehaus.xfire.security.SecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
+import org.codehaus.xfire.security.SecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityResult;
-import org.codehaus.xfire.util.DOMUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -102,7 +99,7 @@ public class WSS4JOutSecurityProcessor
      */
     private Document signDocument(Document document)
     {
-        WSSignEnvelope signer = new WSSignEnvelope();
+        WSSignEnvelope signer = new WSSignEnvelope("actor");
         try
         {
             SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(document
@@ -112,7 +109,7 @@ public class WSS4JOutSecurityProcessor
             signer.setSignatureAlgorithm(WSConstants.RSA);
             // signer.setUseSingleCertificate(true);
             signer.setKeyIdentifierType(WSConstants.ISSUER_SERIAL);
-
+            signer.setActor("actor1");
             Vector parts = new Vector();
             WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants.getEnvelopeURI(),
                     "Content");
