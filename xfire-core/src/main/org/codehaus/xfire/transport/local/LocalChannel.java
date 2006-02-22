@@ -14,6 +14,7 @@ import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.util.STAXUtils;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
@@ -53,6 +54,15 @@ public class LocalChannel
                 final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter( out, message.getEncoding(),context );
 
                 message.getSerializer().writeMessage( message, writer, context );
+                
+                try
+                {
+                    writer.close();
+                }
+                catch (XMLStreamException e)
+                {
+                    throw new XFireException("Couldn't close stream.", e);
+                }
             }
             else
             {
