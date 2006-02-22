@@ -325,7 +325,7 @@ public class AnnotationServiceFactory
         }
         else
         {
-            return super.isOutParam(method, j);
+            return super.isInParam(method, j);
         }
     }
     
