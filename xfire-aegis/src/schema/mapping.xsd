@@ -38,6 +38,7 @@
   <element name="parameter">
     <complexType>
       <attribute name="index" type="int"/>
+      <attribute name="class" type="string"/>
       <attributeGroup ref="tns:mappedType"/>
       <anyAttribute namespace='##other' processContents='lax'/>
     </complexType>

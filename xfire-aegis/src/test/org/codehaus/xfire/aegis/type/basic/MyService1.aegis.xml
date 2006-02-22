@@ -10,18 +10,18 @@
         </method>
         <method name="getCollection">
             <return-type componentType="java.lang.Float"/>
-            <parameter index="0" type="int" mappedName="myint"/>
+            <parameter index="0" class="int" mappedName="myint"/>
         </method>
         <method name="getCollectionForValues">
             <return-type componentType="java.math.BigDecimal"/>
         </method>
         <method name="getCollectionForValues">
-            <parameter index="0" type="java.lang.String"/>
+            <parameter index="0" class="java.lang.String"/>
             <parameter index="1" componentType="java.util.Date"/>
         </method>
         <method name="getCollectionForValues">
             <return-type componentType="java.util.Calendar"/>
-            <parameter index="0" type="int"/>
+            <parameter index="0" class="int"/>
             <parameter index="1" componentType="java.lang.Bit"/>
         </method>
     </mapping>

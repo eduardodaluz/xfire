@@ -422,10 +422,10 @@ public class XMLTypeCreator extends AbstractTypeCreator
                 if(match != null)
                 {
                     //we check if the type is specified and matches
-                    if(match.getAttributeValue("type") != null)
+                    if(match.getAttributeValue("class") != null)
                     {
                         //if it doesn't match, then we can definitely rule out this result
-                        if(!match.getAttributeValue("type").equals(parameterType.getName()))
+                        if(!match.getAttributeValue("class").equals(parameterType.getName()))
                         {
                             iterator.remove();
                         }
