@@ -15,4 +15,4 @@ Ant:
 [Deploying Snapshots and Distributions]
 This should install the xfire jars and distribution to the Maven 
 1 and 2 repositories:
-$ mvn deploy
+$ mvn -Duser.name=yourusername deploy

@@ -38,7 +38,7 @@
       <artifactId>wsdl4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>xfire</groupId>
+      <groupId>org.apache.ws.commons</groupId>
       <artifactId>XmlSchema</artifactId>
     </dependency>
     <dependency>

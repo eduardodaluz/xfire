@@ -123,6 +123,12 @@
       <url>http://dist.codehaus.org/</url>
       <layout>legacy</layout>
     </repository>
+    <repository>
+      <id>apache-snapshots</id>
+      <name>Apache snapshot repository</name>
+      <url>http://cvs.apache.org/maven-snapshot-repository/</url>
+      <layout>legacy</layout>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -319,9 +325,9 @@
         <version>1.0</version>
       </dependency>
       <dependency>
-        <groupId>xfire</groupId>
+        <groupId>org.apache.ws.commons</groupId>
         <artifactId>XmlSchema</artifactId>
-        <version>20060128-patched</version>
+        <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>jetty</groupId>
@@ -488,7 +494,7 @@
       <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2</url>
     </repository>
     <snapshotRepository>
-      <id>xfire</id>
+      <id>xfire-snapshots</id>
       <name>XFire Central Development Repository</name>
       <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2-snapshot</url>
     </snapshotRepository>

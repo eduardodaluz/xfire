@@ -95,14 +95,14 @@
             <goals>
               <goal>assembly</goal>
             </goals>
+            <configuration>
+              <descriptor>assembly.xml</descriptor>
+              <finalName>xfire</finalName>
+              <outputDirectory>target/distro</outputDirectory>
+              <workDirectory>target/work</workDirectory>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <descriptor>assembly.xml</descriptor>
-          <finalName>xfire</finalName>
-          <outputDirectory>target/distro</outputDirectory>
-          <workDirectory>target/work</workDirectory>
-        </configuration>
       </plugin>
     </plugins>
   </build>

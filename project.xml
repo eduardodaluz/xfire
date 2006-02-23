@@ -219,8 +219,16 @@
     <dependency>
       <groupId>httpunit</groupId>
       <artifactId>httpunit</artifactId>
-      <version>1.5.1</version>
+      <version>1.6.1</version>
       <url>http://httpunit.sourceforge.net/</url>
+      <properties>
+        <scope>test</scope>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>0.9.5</version>
       <properties>
         <scope>test</scope>
       </properties>
