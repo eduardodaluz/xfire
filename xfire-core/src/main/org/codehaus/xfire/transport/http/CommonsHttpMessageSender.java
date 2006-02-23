@@ -49,6 +49,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public static final String HTTP_CLIENT_PARAMS = "httpClient.params";
     public static final String USER_AGENT =  
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
+    public static final String HTTP_PROXY_HOST = "http.proxyHost";
+    public static final String HTTP_PROXY_PORT = "http.proxyPort";
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -74,6 +76,19 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         else
         {
             client.setParams(params);
+        }
+
+        if (System.getProperty(HTTP_PROXY_HOST) != null)
+        {
+            client.getHostConfiguration().setProxy(System.getProperty(HTTP_PROXY_HOST), 
+                Integer.parseInt(System.getProperty(HTTP_PROXY_PORT), 80));
+        }
+        
+        String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
+        if (proxyHost != null)
+        {
+            client.getHostConfiguration().setProxy(proxyHost, 
+                Integer.parseInt((String) context.getContextualProperty(HTTP_PROXY_PORT), 80));
         }
         
         postMethod = new PostMethod(getUri());
