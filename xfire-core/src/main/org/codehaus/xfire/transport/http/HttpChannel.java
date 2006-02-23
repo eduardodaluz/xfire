@@ -19,6 +19,7 @@ import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.ByteDataSource;
 import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.exchange.AbstractMessage;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
@@ -172,8 +173,10 @@ public class HttpChannel
             sender.send();
 
             if (sender.hasResponse())
-            {
-                getEndpoint().onReceive(context, sender.getInMessage());
+            {   
+                InMessage inMessage = sender.getInMessage();
+                inMessage.setChannel(this);
+                getEndpoint().onReceive(context, inMessage);
             }
         }
         catch (IOException e)
