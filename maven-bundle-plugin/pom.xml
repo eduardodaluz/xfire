@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.codehaus.mojo.xfire</groupId>
+  <groupId>org.codehaus.xfire.plugins</groupId>
   <artifactId>maven-bundle-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Bundle Plugin</name>
-  <version>1.0-SNAPSHOT</version>
-  <parent>
-    <artifactId>xfire-parent</artifactId>
-    <groupId>org.codehaus.xfire</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+  <version>1.0</version>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
     <testSourceDirectory>src/test</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-one-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install-maven-one-repository</goal>
+              <goal>deploy-maven-one-repository</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <remoteRepositoryId>xfire</remoteRepositoryId>
+          <remoteRepositoryUrl>scp://xfire.codehaus.org/dist</remoteRepositoryUrl>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>snapshot</id>
+      <name>Snapshot repository</name>
+      <url>http://snapshots.maven.codehaus.org/maven2/</url>
+    </pluginRepository>
+  </pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -46,4 +65,20 @@
       <version>2.0</version>
     </dependency>
   </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>xfire</id>
+      <name>XFire Central Repository</name>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2</url>
+    </repository>
+    <snapshotRepository>
+      <id>xfire-snapshots</id>
+      <name>XFire Central Development Repository</name>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2-snapshot</url>
+    </snapshotRepository>
+    <site>
+      <id>xfire</id>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/public_html/maven/</url>
+    </site>
+  </distributionManagement>
 </project>

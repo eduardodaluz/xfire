@@ -101,7 +101,6 @@
     </profile>
   </profiles>
   <modules>
-    <module>maven-bundle-plugin</module>
     <module>xfire-aegis</module>
     <module>xfire-all</module>
     <module>xfire-annotations</module>
