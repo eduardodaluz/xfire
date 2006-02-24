@@ -1,19 +1,8 @@
 package org.codehaus.xfire.security;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import javax.xml.stream.XMLStreamReader;
-
-import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.exchange.InMessage;
-import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.security.handlers.InSecurityHandler;
-import org.codehaus.xfire.util.STAXUtils;
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.jmock.util.Dummy;
-import org.w3c.dom.Document;
 
 public class InSecurityHandlerTest
     extends MockObjectTestCase

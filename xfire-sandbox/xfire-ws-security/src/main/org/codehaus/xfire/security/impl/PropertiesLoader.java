@@ -2,6 +2,7 @@ package org.codehaus.xfire.security.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -45,7 +46,13 @@ public class PropertiesLoader
                 }
             }
         }
-
+        // Trim unnecessary white spaces
+        Iterator iter = props.keySet().iterator();
+        while (iter.hasNext())
+        {
+            String key = (String) iter.next();
+            props.put(key, ((String) props.getProperty(key).trim()));
+        }
         return props;
     }
 

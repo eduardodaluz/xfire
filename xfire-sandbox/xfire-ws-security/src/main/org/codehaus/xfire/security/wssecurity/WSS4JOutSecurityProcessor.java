@@ -50,6 +50,10 @@ public class WSS4JOutSecurityProcessor
 
     private SecurityProcessorBuilder builder;
 
+    private String encSymetricAlg;
+
+    private String encryptionAlg;
+
     /*
      * (non-Javadoc)
      * 
@@ -118,7 +122,7 @@ public class WSS4JOutSecurityProcessor
             signer.setParts(parts);
 
             document = signer.build(document, crypto);
-           
+
         }
         catch (WSSecurityException e)
         {
@@ -144,7 +148,12 @@ public class WSS4JOutSecurityProcessor
 
         parts.add(part);
         encryptor.setParts(parts);
-
+        // set symetric encryption
+        // WSConstants.KEYTRANSPORT_RSA15
+        // WSConstants.KEYTRANSPORT_RSAOEP
+        encryptor.setKeyEnc(getEncryptionAlg());
+        encryptor.setSymmetricEncAlgorithm(getEncSymetricAlg());
+        
         // if alias for public key is not provided, use private key intead
         if (alias != null)
         {
@@ -165,6 +174,26 @@ public class WSS4JOutSecurityProcessor
 
         }
         return document;
+    }
+
+    public String getEncryptionAlg()
+    {
+        return encryptionAlg;
+    }
+
+    public void setEncryptionAlg(String alg)
+    {
+        encryptionAlg = alg;
+    }
+
+    public String getEncSymetricAlg()
+    {
+        return encSymetricAlg;
+    }
+
+    public void setEncSymetricAlg(String alg)
+    {
+        encSymetricAlg = alg;
     }
 
     /**

@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.security.WSConstants;
+import org.apache.xml.security.utils.EncryptionConstants;
 import org.codehaus.xfire.security.SecurityProcessorBuilder;
 import org.codehaus.xfire.security.SecurityActions;
 import org.codehaus.xfire.security.SecurityProcessor;
@@ -40,6 +42,11 @@ public class OutSecurityDefaultBuilder
         String userName = (String) configuration.get(PROP_USER_NAME);
         String userPassword = (String) configuration.get(PROP_USER_PASSWORD);
         String usePlainPass = (String) configuration.get(PROP_USER_PASSWORD_USE_PLAIN);
+        String encryptionAlg = (String) configuration.get(PROP_ENC_ALG);
+        String encryptionSymAlg = (String) configuration.get(PROP_SYM_ALG);
+
+        wss4jProcessor.setEncryptionAlg(encryptionAlg);
+        wss4jProcessor.setEncSymetricAlg(encryptionSymAlg);
 
         wss4jProcessor.setAlias(alias);
         for (int i = 0; i < actions.length; i++)
@@ -176,9 +183,35 @@ public class OutSecurityDefaultBuilder
         validateKeystore(props);
         checkRequiredProperty(SecurityActions.AC_ENCRYPT, new String[] { PROP_KEYSTORE_FILE,
                 PROP_KEYSTORE_PASS, PROP_KEYSTORE_TYPE }, props);
-        // PROP_PRIVATE_ALIAS, PROP_KEY_ALIAS,
-        // PROP_SYM_ALG, PROP_CERT_FILE, ,
-        // 
-    }
 
+        String encryptionAlg = (String) configuration.get(PROP_ENC_ALG);
+        if (encryptionAlg != null)
+        {
+            if (!EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15.equals(encryptionAlg)
+                    && !EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP.equals(encryptionAlg))
+            {
+                throw new ConfigValidationException(SecurityActions.AC_ENCRYPT,
+                        "Unsupported encryption algorith : [" + encryptionAlg
+                                + "]. Supported values : "
+                                + EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15 + ","
+                                + EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP);
+            }
+        }
+        String encryptionSymAlg = (String) configuration.get(PROP_SYM_ALG);
+        if (encryptionSymAlg != null)
+        {
+
+            if (!WSConstants.TRIPLE_DES.equals(encryptionSymAlg)
+                    && !WSConstants.AES_128.equals(encryptionSymAlg)
+                    && !WSConstants.AES_192.equals(encryptionSymAlg)
+                    && !WSConstants.AES_256.equals(encryptionSymAlg))
+            {
+                throw new ConfigValidationException(SecurityActions.AC_ENCRYPT,
+                        "Unsupported symetric encryption algorithm : [" + encryptionSymAlg + "]."
+                                + "Supported values : " + WSConstants.TRIPLE_DES + ","
+                                + WSConstants.AES_128 + "," + WSConstants.AES_192 + ","
+                                + WSConstants.AES_256);
+            }
+        }
+    }
 }

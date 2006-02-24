@@ -33,7 +33,7 @@ public abstract class SecurityConfigurationWorker
     protected static Map actionsMap = new HashMap();
 
     protected Map configuration = new HashMap();
-    
+
     static
     {
         for (int a = 0; a < SecurityActions.ALL_ACTIONS.length; a++)
@@ -106,9 +106,6 @@ public abstract class SecurityConfigurationWorker
      */
     protected void validateKeystore(Map props)
     {
-        // String certFile = (String) props.get(PROP_CERT_FILE);
-        String keystore = (String) props.get(PROP_KEYSTORE_FILE);
-        String keystorePass = (String) props.get(PROP_KEYSTORE_PASS);
         checkRequiredProperty("", new String[] { PROP_KEYSTORE_FILE, PROP_KEYSTORE_PASS, }, props);
     }
 
@@ -155,6 +152,5 @@ public abstract class SecurityConfigurationWorker
     {
         this.configuration = properties;
     }
-    
-    
+
 }

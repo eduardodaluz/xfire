@@ -60,7 +60,7 @@ public class BookClientUTPP
         throws MalformedURLException
     {
         BookClientUTPP client = new BookClientUTPP();
-        client.executeClient("http://localhost:8081/bookws/services/BookService");
+        client.executeClient("http://localhost:8081/bookws/services/BookServiceUTPP");
 
     }
 

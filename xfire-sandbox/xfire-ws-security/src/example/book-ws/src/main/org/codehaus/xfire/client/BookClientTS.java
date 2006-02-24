@@ -7,17 +7,22 @@ import java.util.Map;
 import org.codehaus.xfire.security.impl.SecurityProperties;
 
 /**
- * @author tomeks User Token Hashed Password
+ * @author tomeks
+ * 
+ * Timestamp example
  */
-public class BookClientUTHP
+public class BookClientTS
     extends BookClientUTPP
 {
 
     protected Map getSecurityProperties()
     {
         Map config = new HashMap();
-        config.put(SecurityProperties.PROP_ACTIONS, "usertoken");
-        config.put(SecurityProperties.PROP_TIME_TO_LIVE, "1");
+        // Add timestamp header
+        config.put(SecurityProperties.PROP_ACTIONS, "timestamp");
+        // Message is valid for 10 seconds.
+        config.put(SecurityProperties.PROP_TIME_TO_LIVE, "10");
+
         return config;
     }
 
@@ -28,9 +33,8 @@ public class BookClientUTHP
     public static void main(String[] args)
         throws MalformedURLException
     {
-        BookClientUTHP client = new BookClientUTHP();
-        client.executeClient("http://localhost:8081/bookws/services/BookServiceUTHP");
+        BookClientTS client = new BookClientTS();
+        client.executeClient("http://localhost:8081/bookws/services/BookServiceTS");
 
     }
-
 }
