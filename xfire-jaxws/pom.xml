@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jaxws</artifactId>
   <name>XFire JAX-WS Support</name>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <build>
     <resources>
       <resource>
