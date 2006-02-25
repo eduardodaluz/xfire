@@ -4,7 +4,7 @@
   <artifactId>xfire-parent</artifactId>
   <packaging>pom</packaging>
   <name>XFire</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
@@ -139,6 +139,15 @@
   <reporting>
     <plugins>
       <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.0-beta-3</version>
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+          <verbose>false</verbose>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>2.0-beta-3</version>
         <reportSets>
@@ -147,19 +156,10 @@
               <report>jdepend-maven-plugin</report>
               <report>jxr-maven-plugin</report>
               <report>surefire-report-maven-plugin</report>
-               <report>maven-javadoc-plugin</report>
+              <report>maven-javadoc-plugin</report>
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.0-beta-3</version>
-        <configuration>
-          <minmemory>128m</minmemory>
-          <maxmemory>512</maxmemory>
-          <verbose>false</verbose>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -324,12 +324,12 @@
         <version>1.0</version>
         <exclusions>
           <exclusion>
-            <groupId>saxpath</groupId>
             <artifactId>saxpath</artifactId>
+            <groupId>saxpath</groupId>
           </exclusion>
           <exclusion>
-            <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
+            <groupId>xalan</groupId>
           </exclusion>
         </exclusions>
       </dependency>
