@@ -103,7 +103,7 @@ public class WSS4JOutSecurityProcessor
      */
     private Document signDocument(Document document)
     {
-        WSSignEnvelope signer = new WSSignEnvelope("actor");
+        WSSignEnvelope signer = new WSSignEnvelope();
         try
         {
             SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(document
@@ -113,7 +113,7 @@ public class WSS4JOutSecurityProcessor
             signer.setSignatureAlgorithm(WSConstants.RSA);
             // signer.setUseSingleCertificate(true);
             signer.setKeyIdentifierType(WSConstants.ISSUER_SERIAL);
-            signer.setActor("actor1");
+            //signer.setActor("actor1");
             Vector parts = new Vector();
             WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants.getEnvelopeURI(),
                     "Content");

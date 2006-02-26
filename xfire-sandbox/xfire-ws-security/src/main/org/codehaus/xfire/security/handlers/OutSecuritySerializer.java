@@ -44,8 +44,11 @@ public class OutSecuritySerializer
         this.processor = processor;
     }
 
-    /* (non-Javadoc)
-     * @see org.codehaus.xfire.exchange.MessageSerializer#readMessage(org.codehaus.xfire.exchange.InMessage, org.codehaus.xfire.MessageContext)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.xfire.exchange.MessageSerializer#readMessage(org.codehaus.xfire.exchange.InMessage,
+     *      org.codehaus.xfire.MessageContext)
      */
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
@@ -71,8 +74,11 @@ public class OutSecuritySerializer
         return outputStream.toByteArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.codehaus.xfire.exchange.MessageSerializer#writeMessage(org.codehaus.xfire.exchange.OutMessage, javax.xml.stream.XMLStreamWriter, org.codehaus.xfire.MessageContext)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.codehaus.xfire.exchange.MessageSerializer#writeMessage(org.codehaus.xfire.exchange.OutMessage,
+     *      javax.xml.stream.XMLStreamWriter, org.codehaus.xfire.MessageContext)
      */
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)
         throws XFireFault
@@ -83,18 +89,11 @@ public class OutSecuritySerializer
                                                                                      context));
             Document doc = DOMUtils.readXml(inStream);
             doc = processor.process(doc).getDocument();
-            System.out.print("\n--------OutSecuirytSerializer -------------------\n");
-            OutputStream os = new FileOutputStream("OutSecuirytSerializer.xml");
-        //    DOM2Writer.serializeAsXML(doc.getDocumentElement(), new OutputStreamWriter(os), false);
-            os.close();
-            os = new FileOutputStream("OutSecuirytSerializer.xml1");
-            DOMUtils.writeXml(doc.getDocumentElement(), os);
-            os.close();
-            System.out.print("\n---------------------------\n");
-            //DOM2Writer.serializeAsXML(doc.getDocumentElement(), writer, false);
+
             STAXUtils.writeElement(doc.getDocumentElement(), writer, false);
-            //org.codehaus.xfire.util.stax.DOMStreamWriterHelper.write(writer, doc);
-            
+            // org.codehaus.xfire.util.stax.DOMStreamWriterHelper.write(writer,
+            // doc);
+
             inStream.close();
             writer.close();
 
@@ -113,4 +112,3 @@ public class OutSecuritySerializer
     }
 
 }
- 
