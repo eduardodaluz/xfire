@@ -23,9 +23,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.wss4j</groupId>
+      <groupId>xfire</groupId>
       <artifactId>wss4j</artifactId>
-      <version>1.1.0</version>
+      <version>1.1</version>
       <!--  pulled this file from ws.apache.org/wss4j.  this is not yet in ibiblio, I wonder why not? -->
     </dependency>
     <dependency>
@@ -65,7 +65,7 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.opensaml</groupId>
+      <groupId>xfire</groupId>
       <artifactId>opensaml</artifactId>
       <version>1.0.1</version>
       <!-- pulled this file from www.opensaml.org (java binary distribution) not in ibiblio, yet
