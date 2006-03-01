@@ -66,7 +66,7 @@ public class EchoWSDLClientTest
 
         WSDLServiceBuilder builder = new WSDLServiceBuilder(new ByteArrayInputStream(bos.toByteArray()));
         builder.setTransportManager(getTransportManager());
-        builder.walkTree();
+        builder.build();
         
         Service service = (Service) builder.getServices().iterator().next();
         assertTrue(service.getBindingProvider() instanceof AegisBindingProvider);
