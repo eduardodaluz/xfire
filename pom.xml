@@ -19,9 +19,9 @@
   </ciManagement>
   <inceptionYear>2004</inceptionYear>
   <scm>
-    <connection>scm:cvs:pserver:anonymous:@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</connection>
-    <developerConnection>scm:cvs:ext:${maven.username}@cvs.xfire.codehaus.org:/home/projects/xfire/scm:xfire</developerConnection>
-    <url>https://cvs.xfire.codehaus.org/viewrep/xfire</url>
+    <connection>scm:svn:https://svn.codehaus.org/xfire/trunk/</connection>
+    <developerConnection>scm:svn:https://${maven.username}@svn.codehaus.org/xfire/trunk/</developerConnection>
+    <url>https://cvs.xfire.codehaus.org/viewrep/xfire/trunk</url>
   </scm>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
