@@ -25,7 +25,7 @@ public class WSDLServiceBuilderTest
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echo.wsdl"));
         builder.setBindingProvider(new MessageBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         Collection services = builder.getServices();        
         assertEquals(1, services.size());
@@ -82,7 +82,7 @@ public class WSDLServiceBuilderTest
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoHttp.wsdl"));
         builder.setBindingProvider(new MessageBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         Collection services = builder.getServices();        
         assertEquals(1, services.size());
@@ -102,7 +102,7 @@ public class WSDLServiceBuilderTest
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoSimple.wsdl"));
         builder.setBindingProvider(new MessageBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         Collection services = builder.getServices();        
         assertEquals(1, services.size());

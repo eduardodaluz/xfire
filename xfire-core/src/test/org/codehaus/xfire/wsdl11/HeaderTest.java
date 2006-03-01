@@ -26,7 +26,7 @@ public class HeaderTest
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoHeader.wsdl"));
         builder.setBindingProvider(new MessageBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         Collection services = builder.getServices();        
         assertEquals(1, services.size());

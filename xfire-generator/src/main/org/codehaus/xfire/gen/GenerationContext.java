@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Collection;
 
 import org.codehaus.xfire.AbstractContext;
-import org.codehaus.xfire.service.Service;
 
 import com.sun.codemodel.JCodeModel;
 
@@ -15,14 +14,36 @@ public class GenerationContext
     private Collection services;
     private Object wsdl;
     private String destinationPackage;
+    private String baseURI;
     private SchemaSupport schemaGenerator;
     private File outputDirectory;
     private String wsdlLocation;
+    private Collection schemas;
     
     public GenerationContext(JCodeModel model, Object wsdl)
     {
         codeModel = model;
         this.wsdl = wsdl;
+    }
+
+    public String getBaseURI()
+    {
+        return baseURI;
+    }
+
+    public void setBaseURI(String baseURI)
+    {
+        this.baseURI = baseURI;
+    }
+
+    public Collection getSchemas()
+    {
+        return schemas;
+    }
+
+    public void setSchemas(Collection schemas)
+    {
+        this.schemas = schemas;
     }
 
     public String getWsdlLocation()

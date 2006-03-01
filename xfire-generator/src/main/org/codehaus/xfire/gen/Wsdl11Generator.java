@@ -1,11 +1,9 @@
 package org.codehaus.xfire.gen;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Iterator;
 
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 
@@ -17,6 +15,7 @@ public class Wsdl11Generator
     public static final String XMLBEANS = "xmlbeans";
 
     private String wsdl;
+    private String baseURI;
     private String outputDirectory;
     private String destinationPackage;
     
@@ -47,10 +46,9 @@ public class Wsdl11Generator
             }
         }
 
-       // WSDLServiceBuilder builder = new WSDLServiceBuilder(new FileInputStream(wsdl));
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(new WSDLInputStreamLoader().getInputStream(wsdl));
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, new WSDLInputStreamLoader().getInputStream(wsdl));
         builder.setBindingProvider(support.getBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         if (profile == null) profile = Jsr181Profile.class.getName();
         PluginProfile profileObj = 
@@ -59,6 +57,8 @@ public class Wsdl11Generator
         GenerationContext context = new GenerationContext(codeModel, builder.getDefinition());
         context.setOutputDirectory(dest);
         context.setWsdlLocation(wsdl);
+        context.setBaseURI(baseURI);
+        context.setSchemas(builder.getSchemaElements());
         
         support.initialize(context);
 
@@ -105,6 +105,16 @@ public class Wsdl11Generator
     public JCodeModel getCodeModel()
     {
         return codeModel;
+    }
+
+    public String getBaseURI()
+    {
+        return baseURI;
+    }
+
+    public void setBaseURI(String baseURI)
+    {
+        this.baseURI = baseURI;
     }
 
     public String getWsdl()

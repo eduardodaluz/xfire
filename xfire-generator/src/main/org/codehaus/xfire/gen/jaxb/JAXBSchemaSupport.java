@@ -1,13 +1,9 @@
 package org.codehaus.xfire.gen.jaxb;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import javax.wsdl.Definition;
-import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AegisBindingProvider;
@@ -49,30 +45,7 @@ public class JAXBSchemaSupport implements SchemaSupport
         schemaCompiler = XJC.createSchemaCompiler();
         schemaCompiler.setErrorListener(er);
 
-        Definition def = (Definition) context.getWsdl();
-        
-        ArrayList<Element> elements = new ArrayList<Element>();
-        for (Iterator itr = def.getTypes().getExtensibilityElements().iterator(); itr.hasNext();)
-        {
-            Object o = itr.next();
-            if (o instanceof UnknownExtensibilityElement)
-            {
-                UnknownExtensibilityElement uee = (UnknownExtensibilityElement) o;
-                
-                elements.add(uee.getElement());
-            }
-            else
-            {
-                try 
-                {
-                    Method mth = o.getClass().getMethod("getElement", new Class[0]);
-                    Object val = mth.invoke(o, new Object[0]);
-                    elements.add((Element) val);
-                } catch (Exception e) {
-                    // Ignore exceptions ?
-                }
-            }
-        }
+        ArrayList<Element> elements = (ArrayList<Element>) context.getSchemas();
         
         int schemaElementCount = 1;
         for(Element schemaElement : elements)
@@ -83,6 +56,8 @@ public class JAXBSchemaSupport implements SchemaSupport
         
         model = schemaCompiler.bind();
 
+        if (er.hasFatalErrors()) throw new GenerationException("Error generating JAXB model.");
+        
         //feed external jaxb:bindings file
         /*Set<InputSource> externalBindings = ((WSDLModelInfo)_modelInfo).getJAXBBindings();
         if(externalBindings != null){
@@ -90,9 +65,9 @@ public class JAXBSchemaSupport implements SchemaSupport
                 schemaCompiler.parseSchema(jaxbBinding);
             }
         }*/
-        
+       
         jaxbModel = model.generateCode(null, er);
-         jaxbModel.build(context.getOutputDirectory());
+        jaxbModel.build(context.getOutputDirectory());
 
         Thread.currentThread().setContextClassLoader(cl);
     }

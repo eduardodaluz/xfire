@@ -167,7 +167,7 @@ public class Client
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(definition);
         builder.setTransportManager(xfire.getTransportManager());
-        builder.walkTree();
+        builder.build();
         
         Endpoint ep = findEndpoint(binding, builder.getServices());
         

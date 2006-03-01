@@ -145,7 +145,7 @@ public abstract class AbstractServiceGenerator
             }
         }
 
-        if (op.hasOutput())
+        if (op.hasOutput() && op.getOutputMessage().size() > 0)
         {
             MessageInfo outputMsg = op.getOutputMessage();
             Iterator rtitr = outputMsg.getMessageParts().iterator();
@@ -216,11 +216,11 @@ public abstract class AbstractServiceGenerator
             FaultInfo faultInfo = (FaultInfo) itr.next();
             
             List messageParts = faultInfo.getMessageParts();
-            if (messageParts.size() > 1)
+            /*if (messageParts.size() > 1)
             {
                 throw new GenerationException("Operation " + op.getName() + " has a fault " + faultInfo.getName() + 
                                               " with multiple parts. This is not supported at this time.");
-            }
+            }*/
             
             MessagePartInfo part = (MessagePartInfo) messageParts.get(0);
             

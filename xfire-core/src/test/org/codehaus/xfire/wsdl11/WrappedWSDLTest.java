@@ -28,7 +28,7 @@ public class WrappedWSDLTest
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoWrapped.wsdl"));
         builder.setBindingProvider(new MessageBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         Collection services = builder.getServices();        
         assertEquals(1, services.size());
@@ -73,7 +73,7 @@ public class WrappedWSDLTest
     {
         WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echoBadWrapped.wsdl"));
         builder.setBindingProvider(new MessageBindingProvider());
-        builder.walkTree();
+        builder.build();
         
         Collection services = builder.getServices();        
         assertEquals(1, services.size());

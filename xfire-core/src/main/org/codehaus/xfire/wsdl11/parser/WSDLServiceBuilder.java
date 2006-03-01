@@ -26,6 +26,8 @@ import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -56,10 +58,11 @@ import org.xml.sax.InputSource;
  */
 public class WSDLServiceBuilder
 {
+    private static final Log log = LogFactory.getLog(WSDLServiceBuilder.class);
+    
     private PortType portType;
     private OperationInfo opInfo;
-    private XmlSchemaCollection schemas;
-    private List services = new ArrayList();
+    private XmlSchemaCollection schemas = new XmlSchemaCollection();;
     private boolean isWrapped = false;
     private BindingProvider bindingProvider;
     
@@ -73,13 +76,25 @@ public class WSDLServiceBuilder
     private Map woutput2msg = new HashMap();
     private Map wfault2msg = new HashMap();
     
+    private List schemaElements = new ArrayList();
+    private List definitions = new ArrayList();
+    private List definitionPaths = new ArrayList();
+    private List portTypes = new ArrayList();
+    private List types = new ArrayList();
+
+    /** A collection of XFire Service classes that were built. */
+    private List wsdlServices = new ArrayList();
+    private List xFireSservices = new ArrayList();
+
     private TransportManager transportManager =
         XFireFactory.newInstance().getXFire().getTransportManager();
     private Service service;
     
+    
     public WSDLServiceBuilder(Definition definition)
     {
         this.definition = definition;
+        definitions.add(definition);
         
         bindingAnnotators.add(new SoapBindingAnnotator());
     }
@@ -89,6 +104,11 @@ public class WSDLServiceBuilder
         this(WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(is)));
     }
 
+    public WSDLServiceBuilder(String baseURI, InputStream is) throws WSDLException
+    {
+        this(WSDLFactory.newInstance().newWSDLReader().readWSDL(baseURI, new InputSource(is)));
+    }
+    
     public BindingProvider getBindingProvider()
     {
         if (bindingProvider == null)
@@ -127,41 +147,26 @@ public class WSDLServiceBuilder
         this.transportManager = transportManager;
     }
 
-    public void walkTree() throws Exception
+    public void build() throws Exception
     {
-        //begin();
-
-        //visit(definition);
-        Collection imports = definition.getImports().values();
-        for (Iterator iterator = imports.iterator(); iterator.hasNext();)
-        {
-            Import wsdlImport = (Import) iterator.next();
-            //visit(wsdlImport);
-        }
-        visit(definition.getTypes());
+        processImports(definition);
         
-        Collection messages = definition.getMessages().values();
-        for (Iterator iterator = messages.iterator(); iterator.hasNext();)
+        // Import all the types..
+        types.add(definition.getTypes());
+        for (Iterator itr = types.iterator(); itr.hasNext();)
         {
-            Message message = (Message) iterator.next();
-            //visit(message);
-            Collection parts = message.getParts().values();
-            for (Iterator iterator2 = parts.iterator(); iterator2.hasNext();)
-            {
-                Part part = (Part) iterator2.next();
-                //visit(part);
-            }
+            visit((Types) itr.next());
         }
         
-        Collection portTypes = definition.getPortTypes().values();
+        portTypes.addAll(definition.getPortTypes().values());
         for (Iterator itr = portTypes.iterator(); itr.hasNext();)
         {
             portType = (PortType) itr.next();
             visit(portType);
         }
         
-        Collection services = definition.getServices().values();
-        for (Iterator iterator = services.iterator(); iterator.hasNext();)
+        wsdlServices.addAll(definition.getServices().values());
+        for (Iterator iterator = wsdlServices.iterator(); iterator.hasNext();)
         {
             javax.wsdl.Service wservice = (javax.wsdl.Service) iterator.next();
             Map portType2Ports = getPortTypeToPortMap(wservice);
@@ -184,18 +189,48 @@ public class WSDLServiceBuilder
                                                                              bindingProvider,
                                                                              transportManager);
                 config.configure();
-                this.services.add(config.getService());
+                this.xFireSservices.add(config.getService());
             }
         }
 
         //end();
     }
 
+    protected void processImports(Definition parent)
+    {
+        Collection imports = parent.getImports().values();
+        for (Iterator iterator = imports.iterator(); iterator.hasNext();)
+        {
+            List wsdlImports = (List) iterator.next();
+            for (Iterator importItr = wsdlImports.iterator(); importItr.hasNext();)
+            {
+                Import i = (Import) importItr.next();
+                
+                Definition iDef = i.getDefinition();
+                
+                if (!definitionPaths.contains(i.getLocationURI())) 
+                {
+                    log.info("Adding wsdl definition " + i.getLocationURI() +
+                             " with baseURI of " + parent.getDocumentBaseURI());
+                    
+                    definitionPaths.add(i.getLocationURI());
+                    
+                    definitions.add(iDef);
+                    types.add(iDef.getTypes());
+                    portTypes.addAll(iDef.getPortTypes().values());
+                    wsdlServices.addAll(iDef.getServices().values());
+                    
+                    processImports(iDef);
+                }
+            }
+        }
+    }
+
     private Map getPortTypeToPortMap(javax.wsdl.Service wservice)
     {
         Map pt2port = new HashMap();
         
-        for (Iterator itr = definition.getPortTypes().values().iterator(); itr.hasNext();)
+        for (Iterator itr = portTypes.iterator(); itr.hasNext();)
         {
             PortType pt = (PortType) itr.next();
             List ports = new ArrayList();
@@ -217,19 +252,16 @@ public class WSDLServiceBuilder
 
     public Collection getServices()
     {
-        return services;
+        return xFireSservices;
     }
     
     protected void visit(Types types)
     {
-        schemas = new XmlSchemaCollection();
-
         if (types == null) return;
         
         for (Iterator itr = types.getExtensibilityElements().iterator(); itr.hasNext();)
         {
             ExtensibilityElement ee = (ExtensibilityElement) itr.next();
-            
             if (ee instanceof UnknownExtensibilityElement)
             {
                 UnknownExtensibilityElement uee = (UnknownExtensibilityElement) ee;
@@ -244,9 +276,9 @@ public class WSDLServiceBuilder
             		Method mth = ee.getClass().getMethod("getElement", new Class[0]);
             		Object val = mth.invoke(ee, new Object[0]);
             		schemas.read((Element) val);
-            	} catch (Exception e) {
-            		// Ignore exceptions ?
-            	}
+                    schemaElements.add((Element) val);
+            	} 
+                catch (Exception e) {/* Ignore exceptions */}
             }
         }
     }
@@ -529,5 +561,15 @@ public class WSDLServiceBuilder
         {
             createMessageParts(info, output.getMessage());
         }
+    }
+
+    public List getSchemaElements()
+    {
+        return schemaElements;
+    }
+    
+    public XmlSchemaCollection getSchemas()
+    {
+        return schemas;
     }
 }
