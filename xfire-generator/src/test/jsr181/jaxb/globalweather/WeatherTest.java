@@ -45,7 +45,8 @@ public class WeatherTest
     {   
         GlobalWeatherClient service = new GlobalWeatherClient();
         
-        GlobalWeatherSoap client = service.getGlobalWeatherLocalPort();
+        GlobalWeatherSoap client = service.getGlobalWeatherSoapLocalEndpoint();
+        assertNotNull(client);
         
         assertEquals("foo", client.GetWeather("foo", "bar"));
     }

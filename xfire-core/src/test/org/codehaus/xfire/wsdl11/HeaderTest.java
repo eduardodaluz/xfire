@@ -1,6 +1,7 @@
 package org.codehaus.xfire.wsdl11;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -28,7 +29,10 @@ public class HeaderTest
         builder.setBindingProvider(new MessageBindingProvider());
         builder.build();
         
-        Collection services = builder.getServices();        
+        Map serviceMap = builder.getServices();
+        assertEquals(1, serviceMap.size());
+        
+        Collection services = builder.getAllServices();        
         assertEquals(1, services.size());
         
         Service service = (Service) services.iterator().next();

@@ -169,7 +169,7 @@ public class Client
         builder.setTransportManager(xfire.getTransportManager());
         builder.build();
         
-        Endpoint ep = findEndpoint(binding, builder.getServices());
+        Endpoint ep = findEndpoint(binding, builder.getAllServices());
         
         this.url = ep.getUrl();
         this.binding = ep.getBinding();

@@ -30,7 +30,7 @@ public class WrappedWSDLTest
         builder.setBindingProvider(new MessageBindingProvider());
         builder.build();
         
-        Collection services = builder.getServices();        
+        Collection services = builder.getAllServices();        
         assertEquals(1, services.size());
         
         Service service = (Service) services.iterator().next();
@@ -75,7 +75,7 @@ public class WrappedWSDLTest
         builder.setBindingProvider(new MessageBindingProvider());
         builder.build();
         
-        Collection services = builder.getServices();        
+        Collection services = builder.getAllServices();        
         assertEquals(1, services.size());
         
         Service service = (Service) services.iterator().next();

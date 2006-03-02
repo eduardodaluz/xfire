@@ -45,9 +45,11 @@ public abstract class AbstractServiceGenerator
     public void generate(GenerationContext context)
         throws Exception
     {
-        for (Iterator itr = context.getServices().iterator(); itr.hasNext();)
+        for (Iterator itr = context.getServices().values().iterator(); itr.hasNext();)
         {
-            generate(context, (Service) itr.next());
+            List services = (List) itr.next();
+            for (Iterator sitr = services.iterator(); sitr.hasNext();)
+                generate(context, (Service) sitr.next());
         }
     }
     

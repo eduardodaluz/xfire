@@ -49,8 +49,7 @@ public class EchoTest
     {   
         EchoClient service = new EchoClient();
 
-        QName  ep = new QName("http://xfire.codehaus.org/test/echo", "EchoLocalPort");
-        EchoPortType echo = service.getEndpoint(ep);
+        EchoPortType echo = service.getEchoPortTypeLocalEndpoint();
         
         EchoRequestDocument doc = EchoRequestDocument.Factory.newInstance();
         doc.setEchoRequest("foo");

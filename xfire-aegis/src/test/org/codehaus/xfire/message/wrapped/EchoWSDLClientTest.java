@@ -68,7 +68,7 @@ public class EchoWSDLClientTest
         builder.setTransportManager(getTransportManager());
         builder.build();
         
-        Service service = (Service) builder.getServices().iterator().next();
+        Service service = (Service) builder.getAllServices().iterator().next();
         assertTrue(service.getBindingProvider() instanceof AegisBindingProvider);
         AbstractSoapBinding binding = (AbstractSoapBinding) service.getBindings().iterator().next();
         

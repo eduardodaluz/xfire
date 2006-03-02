@@ -241,7 +241,7 @@ public class Service
         return (Endpoint) endpoints.get(name);
     }
     
-    public void addEndpoint(QName name, QName bindingName, String address)
+    public Endpoint addEndpoint(QName name, QName bindingName, String address)
     {
         Binding binding = getBinding(bindingName);
         
@@ -250,7 +250,9 @@ public class Service
             throw new IllegalStateException("Invalid binding: " + bindingName);
         }
         
-        addEndpoint(new Endpoint(name, binding, address));
+        Endpoint ep = new Endpoint(name, binding, address);
+        addEndpoint(ep);
+        return ep;
     }
     
     public Endpoint addEndpoint(QName name, Binding binding, String address)

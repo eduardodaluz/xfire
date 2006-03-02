@@ -48,7 +48,7 @@ public class EchoTest
         EchoClient service = new EchoClient();
         
         QName  ep = new QName("urn:echo:wrapped", "EchoLocalPort");
-        EchoPortType echo = service.getEndpoint(ep);
+        EchoPortType echo = service.getEchoPortTypeLocalEndpoint();
         
         assertEquals("foo", echo.echo("foo"));
     }

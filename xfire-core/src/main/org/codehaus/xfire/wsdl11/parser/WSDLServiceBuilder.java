@@ -81,10 +81,11 @@ public class WSDLServiceBuilder
     private List definitionPaths = new ArrayList();
     private List portTypes = new ArrayList();
     private List types = new ArrayList();
+    private List wsdlServices = new ArrayList();
 
     /** A collection of XFire Service classes that were built. */
-    private List wsdlServices = new ArrayList();
-    private List xFireSservices = new ArrayList();
+    private Map xFireServices = new HashMap();
+    private List allServices = new ArrayList();
 
     private TransportManager transportManager =
         XFireFactory.newInstance().getXFire().getTransportManager();
@@ -189,11 +190,25 @@ public class WSDLServiceBuilder
                                                                              bindingProvider,
                                                                              transportManager);
                 config.configure();
-                this.xFireSservices.add(config.getService());
+                addService(config.getService());
             }
         }
+    }
 
-        //end();
+    /**
+     * Adds a service to the map of services and also to the list of all services.
+     * @param s
+     */
+    protected void addService(Service s)
+    {
+        List services = (List) xFireServices.get(s.getName());
+        if (services == null)
+        {
+            services = new ArrayList();
+            xFireServices.put(s.getName(), services);
+        }
+        services.add(s);
+        allServices.add(s);
     }
 
     protected void processImports(Definition parent)
@@ -250,9 +265,23 @@ public class WSDLServiceBuilder
         return pt2port;
     }
 
-    public Collection getServices()
+    /**
+     * Gets a Map of Services. The key is the service name and the value is a list
+     * of services with that name.
+     * @return
+     */
+    public Map getServices()
     {
-        return xFireSservices;
+        return xFireServices;
+    }
+    
+    /**
+     * Gets a list of every service created.
+     * @return
+     */
+    public List getAllServices()
+    {
+        return allServices;
     }
     
     protected void visit(Types types)

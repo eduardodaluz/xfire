@@ -1,7 +1,11 @@
 package org.codehaus.xfire.gen.jsr181;
 
 import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -23,6 +27,7 @@ import org.codehaus.xfire.transport.local.LocalTransport;
 
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JCatchBlock;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
@@ -38,48 +43,151 @@ public class PortGenerator
     extends AbstractPlugin
     implements GeneratorPlugin
 {
+    private JFieldVar pfVar;
+    private JFieldVar endpointsVar;
+    private JMethod getEndpoint;
+    private JMethod constructor;
+
     public void generate(GenerationContext context)
         throws Exception
     {
-        for (Iterator itr = context.getServices().iterator(); itr.hasNext();)
+        for (Iterator itr = context.getServices().entrySet().iterator(); itr.hasNext();)
         {
-            generate(context, (Service) itr.next());
+            Map.Entry entry = (Map.Entry) itr.next();
+            
+            generate(context, (QName) entry.getKey(), (List) entry.getValue());
         }
     }
     
-    public void generate(GenerationContext context, Service service)
+    public void generate(GenerationContext context, QName name, List services)
         throws Exception
     {
-        String name = service.getSimpleName();
-        String ns = service.getTargetNamespace();
-        
-        if (service.getEndpoints().size() == 0) return;
-        
-        // hack to get local support
-        Soap11Binding localBind = new Soap11Binding(new QName(ns, name + "LocalBinding"), 
-                                                    LocalTransport.BINDING_ID, 
-                                                    service);
-        service.addBinding(localBind);
-        service.addEndpoint(new QName(ns, name + "LocalPort"), localBind, "xfire.local://" + name);
+        String local = name.getLocalPart();
+        String ns = name.getNamespaceURI();
         
         JCodeModel model = context.getCodeModel();
-
-        String portName = context.getDestinationPackage() + "." + service.getName().getLocalPart() + "Client";
-        portName = getUniqueName(model, portName);
-        JDefinedClass servCls = model._class(portName);
         
-        JVar serviceVar = servCls.field(JMod.PRIVATE, Service.class, "service");
+        // Create the Client class
+        String portName = context.getDestinationPackage() + "." + name.getLocalPart() + "Client";
+        portName = javify(portName);
+        JDefinedClass servCls = model._class(portName);
+
+        /**
+         * Constructor
+         */
+        constructor = servCls.constructor(JMod.PUBLIC);
+        
+        JType pfType = model._ref(XFireProxyFactory.class);
+        pfVar = servCls.field(JMod.STATIC + JMod.PRIVATE, pfType, "proxyFactory", JExpr._new(pfType));
+  
+        JType hashMapType = model._ref(HashMap.class);
+        endpointsVar = servCls.field(JMod.PRIVATE, hashMapType, "endpoints", JExpr._new(hashMapType));
+  
+        /**
+         * getEndpoint(Endpoint)
+         */
+        JClass objectType = model.ref(Object.class);
+        getEndpoint = servCls.method(JMod.PUBLIC, objectType, "getEndpoint");
+        JVar epVar = getEndpoint.param(Endpoint.class, "endpoint");
+        
+        JBlock geBody = getEndpoint.body();
+        JTryBlock tryBlock = geBody._try();
+        
+        JInvocation createProxy = pfVar.invoke("create");
+        createProxy.arg(JExpr.direct(epVar.name()).invoke("getBinding"));
+        createProxy.arg(JExpr.direct(epVar.name()).invoke("getUrl"));
+        
+        tryBlock.body()._return(createProxy);
+
+        JCatchBlock catchBlock = tryBlock._catch(model.ref(MalformedURLException.class));
+        JType xreType = model._ref(XFireRuntimeException.class);
+        JInvocation xreThrow = JExpr._new(xreType);
+        xreThrow.arg("Invalid URL");
+        xreThrow.arg(catchBlock.param("e"));
+        
+        catchBlock.body()._throw(xreThrow);
+        
+
+        /**
+         * T getEndpoint(QName)
+         */
+        JMethod getEndpointByName = servCls.method(JMod.PUBLIC, objectType, "getEndpoint");
+        JVar epname = getEndpointByName.param(QName.class, "name");
+        
+        geBody = getEndpointByName.body();
+        
+        // Endpoint endpoint = (Endpoint) service.getEndpoint(name);
+        JType endpointType = model._ref(Endpoint.class);
+        JInvocation getEndpointInv = endpointsVar.invoke("get");
+        getEndpointInv.arg(JExpr.direct(epname.name()));
+
+        epVar = geBody.decl(endpointType, "endpoint", JExpr.cast(endpointType, getEndpointInv));
+        
+        // if (endpoint == null)
+        JBlock noEPBlock = geBody._if(JExpr.direct(epVar.name()).eq(JExpr._null()))._then();
+        
+        // throw IllegalStateException
+        JType iseType = model._ref(IllegalStateException.class);
+        JInvocation iseThrow = JExpr._new(iseType);
+        iseThrow.arg("No such endpoint!");
+        noEPBlock._throw(iseThrow);
+        
+        // return endpoint
+        
+        JInvocation geInvoke = JExpr.invoke(getEndpoint);
+        geInvoke.arg(JExpr.direct(epVar.name()));
+        geBody._return(geInvoke);
+        
+        /**
+         * Collection getEndpoints()
+         */
+        JType collectionType = model.ref(Collection.class);
+        JMethod getEndpoints = servCls.method(JMod.PUBLIC, collectionType, "getEndpoints");
+        geBody = getEndpoints.body();
+        
+        geBody._return(endpointsVar.invoke("values"));
+        
+        // Create a Service for each Binding
+        for (int i = 0; i < services.size(); i++)
+        {
+            Service service = (Service) services.get(i);
+            
+            if (service.getEndpoints().size() == 0) continue;
+            
+            // Add a local binding. 
+            // TODO: We should have a switch for this...
+            String ptName = service.getServiceInfo().getPortType().getLocalPart();
+            Soap11Binding localBind = new Soap11Binding(new QName(ns, ptName + "LocalBinding"), 
+                                                        LocalTransport.BINDING_ID, 
+                                                        service);
+            service.addBinding(localBind);
+            service.addEndpoint(new QName(ns, ptName + "LocalEndpoint"), localBind, "xfire.local://" + local);
+            
+            JVar serviceVar = generateService(context, servCls, constructor, service, i);
+            
+            // Add each endpoint to the Client class
+            Collection endpoints = service.getEndpoints();
+            for (Iterator eitr = endpoints.iterator(); eitr.hasNext(); )
+            {
+                generate(context, servCls, service, serviceVar, (Endpoint) eitr.next());
+            }
+        }
+    }
+    
+    protected JVar generateService(GenerationContext context, JDefinedClass servCls, 
+                                   JMethod constructor, Service service, int number)
+    {
+        JCodeModel model = context.getCodeModel();
+        JVar serviceVar = servCls.field(JMod.PRIVATE, Service.class, "service" + number);
         
         JDefinedClass serviceImpl = (JDefinedClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
         JDefinedClass serviceIntf = (JDefinedClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         
-        JType pfType = model._ref(XFireProxyFactory.class);
-        JFieldVar pfVar = servCls.field(JMod.STATIC + JMod.PRIVATE, pfType, "proxyFactory", JExpr._new(pfType));
-  
+        
         /**
          * createService()
          */
-        JMethod create = servCls.method(JMod.PRIVATE, void.class, "createService");
+        JMethod create = servCls.method(JMod.PRIVATE, void.class, "create" + number);
         
         JType asfType = model._ref(AnnotationServiceFactory.class);
         JType jsr181Type = model._ref(Jsr181WebAnnotations.class);
@@ -135,131 +243,55 @@ public class PortGenerator
 
             JVar sbVar = block.decl(abSoapBindingType, "soapBinding", createBinding);
         }
-        
-        /**
-         * Constructor
-         */
-        JMethod constrcutor = servCls.constructor(JMod.PUBLIC);
-        constrcutor.body().invoke(create);
-        
-        /**
-         * addEndpoint()
-         */
-        JMethod addEndpointMethod = servCls.method(JMod.PUBLIC, void.class, "addEndpoint");
-        JVar epname = addEndpointMethod.param(QName.class, "name");
-        JVar bindingId = addEndpointMethod.param(QName.class, "binding");
-        JVar address = addEndpointMethod.param(String.class, "address");
-        
-        JInvocation addEPInvoke = serviceVar.invoke("addEndpoint");
-        addEPInvoke.arg(JExpr.direct(epname.name()));
-        addEPInvoke.arg(JExpr.direct(bindingId.name()));
-        addEPInvoke.arg(JExpr.direct(address.name()));
-        
-        addEndpointMethod.body().add(addEPInvoke);
-        
-        /**
-         * T getEndpoint(Endpoint)
-         */
-        JMethod getEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "getEndpoint");
-        JVar epVar = getEndpoint.param(Endpoint.class, "endpoint");
-        
-        JBlock geBody = getEndpoint.body();
-        JTryBlock tryBlock = geBody._try();
-        
-        JInvocation createProxy = pfVar.invoke("create");
-        createProxy.arg(JExpr.direct(epVar.name()).invoke("getBinding"));
-        createProxy.arg(JExpr.direct(epVar.name()).invoke("getUrl"));
-        
-        tryBlock.body()._return(JExpr.cast(serviceIntf, createProxy));
-        
-        JCatchBlock catchBlock = tryBlock._catch(model.ref(MalformedURLException.class));
-        JType xreType = model._ref(XFireRuntimeException.class);
-        JInvocation xreThrow = JExpr._new(xreType);
-        xreThrow.arg("Invalid URL");
-        xreThrow.arg(catchBlock.param("e"));
-        
-        catchBlock.body()._throw(xreThrow);
-        
-        /**
-         * T getEndpoint(QName)
-         */
-        JMethod getEndpointByName = servCls.method(JMod.PUBLIC, serviceIntf, "getEndpoint");
-        epname = getEndpointByName.param(QName.class, "name");
-        
-        geBody = getEndpointByName.body();
-        
-        // Endpoint endpoint = (Endpoint) service.getEndpoint(name);
-        JType endpointType = model._ref(Endpoint.class);
-        JInvocation getEndpointInv = serviceVar.invoke("getEndpoint");
-        getEndpointInv.arg(JExpr.direct(epname.name()));
 
-        epVar = geBody.decl(endpointType, "endpoint", getEndpointInv);
-        
-        // if (endpoint == null)
-        JBlock noEPBlock = geBody._if(JExpr.direct(epVar.name()).eq(JExpr._null()))._then();
-        
-        // throw IllegalStateException
-        JType iseType = model._ref(IllegalStateException.class);
-        JInvocation iseThrow = JExpr._new(iseType);
-        iseThrow.arg("No such endpoint!");
-        noEPBlock._throw(iseThrow);
-        
-        // return endpoint
-        
-        JInvocation geInvoke = JExpr.invoke(getEndpoint);
-        geInvoke.arg(JExpr.direct(epVar.name()));
-        geBody._return(geInvoke);
-        
-        /**
-         * T getEndpoint()
-         */
-        JMethod getDefaultEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "getEndpoint");
-        geBody = getDefaultEndpoint.body();
-        
-        JBlock noEPs = geBody._if(serviceVar.invoke("getEndpoints").invoke("size").eq(JExpr.lit(0)))._then();
-        
-        iseThrow = JExpr._new(iseType);
-        iseThrow.arg("No available endpoints!");
-        noEPs._throw(iseThrow);
-        
-        epVar = geBody.decl(endpointType, "endpoint", 
-                            JExpr.cast(endpointType, serviceVar.invoke("getEndpoints").invoke("iterator").invoke("next")));
-        
-        getEndpointInv = JExpr.direct("this").invoke(getEndpoint);
-        getEndpointInv.arg(JExpr.direct("endpoint"));
-        
-        geBody._return(getEndpointInv);
+        constructor.body().invoke(create);
+
+        return serviceVar;
+    }
+
+    protected void generate(GenerationContext context, JDefinedClass servCls, 
+                            Service service, JVar serviceVar, Endpoint endpoint)
+        throws Exception
+    {
+        String name = service.getSimpleName();
+        String ns = service.getTargetNamespace();
+
+        JCodeModel model = context.getCodeModel();
         
         /*
          * Add endpoints to constructor
          */
-        JBlock consBody = constrcutor.body();
+        JBlock consBody = constructor.body();
+        JType qnameType = model.ref(QName.class);
         
-        for (Iterator itr = service.getEndpoints().iterator(); itr.hasNext();)
-        {
-            Endpoint endpoint = (Endpoint) itr.next();
-            
-            JInvocation addEndpointInv = serviceVar.invoke("addEndpoint");
-            JInvocation newQN = JExpr._new(qnameType);
-            newQN.arg(endpoint.getName().getNamespaceURI());
-            newQN.arg(endpoint.getName().getLocalPart());
-            
-            JInvocation bindingQN = JExpr._new(qnameType);
-            bindingQN.arg(endpoint.getBinding().getName().getNamespaceURI());
-            bindingQN.arg(endpoint.getBinding().getName().getLocalPart());
- 
-            addEndpointInv.arg(newQN);
-            addEndpointInv.arg(bindingQN);
-            addEndpointInv.arg(endpoint.getUrl());
-            
-            consBody.add(addEndpointInv);
-            
-//          Add a getFooEndpointMethod
-            JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "get" + endpoint.getName().getLocalPart());
-            geBody = getFooEndpoint.body();
+        JDefinedClass serviceIntf = (JDefinedClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
 
-            geBody._return(JExpr.direct("this").invoke(getEndpoint).arg(newQN));
-        }
+        JInvocation addEndpointInv = serviceVar.invoke("addEndpoint");
+        JInvocation newQN = JExpr._new(qnameType);
+        newQN.arg(endpoint.getName().getNamespaceURI());
+        newQN.arg(endpoint.getName().getLocalPart());
+
+        JInvocation bindingQN = JExpr._new(qnameType);
+        bindingQN.arg(endpoint.getBinding().getName().getNamespaceURI());
+        bindingQN.arg(endpoint.getBinding().getName().getLocalPart());
+
+        addEndpointInv.arg(newQN);
+        addEndpointInv.arg(bindingQN);
+        addEndpointInv.arg(endpoint.getUrl());
+
+        JType endpointType = model.ref(Endpoint.class);
+        JVar epVar = consBody.decl(endpointType, endpoint.getName().getLocalPart() + "EP", addEndpointInv);
+
+        JInvocation addEndpoint = endpointsVar.invoke("put").arg(newQN).arg(epVar);
+        consBody.add(addEndpoint);
+        
+        // Add a getFooEndpointMethod
+        JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "get"
+                + endpoint.getName().getLocalPart());
+        JBlock geBody = getFooEndpoint.body();
+
+        geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke(getEndpoint).arg(newQN)));
+
     }
 
 }

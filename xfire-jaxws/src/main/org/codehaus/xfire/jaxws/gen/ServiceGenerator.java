@@ -3,7 +3,6 @@ package org.codehaus.xfire.jaxws.gen;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,26 +43,12 @@ public class ServiceGenerator
     extends AbstractPlugin
     implements GeneratorPlugin
 {
+    @SuppressWarnings("unchecked")
     public void generate(GenerationContext context)
         throws Exception
     {
-        Map<QName,Collection<Service>> q2services = 
-            new HashMap<QName,Collection<Service>>();
-        for (Iterator itr = context.getServices().iterator(); itr.hasNext();)
-        {
-            Service service = (Service) itr.next();
-            if (service.getEndpoints().size() == 0) continue;
-            
-            Collection<Service> services = q2services.get(service.getName());
-            if (services == null)
-            {
-                services = new ArrayList<Service>();
-                q2services.put(service.getName(), services);
-            }
-            
-            services.add(service);
-        }
-        
+        Map<QName,Collection<Service>> q2services = context.getServices();
+
         for (Entry<QName,Collection<Service>> entry : q2services.entrySet())
         {
             generate(context, entry.getKey(), entry.getValue());

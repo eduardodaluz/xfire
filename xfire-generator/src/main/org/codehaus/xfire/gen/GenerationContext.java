@@ -2,6 +2,7 @@ package org.codehaus.xfire.gen;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Map;
 
 import org.codehaus.xfire.AbstractContext;
 
@@ -11,7 +12,7 @@ public class GenerationContext
     extends AbstractContext
 {
     private JCodeModel codeModel;
-    private Collection services;
+    private Map services;
     private Object wsdl;
     private String destinationPackage;
     private String baseURI;
@@ -71,12 +72,12 @@ public class GenerationContext
         return codeModel;
     }
 
-    public Collection getServices()
+    public Map getServices()
     {
         return services;
     }
 
-    public void setServices(Collection services)
+    public void setServices(Map services)
     {
         this.services = services;
     }

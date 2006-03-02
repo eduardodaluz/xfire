@@ -45,7 +45,7 @@ public class AuthServiceTest
     {   
         AuthServiceClient service = new AuthServiceClient();
         
-        AuthServicePortType client = service.getAuthServiceLocalPort();
+        AuthServicePortType client = service.getAuthServicePortTypeLocalEndpoint();
         
         try
         {
