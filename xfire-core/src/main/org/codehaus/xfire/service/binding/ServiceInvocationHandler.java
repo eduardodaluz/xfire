@@ -21,6 +21,7 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.invoker.Invoker;
 import org.codehaus.xfire.util.stax.ElementStreamWriter;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.jdom.Element;

@@ -5,25 +5,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.service.invoker.BeanInvoker;
+import org.codehaus.xfire.service.invoker.Invoker;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.spring.config.AbstractSoapBindingBean;
 import org.codehaus.xfire.spring.config.EndpointBean;
 import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.propertyeditors.ClassEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -88,7 +85,8 @@ public class ServiceBean
 
     private String scope;
     
-
+    private Invoker invoker;
+    
     public void afterPropertiesSet()
         throws Exception
     {
@@ -135,15 +133,11 @@ public class ServiceBean
             properties.put(ObjectInvoker.SERVICE_IMPL_CLASS, implementationClass);
         }
 
-
-        prepareXMLFactories(properties);
-
         if (schemas != null)
         {
             properties.put(ObjectServiceFactory.SCHEMAS, schemas);
         }
         
-
         xfireService = serviceFactory.create(intf, name, namespace, properties);
 
         if (bindings != null && serviceFactory instanceof ObjectServiceFactory)
@@ -159,13 +153,20 @@ public class ServiceBean
         // Register the service
         xFire.getServiceRegistry().register(xfireService);
         
-        // If we're referencing a spring bean, set up our invoker.
-        Object serviceBean = getProxyForService();
-        if (serviceBean != null)
+        if (invoker != null)
         {
-            xfireService.setInvoker(new BeanInvoker(serviceBean));
+            xfireService.setInvoker(invoker);
         }
-
+        else
+        {
+            // If we're referencing a spring bean, set up our invoker.
+            Object serviceBean = getProxyForService();
+            if (serviceBean != null)
+            {
+                xfireService.setInvoker(new BeanInvoker(serviceBean));
+            }
+        }
+        
         // set up in handlers
         if (xfireService.getInHandlers() == null)
             xfireService.setInHandlers(getInHandlers());
@@ -183,33 +184,6 @@ public class ServiceBean
             xfireService.setFaultHandlers(getFaultHandlers());
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
-    }
-
-    private void prepareXMLFactories(Map properties) throws Exception
-    {
-        Class inFactoryClass = null;
-        Object inFactory = properties.get(XFire.STAX_INPUT_FACTORY);
-        if( inFactory != null && inFactory instanceof String){
-            ClassEditor ed = new ClassEditor ();
-            ed.setAsText((String) inFactory);
-            inFactoryClass = (Class) ed.getValue();
-            if( !XMLInputFactory.class.isAssignableFrom(inFactoryClass)){
-                throw new RuntimeException("Class : "+inFactoryClass.getName()+" is not XMLInputFactory instance");
-            }
-            properties.put(XFire.STAX_INPUT_FACTORY,inFactoryClass);
-        }
-        Class outFactoryClass = null;
-        Object outFactory = properties.get(XFire.STAX_OUTPUT_FACTORY);
-        if( outFactory != null && outFactory instanceof String){
-            ClassEditor ed = new ClassEditor ();
-            ed.setAsText((String) outFactory);
-            outFactoryClass = (Class) ed.getValue();
-            if( !XMLOutputFactory.class.isAssignableFrom(outFactoryClass) ){
-                throw new RuntimeException("Class : "+outFactoryClass.getName()+" is not XMLOutputFactory instance");
-            }
-            properties.put(XFire.STAX_OUTPUT_FACTORY,outFactoryClass);
-        }
-        
     }
 
     protected void initializeBindings()
@@ -448,6 +422,15 @@ public class ServiceBean
         this.bindings = bindings;
     }
 
+    public Invoker getInvoker()
+    {
+        return invoker;
+    }
+
+    public void setInvoker(Invoker invoker)
+    {
+        this.invoker = invoker;
+    }
 
     public boolean isCreateDefaultBindings()
     {

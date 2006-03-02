@@ -33,6 +33,8 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
+import org.codehaus.xfire.service.invoker.ScopePolicyEditor;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.soap.Soap12Binding;
@@ -250,7 +252,7 @@ public class ObjectServiceFactory
      *            implementation class that implements that interface must be
      *            set via {@link Service#setProperty(String, Object)} with the
      *            property key being
-     *            {@link org.codehaus.xfire.service.binding.ObjectInvoker#SERVICE_IMPL_CLASS}
+     *            {@link org.codehaus.xfire.service.invoker.ObjectInvoker#SERVICE_IMPL_CLASS}
      * @return The service.
      */
     public Service create(Class clazz)
@@ -269,7 +271,7 @@ public class ObjectServiceFactory
      *            implementation class that implements that interface must be
      *            set via {@link Service#setProperty(String, Object)} with the
      *            property key being
-     *            {@link org.codehaus.xfire.service.binding.ObjectInvoker#SERVICE_IMPL_CLASS}
+     *            {@link org.codehaus.xfire.service.invoker.ObjectInvoker#SERVICE_IMPL_CLASS}
      * @return The service.
      */
     public Service create(Class clazz, Map properties)
@@ -334,14 +336,7 @@ public class ObjectServiceFactory
         endpoint.setName(qName);
         setProperties(endpoint, properties);
 
-        ObjectInvoker invoker = new ObjectInvoker();
-        if (theScope.equals("request"))
-            invoker.setScope(ObjectInvoker.SCOPE_REQUEST);
-        else if (theScope.equals("application"))
-            invoker.setScope(ObjectInvoker.SCOPE_APPLICATION);
-        else if (theScope.equals("session"))
-            invoker.setScope(ObjectInvoker.SCOPE_SESSION);
-        
+        final ObjectInvoker invoker = new ObjectInvoker(ScopePolicyEditor.toScopePolicy(theScope));        
         endpoint.setInvoker(invoker);
         endpoint.setFaultSerializer(new SoapFaultSerializer());
 

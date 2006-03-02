@@ -17,13 +17,16 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.plexus.PlexusXFireComponent;
-import org.codehaus.xfire.plexus.ServiceInvoker;
+import org.codehaus.xfire.plexus.ServiceLocatorFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.Invoker;
-import org.codehaus.xfire.service.binding.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.service.invoker.FactoryInvoker;
+import org.codehaus.xfire.service.invoker.Invoker;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
+import org.codehaus.xfire.service.invoker.ScopePolicy;
+import org.codehaus.xfire.service.invoker.ScopePolicyEditor;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
@@ -88,23 +91,19 @@ public class ObjectServiceConfigurator
 
 
         // Setup the Invoker
+        final String scope = config.getChild("scope").getValue("application");
+        final ScopePolicy policy = ScopePolicyEditor.toScopePolicy(scope);
         if (getServiceLocator().hasComponent(role))
         {
-            Invoker invoker = new ServiceInvoker(role, getServiceLocator());
+            final Invoker invoker = new FactoryInvoker(
+              new ServiceLocatorFactory(role, getServiceLocator()), policy);
             
             service.setInvoker(invoker);
         }
         else
         {
-            ObjectInvoker oinvoker = new ObjectInvoker();
-            
-            final String scope = config.getChild("scope").getValue("application");
-            if (scope.equals("application"))
-                oinvoker.setScope(ObjectInvoker.SCOPE_APPLICATION);
-            else if (scope.equals("session"))
-                oinvoker.setScope(ObjectInvoker.SCOPE_SESSION);
-            else if (scope.equals("request"))
-                oinvoker.setScope(ObjectInvoker.SCOPE_REQUEST);
+          //final String scope = config.getChild("scope").getValue("application");
+          final ObjectInvoker oinvoker = new ObjectInvoker(policy);
             
             String implClass = config.getChild("implementationClass").getValue("");
             

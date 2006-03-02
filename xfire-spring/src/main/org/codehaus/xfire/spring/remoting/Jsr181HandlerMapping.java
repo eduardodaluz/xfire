@@ -11,7 +11,7 @@ import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.BeanInvoker;
+import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.codehaus.xfire.spring.SpringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanIsAbstractException;

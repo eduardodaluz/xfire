@@ -8,8 +8,9 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.invoker.BeanInvoker;
+import org.codehaus.xfire.service.invoker.Invoker;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.spring.AbstractXFireSpringTest;
 import org.codehaus.xfire.spring.ServiceBean;
 import org.codehaus.xfire.spring.TestHandler;
@@ -101,6 +102,9 @@ public class XFireConfigLoaderTest
         
         serviceBean = (ServiceBean) getBean("EchoWithBeanServiceFactory");
         assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
+        
+        serviceBean = (ServiceBean) getBean("EchoWithInvoker");
+        assertTrue(serviceBean.getInvoker() instanceof ObjectInvoker);
     }
     
     protected ApplicationContext createContext()

@@ -8,7 +8,7 @@ import org.codehaus.xfire.picocontainer.test.PicoXFireTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.invoker.Invoker;
 import org.picocontainer.defaults.CachingComponentAdapter;
 import org.picocontainer.defaults.ConstructorInjectionComponentAdapter;
 

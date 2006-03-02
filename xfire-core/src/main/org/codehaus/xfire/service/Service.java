@@ -15,7 +15,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.service.binding.BindingProvider;
-import org.codehaus.xfire.service.binding.Invoker;
+import org.codehaus.xfire.service.invoker.Invoker;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 
 /**

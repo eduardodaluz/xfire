@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.services.BeanService;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.w3c.dom.Document;

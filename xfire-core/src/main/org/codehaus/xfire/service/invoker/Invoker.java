@@ -1,4 +1,4 @@
-package org.codehaus.xfire.service.binding;
+package org.codehaus.xfire.service.invoker;
 
 import java.lang.reflect.Method;
 

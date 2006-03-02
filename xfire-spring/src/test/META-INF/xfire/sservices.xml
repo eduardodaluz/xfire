@@ -106,4 +106,15 @@
 
   <bean name="EchoBean" class="org.codehaus.xfire.test.EchoImpl"/>
   
+  <service id="EchoWithInvoker">
+    <name>EchoWithInvoker</name>
+    <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+    <invoker>
+      <bean class="org.codehaus.xfire.service.invoker.ObjectInvoker" xmlns="">
+        <constructor-arg>
+          <bean class="org.codehaus.xfire.service.invoker.RequestScopePolicy"/>
+        </constructor-arg>
+      </bean>
+    </invoker>
+  </service>
 </beans>

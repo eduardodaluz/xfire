@@ -3,7 +3,7 @@ package org.codehaus.xfire.message.wrapped;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.ObjectInvoker;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.services.EchoOverload;
 import org.codehaus.xfire.services.EchoOverloadImpl;
 import org.jdom.Document;
