@@ -1,22 +1,30 @@
 Configuration of WS-Security
-Ws-security can be enabled per service or per XFire instance, to enable it  2 handlers must be add to inHandlers or/and outHandlers of given service or xfire instance.
-For processing incomming security  we must add DOMInHandler and WSS4JInSecurityHandler to inHandlers chain. To secure our outgoing messages we must
-add DOMOutHandler and WSS4JOutSecurityHandler to outHandlers chain.
-One handler is responsible for converting soap message from DOM to stax representation and vice versa ( DOMInHandler/DOMOutHandler).
-Second handler perform real security processing ( WSS4JInSecurityHandler/WSS4JOutSecurityHandler )
-Additionaly security handler must be  configured at creation time. Configuration data can be provided as file ( setting configFile property on handler )
-or as Map object filled with required data ( setting configuration property on handler ).
-Like : 
+XFire currently supports following subset of WS-Security specification:
+? Usertoken with plain password – allows to send username and password ( in plain format ) along with SOAP message
+? Usertoken with hashed password – allows to send username and hash of given password ( receiver must provide valid password to compare hashes)
+? Encryption – allows to encrypt message body with PKI public/private key.
+? Timestamp – allows to specify period of time for which message remains valid ( in seconds ).
+
+Ws-Security can be enabled by adding  2 handlers for incoming and outgoing messages flow.
+Incoming security require following handlers :
+- DOMInHandler – which converts XML representation from stax format to DOM representation.
+- WSS4JinSecurityHandler – which process incoming soap message ( in DOM format produced by DOMInHandler ) and retrieve  its original form ( in case of encryption ) and/or additional data like usertoken.
+
+Outgoing security require following handlers :
+- DOMOutHandler – which converts 
+- WSS4JOutSecurityHandler – which performs all specified action on outgoing message.
+
+
+Both security handlers (WSS4JinSecurityHandler / WSS4JOutSecurityHandler ) must be  configured at creation time. Configuration data can be provided as property file ( setting “configFile” property on handler )
+or as Map object filled with required data ( setting “configuration” property on handler ).
+
   <tns:inHandlers>
       <tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
       <bean id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler" class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
         <property name="configuration" >
-          <map>
-      		<entry>
-		        <key><value>xfire.security.actions</value></key>
-		        <value>usertoken</value>
-	       </entry>
-	      </map>
+          <props>
+      		<prop key=”xfire.security.actions”>usertoken</prop>
+         </props>
         </property>
       </bean>
     </tns:inHandlers>
@@ -31,92 +39,43 @@ or
       </bean>
     </tns:inHandlers>
 
+where insecurity.properties looks like:
+xfire.security.actions= usertoken
 
 
+Security configuration MUST contains at least property xfire.security.actions  which can have one ( or more ) of values : usertoken, encryption, timestamp
 
-Avaiable functionality:
- - UserToken
-	: adds user and password values to soap message. Password can be transmited as plain text or can be hashed.
-  	 To send usertoken, security handler must be setup with following information :
+  UserToken 
+Adds user and password values to soap message header. Password can be transmitted as plain text or can be hashed.
+Client side:
+ To send usertoken, security handler must be setup with following informations:
 
-
+# Action to perform
 xfire.security.actions=usertoken
+# Username to send
 xfire.security.user.name=username
+# Password to send
 xfire.security.user.password=password
+# Format in password will be send : plain text for true or hashed if property not specified or set to false
 xfire.security.user.password.use.plain=true
 
-The entry xfire.security.user.password.use.plain determine if password with be send in plain text or hashed form.
-Values of user name and password can also be provided at runtime but specifing following properties on MessageContext 
+Values of user name and password can also be provided at runtime but specifying following properties on MessageContext 
 
 context.setProperty(SecurityConstants.SECURITY_OUT_USER_NAME_CONTEXT_KEY,userName);
 context.setProperty(SecurityConstants.SECURITY_OUT_USER_PASS_CONTEXT_KEY,password);
 
-To retrive usertoken from incoming message, the security handler must be setuped as follow:
+If these properties are configured then values from handler’s configuration will be overwritten.
+
+Server side:
+To retrieve usertoken from incoming message, the security handler must be configured as follow:
 
 xfire.security.actions=usertoken
 
-If password is send in hashed form, additionaly  one must provide callback object which can retrive orginal password (e.g. from database ), what is required to
-compare hashed values.
+If password is send in hashed form, one must also provide callback object which can retrieve original password (e.g. from database ), what is required to compare hashed values.
 
 xfire.security.password.callback=my.company.users.MyPasswordCallback
 
 where MyPasswordCallback implements org.codehaus.xfire.security.WSPasswordCallback interface.
-
-Username and password retrive from saop message can be accesssed from MessageContext under following keys :
-
-username = context.getProperty(SecurityConstants.SECURITY_OUT_USER_NAME_CONTEXT_KEY);
-password = context.getProperty(SecurityConstants.SECURITY_OUT_USER_PASS_CONTEXT_KEY);
-
-
-- Encryption:
-     Allows to encypt/decyrpt soap message body using pair of keys ( public/private ). Public key is used to 
-     encrypt message and private key to decrypt it. Currentyly only encryption of whole message body is supported ( soap header is unencrypted ).
-     Encryption algorithm uses two keys to perform full data processing, first is symmetric key ( faster then asymetric ) used to encrypt message data,
-     and the second is asymetric key used to encrypt symmtric key.
-Following data is required to encrypt outgoing message
-# action to perform
-xfire.security.actions=encrypt
-# password used when accessing keystore
-xfire.security.keystore.password=keystorePass
-# path to key store containing public key used to encrypt message
-xfire.security.keystore.file=org/codehaus/xfire/client/myPublicstore.jks
-# alias assigend to public key inside keystore
-xfire.security.public.alias=alias
-Additinaly the encryption algorithm can be spefify ( This is optional, is not provided the defaults are used )
-# Algorithm used to encrypt encryption key ( asymetric cryptography )
-# Aviable algorithms : 
-#http://www.w3.org/2001/04/xmlenc#rsa-1_5
-#http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p
-xfire.security.encrypt.key.algoritm
-# Algorith used to encrypt xml data ( symetric cryptography )
-# Aviable algorithms:
-#http://www.w3.org/2001/04/xmlenc#tripledes-cbc
-#http://www.w3.org/2001/04/xmlenc#aes128-cbc
-#http://www.w3.org/2001/04/xmlenc#aes192-cbc
-#http://www.w3.org/2001/04/xmlenc#aes256-cbc
-xfire.security.symmetric.key.algoritm
-
-Sometimes when specyfig encryption algorithm with strength greated then provided default, you can get error like "Invalid key size".
-This means that you need to install "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files". This files can 
-be downloaded from http://java.sun.com/j2se/1.5.0/download.jsp
-
-
-Following data must be provided to decrypt encypted message:
-# action to perform
-xfire.security.actions=encrypt
-# password used when accessing keystore
-xfire.security.keystore.password=keystorePass
-# path to key store containing private key used to decrypt message
-xfire.security.keystore.file=META-INF/xfire/myPrivatestore.jks
-# private key alias
-xfire.security.private.alias=alias
-#password for private key
-xfire.security.private.password=aliaspass
-# Callback returning password for given key's alias in keystore
-xfire.security.password.callback=org.codehaus.xfire.demo.BookPasswordCallback
-
-This callback is responsible for retriving password for given username and 
-must implement WSPasswordCallback interface. It can be implmented as follows :
 
 public class BookPasswordCallback   implements WSPasswordCallback
 {
@@ -130,12 +89,83 @@ public class BookPasswordCallback   implements WSPasswordCallback
 
 }
 
- - Timestamp
+
+Username and password retrieved from SOAP message can be accessed from MessageContext under following keys :
+
+username = context.getProperty(SecurityConstants.SECURITY_IN_USER_NAME_CONTEXT_KEY);
+password = context.getProperty(SecurityConstants.SECURITY_IN_USER_PASS_CONTEXT_KEY);
+
+
+ Encryption:
+     Allows to encypt/decyrpt message body using pair of keys (public/private). Public key is used to encrypt message and private key to decrypt it. Currently only encryption of whole message body is supported ( soap header is unencrypted ).
+     Encryption algorithm uses two keys to perform full data processing, first the symmetric key is  used to encrypt message data ( symmetric algorithm is much faster then asymmetric),
+     and then the public (asymmetric) key is used to encrypt symmetric key.
+Currently the public and private key can be stored only in jks format keystore.
+
+Client side:
+Following data is required to encrypt outgoing message
+# Action to perform
+xfire.security.actions=encrypt
+# Password used to access keystore with public key
+xfire.security.keystore.password=keystorePass
+# path to key store containing public key used to encrypt message
+xfire.security.keystore.file=org/codehaus/xfire/client/myPublicstore.jks
+# alias assigned to public key inside key store
+xfire.security.public.alias=alias
+Additionally the encryption algorithm can be specify (This is optional, if not provided the defaults are used )
+# Algorithm used to encrypt encryption key ( asymmetric)
+# Available algorithms : 
+#http://www.w3.org/2001/04/xmlenc#rsa-1_5
+#http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p
+xfire.security.encrypt.key.algoritm= http://www.w3.org/2001/04/xmlenc#rsa-1_5
+# Algorithm used to encrypt message data (symmetric cryptography)
+# Available algorithms:
+#http://www.w3.org/2001/04/xmlenc#tripledes-cbc
+#http://www.w3.org/2001/04/xmlenc#aes128-cbc
+#http://www.w3.org/2001/04/xmlenc#aes192-cbc
+#http://www.w3.org/2001/04/xmlenc#aes256-cbc
+xfire.security.symmetric.key.algoritm=http://www.w3.org/2001/04/xmlenc#tripledes-cbc
+
+Sometimes when strong cryptography algorithm is used,  Unlimited Strength Policy Files must be used. In other case you will get error like "Invalid key size".
+The  "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files" can be downloaded from http://java.sun.com/j2se/1.5.0/download.jsp ( bottom of the page ) and unpacked to jdk installation folder..
+
+Server side:
+Following data must be provided to decrypt encypted message:
+# Action to perform
+xfire.security.actions=encrypt
+# password used when accessing key store
+xfire.security.keystore.password=keystorePass
+# path to key store containing private key used to decrypt message
+xfire.security.keystore.file=META-INF/xfire/myPrivatestore.jks
+# private key alias
+xfire.security.private.alias=alias
+#password for private key
+xfire.security.private.password=aliaspass
+# Callback returning password for given key's alias in keystore
+xfire.security.password.callback=org.codehaus.xfire.demo.BookPasswordCallback
+
+This callback is responsible for retrieving password for given username and 
+must implement WSPasswordCallback interface. It can be implemented as follows :
+
+public class BookPasswordCallback   implements WSPasswordCallback
+{
+    public String handle(CallbackInfo info)
+    {
+      String user =  info.getId();
+      //.. retrive password for given user from eg. database
+      String password = findUserPassword(user);
+       return password;
+    }
+
+}
+
+ Timestamp
    Timestamp adds ability to control how long message is treated as valid.
-   If server receive such  message after specified ( in seconds ) period of time the message will be  rejected.
+   If server receive such message after specified ( in seconds ) period of time the message will be  rejected.
    
-To timestamp to message we must specify following configuration :  
+To timestamp to message we must specify following configuration:  
 # action to perform
 xfire.security.actions=timestamp
 # Number of second for which message is valid
 xfire.security.time.to.live=1
+
