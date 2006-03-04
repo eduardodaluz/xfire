@@ -1,10 +1,6 @@
 package org.codehaus.xfire.security.wssecurity;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Vector;
 
 import javax.security.auth.callback.Callback;
@@ -15,7 +11,6 @@ import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
-import org.apache.ws.security.util.DOM2Writer;
 import org.codehaus.xfire.security.CallbackInfo;
 import org.codehaus.xfire.security.SecurityProcessor;
 import org.codehaus.xfire.security.SecurityResult;
@@ -57,36 +52,13 @@ public class WSS4JInSecurityProcessor
     {
         Vector wsResult = null;
 
-        System.out.print("\n---------------------------\n");
-        try
-        {
-            OutputStream os = new FileOutputStream("dddd.xml");
-            DOM2Writer.serializeAsXML(document.getDocumentElement(), new OutputStreamWriter(os), false);
-            System.out.print("\n---------------------------\n");
-            os.close();
-        }
-        catch (FileNotFoundException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-
-        
         try
         {
             wsResult = secEngine.processSecurityHeader(document, null, cbHandler, crypto, crypto);
         }
         catch (WSSecurityException ex)
         {
-
             throw ExceptionConverter.convert(ex);
-
         }
 
         SecurityResult result = new SecurityResult();
@@ -94,7 +66,6 @@ public class WSS4JInSecurityProcessor
         {
             SecurityResultHandler handler = new SecurityResultHandler(result);
             result = handler.process(wsResult);
-
         }
 
         result.setDocument(document);
@@ -149,6 +120,5 @@ public class WSS4JInSecurityProcessor
     {
         this.callback = callback;
         cbHandler = new CBPasswordHandler(callback);
-
     }
 }
