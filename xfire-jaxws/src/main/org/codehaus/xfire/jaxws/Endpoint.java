@@ -12,8 +12,7 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import org.codehaus.xfire.jaxws.binding.AbstractBinding;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.BeanInvoker;
-import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.service.invoker.BeanInvoker;
 
 public class Endpoint
     extends javax.xml.ws.Endpoint
