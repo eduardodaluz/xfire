@@ -6,6 +6,10 @@ import java.util.Map;
 import org.codehaus.xfire.security.CallbackInfo;
 import org.codehaus.xfire.security.WSPasswordCallback;
 
+/**
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ *
+ */
 public class TestPwdCallback
     implements WSPasswordCallback
 {

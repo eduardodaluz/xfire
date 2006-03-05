@@ -26,312 +26,269 @@ import org.w3c.dom.Document;
  */
 public class WSS4JOutSecurityProcessor
 
-    implements OutSecurityProcessor
-{
-    private static final Log LOG = LogFactory.getLog(WSS4JOutSecurityProcessor.class);
+implements OutSecurityProcessor {
+	private static final Log LOG = LogFactory
+			.getLog(WSS4JOutSecurityProcessor.class);
 
-    private Crypto crypto;
+	private Crypto crypto;
 
-    private String alias;
+	private String alias;
 
-    private boolean userPasswordUsePlain = false;
+	private boolean userPasswordUsePlain = false;
 
-    private int ttl = -1;
+	private int ttl = -1;
 
-    private String[] actions;
+	private String[] actions;
 
-    private String privateAlias;
+	private String privateAlias;
 
-    private String privatePassword;
+	private String privatePassword;
 
-    private String username;
+	private String username;
 
-    private String userPassword;
+	private String userPassword;
 
-    private SecurityProcessorBuilder builder;
+	private SecurityProcessorBuilder builder;
 
-    private String encSymetricAlg;
+	private String encSymetricAlg;
 
-    private String encryptionAlg;
+	private String encryptionAlg;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.codehaus.xfire.security.OutSecurityProcessor#process(org.w3c.dom.Document)
-     */
-    public SecurityResult process(Document document)
-    {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.codehaus.xfire.security.OutSecurityProcessor#process(org.w3c.dom.Document)
+	 */
+	public SecurityResult process(Document document) {
 
-        // checkInitialized();
-        for (int i = 0; i < actions.length; i++)
-        {
-            String action = actions[i];
-            if (SecurityActions.AC_ENCRYPT.equals(action))
-            {
-                LOG.debug("Encrypting document");
-                document = encryptDocument(document);
-                continue;
-            }
-            if (SecurityActions.AC_SIGNATURE.equals(action))
-            {
-                LOG.debug("Signing document");
-                document = signDocument(document);
-                continue;
-            }
+		// checkInitialized();
+		for (int i = 0; i < actions.length; i++) {
+			String action = actions[i];
+			if (SecurityActions.AC_ENCRYPT.equals(action)) {
+				LOG.debug("Encrypting document");
+				document = encryptDocument(document);
+				continue;
+			}
+			if (SecurityActions.AC_SIGNATURE.equals(action)) {
+				LOG.debug("Signing document");
+				document = signDocument(document);
+				continue;
+			}
 
-            if (SecurityActions.AC_TIMESTAMP.equals(action))
-            {
-                LOG.debug("Adding timestamp");
-                document = addTimestamp(document);
-                continue;
-            }
+			if (SecurityActions.AC_TIMESTAMP.equals(action)) {
+				LOG.debug("Adding timestamp");
+				document = addTimestamp(document);
+				continue;
+			}
 
-            if (SecurityActions.AC_USERTOKEN.equals(action))
-            {
-                LOG.debug("Adding usertoken");
-                document = addUserToken(document);
-                continue;
-            }
-        }
+			if (SecurityActions.AC_USERTOKEN.equals(action)) {
+				LOG.debug("Adding usertoken");
+				document = addUserToken(document);
+				continue;
+			}
+		}
 
-        return new SecurityResult(document);
-    }
+		return new SecurityResult(document);
+	}
 
-    /**
-     * @param document
-     * @return
-     */
-    private Document signDocument(Document document)
-    {
-        WSSignEnvelope signer = new WSSignEnvelope();
-        try
-        {
-            SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(document
-                    .getDocumentElement());
-            signer.setUserInfo(getPrivateAlias(), getPrivatePassword());
-            signer.setSigCanonicalization(WSConstants.C14N_EXCL_OMIT_COMMENTS);
-            signer.setSignatureAlgorithm(WSConstants.RSA);
-            // signer.setUseSingleCertificate(true);
-            signer.setKeyIdentifierType(WSConstants.ISSUER_SERIAL);
-            //signer.setActor("actor1");
-            Vector parts = new Vector();
-            WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants.getEnvelopeURI(),
-                    "Content");
+	/**
+	 * @param document
+	 * @return
+	 */
+	private Document signDocument(Document document) {
+		WSSignEnvelope signer = new WSSignEnvelope();
+		try {
+			SOAPConstants soapConstants = WSSecurityUtil
+					.getSOAPConstants(document.getDocumentElement());
+			signer.setUserInfo(getPrivateAlias(), getPrivatePassword());
+			signer.setSigCanonicalization(WSConstants.C14N_EXCL_OMIT_COMMENTS);
+			signer.setSignatureAlgorithm(WSConstants.RSA);
+			// signer.setUseSingleCertificate(true);
+			signer.setKeyIdentifierType(WSConstants.ISSUER_SERIAL);
+			// signer.setActor("actor1");
+			Vector parts = new Vector();
+			WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants
+					.getEnvelopeURI(), "Content");
 
-            parts.add(part);
-            signer.setParts(parts);
+			parts.add(part);
+			signer.setParts(parts);
 
-            document = signer.build(document, crypto);
+			document = signer.build(document, crypto);
 
-        }
-        catch (WSSecurityException e)
-        {
-            throw ExceptionConverter.convert(e);
-        }
+		} catch (WSSecurityException e) {
+			throw ExceptionConverter.convert(e);
+		}
 
-        return document;
-    }
+		return document;
+	}
 
-    /**
-     * @param document
-     * @return
-     */
-    private Document encryptDocument(Document document)
-    {
-        SOAPConstants soapConstants = WSSecurityUtil
-                .getSOAPConstants(document.getDocumentElement());
-        WSEncryptBody encryptor = new WSEncryptBody();
+	/**
+	 * @param document
+	 * @return
+	 */
+	private Document encryptDocument(Document document) {
+		SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(document
+				.getDocumentElement());
+		WSEncryptBody encryptor = new WSEncryptBody();
 
-        Vector parts = new Vector();
-        WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants.getEnvelopeURI(),
-                "Content");
+		Vector parts = new Vector();
+		WSEncryptionPart part = new WSEncryptionPart("Body", soapConstants
+				.getEnvelopeURI(), "Content");
 
-        parts.add(part);
-        encryptor.setParts(parts);
-        // set symetric encryption
-        // WSConstants.KEYTRANSPORT_RSA15
-        // WSConstants.KEYTRANSPORT_RSAOEP
-        encryptor.setKeyEnc(getEncryptionAlg());
-        encryptor.setSymmetricEncAlgorithm(getEncSymetricAlg());
-        
-        // if alias for public key is not provided, use private key intead
-        if (alias != null)
-        {
-            encryptor.setUserInfo(alias);
-        }
-        else
-        {
-            encryptor.setUserInfo(getPrivateAlias());
-        }
-        try
-        {
-            document = encryptor.build(document, crypto);
-        }
-        catch (WSSecurityException e)
-        {
-            LOG.error(e);
-            throw ExceptionConverter.convert(e);
+		parts.add(part);
+		encryptor.setParts(parts);
+		if (getEncryptionAlg() != null) {
+			encryptor.setKeyEnc(getEncryptionAlg());
+		}
+		if (getEncSymetricAlg() != null) {
+			encryptor.setSymmetricEncAlgorithm(getEncSymetricAlg());
+		}
 
-        }
-        return document;
-    }
+		// if alias for public key is not provided, use private key intead
+		if (alias != null) {
+			encryptor.setUserInfo(alias);
+		} else {
+			encryptor.setUserInfo(getPrivateAlias());
+		}
+		try {
+			document = encryptor.build(document, crypto);
+		} catch (WSSecurityException e) {
+			LOG.error(e);
+			throw ExceptionConverter.convert(e);
 
-    public String getEncryptionAlg()
-    {
-        return encryptionAlg;
-    }
+		}
+		return document;
+	}
 
-    public void setEncryptionAlg(String alg)
-    {
-        encryptionAlg = alg;
-    }
+	public String getEncryptionAlg() {
+		return encryptionAlg;
+	}
 
-    public String getEncSymetricAlg()
-    {
-        return encSymetricAlg;
-    }
+	public void setEncryptionAlg(String alg) {
+		encryptionAlg = alg;
+	}
 
-    public void setEncSymetricAlg(String alg)
-    {
-        encSymetricAlg = alg;
-    }
+	public String getEncSymetricAlg() {
+		return encSymetricAlg;
+	}
 
-    /**
-     * @param doc
-     * @return
-     */
-    private Document addUserToken(Document doc)
-    {
-        WSSAddUsernameToken builder = new WSSAddUsernameToken();
-        if (getUsername() != null)
-        {
-            if (usePlainUserPassword())
-            {
-                builder.setPasswordType(WSConstants.PASSWORD_TEXT);
-            }
-            Document signedDoc = builder.build(doc, getUsername(), getUserPassword());
-            return signedDoc;
-        }
-        return doc;
+	public void setEncSymetricAlg(String alg) {
+		encSymetricAlg = alg;
+	}
 
-    }
+	/**
+	 * @param doc
+	 * @return
+	 */
+	private Document addUserToken(Document doc) {
+		WSSAddUsernameToken builder = new WSSAddUsernameToken();
+		if (getUsername() != null) {
+			if (usePlainUserPassword()) {
+				builder.setPasswordType(WSConstants.PASSWORD_TEXT);
+			}
+			Document signedDoc = builder.build(doc, getUsername(),
+					getUserPassword());
+			return signedDoc;
+		}
+		return doc;
 
-    /**
-     * @param doc
-     * @return
-     */
-    private Document addTimestamp(Document doc)
-    {
-        if (getTTL() == -1)
-        {
-            return doc;
-        }
-        WSAddTimestamp TTLBuilder = new WSAddTimestamp();
-        return TTLBuilder.build(doc, getTTL());
-    }
+	}
 
-    public String getAlias()
-    {
-        return alias;
-    }
+	/**
+	 * @param doc
+	 * @return
+	 */
+	private Document addTimestamp(Document doc) {
+		if (getTTL() == -1) {
+			return doc;
+		}
+		WSAddTimestamp TTLBuilder = new WSAddTimestamp();
+		return TTLBuilder.build(doc, getTTL());
+	}
 
-    public void setAlias(String alias)
-    {
-        this.alias = alias;
-    }
+	public String getAlias() {
+		return alias;
+	}
 
-    public Crypto getCrypto()
-    {
-        return crypto;
-    }
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
 
-    public void setCrypto(Crypto crypto)
-    {
-        this.crypto = crypto;
-    }
+	public Crypto getCrypto() {
+		return crypto;
+	}
 
-    public void setUsePlainUserPassword(boolean usePlain)
-    {
-        this.userPasswordUsePlain = usePlain;
+	public void setCrypto(Crypto crypto) {
+		this.crypto = crypto;
+	}
 
-    }
+	public void setUsePlainUserPassword(boolean usePlain) {
+		this.userPasswordUsePlain = usePlain;
 
-    public boolean usePlainUserPassword()
-    {
+	}
 
-        return this.userPasswordUsePlain;
-    }
+	public boolean usePlainUserPassword() {
 
-    public int getTTL()
-    {
-        return ttl;
-    }
+		return this.userPasswordUsePlain;
+	}
 
-    public void setTTL(int ttl)
-    {
-        this.ttl = ttl;
+	public int getTTL() {
+		return ttl;
+	}
 
-    }
+	public void setTTL(int ttl) {
+		this.ttl = ttl;
 
-    public void setActions(String[] actionsArray)
-    {
-        actions = actionsArray;
+	}
 
-    }
+	public void setActions(String[] actionsArray) {
+		actions = actionsArray;
 
-    public String[] getActions()
-    {
-        return actions;
-    }
+	}
 
-    public String getPrivateAlias()
-    {
-        return privateAlias;
-    }
+	public String[] getActions() {
+		return actions;
+	}
 
-    public void setPrivateAlias(String signatureAlias)
-    {
-        this.privateAlias = signatureAlias;
-    }
+	public String getPrivateAlias() {
+		return privateAlias;
+	}
 
-    public String getPrivatePassword()
-    {
-        return privatePassword;
-    }
+	public void setPrivateAlias(String signatureAlias) {
+		this.privateAlias = signatureAlias;
+	}
 
-    public void setPrivatePassword(String signaturePassword)
-    {
-        this.privatePassword = signaturePassword;
-    }
+	public String getPrivatePassword() {
+		return privatePassword;
+	}
 
-    public void setUsername(String user)
-    {
-        this.username = user;
+	public void setPrivatePassword(String signaturePassword) {
+		this.privatePassword = signaturePassword;
+	}
 
-    }
+	public void setUsername(String user) {
+		this.username = user;
 
-    public void setUserPassword(String password)
-    {
-        this.userPassword = password;
+	}
 
-    }
+	public void setUserPassword(String password) {
+		this.userPassword = password;
 
-    public void setBuilder(SecurityProcessorBuilder builder)
-    {
-        this.builder = builder;
+	}
 
-    }
+	public void setBuilder(SecurityProcessorBuilder builder) {
+		this.builder = builder;
 
-    public String getUsername()
-    {
+	}
 
-        return username;
-    }
+	public String getUsername() {
 
-    public String getUserPassword()
-    {
+		return username;
+	}
 
-        return userPassword;
-    }
+	public String getUserPassword() {
+
+		return userPassword;
+	}
 
 }

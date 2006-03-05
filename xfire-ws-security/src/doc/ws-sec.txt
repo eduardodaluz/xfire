@@ -1,9 +1,9 @@
 Configuration of WS-Security
 XFire currently supports following subset of WS-Security specification:
-? Usertoken with plain password – allows to send username and password ( in plain format ) along with SOAP message
-? Usertoken with hashed password – allows to send username and hash of given password ( receiver must provide valid password to compare hashes)
-? Encryption – allows to encrypt message body with PKI public/private key.
-? Timestamp – allows to specify period of time for which message remains valid ( in seconds ).
+* Usertoken with plain password – allows to send username and password ( in plain format ) along with SOAP message
+* Usertoken with hashed password – allows to send username and hash of given password ( receiver must provide valid password to compare hashes)
+* Encryption – allows to encrypt message body with PKI public/private key.
+* Timestamp – allows to specify period of time for which message remains valid ( in seconds ).
 
 Ws-Security can be enabled by adding  2 handlers for incoming and outgoing messages flow.
 Incoming security require following handlers :

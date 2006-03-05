@@ -31,7 +31,9 @@ public class WSS4JPropertiesHelper
         {
             keyAlias = (String) props.get(SecurityConfigurationWorker.PROP_PUBLIC_ALIAS);
         }
-        wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.alias", keyAlias);
+        if( keyAlias != null ){
+          wss4jProps.put("org.apache.ws.security.crypto.merlin.keystore.alias", keyAlias);
+        }
         String keyPass = (String) props.get(SecurityConfigurationWorker.PROP_PRIVATE_PASSWORD);
         if (keyPass != null)
         {
