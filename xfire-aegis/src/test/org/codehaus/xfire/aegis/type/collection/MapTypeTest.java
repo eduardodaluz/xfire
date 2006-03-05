@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -15,6 +16,7 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.StringType;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
@@ -22,7 +24,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 public class MapTypeTest
-    extends AbstractXFireTest
+    extends AbstractXFireAegisTest
 {
     TypeMapping mapping;
     
@@ -116,4 +118,10 @@ public class MapTypeTest
         assertEquals(String.class, mapType.getKeyClass());
     }
 
+    public void testService() throws Exception
+    {
+        Service service = getServiceFactory().create(MapService.class);
+        getServiceRegistry().register(service);
+        printNode(getWSDLDocument("MapService"));
+    }
 }

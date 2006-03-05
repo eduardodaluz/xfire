@@ -1,0 +1,7 @@
+<mappings>
+  <mapping>
+    <method name="getMap">
+      <return-type componentType="java.lang.String" keyType="java.lang.String"/>
+    </method>
+  </mapping>
+</mappings>
