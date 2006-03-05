@@ -54,15 +54,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/target/lib/xbean-spring-2.2-SNAPSHOT.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/target/lib/spring-mock-1.2.6.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -73,6 +64,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/target/lib/nekohtml-0.9.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/target/lib/xbean-spring-2.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

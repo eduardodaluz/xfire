@@ -40,16 +40,16 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="stax" level="project" />
+    <orderEntry type="module" module-name="aegis" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/target/lib/xbean-2.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/target/lib/xbean-2.1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="aegis" />
     <orderEntryProperties />
   </component>
   <component name="RetroweaverPlugin">

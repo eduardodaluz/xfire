@@ -15,13 +15,14 @@
     <property file="${master.basedir}/project.properties"/>      
     <property file="${master.basedir}/build.properties"/>
     <property file="build.properties"/>
-    <xmlproperty file="${master.basedir}/project.xml" prefix="maven"/>
+    <xmlproperty file="${master.basedir}/pom.xml" prefix="maven"/>
     <property name="classesdir" value="${target.dir}/classes" />
     <property name="testclassesdir" value="${target.dir}/test-classes" />
     <property name="testreportdir" value="${target.dir}/test-reports" />
     <property name="distdir" location="dist" />
     <property name="javadocdir" location="dist/docs/api" />
-    <property name="final.name" value="${ant.project.name}-${maven.project.currentVersion}" />
+    <property name="maven.repo.default" value="http://www.ibiblio.org/maven"/>
+    <property name="final.name" value="${ant.project.name}-${maven.project.version}" />
 
     <condition property="tests.available">
        <and>
@@ -63,7 +64,7 @@
     <macrodef name="check-dep">
       <attribute name="module" />
       <sequential>
-        <available property="@{module}.file.exists" file="${master.basedir}/@{module}/target/@{module}-${maven.project.currentVersion}.jar" />
+        <available property="@{module}.file.exists" file="${master.basedir}/@{module}/target/@{module}-${maven.project.version}.jar" />
         <fail unless="@{module}.file.exists" message="Required dependency @{module} not found, please build that module first." />
       </sequential>
     </macrodef>
@@ -172,8 +173,8 @@
     <tstamp>
       <format pattern="${maven.project.inceptionYear}-yyyy" property="year" />
     </tstamp>
-    <property name="copyright" value="Copyright &amp;copy;  ${maven.project.organization.name}. All Rights Reserved." />
-    <property name="title" value="XFire ${maven.project.currentVersion} API" />
+    <property name="copyright" value="Copyright &amp;copy;  XFire. All Rights Reserved." />
+    <property name="title" value="XFire ${maven.project.version} API" />
     <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="src/main" packagenames="com.sun.syndication.*" windowtitle="${title}">
     	  <doctitle>${title}</doctitle>
     	  <bottom>${copyright}</bottom>
@@ -191,10 +192,10 @@
   	<get-dep artifact="stax" version="1.1.2-dev" dir="${master.libdir}"/>
     <get-dep artifact="stax-api" group="stax" version="1.0" dir="${master.libdir}"/>
     <get-dep artifact="jdom" version="1.0" dir="${master.libdir}"/>
-    <get-dep artifact="wsdl4j" version="1.5.1" dir="${master.libdir}"/>
+    <get-dep artifact="wsdl4j" version="1.5.2" dir="${master.libdir}"/>
     <get-dep artifact="commons-logging" version="1.0.4" dir="${master.libdir}"/>
     <get-dep artifact="servletapi" version="2.3" dir="${master.libdir}"/>
-    <get-dep artifact="httpunit" version="1.5.1" dir="${master.libdir}"/>
+    <get-dep artifact="httpunit" version="1.6.1" dir="${master.libdir}"/>
     <get-dep artifact="jaxen" version="1.1-beta-8" dir="${master.libdir}"/>
     <get-dep artifact="easymock" version="1.1" dir="${master.libdir}"/>
     <get-dep artifact="xmlunit" version="1.0" dir="${master.libdir}"/>

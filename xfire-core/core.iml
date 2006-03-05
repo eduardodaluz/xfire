@@ -26,7 +26,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/target/lib/XmlSchema-20051110.jar!/" />
+          <root url="jar://$MODULE_DIR$/../target/lib/stax-1.1.2-dev.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -35,7 +35,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../target/lib/stax-1.1.2-dev.jar!/" />
+          <root url="jar://$MODULE_DIR$/target/lib/XmlSchema-1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
