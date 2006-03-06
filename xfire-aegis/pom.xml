@@ -24,4 +24,19 @@
       <version>snapshot-20040917</version>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/Test*</exclude>
+            <exclude>**/Abstract*</exclude>
+            <exclude>**/DynamicClientExampleTest*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>
