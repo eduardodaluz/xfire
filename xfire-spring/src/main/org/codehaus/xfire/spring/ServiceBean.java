@@ -87,6 +87,8 @@ public class ServiceBean
     
     private Invoker invoker;
     
+    private Object executor;
+    
     public void afterPropertiesSet()
         throws Exception
     {
@@ -139,7 +141,8 @@ public class ServiceBean
         }
         
         xfireService = serviceFactory.create(intf, name, namespace, properties);
-
+        xfireService.setExecutor(executor);
+        
         if (bindings != null && serviceFactory instanceof ObjectServiceFactory)
         {
             initializeBindings();
@@ -416,7 +419,6 @@ public class ServiceBean
         return bindings;
     }
 
-
     public void setBindings(List bindings)
     {
         this.bindings = bindings;
@@ -437,6 +439,15 @@ public class ServiceBean
         return createDefaultBindings;
     }
 
+    public Object getExecutor()
+    {
+        return executor;
+    }
+
+    public void setExecutor(Object executor)
+    {
+        this.executor = executor;
+    }
 
     public void setCreateDefaultBindings(boolean createDefaultBindings)
     {
