@@ -2,7 +2,6 @@ package org.codehaus.xfire.util;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -192,18 +191,17 @@ public class STAXUtilsTest
     {
         XMLStreamReader reader = ifactory.createXMLStreamReader(getResourceAsStream("amazon2.xml"));
         
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        
-        org.w3c.dom.Document doc = STAXUtils.read(builder, reader, true);
-        
-        /*DOMUtils.writeXml(doc, System.out);
-        DOMReader domReader = new DOMReader();
-        Document testDoc = domReader.read(doc);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-        addNamespace("a", "http://webservices.amazon.com/AWSECommerceService/2004-10-19");
-        assertValid("//a:ItemLookupResponse", testDoc);
-        assertValid("//a:ItemLookupResponse/a:Items", testDoc);
-        assertValid("//a:OperationRequest/a:HTTPHeaders/a:Header[@Name='UserAgent']", testDoc);*/
+        dbf.setValidating(false);
+        dbf.setIgnoringComments(false);
+        dbf.setIgnoringElementContentWhitespace(true);
+        dbf.setNamespaceAware(true);
+        
+        org.w3c.dom.Document doc = STAXUtils.read(dbf.newDocumentBuilder(), reader, false);
+
+//        Diff diff = new Diff(DOMUtils.readXml(getResourceAsStream("amazon2.xml")), doc);
+//        assertTrue("XML isn't similar: " + diff.toString(), diff.similar());
+//        assertTrue(diff.identical());
     }
 }

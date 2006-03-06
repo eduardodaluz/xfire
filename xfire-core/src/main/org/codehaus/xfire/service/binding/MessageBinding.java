@@ -43,10 +43,9 @@ public class MessageBinding
 
         DepthXMLStreamReader dr = new DepthXMLStreamReader(message.getXMLStreamReader());
 
-        STAXUtils.toNextElement(dr);
-
         final List params = new ArrayList();
-        
+        message.setBody( params );
+
         MessageInfo msg;
         if (context.getClient() != null)
         {
@@ -57,16 +56,20 @@ public class MessageBinding
             msg = operation.getInputMessage();
         }
         
+        if (!STAXUtils.toNextElement(dr))
+        {
+            return;
+        }
+
         Binding binding = context.getBinding();
         for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo p = (MessagePartInfo) itr.next();
 
             params.add( service.getBindingProvider().readParameter(p, message.getXMLStreamReader(), context) );
+
             nextEvent(message.getXMLStreamReader());
         }
-
-        message.setBody( params );
     }
 
     public void writeMessage(OutMessage message, XMLStreamWriter writer, MessageContext context)

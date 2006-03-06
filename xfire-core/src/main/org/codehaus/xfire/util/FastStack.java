@@ -1,6 +1,7 @@
 package org.codehaus.xfire.util;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 
 public class FastStack
     extends ArrayList
@@ -12,6 +13,8 @@ public class FastStack
     
     public Object pop()
     {
+        if (empty()) throw new EmptyStackException();
+        
         return remove(size()-1);
     }
     
@@ -22,6 +25,8 @@ public class FastStack
 
     public Object peek()
     {
+        if (empty()) throw new EmptyStackException();
+        
         return get(size()-1);
     }
 }

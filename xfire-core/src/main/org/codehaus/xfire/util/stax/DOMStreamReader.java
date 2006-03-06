@@ -90,11 +90,10 @@ public abstract class DOMStreamReader
     public int next()
         throws XMLStreamException
     {
-
         if (frame.ended)
         {
             frames.pop();
-            if (!frames.isEmpty())
+            if (!frames.empty())
             {
                 frame = (ElementFrame) frames.peek();
             }

@@ -380,7 +380,7 @@ public class STAXUtils
         throws XMLStreamException
     {
         Document doc = builder.newDocument();
-
+       
         readDocElements(doc, reader, repairing);
         
         return doc;
@@ -405,27 +405,28 @@ public class STAXUtils
         throws XMLStreamException
     {
         Document doc = getDocument(parent);
-        
+
         Element e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
         e.setPrefix(reader.getPrefix());
         parent.appendChild(e);
-        
-        declareNamespaces(reader, e);
-        
-        if (repairing && !isDeclared(e, reader.getNamespaceURI(), reader.getPrefix()))
+
+        for (int ns = 0; ns < reader.getNamespaceCount(); ns++)
         {
-            declare(e, reader.getNamespaceURI(), reader.getPrefix());
+            String uri = reader.getNamespaceURI(ns);
+            String prefix = reader.getNamespacePrefix(ns);
+
+            declare(e, uri, prefix);
         }
         
-        for (int i = 0; i < reader.getAttributeCount(); i++)
+        for (int att = 0; att < reader.getAttributeCount(); att++)
         {
-            String name = reader.getAttributeLocalName(i);
-            String prefix = reader.getAttributePrefix(i);
+            String name = reader.getAttributeLocalName(att);
+            String prefix = reader.getAttributePrefix(att);
             if (prefix != null && prefix.length() > 0)
                 name = prefix + ":" + name;
             
-            Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(i), name);
-            attr.setValue(reader.getAttributeValue(i));
+            Attr attr = doc.createAttributeNS(reader.getAttributeNamespace(att), name);
+            attr.setValue(reader.getAttributeValue(att));
             e.setAttributeNode(attr);
         }
         
@@ -433,6 +434,11 @@ public class STAXUtils
         
         readDocElements(e, reader, repairing);
         
+        if (repairing && !isDeclared(e, reader.getNamespaceURI(), reader.getPrefix()))
+        {
+            declare(e, reader.getNamespaceURI(), reader.getPrefix());
+        }
+
         return e;
     }
 
@@ -469,6 +475,8 @@ public class STAXUtils
         Document doc = getDocument(parent);
 
         int event = reader.getEventType();
+        String prefix;
+        
         while (reader.hasNext())
         {
             switch (event)
@@ -485,6 +493,10 @@ public class STAXUtils
                 break;
             case XMLStreamConstants.END_ELEMENT:
                 return;
+            case XMLStreamConstants.NAMESPACE:
+                break;
+            case XMLStreamConstants.ATTRIBUTE:
+                break;
             case XMLStreamConstants.CHARACTERS:
                 if (parent != null)
                 {
@@ -499,6 +511,18 @@ public class STAXUtils
                 }
 
                 break;
+            case XMLStreamConstants.CDATA:
+                parent.appendChild(doc.createCDATASection(reader.getText()));
+
+                break;
+            case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                parent.appendChild(doc.createProcessingInstruction(reader.getPITarget(), reader.getPIData()));
+
+                break;
+            case XMLStreamConstants.ENTITY_REFERENCE:
+                parent.appendChild(doc.createProcessingInstruction(reader.getPITarget(), reader.getPIData()));
+
+                break;
             default:
                 break;
             }
@@ -507,17 +531,6 @@ public class STAXUtils
             {
                 event = reader.next();
             }
-        }
-    }
-
-    private static void declareNamespaces(XMLStreamReader reader, Element node)
-    {
-        for (int i = 0; i < reader.getNamespaceCount(); i++)
-        {
-            String uri = reader.getNamespaceURI(i);
-            String prefix = reader.getNamespacePrefix(i);
-
-            declare(node, uri, prefix);
         }
     }
 
@@ -531,7 +544,7 @@ public class STAXUtils
         {
             if (uri != null /*&& uri.length() > 0*/)
             {
-                node.setAttribute("xmlns", uri);
+                node.setAttributeNS(XML_NS, "xmlns", uri);
             }
         }
     }
