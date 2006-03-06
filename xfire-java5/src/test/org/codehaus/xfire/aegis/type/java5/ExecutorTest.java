@@ -3,8 +3,8 @@ package org.codehaus.xfire.aegis.type.java5;
 import java.util.concurrent.Executor;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.service.Echo;
-import org.codehaus.xfire.service.EchoImpl;
+import org.codehaus.xfire.test.Echo;
+import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 
