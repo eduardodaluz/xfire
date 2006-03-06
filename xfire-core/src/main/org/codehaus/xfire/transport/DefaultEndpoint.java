@@ -8,10 +8,9 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
-import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.handler.DefaultFaultHandler;
 import org.codehaus.xfire.handler.HandlerPipeline;
-import org.codehaus.xfire.service.Service;
 
 /**
  * A <code>ChannelEndpoint</code> which executes the in pipeline
@@ -53,6 +52,9 @@ public class DefaultEndpoint
         
         context.setInPipeline(pipeline);
         
+        if (context.getFaultHandler() == null)
+            context.setFaultHandler(new DefaultFaultHandler());
+        
         try
         {
             pipeline.invoke(context);
@@ -61,79 +63,16 @@ public class DefaultEndpoint
         }
         catch (Exception e)
         {
-            handleException(context, pipeline, e);
-        }
-    }
+            context.setProperty(DefaultFaultHandler.EXCEPTION, e);
 
-    protected void handleException(MessageContext context, HandlerPipeline pipeline, Exception e)
-    {
-        if (e instanceof RuntimeException)
-        {
-            log.error("Fault occurred!", e);
-        }
-        else if (log.isDebugEnabled())
-        {
-            log.debug("Fault occurred!", e);
-        }
-        
-        XFireFault fault = XFireFault.createFault(e);
-
-        // Give the previously invoked pipeline a chance to clean up.
-        pipeline.handleFault(fault, context);
-        
-        Service service = context.getService();
-        if (service == null || service.getFaultSerializer() == null || !context.getExchange().hasFaultMessage())
-        {
-            sendToDeadLetter(fault, context);
-        }
-        else
-        {
-            sendFault(fault, context);
-        }
-    }
-
-    protected void sendToDeadLetter(XFireFault fault, MessageContext context)
-    {
-        log.error("Could not find service.", fault);
-    }
-
-    protected void sendFault(XFireFault fault, MessageContext context)
-    {
-        // Create the outgoing fault message
-        OutMessage outMsg = (OutMessage) context.getExchange().getFaultMessage();
-        
-        outMsg.setSerializer(context.getService().getFaultSerializer());
-        outMsg.setBody(fault);
-        
-        context.setCurrentMessage(outMsg);
-        
-        // Create a fault pipeline
-        HandlerPipeline faultPipe = new HandlerPipeline(context.getXFire().getFaultPhases());
-        
-        faultPipe.addHandlers(context.getXFire().getFaultHandlers());
-        
-        Channel faultChannel = context.getExchange().getFaultMessage().getChannel();
-        if (faultChannel != null)
-        {
-            faultPipe.addHandlers(faultChannel.getTransport().getFaultHandlers());
-        }
-
-        if (context.getService() != null)
-        {
-            faultPipe.addHandlers(context.getService().getFaultHandlers());
-        }
-        
-        try
-        {
-            faultPipe.invoke(context);
-        }
-        catch (Exception e1)
-        {
-            // An exception occurred while sending the fault. Log and move on.
-            XFireFault fault2 = XFireFault.createFault(e1);
-            faultPipe.handleFault(fault2, context);
-            
-            log.error("Could not send fault.", e1);
+            try
+            {
+                context.getFaultHandler().invoke(context);
+            }
+            catch (Exception e1)
+            {
+                log.warn("Error invoking fault handler.", e1);
+            }
         }
     }
 

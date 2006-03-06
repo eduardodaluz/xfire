@@ -17,6 +17,7 @@ import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
+import org.codehaus.xfire.handler.DefaultFaultHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessageInfo;
@@ -85,9 +86,20 @@ public class ServiceInvocationHandler
                     }
                     catch (Exception e)
                     {
+                        context.setProperty(DefaultFaultHandler.EXCEPTION, e);
+
                         XFireFault fault = XFireFault.createFault(e);
-                        
-                        context.getInPipeline().handleFault(fault, context);
+
+                        try
+                        {
+                            context.getOutPipeline().handleFault(fault, context);
+                            
+                            context.getFaultHandler().invoke(context);
+                        }
+                        catch (Exception e1)
+                        {
+                            logger.warn("Error invoking fault handler.", e1);
+                        }
                     }
                 }
             };
@@ -256,7 +268,17 @@ public class ServiceInvocationHandler
             context.setCurrentMessage(outMsg);
             outMsg.setBody(new Object[] {value});
             outMsg.setSerializer(context.getBinding().getSerializer(operation));
-            context.getOutPipeline().invoke(context);
+            
+            try
+            {
+                context.getOutPipeline().invoke(context);
+            }
+            catch (Exception e)
+            {
+                XFireFault fault = XFireFault.createFault(e);
+                context.getOutPipeline().handleFault(fault, context);
+                throw fault;
+            }
         }
     }
     

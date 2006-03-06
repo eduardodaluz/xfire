@@ -5,6 +5,7 @@ import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
@@ -27,6 +28,7 @@ public class MessageContext extends AbstractContext
     private AbstractMessage currentMessage;
     private HandlerPipeline inPipeline;
     private HandlerPipeline outPipeline;
+    private Handler faultHandler;
     private XFire xfire;
     
     public MessageContext()
@@ -144,7 +146,21 @@ public class MessageContext extends AbstractContext
     {
         this.outPipeline = outPipeline;
     }
-    
+
+    /**
+     * The fault Handler is invoked when a fault incurs in the pipeline.
+     * @return
+     */
+    public Handler getFaultHandler()
+    {
+        return faultHandler;
+    }
+
+    public void setFaultHandler(Handler faultHandler)
+    {
+        this.faultHandler = faultHandler;
+    }
+
     /**
      * Gets a propert by checking layered contexts. Contexts are checked in the
      * following order:
