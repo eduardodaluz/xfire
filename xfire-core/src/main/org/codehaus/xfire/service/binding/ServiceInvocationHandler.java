@@ -1,5 +1,7 @@
 package org.codehaus.xfire.service.binding;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,12 +23,19 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartContainer;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.Invoker;
 import org.codehaus.xfire.util.stax.ElementStreamWriter;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+/**
+ * This class is responsible for taking the parameters on the InMessage,
+ * invoking the service, then creating an OutMessage.
+ * 
+ * @author Dan Diephouse
+ */
 public class ServiceInvocationHandler 
     extends AbstractHandler
 {
@@ -66,38 +75,77 @@ public class ServiceInvocationHandler
 
             final Invoker invoker = context.getService().getInvoker();
             
-            // invoke the service method...
-            if (!operation.isAsync())
+            Runnable runnable = new ServiceRunner() 
             {
-                sendMessage(context, paramArray, operation, invoker);
-            }
-            else
-            {
-                Runnable runnable = new Runnable() 
+                public void run() 
                 {
-                    public void run() 
+                    try
                     {
-                        try
-                        {
-                            sendMessage(context, paramArray, operation, invoker);
-                        }
-                        catch (Exception e)
-                        {
-                            XFireFault fault = XFireFault.createFault(e);
-                            
-                            context.getInPipeline().handleFault(fault, context);
-                        }
+                        sendMessage(context, paramArray, operation, invoker);
                     }
-                };
-                
-                Thread opthread = new Thread(runnable);
-                opthread.start();
-            }
+                    catch (Exception e)
+                    {
+                        XFireFault fault = XFireFault.createFault(e);
+                        
+                        context.getInPipeline().handleFault(fault, context);
+                    }
+                }
+            };
+            
+            execute(runnable, context.getService(), operation);
         }
         catch (XFireRuntimeException e)
         {
             logger.warn("Error invoking service.", e);
             throw new XFireFault("Error invoking service" + (e.getMessage() != null ? ": " + e.getMessage() : ".") , e, XFireFault.SENDER);
+        }
+    }
+
+    /**
+     * Run the Runnable which executes our service.
+     * 
+     * @param runnable
+     * @param service
+     * @param operation
+     */
+    protected void execute(Runnable runnable, Service service, OperationInfo operation)
+    {
+        Object executor = null;
+        if (service != null) executor = service.getExecutor();
+        
+        if (executor == null)
+        {
+            if (!operation.isAsync())
+            {
+                runnable.run();
+            }
+            else
+            {
+                Thread opthread = new Thread(runnable);
+                opthread.start();
+            }
+        }
+        else
+        {
+            try
+            {
+                Method method = executor.getClass().getMethod("execute", new Class[] { Runnable.class });
+                method.invoke(executor, new Object[] { runnable });
+            }
+            catch (InvocationTargetException e)
+            {
+                // Since we catch all the throwables, the only time this will happen
+                // is when a runtime exception is thrown.
+                Throwable t = e.getTargetException();
+                if (t instanceof RuntimeException)
+                    throw (RuntimeException) t;
+                
+                throw new XFireRuntimeException("Could not invoke executor.", e);
+            }
+            catch (Exception e)
+            {
+                throw new XFireRuntimeException("Could not invoke executor.", e);
+            }
         }
     }
 
