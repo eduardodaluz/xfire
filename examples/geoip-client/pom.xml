@@ -34,7 +34,7 @@
             <configuration>
               <tasks>
                 <taskdef name="wsgen" classname="org.codehaus.xfire.gen.WsGenTask" 
-                     classpathref="maven.dependency.classpath"/>
+                     classpathref="maven.compile.classpath"/>
               		
                 <wsgen outputDirectory="${basedir}/target/generated-source"
                   wsdl="${basedir}/src/wsdl/geoip.wsdl" package="net.webservicex.geoip.jaxb"
