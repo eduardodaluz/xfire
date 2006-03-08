@@ -1,14 +1,16 @@
 <mappings xmlns:bean="urn:xfire:bean"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:noNamespaceSchemaLocation="http://xfire.codehaus.org/schemas/1.0/mapping.xsd">
-  
+   xsi:noNamespaceSchemaLocation="http://www.codehaus.org/~dandiep/aegis1.xsd">
+
+  <mapping>
+    
+  </mapping>
   <mapping uri="urn:xfire:bean">
-    <property name="prop1" mappedName="Prop1"/>
-    <property name="prop2" mappedName="Prop2" style="attribute"/>
+    
   </mapping>
   
   <mapping uri="urn:xfire:bean2">
-    <property name="prop1" mappedName="Prop1"/>
+    <property name="prop1"  mappedName="Prop1"/>
     <property name="prop2" mappedName="Prop2"/>
   </mapping>
   
