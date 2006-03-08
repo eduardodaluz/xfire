@@ -41,7 +41,11 @@ public class AddressingInHandler
     {
         factories.add(new AddressingHeadersFactory200508());
         factories.add(new AddressingHeadersFactory200408());
+    }
 
+    public List getFactories()
+    {
+        return factories;
     }
 
     public void invoke(MessageContext context)
