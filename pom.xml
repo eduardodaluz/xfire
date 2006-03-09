@@ -112,6 +112,7 @@
     <module>xfire-picocontainer</module>
     <module>xfire-plexus</module>
     <module>xfire-spring</module>
+    <module>xfire-ws-security</module>
     <module>xfire-xmlbeans</module>
     <module>xfire-xmpp</module>
   </modules>
@@ -500,12 +501,12 @@
     <repository>
       <id>xfire</id>
       <name>XFire Central Repository</name>
-      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2</url>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/repository</url>
     </repository>
     <snapshotRepository>
       <id>xfire-snapshots</id>
       <name>XFire Central Development Repository</name>
-      <url>scpexe://xfire.codehaus.org/home/projects/xfire/dist-m2-snapshot</url>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/repository-snapshot</url>
     </snapshotRepository>
     <site>
       <id>xfire</id>
