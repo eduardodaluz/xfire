@@ -262,6 +262,11 @@
         <version>${version}</version>
       </dependency>
       <dependency>
+        <groupId>org.codehaus.xfire</groupId>
+        <artifactId>xfire-ws-security</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
         <version>1.0.2</version>
