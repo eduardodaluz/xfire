@@ -106,7 +106,7 @@ public class CustomFaultHandler
         {
             FaultInfo faultInfo = (FaultInfo) itr.next();
             
-            if (class1.isAssignableFrom(faultInfo.getExceptionClass()))
+            if (faultInfo.getExceptionClass().isAssignableFrom(class1))
             {
                 return faultInfo;
             }
