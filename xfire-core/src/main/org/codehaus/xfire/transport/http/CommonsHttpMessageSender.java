@@ -51,6 +51,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
     public static final String HTTP_PROXY_HOST = "http.proxyHost";
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
+    public static final String HTTP_STATE = "httpClient.httpstate";
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -78,28 +79,31 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             client.setParams(params);
         }
 
-        if (System.getProperty(HTTP_PROXY_HOST) != null)
-        {
-            client.getHostConfiguration().setProxy(System.getProperty(HTTP_PROXY_HOST), 
-                Integer.parseInt(System.getProperty(HTTP_PROXY_PORT), 80));
-        }
-        
+        // Setup the proxy settings
         String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
         if (proxyHost != null)
         {
-            client.getHostConfiguration().setProxy(proxyHost, 
-                Integer.parseInt((String) context.getContextualProperty(HTTP_PROXY_PORT), 80));
+            String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
+            int port = 80;
+            if (portS != null) port = Integer.parseInt(portS);
+            
+            client.getHostConfiguration().setProxy(proxyHost, port);
         }
+        
+        // Pull the HttpState from the context if possible. Otherwise create
+        // one in the ThreadLocal
+        HttpState state = (HttpState) context.getContextualProperty(HTTP_STATE);
+        if (state == null) state = getHttpState();
         
         postMethod = new PostMethod(getUri());
         
+        // set the username and password if present
         String username = (String) context.getContextualProperty(Channel.USERNAME);
         if (username != null)
         {
             String password = (String) context.getContextualProperty(Channel.PASSWORD);
             client.getParams().setAuthenticationPreemptive(true);
-            getHttpState().setCredentials(AuthScope.ANY, 
-                                          new UsernamePasswordCredentials(username, password));
+            state.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
         }
         
         if (getSoapAction() != null)
@@ -151,9 +155,9 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         return ct != null && ct.length() > 0;
     }
     
-    private HttpState getHttpState()
+    public HttpState getHttpState()
     {
-        HttpState state = (HttpState)httpState.get();
+        HttpState state = (HttpState) httpState.get();
 
         if( null == state )
         {
@@ -162,6 +166,11 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         }
 
         return state;
+    }
+    
+    public void clearHttpState()
+    {
+        httpState.set(null);
     }
 
     private RequestEntity getByteArrayRequestEntity()
