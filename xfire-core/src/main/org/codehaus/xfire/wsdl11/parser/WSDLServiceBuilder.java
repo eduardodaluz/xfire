@@ -420,20 +420,7 @@ public class WSDLServiceBuilder
         {
             st = getBindingProvider().getSchemaType(element.getSchemaTypeName(), service);
         }
-        
-//        SimpleSchemaType st = new SimpleSchemaType();
-//
-//        if (element.getRefName() != null)
-//        {
-//            st.setAbstract(false);
-//            st.setSchemaType(element.getRefName());
-//        }
-//        else
-//        {
-//            st.setAbstract(true);
-//            st.setSchemaType(element.getSchemaTypeName());
-//        }
-        
+
         part.setSchemaType(st);
     }
 
@@ -515,6 +502,12 @@ public class WSDLServiceBuilder
             
             if (el.getMaxOccurs() > 1) return false;
 
+            // If this is an anonymous complex type, mark it as unwrapped.
+            // We're doing this because things like JAXB don't have support
+            // for finding classes from anonymous type names.
+            if (el.getSchemaTypeName() == null && el.getRefName() == null)
+                return false;
+            
             return true;
         }
         

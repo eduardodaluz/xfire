@@ -192,7 +192,7 @@ public abstract class AbstractServiceGenerator
                 }
             }
         }
-        else 
+        else if (!op.hasOutput())
         {
             annotateOneWay(method);
         }
@@ -341,7 +341,7 @@ public abstract class AbstractServiceGenerator
         {
             MessagePartInfo returnPart = 
                 (MessagePartInfo) op.getOutputMessage().getMessageParts().iterator().next();
-            
+
             returnType = schema.getType(context, 
                     returnPart.getName(), returnPart.getSchemaType().getSchemaType());
         }

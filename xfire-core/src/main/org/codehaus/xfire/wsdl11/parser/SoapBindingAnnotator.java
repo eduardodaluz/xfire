@@ -115,14 +115,17 @@ public class SoapBindingAnnotator extends BindingAnnotator
         
         AbstractSoapBinding binding = getSoapBinding();
         
-        binding.setSoapAction(opInfo, soapOp.getSoapActionURI());
-
-        String style = soapOp.getStyle();
-        if (style != null)
+        if (soapOp != null)
         {
-            setStyle(style);
+            binding.setSoapAction(opInfo, soapOp.getSoapActionURI());
+    
+            String style = soapOp.getStyle();
+            if (style != null)
+            {
+                setStyle(style);
+            }
         }
-
+        
         binding.setSerializer(opInfo, AbstractSoapBinding.getSerializer(binding.getStyle(), binding.getUse()));
     }
 
