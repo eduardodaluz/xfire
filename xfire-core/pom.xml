@@ -14,21 +14,6 @@
       <artifactId>activation</artifactId>
     </dependency>
     <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
     </dependency>
@@ -59,11 +44,6 @@
     <dependency>
       <groupId>org.apache.ws.commons</groupId>
       <artifactId>XmlSchema</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jetty</groupId>
-      <artifactId>org.mortbay.jetty</artifactId>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>xalan</groupId>
