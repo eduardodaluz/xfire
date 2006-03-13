@@ -16,14 +16,17 @@
     <dependency>
       <groupId>httpunit</groupId>
       <artifactId>httpunit</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -60,10 +63,12 @@
     <dependency>
       <groupId>jetty</groupId>
       <artifactId>org.mortbay.jetty</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
