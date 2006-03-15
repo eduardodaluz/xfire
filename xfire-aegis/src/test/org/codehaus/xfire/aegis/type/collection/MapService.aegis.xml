@@ -1,7 +1,8 @@
 <mappings>
   <mapping>
-    <method name="getMap">
-      <return-type componentType="java.lang.String" keyType="java.lang.String"/>
+    <method name="echoMap">
+      <parameter index="0" keyType="java.lang.String" componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
+      <return-type keyType="java.lang.String" componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
     </method>
   </mapping>
 </mappings>
