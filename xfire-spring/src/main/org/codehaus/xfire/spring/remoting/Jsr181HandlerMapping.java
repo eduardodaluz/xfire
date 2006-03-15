@@ -10,7 +10,6 @@ import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.codehaus.xfire.spring.SpringUtils;
 import org.springframework.beans.BeansException;
@@ -101,7 +100,6 @@ public class Jsr181HandlerMapping
                     webAnnotations.hasWebServiceAnnotation(clazz))
             {
                 Service endpoint = serviceFactory.create(clazz);
-                ServiceInfo service = endpoint.getServiceInfo();
                 if (logger.isInfoEnabled())
                 {
                     logger.info("Exposing  service " + endpoint.getName() + 
