@@ -15,7 +15,9 @@ import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.codehaus.xfire.spring.SpringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanIsAbstractException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.handler.AbstractUrlHandlerMapping;
 
 /**
@@ -64,10 +66,14 @@ public class Jsr181HandlerMapping
     {
         String[] beanNames = beanFactory.getBeanDefinitionNames();
 
+        ConfigurableApplicationContext ctxt = (ConfigurableApplicationContext) beanFactory;
+
         // Take any bean name or alias that has a web service annotation
         for (int i = 0; i < beanNames.length; i++)
         {
-            if (!beanFactory.isSingleton(beanNames[i])) continue;
+            BeanDefinition def = ctxt.getBeanFactory().getBeanDefinition(beanNames[i]);
+    
+            if (!def.isSingleton() || def.isAbstract()) continue;
             
             Class clazz;
             Object bean;
