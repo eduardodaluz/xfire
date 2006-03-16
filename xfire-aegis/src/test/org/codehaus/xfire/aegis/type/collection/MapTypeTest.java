@@ -1,6 +1,5 @@
 package org.codehaus.xfire.aegis.type.collection;
 
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,14 +18,10 @@ import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.SimpleBean;
 import org.codehaus.xfire.aegis.type.basic.StringType;
-import org.codehaus.xfire.client.Client;
-import org.codehaus.xfire.client.XFireProxy;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.LoggingHandler;
-import org.codehaus.xfire.util.dom.DOMOutHandler;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -128,18 +123,14 @@ public class MapTypeTest
 
     public void testService() throws Exception
     {
-        Service service = getServiceFactory().create(MapService.class);
+        Service service = getServiceFactory().create(MapService.class, null, "urn:MapService", null);
         getServiceRegistry().register(service);
-        getWSDLDocument("MapService");
+        printNode(getWSDLDocument("MapService"));
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, MapServiceImpl.class);
         
         XFireProxyFactory factory = new XFireProxyFactory(getXFire());
         MapService client = (MapService) factory.create(service, "xfire.local://MapService");
-        
-        Client xclient = ((XFireProxy) Proxy.getInvocationHandler(client)).getClient();
-        xclient.addOutHandler(new DOMOutHandler());
-        xclient.addOutHandler(new LoggingHandler());
-        
+
         Map map = new HashMap();
         SimpleBean bean = new SimpleBean();
         bean.setHowdy("howdy");
