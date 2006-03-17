@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.annotations.commons.CommonsWebAttributes;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -303,5 +304,11 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setDefaultReturnValue(false); 
+    }
+    
+    public void testDefaultConstructor() 
+    {
+        AnnotationServiceFactory factory = new AnnotationServiceFactory();
+        assertTrue(factory.getAnnotations() instanceof CommonsWebAttributes);
     }
 }

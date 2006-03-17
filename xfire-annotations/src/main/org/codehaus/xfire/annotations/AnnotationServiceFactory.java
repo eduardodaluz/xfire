@@ -9,6 +9,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFireFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.OperationInfo;
@@ -36,6 +38,30 @@ public class AnnotationServiceFactory
     
     private WebAnnotations webAnnotations;
 
+    /**
+     * Creates an AnnotationServiceFactory which uses the most appropriate
+     * annotations implementation - commons-attributes on Java 1.4 and
+     * Java 5 attributes on Java 5 JVMs.
+     * <p>
+     * The {@link TransportManager} is retrieved from the {@link XFireFactory}.
+     */
+    public AnnotationServiceFactory()
+    {
+        this(XFireFactory.newInstance().getXFire().getTransportManager());
+    }
+    
+
+    /**
+     * Creates an AnnotationServiceFactory which uses the most appropriate
+     * annotations implementation - commons-attributes on Java 1.4 and
+     * Java 5 attributes on Java 5 JVMs.
+     */
+    public AnnotationServiceFactory(final TransportManager transportManager)
+    {
+        super(transportManager, new AegisBindingProvider());
+        this.webAnnotations = getAnnotations();
+    }
+
     public AnnotationServiceFactory(WebAnnotations webAnnotations,
                                     final TransportManager transportManager)
     {
@@ -59,6 +85,48 @@ public class AnnotationServiceFactory
         this.webAnnotations = webAnnotations;
     }
 
+    protected WebAnnotations getAnnotations()
+    {
+        if (!isJDK5andAbove())
+            return loadCommonsAttributesAnnotations();
+        
+        try
+        {
+            WebAnnotations wa = (WebAnnotations)
+                ClassLoaderUtils.loadClass("org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations", 
+                                           getClass()).newInstance();
+            
+            return wa;
+        }
+        catch (Exception e)
+        {
+            return loadCommonsAttributesAnnotations();
+        }
+    }
+
+
+    private WebAnnotations loadCommonsAttributesAnnotations()
+    {
+        try
+        {
+            WebAnnotations wa = (WebAnnotations)
+                ClassLoaderUtils.loadClass("org.codehaus.xfire.annotations.commons.CommonsWebAttributes", 
+                                           getClass()).newInstance();
+            
+            return wa;
+        }
+        catch (Exception e1)
+        {
+            throw new XFireRuntimeException("No WebAnnotation implementation was found!", e1);
+        }
+    }
+    
+    boolean isJDK5andAbove()
+    {
+      String v = System.getProperty("java.class.version","44.0");
+      return ("49.0".compareTo(v) <= 0);
+    }
+    
     /**
      * Creates a service from the specified class. If the class has a
      * {@link SOAPBindingAnnotation}, it will be used to define the style and
