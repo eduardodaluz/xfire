@@ -18,6 +18,7 @@ import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.SimpleBean;
 import org.codehaus.xfire.aegis.type.basic.StringType;
+import org.codehaus.xfire.aegis.type.collection.bean.MapBean;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
@@ -114,10 +115,10 @@ public class MapTypeTest
         Type type = beanType.getTypeInfo().getType(mapName);
         assertTrue(type instanceof MapType);
 
-        assertEquals(new QName(mapping.getEncodingStyleURI(), "string2stringMap"), type.getSchemaType());
+        assertEquals(new QName(mapping.getEncodingStyleURI(), "string2SimpleBeanMap"), type.getSchemaType());
         
         MapType mapType = (MapType) type;
-        assertEquals(String.class, mapType.getValueClass());
+        assertEquals(SimpleBean.class, mapType.getValueClass());
         assertEquals(String.class, mapType.getKeyClass());
     }
 
@@ -141,5 +142,10 @@ public class MapTypeTest
         bean = (SimpleBean) map.get("test");
         assertNotNull(bean);
         assertEquals("howdy", bean.getHowdy());
+        
+        MapBean mapBean = new MapBean();
+        mapBean.setMap(map);
+        MapBean mapBean2 = client.echoMapBean(mapBean);
+        assertEquals(1, mapBean2.getMap().size());
     }
 }

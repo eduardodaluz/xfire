@@ -39,6 +39,7 @@ public class XMLStreamReaderType
         try
         {
             STAXUtils.copy(reader, ((ElementWriter) writer).getXMLStreamWriter());
+            reader.close();
         }
         catch (XMLStreamException e)
         {

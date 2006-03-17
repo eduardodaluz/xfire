@@ -2,7 +2,7 @@
  <env:Header/>
  <env:Body>
   <m:echo xmlns:m="urn:Echo">
-   <m:echo>Yo Yo</m:echo>
+   <m:in0>Yo Yo</m:in0>
   </m:echo>
  </env:Body>
 </env:Envelope>

@@ -1,0 +1,6 @@
+<mappings>
+  <mapping>
+    <property name="map" keyType="java.lang.String" 
+       componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
+  </mapping>
+</mappings>

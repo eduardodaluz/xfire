@@ -1,4 +1,4 @@
-package org.codehaus.xfire.aegis.type.collection;
+package org.codehaus.xfire.aegis.type.collection.bean;
 
 import java.util.Map;
 

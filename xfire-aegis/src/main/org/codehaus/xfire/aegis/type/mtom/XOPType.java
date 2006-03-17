@@ -41,6 +41,7 @@ public abstract class XOPType
     public Object readObject(MessageReader reader, MessageContext context)
     	throws XFireFault
     {
+        
         String uri = null; //getURI(reader.getValue(null, "href"));
         String contentType = null; //reader.getValue(XML_MIME_NS, "contentType");
         
