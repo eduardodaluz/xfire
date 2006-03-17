@@ -36,10 +36,13 @@ public class RPCBinding
             throw new XFireFault("There must be a method name element.", XFireFault.SENDER);
         
         String opName = dr.getLocalName();
+        if (isClientModeOn(context))
+            opName = opName.substring(0, opName.lastIndexOf("Response"));
+        
         OperationInfo operation = endpoint.getServiceInfo().getOperation( opName );
 
         if (operation == null)
-            throw new XFireFault("Could not find appropriate operation!", XFireFault.SENDER);
+            throw new XFireFault("Could not find operation: " + opName, XFireFault.SENDER);
         
         // Move from operation element to whitespace or start element
         nextEvent(dr);

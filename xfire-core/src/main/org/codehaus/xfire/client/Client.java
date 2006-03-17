@@ -39,15 +39,28 @@ import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.xml.sax.InputSource;
 
+/**
+ * A SOAP Client. This client can function in two modes.
+ * <p>
+ * The first is dynamic mode. In this mode the WSDL is retrieved for a service,
+ * a {@link org.codehaus.xfire.service.Service} model is created from it, and 
+ * it is used as metadata for the service.
+ * @author Dan
+ */
 public class Client
     extends AbstractHandlerSupport
     implements ChannelEndpoint
 {
     private static final Log log = LogFactory.getLog(Client.class);
 
+    /**
+     * This is a variable set on the MessageContext to let particular Handlers
+     * know that the invocation is a client invocation.
+     */
     public static final String CLIENT_MODE = "client.mode";
 
     private Object[] response;
+    private Channel channel;
     private Transport transport;
     private Service service;
     private Binding binding;
@@ -66,11 +79,24 @@ public class Client
         addFaultHandler(new ClientFaultConverter());
     }
     
+    /**
+     * Creates a client for a particular {@link Endpoint} on a specified {@link Transport}. The
+     * client will create an anonymous Channel to talk to the service. The URI from the endpoint 
+     * will be used as the destination for messages. 
+     * @param t The Transport to use.
+     * @param endpoint The Endpoint to invoke.
+     */
     public Client(Transport t, Endpoint endpoint)
     {
         this(endpoint.getBinding(), t, endpoint.getBinding().getService(), endpoint.getUrl(), null);
     }
 
+    /**
+     * Create a client which uses a particular {@link Binding} with a specified URL. The
+     * {@link Transport} is looked up via the {@link TransportManager} from its URL.
+     * @param binding
+     * @param url
+     */
     public Client( Binding binding, String url)
     {
         this(binding, 
@@ -78,16 +104,43 @@ public class Client
              binding.getService(), url, null);
     }
     
+    /**
+     * Create a client which uses a particular {@link Binding} with a specified URL
+     * and a specified {@link Transport}.
+     * @param transport The Transport to use.
+     * @param binding
+     * @param url
+     */
     public Client(Transport t, Binding binding, String url)
     {
         this(binding, t, binding.getService(), url, null);
     }
     
+    /**
+     * Create a Client on the specified {@link Transport} for a {@link Service}.
+     * The Client will look for an appropriate binding on the client bye attempting
+     * to find the first Binding that is compatabile with the specified Transport.
+     * 
+     * @param transport
+     * @param service
+     * @param url The destination URL.
+     */
     public Client(Transport transport, Service service, String url)
     {
         this(transport, service, url, null);
     }
     
+    /**
+     * Create a Client on the specified {@link Transport} for a {@link Service}.
+     * The Client will look for an appropriate binding on the client bye attempting
+     * to find the first Binding that is compatabile with the specified Transport.
+     * 
+     * @param transport
+     * @param service The Service model which defines our operations.
+     * @param url The destination URL.
+     * @param endpointUri The URI to bind to on the client side. The client will look
+     * for messages here.
+     */
     public Client(Transport transport, Service service, String url, String endpointUri)
     {
         this();
@@ -101,6 +154,18 @@ public class Client
         this.binding = findBinding(transport, service);
     }
     
+    /**
+     * Create a Client on the specified {@link Transport} for a {@link Service}.
+     * The Client will look for an appropriate binding on the client bye attempting
+     * to find the first Binding that is compatabile with the specified Transport.
+     * 
+     * @param binding The Binding to use.
+     * @param transport The Transport to send message through.
+     * @param service The Service model which defines our operations.
+     * @param url The destination URL.
+     * @param endpointUri The URI to bind to on the client side. The client will look
+     * for messages here.
+     */
     public Client(Binding binding, Transport transport, Service service, String url, String endpointUri)
     {
         this();
@@ -114,14 +179,29 @@ public class Client
         this.binding = binding;
     }
 
+
+    /**
+     * Creates a Client form a WSDL and a service class. The Client will attempt to use
+     * the SOAP 1.1 HTTP binding.
+     * 
+     * @param definition The WSDL definition.
+     * @param serviceClass The service class being used.
+     * @throws Exception
+     */
     public Client(Definition definition, Class serviceClass) throws Exception
     {
     	this();
         
-		Transport transport = xfire.getTransportManager().getTransportForUri(SoapHttpTransport.SOAP11_HTTP_BINDING);
-    	initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, definition, serviceClass);
+		initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, definition, serviceClass);
     }
     
+    /**
+     * Creates a Client form a WSDL, a service class and the specified binding id.
+     * 
+     * @param definition The WSDL definition.
+     * @param serviceClass The service class being used.
+     * @throws Exception
+     */
     public Client(String binding, Definition definition, Class serviceClass) throws Exception
     {
     	this();
@@ -129,6 +209,12 @@ public class Client
     	initFromDefinition(binding, definition, serviceClass);
     }
     
+    /**
+     * Creates a Client form a WSDL and a service class.
+     * @param is The InputStream for the wsdl.
+     * @param serviceClass The service class being used.
+     * @throws Exception
+     */
     public Client(InputStream is, Class serviceClass) throws Exception
     {
         this();
@@ -137,7 +223,6 @@ public class Client
         {
             InputSource src = new InputSource(is);
             Definition def = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, src);
-            Transport transport = xfire.getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
             initFromDefinition(SoapHttpTransport.SOAP11_HTTP_BINDING, def, serviceClass);
         }
         finally
@@ -145,7 +230,6 @@ public class Client
             is.close();
         }
     }
-    
     
     public Client(URL wsdlLocation) throws Exception
     {
@@ -383,7 +467,6 @@ public class Client
             }
         }
     }
-    
 
     public void finishReadingMessage(InMessage message, MessageContext context)
         throws XFireFault
@@ -402,7 +485,8 @@ public class Client
 
     public Channel getOutChannel()
     {
-        Channel channel = null;
+        if (channel != null) return channel;
+        
         try
         {
             String uri = getEndpointUri();
@@ -419,6 +503,12 @@ public class Client
         channel.setEndpoint(this);
         
         return channel;
+    }
+    
+    public void close() 
+    {
+        if (channel != null)
+            channel.close();
     }
     
     public Transport getTransport()

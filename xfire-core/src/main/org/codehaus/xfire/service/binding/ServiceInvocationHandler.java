@@ -293,8 +293,7 @@ public class ServiceInvocationHandler
         for (Iterator itr = headers.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
-            BindingProvider provider = context.getService().getBindingProvider();
-
+            
             AbstractBinding.writeParameter(writer,
                                            context,
                                            body[part.getIndex()],

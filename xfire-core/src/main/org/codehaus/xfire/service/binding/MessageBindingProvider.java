@@ -115,7 +115,9 @@ public class MessageBindingProvider
             }
             else if (value instanceof XMLStreamReader)
             {
-                STAXUtils.copy((XMLStreamReader) value, writer);
+                XMLStreamReader xsr = (XMLStreamReader) value;
+                STAXUtils.copy(xsr, writer);
+                xsr.close();
             }
             else
             {
