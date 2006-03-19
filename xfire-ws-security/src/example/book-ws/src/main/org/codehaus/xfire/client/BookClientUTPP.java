@@ -8,8 +8,6 @@ import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.demo.Book;
 import org.codehaus.xfire.demo.IBook;
-import org.codehaus.xfire.security.impl.SecurityProperties;
-import org.codehaus.xfire.security.wssecurity.WSS4JOutSecurityHandler;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.util.dom.DOMOutHandler;
@@ -24,10 +22,10 @@ public class BookClientUTPP
     protected Map getSecurityProperties()
     {
         Map config = new HashMap();
-        config.put(SecurityProperties.PROP_ACTIONS, "usertoken");
+        /*config.put(SecurityProperties.PROP_ACTIONS, "usertoken");
         config.put(SecurityProperties.PROP_USER_NAME, "tomek");
         config.put(SecurityProperties.PROP_USER_PASSWORD, "secretPass");
-        config.put(SecurityProperties.PROP_USER_PASSWORD_USE_PLAIN, "true");
+        config.put(SecurityProperties.PROP_USER_PASSWORD_USE_PLAIN, "true");*/
         return config;
     }
 
@@ -42,7 +40,7 @@ public class BookClientUTPP
 
         xfire.addOutHandler(new DOMOutHandler());
 
-        xfire.addOutHandler(new WSS4JOutSecurityHandler(getSecurityProperties()));
+     //  xfire.addOutHandler(new WSS4JOutSecurityHandler(getSecurityProperties()));
 
         Service serviceModel = new ObjectServiceFactory()
                 .create(IBook.class, "BookService", "http://xfire.codehaus.org/BookService", null);

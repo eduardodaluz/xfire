@@ -4,8 +4,6 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.xfire.security.impl.SecurityProperties;
-
 /**
  *  THIS SAMPLE DOESN'T WORK. THERE IS ALWAYS "The signature verification failed" returned.
  *
@@ -17,11 +15,11 @@ public class BookClientSign
     protected Map getSecurityProperties()
     {
         Map config = new HashMap();
-        config.put(SecurityProperties.PROP_ACTIONS, "signature");
+       /* config.put(SecurityProperties.PROP_ACTIONS, "signature");
         config.put(SecurityProperties.PROP_KEYSTORE_PASS, "keystorePass");
         config.put(SecurityProperties.PROP_KEYSTORE_FILE, "META-INF/xfire/myPrivatestore.jks");
         config.put(SecurityProperties.PROP_PRIVATE_ALIAS, "alias");
-        config.put(SecurityProperties.PROP_PRIVATE_PASSWORD, "aliaspass");
+        config.put(SecurityProperties.PROP_PRIVATE_PASSWORD, "aliaspass");*/
         return config;
     }
 

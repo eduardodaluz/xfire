@@ -1,13 +1,16 @@
 package org.codehaus.xfire.client;
 
+import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
+import java.util.Properties;
 
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.demo.Book;
 import org.codehaus.xfire.demo.IBook;
-import org.codehaus.xfire.security.wssecurity.WSS4JOutSecurityHandler;
+import org.codehaus.xfire.security.wss4j.WSS4JOutHandler;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.util.dom.DOMOutHandler;
@@ -31,7 +34,14 @@ public class BookClientEnc
     IBook service = (IBook) new XFireProxyFactory().create(serviceModel, url);
     Client client = ((XFireProxy)Proxy.getInvocationHandler(service)).getClient();
     client.addOutHandler(new DOMOutHandler());
-    client.addOutHandler(new WSS4JOutSecurityHandler("org/codehaus/xfire/client/outsecurity.properties"));
+    Properties props = new Properties();
+    
+    props.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.ENCRYPT);
+    props.setProperty(WSHandlerConstants.USER,"alias");
+    props.setProperty(WSHandlerConstants.ENC_PROP_FILE,"org/codehaus/xfire/client/outsecurity_enc.properties");
+    
+    
+    client.addOutHandler(new WSS4JOutHandler(props));
     Book b = service.findBook("0123456789");
 
 }

@@ -4,8 +4,6 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.xfire.security.impl.SecurityProperties;
-
 /**
  * @author tomeks
  * 
@@ -19,9 +17,9 @@ public class BookClientTS
     {
         Map config = new HashMap();
         // Add timestamp header
-        config.put(SecurityProperties.PROP_ACTIONS, "timestamp");
+        /*config.put(SecurityProperties.PROP_ACTIONS, "timestamp");
         // Message is valid for 10 seconds.
-        config.put(SecurityProperties.PROP_TIME_TO_LIVE, "10");
+        config.put(SecurityProperties.PROP_TIME_TO_LIVE, "10");*/
 
         return config;
     }
