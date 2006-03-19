@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *  THIS SAMPLE DOESN'T WORK. THERE IS ALWAYS "The signature verification failed" returned.
- *
+ * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a> 
+ * Signature Sample
+ * 
  */
 public class BookClientSign
     extends BookClientUTPP
@@ -15,11 +16,14 @@ public class BookClientSign
     protected Map getSecurityProperties()
     {
         Map config = new HashMap();
-       /* config.put(SecurityProperties.PROP_ACTIONS, "signature");
-        config.put(SecurityProperties.PROP_KEYSTORE_PASS, "keystorePass");
-        config.put(SecurityProperties.PROP_KEYSTORE_FILE, "META-INF/xfire/myPrivatestore.jks");
-        config.put(SecurityProperties.PROP_PRIVATE_ALIAS, "alias");
-        config.put(SecurityProperties.PROP_PRIVATE_PASSWORD, "aliaspass");*/
+        /*
+         * config.put(SecurityProperties.PROP_ACTIONS, "signature");
+         * config.put(SecurityProperties.PROP_KEYSTORE_PASS, "keystorePass");
+         * config.put(SecurityProperties.PROP_KEYSTORE_FILE,
+         * "META-INF/xfire/myPrivatestore.jks");
+         * config.put(SecurityProperties.PROP_PRIVATE_ALIAS, "alias");
+         * config.put(SecurityProperties.PROP_PRIVATE_PASSWORD, "aliaspass");
+         */
         return config;
     }
 

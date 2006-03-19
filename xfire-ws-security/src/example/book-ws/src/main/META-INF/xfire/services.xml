@@ -5,19 +5,20 @@
 		<tns:name>BookServiceUTPP</tns:name>
 		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
 		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
-		<!-- tns:inHandlers>
+		<tns:inHandlers>
 			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
 			<bean
-				id="org.codehaus.xfire.security.wssecurity.WSS4JInHandler"
-				class="org.codehaus.xfire.security.wssecurity.WSS4JInecurityHandler">
-				<property name="configuration">
+				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
+				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
+				<property name="properties">
 					<props>
-						<prop key="xfire.security.actions">usertoken</prop>
+						<prop key="action">UsernameToken</prop>
+						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
 					</props>
 				</property>
 			</bean>
 			<tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
-		</tns:inHandlers -->
+		</tns:inHandlers>
 	</tns:service>
 	
 	<!--  ============= User Token with Hashed Password   ============= -->
@@ -25,21 +26,20 @@
 		<tns:name>BookServiceUTHP</tns:name>
 		<tns:namespace>	http://xfire.codehaus.org/BookService</tns:namespace>
 		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
-		<!--  tns:inHandlers>
+		<tns:inHandlers>
 			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
 			<bean
-				id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler"
-				class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
-				<property name="configuration">
+				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
+				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
+				<property name="properties">
 					<props>
-						<prop key="xfire.security.actions">usertoken</prop>
-						<prop key="xfire.security.password.callback">org.codehaus.xfire.demo.BookPasswordCallback
-						</prop>
+						<prop key="action">UsernameToken</prop>
+						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
 					</props>
 				</property>
 			</bean>
 			<tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
-		</tns:inHandlers -->
+		</tns:inHandlers>
 	</tns:service>
 
 	<!--  ============= Encryption   ============= -->

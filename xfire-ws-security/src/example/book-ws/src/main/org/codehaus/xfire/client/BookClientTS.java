@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author tomeks
+ * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
  * Timestamp example
  */
@@ -16,10 +16,6 @@ public class BookClientTS
     protected Map getSecurityProperties()
     {
         Map config = new HashMap();
-        // Add timestamp header
-        /*config.put(SecurityProperties.PROP_ACTIONS, "timestamp");
-        // Message is valid for 10 seconds.
-        config.put(SecurityProperties.PROP_TIME_TO_LIVE, "10");*/
 
         return config;
     }
