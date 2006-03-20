@@ -43,5 +43,4 @@ public class JDOMNamespaceContext implements NamespaceContext
     {
         this.element = element;
     }
-    
 }

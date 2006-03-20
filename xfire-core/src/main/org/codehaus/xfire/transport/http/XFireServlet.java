@@ -28,17 +28,22 @@ public class XFireServlet
 
     private final static Log logger = LogFactory.getLog(XFireServlet.class);
     
+    public final static String XFIRE_INSTANCE = "xfire.instance";
+    
     public void init() 
         throws ServletException
     {
-        try{
-        super.init();
-        xfire = createXFire();
-        controller = createController();
-        }catch(Throwable tx){
-            //log.er
-            logger.error("Error initializing XFireServlet.",tx);
-            throw new ServletException("Error initializing XFireServlet.",tx);
+        try
+        {
+            super.init();
+            xfire = createXFire();
+            controller = createController();
+        }
+        catch (Throwable tx)
+        {
+            // log.er
+            logger.error("Error initializing XFireServlet.", tx);
+            throw new ServletException("Error initializing XFireServlet.", tx);
         }
     }
 
@@ -66,8 +71,13 @@ public class XFireServlet
     {
         try
         {
-            XFireFactory factory = XFireFactory.newInstance();
-            return factory.getXFire();
+            XFire xfire = (XFire) getServletContext().getAttribute(XFIRE_INSTANCE);
+            if (xfire == null)
+            {
+                XFireFactory factory = XFireFactory.newInstance();
+                xfire = factory.getXFire();
+            }
+            return xfire;
         }
         catch (Exception e)
         {

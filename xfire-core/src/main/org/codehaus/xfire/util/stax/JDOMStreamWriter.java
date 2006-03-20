@@ -1,9 +1,6 @@
 package org.codehaus.xfire.util.stax;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -18,7 +15,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-public class ElementStreamWriter
+public class JDOMStreamWriter
     implements XMLStreamWriter
 {
     private Stack stack = new Stack();
@@ -27,11 +24,11 @@ public class ElementStreamWriter
     private NamespaceContext context;
     private Map properties = new HashMap();
     
-    public ElementStreamWriter()
+    public JDOMStreamWriter()
     {
     }
     
-    public ElementStreamWriter(Element e)
+    public JDOMStreamWriter(Element e)
     {
         newChild(e);
     }
@@ -49,9 +46,14 @@ public class ElementStreamWriter
             stack.push(currentNode);
             currentNode.addContent(element);
         }
+        else
+        {
+            if (document != null)
+                document.setRootElement(element);
+        }
         
         JDOMNamespaceContext context = new JDOMNamespaceContext();
-        context.currentNode = element;
+        context.setElement(element);
         this.context = context;
         
         currentNode = element;
@@ -254,32 +256,5 @@ public class ElementStreamWriter
         throws IllegalArgumentException
     {
         return properties.get(prop);
-    }
-    
-    protected static class JDOMNamespaceContext implements NamespaceContext
-    {
-        public Element currentNode;
-        
-        public String getNamespaceURI(String prefix)
-        {
-            Namespace ns = currentNode.getNamespace(prefix);
-            return ns != null ? ns.getURI() : null;
-        }
-
-        public String getPrefix(String uri)
-        {
-            return NamespaceHelper.getPrefix(currentNode, uri);
-        }
-
-        public Iterator getPrefixes(String uri)
-        {
-            List prefixes = new ArrayList();
-            
-            String prefix = getPrefix(uri);
-            if (prefix != null) prefixes.add(prefix);
-            
-            return prefixes.iterator();
-        }
-        
     }
 }

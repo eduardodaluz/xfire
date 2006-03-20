@@ -25,9 +25,11 @@ import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.EntityReference;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 
 /**
@@ -373,6 +375,15 @@ public class STAXUtils
         else if ( n instanceof Comment )
         {
             writer.writeComment(((Comment) n).getData());
+        }
+        else if ( n instanceof EntityReference )
+        {
+            writer.writeEntityRef(((EntityReference)n).getNodeValue());
+        }
+        else if ( n instanceof ProcessingInstruction )
+        {
+            ProcessingInstruction pi = (ProcessingInstruction) n;
+            writer.writeProcessingInstruction(pi.getTarget(), pi.getData());
         }
     }
 

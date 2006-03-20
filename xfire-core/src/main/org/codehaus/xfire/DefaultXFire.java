@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.DispatchServiceHandler;
@@ -33,8 +31,7 @@ public class DefaultXFire
     private List inPhases;
     private List outPhases;
     private List faultPhases;
-    private Map properties  = new HashMap();
-    
+
     public DefaultXFire()
     {
         registry = new DefaultServiceRegistry();

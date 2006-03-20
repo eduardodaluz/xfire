@@ -14,6 +14,7 @@ public class SimpleAttachment
     private DataHandler handler;
     private	String id;
     private Map headers = new HashMap();
+    private boolean xop;
     
     public SimpleAttachment(String id, DataHandler handler)
     {
@@ -43,10 +44,12 @@ public class SimpleAttachment
 
     public boolean isXOP()
     {
-        String ct = getHeader("Content-Type");
-        
-        return (ct != null && ct.equals("application/xop+xml"));
+        return xop;
     }
-    
-    
+
+    public void setXOP(boolean xop)
+    {
+        headers.put("Content-Transfer-Encoding", "binary");
+        this.xop = xop;
+    }
 }

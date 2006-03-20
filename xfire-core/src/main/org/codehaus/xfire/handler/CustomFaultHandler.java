@@ -14,7 +14,7 @@ import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.binding.AbstractBinding;
-import org.codehaus.xfire.util.stax.ElementStreamWriter;
+import org.codehaus.xfire.util.stax.JDOMStreamWriter;
 
 /**
  * Builds up a custom detail element from an exception.
@@ -55,7 +55,7 @@ public class CustomFaultHandler
     protected void handleFault(MessageContext context, XFireFault fault, Throwable cause, MessagePartInfo faultPart)
         throws XFireFault
     {
-        ElementStreamWriter writer = new ElementStreamWriter(fault.getDetail());
+        JDOMStreamWriter writer = new JDOMStreamWriter(fault.getDetail());
         
         Object faultBean = getFaultBean(cause, faultPart, context);
         

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.server.http;
 
+import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.server.XFireServer;
 import org.codehaus.xfire.transport.http.XFireServlet;
 import org.mortbay.http.HttpContext;
@@ -21,6 +22,15 @@ public class XFireHttpServer
     // properties
     private int port = 8081;
 
+    private XFire xfire;
+
+    public XFireHttpServer() {}
+    
+    public XFireHttpServer(XFire xfire) 
+    {
+        this.xfire = xfire;
+    }
+    
     public void start()
         throws Exception
     {
@@ -37,6 +47,9 @@ public class XFireHttpServer
         ServletHandler handler = new ServletHandler();
         handler.addServlet("XFireServlet", "/*", XFireServlet.class.getName());
         
+        if (xfire != null)
+            handler.getServletContext().setAttribute(XFireServlet.XFIRE_INSTANCE, xfire);
+            
         context.addHandler(handler);
         
         httpServer.start();

@@ -54,4 +54,11 @@ public class SoapConstants
     public static final String MEP_IN = "urn:xfire:mep:in";
     
     public static final String SOAP_ACTION = "SOAPAction";
+    
+    /**
+     * Whether or not MTOM should be enabled for each service.
+     */
+    public static final String MTOM_ENABLED = "mtom-enabled";
+
+    
 }

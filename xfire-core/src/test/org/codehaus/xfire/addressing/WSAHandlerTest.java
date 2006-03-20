@@ -44,7 +44,7 @@ public class WSAHandlerTest
     public void testInvoke()
         throws Exception
     {
-        Document response = invokeService(null, "/org/codehaus/xfire/addressing/echo.xml");
+        Document response = invokeService((String)null, "/org/codehaus/xfire/addressing/echo.xml");
 
         addNamespace("m", "urn:Echo");
         assertValid("//m:echo", response);

@@ -26,7 +26,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.Invoker;
-import org.codehaus.xfire.util.stax.ElementStreamWriter;
+import org.codehaus.xfire.util.stax.JDOMStreamWriter;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -289,7 +289,7 @@ public class ServiceInvocationHandler
         if (headers.size() == 0) return;
         Object[] body = (Object[]) context.getCurrentMessage().getBody();
         
-        ElementStreamWriter writer = new ElementStreamWriter(context.getOutMessage().getOrCreateHeader());
+        JDOMStreamWriter writer = new JDOMStreamWriter(context.getOutMessage().getOrCreateHeader());
         for (Iterator itr = headers.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();

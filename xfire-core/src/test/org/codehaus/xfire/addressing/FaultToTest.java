@@ -53,7 +53,7 @@ public class FaultToTest
         JDOMEndpoint endpoint = new JDOMEndpoint();
         channel.setEndpoint(endpoint);
         
-        Document response = invokeService(null, "/org/codehaus/xfire/addressing/FaultTo.xml");
+        Document response = invokeService((String)null, "/org/codehaus/xfire/addressing/FaultTo.xml");
         
         assertNull(response);
         Thread.sleep(1000);

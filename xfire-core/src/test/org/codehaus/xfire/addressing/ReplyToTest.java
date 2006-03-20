@@ -54,7 +54,7 @@ public class ReplyToTest
         JDOMEndpoint endpoint = new JDOMEndpoint();
         channel.setEndpoint(endpoint);
         
-        Document response = invokeService(null, "/org/codehaus/xfire/addressing/ReplyTo.xml");
+        Document response = invokeService((String)null, "/org/codehaus/xfire/addressing/ReplyTo.xml");
 
         assertNull(response);
         Thread.sleep(1000);

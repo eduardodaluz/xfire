@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
 
@@ -21,6 +22,10 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.exchange.InMessage;
+import org.codehaus.xfire.exchange.MessageExchange;
+import org.codehaus.xfire.exchange.MessageSerializer;
+import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceRegistry;
@@ -30,6 +35,7 @@ import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.MapSession;
 import org.codehaus.xfire.transport.Session;
 import org.codehaus.xfire.transport.Transport;
@@ -124,6 +130,40 @@ public abstract class AbstractXFireTest
 		return readDocument(response);
 	}
 
+    public static final String RESPONSE = "response";
+    
+    protected InMessage invokeService( OutMessage msg, String transportID ) throws Exception
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MessageContext context = new MessageContext();
+        context.setXFire(getXFire());
+        context.setProperty( Channel.BACKCHANNEL_URI, out );
+
+        Transport t = getTransportManager().getTransport(transportID);
+        Channel c = t.createChannel();
+        msg.setChannel(c);
+
+        msg.setSerializer(new CopySerializer());
+
+        c.setEndpoint(new ChannelEndpoint() {
+            public void onReceive(MessageContext context, InMessage msg) {
+                try {
+                    Document doc = new StaxBuilder().build(msg.getXMLStreamReader());
+                    context.setExchange(new MessageExchange(context));
+                    context.getExchange().setInMessage(msg);
+                    
+                    msg.setProperty(RESPONSE, doc);
+                } catch (XMLStreamException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        c.send(context, msg);
+
+        return context.getInMessage(); 
+    }
+    
 	protected Document readDocument(String text)
 			throws XMLStreamException
 	{
@@ -322,4 +362,22 @@ public abstract class AbstractXFireTest
         return basedirPath;
     }
 
+    protected static class CopySerializer implements MessageSerializer
+    {
+        public CopySerializer() {
+            super();
+        }
+
+        public void readMessage(InMessage arg0, MessageContext arg1) throws XFireFault {
+        }
+
+        public void writeMessage(OutMessage out, XMLStreamWriter writer, MessageContext ctx) 
+            throws XFireFault {
+            try {
+                STAXUtils.copy((XMLStreamReader) out.getBody(), writer);
+            } catch (XMLStreamException e) {
+                throw new XFireFault("Couldn't write to stream.", e, XFireFault.RECEIVER);
+            }
+        }
+    }
 }

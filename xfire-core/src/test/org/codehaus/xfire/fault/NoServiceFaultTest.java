@@ -14,7 +14,7 @@ public class NoServiceFaultTest
     public void testInvoke()
         throws Exception
     {
-        Document response = invokeService(null, "/org/codehaus/xfire/echo11.xml");
+        Document response = invokeService((String)null, "/org/codehaus/xfire/echo11.xml");
 
         assertNull(response);
     }

@@ -1,17 +1,16 @@
 package org.codehaus.xfire.util.dom;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.handler.SoapSerializerHandler;
-import org.codehaus.xfire.util.DOMUtils;
-import org.codehaus.xfire.util.STAXUtils;
+import org.codehaus.xfire.util.stax.W3CDOMStreamWriter;
 import org.w3c.dom.Document;
 
 /**
@@ -28,35 +27,33 @@ public class DOMOutHandler
     extends AbstractHandler
 {
     public static final String DOM_MESSAGE = "dom.message";
+    private DocumentBuilder builder;
     
     public DOMOutHandler()
     {
         super();
         setPhase(Phase.POST_INVOKE);
         after(SoapSerializerHandler.class.getName());
+        
+        try
+        {
+            builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new XFireRuntimeException("Couldn't create DocumentBuilder.", e);
+        }
     }
 
     public void invoke(MessageContext context)
         throws Exception
     {
         OutMessage message = context.getOutMessage();
-        ByteArrayInputStream inStream = new ByteArrayInputStream(getMessageBytes(message, context));
-        Document doc = DOMUtils.readXml(inStream);
-        
+        W3CDOMStreamWriter writer = new W3CDOMStreamWriter(builder);
+        message.getSerializer().writeMessage(message, writer, context);
+       
+        Document doc = writer.getDocument();
         message.setProperty(DOM_MESSAGE, doc);
         message.setSerializer(new DOMSerializer(doc));
-    }
-
-    private byte[] getMessageBytes(OutMessage message, MessageContext context)
-        throws Exception
-    {
-        //XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        
-        //XMLStreamWriter byteArrayWriter = factory.createXMLStreamWriter(outputStream);
-        XMLStreamWriter byteArrayWriter =  STAXUtils.createXMLStreamWriter(outputStream, null,context);
-        message.getSerializer().writeMessage(message, byteArrayWriter, context);
-        byteArrayWriter.flush();
-        return outputStream.toByteArray();
     }
 }
