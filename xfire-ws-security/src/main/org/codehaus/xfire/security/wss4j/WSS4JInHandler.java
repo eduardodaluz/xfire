@@ -130,6 +130,7 @@ public class WSS4JInHandler
             }
             catch (WSSecurityException ex)
             {
+            	log.error(ex);
                 throw new XFireFault("WSS4JInHandler: security processing failed", ex,
                         XFireFault.SENDER);
             }

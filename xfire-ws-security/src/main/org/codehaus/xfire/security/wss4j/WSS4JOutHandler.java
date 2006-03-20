@@ -1,5 +1,6 @@
 package org.codehaus.xfire.security.wss4j;
 
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -33,6 +34,14 @@ public class WSS4JOutHandler
         getAfter().add(DOMOutHandler.class.getName());
     }
     
+    public WSS4JOutHandler(Map props)
+    {
+        this();
+        setProperties(props);
+        
+    }
+    
+   
     public void invoke(MessageContext mc)
         throws Exception
     {
@@ -43,7 +52,7 @@ public class WSS4JOutHandler
         {
             t0 = System.currentTimeMillis();
         }
-
+       
         if (doDebug)
         {
             log.debug("WSDoAllSender: enter invoke()");
