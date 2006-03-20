@@ -20,6 +20,7 @@ public class BookClientSign
         properties.setProperty(WSHandlerConstants.USER, "alias");
         properties.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, org.codehaus.xfire.demo.PasswordHandler.class.getName());
         properties.setProperty(WSHandlerConstants.SIG_PROP_FILE,"org/codehaus/xfire/client/outsecurity_sign.properties");
+        properties.setProperty(WSHandlerConstants.SIG_KEY_ID,"IssuerSerial");
 
     }
 

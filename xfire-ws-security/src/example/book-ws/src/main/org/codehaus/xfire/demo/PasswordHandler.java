@@ -11,7 +11,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import org.apache.ws.security.WSPasswordCallback;
 
 /**
- * @author tomeks
+ * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  *
  */
 public class PasswordHandler implements CallbackHandler {
