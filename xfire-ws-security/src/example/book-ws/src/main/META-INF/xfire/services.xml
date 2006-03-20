@@ -34,7 +34,7 @@
 				<property name="properties">
 					<props>
 						<prop key="action">UsernameToken</prop>
-						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
+						<prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
 					</props>
 				</property>
 			</bean>
@@ -70,19 +70,18 @@
 		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
 		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
 
-		<!--  tns:inHandlers>
-			<tns:handler
-				handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+		<tns:inHandlers>
+			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
 			<bean
-				id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler"
-				class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
-				<property name="configuration">
+				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
+				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
+				<property name="properties">
 					<props>
-						<prop key="xfire.security.actions">timestamp</prop>
+						<prop key="action">Timestamp</prop>
 					</props>
 				</property>
 			</bean>
-		</tns:inHandlers -->
+		</tns:inHandlers>
 	</tns:service>
 
 <!--  ============= Signature  ============= -->
@@ -91,22 +90,20 @@
 		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
 		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
 
-		<!--  tns:inHandlers>
-			<tns:handler
-				handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+		<tns:inHandlers>
+			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
 			<bean
-				id="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler"
-				class="org.codehaus.xfire.security.wssecurity.WSS4JInSecurityHandler">
-				<property name="configuration">
+				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
+				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
+				<property name="properties">
 					<props>
-						<prop key="xfire.security.actions">signature</prop>
-						<prop key="xfire.security.keystore.password">keystorePass</prop>
-						<prop key="xfire.security.keystore.file">org/codehaus/xfire/client/myPublicstore.jks</prop>						
-						<prop key="xfire.security.public.alias">alias</prop>						
+						<prop key="action">Signature</prop>
+						<prop key="signaturePropFile">META-INF/xfire/insecurity_sign.properties</prop>
+						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
 					</props>
 				</property>
 			</bean>
-		</tns:inHandlers -->
+		</tns:inHandlers>
 	</tns:service>
 
 </beans>

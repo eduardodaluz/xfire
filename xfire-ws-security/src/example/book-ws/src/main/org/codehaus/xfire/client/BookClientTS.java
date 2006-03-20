@@ -1,8 +1,9 @@
 package org.codehaus.xfire.client;
 
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
+
+import org.apache.ws.security.handler.WSHandlerConstants;
 
 /**
  * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -10,16 +11,15 @@ import java.util.Map;
  * Timestamp example
  */
 public class BookClientTS
-    extends BookClientUTPP
-{
+    extends BookClient{
 
-    protected Map getSecurityProperties()
+    protected void configureProperties(Properties properties)
     {
-        Map config = new HashMap();
-
-        return config;
+        properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.TIMESTAMP);
+        properties.setProperty(WSHandlerConstants.TTL_TIMESTAMP,"15");
+        
     }
-
+    
     /**
      * @param args
      * @throws MalformedURLException
@@ -27,8 +27,16 @@ public class BookClientTS
     public static void main(String[] args)
         throws MalformedURLException
     {
-        BookClientTS client = new BookClientTS();
-        client.executeClient("http://localhost:8081/bookws/services/BookServiceTS");
+        
+        new BookClientTS().executeClient("BookServiceTS");
 
     }
+
+    protected String getName()
+    {
+        
+        return "TimeStamp Client";
+    }
+
+    
 }

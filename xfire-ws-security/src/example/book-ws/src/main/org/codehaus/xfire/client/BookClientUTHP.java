@@ -13,18 +13,9 @@ import org.codehaus.xfire.demo.PasswordHandler;
  * User Token  (Hashed Password) Sample
  */
 public class BookClientUTHP
-    extends BookClientUTPP
+    extends BookClient
 {
 
-    protected Map getSecurityProperties()
-    {
-        Properties config = new Properties();
-        config.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-        config.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
-        config.setProperty(WSHandlerConstants.USER, "alias");
-        config.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordHandler.class.getName());
-        return config;
-    }
 
     /**
      * @param args
@@ -33,9 +24,23 @@ public class BookClientUTHP
     public static void main(String[] args)
         throws MalformedURLException
     {
-        BookClientUTHP client = new BookClientUTHP();
-        client.executeClient("http://localhost:8081/bookws/services/BookServiceUTHP");
+        new BookClientUTHP().executeClient("BookServiceUTHP");
 
+    }
+
+    protected void configureProperties(Properties properties)
+    {
+        properties.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+        properties.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
+        properties.setProperty(WSHandlerConstants.USER, "alias");
+        properties.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordHandler.class.getName());
+        
+    }
+
+    protected String getName()
+    {
+        
+        return "User Token ( Hashed Password ) client";
     }
 
 }

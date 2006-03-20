@@ -10,6 +10,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.ws.security.WSPasswordCallback;
 
+/**
+ * @author tomeks
+ *
+ */
 public class PasswordHandler implements CallbackHandler {
 
 	private Map passwords = new HashMap();
