@@ -13,7 +13,8 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.util.dom.DOMOutHandler;
 
 /**
- * @author tomeks
+ * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ * Base class for security samples.
  * 
  */
 public abstract class BookClient
@@ -22,10 +23,17 @@ public abstract class BookClient
 
     public static final String SERVICE_NAMESPACE = "http://xfire.codehaus.org/BookService";
 
-    public static final String SERVICE_URL = "http://localhost:8080/bookws/services/";
+    public static final String SERVICE_URL = "http://localhost:8081/bookws/services/";
 
+    /**
+     * Setups required security properties for given test.
+     * @param properties
+     */
     abstract protected void configureProperties(Properties properties);
     
+    /**
+     * @return Name of the client.
+     */
     abstract protected String getName();
     /**
      * @param url
@@ -38,7 +46,6 @@ public abstract class BookClient
         DefaultXFire xfire = (DefaultXFire) XFireFactory.newInstance().getXFire();
 
         xfire.addOutHandler(new DOMOutHandler());
-
         Properties properties = new Properties();
         configureProperties(properties);
         xfire.addOutHandler(new WSS4JOutHandler(properties));

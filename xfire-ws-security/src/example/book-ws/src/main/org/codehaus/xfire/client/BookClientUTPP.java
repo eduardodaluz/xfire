@@ -9,7 +9,7 @@ import org.codehaus.xfire.demo.PasswordHandler;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a> 
- * User Token  (Plain Password) Sample
+ * User Token  (Plain Password) Sample : Add username and password ( as plain text, not hashed ) to message header.
  */
 public class BookClientUTPP
     extends BookClient
@@ -17,9 +17,13 @@ public class BookClientUTPP
 
     protected void configureProperties(Properties config)
     {
+        // Action to perform : user token
         config.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+        // Password type : plain text
         config.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+        // User in keystore
         config.setProperty(WSHandlerConstants.USER, "alias");
+        // Callback used to retrive password for given user.
         config.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordHandler.class.getName());
     }
 

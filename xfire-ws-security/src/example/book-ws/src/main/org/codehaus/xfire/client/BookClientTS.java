@@ -8,7 +8,8 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 /**
  * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * 
- * Timestamp example
+ * Timestamp example : Adds timestamp to message. If message will be received after specified period of time, the message 
+ * will be rejected.
  */
 public class BookClientTS
     extends BookClient{
@@ -16,6 +17,7 @@ public class BookClientTS
     protected void configureProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.TIMESTAMP);
+        // How long ( in seconds ) message is valid since send.
         properties.setProperty(WSHandlerConstants.TTL_TIMESTAMP,"15");
         
     }
