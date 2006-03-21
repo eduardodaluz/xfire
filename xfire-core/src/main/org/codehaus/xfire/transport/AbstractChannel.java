@@ -52,4 +52,9 @@ public abstract class AbstractChannel
     {
         return true;
     }
+    
+    public void close()
+    {
+        transport.close(this);
+    }
 }

@@ -195,6 +195,8 @@ public class HttpChannel
     public void close()
     {
         properties.clear();
+        
+        super.close();
     }
 
     public boolean isAsync()

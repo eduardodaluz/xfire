@@ -125,6 +125,7 @@ public class XFireServerTest
         Client client = new Client(transport, asyncService, "http://localhost:8391/AsyncService");
         Object[] response = client.invoke("echo", new Object[] { root });
         
+        client.close();
         assertNull(response);
     }
 

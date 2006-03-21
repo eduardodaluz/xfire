@@ -56,8 +56,6 @@ public abstract class AbstractTransport
 
     public void close(Channel c)
     {
-        c.close();
-        
         channels.remove(c.getUri());
     }
     
