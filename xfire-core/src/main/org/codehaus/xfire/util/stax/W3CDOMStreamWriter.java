@@ -163,7 +163,14 @@ public class W3CDOMStreamWriter
     public void writeNamespace(String prefix, String namespace)
         throws XMLStreamException
     {
-        currentNode.setAttributeNS(XML_NS, "xmlns:" + prefix, namespace);
+        if (prefix.length() == 0) 
+        {
+            writeDefaultNamespace(namespace);
+        }
+        else
+        {
+            currentNode.setAttributeNS(XML_NS, "xmlns:" + prefix, namespace);
+        }
     }
 
     public void writeDefaultNamespace(String namespace)
