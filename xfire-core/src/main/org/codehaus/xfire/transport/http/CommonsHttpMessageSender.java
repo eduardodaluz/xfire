@@ -52,6 +52,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public static final String HTTP_PROXY_HOST = "http.proxyHost";
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
     public static final String HTTP_STATE = "httpClient.httpstate";
+    public static final String HTTP_CLIENT = "httpClient";
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -61,7 +62,12 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public void open()
         throws IOException, XFireException
     {
-        client = new HttpClient();
+        client = (HttpClient) ((HttpChannel) getMessage().getChannel()).getProperty(HTTP_CLIENT);
+        if (client == null)
+        {
+            client = new HttpClient();
+            ((HttpChannel) getMessage().getChannel()).setProperty(HTTP_CLIENT, client);
+        }
         
         MessageContext context = getMessageContext();
         

@@ -123,7 +123,6 @@ public class XFireServerTest
                 .getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
 
         Client client = new Client(transport, asyncService, "http://localhost:8391/AsyncService");
-
         Object[] response = client.invoke("echo", new Object[] { root });
         
         assertNull(response);

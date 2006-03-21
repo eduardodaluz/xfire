@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +35,7 @@ public class HttpChannel
     extends AbstractChannel
 {
     private static final Log log = LogFactory.getLog(HttpChannel.class);
+    private Map properties = new HashMap();
     
     public HttpChannel(String uri, HttpTransport transport)
     {
@@ -191,10 +194,21 @@ public class HttpChannel
 
     public void close()
     {
+        properties.clear();
     }
 
     public boolean isAsync()
     {
         return false;
+    }
+    
+    public Object getProperty(String key)
+    {
+        return properties.get(key);
+    }
+    
+    public void setProperty(String key, Object value)
+    {
+        properties.put(key, value);
     }
 }
