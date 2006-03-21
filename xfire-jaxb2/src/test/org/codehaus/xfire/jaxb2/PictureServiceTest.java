@@ -1,5 +1,8 @@
 package org.codehaus.xfire.jaxb2;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,8 +79,6 @@ public class PictureServiceTest
         server.stop();
     }
 
-    
-
     public void testService()
             throws Exception
     {
@@ -108,7 +109,12 @@ public class PictureServiceTest
         client.addOutHandler(new DOMOutHandler());
         
         EchoPicture req = new EchoPicture();
-        req.setImage(ImageIO.read(getTestFile("src/test-resources/xfire.jpg")));
+        File file = getTestFile("src/test-resources/xfire.jpg");
+        System.out.println(file.getAbsolutePath());
+        assertTrue(file.exists());
+        BufferedImage img = ImageIO.read(new FileInputStream(file));
+        img.getData();
+        req.setImage(img);
         
         EchoPictureResponse res = picClient.EchoPicture(req);
         assertNotNull(res.getImage());
