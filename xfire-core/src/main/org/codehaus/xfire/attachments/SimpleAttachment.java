@@ -49,7 +49,6 @@ public class SimpleAttachment
 
     public void setXOP(boolean xop)
     {
-        headers.put("Content-Transfer-Encoding", "binary");
         this.xop = xop;
     }
 }

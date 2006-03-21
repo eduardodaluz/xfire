@@ -168,6 +168,10 @@ public class JavaMailAttachments
     	            MimeBodyPart part = new MimeBodyPart();
     	            part.setDataHandler(att.getDataHandler());
     	            part.setContentID("<"+att.getId()+">");
+                    
+                    if (att.isXOP())
+                        part.addHeader("Content-Transfer-Encoding", "binary");
+                    
     	            mimeMP.addBodyPart(part);
     	        }
             }
