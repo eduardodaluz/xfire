@@ -102,5 +102,7 @@ public class XMPPChannel
     {
         if (conn != null)
             conn.close();
+        
+        super.close();
     }
 }
