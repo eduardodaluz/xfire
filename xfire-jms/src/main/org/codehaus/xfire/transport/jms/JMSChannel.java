@@ -23,7 +23,6 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.util.STAXUtils;
 
@@ -38,8 +37,7 @@ public class JMSChannel
     private Connection connection;
     private Queue queue;
     private MessageConsumer consumer;
-    private Service service;
-    
+
     public JMSChannel(String uri, JMSTransport transport)
     {
         setUri(uri);
@@ -150,5 +148,7 @@ public class JMSChannel
         {
             log.error("Error closing jms connection.", e);
         }
+        
+        super.close();
     }
 }
