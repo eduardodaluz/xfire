@@ -109,12 +109,7 @@ public class PictureServiceTest
         client.addOutHandler(new DOMOutHandler());
         
         EchoPicture req = new EchoPicture();
-        File file = getTestFile("src/test-resources/xfire.jpg");
-        System.out.println(file.getAbsolutePath());
-        assertTrue(file.exists());
-        BufferedImage img = ImageIO.read(new FileInputStream(file));
-        img.getData();
-        req.setImage(img);
+        req.setImage(ImageIO.read(getTestFile("src/test-resources/xfire.jpg")));
         
         EchoPictureResponse res = picClient.EchoPicture(req);
         assertNotNull(res.getImage());
