@@ -57,6 +57,7 @@ public class JaxbTypeCreator
         return type;
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean isJaxbType(Class clazz)
     {
         return clazz.isAnnotationPresent(XmlElement.class)

@@ -42,6 +42,7 @@ public class JaxbType
             JAXBContext jc = getJAXBContext();
 
             Unmarshaller u = jc.createUnmarshaller();
+            u.setAttachmentUnmarshaller(new AttachmentUnmarshaller(context));
             if (isAbstract()) 
             {
                  JAXBElement element = u.unmarshal(reader.getXMLStreamReader(), getTypeClass());
@@ -59,7 +60,8 @@ public class JaxbType
 
     }
 
-    public void writeObject(Object object, MessageWriter writer, MessageContext context)
+    @SuppressWarnings("unchecked")
+	public void writeObject(Object object, MessageWriter writer, MessageContext context)
         throws XFireFault
     {
         try
@@ -68,7 +70,8 @@ public class JaxbType
 
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            
+            m.setAttachmentMarshaller(new AttachmentMarshaller(context));
+
             if (isAbstract())
             {
                 MessagePartInfo part = (MessagePartInfo) 

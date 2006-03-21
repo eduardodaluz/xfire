@@ -1,0 +1,5 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Body xmlns="http://xfire.codehaus.org/mtom">
+	<GetPicture/>
+ </env:Body>
+</env:Envelope>

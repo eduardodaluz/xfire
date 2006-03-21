@@ -1,0 +1,31 @@
+<s:schema elementFormDefault="qualified" targetNamespace="http://xfire.codehaus.org/mtom" 
+xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.webservicex.net" 
+xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+  <s:element name="GetPicture">
+    <s:complexType>
+      <s:sequence>
+      </s:sequence>
+    </s:complexType>
+  </s:element>
+  <s:element name="GetPictureResponse">
+    <s:complexType>
+      <s:sequence>
+         <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+      </s:sequence>
+    </s:complexType>
+  </s:element>
+  <s:element name="EchoPicture">
+    <s:complexType>
+      <s:sequence>
+        <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+      </s:sequence>
+    </s:complexType>
+  </s:element>
+  <s:element name="EchoPictureResponse">
+    <s:complexType>
+      <s:sequence>
+         <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+      </s:sequence>
+    </s:complexType>
+  </s:element>
+</s:schema>
