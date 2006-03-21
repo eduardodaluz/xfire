@@ -15,4 +15,9 @@ public @interface XmlElement
     String name() default "";
     String namespace() default "";
     boolean nillable() default true;
+    
+    /**
+     * ajc - set to "0" to make the property optional, "1" for required
+     */
+    String minOccurs() default "";
 }

@@ -57,6 +57,9 @@ public class AnnotatedTypeTest
         assertTrue(atts.hasNext());
         QName att = (QName) atts.next();
         assertFalse(atts.hasNext());
+        
+        assertTrue ( info.isExtensibleElements() );
+        assertTrue( info.isExtensibleAttributes() );
     }
 
     public void testAegisType()
@@ -69,6 +72,44 @@ public class AnnotatedTypeTest
         assertTrue(itr.hasNext());
         QName q = (QName) itr.next();
         assertEquals("attProp", q.getLocalPart());
+    }
+    
+    public void testExtensibilityOff()
+    {
+        BeanType type = (BeanType) tm.getTypeCreator().createType(AnnotatedBean4.class);
+        
+        assertFalse ( type.getTypeInfo().isExtensibleElements() );
+        assertFalse ( type.getTypeInfo().isExtensibleAttributes() );
+    }
+    
+    public void testNillableAndMinOccurs()
+    {
+        BeanType type = (BeanType) tm.getTypeCreator().createType(AnnotatedBean4.class);
+        AnnotatedTypeInfo info = (AnnotatedTypeInfo) type.getTypeInfo();
+        Iterator elements = info.getElements();
+        assertTrue(elements.hasNext());
+        // nillable first
+        QName element = (QName) elements.next();
+        if ( "minOccursProperty".equals( element.getLocalPart() ) )
+        {
+            assertEquals(1, info.getMinOccurs( element ) );
+        }
+        else
+        {
+            assertFalse( info.isNillable( element ) );
+        }
+        
+        assertTrue(elements.hasNext());
+        // minOccurs = 1 second
+        element = (QName) elements.next();
+        if ( "minOccursProperty".equals( element.getLocalPart() ) )
+        {
+            assertEquals(1, info.getMinOccurs( element ) );
+        }
+        else
+        {
+            assertFalse( info.isNillable( element ) );
+        }        
     }
 
     public void testWSDL() throws Exception

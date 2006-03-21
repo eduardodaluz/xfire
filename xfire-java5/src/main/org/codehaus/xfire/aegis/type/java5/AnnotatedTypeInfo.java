@@ -15,8 +15,7 @@ public class AnnotatedTypeInfo
     public AnnotatedTypeInfo(TypeMapping tm, Class typeClass, String ns)
     {
         super(typeClass, ns);
-        setTypeMapping(tm);
-        
+        setTypeMapping(tm);        
         initialize();
     }
     
@@ -123,5 +122,20 @@ public class AnnotatedTypeInfo
         {
             return super.isNillable(name);
         }
+    }
+    
+    public int getMinOccurs ( QName name )
+    {
+        PropertyDescriptor desc = getPropertyDescriptorFromMappedName(name);        
+        if (isAnnotatedElement(desc))
+        {
+            XmlElement att = desc.getReadMethod().getAnnotation(XmlElement.class);
+            String minOccurs = att.minOccurs();
+            if ( minOccurs != null && minOccurs.length() > 0 )
+            {
+                return Integer.parseInt( minOccurs );
+            }
+        }
+        return super.getMinOccurs(name);
     }
 }

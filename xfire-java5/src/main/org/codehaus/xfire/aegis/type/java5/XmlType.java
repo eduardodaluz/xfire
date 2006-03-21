@@ -14,4 +14,6 @@ public @interface XmlType
     Class type() default Type.class;
     String name() default "";
     String namespace() default "";
+    boolean extensibleElements() default true;
+    boolean extensibleAttributes() default true;
 }
