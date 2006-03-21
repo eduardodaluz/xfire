@@ -18,15 +18,17 @@ import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 
 /**
- * @author Hani Suleiman
- *         Date: Jun 14, 2005
- *         Time: 11:59:57 PM
+ * @author Hani Suleiman Date: Jun 14, 2005 Time: 11:59:57 PM
  */
-public abstract class AbstractTypeCreator implements TypeCreator
+public abstract class AbstractTypeCreator
+    implements TypeCreator
 {
     protected TypeMapping tm;
+
     protected AbstractTypeCreator nextCreator;
 
+    private Configuration typeConfiguration;
+    
     public TypeMapping getTypeMapping()
     {
         return tm;
@@ -35,8 +37,9 @@ public abstract class AbstractTypeCreator implements TypeCreator
     public void setTypeMapping(TypeMapping typeMapping)
     {
         this.tm = typeMapping;
-        
-        if (nextCreator != null) nextCreator.setTypeMapping(tm);
+
+        if (nextCreator != null)
+            nextCreator.setTypeMapping(tm);
     }
 
     public void setNextCreator(AbstractTypeCreator creator)
@@ -63,30 +66,32 @@ public abstract class AbstractTypeCreator implements TypeCreator
     protected Type createTypeForClass(TypeClassInfo info)
     {
         Class javaType = info.getTypeClass();
-
+        Type result = null;
+        boolean newType = true;
+        
         if (info.getType() != null)
         {
-            return createUserType(info);
+            result = createUserType(info);
         }
-        else if(isHolder(javaType))
+        else if (isHolder(javaType))
         {
-            return createHolderType(info);
+            result = createHolderType(info);
         }
-        else if(isArray(javaType))
+        else if (isArray(javaType))
         {
-            return createArrayType(info);
+            result = createArrayType(info);
         }
-        else if(isMap(javaType))
+        else if (isMap(javaType))
         {
-            return createMapType(info);
+            result = createMapType(info);
         }
-        else if(isCollection(javaType))
+        else if (isCollection(javaType))
         {
-            return createCollectionType(info);
+            result = createCollectionType(info);
         }
-        else if(isEnum(javaType))
+        else if (isEnum(javaType))
         {
-            return createEnumType(info);
+            result = createEnumType(info);
         }
         else
         {
@@ -95,9 +100,19 @@ public abstract class AbstractTypeCreator implements TypeCreator
             {
                 type = createDefaultType(info);
             }
+            else
+            {
+                newType = false;
+            }
             
-            return type;
+            result = type;
         }
+
+        
+        if (newType && !getConfiguration().isDefaultNillable())
+            result.setNillable(false);
+        
+        return result;
     }
 
     protected boolean isHolder(Class javaType)
@@ -109,10 +124,10 @@ public abstract class AbstractTypeCreator implements TypeCreator
     {
         if (info.getGenericType() == null)
         {
-            throw new UnsupportedOperationException("To use holder types " +
-                    "you must have an XML descriptor declaring the component type.");
+            throw new UnsupportedOperationException("To use holder types "
+                    + "you must have an XML descriptor declaring the component type.");
         }
-        
+
         Class heldCls = (Class) info.getGenericType();
         info.setTypeClass(heldCls);
 
@@ -131,28 +146,29 @@ public abstract class AbstractTypeCreator implements TypeCreator
         try
         {
             Type type = (Type) info.getType().newInstance();
-            
+
             QName name = info.getTypeName();
-            if (name == null) name = createQName(info.getTypeClass());
-            
+            if (name == null)
+                name = createQName(info.getTypeClass());
+
             type.setSchemaType(name);
             type.setTypeClass(info.getTypeClass());
             type.setTypeMapping(getTypeMapping());
-            
+
             return type;
         }
         catch (InstantiationException e)
         {
-            throw new XFireRuntimeException("Couldn't instantiate type classs " + 
-                                            info.getType().getName(), e);
+            throw new XFireRuntimeException("Couldn't instantiate type classs "
+                    + info.getType().getName(), e);
         }
         catch (IllegalAccessException e)
         {
-            throw new XFireRuntimeException("Couldn't access type classs " + 
-                                            info.getType().getName(), e);
+            throw new XFireRuntimeException("Couldn't access type classs "
+                    + info.getType().getName(), e);
         }
     }
-    
+
     protected QName createArrayQName(TypeClassInfo info)
     {
         Class javaType = info.getTypeClass();
@@ -164,10 +180,9 @@ public abstract class AbstractTypeCreator implements TypeCreator
         ArrayType type = new ArrayType();
         type.setSchemaType(createArrayQName(info));
         type.setTypeClass(info.getTypeClass());
-
         return type;
     }
-
+    
     protected QName createQName(Class javaType)
     {
         String clsName = javaType.getName();
@@ -187,11 +202,12 @@ public abstract class AbstractTypeCreator implements TypeCreator
     {
         CollectionType type = new CollectionType(component);
         type.setTypeMapping(getTypeMapping());
-        
+
         QName name = info.getTypeName();
-        if (name == null) name = createCollectionQName(info, component);
+        if (name == null)
+            name = createCollectionQName(info, component);
         type.setSchemaType(name);
-        
+
         type.setTypeClass(info.getTypeClass());
 
         return type;
@@ -200,9 +216,7 @@ public abstract class AbstractTypeCreator implements TypeCreator
     protected Type createMapType(TypeClassInfo info, Class keyType, Class valueType)
     {
         QName schemaType = createMapQName(info, keyType, valueType);
-        MapType type = new MapType(schemaType, 
-                                   keyType, 
-                                   valueType);
+        MapType type = new MapType(schemaType, keyType, valueType);
         type.setTypeMapping(getTypeMapping());
         type.setTypeClass(info.getTypeClass());
 
@@ -211,51 +225,49 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     protected Type createMapType(TypeClassInfo info)
     {
-    	return createMapType(info, (Class) info.getKeyType(), (Class) info.getGenericType());
+        return createMapType(info, (Class) info.getKeyType(), (Class) info.getGenericType());
     }
 
     protected QName createMapQName(TypeClassInfo info, Class keyClass, Class valueClass)
     {
-        if(keyClass == null)
+        if (keyClass == null)
         {
-           throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type" 
-           + (info.getDescription() != null ? " for " + info.getDescription() : ""));
+            throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type"
+                    + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
-        
-        if(valueClass == null)
+
+        if (valueClass == null)
         {
             throw new XFireRuntimeException("Cannot create mapping for map, unspecified value type"
-            + (info.getDescription() != null ? " for " + info.getDescription() : ""));
+                    + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
-        
+
         Type keyType = tm.getType(keyClass);
-        if(keyType == null)
+        if (keyType == null)
         {
             keyType = createType(keyClass);
             getTypeMapping().register(keyType);
         }
-        
+
         Type valueType = tm.getType(valueClass);
-        if(valueType == null)
+        if (valueType == null)
         {
-        	valueType = createType(valueClass);
+            valueType = createType(valueClass);
             getTypeMapping().register(valueType);
         }
-        
-        String name = keyType.getSchemaType().getLocalPart()
-                      + '2'
-                      + valueType.getSchemaType().getLocalPart()
-                      + "Map";
-         
+
+        String name = keyType.getSchemaType().getLocalPart() + '2'
+                + valueType.getSchemaType().getLocalPart() + "Map";
+
         // TODO: Get namespace from XML?
         return new QName(tm.getEncodingStyleURI(), name);
     }
-    
+
     protected boolean isMap(Class javaType)
     {
         return Map.class.isAssignableFrom(javaType);
     }
-    
+
     public abstract TypeClassInfo createClassInfo(PropertyDescriptor pd);
 
     protected boolean isEnum(Class javaType)
@@ -275,20 +287,21 @@ public abstract class AbstractTypeCreator implements TypeCreator
     protected QName createCollectionQName(TypeClassInfo info, Class componentType)
     {
         Class javaType = info.getTypeClass();
-        if(componentType == null)
+        if (componentType == null)
         {
-            throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName() + ", unspecified component type"
-            + (info.getDescription() != null ? " for " + info.getDescription() : ""));
+            throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName()
+                    + ", unspecified component type"
+                    + (info.getDescription() != null ? " for " + info.getDescription() : ""));
         }
         Type type = tm.getType(componentType);
-        if(type == null)
+        if (type == null)
         {
             type = createType(componentType);
             getTypeMapping().register(type);
         }
         String ns;
 
-        if(type.isComplex())
+        if (type.isComplex())
         {
             ns = type.getSchemaType().getNamespaceURI();
         }
@@ -308,21 +321,26 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     /**
      * Create a Type for a Method parameter.
-     *
-     * @param m the method to create a type for
-     * @param index The parameter index. If the index is less than zero, the return type is used.
+     * 
+     * @param m
+     *            the method to create a type for
+     * @param index
+     *            The parameter index. If the index is less than zero, the
+     *            return type is used.
      */
     public Type createType(Method m, int index)
     {
         TypeClassInfo info = createClassInfo(m, index);
-        info.setDescription((index == -1 ? "return type" : "parameter " + index)  + " of method " + m.getName() + " in " + m.getDeclaringClass());
+        info.setDescription((index == -1 ? "return type" : "parameter " + index) + " of method "
+                + m.getName() + " in " + m.getDeclaringClass());
         return createTypeForClass(info);
     }
 
     /**
      * Create type information for a PropertyDescriptor.
-     *
-     * @param pd the propertydescriptor
+     * 
+     * @param pd
+     *            the propertydescriptor
      */
     public Type createType(PropertyDescriptor pd)
     {
@@ -333,8 +351,9 @@ public abstract class AbstractTypeCreator implements TypeCreator
 
     /**
      * Create type information for a <code>Field</code>.
-     *
-     * @param f the field to create a type from
+     * 
+     * @param f
+     *            the field to create a type from
      */
     public Type createType(Field f)
     {
@@ -350,15 +369,32 @@ public abstract class AbstractTypeCreator implements TypeCreator
         return createTypeForClass(info);
     }
 
+    public Configuration getConfiguration()
+    {
+        return typeConfiguration;
+    }
+
+    public void setConfiguration(Configuration typeConfiguration)
+    {
+        this.typeConfiguration = typeConfiguration;
+    }
+    
     public static class TypeClassInfo
     {
         Class typeClass;
+
         Object[] annotations;
+
         Object genericType;
+
         Object keyType;
+
         String mappedName;
+
         QName typeName;
+
         Class type;
+
         String description;
 
         public String getDescription()

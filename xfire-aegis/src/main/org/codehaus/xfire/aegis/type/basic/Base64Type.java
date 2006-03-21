@@ -24,7 +24,6 @@ public class Base64Type
     public Base64Type()
     {
         super();
-        setNillable(true);
     }
 
     public Object readObject(MessageReader mreader, MessageContext context)

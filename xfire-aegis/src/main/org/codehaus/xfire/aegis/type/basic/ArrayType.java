@@ -34,7 +34,6 @@ public class ArrayType
     
     public ArrayType()
     {
-        setNillable(true);
     }
     
     public Object readObject(MessageReader reader, MessageContext context)

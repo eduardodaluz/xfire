@@ -13,16 +13,6 @@ import org.codehaus.xfire.aegis.type.Type;
 public class IntType
     extends Type
 {
-    public void setTypeClass(Class typeClass)
-    {
-        super.setTypeClass(typeClass);
-        
-        if (typeClass.equals(Integer.class))
-        {
-            setNillable(true);
-        }
-    }
-
     public Object readObject(MessageReader reader, MessageContext context)
     {
         return new Integer( reader.getValueAsInt() );

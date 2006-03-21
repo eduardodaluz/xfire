@@ -11,7 +11,7 @@ import org.codehaus.xfire.wsdl.SchemaType;
 import org.jdom.Element;
 
 /**
- * Type
+ * A Type reads and writes XML fragments to create and write objects.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
@@ -22,16 +22,30 @@ public abstract class Type
     private TypeMapping typeMapping;
     private Class typeClass;
     private boolean abstrct = true;
-    private boolean nillable = false;
+    private boolean nillable = true;
     private boolean writeOuter = true;
     
     public Type()
     {
     }
     
+    /**
+     * Read in the XML fragment and create an object.
+     * @param reader
+     * @param context
+     * @return
+     * @throws XFireFault
+     */
     public abstract Object readObject( MessageReader reader, MessageContext context ) 
     	throws XFireFault;
     
+    /**
+     * Writes the object to the MessageWriter.
+     * @param object
+     * @param writer
+     * @param context
+     * @throws XFireFault
+     */
     public abstract void writeObject( Object object, MessageWriter writer, MessageContext context ) 
     	throws XFireFault;
     
@@ -68,7 +82,12 @@ public abstract class Type
 	 */
 	public void setTypeClass( Class typeClass )
 	{
-		this.typeClass = typeClass;
+        this.typeClass = typeClass;
+        
+        if (typeClass.isPrimitive())
+        {
+            setNillable(false);
+        }
 	}
 
     /**
@@ -88,7 +107,7 @@ public abstract class Type
     {
         this.abstrct = abstrct;
     }
-    
+
     public boolean isNillable()
     {
         return nillable;

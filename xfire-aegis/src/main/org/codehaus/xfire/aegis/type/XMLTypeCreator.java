@@ -101,9 +101,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
         return null;
     }
-
-    
-    
+ 
     protected boolean isEnum(Class javaType)
     {
         Element mapping = findMapping(javaType);
@@ -255,6 +253,12 @@ public class XMLTypeCreator extends AbstractTypeCreator
             String typeNameAtt = null;
             if (mapping != null) typeNameAtt = mapping.getAttributeValue("name");
             
+            String extensibleElements = null;
+            if (mapping != null) extensibleElements = mapping.getAttributeValue("extensibleElements");
+            
+            String extensibleAttributes = null;
+            if (mapping != null) extensibleAttributes = mapping.getAttributeValue("extensibleAttributes");
+            
             String defaultNS = NamespaceHelper.makeNamespaceFromClassName(info.getTypeClass().getName(), "http");
             QName name = null;
             if (typeNameAtt != null)
@@ -268,6 +272,13 @@ public class XMLTypeCreator extends AbstractTypeCreator
                                                          mappings,
                                                          defaultNS);
             btinfo.setTypeMapping(getTypeMapping());
+            btinfo.setDefaultMinOccurs(getConfiguration().getDefaultMinOccurs());
+
+            if ( extensibleElements != null ) btinfo.setExtensibleElements( Boolean.valueOf( extensibleElements ).booleanValue() );
+            else btinfo.setExtensibleElements(getConfiguration().isDefaultExtensibleElements());
+            
+            if ( extensibleAttributes != null ) btinfo.setExtensibleAttributes( Boolean.valueOf( extensibleAttributes ).booleanValue() );
+            else btinfo.setExtensibleAttributes(getConfiguration().isDefaultExtensibleAttributes());
             
             BeanType type = new BeanType(btinfo);
             

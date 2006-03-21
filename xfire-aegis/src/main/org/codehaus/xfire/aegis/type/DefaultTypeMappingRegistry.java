@@ -43,15 +43,15 @@ import org.w3c.dom.Document;
 
 /**
  * The default implementation of TypeMappingRegistry.
- *
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @since Feb 22, 2004
  */
 public class DefaultTypeMappingRegistry
-        implements TypeMappingRegistry
+    implements TypeMappingRegistry
 {
     private static final Log logger = LogFactory.getLog(DefaultTypeMappingRegistry.class);
-    
+
     protected static final QName XSD_STRING = new QName(SoapConstants.XSD, "string", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_LONG = new QName(SoapConstants.XSD, "long", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float", SoapConstants.XSD_PREFIX);
@@ -64,9 +64,8 @@ public class DefaultTypeMappingRegistry
     protected static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_URI = new QName(SoapConstants.XSD, "anyURI", SoapConstants.XSD_PREFIX);
-
     protected static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType", SoapConstants.XSD_PREFIX);
-
+    
     protected static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
     protected static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
     protected static final QName ENCODED_LONG = new QName(ENCODED_NS, "long");
@@ -80,10 +79,12 @@ public class DefaultTypeMappingRegistry
     protected static final QName ENCODED_DECIMAL = new QName(ENCODED_NS, "decimal");
 
     private Hashtable registry;
-
+    
     private TypeMapping defaultTM;
 
     private TypeCreator typeCreator;
+
+    private Configuration typeConfiguration;
     
     public DefaultTypeMappingRegistry()
     {
@@ -94,12 +95,13 @@ public class DefaultTypeMappingRegistry
     {
         this(null, createDefault);
     }
-    
+
     public DefaultTypeMappingRegistry(TypeCreator typeCreator, boolean createDefault)
     {
         registry = new Hashtable();
-        
+
         this.typeCreator = typeCreator;
+        this.typeConfiguration = new Configuration();
         
         if (createDefault)
         {
@@ -156,7 +158,8 @@ public class DefaultTypeMappingRegistry
     }
 
     /**
-     * @see org.codehaus.xfire.aegis.type.TypeMappingRegistry#createTypeMapping(String, boolean)
+     * @see org.codehaus.xfire.aegis.type.TypeMappingRegistry#createTypeMapping(String,
+     *      boolean)
      */
     public TypeMapping createTypeMapping(String parentNamespace, boolean autoTypes)
     {
@@ -166,9 +169,10 @@ public class DefaultTypeMappingRegistry
     protected TypeMapping createTypeMapping(TypeMapping parent, boolean autoTypes)
     {
         CustomTypeMapping tm = new CustomTypeMapping(parent);
-        
-        if (autoTypes) tm.setTypeCreator(getTypeCreator());
-        
+
+        if (autoTypes)
+            tm.setTypeCreator(getTypeCreator());
+
         return tm;
     }
 
@@ -176,9 +180,9 @@ public class DefaultTypeMappingRegistry
     {
         if (typeCreator == null)
         {
-            typeCreator = createTypeCreator(); 
+            typeCreator = createTypeCreator();
         }
-        
+
         return typeCreator;
     }
 
@@ -190,25 +194,25 @@ public class DefaultTypeMappingRegistry
     protected TypeCreator createTypeCreator()
     {
         AbstractTypeCreator xmlCreator = createRootTypeCreator();
-        xmlCreator.setNextCreator(new DefaultTypeCreator());
-
+        xmlCreator.setNextCreator(createDefaultTypeCreator());
+        
         if (isJDK5andAbove())
         {
             try
             {
                 String j5TC = "org.codehaus.xfire.aegis.type.java5.Java5TypeCreator";
-    
+
                 Class clazz = ClassLoaderUtils.loadClass(j5TC, getClass());
-                
+
                 AbstractTypeCreator j5Creator = (AbstractTypeCreator) clazz.newInstance();
-                j5Creator.setNextCreator(new DefaultTypeCreator());
-                
+                j5Creator.setNextCreator(createDefaultTypeCreator());
+                j5Creator.setConfiguration(getConfiguration());
                 xmlCreator.setNextCreator(j5Creator);
             }
             catch (Throwable t)
             {
                 logger.info("Couldn't find Java 5 module on classpath. Annotation mappings will not be supported.");
-                
+
                 if (!(t instanceof ClassNotFoundException))
                     logger.debug("Error loading Java 5 module", t);
             }
@@ -219,15 +223,24 @@ public class DefaultTypeMappingRegistry
 
     boolean isJDK5andAbove()
     {
-      String v = System.getProperty("java.class.version","44.0");
-      return ("49.0".compareTo(v) <= 0);
+        String v = System.getProperty("java.class.version", "44.0");
+        return ("49.0".compareTo(v) <= 0);
     }
-    
+
     protected AbstractTypeCreator createRootTypeCreator()
     {
-        return new XMLTypeCreator();
+        AbstractTypeCreator creator = new XMLTypeCreator();
+        creator.setConfiguration(getConfiguration());
+        return creator;
     }
-    
+
+    protected AbstractTypeCreator createDefaultTypeCreator()
+    {
+        AbstractTypeCreator creator = new DefaultTypeCreator();
+        creator.setConfiguration(getConfiguration());
+        return creator;
+    }
+
     /**
      * @see org.codehaus.xfire.aegis.type.TypeMappingRegistry#unregisterTypeMapping(java.lang.String)
      */
@@ -266,32 +279,32 @@ public class DefaultTypeMappingRegistry
     {
         TypeMapping tm = createTypeMapping(false);
 
-        tm.register(boolean.class, XSD_BOOLEAN, new BooleanType());
-        tm.register(int.class, XSD_INT, new IntType());
-        tm.register(short.class, XSD_SHORT, new ShortType());
-        tm.register(double.class, XSD_DOUBLE, new DoubleType());
-        tm.register(float.class, XSD_FLOAT, new FloatType());
-        tm.register(long.class, XSD_LONG, new LongType());
-        tm.register(String.class, XSD_STRING, new StringType());
-        tm.register(Boolean.class, XSD_BOOLEAN, new BooleanType());
-        tm.register(Integer.class, XSD_INT, new IntType());
-        tm.register(Short.class, XSD_SHORT, new ShortType());
-        tm.register(Double.class, XSD_DOUBLE, new DoubleType());
-        tm.register(Float.class, XSD_FLOAT, new FloatType());
-        tm.register(Long.class, XSD_LONG, new LongType());
-        tm.register(Date.class, XSD_DATETIME, new DateTimeType());
-        tm.register(java.sql.Date.class, XSD_DATETIME, new SqlDateType());
-        tm.register(Time.class, XSD_TIME, new TimeType());
-        tm.register(Timestamp.class, XSD_DATETIME, new TimestampType());
-        tm.register(Calendar.class, XSD_DATETIME, new CalendarType());
-        tm.register(byte[].class, XSD_BASE64, new Base64Type());
-        tm.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
-        tm.register(URI.class, XSD_URI, new URIType());
-        tm.register(Document.class, XSD_ANY, new DocumentType());
-        tm.register(Source.class, XSD_ANY, new SourceType());
-        tm.register(XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
-        tm.register(Element.class, XSD_ANY, new JDOMElementType());
-        tm.register(Object.class, XSD_ANY, new ObjectType());
+        register(tm, boolean.class, XSD_BOOLEAN, new BooleanType());
+        register(tm, int.class, XSD_INT, new IntType());
+        register(tm, short.class, XSD_SHORT, new ShortType());
+        register(tm, double.class, XSD_DOUBLE, new DoubleType());
+        register(tm, float.class, XSD_FLOAT, new FloatType());
+        register(tm, long.class, XSD_LONG, new LongType());
+        register(tm, String.class, XSD_STRING, new StringType());
+        register(tm, Boolean.class, XSD_BOOLEAN, new BooleanType());
+        register(tm, Integer.class, XSD_INT, new IntType());
+        register(tm, Short.class, XSD_SHORT, new ShortType());
+        register(tm, Double.class, XSD_DOUBLE, new DoubleType());
+        register(tm, Float.class, XSD_FLOAT, new FloatType());
+        register(tm, Long.class, XSD_LONG, new LongType());
+        register(tm, Date.class, XSD_DATETIME, new DateTimeType());
+        register(tm, java.sql.Date.class, XSD_DATETIME, new SqlDateType());
+        register(tm, Time.class, XSD_TIME, new TimeType());
+        register(tm, Timestamp.class, XSD_DATETIME, new TimestampType());
+        register(tm, Calendar.class, XSD_DATETIME, new CalendarType());
+        register(tm, byte[].class, XSD_BASE64, new Base64Type());
+        register(tm, BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        register(tm, URI.class, XSD_URI, new URIType());
+        register(tm, Document.class, XSD_ANY, new DocumentType());
+        register(tm, Source.class, XSD_ANY, new SourceType());
+        register(tm, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
+        register(tm, Element.class, XSD_ANY, new JDOMElementType());
+        register(tm, Object.class, XSD_ANY, new ObjectType());
 
         register(SoapConstants.XSD, tm);
         registerDefault(tm);
@@ -299,54 +312,74 @@ public class DefaultTypeMappingRegistry
         // Create a Type Mapping for SOAP 1.1 Encoding
         TypeMapping soapTM = createTypeMapping(tm, false);
 
-        soapTM.register(boolean.class, ENCODED_BOOLEAN, new BooleanType());
-        soapTM.register(int.class, ENCODED_INT, new IntType());
-        soapTM.register(short.class, ENCODED_SHORT, new ShortType());
-        soapTM.register(double.class, ENCODED_DOUBLE, new DoubleType());
-        soapTM.register(float.class, ENCODED_FLOAT, new FloatType());
-        soapTM.register(long.class, ENCODED_LONG, new LongType());
-        soapTM.register(String.class, ENCODED_STRING, new StringType());
-        soapTM.register(Boolean.class, ENCODED_BOOLEAN, new BooleanType());
-        soapTM.register(Integer.class, ENCODED_INT, new IntType());
-        soapTM.register(Short.class, ENCODED_SHORT, new ShortType());
-        soapTM.register(Double.class, ENCODED_DOUBLE, new DoubleType());
-        soapTM.register(Float.class, ENCODED_FLOAT, new FloatType());
-        soapTM.register(Long.class, ENCODED_LONG, new LongType());
-        soapTM.register(Date.class, ENCODED_DATETIME, new DateTimeType());
-        soapTM.register(java.sql.Date.class, ENCODED_DATETIME, new SqlDateType());
-        soapTM.register(Calendar.class, ENCODED_DATETIME, new CalendarType());
-        soapTM.register(byte[].class, ENCODED_BASE64, new Base64Type());
-        soapTM.register(BigDecimal.class, ENCODED_DECIMAL, new BigDecimalType());
+        register(soapTM, boolean.class, ENCODED_BOOLEAN, new BooleanType());
+        register(soapTM, int.class, ENCODED_INT, new IntType());
+        register(soapTM, short.class, ENCODED_SHORT, new ShortType());
+        register(soapTM, double.class, ENCODED_DOUBLE, new DoubleType());
+        register(soapTM, float.class, ENCODED_FLOAT, new FloatType());
+        register(soapTM, long.class, ENCODED_LONG, new LongType());
+        register(soapTM, String.class, ENCODED_STRING, new StringType());
+        register(soapTM, Boolean.class, ENCODED_BOOLEAN, new BooleanType());
+        register(soapTM, Integer.class, ENCODED_INT, new IntType());
+        register(soapTM, Short.class, ENCODED_SHORT, new ShortType());
+        register(soapTM, Double.class, ENCODED_DOUBLE, new DoubleType());
+        register(soapTM, Float.class, ENCODED_FLOAT, new FloatType());
+        register(soapTM, Long.class, ENCODED_LONG, new LongType());
+        register(soapTM, Date.class, ENCODED_DATETIME, new DateTimeType());
+        register(soapTM, java.sql.Date.class, ENCODED_DATETIME, new SqlDateType());
+        register(soapTM, Calendar.class, ENCODED_DATETIME, new CalendarType());
+        register(soapTM, byte[].class, ENCODED_BASE64, new Base64Type());
+        register(soapTM, BigDecimal.class, ENCODED_DECIMAL, new BigDecimalType());
 
-        soapTM.register(boolean.class, XSD_BOOLEAN, new BooleanType());
-        soapTM.register(int.class, XSD_INT, new IntType());
-        soapTM.register(short.class, XSD_SHORT, new ShortType());
-        soapTM.register(double.class, XSD_DOUBLE, new DoubleType());
-        soapTM.register(float.class, XSD_FLOAT, new FloatType());
-        soapTM.register(long.class, XSD_LONG, new LongType());
-        soapTM.register(String.class, XSD_STRING, new StringType());
-        soapTM.register(Boolean.class, XSD_BOOLEAN, new BooleanType());
-        soapTM.register(Integer.class, XSD_INT, new IntType());
-        soapTM.register(Short.class, XSD_SHORT, new ShortType());
-        soapTM.register(Double.class, XSD_DOUBLE, new DoubleType());
-        soapTM.register(Float.class, XSD_FLOAT, new FloatType());
-        soapTM.register(Long.class, XSD_LONG, new LongType());
-        soapTM.register(Date.class, XSD_DATETIME, new DateTimeType());
-        soapTM.register(java.sql.Date.class, XSD_DATETIME, new SqlDateType());
-        soapTM.register(Time.class, XSD_TIME, new TimeType());
-        soapTM.register(Timestamp.class, XSD_DATETIME, new TimestampType());
-        soapTM.register(Calendar.class, XSD_DATETIME, new CalendarType());
-        soapTM.register(byte[].class, XSD_BASE64, new Base64Type());
-        soapTM.register(BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
-		soapTM.register(URI.class, XSD_URI, new URIType());
-		soapTM.register(Document.class, XSD_ANY, new DocumentType());
-        soapTM.register(Source.class, XSD_ANY, new SourceType());
-        soapTM.register(XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
-        soapTM.register(Element.class, XSD_ANY, new JDOMElementType());
-        soapTM.register(Object.class, XSD_ANY, new ObjectType());
+        register(soapTM, boolean.class, XSD_BOOLEAN, new BooleanType());
+        register(soapTM, int.class, XSD_INT, new IntType());
+        register(soapTM, short.class, XSD_SHORT, new ShortType());
+        register(soapTM, double.class, XSD_DOUBLE, new DoubleType());
+        register(soapTM, float.class, XSD_FLOAT, new FloatType());
+        register(soapTM, long.class, XSD_LONG, new LongType());
+        register(soapTM, String.class, XSD_STRING, new StringType());
+        register(soapTM, Boolean.class, XSD_BOOLEAN, new BooleanType());
+        register(soapTM, Integer.class, XSD_INT, new IntType());
+        register(soapTM, Short.class, XSD_SHORT, new ShortType());
+        register(soapTM, Double.class, XSD_DOUBLE, new DoubleType());
+        register(soapTM, Float.class, XSD_FLOAT, new FloatType());
+        register(soapTM, Long.class, XSD_LONG, new LongType());
+        register(soapTM, Date.class, XSD_DATETIME, new DateTimeType());
+        register(soapTM, java.sql.Date.class, XSD_DATETIME, new SqlDateType());
+        register(soapTM, Time.class, XSD_TIME, new TimeType());
+        register(soapTM, Timestamp.class, XSD_DATETIME, new TimestampType());
+        register(soapTM, Calendar.class, XSD_DATETIME, new CalendarType());
+        register(soapTM, byte[].class, XSD_BASE64, new Base64Type());
+        register(soapTM, BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        register(soapTM, URI.class, XSD_URI, new URIType());
+        register(soapTM, Document.class, XSD_ANY, new DocumentType());
+        register(soapTM, Source.class, XSD_ANY, new SourceType());
+        register(soapTM, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
+        register(soapTM, Element.class, XSD_ANY, new JDOMElementType());
+        register(soapTM, Object.class, XSD_ANY, new ObjectType());
 
         register(ENCODED_NS, soapTM);
 
         return tm;
+    }
+
+    protected void register(TypeMapping tm, Class class1, QName name, Type type)
+    {
+        if (!getConfiguration().isDefaultNillable())
+        {
+            type.setNillable(false);
+        }
+        
+        tm.register(class1, name, type);
+    }
+
+    public Configuration getConfiguration()
+    {
+        return typeConfiguration;
+    }
+
+    public void setConfiguration(Configuration typeConfiguration)
+    {
+        this.typeConfiguration = typeConfiguration;
     }
 }

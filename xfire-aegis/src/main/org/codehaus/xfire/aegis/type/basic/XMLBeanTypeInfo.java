@@ -19,7 +19,11 @@ public class XMLBeanTypeInfo
 {
     private static final Log logger = LogFactory.getLog(XMLBeanTypeInfo.class);
     private List mappings;
-    private Map name2Nillable = new HashMap();
+    
+    /**
+     * Map used for storing meta data about each property
+     */
+    private Map name2PropertyInfo = new HashMap();
  
     public XMLBeanTypeInfo(Class typeClass,
                            List mappings,
@@ -67,8 +71,14 @@ public class XMLBeanTypeInfo
             String nillableVal = e.getAttributeValue("nillable");
             if (nillableVal != null && nillableVal.length() > 0)
             {
-                 name2Nillable.put(mappedName, Boolean.valueOf(nillableVal));
+                ensurePropertyInfo( mappedName ).setNillable( Boolean.valueOf(nillableVal).booleanValue() );
             }
+            
+            String minOccurs = e.getAttributeValue("minOccurs");
+            if ( minOccurs != null && minOccurs.length() > 0 )
+            {
+                ensurePropertyInfo( mappedName).setMinOccurs( Integer.parseInt( minOccurs ) );
+            }            
         }
 
         try
@@ -110,13 +120,54 @@ public class XMLBeanTypeInfo
         
         return null;
     }
-
+    
+    /**
+     * Grab Nillable by looking in PropertyInfo map
+     * if no entry found, revert to parent class
+     */
     public boolean isNillable(QName name)
     {
-        Boolean nillable = (Boolean) name2Nillable.get(name);
-        
-        if (nillable != null) return nillable.booleanValue();
-        
+        BeanTypePropertyInfo info = getPropertyInfo( name );
+        if ( info != null ) return info.isNillable();        
         return super.isNillable(name);
-    } 
+    }
+    
+    /**
+     * Grab Min Occurs by looking in PropertyInfo map
+     * if no entry found, revert to parent class
+     */
+    public int getMinOccurs (QName name)
+    {
+        BeanTypePropertyInfo info = getPropertyInfo( name );
+        if ( info != null ) return info.getMinOccurs();
+        return super.getMinOccurs( name );
+    }
+    
+    
+    /**
+     * Grab the Property Info for the given property
+     * @param name
+     * @return the BeanTypePropertyInfo for the property or NULL if none found
+     */
+    private BeanTypePropertyInfo getPropertyInfo (QName name)
+    {
+        return (BeanTypePropertyInfo) name2PropertyInfo.get( name );
+    }
+    
+    /**
+     * Grab the Property Info for the given property but if not found
+     * create one and add it to the map
+     * @param name
+     * @return the BeanTypePropertyInfo for the property
+     */
+    private BeanTypePropertyInfo ensurePropertyInfo (QName name)
+    {
+        BeanTypePropertyInfo result = getPropertyInfo( name );
+        if ( result == null )
+        {
+            result = new BeanTypePropertyInfo();
+            name2PropertyInfo.put( name, result );
+        }        
+        return result;
+    }
 }

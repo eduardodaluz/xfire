@@ -6,16 +6,14 @@ import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
 
 /**
- * SimpleSerializer
- * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class StringType
     extends Type
 {
+
     public StringType()
-    {
-        setNillable(true);
+    {        
     }
     
     public Object readObject(MessageReader reader, MessageContext context)

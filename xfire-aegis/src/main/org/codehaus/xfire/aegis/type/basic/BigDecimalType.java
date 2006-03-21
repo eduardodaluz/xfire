@@ -17,7 +17,6 @@ public class BigDecimalType extends Type
     public BigDecimalType()
     {
         super();
-        setNillable(true);
     }
 
     public Object readObject( final MessageReader reader, final MessageContext context )

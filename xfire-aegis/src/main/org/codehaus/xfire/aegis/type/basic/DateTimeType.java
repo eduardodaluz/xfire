@@ -21,6 +21,13 @@ public class DateTimeType
 {
     private static XsDateTimeFormat format = new XsDateTimeFormat();
     
+    
+    public DateTimeType()
+    {
+        super();
+        setNillable(false);
+    }
+
     public Object readObject(MessageReader reader, MessageContext context) throws XFireFault
     {
         String value = reader.getValue();

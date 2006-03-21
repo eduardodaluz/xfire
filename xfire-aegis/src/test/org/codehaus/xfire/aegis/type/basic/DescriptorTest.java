@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -34,8 +35,12 @@ public class DescriptorTest
 
         DefaultTypeMappingRegistry reg = new DefaultTypeMappingRegistry(true);
         tm = (CustomTypeMapping) reg.getDefaultTypeMapping();
+        
         XMLTypeCreator creator = new XMLTypeCreator();
-        creator.setNextCreator(new DefaultTypeCreator());
+        creator.setConfiguration(reg.getConfiguration());
+        DefaultTypeCreator next = new DefaultTypeCreator();
+        next.setConfiguration(reg.getConfiguration());
+        creator.setNextCreator(next);
         tm.setTypeCreator(creator);
     }
 
@@ -146,6 +151,35 @@ public class DescriptorTest
         assertFalse(info.isNillable(new QName(info.getDefaultNamespace(), "prop1")));
         assertTrue(info.isNillable(new QName(info.getDefaultNamespace(), "prop2")));
     }
+    
+    public void testMinOccurs() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:bean-minoccurs");
+
+        Type type = tm.getTypeCreator().createType(MyBean.class);
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
+
+        assertEquals(info.getMinOccurs(new QName(info.getDefaultNamespace(), "prop1")), 1);
+        assertEquals(info.getMinOccurs(new QName(info.getDefaultNamespace(), "prop2")), 0);
+    }
+    
+    public void testExtensible() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:bean-extensible");
+        Type type = tm.getTypeCreator().createType(MyBean.class);
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
+        assertTrue(info.isExtensibleElements());
+        assertTrue(info.isExtensibleAttributes());
+    }
+    
+    public void testExtensibleOff() throws Exception
+    {
+        tm.setEncodingStyleURI("urn:xfire:bean-extensibleoff");
+        Type type = tm.getTypeCreator().createType(MyBean.class);
+        BeanTypeInfo info = ((BeanType) type).getTypeInfo();
+        assertFalse(info.isExtensibleElements());
+        assertFalse(info.isExtensibleAttributes());
+    }
 
     public void testCustomType() throws Exception
     {
@@ -163,6 +197,7 @@ public class DescriptorTest
     {
         XMLTypeCreator creator = new XMLTypeCreator();
         creator.setNextCreator(new DefaultTypeCreator());
+        creator.setConfiguration(new Configuration());
         tm = new CustomTypeMapping(new DefaultTypeMappingRegistry().createDefaultMappings());
         creator.setTypeMapping(tm);
         Type type = creator.createType(MyService1.class.getDeclaredMethod("getCollection", new Class[0]), -1);
@@ -184,6 +219,7 @@ public class DescriptorTest
     {
         XMLTypeCreator creator = new XMLTypeCreator();
         creator.setNextCreator(new DefaultTypeCreator());
+        creator.setConfiguration(new Configuration());
         tm = new CustomTypeMapping(new DefaultTypeMappingRegistry().createDefaultMappings());
         creator.setTypeMapping(tm);
         Method method = MyService1.class.getDeclaredMethod("getCollection", new Class[0]);

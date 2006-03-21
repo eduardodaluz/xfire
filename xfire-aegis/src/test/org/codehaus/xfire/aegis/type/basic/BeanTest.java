@@ -10,8 +10,8 @@ import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
@@ -21,6 +21,7 @@ public class BeanTest
     extends AbstractXFireTest
 {
     TypeMapping mapping;
+    private DefaultTypeMappingRegistry reg;
     
     public void setUp() throws Exception
     {
@@ -31,7 +32,7 @@ public class BeanTest
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("xsi", SoapConstants.XSI_NS);
         
-        TypeMappingRegistry reg = new DefaultTypeMappingRegistry(true);
+        reg = new DefaultTypeMappingRegistry(true);
         mapping = reg.createTypeMapping(true);
     }
 
@@ -197,11 +198,40 @@ public class BeanTest
         
         type.writeSchema(schema);
 
-        assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int1'][@nillable='true']", schema);
-        assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int2']", schema);
+        assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int1'][@nillable='true'][@minOccurs='0']", schema);
+        assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int2'][@minOccurs='0']", schema);
         assertInvalid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@name='int2'][@nillable='true']", schema);
     }   
     
+    public void testNillableIntMinOccurs1()
+        throws Exception
+    {
+        reg = new DefaultTypeMappingRegistry();
+        
+        Configuration config = reg.getConfiguration();
+        config.setDefaultMinOccurs(1);
+        config.setDefaultNillable(false);
+
+        reg.createDefaultMappings();
+        mapping = reg.createTypeMapping(true);
+
+        BeanType type = (BeanType) mapping.getTypeCreator().createType(IntBean.class);
+        type.setTypeClass(IntBean.class);
+        type.setTypeMapping(mapping);
+        
+        Element types = new Element("types", "xsd", SoapConstants.XSD);
+        Element schema = new Element("schema", "xsd", SoapConstants.XSD);
+        types.addContent(schema);
+        
+        Document doc = new Document(types);
+        
+        type.writeSchema(schema);
+
+        assertValid("//xsd:complexType[@name='IntBean']/xsd:sequence/xsd:element[@name='int1']", schema);
+        assertInvalid("//xsd:complexType[@name='IntBean']/xsd:sequence/xsd:element[@name='int1'][@minOccurs]", schema);
+        assertInvalid("//xsd:complexType[@name='IntBean']/xsd:sequence/xsd:element[@name='int1'][@nillable]", schema);
+    }   
+
     public void testNullNonNillableWithDate()
         throws Exception
     {
@@ -225,50 +255,7 @@ public class BeanTest
         assertInvalid("/b:root/b:date", element);
         assertValid("/b:root", element);
     }
-        
-    /*
-    public void testNonDefaultNames()
-        throws Exception
-    {
-        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class);
-        info.setTypeMapping(mapping);
-        info.mapElement("howdy", new QName("urn:anotherns", "howdy"));
-        info.mapElement("bleh", new QName("urn:anotherns", "bleh"));
-        
-        BeanType type = new BeanType(info);
-        type.setTypeClass(SimpleBean.class);
-        type.setTypeMapping(mapping);
-        type.setSchemaType(new QName("urn:Bean", "bean"));
-        
-        // Test Reading
-        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean6.xml"));
-        
-        SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
-        assertEquals("bleh", bean.getBleh());
-        assertEquals("howdy", bean.getHowdy());
-        
-        // Test writing
-        Element element = new Element("b:root", "urn:Bean");
-        Document doc = new Document(element);
-        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
-    
-        assertValid("/b:root/a:bleh[text()='bleh']", element);
-        assertValid("/b:root/a:howdy[text()='howdy']", element);
 
-        Element types = new Element("xsd:types", SoapConstants.XSD);
-        Element schema = new Element("xsd:schema", SoapConstants.XSD);
-        types.addContent(schema);
-        
-        doc = new Document(types);
-        
-        type.writeSchema(schema);
-
-        // TODO: referenced types don't work yet
-        //assertValid("//xsd:complexType[@name='bean']/xsd:element[@ref='ns1:howdy']", schema);
-        //assertValid("//xsd:complexType[@name='bean']/xsd:sequence/xsd:element[@ref='ns1:bleh']", schema);
-    }
-    */
-    
     public void testByteBean()
         throws Exception
     {

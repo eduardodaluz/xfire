@@ -37,14 +37,11 @@ public class BeanType
     
     public BeanType()
     {
-        setNillable(true);
     }
     
     public BeanType(BeanTypeInfo info)
     {
-        this._info = info;
-        setNillable(true);
-        
+        this._info = info;        
         this.setTypeClass(info.getTypeClass());
     }
 	
@@ -370,6 +367,19 @@ public class BeanType
             writeTypeReference(name, nameWithPrefix, element, type, prefix);
         }
         
+        /**
+         * if future proof then add <xsd:any/> element
+         */
+        if ( info.isExtensibleElements() )
+        {
+            if (seq == null)
+            {
+                seq = new Element("sequence", SoapConstants.XSD_PREFIX, SoapConstants.XSD);
+                complex.addContent(seq);
+            }
+            seq.addContent( createAnyElement () );            
+        }
+        
         // Write out schema for attributes
         for (Iterator itr = info.getAttributes(); itr.hasNext();)
         {
@@ -389,6 +399,14 @@ public class BeanType
                                                             type.getSchemaType().getNamespaceURI() );
             element.setAttribute(new Attribute("name", nameWithPrefix));
             element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
+        }
+        
+        /**
+         * If extensible attributes then add <xsd:anyAttribute/>
+         */
+        if ( info.isExtensibleAttributes() )
+        {
+            complex.addContent( createAnyAttribute() );
         }
     }
 
@@ -422,7 +440,12 @@ public class BeanType
         {
             element.setAttribute(new Attribute("name", nameWithPrefix));
             element.setAttribute(new Attribute("type", prefix + ':' + type.getSchemaType().getLocalPart()));
-            element.setAttribute(new Attribute("minOccurs", "0"));
+            
+            int minOccurs = getTypeInfo().getMinOccurs(name);
+            if ( minOccurs != 1 )
+            {
+                element.setAttribute(new Attribute("minOccurs", new Integer(minOccurs).toString()));
+            }
             
             if (getTypeInfo().isNillable(name))
             {
@@ -501,4 +524,35 @@ public class BeanType
 
         return info;
     }
+    
+    /**
+     * Create an element to represent any future elements
+     * that might get added to the schema
+     * <xsd:any minOccurs="0" maxOccurs="unbounded"/>
+     * @return
+     */
+    private Element createAnyElement()
+    {
+        Element result = new Element("any",
+                                      SoapConstants.XSD_PREFIX,
+                                      SoapConstants.XSD);
+        result.setAttribute(new Attribute("minOccurs", "0"));
+        result.setAttribute(new Attribute("maxOccurs", "unbounded"));       
+        return result;
+    }
+    
+    /**
+     * Create an element to represent any future attributes
+     * that might get added to the schema
+     * <xsd:anyAttribute/>
+     * @return
+     */
+    private Element createAnyAttribute()
+    {
+        Element result = new Element("anyAttribute",
+                                      SoapConstants.XSD_PREFIX,
+                                      SoapConstants.XSD);     
+        return result;
+    }
+    
 }

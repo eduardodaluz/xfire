@@ -5,15 +5,19 @@ import java.lang.reflect.Method;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
+import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
 
-public class DefaultTypeCreator extends AbstractTypeCreator
+public class DefaultTypeCreator
+    extends AbstractTypeCreator
 {
     public TypeClassInfo createClassInfo(Method m, int index)
     {
         TypeClassInfo info = new TypeClassInfo();
 
-        if(index >= 0) info.setTypeClass(m.getParameterTypes()[index]);
-        else info.setTypeClass(m.getReturnType());
+        if (index >= 0)
+            info.setTypeClass(m.getParameterTypes()[index]);
+        else
+            info.setTypeClass(m.getReturnType());
 
         return info;
     }
@@ -25,14 +29,14 @@ public class DefaultTypeCreator extends AbstractTypeCreator
 
     public Type createCollectionType(TypeClassInfo info)
     {
-        if(info.getGenericType() == null)
+        if (info.getGenericType() == null)
         {
-            throw new XFireRuntimeException("Cannot create mapping for " + 
-                                            info.getTypeClass().getName() + 
-                                            ", unspecified component type for " + info.getDescription());
+            throw new XFireRuntimeException("Cannot create mapping for "
+                    + info.getTypeClass().getName() + ", unspecified component type for "
+                    + info.getDescription());
         }
 
-        return createCollectionType(info, (Class)info.getGenericType());
+        return createCollectionType(info, (Class) info.getGenericType());
     }
 
     public Type createDefaultType(TypeClassInfo info)
@@ -42,6 +46,11 @@ public class DefaultTypeCreator extends AbstractTypeCreator
         type.setTypeClass(info.getTypeClass());
         type.setTypeMapping(getTypeMapping());
 
+        BeanTypeInfo typeInfo = type.getTypeInfo();
+        typeInfo.setDefaultMinOccurs(getConfiguration().getDefaultMinOccurs());
+        typeInfo.setExtensibleAttributes(getConfiguration().isDefaultExtensibleAttributes());
+        typeInfo.setExtensibleElements(getConfiguration().isDefaultExtensibleElements());
+        
         return type;
     }
 }

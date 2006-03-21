@@ -31,6 +31,17 @@
     <property name="prop2"/>
   </mapping>
   
+  <mapping uri="urn:xfire:bean-minoccurs">
+    <property name="prop1" minOccurs="1"/>
+    <property name="prop2"/>
+  </mapping>
+  
+  <mapping uri="urn:xfire:bean-extensible">
+  </mapping>
+  
+  <mapping uri="urn:xfire:bean-extensibleoff" extensibleElements="false" extensibleAttributes="false">
+  </mapping>
+  
   <mapping uri="urn:xfire:custom-type">
     <property name="prop1" type="org.codehaus.xfire.aegis.type.basic.MyStringType"/>
   </mapping>
