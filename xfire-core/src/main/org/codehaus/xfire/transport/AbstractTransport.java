@@ -29,7 +29,6 @@ public abstract class AbstractTransport
         {
             Channel channel = (Channel) itr.next();
             channel.close();
-            itr.remove();
         }
     }
 
