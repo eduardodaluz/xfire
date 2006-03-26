@@ -19,12 +19,14 @@ import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.ByteDataSource;
+import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
@@ -58,31 +60,46 @@ public class HttpChannel
                 throw new XFireRuntimeException("No backchannel exists for message");
             }
             
-            try
-            {
-                Attachments atts = message.getAttachments();
-                if (atts != null && atts.size() > 0)
-                {
-                    HttpChannel.writeAttachmentBody(context, message);
-                    response.setContentType(atts.getContentType());
-
-                    atts.write(response.getOutputStream());
-                }
-                else
-                {
-                    response.setContentType(getSoapMimeType(message));
-
-                    HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
-                }
-            }
-            catch (IOException e)
-            {
-                throw new XFireException("Couldn't send message.", e);
-            }
+            sendViaServlet(context, message, response);
         }
         else
         {
             sendViaClient(context, message);
+        }
+    }
+
+    protected void sendViaServlet(MessageContext context, OutMessage message, HttpServletResponse response)
+        throws XFireException
+    {
+        try
+        {
+            boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
+            if (mtomEnabled || message.getAttachments() != null)
+            {
+                Attachments atts = message.getAttachments();
+                if (atts == null)
+                {
+                    atts = new JavaMailAttachments();
+                    message.setAttachments(atts);
+                }
+                
+                atts.setSoapContentType("application/xop+xml");
+                HttpChannel.writeAttachmentBody(context, message);
+                
+                response.setContentType(atts.getContentType());
+
+                atts.write(response.getOutputStream());
+            }
+            else
+            {
+                response.setContentType(getSoapMimeType(message));
+
+                HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
+            }
+        }
+        catch (IOException e)
+        {
+            throw new XFireException("Couldn't send message.", e);
         }
     }
 
@@ -112,12 +129,22 @@ public class HttpChannel
         
         Attachments atts = message.getAttachments();
         
+        String encoding = message.getEncoding();
+        if (encoding == null) encoding = "UTF-8";
+        
         ByteDataSource ds = new ByteDataSource(bos.toByteArray());
-        ds.setContentType(getSoapMimeType(message));
+        StringBuffer ct = new StringBuffer();
+        ct.append("application/xop+xml; charset=")
+          .append(encoding)
+          .append("; type=\"")
+          .append(getSoapMimeType(message))
+          .append("\"");
+        
+        ds.setContentType(ct.toString());
         DataHandler dh = new DataHandler(ds);        
         
-        SimpleAttachment att = new SimpleAttachment("soap-message.xml", dh);
-       
+        SimpleAttachment att = new SimpleAttachment("soap-message.xml@example.org", dh);
+        
         atts.setSoapMessage(att);
     }
 
@@ -135,19 +162,22 @@ public class HttpChannel
     
     public static String getSoapMimeType(AbstractMessage msg)
     {
+        String ct;
         SoapVersion soap = msg.getSoapVersion();
         if (soap instanceof Soap11)
         {
-            return "text/xml; charset=" + msg.getEncoding();
+            ct = "text/xml; charset=" + msg.getEncoding();
         }
         else if (soap instanceof Soap12)
         {
-             return "application/soap+xml; charset=" +  msg.getEncoding();
+             return "application/soap+xml; charset=" + msg.getEncoding();
         }
         else
         {
             return "text/xml; charset=" + msg.getEncoding();
         }
+        
+        return ct;
     }
 
     protected void sendViaClient(MessageContext context, OutMessage message)

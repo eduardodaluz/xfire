@@ -218,7 +218,7 @@ public class ElementReader
     {
         return new AttributeReader( qName, root.getAttributeValue( qName.getNamespaceURI(), qName.getLocalPart() ) );
     }
-
+    
     public MessageReader getNextAttributeReader()
     {
         MessageReader reader = new AttributeReader(root.getAttributeName(currentAttribute),

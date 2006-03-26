@@ -4,7 +4,10 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.AbstractContext;
+import org.codehaus.xfire.service.Service;
 
 import com.sun.codemodel.JCodeModel;
 
@@ -12,7 +15,7 @@ public class GenerationContext
     extends AbstractContext
 {
     private JCodeModel codeModel;
-    private Map services;
+    private Map<QName,Collection<Service>> services;
     private Object wsdl;
     private String destinationPackage;
     private String baseURI;
@@ -72,12 +75,12 @@ public class GenerationContext
         return codeModel;
     }
 
-    public Map getServices()
+    public Map<QName,Collection<Service>> getServices()
     {
         return services;
     }
 
-    public void setServices(Map services)
+    public void setServices(Map<QName,Collection<Service>> services)
     {
         this.services = services;
     }

@@ -33,8 +33,8 @@ public class AttachmentMarshaller
                                     String elementNamespace,
                                     String elementLocalName)
     {
-        log.debug("Adding attachment {" + elementNamespace + "}" + elementLocalName);
-        
+        log.debug("Adding byte[] attachment {" + elementNamespace + "}" + elementLocalName);
+        log.debug("Length: " + length);       
         Attachments atts = context.getOutMessage().getAttachments();
         if (atts == null)
         {
@@ -42,7 +42,7 @@ public class AttachmentMarshaller
             context.getOutMessage().setAttachments(atts);
         }
         
-        ByteDataSource source = new ByteDataSource(data);
+        ByteDataSource source = new ByteDataSource(data, offset, length);
         source.setContentType(mimeType);
         DataHandler handler = new DataHandler(source);
         
@@ -50,13 +50,13 @@ public class AttachmentMarshaller
         SimpleAttachment att = new SimpleAttachment(id, handler);
         att.setXOP(true);
         atts.addPart(att);
-        return id;
+        return "cid:" +id;
     }
 
     @Override
     public String addMtomAttachment(DataHandler handler, String elementNS, String elementLocalName)
     {
-        log.debug("Adding attachment {" + elementNS + "}" + elementLocalName);
+        log.debug("Adding DataHandler attachment {" + elementNS + "}" + elementLocalName);
         
         Attachments atts = context.getOutMessage().getAttachments();
         if (atts == null)
@@ -69,7 +69,7 @@ public class AttachmentMarshaller
         SimpleAttachment att = new SimpleAttachment(id, handler);
         atts.addPart(att);
         att.setXOP(true);
-        return id;
+        return "cid:" +id;
     }
 
     @Override

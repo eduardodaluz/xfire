@@ -249,9 +249,11 @@ public class XFireServletController
             {
                 Attachments atts = new JavaMailAttachments(request.getInputStream(), 
                                                            request.getContentType());
+                String encoding = getEncoding(request.getCharacterEncoding());
                 XMLStreamReader reader = 
                     STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
-                                                    request.getCharacterEncoding(),context);
+                                                    encoding,
+                                                    context);
                 InMessage message = new InMessage(reader, request.getRequestURI());
                 message.setProperty(SoapConstants.SOAP_ACTION, 
                                     request.getHeader(SoapConstants.SOAP_ACTION));
@@ -275,6 +277,21 @@ public class XFireServletController
                                 request.getHeader(SoapConstants.SOAP_ACTION));
             channel.receive(context, message);
         }
+    }
+
+    private String getEncoding(String enc) throws ServletException
+    {
+        int typeI = enc.indexOf("type=");
+        if (typeI == -1) return null;
+        
+        int charI = enc.indexOf("charset=", typeI);
+        if (charI == -1) return null;
+        
+        int end = enc.indexOf("\"", charI);
+        if (end == -1) end = enc.indexOf(";", charI);
+        if (end == -1) throw new ServletException("Invalid content type: " + enc);
+        
+        return enc.substring(charI + 8, end);
     }
 
     /**

@@ -13,12 +13,20 @@ public class ByteDataSource
     private String contentType;
     private String name;
     private byte[] data;
-    
+    private int offset;
+    private int length;
     
     public ByteDataSource(byte[] data)
     {
-        super();
+        this(data, 0, data.length);
+    }
+
+    public ByteDataSource(byte[] data, int offset, int length)
+    {
         this.data = data;
+        this.offset = offset;
+        this.length = length;
+        System.out.println("Length: " + length);
     }
 
     public byte[] getData()
@@ -49,7 +57,7 @@ public class ByteDataSource
     public InputStream getInputStream()
         throws IOException
     {
-        return new ByteArrayInputStream(data);
+        return new ByteArrayInputStream(data, offset, length);
     }
 
     public String getName()

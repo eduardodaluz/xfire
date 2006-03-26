@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.mail.MessagingException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -185,12 +184,12 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         OutMessage message = getMessage();
         MessageContext context = getMessageContext();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(bos, message.getEncoding(),context);
 
         Attachments atts = message.getAttachments();
         if (atts != null && atts.size() > 0)
         {
             atts.write(bos);
+            atts.write(System.out);
         }
         else
         {

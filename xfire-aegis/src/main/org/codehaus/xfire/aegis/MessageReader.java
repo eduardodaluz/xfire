@@ -26,7 +26,7 @@ public interface MessageReader
 	public boolean getValueAsBoolean();
 
     public MessageReader getAttributeReader( QName qName );
-    
+
     public boolean hasMoreAttributeReaders();
     
     public MessageReader getNextAttributeReader();

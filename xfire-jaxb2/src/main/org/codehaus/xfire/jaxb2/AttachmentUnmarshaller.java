@@ -10,6 +10,7 @@ import javax.activation.DataHandler;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachment;
+import org.codehaus.xfire.attachments.AttachmentUtil;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.soap.SoapConstants;
 
@@ -26,7 +27,7 @@ public class AttachmentUnmarshaller
     @Override
     public byte[] getAttachmentAsByteArray(String cid)
     {
-        Attachment a = getAttachment(cid);
+        Attachment a = AttachmentUtil.getAttachment(cid, context.getOutMessage());
         if (a == null)
             throw new IllegalArgumentException("Attachment " + cid + " was not found.");
 
@@ -60,19 +61,12 @@ public class AttachmentUnmarshaller
             input.close();
         }
     }
-    private Attachment getAttachment(String cid)
-    {
-        Attachments atts = context.getInMessage().getAttachments();
-        if (atts == null)
-            return null;
 
-        return atts.getPart(cid);
-    }
 
     @Override
     public DataHandler getAttachmentAsDataHandler(String cid)
     {
-        Attachment a = getAttachment(cid);
+        Attachment a = AttachmentUtil.getAttachment(cid, context.getInMessage());
         if (a == null)
             throw new IllegalArgumentException("Attachment " + cid + " was not found.");
 

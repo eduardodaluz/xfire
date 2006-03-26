@@ -37,6 +37,11 @@ public class AttributeReader
         throw new IllegalStateException();
     }
 
+    public MessageReader getAttributeReader(String name, String namespace)
+    {
+        throw new IllegalStateException();
+    }
+
     public boolean hasMoreElementReaders()
     {
         return false;

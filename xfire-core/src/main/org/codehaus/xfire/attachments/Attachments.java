@@ -8,12 +8,10 @@ import java.util.Iterator;
  * Manages attachments for an invocation.
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @see org.codehaus.xfire.exchange.AbstractMessage
  */
 public interface Attachments
 {
-    /** The key for the Attachments object in the MessageContext. */
-    String ATTACHMENTS_KEY = "xfire.attachments";
-
     /**
      * @return Returns the SOAP Message.
      */
@@ -34,5 +32,21 @@ public interface Attachments
 
     void write(OutputStream out) throws IOException;
 
+    /**
+     * Get the conetnt type of the whole message.
+     * @return
+     */
     String getContentType();
+
+    /**
+     * Get the content type of the soap message.
+     * @return
+     */
+    String getSoapContentType();
+    
+    /**
+     * Set the content type of the soap message.
+     * @param soapMimeType
+     */
+    void setSoapContentType(String soapMimeType);
 }

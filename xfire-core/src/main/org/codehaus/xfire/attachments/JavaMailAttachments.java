@@ -28,6 +28,8 @@ public class JavaMailAttachments
     private Map parts;
     
     private Attachment soapMessage;
+
+    private String soapContentType;
     
     private MimeMultipart mimeMP;
     
@@ -151,14 +153,22 @@ public class JavaMailAttachments
     {
         if ( mimeMP == null )
         {
-            mimeMP = new MimeMultipart("related; type=\"text/xml\"; start=\"<"
-                    + getSoapMessage().getId() + ">\"");
+            StringBuffer ct = new StringBuffer();
+            ct.append("related; type=\"")
+              .append(soapContentType)
+              .append("\"; start=\"<")
+              .append(getSoapMessage().getId())
+              .append(">\"; start-info=\"text/xml; charset=utf-8\"");
+            
+            mimeMP = new MimeMultipart(ct.toString());
            
             try
             {
                 MimeBodyPart soapPart = new MimeBodyPart();
                 soapPart.setDataHandler(soapMessage.getDataHandler());
                 soapPart.setContentID("<"+soapMessage.getId()+">");
+                soapPart.addHeader("Content-Transfer-Encoding", "binary");
+                
                 mimeMP.addBodyPart(soapPart);
                 
                 for (Iterator itr = getParts(); itr.hasNext(); )
@@ -168,10 +178,10 @@ public class JavaMailAttachments
     	            MimeBodyPart part = new MimeBodyPart();
     	            part.setDataHandler(att.getDataHandler());
     	            part.setContentID("<"+att.getId()+">");
-                    
+
                     if (att.isXOP())
                         part.addHeader("Content-Transfer-Encoding", "binary");
-                    
+
     	            mimeMP.addBodyPart(part);
     	        }
             }
@@ -188,4 +198,18 @@ public class JavaMailAttachments
     {
         return getMimeMultipart().getContentType();
     }
+
+    /**
+     * The Content-Type of the SOAP message part.
+     * @return
+     */
+    public String getSoapContentType()
+    {
+        return soapContentType;
+    }
+
+    public void setSoapContentType(String soapContentType)
+    {
+        this.soapContentType = soapContentType;
+    }   
 }

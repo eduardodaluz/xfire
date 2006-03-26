@@ -21,6 +21,8 @@ public class PictureServiceImpl implements PictureService
         GetPictureResponse response = new GetPictureResponse();
         try
         {
+            File file = getTestFile("src/test-resources/xfire.jpg");
+            System.out.println("LENGTH " + file.length());
             Image image = ImageIO.read(getTestFile("src/test-resources/xfire.jpg"));
             response.setImage(image);
         }
@@ -38,7 +40,16 @@ public class PictureServiceImpl implements PictureService
     public EchoPictureResponse EchoPicture(EchoPicture req)
     {
         EchoPictureResponse response = new EchoPictureResponse();
-        response.setImage(req.getImage());
+        Image image;
+        try
+        {
+            image = ImageIO.read(getTestFile("src/test-resources/xfire.jpg"));
+            response.setImage(image);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
         return response;
     }

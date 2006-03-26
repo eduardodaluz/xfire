@@ -1,8 +1,5 @@
 package org.codehaus.xfire.jaxb2;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +60,6 @@ public class PictureServiceTest
                                  props);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, PictureServiceImpl.class);
         service.setProperty(SoapConstants.MTOM_ENABLED, "true");
-        service.addOutHandler(new DOMOutHandler());
         
         getServiceRegistry().register(service);
         

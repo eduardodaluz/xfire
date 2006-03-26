@@ -1,21 +1,17 @@
 package org.codehaus.xfire.aegis.type.mtom;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-
-import javax.activation.DataContentHandler;
 import javax.activation.DataHandler;
-import javax.activation.URLDataSource;
+import javax.activation.DataSource;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.attachments.Attachment;
+import org.codehaus.xfire.attachments.AttachmentUtil;
 import org.codehaus.xfire.attachments.Attachments;
-import org.codehaus.xfire.attachments.DefaultDataContentHandlerFactory;
+import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.fault.XFireFault;
 
@@ -28,11 +24,9 @@ public abstract class XOPType
     public final static String XOP_NS = "http://www.w3.org/2004/08/xop/include";
     public final static String XML_MIME_NS = "http://www.w3.org/2004/11/xmlmime";
  
-    private static DefaultDataContentHandlerFactory factory =
-        new DefaultDataContentHandlerFactory();
-    
-    private Map classToCType;
-    private Map CTypeToClass;
+    private final static QName XOP_INCLUDE = new QName(XOP_NS, "Include");
+    private final static QName XOP_HREF = new QName("href");
+    private final static QName XML_MIME_TYPE = new QName(XML_MIME_NS, "mimeType");
     
     public XOPType()
     {
@@ -41,91 +35,60 @@ public abstract class XOPType
     public Object readObject(MessageReader reader, MessageContext context)
     	throws XFireFault
     {
-        
-        String uri = null; //getURI(reader.getValue(null, "href"));
-        String contentType = null; //reader.getValue(XML_MIME_NS, "contentType");
-        
-        Attachment att = getAttachment( uri, context );
-        
-        String type = att.getDataHandler().getContentType();
-        DataContentHandler handler = factory.createDataContentHandler(type);
-        try
+        Object o = null;
+        while (reader.hasMoreElementReaders())
         {
-            if ( handler != null )
+            MessageReader child = reader.getNextElementReader();
+            if (child.getName().equals(XOP_INCLUDE))
             {
-                return handler.getContent(att.getDataHandler().getDataSource());
-            }
-            else
-            {
-                return att.getDataHandler().getContent();
+                MessageReader mimeReader = reader.getAttributeReader(XOP_HREF);
+                String type = mimeReader.getValue();
+                o = readInclude(type, reader, context);
             }
         }
-        catch (IOException e)
-        {
-            throw new XFireFault("Could not read the attachment " + uri, e, XFireFault.SENDER);
-        }
-    }
-
-    /**
-     * Parse the URI from the <code>xop:Include</code> href value.
-     * @param value
-     * @return
-     */
-    protected String getURI(String value)
-    {
-        int index = value.indexOf(":");
-        return value.substring(index+1);
-    }
-
-    public Attachment getAttachment(String id, MessageContext context) 
-    	throws XFireFault
-    {
-        Attachments attachments = 
-            (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
-        Attachment att = null;
         
-        if ( attachments != null)
+        return o;
+    }
+    
+    public Object readInclude(String type, MessageReader reader, MessageContext context)
+        throws XFireFault
+    {
+        String href = reader.getAttributeReader(XOP_HREF).getValue();
+        
+        Attachment att = AttachmentUtil.getAttachment(href, context.getInMessage());
+        
+        if (att == null)
         {
-           att = attachments.getPart(id);
-        }
-
-        // Try loading the URL remotely
-        try
-        {
-            URLDataSource source = new URLDataSource(new URL(id));
-            att = new SimpleAttachment(id, new DataHandler(source));
-        }
-        catch (MalformedURLException e)
-        {
-            throw new XFireFault("Invalid attachment id: " + id, e, XFireFault.SENDER);
+            throw new XFireFault("Could not find the attachment " + href, XFireFault.SENDER);
         }
         
-        return att;
+        return att.getDataHandler().getDataSource();
     }
     
     public void writeObject(Object object, MessageWriter writer, MessageContext context) 
     	throws XFireFault
     {
-        /*Attachments attachments = 
-            (Attachments) context.getProperty(Attachments.ATTACHMENTS_KEY);
+        Attachments attachments = context.getOutMessage().getAttachments();
         if ( attachments == null )
         {
             attachments = new JavaMailAttachments();
-            context.setProperty(Attachments.ATTACHMENTS_KEY, attachments);
+            context.getOutMessage().setAttachments(attachments);
         }
 
-        String id = null; // how do we generate this?
-        String contentType = factory.getContentType(object.getClass()); // how?
+        DataSource source = (DataSource) object;
+        String id = AttachmentUtil.createContentID(getSchemaType().getNamespaceURI());
+        String contentType = source.getContentType();
         
-        DataHandler handler = new DataHandler(object, contentType);
-        Attachment att = new SimpleAttachment(id, handler);
-        
+        DataHandler handler = new DataHandler(source);
+        SimpleAttachment att = new SimpleAttachment(id, handler);
+        att.setXOP(true);
         attachments.addPart(att);
           
-        // write XOP element*/
+        MessageWriter mt = writer.getAttributeWriter(XML_MIME_TYPE);
+        mt.writeValue(contentType);
         
-        throw new UnsupportedOperationException();
+        MessageWriter include = writer.getElementWriter(XOP_INCLUDE);
+        MessageWriter href = include.getAttributeWriter(XOP_HREF);
+        href.writeValue(id);
     }
-    
-    
 }
