@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -17,10 +18,20 @@ import org.codehaus.xfire.util.STAXUtils;
  */
 public class HtmlServiceWriter
 {
+	private HttpServletRequest request;
+	
     private static final String XHTML_STRICT_DTD = "<!DOCTYPE html " +
             "PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" " +
             "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
 
+    public HtmlServiceWriter(){
+    	
+    }
+    
+    
+    public HtmlServiceWriter(HttpServletRequest request){
+    	this.request = request;
+    }
     /**
      * Writes a HTML list of services to the given stream. Each service is described with its name.
      *
@@ -39,7 +50,7 @@ public class HtmlServiceWriter
 
         writer.writeStartElement("body");
         writer.writeStartElement("p");
-        writer.writeCharacters("No such service");
+   //     writer.writeCharacters("No such service");
         writer.writeEndElement(); // p
         if (!services.isEmpty())
         {
@@ -47,11 +58,27 @@ public class HtmlServiceWriter
             writer.writeCharacters("Services:");
             writer.writeEndElement(); // p
             writer.writeStartElement("ul");
+            
+            request.getPathTranslated();
+            request.getProtocol();
+            
+            
+            String base = request.getRequestURL().toString();
+            
+            
+            request.getPathInfo();
             for (Iterator iterator = services.iterator(); iterator.hasNext();)
             {
-                Service service = (Service) iterator.next();
+            	Service service = (Service) iterator.next();
+            	String url = base+service.getSimpleName().toString()+"?wsdl";
+                
                 writer.writeStartElement("li");
                 writer.writeCharacters(service.getSimpleName().toString());
+                writer.writeCharacters(" ");
+                writer.writeStartElement("a");
+                writer.writeAttribute("href",url);
+                writer.writeCharacters("[wsdl]");
+                writer.writeEndElement();
                 writer.writeEndElement(); // li
             }
         }

@@ -129,7 +129,7 @@ public class XFireServletController
                 response.setStatus(404);
             }
 
-            generateServices(response);
+            generateServices(request,response);
             return;
         }
 
@@ -165,7 +165,9 @@ public class XFireServletController
         }
     }
 
-    protected void generateService(HttpServletResponse response, String serviceName)
+    
+
+	protected void generateService(HttpServletResponse response, String serviceName)
             throws ServletException, IOException
     {
         response.setContentType("text/html");
@@ -185,12 +187,13 @@ public class XFireServletController
     /**
      * @param response
      */
-    protected void generateServices(HttpServletResponse response)
+    protected void generateServices(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
         response.setContentType("text/html");
 
-        HtmlServiceWriter writer = new HtmlServiceWriter();
+        HtmlServiceWriter writer = new HtmlServiceWriter(request);
+      
         try
         {
             writer.write(response.getOutputStream(), getServiceRegistry().getServices());
