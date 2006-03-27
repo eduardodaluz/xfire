@@ -38,7 +38,12 @@ public class W3CNamespaceContext implements NamespaceContext
                 return getNamespaceURI((Element) n, name);
             }
         }
-        return attr.getValue();
+        else
+        {
+            return attr.getValue();
+        }
+        
+        return null;
     }
     
     public String getPrefix(String uri)
