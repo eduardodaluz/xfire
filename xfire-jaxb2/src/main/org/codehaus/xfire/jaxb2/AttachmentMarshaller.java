@@ -34,7 +34,7 @@ public class AttachmentMarshaller
                                     String elementLocalName)
     {
         log.debug("Adding byte[] attachment {" + elementNamespace + "}" + elementLocalName);
-        log.debug("Length: " + length);       
+        
         Attachments atts = context.getOutMessage().getAttachments();
         if (atts == null)
         {

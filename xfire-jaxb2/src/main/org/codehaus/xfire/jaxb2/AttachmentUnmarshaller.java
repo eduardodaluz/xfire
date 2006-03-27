@@ -11,7 +11,6 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachment;
 import org.codehaus.xfire.attachments.AttachmentUtil;
-import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.soap.SoapConstants;
 
 public class AttachmentUnmarshaller

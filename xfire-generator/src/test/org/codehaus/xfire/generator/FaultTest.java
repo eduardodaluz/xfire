@@ -1,4 +1,4 @@
-package jsr181;
+package org.codehaus.xfire.generator;
 
 import org.codehaus.xfire.gen.Wsdl11Generator;
 

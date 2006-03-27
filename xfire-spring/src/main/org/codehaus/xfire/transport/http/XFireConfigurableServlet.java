@@ -1,7 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import java.util.Enumeration;
-
 import javax.servlet.ServletException;
 
 import org.apache.commons.logging.Log;
@@ -9,8 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.spring.XFireConfigLoader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * XFire Servlet as Dispatcher including a configuration<br>

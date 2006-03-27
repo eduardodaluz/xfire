@@ -3,6 +3,7 @@ package org.codehaus.xfire.gen.jaxb;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -20,6 +21,7 @@ import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JType;
 import com.sun.tools.xjc.api.Mapping;
+import com.sun.tools.xjc.api.Property;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.TypeAndAnnotation;
@@ -78,7 +80,7 @@ public class JAXBSchemaSupport implements SchemaSupport
         JCodeModel codeModel = context.getCodeModel();
 
         Mapping mapping = model.get(concreteType);
-        
+
         if (mapping == null)
         {
             mapping = model.get(schemaType);
@@ -91,7 +93,7 @@ public class JAXBSchemaSupport implements SchemaSupport
             typeClass = mapping.getType().getTypeClass();
         }
         
-        if(typeClass == null)
+        if (typeClass == null)
         {
         	TypeAndAnnotation def = model.getJavaType(concreteType);
         	if(def == null)

@@ -18,7 +18,7 @@ import org.codehaus.xfire.fault.XFireFault;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public abstract class XOPType
+public class XOPType
 	extends Type
 {
     public final static String XOP_NS = "http://www.w3.org/2004/08/xop/include";
@@ -41,10 +41,11 @@ public abstract class XOPType
             MessageReader child = reader.getNextElementReader();
             if (child.getName().equals(XOP_INCLUDE))
             {
-                MessageReader mimeReader = reader.getAttributeReader(XOP_HREF);
+                MessageReader mimeReader = child.getAttributeReader(XOP_HREF);
                 String type = mimeReader.getValue();
-                o = readInclude(type, reader, context);
+                o = readInclude(type, child, context);
             }
+            child.readToEnd();
         }
         
         return o;
@@ -89,6 +90,8 @@ public abstract class XOPType
         
         MessageWriter include = writer.getElementWriter(XOP_INCLUDE);
         MessageWriter href = include.getAttributeWriter(XOP_HREF);
-        href.writeValue(id);
+        href.writeValue("cid:" + id);
+        
+        include.close();
     }
 }

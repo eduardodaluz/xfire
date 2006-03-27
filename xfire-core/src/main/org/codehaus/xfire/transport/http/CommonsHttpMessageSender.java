@@ -189,7 +189,6 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         if (atts != null && atts.size() > 0)
         {
             atts.write(bos);
-            atts.write(System.out);
         }
         else
         {

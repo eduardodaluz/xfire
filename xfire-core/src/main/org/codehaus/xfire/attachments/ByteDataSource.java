@@ -26,7 +26,6 @@ public class ByteDataSource
         this.data = data;
         this.offset = offset;
         this.length = length;
-        System.out.println("Length: " + length);
     }
 
     public byte[] getData()

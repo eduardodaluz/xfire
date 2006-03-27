@@ -74,9 +74,9 @@ public class HttpChannel
         try
         {
             boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
-            if (mtomEnabled || message.getAttachments() != null)
+            Attachments atts = message.getAttachments();
+            if (mtomEnabled || atts != null)
             {
-                Attachments atts = message.getAttachments();
                 if (atts == null)
                 {
                     atts = new JavaMailAttachments();
@@ -84,10 +84,11 @@ public class HttpChannel
                 }
                 
                 atts.setSoapContentType("application/xop+xml");
+                
                 HttpChannel.writeAttachmentBody(context, message);
                 
                 response.setContentType(atts.getContentType());
-
+                
                 atts.write(response.getOutputStream());
             }
             else
@@ -124,6 +125,7 @@ public class HttpChannel
     public static void writeAttachmentBody(MessageContext context, OutMessage message) 
         throws XFireException
     {
+        // TODO: lets just make our own datasource instead
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         writeWithoutAttachments(context, message, bos);
         

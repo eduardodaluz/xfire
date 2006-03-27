@@ -1,8 +1,8 @@
 package org.codehaus.xfire.generator.imports;
 
-import jsr181.GenerationTestSupport;
 
 import org.codehaus.xfire.gen.Wsdl11Generator;
+import org.codehaus.xfire.generator.GenerationTestSupport;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;

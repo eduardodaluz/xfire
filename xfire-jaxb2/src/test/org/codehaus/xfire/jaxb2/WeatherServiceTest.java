@@ -34,9 +34,9 @@ public class WeatherServiceTest
         builder.setStyle(SoapConstants.STYLE_DOCUMENT);
         
         // Set the schemas
-        ArrayList schemas = new ArrayList();
+        ArrayList<String> schemas = new ArrayList<String>();
         schemas.add(getTestFile("src/test-schemas/WeatherForecast.xsd").getAbsolutePath());
-        Map props = new HashMap();
+        Map<String,Object> props = new HashMap<String,Object>();
         props.put(ObjectServiceFactory.SCHEMAS, schemas);
         
         endpoint = builder.create(WeatherService.class,

@@ -168,7 +168,6 @@ public class JavaMailAttachments
                 soapPart.setDataHandler(soapMessage.getDataHandler());
                 soapPart.setContentID("<"+soapMessage.getId()+">");
                 soapPart.addHeader("Content-Transfer-Encoding", "binary");
-                
                 mimeMP.addBodyPart(soapPart);
                 
                 for (Iterator itr = getParts(); itr.hasNext(); )

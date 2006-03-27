@@ -22,7 +22,6 @@ public class PictureServiceImpl implements PictureService
         try
         {
             File file = getTestFile("src/test-resources/xfire.jpg");
-            System.out.println("LENGTH " + file.length());
             Image image = ImageIO.read(getTestFile("src/test-resources/xfire.jpg"));
             response.setImage(image);
         }
