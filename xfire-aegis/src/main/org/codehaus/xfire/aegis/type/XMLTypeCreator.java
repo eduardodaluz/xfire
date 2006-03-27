@@ -273,6 +273,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
                                                          defaultNS);
             btinfo.setTypeMapping(getTypeMapping());
             btinfo.setDefaultMinOccurs(getConfiguration().getDefaultMinOccurs());
+            btinfo.setDefaultNillable( getConfiguration().isDefaultNillable() );
 
             if ( extensibleElements != null ) btinfo.setExtensibleElements( Boolean.valueOf( extensibleElements ).booleanValue() );
             else btinfo.setExtensibleElements(getConfiguration().isDefaultExtensibleElements());

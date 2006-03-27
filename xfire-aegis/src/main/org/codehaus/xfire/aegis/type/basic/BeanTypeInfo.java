@@ -40,6 +40,8 @@ public class BeanTypeInfo
 
     private int minOccurs = 0;
     
+    private boolean nillable = true;
+    
     /**
      * extensibleElements means adding xs:any to WSDL Complex Type Definition
      */
@@ -390,8 +392,8 @@ public class BeanTypeInfo
     public boolean isNillable(QName name)
     {
         Type type = getType(name);
-
-        return type.isNillable();
+        if ( !type.isNillable() ) return false;
+        return nillable;
     }
 
     public int getMinOccurs(QName name)
@@ -402,6 +404,11 @@ public class BeanTypeInfo
     public void setDefaultMinOccurs(int minOccurs)
     {
         this.minOccurs = minOccurs;
+    }
+    
+    public void setDefaultNillable (boolean nillable)
+    {
+        this.nillable = nillable;
     }
 
     private String getPropertyNameFromMappedName(QName name)

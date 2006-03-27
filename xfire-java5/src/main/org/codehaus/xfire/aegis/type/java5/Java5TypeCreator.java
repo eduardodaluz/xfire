@@ -205,6 +205,9 @@ public class Java5TypeCreator
             typeInfo.setExtensibleElements(getConfiguration().isDefaultExtensibleElements());
             typeInfo.setExtensibleAttributes(getConfiguration().isDefaultExtensibleAttributes());
         }
+        
+        typeInfo.setDefaultMinOccurs( getConfiguration().getDefaultMinOccurs() );
+        typeInfo.setDefaultNillable( getConfiguration().isDefaultNillable() );
 
         BeanType type = new BeanType(typeInfo);
         type.setTypeMapping(getTypeMapping());
