@@ -87,7 +87,7 @@ public class WsGen {
 		System.out.print("wsdl    : " + wsdl + "\n");
 		System.out.print("package : " + _package + "\n");
 		System.out.print("output  : " + outputDirectory + "\n");
-		System.out.print("binding : " + binding + "\n");
+		System.out.print("binding : " + (binding==null?"":binding) + "\n");
 
 		Wsdl11Generator generator = new Wsdl11Generator();
 		generator.setDestinationPackage(_package);
