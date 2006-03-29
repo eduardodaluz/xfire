@@ -8,9 +8,9 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
-import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -59,6 +59,15 @@ public class BeanTest
         assertEquals("bleh", bean.getBleh());
         assertEquals("howdy", bean.getHowdy());
         reader.getXMLStreamReader().close();
+
+        // test <bleh/> element 
+        reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean7.xml"));        
+        bean = (SimpleBean) type.readObject(reader, new MessageContext());
+        assertEquals("", bean.getBleh());
+        assertEquals("howdy", bean.getHowdy());
+        reader.getXMLStreamReader().close();
+        
+        bean.setBleh("bleh");
         
         // Test writing
         Element element = new Element("root", "b", "urn:Bean");
@@ -66,7 +75,7 @@ public class BeanTest
         type.writeObject(bean, new JDOMWriter(element), new MessageContext());
 
         assertValid("/b:root/b:bleh[text()='bleh']", element);
-        assertValid("/b:root/b:howdy[text()='howdy']", element);
+        assertValid("/b:root/b:howdy[text()='howdy']", element);        
     }
     
     public void testUnmappedProperty()

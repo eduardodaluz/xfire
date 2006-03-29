@@ -61,10 +61,7 @@ public class ElementReader
         //XMLStreamReader xmlReader = factory.createXMLStreamReader(is);
         XMLStreamReader xmlReader = STAXUtils.createXMLStreamReader(is,null,null);
 
-        while( xmlReader.getEventType() != XMLStreamReader.START_ELEMENT )
-        {
-            xmlReader.next();
-        }
+        xmlReader.nextTag();
         
         this.root = new DepthXMLStreamReader(xmlReader);
         this.localName = root.getLocalName();
@@ -211,6 +208,8 @@ public class ElementReader
 
     public boolean hasMoreAttributeReaders()
     {
+        if (!root.isStartElement()) return false;
+        
         return currentAttribute < root.getAttributeCount();
     }
 
