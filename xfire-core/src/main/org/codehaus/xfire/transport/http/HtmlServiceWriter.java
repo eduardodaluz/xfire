@@ -74,11 +74,15 @@ public class HtmlServiceWriter
                 
                 writer.writeStartElement("li");
                 writer.writeCharacters(service.getSimpleName().toString());
+                Object obj =service.getProperty(Service.DISABLE_WSDL_GENERATION);
+                
+                if(obj ==null || "false".equals(obj.toString().toLowerCase())){
                 writer.writeCharacters(" ");
                 writer.writeStartElement("a");
                 writer.writeAttribute("href",url);
                 writer.writeCharacters("[wsdl]");
                 writer.writeEndElement();
+                }
                 writer.writeEndElement(); // li
             }
         }

@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
@@ -196,7 +197,12 @@ public class XFireServletController
       
         try
         {
-            writer.write(response.getOutputStream(), getServiceRegistry().getServices());
+        	Object value = XFireFactory.newInstance().getXFire().getProperty(XFire.SERVICES_LIST_DISABLED);
+        	if( value != null && "true".equals(value.toString().toLowerCase())){
+        	  response.getOutputStream().write("Services list disabled".getBytes());
+        	}else{
+              writer.write(response.getOutputStream(), getServiceRegistry().getServices());
+        	}
         }
         catch (XMLStreamException e)
         {
