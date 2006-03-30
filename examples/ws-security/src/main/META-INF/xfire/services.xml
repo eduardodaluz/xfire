@@ -1,109 +1,109 @@
-<beans xmlns:tns="http://xfire.codehaus.org/config/1.0">
-   <!--  =============  User Token with Plain Pasword  ============= -->
-	<tns:service>
-		<!--  -->
-		<tns:name>BookServiceUTPP</tns:name>
-		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
-		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
-		<tns:inHandlers>
-			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
-			<bean
-				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
-				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
-				<property name="properties">
-					<props>
-						<prop key="action">UsernameToken</prop>
-						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
-					</props>
-				</property>
-			</bean>
-			<tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
-		</tns:inHandlers>
-	</tns:service>
-	
-	<!--  ============= User Token with Hashed Password   ============= -->
-	<tns:service>
-		<tns:name>BookServiceUTHP</tns:name>
-		<tns:namespace>	http://xfire.codehaus.org/BookService</tns:namespace>
-		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
-		<tns:inHandlers>
-			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
-			<bean
-				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
-				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
-				<property name="properties">
-					<props>
-						<prop key="action">UsernameToken</prop>
-						<prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
-					</props>
-				</property>
-			</bean>
-			<tns:handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
-		</tns:inHandlers>
-	</tns:service>
+<beans xmlns:x="http://xfire.codehaus.org/config/1.0">
+  <!-- START SNIPPET: utpp -->
+  <!--  =============  User Token with Plain Pasword  ============= -->
+  <service>
+    <!--  -->
+    <name>BookServiceUTPP</name>
+    <namespace>http://xfire.codehaus.org/BookService</namespace>
+    <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JInHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">UsernameToken</prop>
+            <prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
+          </props>
+        </property>
+      </bean>
+      <handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
+    </inHandlers>
+  </service>
+  <!-- END SNIPPET: utpp -->
 
-	<!--  ============= Encryption   ============= -->
-	<tns:service>
-		<tns:name>BookServiceENC</tns:name>
-		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
-		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
+  <!-- START SNIPPET: uthp -->
+  <!--  ============= User Token with Hashed Password   ============= -->
+  <service>
+    <name>BookServiceUTHP</name>
+    <namespace>http://xfire.codehaus.org/BookService</namespace>
+    <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JInHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">UsernameToken</prop>
+            <prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
+          </props>
+        </property>
+      </bean>
+      <handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
+    </inHandlers>
+  </service>
+  <!-- END SNIPPET: uthp -->
 
-		<tns:inHandlers>
-			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
-			<bean
-				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
-				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
-				<property name="properties">
-					<props>
-						<prop key="action">Encrypt</prop>
-						<prop key="decryptionPropFile">META-INF/xfire/insecurity_enc.properties</prop>
-						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
-					</props>
-				</property>
-			</bean>
-		</tns:inHandlers>
-	</tns:service>
+  <!-- START SNIPPET: utpp -->
+  <!--  ============= Encryption   ============= -->
+  <service>
+    <name>BookServiceENC</name>
+    <namespace>http://xfire.codehaus.org/BookService</namespace>
+    <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
 
-	<!--  ============= TimeStamp  ============= -->
-	<tns:service>
-		<tns:name>BookServiceTS</tns:name>
-		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
-		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JInHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">Encrypt</prop>
+            <prop key="decryptionPropFile">META-INF/xfire/insecurity_enc.properties</prop>
+            <prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
+          </props>
+        </property>
+      </bean>
+    </inHandlers>
+  </service>
+  <!-- END SNIPPET: time -->
 
-		<tns:inHandlers>
-			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
-			<bean
-				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
-				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
-				<property name="properties">
-					<props>
-						<prop key="action">Timestamp</prop>
-					</props>
-				</property>
-			</bean>
-		</tns:inHandlers>
-	</tns:service>
+  <!-- START SNIPPET: time -->
+  <!--  ============= TimeStamp  ============= -->
+  <service>
+    <name>BookServiceTS</name>
+    <namespace>http://xfire.codehaus.org/BookService</namespace>
+    <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
 
-<!--  ============= Signature  ============= -->
-	<tns:service>
-		<tns:name>BookServiceSign</tns:name>
-		<tns:namespace>http://xfire.codehaus.org/BookService</tns:namespace>
-		<tns:serviceClass>org.codehaus.xfire.demo.BookService</tns:serviceClass>
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JInHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">Timestamp</prop>
+          </props>
+        </property>
+      </bean>
+    </inHandlers>
+  </service>
+  <!-- END SNIPPET: time -->
 
-		<tns:inHandlers>
-			<tns:handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
-			<bean
-				id="org.codehaus.xfire.security.wss4j.WSS4JInHandler"
-				class="org.codehaus.xfire.security.wss4j.WSS4JInHandler">
-				<property name="properties">
-					<props>
-						<prop key="action">Signature</prop>
-						<prop key="signaturePropFile">META-INF/xfire/insecurity_sign.properties</prop>
-						<prop key="passwordCallbackClass" >org.codehaus.xfire.demo.PasswordHandler</prop>
-					</props>
-				</property>
-			</bean>
-		</tns:inHandlers>
-	</tns:service>
+  <!-- START SNIPPET: sig -->
+  <!--  ============= Signature  ============= -->
+  <service>
+    <name>BookServiceSign</name>
+    <namespace>http://xfire.codehaus.org/BookService</namespace>
+    <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
+
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JInHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">Signature</prop>
+            <prop key="signaturePropFile">META-INF/xfire/insecurity_sign.properties</prop>
+            <prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
+          </props>
+        </property>
+      </bean>
+    </inHandlers>
+  </service>
+  <!-- END SNIPPET: sig -->
 
 </beans>
