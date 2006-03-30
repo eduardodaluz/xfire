@@ -16,12 +16,13 @@ import org.codehaus.xfire.transport.Transport;
 /**
  * Factory for creating XFire SOAP client stubs.  The returned stub will call the remote object for all methods.
  * <pre>
+ * Service serviceModel = new ObjectServiceFactory().create(Echo.class);
  * String url = "http://localhost:8080/services/Echo");
- * Echo echo = (Echo) factory.create(HelloHome.class, url);
+ * Echo echo = (Echo) factory.create(serviceModel, url);
  * </pre>
  * After creation, the stub can be like a regular Java class.  Because it makes remote calls, it can throw more
  * exceptions than a Java class. In particular, it may throw protocol exceptions, and <code>XFireFaults</code>
- *
+ * 
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see org.codehaus.xfire.fault.XFireFault
  */
