@@ -24,6 +24,8 @@ public interface XFire extends HandlerSupport
     
     final public static String STAX_INPUT_FACTORY="xfire.stax.input.factory";
     final public static String STAX_OUTPUT_FACTORY="xfire.stax.output.factory";
+    
+    final public static String SERVICES_LIST_DISABLED="services.list.disabled";
     /**
      * Generate WSDL for a service.
      *
