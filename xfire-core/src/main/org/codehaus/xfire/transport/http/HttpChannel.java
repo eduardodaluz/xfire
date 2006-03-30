@@ -1,6 +1,5 @@
 package org.codehaus.xfire.transport.http;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
@@ -18,7 +17,6 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
-import org.codehaus.xfire.attachments.ByteDataSource;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.exchange.AbstractMessage;
@@ -31,6 +29,7 @@ import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.AbstractChannel;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.util.OutMessageDataSource;
 import org.codehaus.xfire.util.STAXUtils;
 
 public class HttpChannel
@@ -83,9 +82,9 @@ public class HttpChannel
                     message.setAttachments(atts);
                 }
                 
-                atts.setSoapContentType("application/xop+xml");
-                
-                HttpChannel.writeAttachmentBody(context, message);
+                OutMessageDataSource source = new OutMessageDataSource(context, message);
+                DataHandler soapHandler = new DataHandler(source);
+                atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
                 
                 response.setContentType(atts.getContentType());
                 
@@ -122,46 +121,6 @@ public class HttpChannel
         }
     }
 
-    public static void writeAttachmentBody(MessageContext context, OutMessage message) 
-        throws XFireException
-    {
-        // TODO: lets just make our own datasource instead
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        writeWithoutAttachments(context, message, bos);
-        
-        Attachments atts = message.getAttachments();
-        
-        String encoding = message.getEncoding();
-        if (encoding == null) encoding = "UTF-8";
-        
-        ByteDataSource ds = new ByteDataSource(bos.toByteArray());
-        StringBuffer ct = new StringBuffer();
-        ct.append("application/xop+xml; charset=")
-          .append(encoding)
-          .append("; type=\"")
-          .append(getSoapMimeType(message))
-          .append("\"");
-        
-        ds.setContentType(ct.toString());
-        DataHandler dh = new DataHandler(ds);        
-        
-        SimpleAttachment att = new SimpleAttachment("soap-message.xml@example.org", dh);
-        
-        atts.setSoapMessage(att);
-    }
-
-    public static String getMimeType(AbstractMessage msg)
-    {
-        if (msg.getAttachments() != null && msg.getAttachments().size() > 0)
-        {
-            return msg.getAttachments().getContentType();
-        }
-        else
-        {
-            return getSoapMimeType(msg);
-        }
-    }
-    
     public static String getSoapMimeType(AbstractMessage msg)
     {
         String ct;

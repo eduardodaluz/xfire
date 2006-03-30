@@ -140,7 +140,30 @@ public class JavaMailAttachments
         
         try
         {
-            message.setContent(getMimeMultipart());
+            MimeMultipart mimeMP = getMimeMultipart();
+
+            MimeBodyPart soapPart = new MimeBodyPart();
+            soapPart.setDataHandler(soapMessage.getDataHandler());
+            soapPart.setContentID("<"+soapMessage.getId()+">");
+            soapPart.addHeader("Content-Transfer-Encoding", "binary");
+            mimeMP.addBodyPart(soapPart);
+            
+            for (Iterator itr = getParts(); itr.hasNext(); )
+            {
+                Attachment att = (Attachment) itr.next();
+                
+                MimeBodyPart part = new MimeBodyPart();
+                part.setDataHandler(att.getDataHandler());
+                part.setContentID("<"+att.getId()+">");
+
+                if (att.isXOP())
+                    part.addHeader("Content-Transfer-Encoding", "binary");
+
+                mimeMP.addBodyPart(part);
+            }
+
+            
+            message.setContent(mimeMP);
 	        message.writeTo(out, filter);
         }
         catch( MessagingException e )
@@ -155,39 +178,14 @@ public class JavaMailAttachments
         {
             StringBuffer ct = new StringBuffer();
             ct.append("related; type=\"")
-              .append(soapContentType)
+              .append("application/xop+xml")
               .append("\"; start=\"<")
               .append(getSoapMessage().getId())
-              .append(">\"; start-info=\"text/xml; charset=utf-8\"");
+              .append(">\"; start-info=\"")
+              .append(getSoapContentType())
+              .append("; charset=utf-8\"");
             
             mimeMP = new MimeMultipart(ct.toString());
-           
-            try
-            {
-                MimeBodyPart soapPart = new MimeBodyPart();
-                soapPart.setDataHandler(soapMessage.getDataHandler());
-                soapPart.setContentID("<"+soapMessage.getId()+">");
-                soapPart.addHeader("Content-Transfer-Encoding", "binary");
-                mimeMP.addBodyPart(soapPart);
-                
-                for (Iterator itr = getParts(); itr.hasNext(); )
-    	        {
-    	            Attachment att = (Attachment) itr.next();
-    	            
-    	            MimeBodyPart part = new MimeBodyPart();
-    	            part.setDataHandler(att.getDataHandler());
-    	            part.setContentID("<"+att.getId()+">");
-
-                    if (att.isXOP())
-                        part.addHeader("Content-Transfer-Encoding", "binary");
-
-    	            mimeMP.addBodyPart(part);
-    	        }
-            }
-            catch( MessagingException e )
-            {
-                throw new XFireRuntimeException("Couldn't create message.", e);
-            }
         }
 
         return mimeMP;

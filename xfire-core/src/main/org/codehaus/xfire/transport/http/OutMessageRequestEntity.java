@@ -36,7 +36,7 @@ public class OutMessageRequestEntity
         try
         {
             Attachments atts = message.getAttachments();
-            if (atts != null && atts.size() > 0)
+            if (atts != null)
             {
                 atts.write(out);
             }

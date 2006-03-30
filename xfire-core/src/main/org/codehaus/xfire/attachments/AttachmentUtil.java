@@ -10,7 +10,6 @@ import javax.activation.URLDataSource;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.AbstractMessage;
-import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.util.UID;
 
 public class AttachmentUtil

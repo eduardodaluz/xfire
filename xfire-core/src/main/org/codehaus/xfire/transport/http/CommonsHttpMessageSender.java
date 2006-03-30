@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -22,9 +23,12 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
+import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.util.OutMessageDataSource;
 import org.codehaus.xfire.util.STAXUtils;
 
 /**
@@ -116,10 +120,20 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             postMethod.setRequestHeader("SOAPAction", getQuotedSoapAction());
         }
         
-        Attachments atts = getMessage().getAttachments();
-        if (atts != null && atts.size() > 0)
+        OutMessage message = getMessage();
+        boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
+        Attachments atts = message.getAttachments();
+        if (mtomEnabled || atts != null)
         {
-            HttpChannel.writeAttachmentBody(context, getMessage());
+            if (atts == null)
+            {
+                atts = new JavaMailAttachments();
+                message.setAttachments(atts);
+            }
+            
+            OutMessageDataSource source = new OutMessageDataSource(context, message);
+            DataHandler soapHandler = new DataHandler(source);
+            atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
             
             postMethod.setRequestHeader("Content-Type", atts.getContentType());
         }
@@ -186,7 +200,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         Attachments atts = message.getAttachments();
-        if (atts != null && atts.size() > 0)
+        if (atts != null)
         {
             atts.write(bos);
         }
