@@ -88,7 +88,7 @@
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
-          <tagBase>scm:svn:https://svn.codehaus.org/xfire/tags/</tagBase>
+          <tagBase>https://svn.codehaus.org/xfire/tags/</tagBase>
         </configuration>
       </plugin>
     </plugins>
