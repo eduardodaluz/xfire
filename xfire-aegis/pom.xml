@@ -2,13 +2,27 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1-beta-1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-aegis</artifactId>
   <name>XFire Aegis Binding</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1-beta-1</version>
   <description>A Java - XML Data Binding framework. Aegis = Shield</description>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/Test*</exclude>
+            <exclude>**/Abstract*</exclude>
+            <exclude>**/DynamicClientExampleTest*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -24,19 +38,4 @@
       <version>snapshot-20040917</version>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/Test*</exclude>
-            <exclude>**/Abstract*</exclude>
-            <exclude>**/DynamicClientExampleTest*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </build>
 </project>
