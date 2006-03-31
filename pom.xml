@@ -21,7 +21,7 @@
   <scm>
     <connection>scm:svn:https://svn.codehaus.org/xfire/trunk/</connection>
     <developerConnection>scm:svn:https://${maven.username}@svn.codehaus.org/xfire/trunk/</developerConnection>
-    <url>https://cvs.xfire.codehaus.org/viewrep/xfire/trunk</url>
+    <url>https://svn.xfire.codehaus.org/viewrep/xfire/trunk</url>
   </scm>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
