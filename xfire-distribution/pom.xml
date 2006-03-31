@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1-beta-1</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-distribution</artifactId>
   <name>XFire Distribution</name>
-  <version>1.1-beta-1</version>
+  <version>1.1-SNAPSHOT</version>
   <build>
     <testSourceDirectory>/none/</testSourceDirectory>
     <plugins>
@@ -29,7 +29,11 @@
                   </filterset>
                 </copy>
                 <echo>Downloading Manual</echo>
-                <javadoc defaultexcludes="yes" useexternalfile="yes" destdir="${project.build.directory}/api" use="true" packagenames="org.codehaus.xfire.*" windowtitle="Codehaus XFire ${project.version} API" author="true" version="true">
+<!--                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${project.build.directory}/${pom.artifactId}-manual.zip"></get>-->
+<!--                <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip" dest="${project.build.directory}/manual"></unzip>-->
+                <javadoc defaultexcludes="yes" destdir="${project.build.directory}/api" use="true" 
+                  packagenames="org.codehaus.xfire.*" windowtitle="Codehaus XFire ${project.version} API" 
+                  author="true" version="true" useexternalfile="yes">
                   <fileset defaultexcludes="yes" dir=".">
                     <include name="../xfire-annotations/src/main/**/*.java"></include>
                   </fileset>

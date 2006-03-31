@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1-beta-1</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-all</artifactId>
   <name>XFire All Jar</name>
-  <version>1.1-beta-1</version>
+  <version>1.1-SNAPSHOT</version>
   <build>
     <testSourceDirectory>/none/</testSourceDirectory>
     <plugins>
@@ -49,10 +49,6 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-ws-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-picocontainer</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -87,8 +83,7 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-castor</artifactId>
-      <scope>provided</scope>
+      <artifactId>xfire-jaxws</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -96,11 +91,12 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-jaxb</artifactId>
+      <artifactId>xfire-castor</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-jaxws</artifactId>
+      <artifactId>xfire-jaxb</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -110,6 +106,10 @@
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-ws-security</artifactId>
     </dependency>
   </dependencies>
 </project>
