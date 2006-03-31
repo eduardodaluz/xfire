@@ -1,7 +1,5 @@
 package org.codehaus.xfire.aegis.type.mtom;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -12,13 +10,12 @@ import org.codehaus.xfire.attachments.Attachment;
 import org.codehaus.xfire.attachments.AttachmentUtil;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
-import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
-public class XOPType
+public abstract class AbstractXOPType
 	extends Type
 {
     public final static String XOP_NS = "http://www.w3.org/2004/08/xop/include";
@@ -28,7 +25,7 @@ public class XOPType
     private final static QName XOP_HREF = new QName("href");
     private final static QName XML_MIME_TYPE = new QName(XML_MIME_NS, "mimeType");
     
-    public XOPType()
+    public AbstractXOPType()
     {
     }
     
@@ -63,8 +60,10 @@ public class XOPType
             throw new XFireFault("Could not find the attachment " + href, XFireFault.SENDER);
         }
         
-        return att.getDataHandler().getDataSource();
+        return readAttachment(att, context);
     }
+
+    protected abstract Object readAttachment(Attachment att, MessageContext context);
     
     public void writeObject(Object object, MessageWriter writer, MessageContext context) 
     	throws XFireFault
@@ -76,17 +75,18 @@ public class XOPType
             context.getOutMessage().setAttachments(attachments);
         }
 
-        DataSource source = (DataSource) object;
         String id = AttachmentUtil.createContentID(getSchemaType().getNamespaceURI());
-        String contentType = source.getContentType();
         
-        DataHandler handler = new DataHandler(source);
-        SimpleAttachment att = new SimpleAttachment(id, handler);
-        att.setXOP(true);
+        Attachment att = createAttachment(object, id);
+        
         attachments.addPart(att);
           
-        MessageWriter mt = writer.getAttributeWriter(XML_MIME_TYPE);
-        mt.writeValue(contentType);
+        String contentType = getContentType(object, context);
+        if (contentType != null)
+        {
+            MessageWriter mt = writer.getAttributeWriter(XML_MIME_TYPE);
+            mt.writeValue(contentType);
+        }
         
         MessageWriter include = writer.getElementWriter(XOP_INCLUDE);
         MessageWriter href = include.getAttributeWriter(XOP_HREF);
@@ -94,4 +94,8 @@ public class XOPType
         
         include.close();
     }
+
+    protected abstract Attachment createAttachment(Object object, String id);
+    
+    protected abstract String getContentType(Object object, MessageContext context);
 }

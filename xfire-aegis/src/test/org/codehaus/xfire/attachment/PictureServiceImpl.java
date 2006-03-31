@@ -2,6 +2,7 @@ package org.codehaus.xfire.attachment;
 
 import java.io.File;
 
+import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
@@ -12,9 +13,14 @@ public class PictureServiceImpl implements PictureService
         return new FileDataSource("src/test-resources/xfire.jpg");
     }
 
+    public DataHandler EchoPicture2(DataHandler handler)
+    {
+        return new DataHandler(GetPicture());
+    }
+
     public DataSource EchoPicture(DataSource req)
     {
-        return new FileDataSource("src/test-resources/xfire.jpg");
+        return GetPicture();
     }
     
     private String basedirPath;

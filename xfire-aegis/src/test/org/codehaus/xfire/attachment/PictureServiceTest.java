@@ -2,6 +2,7 @@ package org.codehaus.xfire.attachment;
 
 import java.lang.reflect.Proxy;
 
+import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
@@ -62,5 +63,10 @@ public class PictureServiceTest
         
         FileDataSource fileSource = new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
         DataSource source2 = picClient.EchoPicture(fileSource);
+        assertNotNull(source2);
+        
+        DataHandler handler = new DataHandler(source2);
+        DataHandler handler2 = picClient.EchoPicture2(handler);
+        assertNotNull(handler2);
     }
 }

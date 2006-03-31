@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -32,7 +33,8 @@ import org.codehaus.xfire.aegis.type.basic.StringType;
 import org.codehaus.xfire.aegis.type.basic.TimeType;
 import org.codehaus.xfire.aegis.type.basic.TimestampType;
 import org.codehaus.xfire.aegis.type.basic.URIType;
-import org.codehaus.xfire.aegis.type.mtom.XOPType;
+import org.codehaus.xfire.aegis.type.mtom.DataHandlerType;
+import org.codehaus.xfire.aegis.type.mtom.DataSourceType;
 import org.codehaus.xfire.aegis.type.xml.DocumentType;
 import org.codehaus.xfire.aegis.type.xml.JDOMElementType;
 import org.codehaus.xfire.aegis.type.xml.SourceType;
@@ -307,7 +309,8 @@ public class DefaultTypeMappingRegistry
         register(tm, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
         register(tm, Element.class, XSD_ANY, new JDOMElementType());
         register(tm, Object.class, XSD_ANY, new ObjectType());
-        register(tm, DataSource.class, XSD_BASE64, new XOPType());
+        register(tm, DataSource.class, XSD_BASE64, new DataSourceType());
+        register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
 
         register(SoapConstants.XSD, tm);
         registerDefault(tm);
@@ -360,7 +363,8 @@ public class DefaultTypeMappingRegistry
         register(soapTM, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
         register(soapTM, Element.class, XSD_ANY, new JDOMElementType());
         register(soapTM, Object.class, XSD_ANY, new ObjectType());
-        register(soapTM, DataSource.class, XSD_BASE64, new XOPType());
+        register(soapTM, DataSource.class, XSD_BASE64, new DataSourceType());
+        register(soapTM, DataHandler.class, XSD_BASE64, new DataHandlerType());
 
         register(ENCODED_NS, soapTM);
 
