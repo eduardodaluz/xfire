@@ -10,7 +10,9 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.mtom.ByteArrayType;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.util.Base64;
 
 /**
@@ -21,6 +23,8 @@ import org.codehaus.xfire.util.Base64;
 public class Base64Type
     extends Type
 {
+    private static ByteArrayType optimizedType = new ByteArrayType();
+    
     public Base64Type()
     {
         super();
@@ -29,6 +33,12 @@ public class Base64Type
     public Object readObject(MessageReader mreader, MessageContext context)
         throws XFireFault
     {
+        boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
+        if (mtomEnabled)
+        {
+            return optimizedType.readObject(mreader, context);
+        }
+        
         XMLStreamReader reader = mreader.getXMLStreamReader();
         
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -70,6 +80,13 @@ public class Base64Type
     public void writeObject(Object object, MessageWriter writer, MessageContext context)
         throws XFireFault
     {
+        boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
+        if (mtomEnabled)
+        {
+            optimizedType.writeObject(object, writer, context);
+            return;
+        }
+
         byte[] data = (byte[]) object;
 
         writer.writeValue( Base64.encode(data, 0, data.length) );

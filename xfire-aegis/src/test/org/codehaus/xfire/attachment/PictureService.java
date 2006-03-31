@@ -12,4 +12,6 @@ public interface PictureService
 
     public abstract DataHandler EchoPicture2(DataHandler handler);
 
+    public abstract byte[] EchoPictureBytes(byte[] pic);
+
 }

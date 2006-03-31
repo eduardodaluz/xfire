@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis.type.mtom;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -60,10 +62,17 @@ public abstract class AbstractXOPType
             throw new XFireFault("Could not find the attachment " + href, XFireFault.SENDER);
         }
         
-        return readAttachment(att, context);
+        try
+        {
+            return readAttachment(att, context);
+        }
+        catch (IOException e)
+        {
+            throw new XFireFault("Could not read attachment", e, XFireFault.SENDER);
+        }
     }
 
-    protected abstract Object readAttachment(Attachment att, MessageContext context);
+    protected abstract Object readAttachment(Attachment att, MessageContext context) throws IOException;
     
     public void writeObject(Object object, MessageWriter writer, MessageContext context) 
     	throws XFireFault

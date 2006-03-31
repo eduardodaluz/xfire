@@ -1,5 +1,9 @@
 package org.codehaus.xfire.attachment;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Proxy;
 
 import javax.activation.DataHandler;
@@ -68,5 +72,31 @@ public class PictureServiceTest
         DataHandler handler = new DataHandler(source2);
         DataHandler handler2 = picClient.EchoPicture2(handler);
         assertNotNull(handler2);
+        
+        byte[] picBytes = readAsBytes(new FileInputStream(getTestFile("src/test-resources/xfire.jpg")));
+        byte[] response = picClient.EchoPictureBytes(picBytes);
+        
+        assertEquals(picBytes.length, response.length);
+    }
+    
+    public byte[] readAsBytes(InputStream input) throws IOException
+    {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try
+        {
+            final byte[] buffer = new byte[8096];
+
+            int n = 0;
+            while (-1 != (n = input.read(buffer)))
+            {
+                output.write(buffer, 0, n);
+            }
+        }
+        finally
+        {
+            output.close();
+            input.close();
+        }
+        return output.toByteArray();
     }
 }
