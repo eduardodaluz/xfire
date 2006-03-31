@@ -12,7 +12,7 @@ public class JaxbGenerationTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/wwcarsXMLInterface.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.wwcars");
         generator.setBinding("jaxb");
         
@@ -27,7 +27,7 @@ public class JaxbGenerationTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/globalweather-twoporttypes.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.globalweather.twopts");
         generator.setBinding("jaxb");
         
@@ -42,7 +42,7 @@ public class JaxbGenerationTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/auth.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.auth");
         generator.setBinding("jaxb");
         
@@ -57,7 +57,7 @@ public class JaxbGenerationTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/oneway.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.oneway");
         generator.setBinding("jaxb");
         
@@ -72,7 +72,7 @@ public class JaxbGenerationTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/globalweather.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.globalweather");
         generator.setBinding("jaxb");
         
@@ -87,7 +87,7 @@ public class JaxbGenerationTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/echoWrapped.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.echo.wrapped");
         
         generator.generate();

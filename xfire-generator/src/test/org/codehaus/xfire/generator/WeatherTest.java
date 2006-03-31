@@ -9,7 +9,7 @@ public class WeatherTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/WeatherForecast.wsdl"));
-        generator.setOutputDirectory("target/gen/echo");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("weather");
 
         generator.generate();        

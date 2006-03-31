@@ -12,7 +12,7 @@ public class FaultTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/echoFault.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.echofault");
         
         generator.generate();

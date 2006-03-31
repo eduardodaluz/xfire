@@ -14,7 +14,7 @@ public class WsdlImportTest
     {
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/import-test/main.wsdl"));
-        generator.setOutputDirectory("target/test-services");
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("org.codehaus.xfire.generator.imports");
         generator.setBinding("jaxb");
         generator.setBaseURI(getTestFilePath("src/wsdl/import-test/"));
