@@ -84,15 +84,6 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>java.net</id>
-      <name>java.net public repo</name>
-      <url>https://maven-repository.dev.java.net/nonav/repository</url>
-      <layout>legacy</layout>
-    </repository>
-  </repositories>
-  
   <build>
     <testResources>
       <testResource>
