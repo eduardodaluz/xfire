@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1-beta-1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jaxb2</artifactId>
   <name>XFire Jaxb 2.0 Support</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1-beta-1</version>
   <build>
     <plugins>
       <plugin>
@@ -50,6 +50,11 @@
   </repositories>
   <dependencies>
     <dependency>
+      <groupId>xfire</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>2.0-ea3</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-aegis</artifactId>
     </dependency>
@@ -60,11 +65,6 @@
     <dependency>
       <groupId>xfire</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.0-ea3</version>
-    </dependency>
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>jaxb-impl</artifactId>
       <version>2.0-ea3</version>
     </dependency>
     <dependency>
