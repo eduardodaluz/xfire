@@ -64,6 +64,7 @@
         <exclude>org.codehaus.xfire:xfire-spring</exclude>
         <exclude>org.codehaus.xfire:xfire-xmlbeans</exclude>
         <exclude>org.codehaus.xfire:xfire-xmpp</exclude>
+        <exclude>org.codehaus.xfire:xfire-ws-security</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
@@ -87,6 +88,7 @@
         <include>org.codehaus.xfire:xfire-spring</include>
         <include>org.codehaus.xfire:xfire-xmlbeans</include>
         <include>org.codehaus.xfire:xfire-xmpp</include>
+        <include>org.codehaus.xfire:xfire-ws-security</include>
       </includes>
     </dependencySet>
      <dependencySet>

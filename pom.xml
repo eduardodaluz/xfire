@@ -94,6 +94,8 @@
         <jdk>1.5</jdk>
       </activation>
       <modules>
+        <module>xfire-all</module>
+        <module>xfire-distribution</module>
         <module>xfire-generator</module>
         <module>xfire-java5</module>
         <module>xfire-jaxb2</module>
@@ -103,7 +105,6 @@
   </profiles>
   <modules>
     <module>xfire-aegis</module>
-    <module>xfire-all</module>
     <module>xfire-annotations</module>
     <module>xfire-castor</module>
     <module>xfire-core</module>
