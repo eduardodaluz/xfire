@@ -10,6 +10,15 @@ import org.codehaus.xfire.aegis.type.basic.BeanTypeInfo;
 public class DefaultTypeCreator
     extends AbstractTypeCreator
 {
+    public DefaultTypeCreator()
+    {
+    }
+
+    public DefaultTypeCreator(Configuration configuration)
+    {
+        setConfiguration(configuration);
+    }
+    
     public TypeClassInfo createClassInfo(Method m, int index)
     {
         TypeClassInfo info = new TypeClassInfo();

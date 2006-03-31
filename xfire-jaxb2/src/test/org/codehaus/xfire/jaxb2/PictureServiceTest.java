@@ -26,7 +26,6 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.http.HttpTransport;
 import org.codehaus.xfire.util.STAXUtils;
-import org.codehaus.xfire.util.dom.DOMOutHandler;
 import org.jdom.Document;
 
 /**
@@ -102,7 +101,7 @@ public class PictureServiceTest
         PictureService picClient = (PictureService) xpf.create(service, "http://localhost:8081/PictureService");
         
         Client client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
-        client.addOutHandler(new DOMOutHandler());
+        client.setProperty(SoapConstants.MTOM_ENABLED, "true");
         
         EchoPicture req = new EchoPicture();
         req.setImage(ImageIO.read(getTestFile("src/test-resources/xfire.jpg")));
