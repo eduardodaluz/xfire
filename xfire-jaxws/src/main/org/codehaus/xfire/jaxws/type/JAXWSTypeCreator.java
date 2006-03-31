@@ -2,6 +2,7 @@ package org.codehaus.xfire.jaxws.type;
 
 import javax.xml.ws.Holder;
 
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.XMLTypeCreator;
@@ -11,12 +12,15 @@ import org.codehaus.xfire.jaxb2.JaxbTypeCreator;
 
 public class JAXWSTypeCreator extends Java5TypeCreator
 {
-    public JAXWSTypeCreator()
+    public JAXWSTypeCreator(Configuration configuration)
     {
         super();
         
+        setConfiguration(configuration);
+        
         XMLTypeCreator xc = new XMLTypeCreator();
-        xc.setNextCreator(new DefaultTypeCreator());
+        xc.setNextCreator(new DefaultTypeCreator(getConfiguration()));
+        xc.setConfiguration(getConfiguration());
         setNextCreator(xc);
     }
 

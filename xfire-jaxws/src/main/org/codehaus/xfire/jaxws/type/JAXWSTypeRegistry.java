@@ -12,6 +12,6 @@ public class JAXWSTypeRegistry extends DefaultTypeMappingRegistry
 
     protected TypeCreator createTypeCreator()
     {
-        return new JAXWSTypeCreator();
+        return new JAXWSTypeCreator(getConfiguration());
     }
 }
