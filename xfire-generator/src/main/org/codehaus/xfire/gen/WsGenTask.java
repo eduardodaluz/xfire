@@ -1,8 +1,5 @@
 package org.codehaus.xfire.gen;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
