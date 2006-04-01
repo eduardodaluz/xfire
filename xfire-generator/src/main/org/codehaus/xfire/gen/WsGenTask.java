@@ -14,7 +14,8 @@ public class WsGenTask extends MatchingTask
     private String _package;
     private String profile = Jsr181Profile.class.getName();
     private String binding;
-
+    private String baseURI;
+    
     public void execute()
         throws BuildException
     {
@@ -29,6 +30,8 @@ public class WsGenTask extends MatchingTask
         generator.setDestinationPackage(_package);
         generator.setOutputDirectory(outputDirectory);
         generator.setWsdl(wsdl);
+        generator.setBaseURI(baseURI);
+        
         if (binding != null) generator.setBinding(binding);
         if (profile != null) generator.setProfile(profile);
         
@@ -42,6 +45,16 @@ public class WsGenTask extends MatchingTask
         }
         
     	Thread.currentThread().setContextClassLoader(originalCL);
+    }
+
+    public String getBaseURI()
+    {
+        return baseURI;
+    }
+
+    public void setBaseURI(String baseURI)
+    {
+        this.baseURI = baseURI;
     }
 
     public String getPackage()
