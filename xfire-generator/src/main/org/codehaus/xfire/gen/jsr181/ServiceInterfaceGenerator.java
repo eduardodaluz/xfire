@@ -135,7 +135,7 @@ public class ServiceInterfaceGenerator
     protected String getClassName(GenerationContext context, Service service)
     {
         QName name = service.getServiceInfo().getPortType();
-        String pckg = context.getDestinationPackage();
+        String pckg = getPackage(service.getName(), context);
         String clsName = javify(name.getLocalPart());
 
         return pckg + "." + clsName;

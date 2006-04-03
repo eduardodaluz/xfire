@@ -21,6 +21,8 @@ public class JaxbGenerationTest
         JCodeModel model = generator.getCodeModel();
         JDefinedClass echo = model._getClass("jsr181.jaxb.wwcars.wwcarsXMLInterfaceSoap");
         assertNotNull(echo);
+        
+        assertEquals(getTestFilePath("src/wsdl/"), generator.getBaseURI());
     }
     
     public void testTwoPortsDifferentBindings() throws Exception
@@ -102,5 +104,19 @@ public class JaxbGenerationTest
         
         assertNotNull(model._getClass("jsr181.jaxb.echo.wrapped.EchoClient"));
         assertNotNull(model._getClass("jsr181.jaxb.echo.wrapped.EchoImpl"));*/
+    }
+    
+
+    public void testEchoNoDestPkg() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/echoWrapped.wsdl"));
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("wrapped.echo.EchoPortType");
+        assertNotNull(echo);
     }
 }

@@ -37,7 +37,7 @@ public class ServiceStubGenerator
     protected String getClassName(GenerationContext context, Service service)
     {
         QName name = service.getName();
-        String pckg = context.getDestinationPackage();
+        String pckg = getPackage(service.getName(), context);
         String clsName = javify(name.getLocalPart());
 
         return getUniqueName(context.getCodeModel(), pckg + "." + clsName + "Impl");

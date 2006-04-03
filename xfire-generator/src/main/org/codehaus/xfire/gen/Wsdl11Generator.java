@@ -25,6 +25,7 @@ public class Wsdl11Generator
     private String binding = JAXB;
     private SchemaSupport support;
     
+    @SuppressWarnings("unchecked")
     public void generate() throws Exception
     {
         File dest = new File(outputDirectory);
@@ -46,7 +47,13 @@ public class Wsdl11Generator
             }
         }
 
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, new WSDLInputStreamLoader().getInputStream(wsdl));
+        int lastSlash = wsdl.lastIndexOf(File.separatorChar);
+        if (baseURI == null && lastSlash != -1 && !wsdl.startsWith("/"))
+        {
+            baseURI = wsdl.substring(0, lastSlash);
+        }
+
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI,  new WSDLInputStreamLoader().getInputStream(wsdl));
         builder.setBindingProvider(support.getBindingProvider());
         builder.build();
         
