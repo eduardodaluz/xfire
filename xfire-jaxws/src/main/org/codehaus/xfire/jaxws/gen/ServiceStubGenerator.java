@@ -32,7 +32,7 @@ public class ServiceStubGenerator
         String name = javify(part.getName().getLocalPart());
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
-        String clsName = context.getDestinationPackage() + "." + name + "_Exception";
+        String clsName = getPackage(part.getName(), context) + "." + name + "_Exception";
         JDefinedClass exCls;
         try 
         {

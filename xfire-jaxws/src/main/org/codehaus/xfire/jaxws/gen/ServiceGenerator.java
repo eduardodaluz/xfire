@@ -63,7 +63,7 @@ public class ServiceGenerator
         
         JCodeModel model = context.getCodeModel();
 
-        String portName = context.getDestinationPackage() + "." + name + "Service";
+        String portName = getPackage(qname, context) + "." + name + "Service";
         portName = getUniqueName(model, portName);
         
         JDefinedClass servCls = model._class(portName);
