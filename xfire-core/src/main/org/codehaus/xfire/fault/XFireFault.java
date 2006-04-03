@@ -140,7 +140,7 @@ public class XFireFault
     {
         super(message, cause);
         
-        this.message = message != null ? message : "Fault";
+        this.message = message != null ? message : cause.getMessage();
         this.faultCode = code;
         this.namespaces = new HashMap();
     }
