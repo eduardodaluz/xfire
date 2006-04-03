@@ -1,4 +1,4 @@
-<beans xmlns:x="http://xfire.codehaus.org/config/1.0">
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
   <!-- START SNIPPET: utpp -->
   <!--  =============  User Token with Plain Pasword  ============= -->
   <service>
