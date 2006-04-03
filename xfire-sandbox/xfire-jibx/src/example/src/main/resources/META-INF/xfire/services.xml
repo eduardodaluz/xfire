@@ -1,0 +1,11 @@
+<beans xmlns:xns="http://xfire.codehaus.org/config/1.0">
+  <xns:service>
+    <xns:name>JibxService</xns:name>
+    <xns:namespace>http://jibx.xfire.codehaus.org</xns:namespace>
+    <xns:serviceClass>org.codehaus.xfire.jibx.AccountServiceImpl</xns:serviceClass>
+    <xns:implementationClass>org.codehaus.xfire.jibx.AccountServiceImpl</xns:implementationClass>
+    <xns:serviceFactory>org.codehaus.xfire.jibx.JibxObjectFactory</xns:serviceFactory>
+    <xns:style>document</xns:style>
+    <xns:use>literal</xns:use>
+  </xns:service>
+</beans>
