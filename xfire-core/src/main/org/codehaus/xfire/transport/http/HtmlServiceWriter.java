@@ -42,8 +42,7 @@ public class HtmlServiceWriter
     public void write(OutputStream out, Collection services)
             throws XMLStreamException
     {
-        //XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        //XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+       
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, null,null);
         writer.writeStartDocument();
         writePreamble(writer, "XFire Services");
@@ -59,10 +58,6 @@ public class HtmlServiceWriter
             writer.writeEndElement(); // p
             writer.writeStartElement("ul");
             
-            request.getPathTranslated();
-            request.getProtocol();
-            
-            
             String base = request.getRequestURL().toString();
             
             
@@ -70,7 +65,8 @@ public class HtmlServiceWriter
             for (Iterator iterator = services.iterator(); iterator.hasNext();)
             {
             	Service service = (Service) iterator.next();
-            	String url = base+service.getSimpleName().toString()+"?wsdl";
+                
+            	String url = base+(base.charAt(base.length()-1)!='/'?"/":"")+service.getSimpleName().toString()+"?wsdl";
                 
                 writer.writeStartElement("li");
                 writer.writeCharacters(service.getSimpleName().toString());
