@@ -14,7 +14,7 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;
-import org.exolab.castor.xml.XMLClassDescriptor;
+import org.exolab.castor.xml.util.XMLClassDescriptorImpl;
 
 /**
  * TypeCreator factory class for creating CastorType classes.
@@ -53,7 +53,9 @@ public class CastorTypeCreator
         {
             if (mappingFile != null && mappingFile.length() > 0)
             {
-                mapping.loadMapping(this.getClass().getClassLoader().getResource(mappingFile));
+                mapping = new Mapping();
+                mapping.loadMapping(ClassLoaderUtils.getResource(mappingFile,
+                                                                 CastorTypeCreator.class));
             }
         }
         catch (IOException e)
@@ -146,8 +148,8 @@ public class CastorTypeCreator
         {
             try
             {
-                XMLClassDescriptor xd = (XMLClassDescriptor) mapping.getResolver(Mapping.XML)
-                        .getDescriptor(clazz);
+                XMLClassDescriptorImpl xd = (XMLClassDescriptorImpl) mapping
+                        .getResolver(Mapping.XML).getDescriptor(clazz);
                 if (xd != null)
                     isCastor = true;
             }
@@ -163,7 +165,7 @@ public class CastorTypeCreator
         try
         {
             xdClass = ClassLoaderUtils.loadClass(clazz.getName() + "Descriptor", this.getClass());
-            if (xdClass != null && (xdClass.newInstance() instanceof XMLClassDescriptor))
+            if (xdClass != null && (XMLClassDescriptorImpl.class.isAssignableFrom(xdClass)))
             {
                 isCastor = true;
             }
