@@ -35,7 +35,7 @@ import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
-import org.exolab.castor.xml.XMLClassDescriptor;
+import org.exolab.castor.xml.util.XMLClassDescriptorImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -190,13 +190,7 @@ public class CastorType
             throw new XFireFault(e);
         }
     }
-
-    public boolean isAbstract()
-    {
-        // right now we dont support abstract types
-        return false;
-    }
-
+    
     public boolean isComplex()
     {
         return true;
@@ -211,7 +205,7 @@ public class CastorType
     {
         Class clazz = getTypeClass();
         Class xdClass = null;
-        XMLClassDescriptor xd = null;
+        XMLClassDescriptorImpl xd = null;
         String nsUri;
         String nsPrefix;
         String localTypeName;
@@ -221,16 +215,19 @@ public class CastorType
         {
             try
             {
-                xd = (XMLClassDescriptor) mapping.getResolver(Mapping.XML).getDescriptor(clazz);
+                xd = (XMLClassDescriptorImpl) mapping.getResolver(Mapping.XML).getDescriptor(clazz);
                 nsUri = (xd.getNameSpaceURI() == null ? "" : xd.getNameSpaceURI());
-                // Use xml name as schema type name, unless it has been
-                // introspected
+                // Use xml name as schema type name, unless it has been introspected
                 if (Introspector.introspected(xd))
-                    localTypeName = getTypeClass().getSimpleName();
+                    localTypeName = clazz.getSimpleName();
                 else
                     localTypeName = xd.getXMLName();
-                nsPrefix = (xd.getNameSpacePrefix() == null ? "" : xd.getNameSpacePrefix());
-                setSchemaType(new QName(nsUri, localTypeName, nsPrefix));
+                nsPrefix = xd.getNameSpacePrefix();
+                if (nsPrefix == null || nsPrefix.length() == 0)
+                    setSchemaType(new QName(nsUri, localTypeName));
+                else
+                    setSchemaType(new QName(nsUri, localTypeName, nsPrefix));
+                setAbstract(!xd.isElementDefinition());
             }
             catch (MappingException e)
             {
@@ -246,16 +243,23 @@ public class CastorType
             {
                 xdClass = ClassLoaderUtils.loadClass(clazz.getName() + "Descriptor", this
                         .getClass());
-                if (xdClass != null && (xdClass.newInstance() instanceof XMLClassDescriptor))
+                if (xdClass != null && (XMLClassDescriptorImpl.class.isAssignableFrom(xdClass)))
                 {
-                    xd = (XMLClassDescriptor) xdClass.newInstance();
+                    xd = (XMLClassDescriptorImpl) xdClass.newInstance();
                     nsUri = (xd.getNameSpaceURI() == null ? "" : xd.getNameSpaceURI());
                     nsPrefix = (xd.getNameSpacePrefix() == null ? "" : xd.getNameSpacePrefix());
                     localTypeName = xd.getXMLName();
                     setSchemaType(new QName(nsUri, localTypeName, nsPrefix));
+                    setAbstract(!xd.isElementDefinition());
                 }
             }
-            catch (Exception e)
+            catch (ClassNotFoundException e)
+            {
+            }
+            catch (InstantiationException e1)
+            {
+            }
+            catch (IllegalAccessException e2) 
             {
             }
         }

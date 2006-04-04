@@ -40,7 +40,7 @@
     <dependency>
       <groupId>castor</groupId>
       <artifactId>castor</artifactId>
-      <version>1.0M2</version>
+      <version>1.0M4</version>
     </dependency>
     <dependency>
       <groupId>xerces</groupId>
