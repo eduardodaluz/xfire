@@ -1,0 +1,10 @@
+<xsd:schema elementFormDefault="qualified" targetNamespace="http://xfire.codehaus.org/"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xfire.codehaus.org/">
+    <xsd:complexType name="Book">
+        <xsd:sequence>
+            <xsd:element name="title" type="xsd:string"/>
+            <xsd:element name="isbn" type="xsd:string"/>
+            <xsd:element name="author" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

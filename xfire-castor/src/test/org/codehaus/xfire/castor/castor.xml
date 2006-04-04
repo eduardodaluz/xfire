@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                                 "http://castor.org/mapping.dtd">
+
+<mapping>
+    <class name="org.codehaus.xfire.castor.Book">
+    		<map-to xml="Book" ns-uri="http://xfire.codehaus.org/" ns-prefix="tns" />
+    		<field name="title" type="string" />
+    		<field name="isbn" type="string" />
+    		<field name="author" type="string" />
+    </class>
+</mapping>
+

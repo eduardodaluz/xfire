@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Body xmlns="http://xfire.codehaus.org/">
+    <addBook>
+      <Book>
+      	<title>The Story of My Life</title>
+      	<isbn>0553213873</isbn>
+      	<author>Helen Keller</author>
+      </Book>
+    </addBook>
+  </env:Body>
+</env:Envelope>
