@@ -139,7 +139,8 @@ public class Soap12FaultSerializer
 
             writer.writeStartElement("soap:Reason");
             writer.writeStartElement("soap:Text");
-            writer.writeCharacters(fault.getReason());
+            if (fault.getReason() != null)
+                writer.writeCharacters(fault.getReason());
             writer.writeEndElement(); // Text
             writer.writeEndElement(); // Reason
 
