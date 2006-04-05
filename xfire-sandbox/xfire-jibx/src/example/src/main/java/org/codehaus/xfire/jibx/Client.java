@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.xfire.client.XFireProxyFactory;
+import org.codehaus.xfire.jibx.Account;
+import org.codehaus.xfire.jibx.AccountInfo;
+import org.codehaus.xfire.jibx.AccountService;
+import org.codehaus.xfire.jibx.JibxObjectFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 
