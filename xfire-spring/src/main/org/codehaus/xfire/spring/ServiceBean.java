@@ -77,7 +77,7 @@ public class ServiceBean
 
     /** Some properties to make it easier to work with ObjectServiceFactory */
 
-    protected boolean createDefaultBindings;
+    protected boolean createDefaultBindings = true;
 
     protected String use;
 
@@ -121,7 +121,9 @@ public class ServiceBean
         
         // Lets set up some properties for the service
         if (createDefaultBindings)
-            properties.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.TRUE);
+            	properties.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.TRUE);
+        else
+        		properties.put(ObjectServiceFactory.CREATE_DEFAULT_BINDINGS, Boolean.FALSE);
         
         if (style != null)
             properties.put(ObjectServiceFactory.STYLE, style);

@@ -10,6 +10,7 @@ import java.util.List;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.Phase;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -86,6 +87,15 @@ public class ServiceComponentTest
         assertTrue(firstPos != -1);
         assertTrue(secondPos != -1);
         assertTrue(firstPos > secondPos);
+    }
+    
+    public void testNondefaultBinding() throws Exception
+    {
+    		ServiceBean service = (ServiceBean) getContext().getBean("echoNondefaultBind");
+        assertNotNull(service);
+        Service endpoint = service.getXfire().getServiceRegistry().getService("EchoBind"); 
+        //There should be no bindings, none specified and no default created
+        assertEquals(0, endpoint.getBindings().size());
     }
     
     protected ApplicationContext createContext()

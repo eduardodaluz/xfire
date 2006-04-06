@@ -65,5 +65,12 @@
     
     <bean id="secondHandler2" class="org.codehaus.xfire.spring.TestHandler2"/>
     
+    <bean name="echoNondefaultBind" class="org.codehaus.xfire.spring.ServiceBean">
+        <property name="serviceBean" ref="echo"/>
+        <property name="name" value="EchoBind" />
+        <property name="serviceClass" value="org.codehaus.xfire.test.Echo"/>
+        <property name="createDefaultBindings" value="false"/>
+    </bean>
+    
 </beans>
 
