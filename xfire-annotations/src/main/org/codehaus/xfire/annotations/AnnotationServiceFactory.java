@@ -363,7 +363,13 @@ public class AnnotationServiceFactory
         if (method.getDeclaringClass().isInterface())
             return true;
 
-        return webAnnotations.hasWebMethodAnnotation(method);
+        if (webAnnotations.hasWebMethodAnnotation(method))
+        {
+            WebMethodAnnotation ann = webAnnotations.getWebMethodAnnotation(method);
+            return !ann.isExclude();
+        }
+        
+        return false;
     }
 
     protected boolean isHeader(Method method, int paramNumber)

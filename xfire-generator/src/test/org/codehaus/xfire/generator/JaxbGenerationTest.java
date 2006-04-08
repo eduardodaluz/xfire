@@ -8,6 +8,21 @@ import com.sun.codemodel.JDefinedClass;
 public class JaxbGenerationTest
     extends GenerationTestSupport
 {    
+    public void testEchoWithFaults() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/echoFault.wsdl"));
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("fault.echo.xfire.OtherEchoFault_Exception");
+        assertNotNull(echo);
+        echo = model._getClass("fault.echo.xfire.EchoFault_Exception");
+        assertNotNull(echo);
+    }
+    
     public void testWWCars() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();

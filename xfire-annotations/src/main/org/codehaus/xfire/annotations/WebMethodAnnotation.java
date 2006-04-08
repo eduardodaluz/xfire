@@ -13,6 +13,17 @@ public class WebMethodAnnotation
 {
     private String action = "";
     private String operationName = "";
+    private boolean exclude = false;
+    
+    public boolean isExclude()
+    {
+        return exclude;
+    }
+
+    public void setExclude(boolean exclude)
+    {
+        this.exclude = exclude;
+    }
 
     /**
      * Returns the action for this operation. For SOAP bindings, this determines the value of the SOAPAction header.

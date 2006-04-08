@@ -38,6 +38,7 @@
       <wsdl:input message="tns:echoRequest" name="echoRequest" />
       <wsdl:output message="tns:echoResponse" name="echoResponse" />
       <wsdl:fault message="tns:EchoFault" name="EchoFault" />
+      <wsdl:fault message="tns:EchoFault" name="OtherEchoFault" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="EchoWithFaultHttpBinding" type="tns:EchoWithFaultPortType">
@@ -52,6 +53,9 @@
       </wsdl:output>
       <wsdl:fault name="EchoFault">
         <wsdlsoap:fault name="EchoFault" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="OtherEchoFault">
+        <wsdlsoap:fault name="OtherEchoFault" use="literal" />
       </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>

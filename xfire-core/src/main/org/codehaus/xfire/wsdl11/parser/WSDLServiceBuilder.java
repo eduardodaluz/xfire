@@ -393,7 +393,7 @@ public class WSDLServiceBuilder
         if (type.getParticle() instanceof XmlSchemaSequence)
         {
             XmlSchemaSequence seq = (XmlSchemaSequence) type.getParticle();
-            
+
             XmlSchemaObjectCollection col = seq.getItems();
             for (Iterator itr = col.getIterator(); itr.hasNext();)
             {
@@ -409,8 +409,10 @@ public class WSDLServiceBuilder
 
     private void createMessagePart(MessageInfo info, XmlSchemaElement element)
     {
+        int index = info.size();
         MessagePartInfo part = info.addMessagePart(element.getQName(), XmlSchemaElement.class);
-
+        part.setIndex(index);
+        
         SchemaType st = null;
         if (element.getRefName() != null)
         {

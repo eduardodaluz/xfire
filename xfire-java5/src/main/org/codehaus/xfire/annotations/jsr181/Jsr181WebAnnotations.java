@@ -12,12 +12,12 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
-import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
 import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
 public class Jsr181WebAnnotations
         implements WebAnnotations
@@ -60,7 +60,8 @@ public class Jsr181WebAnnotations
             WebMethodAnnotation annotation = new WebMethodAnnotation();
             annotation.setAction(webMethod.action());
             annotation.setOperationName(webMethod.operationName());
-
+            annotation.setExclude(webMethod.exclude());
+            
             return annotation;
         }
         else

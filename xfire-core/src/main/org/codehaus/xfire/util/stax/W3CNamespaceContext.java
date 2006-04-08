@@ -29,7 +29,7 @@ public class W3CNamespaceContext implements NamespaceContext
 
     private String getNamespaceURI(Element e, String name)
     {
-        Attr attr = e.getAttributeNodeNS(W3CDOMStreamWriter.XML_NS, name);
+        Attr attr = e.getAttributeNode(name);
         if (attr == null)
         {
             Node n = e.getParentNode();
@@ -63,7 +63,7 @@ public class W3CNamespaceContext implements NamespaceContext
             {
                 String name = a.getNodeName();
                 if (name.equals("xmlns")) return "";
-                else return name.substring(5);
+                else return name.substring(6);
             }
         }
         

@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.attachments.Attachment;
@@ -104,7 +105,8 @@ public class PictureServiceTest
         client.setProperty(SoapConstants.MTOM_ENABLED, "true");
         
         EchoPicture req = new EchoPicture();
-        req.setImage(ImageIO.read(getTestFile("src/test-resources/xfire.jpg")));
+        FileDataSource source = new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
+        req.setImage(new DataHandler(source));
         
         EchoPictureResponse res = picClient.EchoPicture(req);
         assertNotNull(res.getImage());

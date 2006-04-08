@@ -238,7 +238,7 @@ public abstract class AbstractServiceGenerator
         JCodeModel model = context.getCodeModel();
         SchemaSupport schema = context.getSchemaGenerator();
         
-        String name = javify(part.getName().getLocalPart());
+        String name = javify(((FaultInfo) part.getContainer()).getName());
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
         String clsName = getPackage(part.getName(), context) + "." + name + "_Exception";

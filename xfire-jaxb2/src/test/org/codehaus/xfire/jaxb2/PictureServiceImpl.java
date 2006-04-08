@@ -3,8 +3,13 @@ package org.codehaus.xfire.jaxb2;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
+
+import junit.framework.Assert;
 
 import org.codehaus.xfire.mtom.EchoPicture;
 import org.codehaus.xfire.mtom.EchoPictureResponse;
@@ -21,7 +26,6 @@ public class PictureServiceImpl implements PictureService
         GetPictureResponse response = new GetPictureResponse();
         try
         {
-            File file = getTestFile("src/test-resources/xfire.jpg");
             Image image = ImageIO.read(getTestFile("src/test-resources/xfire.jpg"));
             response.setImage(image);
         }
@@ -39,17 +43,27 @@ public class PictureServiceImpl implements PictureService
     public EchoPictureResponse EchoPicture(EchoPicture req)
     {
         EchoPictureResponse response = new EchoPictureResponse();
-        Image image;
+        Assert.assertNotNull(req.getImage());
+        
         try
         {
-            image = ImageIO.read(getTestFile("src/test-resources/xfire.jpg"));
-            response.setImage(image);
+            InputStream is = req.getImage().getInputStream();
+            
+            int i = 0;
+            while (is.read() != -1)
+                i++;
+            
+            Assert.assertEquals(27364, i);
         }
         catch (IOException e)
         {
+            Assert.fail(e.getMessage());
             e.printStackTrace();
         }
-
+        
+        FileDataSource source = new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
+        response.setImage(new DataHandler(source));
+        
         return response;
     }
     

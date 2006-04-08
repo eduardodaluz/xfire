@@ -17,14 +17,14 @@ xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
   <s:element name="EchoPicture">
     <s:complexType>
       <s:sequence>
-        <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+        <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
       </s:sequence>
     </s:complexType>
   </s:element>
   <s:element name="EchoPictureResponse">
     <s:complexType>
       <s:sequence>
-         <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+         <s:element name="image" type="s:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
       </s:sequence>
     </s:complexType>
   </s:element>

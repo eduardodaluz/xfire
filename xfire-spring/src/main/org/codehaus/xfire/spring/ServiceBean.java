@@ -19,6 +19,7 @@ import org.codehaus.xfire.spring.config.AbstractSoapBindingBean;
 import org.codehaus.xfire.spring.config.EndpointBean;
 import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -75,6 +76,8 @@ public class ServiceBean
 
     private Map properties = new HashMap();
 
+    private String wsdlURL;
+    
     /** Some properties to make it easier to work with ObjectServiceFactory */
 
     protected boolean createDefaultBindings = true;
@@ -88,7 +91,7 @@ public class ServiceBean
     private Invoker invoker;
     
     private Object executor;
-    
+
     public void afterPropertiesSet()
         throws Exception
     {
@@ -189,6 +192,11 @@ public class ServiceBean
             xfireService.setFaultHandlers(getFaultHandlers());
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
+        
+        if (wsdlURL != null)
+        {
+            xfireService.setWSDLWriter(new ResourceWSDL(wsdlURL));
+        }
     }
 
     protected void initializeBindings()
@@ -456,4 +464,13 @@ public class ServiceBean
         this.createDefaultBindings = createDefaultBindings;
     }
 
+    public String getWsdlURL()
+    {
+        return wsdlURL;
+    }
+
+    public void setWsdlURL(String wsdlURL)
+    {
+        this.wsdlURL = wsdlURL;
+    }   
 }
