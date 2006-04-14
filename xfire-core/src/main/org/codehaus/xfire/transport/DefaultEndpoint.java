@@ -10,6 +10,7 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.DefaultFaultHandler;
+import org.codehaus.xfire.handler.Handler;
 import org.codehaus.xfire.handler.HandlerPipeline;
 
 /**
@@ -53,7 +54,7 @@ public class DefaultEndpoint
         context.setInPipeline(pipeline);
         
         if (context.getFaultHandler() == null)
-            context.setFaultHandler(new DefaultFaultHandler());
+            context.setFaultHandler(createFaultHandler());
         
         try
         {
@@ -74,6 +75,11 @@ public class DefaultEndpoint
                 log.warn("Error invoking fault handler.", e1);
             }
         }
+    }
+
+    protected Handler createFaultHandler()
+    {
+        return new DefaultFaultHandler();
     }
 
     public void finishReadingMessage(InMessage message, MessageContext context)
