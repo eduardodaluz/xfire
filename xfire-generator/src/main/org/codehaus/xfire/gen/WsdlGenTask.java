@@ -19,7 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * WsdlGenTask. Allows to generate the Wsdl without firing up the web server.
+ * A Java 2 WSDL generation Ant task for XFire. Allows to generate the Wsdl without 
+ * firing up the web server.
+ * 
  * @author <a href="jerome@coffeebreaks.org">Jerome Lacoste</a>
  */
 public class WsdlGenTask extends Task

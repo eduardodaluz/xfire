@@ -28,7 +28,7 @@ public class WsGen {
 
 	private static void usage() {
 		System.out
-				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory -p package [-b binding] \n");
+				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] \n");
 	}
 
 	private static void missingParam(String param) {
@@ -65,12 +65,6 @@ public class WsGen {
 			if ("-b".equals(param)) {
 				binding = value;
 			}
-		}
-
-		if (_package == null) {
-			missingParam("package");
-			usage();
-			return;
 		}
 
 		if (wsdl == null) {

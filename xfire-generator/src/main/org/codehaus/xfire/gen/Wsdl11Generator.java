@@ -9,6 +9,17 @@ import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 
 import com.sun.codemodel.JCodeModel;
 
+/**
+ * A bean type class which generates client and server stubs from a wsdl.
+ * A simple invocation goes like so:
+ * <pre>
+ * Wsdl11Generator gen = new Wsdl11Generator();
+ * gen.setWsdl("src/wsdl/service.wsdl");
+ * gen.setOutputDirectory("target/generated-source");
+ * gen.generate();
+ * </pre>
+ * @author Dan Diephouse
+ */
 public class Wsdl11Generator
 {
     public static final String JAXB = "jaxb";
