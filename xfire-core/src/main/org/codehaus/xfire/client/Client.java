@@ -32,9 +32,14 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap11Binding;
+import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.Soap12Binding;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
+import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.xml.sax.InputSource;
@@ -323,13 +328,20 @@ public class Client
             msg.setBody(params);
             msg.setChannel(getOutChannel());
             
+            // TODO this should probably be in a seperate handler.
+            // We'll have to address this when we add REST support.
+            if (binding instanceof Soap11Binding)
+                msg.setSoapVersion(Soap11.getInstance());
+            else if (binding instanceof Soap12Binding)
+                msg.setSoapVersion(Soap12.getInstance());
+            
             context = new MessageContext();
             context.setService(service);
             context.setXFire(xfire);
             context.setBinding(binding);
             context.setProperty(CLIENT_MODE, Boolean.TRUE);
             context.setClient(this);
-            
+
             MessageExchange exchange = new MessageExchange(context);
             exchange.setOperation(op);
             exchange.setOutMessage(msg);

@@ -43,6 +43,11 @@ public class LocateBindingHandler
         // set the binding
         Binding binding =  c.getTransport().findBinding(context, service);
         
+        if (binding == null)
+        {
+            throw new XFireFault("Could not find an appropriate Transport Binding to invoke.", XFireFault.SENDER);
+        }
+        
         if (!binding.isUndefinedEndpointAllowed())
         {
             boolean defined = false;

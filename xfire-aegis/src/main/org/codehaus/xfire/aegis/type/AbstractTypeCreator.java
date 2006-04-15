@@ -335,6 +335,13 @@ public abstract class AbstractTypeCreator
                 + m.getName() + " in " + m.getDeclaringClass());
         return createTypeForClass(info);
     }
+    
+    public QName getElementName(Method m, int index)
+    {
+        TypeClassInfo info = createClassInfo(m, index);
+        
+        return info.getMappedName();
+    }
 
     /**
      * Create type information for a PropertyDescriptor.
@@ -389,7 +396,7 @@ public abstract class AbstractTypeCreator
 
         Object keyType;
 
-        String mappedName;
+        QName mappedName;
 
         QName typeName;
 
@@ -465,6 +472,16 @@ public abstract class AbstractTypeCreator
         public void setType(Class type)
         {
             this.type = type;
+        }
+
+        public QName getMappedName()
+        {
+            return mappedName;
+        }
+
+        public void setMappedName(QName mappedName)
+        {
+            this.mappedName = mappedName;
         }
     }
 }

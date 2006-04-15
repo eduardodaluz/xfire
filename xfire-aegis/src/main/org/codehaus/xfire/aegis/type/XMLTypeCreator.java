@@ -210,7 +210,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         Element mapping = getMatch(doc, "/mappings/mapping[@uri='" + getTypeMapping().getEncodingStyleURI() + "']");
         if (mapping == null)
         {
-            mapping = getMatch(doc, "/mappings/mapping");
+            mapping = getMatch(doc, "/mappings/mapping[not(@uri)]");
         }
         
         return mapping;
@@ -354,6 +354,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
     protected void readMetadata(TypeClassInfo info, Element parameter)
     {        
         info.setTypeName(createQName(parameter, parameter.getAttributeValue("typeName")));
+        info.setMappedName(createQName(parameter, parameter.getAttributeValue("mappedName")));
         setComponentType(info, parameter);
         setKeyType(info, parameter);
         setType(info, parameter);

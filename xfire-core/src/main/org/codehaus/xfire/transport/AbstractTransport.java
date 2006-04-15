@@ -8,6 +8,11 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.soap.Soap11;
+import org.codehaus.xfire.soap.Soap11Binding;
+import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.Soap12Binding;
+import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.util.UID;
 
 /**
@@ -86,6 +91,17 @@ public abstract class AbstractTransport
 
     public Binding findBinding(MessageContext context, Service service)
     {
-        return service.getBinding(getSupportedBindings()[0]);
+        SoapVersion soapVersion = context.getCurrentMessage().getSoapVersion();
+        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
+        {
+            Binding binding = (Binding) itr.next();
+            if (binding.getBindingId().equals(getSupportedBindings()[0]) &&
+                    ((binding instanceof Soap11Binding && soapVersion instanceof Soap11) ||
+                            (binding instanceof Soap12Binding && soapVersion instanceof Soap12)))
+            {
+                return binding;
+            }
+        }
+        return null;
     }
 }

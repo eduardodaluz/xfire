@@ -114,12 +114,18 @@ public class AegisBindingProvider
     public QName getSuggestedName(Service service, OperationInfo op, int param)
     {
         TypeMapping tm = getTypeMapping(service);
-        Type type = tm.getTypeCreator().createType(op.getMethod(), param);
+        QName name = tm.getTypeCreator().getElementName(op.getMethod(), param);
         
-        if (type.isComplex() && !type.isAbstract()) 
-            return type.getSchemaType();
+        // No mapped name was specified, so if its a complex type use that name instead
+        if (name == null)
+        {
+            Type type = tm.getTypeCreator().createType(op.getMethod(), param);
+            
+            if (type.isComplex() && !type.isAbstract()) 
+                name = type.getSchemaType();
+        }
         
-        return null;
+        return name;
     }
 
     private Type getParameterType(TypeMapping tm, MessagePartInfo param, int paramtype)

@@ -1,10 +1,16 @@
 package org.codehaus.xfire.fault;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
+import org.codehaus.xfire.soap.Soap12;
+import org.codehaus.xfire.soap.Soap12Binding;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.jdom.Document;
 
@@ -14,23 +20,31 @@ public class AuthFaultTest
     private Service service;
     private String ns = "urn:xfire:authenticate";
     private String name = "AuthService";
-
+    private Soap12Binding soap12Binding;
+    
     protected void setUp()
         throws Exception
     {
         super.setUp();
         
-        service = getServiceFactory().create(AuthService.class, name, ns, null);
+        ObjectServiceFactory osf = (ObjectServiceFactory) getServiceFactory();
+        service = osf.create(AuthService.class, name, ns, null);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, AuthServiceImpl.class);
         
+        soap12Binding = osf.createSoap12Binding(service, new QName(service.getTargetNamespace(), "Auth12"), LocalTransport.BINDING_ID);
+
         getServiceRegistry().register(service);
     }
 
     public void testService() throws Exception
     {
-        Document response = invokeService(name, "authenticate.xml");
+        Document response = invokeService(name, "authenticate12.xml");
 
         addNamespace("f", "urn:xfire:authenticate:fault");
+        addNamespace("s12", Soap12.getInstance().getNamespace());
+        assertValid("//s12:Detail/f:AuthenticationFault/f:message[text()='Invalid username/password']", response);
+       
+        response = invokeService(name, "authenticate.xml");
         assertValid("//detail/f:AuthenticationFault/f:message[text()='Invalid username/password']", response);
     }
     
@@ -38,7 +52,20 @@ public class AuthFaultTest
     {
         XFireProxyFactory factory = new XFireProxyFactory(getXFire());
         AuthService echo = (AuthService) factory.create(service, "xfire.local://AuthService");
+ 
+        try
+        {
+            echo.authenticate("yo", "yo");
+            fail("Should have thrown custom fault.");
+        }
+        catch (AuthenticationFault_Exception fault)
+        {
+            assertEquals("Invalid username/password", fault.getFaultInfo().getMessage());
+            assertEquals("message", fault.getMessage());
+        }
         
+        echo = (AuthService) factory.create(soap12Binding, "xfire.local://AuthService");
+
         try
         {
             echo.authenticate("yo", "yo");
