@@ -4,6 +4,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javax.xml.namespace.QName;
+
 import org.apache.xmlbeans.XmlObject;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeCreator;
@@ -20,6 +22,11 @@ public class XmlBeansTypeCreator
         this.nextCreator = nextCreator;   
     }
     
+    public QName getElementName(Method m, int index)
+    {
+        return nextCreator.getElementName(m, index);
+    }
+
     public TypeMapping getTypeMapping()
     {
         return typeMapping;

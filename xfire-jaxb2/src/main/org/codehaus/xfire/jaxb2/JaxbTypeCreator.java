@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeCreator;
@@ -22,7 +23,12 @@ public class JaxbTypeCreator
     {
         this.nextCreator = nextCreator;   
     }
-    
+        
+    public QName getElementName(Method m, int index)
+    {
+        return nextCreator.getElementName(m, index);
+    }
+
     public TypeMapping getTypeMapping()
     {
         return typeMapping;

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javax.xml.namespace.QName;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -70,6 +72,11 @@ public class CastorTypeCreator
             log.error(error, e);
             throw new XFireRuntimeException(error, e);
         }
+    }
+
+    public QName getElementName(Method m, int index)
+    {
+        return nextCreator.getElementName(m, index);
     }
 
     public Type createType(Method method, int index)

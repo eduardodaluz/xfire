@@ -6,6 +6,8 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 
 import javax.xml.bind.Element;
 import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -25,6 +27,11 @@ public class JaxbTypeCreator implements TypeCreator
     {
         this.nextCreator = nextCreator;
         this.jaxbContext = jaxbContext;
+    }
+
+    public QName getElementName(Method m, int index)
+    {
+        return nextCreator.getElementName(m, index);
     }
 
     public Type createType(Method m, int index)
