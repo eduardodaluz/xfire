@@ -22,7 +22,7 @@
               <tasks>
                 <delete dir="${project.build.directory}/generated-test"></delete>
                 <mkdir dir="${project.build.directory}/generated-test"></mkdir>
-                <taskdef classname="org.exolab.castor.tools.ant.taskdefs.CastorSourceGenTask" classpathref="maven.dependency.classpath" name="castor-srcgen"></taskdef>
+                <taskdef classname="org.exolab.castor.tools.ant.taskdefs.CastorSourceGenTask" classpathref="maven.test.classpath" name="castor-srcgen"></taskdef>
                 <castor-srcgen types="j2" warnings="false" file="${basedir}/src/test-schemas/WeatherForecast.xsd" todir="${project.build.directory}/generated-test" package="net.webservicex"></castor-srcgen>
               </tasks>
               <testSourceRoot>${project.build.directory}/generated-test</testSourceRoot>
