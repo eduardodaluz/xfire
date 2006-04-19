@@ -270,7 +270,7 @@ public class JDOMStreamReader
 
     public String getText()
     {
-        return ((Text) content).getText();
+        return ((Content) content).getValue();
     }
 
     public char[] getTextCharacters()
