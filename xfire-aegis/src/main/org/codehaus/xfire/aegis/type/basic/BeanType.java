@@ -18,6 +18,7 @@ import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -45,6 +46,9 @@ public class BeanType
         this.setTypeClass(info.getTypeClass());
     }
 	
+	/* (non-Javadoc)
+	 * @see org.codehaus.xfire.aegis.type.Type#readObject(org.codehaus.xfire.aegis.MessageReader, org.codehaus.xfire.MessageContext)
+	 */
 	public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
     {
@@ -55,13 +59,37 @@ public class BeanType
             Class clazz = getTypeClass();
             Object object = null;
             InterfaceInvocationHandler delegate = null;
+            boolean isProxy = false;
             
             if (isInterface)
             {
-                delegate = new InterfaceInvocationHandler();
-                object = Proxy.newProxyInstance(this.getClass().getClassLoader(),
-                                                new Class[] { clazz },
-                                                delegate);
+                String impl = null;
+                if (context.getService() != null)
+                {
+                    impl = (String) context.getService().getProperty(clazz.getName() + ".implementation");
+                }
+                
+                if (impl == null)
+                {
+                    delegate = new InterfaceInvocationHandler();
+                    object = Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                                                    new Class[] { clazz },
+                                                    delegate);
+                    isProxy = true;
+                }
+                else
+                {
+                    try
+                    {
+                        clazz = ClassLoaderUtils.loadClass(impl, getClass());
+                        object = clazz.newInstance();
+                    }
+                    catch (ClassNotFoundException e)
+                    {
+                        throw new XFireRuntimeException("Could not find implementation class " + 
+                                                        impl + " for class " + clazz.getName());
+                    }
+                }
             }
             else if (isException)
             {
@@ -84,11 +112,13 @@ public class BeanType
                 {
                     Object writeObj = type.readObject(childReader, context);
 
-                    if (isInterface) {
+                    if (isProxy) 
+                    {
                     	delegate.writeProperty(name.getLocalPart(), writeObj);
                     }
-                    else {
-                    	writeProperty(name, object, writeObj);
+                    else 
+                    {
+                    	writeProperty(name, object, writeObj, clazz);
                     }
                 }
             }
@@ -107,13 +137,13 @@ public class BeanType
                     {
                         Object writeObj = type.readObject(childReader, context);
 
-                        if (isInterface)
+                        if (isProxy) 
                         {
                             delegate.writeProperty(name.getLocalPart(), writeObj);
                         }
-                        else
+                        else 
                         {
-                            writeProperty(name, object, writeObj);
+                            writeProperty(name, object, writeObj, clazz);
                         }
                     }
                     else
@@ -206,7 +236,7 @@ public class BeanType
     /**
      * Write the specified property to a field.
      */
-    protected void writeProperty(QName name, Object object, Object property)
+    protected void writeProperty(QName name, Object object, Object property, Class impl)
         throws XFireFault
     {
         try
@@ -215,7 +245,14 @@ public class BeanType
             
             Method m = desc.getWriteMethod();
             
-            if (m == null) throw new XFireFault("No write method for property " + name + " in " + object.getClass(), XFireFault.SENDER);
+            if (m == null) 
+            {
+                if (getTypeClass().isInterface())
+                    m = getWriteMethodFromImplClass(impl, desc);
+                
+                if (m == null)
+                    throw new XFireFault("No write method for property " + name + " in " + object.getClass(), XFireFault.SENDER);
+            }
 
             Class propertyType = desc.getPropertyType();
             if ((property == null && !propertyType.isPrimitive()) || (property != null))
@@ -225,8 +262,23 @@ public class BeanType
         }
         catch (Exception e)
         {
+            if (e instanceof XFireFault) throw (XFireFault) e;
+            
             throw new XFireFault("Couldn't set property " + name + " on " + object + ". " + e.getMessage(), e, XFireFault.SENDER);
         }
+    }
+
+    /**
+     * This is a hack to get the write method from the implementation
+     * class for an interface.
+     */
+    private Method getWriteMethodFromImplClass(Class impl, PropertyDescriptor pd)
+        throws Exception
+    {
+        String name = pd.getName();
+        name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+        
+        return impl.getMethod(name, new Class[] { pd.getPropertyType() });
     }
 
     /**
