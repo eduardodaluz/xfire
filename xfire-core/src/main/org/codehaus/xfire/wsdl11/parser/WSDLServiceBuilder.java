@@ -291,24 +291,28 @@ public class WSDLServiceBuilder
         for (Iterator itr = types.getExtensibilityElements().iterator(); itr.hasNext();)
         {
             ExtensibilityElement ee = (ExtensibilityElement) itr.next();
+            Element el = null;
             if (ee instanceof UnknownExtensibilityElement)
             {
                 UnknownExtensibilityElement uee = (UnknownExtensibilityElement) ee;
-                schemas.read(uee.getElement());
+                el = uee.getElement();
             }
             else
             {
-            	// if we are using wsdl4j >= 1.5.1, a specific extensibility
+                // if we are using wsdl4j >= 1.5.1, a specific extensibility
             	// element is defined for schemas, so try retrieve the element
             	try 
             	{
             		Method mth = ee.getClass().getMethod("getElement", new Class[0]);
             		Object val = mth.invoke(ee, new Object[0]);
-            		schemas.read((Element) val);
-                    schemaElements.add((Element) val);
+                    el = (Element) val;
             	} 
                 catch (Exception e) {/* Ignore exceptions */}
             }
+
+            schemas.setBaseUri(definition.getDocumentBaseURI());
+            schemas.read(el);
+            schemaElements.add(el);
         }
     }
     
