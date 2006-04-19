@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -76,7 +77,7 @@ public class WSDLServiceBuilder
     private Map woutput2msg = new HashMap();
     private Map wfault2msg = new HashMap();
     
-    private List schemaElements = new ArrayList();
+    private List schemaInfos = new ArrayList();
     private List definitions = new ArrayList();
     private List definitionPaths = new ArrayList();
     private List portTypes = new ArrayList();
@@ -136,6 +137,11 @@ public class WSDLServiceBuilder
     public Definition getDefinition()
     {
         return definition;
+    }
+
+    public List getDefinitions()
+    {
+        return definitions;
     }
 
     public TransportManager getTransportManager()
@@ -307,12 +313,18 @@ public class WSDLServiceBuilder
             		Object val = mth.invoke(ee, new Object[0]);
                     el = (Element) val;
             	} 
-                catch (Exception e) {/* Ignore exceptions */}
+                catch (Exception e) {e.printStackTrace();}
             }
-
+            
             schemas.setBaseUri(definition.getDocumentBaseURI());
-            schemas.read(el);
-            schemaElements.add(el);
+            XmlSchema schema = schemas.read(el);
+            
+            SchemaInfo schemaInfo = new SchemaInfo();
+            schemaInfo.setDefinition(definition);
+            schemaInfo.setSchema(schema);
+            schemaInfo.setSchemaElement(el);
+            
+            schemaInfos.add(schemaInfo);
         }
     }
     
@@ -591,12 +603,16 @@ public class WSDLServiceBuilder
         }
     }
 
-    public List getSchemaElements()
+    /**
+     * Returns a Collection of SchemaInfo objects.
+     * @return
+     */
+    public List getSchemas()
     {
-        return schemaElements;
+        return schemaInfos;
     }
     
-    public XmlSchemaCollection getSchemas()
+    public XmlSchemaCollection getSchemaCollection()
     {
         return schemas;
     }
