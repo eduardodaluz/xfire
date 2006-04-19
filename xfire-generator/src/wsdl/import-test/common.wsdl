@@ -12,6 +12,8 @@
     <xsd:schema targetNamespace='urn:xfire:generator:import-test'
       xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
 
+      <xsd:import namespace="urn:xfire:generator:import-test" schemaLocation="import.xsd"/>
+      
       <xsd:element name="SomeStrings">
         <xsd:complexType>
           <xsd:sequence>

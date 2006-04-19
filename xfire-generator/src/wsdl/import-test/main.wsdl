@@ -15,7 +15,7 @@
     <wsdl:part element="tns:SomeStrings" name="parameters"/>
   </wsdl:message>
   <wsdl:message name="echoResponse">
-    <wsdl:part element="tns:SomeStrings" name="parameters"/>
+    <wsdl:part element="tns:MoreStrings" name="parameters"/>
   </wsdl:message>
   <wsdl:portType name="EchoPortType">
     <wsdl:operation name="echo">

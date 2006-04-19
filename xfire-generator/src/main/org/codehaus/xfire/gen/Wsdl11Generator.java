@@ -76,7 +76,7 @@ public class Wsdl11Generator
         context.setOutputDirectory(dest);
         context.setWsdlLocation(wsdl);
         context.setBaseURI(baseURI);
-        context.setSchemas(builder.getSchemaElements());
+        context.setSchemas(builder.getSchemas());
         
         support.initialize(context);
 

@@ -1,9 +1,11 @@
 package org.codehaus.xfire.gen.jaxb;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -13,7 +15,13 @@ import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.SchemaSupport;
 import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.codehaus.xfire.wsdl11.parser.SchemaInfo;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JExpr;
@@ -21,7 +29,6 @@ import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JType;
 import com.sun.tools.xjc.api.Mapping;
-import com.sun.tools.xjc.api.Property;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.TypeAndAnnotation;
@@ -43,17 +50,19 @@ public class JAXBSchemaSupport implements SchemaSupport
         Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0], cl));
 
         ErrorReceiverImpl er = new ErrorReceiverImpl();
-         
+
         schemaCompiler = XJC.createSchemaCompiler();
         schemaCompiler.setErrorListener(er);
-
-        ArrayList<Element> elements = (ArrayList<Element>) context.getSchemas();
         
+        ArrayList<SchemaInfo> elements = (ArrayList<SchemaInfo>) context.getSchemas();
+
         int schemaElementCount = 1;
-        for(Element schemaElement : elements)
+        for(SchemaInfo schema : elements)
         {
-            String systemId = new String("#types?schema"+schemaElementCount++);
-            schemaCompiler.parseSchema(systemId,schemaElement);
+            schemaCompiler.setEntityResolver(new RelativeEntityResolver(schema.getDefinition().getDocumentBaseURI()));
+            
+            System.out.println("adding schema " + schema.getSchema().getTargetNamespace());
+            schemaCompiler.parseSchema("#types?schema"+schemaElementCount++, schema.getSchemaElement());
         }
         
         model = schemaCompiler.bind();
@@ -74,6 +83,24 @@ public class JAXBSchemaSupport implements SchemaSupport
         Thread.currentThread().setContextClassLoader(cl);
     }
 
+    private void removeImports(Element el)
+    {
+        NodeList nodes = el.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++)
+        {
+            Node n = nodes.item(i);
+            if (n instanceof Element)
+            {
+                Element e = (Element) n;
+                
+                if (e.getLocalName().equals("import"))
+                {
+                    e.removeAttribute("schemaLocation");
+                }
+            }
+        }
+    }
+    
     public JType getType(GenerationContext context, QName concreteType, QName schemaType) 
         throws GenerationException
     {
@@ -139,5 +166,32 @@ public class JAXBSchemaSupport implements SchemaSupport
         expr.arg(JExpr._new(xbean));
         
         return expr;
+    }
+    
+    
+    /**
+     * Resolves Schemas relative to the WSDL document they're included in.
+     * @author Dan Diephouse
+     */
+    static class RelativeEntityResolver  implements EntityResolver
+    {
+        private String baseURI;
+
+        public RelativeEntityResolver(String baseURI)
+        {
+            super();
+            this.baseURI = baseURI;
+        }
+
+        public InputSource resolveEntity(String publicId, String systemId)
+            throws SAXException, IOException
+        {
+            File file = new File(baseURI, systemId);
+            if (file.exists())
+            {
+                return new InputSource(new FileInputStream(file));
+            }
+            return null;
+        }
     }
 }
