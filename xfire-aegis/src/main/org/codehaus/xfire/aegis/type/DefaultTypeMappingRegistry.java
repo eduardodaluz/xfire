@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis.type;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -19,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.aegis.type.basic.Base64Type;
 import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
+import org.codehaus.xfire.aegis.type.basic.BigIntegerType;
 import org.codehaus.xfire.aegis.type.basic.BooleanType;
 import org.codehaus.xfire.aegis.type.basic.CalendarType;
 import org.codehaus.xfire.aegis.type.basic.DateTimeType;
@@ -67,6 +69,7 @@ public class DefaultTypeMappingRegistry
     protected static final QName XSD_TIME = new QName(SoapConstants.XSD, "dateTime", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_BASE64 = new QName(SoapConstants.XSD, "base64Binary", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_DECIMAL = new QName(SoapConstants.XSD, "decimal", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_INTEGER = new QName(SoapConstants.XSD, "integer", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_URI = new QName(SoapConstants.XSD, "anyURI", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType", SoapConstants.XSD_PREFIX);
     
@@ -81,6 +84,7 @@ public class DefaultTypeMappingRegistry
     protected static final QName ENCODED_DATETIME = new QName(ENCODED_NS, "dateTime");
     protected static final QName ENCODED_BASE64 = new QName(ENCODED_NS, "base64Binary");
     protected static final QName ENCODED_DECIMAL = new QName(ENCODED_NS, "decimal");
+    protected static final QName ENCODED_INTEGER = new QName(ENCODED_NS, "integer");
 
     private Hashtable registry;
     
@@ -303,6 +307,7 @@ public class DefaultTypeMappingRegistry
         register(tm, Calendar.class, XSD_DATETIME, new CalendarType());
         register(tm, byte[].class, XSD_BASE64, new Base64Type());
         register(tm, BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        register(tm, BigInteger.class, XSD_INTEGER, new BigIntegerType());
         register(tm, URI.class, XSD_URI, new URIType());
         register(tm, Document.class, XSD_ANY, new DocumentType());
         register(tm, Source.class, XSD_ANY, new SourceType());
@@ -336,7 +341,8 @@ public class DefaultTypeMappingRegistry
         register(soapTM, Calendar.class, ENCODED_DATETIME, new CalendarType());
         register(soapTM, byte[].class, ENCODED_BASE64, new Base64Type());
         register(soapTM, BigDecimal.class, ENCODED_DECIMAL, new BigDecimalType());
-
+        register(soapTM, BigInteger.class, ENCODED_INTEGER, new BigIntegerType());
+        
         register(soapTM, boolean.class, XSD_BOOLEAN, new BooleanType());
         register(soapTM, int.class, XSD_INT, new IntType());
         register(soapTM, short.class, XSD_SHORT, new ShortType());
@@ -365,7 +371,8 @@ public class DefaultTypeMappingRegistry
         register(soapTM, Object.class, XSD_ANY, new ObjectType());
         register(soapTM, DataSource.class, XSD_BASE64, new DataSourceType());
         register(soapTM, DataHandler.class, XSD_BASE64, new DataHandlerType());
-
+        register(soapTM, BigInteger.class, XSD_INTEGER, new BigIntegerType());
+        
         register(ENCODED_NS, soapTM);
 
         return tm;
