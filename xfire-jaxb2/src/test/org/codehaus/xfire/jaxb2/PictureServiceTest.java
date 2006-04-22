@@ -95,7 +95,7 @@ public class PictureServiceTest
         assertValid("//s:Body/m:GetPictureResponse/m:image/xop:Include", response);
     }
 
-    public void testClient()
+    public void atestClient()
         throws Exception
     {
         XFireProxyFactory xpf = new XFireProxyFactory();
