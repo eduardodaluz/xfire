@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.activation.DataHandler;
-import javax.mail.MessagingException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -17,13 +16,12 @@ import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.attachments.SimpleAttachment;
+import org.codehaus.xfire.attachments.StreamedAttachments;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -47,8 +45,6 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private HttpClient client;
 
-    private static final Log log = LogFactory.getLog(CommonsHttpMessageSender.class);
-    
     public static final String HTTP_CLIENT_PARAMS = "httpClient.params";
     public static final String USER_AGENT =  
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
@@ -133,6 +129,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             
             OutMessageDataSource source = new OutMessageDataSource(context, message);
             DataHandler soapHandler = new DataHandler(source);
+            atts.setSoapContentType(HttpChannel.getSoapMimeType(message));
             atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
             
             postMethod.setRequestHeader("Content-Type", atts.getContentType());
@@ -219,26 +216,17 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         InputStream in = postMethod.getResponseBodyAsStream();
         if (ct.toLowerCase().indexOf("multipart/related") != -1)
         {
-            try
-            {
-                Attachments atts = new JavaMailAttachments(in, ct);
+            Attachments atts = new StreamedAttachments(in, ct);
 
-                InputStream msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
-                InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding(),getMessageContext()), getUri());
-                msg.setAttachments(atts);
-                return msg;
-            }
-            catch (MessagingException e)
-            {
-                log.error(e);
-                throw new IOException(e.getMessage());
-            }
+            InputStream msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
+            InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding(),getMessageContext()), getUri());
+            msg.setAttachments(atts);
+            return msg;
         }
         else
         {
             return new InMessage(STAXUtils.createXMLStreamReader(in, getEncoding(),getMessageContext()), getUri());
         }
-        
     }
 
     public PostMethod getMethod()

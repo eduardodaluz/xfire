@@ -1,7 +1,5 @@
 package org.codehaus.xfire.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -81,23 +79,27 @@ public class OutMessageDataSource implements DataSource
     public InputStream createInputStream()
         throws XFireException
     {
-        // TODO: lets just make our own datasource instead
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, msg.getEncoding(), context);
-
-        msg.getSerializer().writeMessage(msg, writer, context);
-        
         try
         {
-            writer.flush();
+           // TODO: its really not necessary to cache this...
+           CachedOutputStream out = new CachedOutputStream(1024*1000, null);
+
+           XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, msg.getEncoding(), context);
+
+           msg.getSerializer().writeMessage(msg, writer, context);
+           
+           writer.flush();
+           
+           return out.getInputStream();
         }
         catch (XMLStreamException e)
         {
             throw new XFireException("Couldn't send message.", e);
         }
-        
-        return new ByteArrayInputStream(out.toByteArray());
+        catch (IOException e)
+        {
+            throw new XFireException("Couldn't send message.", e);
+        }
     }
 
     public String getName()

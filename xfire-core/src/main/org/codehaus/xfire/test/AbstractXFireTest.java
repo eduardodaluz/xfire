@@ -148,6 +148,10 @@ public abstract class AbstractXFireTest
         c.setEndpoint(new ChannelEndpoint() {
             public void onReceive(MessageContext context, InMessage msg) {
                 try {
+                    // force attachment read...
+                    if (msg.getAttachments() != null)
+                        msg.getAttachments().getParts();
+                    
                     Document doc = new StaxBuilder().build(msg.getXMLStreamReader());
                     context.setExchange(new MessageExchange(context));
                     context.getExchange().setInMessage(msg);

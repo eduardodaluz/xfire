@@ -161,7 +161,6 @@ public class JavaMailAttachments
 
                 mimeMP.addBodyPart(part);
             }
-
             
             message.setContent(mimeMP);
 	        message.writeTo(out, filter);
@@ -183,7 +182,7 @@ public class JavaMailAttachments
               .append(getSoapMessage().getId())
               .append(">\"; start-info=\"")
               .append(getSoapContentType())
-              .append("; charset=utf-8\"");
+              .append("\"");
             
             mimeMP = new MimeMultipart(ct.toString());
         }
@@ -208,5 +207,9 @@ public class JavaMailAttachments
     public void setSoapContentType(String soapContentType)
     {
         this.soapContentType = soapContentType;
+    }
+
+    public void dispose()
+    {
     }   
 }

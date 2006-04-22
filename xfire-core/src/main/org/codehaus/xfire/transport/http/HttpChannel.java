@@ -84,6 +84,7 @@ public class HttpChannel
                 
                 OutMessageDataSource source = new OutMessageDataSource(context, message);
                 DataHandler soapHandler = new DataHandler(source);
+                atts.setSoapContentType(getSoapMimeType(message));
                 atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
                 
                 response.setContentType(atts.getContentType());

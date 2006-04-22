@@ -49,4 +49,6 @@ public interface Attachments
      * @param soapMimeType
      */
     void setSoapContentType(String soapMimeType);
+
+    void dispose();
 }

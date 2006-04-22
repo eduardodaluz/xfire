@@ -4,7 +4,6 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,9 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
-import org.codehaus.xfire.attachments.JavaMailAttachments;
+import org.codehaus.xfire.attachments.StreamedAttachments;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
@@ -254,26 +252,21 @@ public class XFireServletController
         }
         else if (contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
-            try
-            {
-                Attachments atts = new JavaMailAttachments(request.getInputStream(), 
-                                                           request.getContentType());
-                String encoding = getEncoding(request.getCharacterEncoding());
-                XMLStreamReader reader = 
-                    STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
-                                                    encoding,
-                                                    context);
-                InMessage message = new InMessage(reader, request.getRequestURI());
-                message.setProperty(SoapConstants.SOAP_ACTION, 
-                                    request.getHeader(SoapConstants.SOAP_ACTION));
-                message.setAttachments(atts);
-                
-                channel.receive(context, message);
-            }
-            catch (MessagingException e)
-            {
-                throw new XFireRuntimeException("Couldn't parse request message.", e);
-            }
+            Attachments atts = new StreamedAttachments(request.getInputStream(), 
+                                                       request.getContentType());
+            String encoding = getEncoding(request.getCharacterEncoding());
+            XMLStreamReader reader = 
+                STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
+                                                encoding,
+                                                context);
+            InMessage message = new InMessage(reader, request.getRequestURI());
+            message.setProperty(SoapConstants.SOAP_ACTION, 
+                                request.getHeader(SoapConstants.SOAP_ACTION));
+            message.setAttachments(atts);
+            
+            channel.receive(context, message);
+            
+            atts.dispose();
         }
         else
         {
