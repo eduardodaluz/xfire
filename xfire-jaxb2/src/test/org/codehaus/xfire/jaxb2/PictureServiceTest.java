@@ -50,7 +50,7 @@ public class PictureServiceTest
         
         // Set the schemas
         ArrayList<String> schemas = new ArrayList<String>();
-        schemas.add(getTestFile("src/test-schemas/PictureService.xsd").getAbsolutePath());
+        schemas.add(getTestFile("src/test-schemas/picture.xsd").getAbsolutePath());
         Map<String,Object> props = new HashMap<String,Object>();
         props.put(ObjectServiceFactory.SCHEMAS, schemas);
         
@@ -95,7 +95,7 @@ public class PictureServiceTest
         assertValid("//s:Body/m:GetPictureResponse/m:image/xop:Include", response);
     }
 
-    public void atestClient()
+    public void testClient()
         throws Exception
     {
         XFireProxyFactory xpf = new XFireProxyFactory();
