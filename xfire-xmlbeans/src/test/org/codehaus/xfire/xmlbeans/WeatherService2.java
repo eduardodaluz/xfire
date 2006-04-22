@@ -9,7 +9,7 @@ import net.webservicex.WeatherForecasts;
  */
 public class WeatherService2
 {
-    public GetWeatherByZipCodeResponseDocument.GetWeatherByZipCodeResponse 
+    public GetWeatherByZipCodeResponseDocument.GetWeatherByZipCodeResponse
         GetWeatherByZipCode( GetWeatherByZipCodeDocument.GetWeatherByZipCode body )
     {
         GetWeatherByZipCodeResponseDocument.GetWeatherByZipCodeResponse res =

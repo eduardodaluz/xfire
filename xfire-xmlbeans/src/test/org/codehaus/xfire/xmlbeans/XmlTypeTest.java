@@ -36,5 +36,7 @@ public class XmlTypeTest
         XmlBeansType type = (XmlBeansType) typeCreator.createType(WeatherData.class);
      
         assertNotNull(type);
+        
+        assertTrue(type.isAbstract());
     }
 }

@@ -35,10 +35,10 @@ public class WeatherService2Test
         
         response = invokeService("WeatherService", "GetForecasts.xml");
 
-        addNamespace("w", "http://www.webservicex.net");
-        assertValid("//w:WeatherForecasts", response);
-        assertValid("//w:WeatherForecasts/w:Latitude", response);
-        assertValid("//w:WeatherForecasts/w:Longitude", response);
+        addNamespace("u", "urn:WeatherService");
+        assertValid("//u:GetForecastsout", response);
+        assertValid("//u:GetForecastsout/w:Latitude", response);
+        assertValid("//u:GetForecastsout/w:Longitude", response);
     }
     
     public void testWSDL() throws Exception
@@ -48,7 +48,6 @@ public class WeatherService2Test
         addNamespace("xsd", SoapConstants.XSD);
         addNamespace("w", AbstractWSDL.WSDL11_NS);
         
-        assertValid("//w:message[@name='GetWeatherByZipCodeRequest']/w:part[@element='ns1:GetWeatherByZipCode']", wsdl);
-        assertValid("//w:message[@name='GetForecastsResponse']/w:part[@element='ns1:WeatherForecasts']", wsdl);
+        assertValid("//w:message[@name='GetForecastsResponse']/w:part[@element='tns:GetForecastsout']", wsdl);
     }
 }

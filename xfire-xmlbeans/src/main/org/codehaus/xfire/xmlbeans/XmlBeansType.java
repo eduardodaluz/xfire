@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.xmlbeans.SchemaParticle;
 import org.apache.xmlbeans.SchemaProperty;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlBeans;
@@ -52,7 +53,14 @@ public class XmlBeansType
         setTypeClass(schemaType.getJavaClass());
         options.setDocumentType(schemaType);
 
-        if (!schemaType.isDocumentType() && !schemaType.isAbstract())
+        // Check to see if this is a <complexType> or global <element>
+        if (schemaType.getContentModel() != null &&
+                schemaType.getContentModel().getParticleType() == SchemaParticle.ELEMENT)
+            setAbstract(false);
+        else
+            setAbstract(true);
+
+        if (!schemaType.isDocumentType() || isAbstract())
         {
             setWriteOuter(true);
         }
@@ -74,11 +82,6 @@ public class XmlBeansType
     public boolean isComplex()
     {
         return !schemaType.isPrimitiveType();
-    }
-
-    public boolean isAbstract()
-    {
-        return schemaType.isAbstract();
     }
 
     public Set getDependencies()
