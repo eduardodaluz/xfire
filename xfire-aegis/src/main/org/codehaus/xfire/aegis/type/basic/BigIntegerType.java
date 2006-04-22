@@ -8,7 +8,7 @@ import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
 
 /**
- * <code>Type</code> for a <code>BigDecimal</code>
+ * <code>Type</code> for a <code>BigInteger</code>
  *
  * @author <a href="mailto:peter.royal@pobox.com">peter royal</a>
  */
