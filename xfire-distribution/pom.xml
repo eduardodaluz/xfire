@@ -28,55 +28,33 @@
                     <filter value=">${version}&lt;" token="1.1-SNAPSHOT"></filter>
                   </filterset>
                 </copy>
+                <echo>Copying sources for source jar</echo>
+                <mkdir dir="${basedir}/target/sources"/>
+                <copy todir="${basedir}/target/sources">
+                  <fileset dir="${basedir}/../xfire-aegis/src/main"/>
+                  <fileset dir="${basedir}/../xfire-annotations/src/main"/>
+                  <fileset dir="${basedir}/../xfire-castor/src/main"/>
+                  <fileset dir="${basedir}/../xfire-core/src/main"/>
+                  <fileset dir="${basedir}/../xfire-generator/src/main"/>
+                  <fileset dir="${basedir}/../xfire-jaxb/src/main"/>
+                  <fileset dir="${basedir}/../xfire-jaxb2/src/main"/>
+                  <fileset dir="${basedir}/../xfire-jaxws/src/main"/>
+                  <fileset dir="${basedir}/../xfire-jms/src/main"/>
+                  <fileset dir="${basedir}/../xfire-loom/src/main"/>
+                  <fileset dir="${basedir}/../xfire-picocontainer/src/main"/>
+                  <fileset dir="${basedir}/../xfire-plexus/src/main"/>
+                  <fileset dir="${basedir}/../xfire-spring/src/main"/>
+                  <fileset dir="${basedir}/../xfire-ws-security/src/main"/>
+                  <fileset dir="${basedir}/../xfire-xmlbeans/src/main"/>
+                  <fileset dir="${basedir}/../xfire-xmpp/src/main"/>
+                </copy>
                 <echo>Downloading Manual</echo>
                 <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${project.build.directory}/${pom.artifactId}-manual.zip"></get>
                 <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip" dest="${project.build.directory}/manual"></unzip>
                 <javadoc defaultexcludes="yes" destdir="${project.build.directory}/api" use="true" 
                   packagenames="org.codehaus.xfire.*" windowtitle="Codehaus XFire ${project.version} API" 
                   author="true" version="true" useexternalfile="yes">
-                  <fileset defaultexcludes="yes" dir=".">
-                    <include name="../xfire-annotations/src/main/**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-castor/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-core/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-generator/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-java5/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-jaxb/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-jaxb2/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-jaxws/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-jms/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-loom/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-picocontainer/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-plexus/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-spring/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-xmlbeans/src/main/">
-                    <include name="**/*.java"></include>
-                  </fileset>
-                  <fileset defaultexcludes="yes" dir="../xfire-xmpp/src/main/">
+                  <fileset defaultexcludes="yes" dir="./target/sources/">
                     <include name="**/*.java"></include>
                   </fileset>
                   <doctitle>&lt;h1>Codehaus XFire&lt;/h1></doctitle>
@@ -93,12 +71,26 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
+            <id>bin</id>
             <phase>package</phase>
             <goals>
               <goal>assembly</goal>
             </goals>
             <configuration>
               <descriptor>assembly.xml</descriptor>
+              <finalName>xfire</finalName>
+              <outputDirectory>target/distro</outputDirectory>
+              <workDirectory>target/work</workDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>assembly</goal>
+            </goals>
+            <configuration>
+              <descriptor>source-assembly.xml</descriptor>
               <finalName>xfire</finalName>
               <outputDirectory>target/distro</outputDirectory>
               <workDirectory>target/work</workDirectory>
