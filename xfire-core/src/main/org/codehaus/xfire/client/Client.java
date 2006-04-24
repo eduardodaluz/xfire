@@ -478,11 +478,6 @@ public class Client
                 this.fault = e;
             }
         }
-        finally
-        {
-            if (msg.getAttachments() != null)
-                msg.getAttachments().dispose();
-        }
     }
 
     public void finishReadingMessage(InMessage message, MessageContext context)
