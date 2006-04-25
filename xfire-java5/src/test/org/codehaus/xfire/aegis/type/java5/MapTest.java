@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.collection.MapType;
@@ -28,6 +29,7 @@ public class MapTest
         
         tm = new CustomTypeMapping();
         creator = new Java5TypeCreator();
+        creator.setConfiguration(new Configuration());
         tm.setTypeCreator(creator);
     }
 
@@ -75,6 +77,7 @@ public class MapTest
     {
         CustomTypeMapping tm = new CustomTypeMapping();
         Java5TypeCreator creator = new Java5TypeCreator();
+        creator.setConfiguration(new Configuration());
         tm.setTypeCreator(creator);
         
         Type dto = creator.createType(MapDTO.class);

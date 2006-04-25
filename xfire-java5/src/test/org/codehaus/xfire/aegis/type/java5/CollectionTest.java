@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
@@ -30,6 +31,7 @@ public class CollectionTest
         
         tm = new CustomTypeMapping();
         creator = new Java5TypeCreator();
+        creator.setConfiguration(new Configuration());
         tm.setTypeCreator(creator);
     }
 
@@ -72,6 +74,7 @@ public class CollectionTest
     {
         CustomTypeMapping tm = new CustomTypeMapping();
         Java5TypeCreator creator = new Java5TypeCreator();
+        creator.setConfiguration(new Configuration());
         tm.setTypeCreator(creator);
         
         Type dto = creator.createType(CollectionDTO.class);
@@ -94,6 +97,7 @@ public class CollectionTest
     {
         CustomTypeMapping tm = new CustomTypeMapping();
         Java5TypeCreator creator = new Java5TypeCreator();
+        creator.setConfiguration(new Configuration());
         tm.setTypeCreator(creator);
         
         Type dto = creator.createType(ObjectDTO.class);
