@@ -1,12 +1,19 @@
 package org.codehaus.xfire.spring;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
+import org.apache.xbean.spring.context.impl.XBeanXmlBeanDefinitionReader;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -19,7 +26,7 @@ public class XFireConfigLoader
 
     public ApplicationContext loadContext(String configPath, ApplicationContext parent) throws XFireException
     {
-        ClassPathXmlApplicationContext newCtx = getXFireApplicationContext(configPath, null);
+        ApplicationContext newCtx = getXFireApplicationContext(configPath, null);
 
         return newCtx;
     }
@@ -43,52 +50,49 @@ public class XFireConfigLoader
      * @param parent may be null
      * @throws XFireException  if the configuration file is missing
      */
-    private ClassPathXmlApplicationContext getXFireApplicationContext(String configPath, ApplicationContext parent) throws XFireException
+    private ApplicationContext getXFireApplicationContext(String configPath, ApplicationContext parent) throws XFireException
     {
         if (configPath == null)
         {
             throw new XFireException("Configuration file required");
         }
         
-        ClassPathXmlApplicationContext newCtx = null;
+        boolean isFile = new File(configPath).exists();
+
+        List classpathFiles = new ArrayList();
+        if (!isFile)
+            classpathFiles.add(configPath);
         
-        String configFiles[] = null;
-        
+        GenericApplicationContext ctx = new GenericApplicationContext(parent);
+        XBeanXmlBeanDefinitionReader xmlReader = new XBeanXmlBeanDefinitionReader(ctx, ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
+
         if((parent == null) || !parent.containsBean("xfire"))
         {
-            // Include all xfire definitions (including custom editors)
-            configPath = "org/codehaus/xfire/spring/xfire.xml," + configPath;
+            xmlReader.loadBeanDefinitions(new ClassPathResource("org/codehaus/xfire/spring/xfire.xml"));
         } 
         else 
         {
             // Include only custom editors, because they are nor inherited from springs parent defs.
-            configPath = "org/codehaus/xfire/spring/customEditors.xml," + configPath;
+            xmlReader.loadBeanDefinitions(new ClassPathResource("org/codehaus/xfire/spring/xfire.xml"));
         }
 
-        if(configPath.indexOf(",") != -1)
+        if (isFile)
         {
-            configFiles = configPath.split(",");
-        } 
-        else 
+            xmlReader.loadBeanDefinitions(new FileSystemResource(configPath));
+        }
+        else
         {
-            configFiles = new String[]{configPath};
+            xmlReader.loadBeanDefinitions(new ClassPathResource(configPath));
         }
         
-        if(parent != null)
-        {
-            newCtx = new ClassPathXmlApplicationContext(configFiles, parent);            
-        } 
-        else 
-        {
-            newCtx = new ClassPathXmlApplicationContext(configFiles);
-        }
-
-        XFire xfire = (XFire) newCtx.getBean("xfire");
+        ctx.refresh();
+        
+        XFire xfire = (XFire) ctx.getBean("xfire");
         log.debug("Setting XFire instance: "+xfire);
         
         // TODO: don't like this
         XFireFactory.newInstance().setXFire(xfire);
         
-        return newCtx;
+        return ctx;
     }
 }

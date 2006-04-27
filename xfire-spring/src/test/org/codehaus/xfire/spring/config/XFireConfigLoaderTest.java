@@ -37,6 +37,15 @@ public class XFireConfigLoaderTest
         doAssertions(xfire);
     }
     
+    public void testConfigLoaderWithFilesystem()
+        throws Exception
+    {
+        XFireConfigLoader configLoader = new XFireConfigLoader();
+        XFire xfire = configLoader.loadConfig(getTestFile("src/test/META-INF/xfire/sservices.xml").getAbsolutePath());
+        
+        doAssertions(xfire);
+    }
+        
     public void testConfigLoaderWithParentContext() throws Exception 
     {
     	ServletContext servletCtx = new MockServletContext();
