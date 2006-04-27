@@ -48,6 +48,19 @@ public abstract class AbstractBinding
 
     protected OperationInfo findOperation(Collection operations, List parameters)
     {
+        // first check for exact matches
+        for ( Iterator itr = operations.iterator(); itr.hasNext(); )
+        {
+            OperationInfo o = (OperationInfo) itr.next();
+            List messageParts = o.getInputMessage().getMessageParts();
+            if ( messageParts.size() == parameters.size() )
+            {
+                if (checkExactParameters(messageParts, parameters))
+                    return o;
+            }
+        }
+        
+        // now check for assignable matches
         for ( Iterator itr = operations.iterator(); itr.hasNext(); )
         {
             OperationInfo o = (OperationInfo) itr.next();
@@ -57,11 +70,31 @@ public abstract class AbstractBinding
                 if (checkParameters(messageParts, parameters))
                     return o;
             }
-        }
-        
+        }        
         return null;
     }
-
+    
+    /**
+     * Return true only if the message parts exactly match the classes of the parameters
+     * @param messageParts
+     * @param parameters
+     * @return
+     */
+    private boolean checkExactParameters(List messageParts, List parameters)
+    {
+        Iterator messagePartIterator = messageParts.iterator();
+        for (Iterator parameterIterator = parameters.iterator(); parameterIterator.hasNext();)
+        {
+            Object param = parameterIterator.next();
+            MessagePartInfo mpi = (MessagePartInfo) messagePartIterator.next();            
+            if (!mpi.getTypeClass().equals(param.getClass()))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     private boolean checkParameters(List messageParts, List parameters)
     {
         Iterator messagePartIterator = messageParts.iterator();
