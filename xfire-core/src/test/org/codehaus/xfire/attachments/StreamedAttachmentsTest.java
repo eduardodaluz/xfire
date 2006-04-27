@@ -1,6 +1,7 @@
 package org.codehaus.xfire.attachments;
 
 import java.util.Iterator;
+import java.io.FileInputStream;
 
 import javax.activation.DataHandler;
 
@@ -13,7 +14,7 @@ public class StreamedAttachmentsTest
     public void testText()
         throws Exception
     {
-        StreamedAttachments atts = new StreamedAttachments(getResourceAsStream("mimedata"), 
+        StreamedAttachments atts = new StreamedAttachments(new FileInputStream(getTestFile("src/test/org/codehaus/xfire/attachments/mimedata")), 
                                                            "multipart/related; type=\"application/xop+xml\"; start=\"<soap.xml@xfire.codehaus.org>\"; start-info=\"null; charset=utf-8\"; boundary=\"----=_Part_4_701508.1145579811786\"");
         Attachment soapMessage = atts.getSoapMessage();
         assertNotNull(soapMessage);
@@ -35,7 +36,7 @@ public class StreamedAttachmentsTest
     public void testBoundaryWithoutQuotes()
         throws Exception
     {
-        StreamedAttachments atts = new StreamedAttachments(getResourceAsStream("mimedata2"), 
+        StreamedAttachments atts = new StreamedAttachments(new FileInputStream(getTestFile("src/test/org/codehaus/xfire/attachments/mimedata2")),
                                                            "start=\"<soap.xml@xfire.codehaus.org>\"; boundary=----=_Part_0_1696092.1145592699395");
         Attachment soapMessage = atts.getSoapMessage();
         assertNotNull(soapMessage);
@@ -54,7 +55,7 @@ public class StreamedAttachmentsTest
     public void testText2()
         throws Exception
     {
-        StreamedAttachments atts = new StreamedAttachments(getResourceAsStream("mimedata2"), 
+        StreamedAttachments atts = new StreamedAttachments(new FileInputStream(getTestFile("src/test/org/codehaus/xfire/attachments/mimedata2")),
                                                            "multipart/related; type=\"application/xop+xml\"; start=\"<soap.xml@xfire.codehaus.org>\"; start-info=\"null; charset=utf-8\"; boundary=\"----=_Part_0_1696092.1145592699395\"");
         Attachment soapMessage = atts.getSoapMessage();
         assertNotNull(soapMessage);
