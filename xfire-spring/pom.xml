@@ -53,7 +53,7 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
+      <groupId>org.codehaus.xfire</groupId>
       <artifactId>xbean-spring</artifactId>
     </dependency>
     <dependency>
