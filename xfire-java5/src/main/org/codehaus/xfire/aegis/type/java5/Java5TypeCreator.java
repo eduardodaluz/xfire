@@ -82,7 +82,7 @@ public class Java5TypeCreator
 
     public XmlParamType getXmlParamAnnotation(Method m, int index)
     {
-        if (m.getParameterAnnotations() == null || m.getParameterAnnotations().length < index
+        if (m.getParameterAnnotations() == null || m.getParameterAnnotations().length > index
                 || m.getParameterAnnotations()[index] == null)
             return null;
 
