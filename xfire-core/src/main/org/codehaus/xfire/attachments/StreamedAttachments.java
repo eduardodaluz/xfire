@@ -18,11 +18,15 @@ import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 
+import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.util.CachedOutputStream;
 
 public class StreamedAttachments implements Attachments
 {
+    public static final String ATTACHMENT_DIRECTORY = "attachment-directory";
+    public static final String ATTACHMENT_MEMORY_THRESHOLD = "attachment-memory-threshold";
+    
     private boolean soapMessageRead = false;
     private PushbackInputStream stream;
     private String boundary;
@@ -32,8 +36,14 @@ public class StreamedAttachments implements Attachments
     private Attachment soapMessage;
     private String contentType;
     private List cache = new ArrayList();
+    private MessageContext context;
     
     public StreamedAttachments(InputStream is, String contentType) throws IOException
+    {
+        this(null, is, contentType);
+    }
+    
+    public StreamedAttachments(MessageContext context, InputStream is, String contentType) throws IOException
     {
         int i = contentType.indexOf("boundary=\"");
         int end;
@@ -61,6 +71,8 @@ public class StreamedAttachments implements Attachments
         
         if (!readTillFirstBoundary(stream, boundary.getBytes()))
             throw new IOException("Couldn't find MIME boundary: " + boundary);
+        
+        this.context = context;
     }
 
     public void addPart(Attachment part)
@@ -228,7 +240,15 @@ public class StreamedAttachments implements Attachments
      */
     public File getTempDirectory()
     {
-        return tempDirectory;
+        File td = null;
+        
+        if (context != null)
+            td = (File) context.getContextualProperty(ATTACHMENT_DIRECTORY);
+        
+        if (td == null)
+            td = tempDirectory;
+        
+        return td;
     }
 
     public void setTempDirectory(File tempDirectory)
@@ -243,6 +263,12 @@ public class StreamedAttachments implements Attachments
      */
     public int getThreshold()
     {
+        if (context != null)
+        {
+            Integer t = (Integer) context.getContextualProperty(ATTACHMENT_DIRECTORY);
+            if (t != null) return t.intValue();
+        }
+        
         return threshold;
     }
 
