@@ -31,6 +31,9 @@ public class ArrayType
 {
     private QName componentName;
     private static final Log logger = LogFactory.getLog(ArrayType.class);
+    private long minOccurs = 0;
+    private long maxOccurs = Long.MAX_VALUE;
+    private boolean flat;
     
     public ArrayType()
     {
@@ -57,7 +60,19 @@ public class ArrayType
                 {
                     values.add( compType.readObject(creader, context) );
                 }
+
+                // check max occurs
+                int size = values.size();
+                if (size > maxOccurs)
+                    throw new XFireFault("The number of elements in " + getSchemaType() + 
+                                         " exceeds the maximum of " + maxOccurs, XFireFault.SENDER);
+                
             }
+            
+            // check min occurs
+            if (values.size() < minOccurs)
+                throw new XFireFault("The number of elements in " + getSchemaType() + 
+                                     " does not meet the minimum of " + minOccurs, XFireFault.SENDER);
             
             return makeArray(getComponentType().getTypeClass(), values);
         }
@@ -360,5 +375,35 @@ public class ArrayType
         }
         
         return type;
+    }
+
+    public long getMaxOccurs()
+    {
+        return maxOccurs;
+    }
+
+    public void setMaxOccurs(long maxOccurs)
+    {
+        this.maxOccurs = maxOccurs;
+    }
+
+    public long getMinOccurs()
+    {
+        return minOccurs;
+    }
+
+    public void setMinOccurs(long minOccurs)
+    {
+        this.minOccurs = minOccurs;
+    }
+
+    public boolean isFlat()
+    {
+        return flat;
+    }
+
+    public void setFlat(boolean flat)
+    {
+        this.flat = flat;
     }
 }

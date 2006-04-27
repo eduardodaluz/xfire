@@ -358,6 +358,15 @@ public class XMLTypeCreator extends AbstractTypeCreator
         setComponentType(info, parameter);
         setKeyType(info, parameter);
         setType(info, parameter);
+        
+        String min = parameter.getAttributeValue("minOccurs");
+        if (min != null) info.setMinOccurs(Long.parseLong(min));
+        
+        String max = parameter.getAttributeValue("maxOccurs");
+        if (max != null) info.setMaxOccurs(Long.parseLong(max));
+        
+        String flat = parameter.getAttributeValue("flat");
+        if (flat != null) info.setFlat(Boolean.parseBoolean(flat));
     }
     
     protected void setComponentType(TypeClassInfo info, Element parameter)

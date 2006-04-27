@@ -13,4 +13,19 @@
       <parameter index="0" componentType="java.lang.Double" />
     </method>
   </mapping>
+  
+  <mapping uri="urn:flat-test">
+    <method name="getStrings">
+      <return-type componentType="java.lang.String" flat="true"/>
+    </method>
+    <method name="getDoubles">
+      <return-type componentType="java.lang.Double" flat="true" />
+    </method>
+    <method name="receiveStrings">
+      <parameter index="0" componentType="java.lang.String" flat="true" />
+    </method>
+    <method name="receiveDoubles">
+      <parameter index="0" componentType="java.lang.Double" flat="true" />
+    </method>
+  </mapping>
 </mappings>

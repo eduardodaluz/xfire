@@ -180,6 +180,12 @@ public abstract class AbstractTypeCreator
         ArrayType type = new ArrayType();
         type.setSchemaType(createArrayQName(info));
         type.setTypeClass(info.getTypeClass());
+        
+        if (info.getMinOccurs() != -1) type.setMinOccurs(info.getMinOccurs());
+        if (info.getMaxOccurs() != -1) type.setMaxOccurs(info.getMaxOccurs());
+        
+        type.setFlat(info.isFlat());
+        
         return type;
     }
     
@@ -209,7 +215,12 @@ public abstract class AbstractTypeCreator
         type.setSchemaType(name);
 
         type.setTypeClass(info.getTypeClass());
-
+        
+        if (info.getMinOccurs() != -1) type.setMinOccurs(info.getMinOccurs());
+        if (info.getMaxOccurs() != -1) type.setMaxOccurs(info.getMaxOccurs());
+        
+        type.setFlat(info.isFlat());
+        
         return type;
     }
 
@@ -404,6 +415,10 @@ public abstract class AbstractTypeCreator
 
         String description;
 
+        long minOccurs = -1;
+        long maxOccurs = -1;
+        boolean flat = false;
+        
         public String getDescription()
         {
             return description;
@@ -482,6 +497,36 @@ public abstract class AbstractTypeCreator
         public void setMappedName(QName mappedName)
         {
             this.mappedName = mappedName;
+        }
+
+        public long getMaxOccurs()
+        {
+            return maxOccurs;
+        }
+
+        public void setMaxOccurs(long maxOccurs)
+        {
+            this.maxOccurs = maxOccurs;
+        }
+
+        public long getMinOccurs()
+        {
+            return minOccurs;
+        }
+
+        public void setMinOccurs(long minOccurs)
+        {
+            this.minOccurs = minOccurs;
+        }
+
+        public boolean isFlat()
+        {
+            return flat;
+        }
+
+        public void setFlat(boolean flat)
+        {
+            this.flat = flat;
         }
     }
 }

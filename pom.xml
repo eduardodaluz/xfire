@@ -101,11 +101,16 @@
       </activation>
       <modules>
         <module>xfire-all</module>
-        <module>xfire-distribution</module>
         <module>xfire-generator</module>
         <module>xfire-java5</module>
         <module>xfire-jaxb2</module>
         <module>xfire-jaxws</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>release</id>
+      <modules>
+        <module>xfire-distribution</module>
       </modules>
     </profile>
   </profiles>
