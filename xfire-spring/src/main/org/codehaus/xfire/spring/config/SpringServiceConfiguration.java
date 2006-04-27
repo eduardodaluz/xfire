@@ -156,9 +156,9 @@ public class SpringServiceConfiguration
     public Boolean isOperation(Method method)
     {
         MethodBean op = getMethodBean(method);
-        if (op != null)
+        if (op != null && op.isExclude())
         {
-            return new Boolean(!op.isExclude());
+            return Boolean.FALSE;
         }
         
         return super.isOperation(method);
