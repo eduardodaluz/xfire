@@ -44,10 +44,16 @@ public class Jsr181HandlerMapping
     protected void initApplicationContext()
             throws BeansException
     {
+        AegisBindingProvider provider;
+        if (typeMappingRegistry == null)
+            provider = new AegisBindingProvider();
+        else
+            provider = new AegisBindingProvider(typeMappingRegistry);
+        
         AnnotationServiceFactory serviceFactory =
                 new AnnotationServiceFactory(webAnnotations,
                                              xFire.getTransportManager(),
-                                             new AegisBindingProvider(typeMappingRegistry));
+                                             provider);
 
         ApplicationContext context = getApplicationContext();
  
