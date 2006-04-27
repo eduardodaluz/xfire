@@ -1,8 +1,8 @@
 package org.codehaus.xfire.service.binding;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +48,6 @@ import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.xfire.util.ParamReader;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
@@ -88,6 +87,8 @@ public class ObjectServiceFactory
     private Set soap11Transports = new HashSet();
     private Set soap12Transports = new HashSet();
     
+    private List serviceConfigurations = new ArrayList();
+    
     /**
      * Initializes a new instance of the <code>ObjectServiceFactory</code>.
      * Uses the XFireFactory to obtain an instance of the TransportManager.
@@ -119,6 +120,10 @@ public class ObjectServiceFactory
         this.transportManager = transportManager;
         setStyle(SoapConstants.STYLE_WRAPPED);
         setUse(SoapConstants.USE_LITERAL);
+        
+        DefaultServiceConfiguration config = new DefaultServiceConfiguration();
+        config.setServiceFactory(this);
+        serviceConfigurations.add(config);
         
         soap11Transports.add(SoapHttpTransport.SOAP11_HTTP_BINDING);
         soap11Transports.add(LocalTransport.BINDING_ID);
@@ -646,12 +651,14 @@ public class ObjectServiceFactory
 
     protected boolean isValidMethod(final Method method)
     {
-        if(ignoredClasses.contains(method.getDeclaringClass().getName())) return false;
-
-        final int modifiers = method.getModifiers();
-
-        return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
-    }
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            Boolean b = c.isOperation(method);
+            if (b != null) return b.booleanValue();
+        }
+        return true;
+    }    
 
     protected OperationInfo addOperation(Service endpoint, final Method method, String style)
     {
@@ -723,28 +730,56 @@ public class ObjectServiceFactory
 
     protected boolean isOutParam(Method method, int j)
     {
-        return false;
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            Boolean b = c.isOutParam(method, j);
+            if (b != null) return b.booleanValue();
+        }
+        return true;
     }
 
     protected boolean isInParam(Method method, int j)
     {
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            Boolean b = c.isInParam(method, j);
+            if (b != null) return b.booleanValue();
+        }
         return true;
     }
     
     protected QName createInputMessageName(final OperationInfo op)
     {
-        return new QName(op.getService().getPortType().getNamespaceURI(), op.getName() + "Request");
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            QName q = c.getInputMessageName(op);
+            if (q != null) return q;
+        }
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
 
     protected QName createOutputMessageName(final OperationInfo op)
     {
-        return new QName(op.getService().getPortType().getNamespaceURI(), op.getName() + "Response");
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            QName q = c.getOutputMessageName(op);
+            if (q != null) return q;
+        }
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
     
     protected boolean hasOutMessage(String mep)
     {
-        if (mep.equals(SoapConstants.MEP_IN)) return false;
-        
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            Boolean b = c.hasOutMessage(mep);
+            if (b != null) return b.booleanValue();
+        }
         return true;
     }
     
@@ -807,36 +842,35 @@ public class ObjectServiceFactory
 
     protected QName getFaultName(Service service, OperationInfo o, Class exClass, Class beanClass)
     {
-        if (FaultInfoException.class.isAssignableFrom(exClass))
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
         {
-            Method method;
-            try
-            {
-                method = exClass.getMethod("getFaultName", new Class[0]);
-                QName name = (QName) method.invoke(null, new Object[0]);
-                return name;
-            }
-            catch (NoSuchMethodException e)
-            {
-            }
-            catch (Exception e)
-            {
-                throw new XFireRuntimeException("Couldn't access getFaultName method.", e);
-            }
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            QName q = c.getFaultName(service, o, exClass, beanClass);
+            if (q != null) return q;
         }
-        
-        String name = ServiceUtils.makeServiceNameFromClassName(beanClass);
-        return new QName(service.getTargetNamespace(), name);
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
     
     protected String getAction(OperationInfo op)
     {
-        return "";
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            String s = c.getAction(op);
+            if (s != null) return s;
+        }
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
 
     protected boolean isHeader(Method method, int j)
     {
-        return false;
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            Boolean b = c.isHeader(method, j);
+            if (b != null) return b.booleanValue();
+        }
+        return true;
     }
 
     /**
@@ -850,78 +884,64 @@ public class ObjectServiceFactory
      */
     protected String getOperationName(ServiceInfo service, Method method)
     {
-        if (service.getOperation(method.getName()) == null)
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
         {
-            return method.getName();
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            String s = c.getOperationName(service, method);
+            if (s != null) return s;
         }
-
-        int i = 1;
-        while (true)
-        {
-            String name = method.getName() + i;
-            if (service.getOperation(name) == null)
-            {
-                return name;
-            }
-            else
-            {
-                i++;
-            }
-        }
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
 
     protected String getMEP(final Method method)
     {
-        if (isVoidOneWay() && method.getReturnType().equals(void.class))
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
         {
-            return SoapConstants.MEP_IN;
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            String s = c.getMEP(method);
+            if (s != null) return s;
         }
-        return SoapConstants.MEP_ROBUST_IN_OUT;
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
 
     protected boolean isAsync(final Method method)
     {
-        return false;
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            Boolean b = c.isAsync(method);
+            if (b != null) return b.booleanValue();
+        }
+        return true;
     }
 
-    protected QName getInParameterName(final Service endpoint,
+    protected QName getInParameterName(final Service service,
                                        final OperationInfo op,
                                        final Method method,
                                        final int paramNumber,
                                        final boolean doc)
     {
-        QName suggestion = getBindingProvider().getSuggestedName(endpoint, op, paramNumber);
-        
-        if (suggestion != null) return suggestion;
-        
-        String paramName = "";
-        String[] names = ParamReader.getParameterNamesFromDebugInfo(method); 
-        
-        //get the spcific parameter name from the parameter Number
-        if (names != null && names[paramNumber] != null)
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
         {
-            paramName = names[paramNumber];
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            QName q = c.getInParameterName(service, op, method, paramNumber, doc);
+            if (q != null) return q;
         }
-        else
-        {
-            paramName = "in" + paramNumber;        
-        }
-
-        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), paramName);
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
 
-    protected QName getOutParameterName(final Service endpoint, 
+    protected QName getOutParameterName(final Service service, 
                                         final OperationInfo op, 
                                         final Method method, 
                                         final boolean doc)
     {
-        QName suggestion = getBindingProvider().getSuggestedName(endpoint, op, -1);
-        
-        if (suggestion != null) return suggestion;
-        
-        String pName = (doc) ? method.getName() : "";
-        
-        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), pName + "out");
+        for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
+        {
+            ServiceConfiguration c = (ServiceConfiguration) itr.next();
+            QName q = c.getOutParameterName(service, op, method, doc);
+            if (q != null) return q;
+        }
+        throw new IllegalStateException("ServiceConfiguration must provide a value!");
     }
 
     public TransportManager getTransportManager()
@@ -998,4 +1018,19 @@ public class ObjectServiceFactory
     {
         this.bindingCreationEnabled = bindingCreationEnabled;
     }
+
+    public Set getIgnoredClasses()
+    {
+        return ignoredClasses;
+    }
+
+    public List getServiceConfigurations()
+    {
+        return serviceConfigurations;
+    }
+
+    public void setServiceConfigurations(List serviceConfigurations)
+    {
+        this.serviceConfigurations = serviceConfigurations;
+    }    
 }
