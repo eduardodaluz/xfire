@@ -5,26 +5,45 @@ import java.util.Iterator;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.ServiceInfo;
 
+/**
+ * Addressing information for an operation. 
+ * 
+ * Warning: This class may change in the future!
+ * 
+ * @author Dan Diephouse
+ */
 public class AddressingOperationInfo
 {
     private String inAction;
     private String outAction;
+    private String to;
+    private EndpointReference replyTo;
+    private EndpointReference faultTo;
+    private EndpointReference from;
+    
     private OperationInfo operationInfo;
     
     public final static String ADDRESSING_OPERATION_KEY = "addressingOperationInfo";
+    
+    public AddressingOperationInfo() {}
     
     public AddressingOperationInfo(String inAction, OperationInfo op)
     {
         this(inAction, inAction + "Ack", op);
     }
-
-    public AddressingOperationInfo(String inAction, String outAction, OperationInfo op)
+    
+    public AddressingOperationInfo(String inAction, String outAction, String to, OperationInfo op)
     {
         this.inAction = inAction;
         this.outAction = outAction;
-        
+        this.to=to;
         op.setProperty(ADDRESSING_OPERATION_KEY, this);
         this.operationInfo = op;
+    }
+    
+    public AddressingOperationInfo(String inAction, String outAction, OperationInfo op)
+    {
+        this(inAction, outAction, null, op);
     }
 
     public static AddressingOperationInfo getAddressingOperationInfo(OperationInfo op)
@@ -75,17 +94,28 @@ public class AddressingOperationInfo
     {
         return inAction;
     }
+    
     public void setInAction(String inAction)
     {
         this.inAction = inAction;
     }
+    
     public String getOutAction()
     {
         return outAction;
     }
+    
     public void setOutAction(String outAction)
     {
         this.outAction = outAction;
+    }
+    public String getTo()
+    {
+        return to;
+    }
+    public void setTo(String to)
+    {
+        this.to = to;
     }
 
     public OperationInfo getOperationInfo()
@@ -98,4 +128,33 @@ public class AddressingOperationInfo
         this.operationInfo = operationInfo;
     }
 
+    public EndpointReference getFaultTo()
+    {
+        return faultTo;
+    }
+
+    public void setFaultTo(EndpointReference faultTo)
+    {
+        this.faultTo = faultTo;
+    }
+
+    public EndpointReference getFrom()
+    {
+        return from;
+    }
+
+    public void setFrom(EndpointReference from)
+    {
+        this.from = from;
+    }
+
+    public EndpointReference getReplyTo()
+    {
+        return replyTo;
+    }
+
+    public void setReplyTo(EndpointReference replyTo)
+    {
+        this.replyTo = replyTo;
+    }
 }
