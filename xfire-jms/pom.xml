@@ -37,7 +37,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
+      <groupId>org.codehaus.xfire</groupId>
       <artifactId>xbean-spring</artifactId>
     </dependency>
     <dependency>
