@@ -66,7 +66,7 @@ public class AnnotationServiceConfiguration
         if (webAnnotations.hasWebMethodAnnotation(method))
         {
             WebMethodAnnotation ann = webAnnotations.getWebMethodAnnotation(method);
-            return new Boolean(!ann.isExclude());
+            if (ann.isExclude()) return Boolean.FALSE;
         }
         
         // All methods on endpoint interfaces are valid WebMethods.
