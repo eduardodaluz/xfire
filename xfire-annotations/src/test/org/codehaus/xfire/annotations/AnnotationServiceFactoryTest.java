@@ -71,9 +71,12 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.setDefaultReturnValue(wma);
 
         webAnnotations.hasOnewayAnnotation(echoMethod);
-        webAnnotationsControl.setDefaultReturnValue(true);
+        webAnnotationsControl.setDefaultReturnValue(false);
 
         webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        webAnnotationsControl.setDefaultReturnValue(false);
+
+        webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setDefaultReturnValue(false);
 
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
@@ -150,22 +153,19 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
         webAnnotationsControl.setReturnValue(false);
-        
+
+        webAnnotations.hasWebResultAnnotation(asyncMethod);
+        webAnnotationsControl.setDefaultReturnValue(false);
+
         Method echoMethod = EchoServiceImpl.class.getMethod("echo", new Class[]{String.class});
 
         webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(false);
-        
+        webAnnotationsControl.setDefaultReturnValue(false);
+
+        webAnnotations.hasWebResultAnnotation(echoMethod);
+        webAnnotationsControl.setDefaultReturnValue(false);
+
         echoMethod = EchoService.class.getMethod("echo", new Class[]{String.class});
-        System.out.println(echoMethod);
-        webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
-        webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
-        webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
-        webAnnotations.hasWebMethodAnnotation(echoMethod);
-        webAnnotationsControl.setReturnValue(true);
 
         WebMethodAnnotation wma = new WebMethodAnnotation();
         wma.setAction("test");

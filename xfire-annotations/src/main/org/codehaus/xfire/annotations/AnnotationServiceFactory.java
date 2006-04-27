@@ -13,14 +13,11 @@ import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
-import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
-import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -60,6 +57,10 @@ public class AnnotationServiceFactory
     {
         super(transportManager, new AegisBindingProvider());
         this.webAnnotations = getAnnotations();
+        
+        AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
+        annotationConfig.setWebAnnotations(webAnnotations);
+        getServiceConfigurations().add(0, annotationConfig);
     }
 
     public AnnotationServiceFactory(WebAnnotations webAnnotations,
@@ -67,6 +68,10 @@ public class AnnotationServiceFactory
     {
         super(transportManager, new AegisBindingProvider());
         this.webAnnotations = webAnnotations;
+
+        AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
+        annotationConfig.setWebAnnotations(webAnnotations);
+        getServiceConfigurations().add(0, annotationConfig);
     }
     
     /**
@@ -83,6 +88,10 @@ public class AnnotationServiceFactory
     {
         super(transportManager, provider);
         this.webAnnotations = webAnnotations;
+
+        AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
+        annotationConfig.setWebAnnotations(webAnnotations);
+        getServiceConfigurations().add(0, annotationConfig);
     }
 
     protected WebAnnotations getAnnotations()
@@ -322,176 +331,5 @@ public class AnnotationServiceFactory
         }
 
         return portType;
-    }
-
-    protected String getOperationName(ServiceInfo service, Method method)
-    {
-    	if (webAnnotations.hasWebMethodAnnotation(method)) 
-    	{
-            WebMethodAnnotation wma = webAnnotations.getWebMethodAnnotation(method);
-            if (wma.getOperationName().length() > 0)
-                return wma.getOperationName();
-    	}
-        
-        return super.getOperationName(service, method);
-    }
-    
-    protected String getAction(OperationInfo op)
-    {
-        if (webAnnotations.hasWebMethodAnnotation(op.getMethod()))
-        {
-            WebMethodAnnotation wma = webAnnotations.getWebMethodAnnotation(op.getMethod());
-            if (wma.getAction().length() > 0)
-                return wma.getAction();
-        }
-        
-        return super.getAction(op);
-    }
-
-    /**
-     * Returns <code>true</code> if the specified method is valid for a SOAP operation.
-     *
-     * @param method the method.
-     * @return <code>true</code> if valid; <code>false</code> otherwise.
-     */
-    protected boolean isValidMethod(Method method)
-    {
-        if (!super.isValidMethod(method))
-            return false;
-        
-        // All methods on endpoint interfaces are valid WebMethods.
-        if (method.getDeclaringClass().isInterface())
-            return true;
-
-        if (webAnnotations.hasWebMethodAnnotation(method))
-        {
-            WebMethodAnnotation ann = webAnnotations.getWebMethodAnnotation(method);
-            return !ann.isExclude();
-        }
-        
-        return false;
-    }
-
-    protected boolean isHeader(Method method, int paramNumber)
-    {
-        if (paramNumber != -1)
-        {
-            if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
-            {
-                final WebParamAnnotation webParamAnnotation = 
-                    webAnnotations.getWebParamAnnotation(method, paramNumber);
-                
-                return webParamAnnotation.isHeader();
-            }
-        }
-
-        return super.isHeader(method, paramNumber);
-    }
-    
-    protected boolean isInParam(Method method, int j)
-    {
-        if (webAnnotations.hasWebParamAnnotation(method, j))
-        {
-            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
-
-            return webParamAnnotation.getMode() == WebParamAnnotation.MODE_IN ||
-                webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT;
-        }
-        else
-        {
-            return super.isInParam(method, j);
-        }
-    }
-    
-    protected boolean isOutParam(Method method, int j)
-    {
-        if (webAnnotations.hasWebParamAnnotation(method, j))
-        {
-            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
-
-            return webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT ||
-                webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT;
-        }
-        else
-        {
-            return super.isOutParam(method, j);
-        }
-    }
-
-    protected QName getInParameterName(Service endpoint, OperationInfo op, Method method, int paramNumber, boolean doc)
-    {
-        if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
-        {
-            final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, paramNumber);
-
-            String name = webParamAnnotation.getName();
-            if (name == null || name.length() == 0)
-            {
-                name = super.getInParameterName(endpoint, op, method, paramNumber, doc).getLocalPart();
-            }
-            
-            String ns = webParamAnnotation.getTargetNamespace();
-
-            if (ns == null || ns.length() == 0) 
-            {
-                ns = endpoint.getTargetNamespace();
-            }
-
-            return new QName(ns, name);
-        }
-        else
-        {
-            return super.getInParameterName(endpoint, op, method, paramNumber, doc);
-        }
-    }
-
-    protected QName getOutParameterName(Service endpoint, OperationInfo op, Method method, boolean doc)
-    {
-        if (webAnnotations.hasWebResultAnnotation(method))
-        {
-            final WebResultAnnotation webResultAnnotation = webAnnotations.getWebResultAnnotation(method);
-
-            String name = webResultAnnotation.getName();
-            if (name == null || name.length() == 0)
-            {
-                name = super.getOutParameterName(endpoint, op, method, doc).getLocalPart();
-            }
-            
-            String ns = webResultAnnotation.getTargetNamespace();
-
-            if (ns == null || ns.length() == 0)
-            {
-                ns = endpoint.getTargetNamespace();
-            }
-
-            return new QName(ns, name);
-        }
-        else
-        {
-            return super.getOutParameterName(endpoint, op, method, doc);
-        }
-    }
-
-    protected boolean isAsync(Method method)
-    {
-        boolean oneway = webAnnotations.hasOnewayAnnotation(method);
-        
-        if (oneway && !method.getReturnType().equals(void.class))
-        {
-            throw new AnnotationException("Method " + method.getName() + 
-                                          " is marked as Oneway, but does not return void!");
-        }
-        
-        return oneway;
-    }
-
-    protected String getMEP(Method method)
-    {
-        if (webAnnotations.hasOnewayAnnotation(method))
-        {
-            return SoapConstants.MEP_IN;
-        }
-        
-        return super.getMEP(method);
     }
 }
