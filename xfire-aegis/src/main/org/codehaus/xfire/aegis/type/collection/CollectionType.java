@@ -32,18 +32,7 @@ public class CollectionType
     {
         try
         {
-            Type compType = getComponentType();
-            
-            Collection values = createCollection();
-            
-            while (reader.hasMoreElementReaders())
-            {
-                MessageReader childReader = reader.getNextElementReader();
-                
-                values.add(compType.readObject(childReader, context));
-            }
-            
-            return values;
+            return readCollection(reader, context);
         }
         catch (IllegalArgumentException e)
         {

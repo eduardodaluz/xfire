@@ -13,16 +13,31 @@
       <parameter index="0" componentType="java.lang.Double" />
     </method>
   </mapping>
-  
+
+  <mapping uri="urn:min-max-test">
+    <method name="getStrings">
+      <return-type componentType="java.lang.String" />
+    </method>
+    <method name="getDoubles">
+      <return-type componentType="java.lang.Double" />
+    </method>
+    <method name="receiveStrings">
+      <parameter index="0" componentType="java.lang.String" minOccurs="1" maxOccurs="4" />
+    </method>
+    <method name="receiveDoubles">
+      <parameter index="0" componentType="java.lang.Double" />
+    </method>
+  </mapping>
+
   <mapping uri="urn:flat-test">
     <method name="getStrings">
-      <return-type componentType="java.lang.String" flat="true"/>
+      <return-type componentType="java.lang.String" flat="true" />
     </method>
     <method name="getDoubles">
       <return-type componentType="java.lang.Double" flat="true" />
     </method>
     <method name="receiveStrings">
-      <parameter index="0" componentType="java.lang.String" flat="true" />
+      <parameter index="0" componentType="java.lang.String" flat="true" minOccurs="1" maxOccurs="4" />
     </method>
     <method name="receiveDoubles">
       <parameter index="0" componentType="java.lang.Double" flat="true" />

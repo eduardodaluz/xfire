@@ -2,8 +2,8 @@ package org.codehaus.xfire.aegis.type.basic;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -44,35 +44,7 @@ public class ArrayType
     {
         try
         {
-            Type compType = getComponentType();
-            
-            List values = new ArrayList();
-            
-            while ( reader.hasMoreElementReaders() )
-            {
-                MessageReader creader = reader.getNextElementReader();
-                if (creader.isXsiNil())
-                {    
-                    values.add(null);
-                    creader.readToEnd();
-                }
-                else
-                {
-                    values.add( compType.readObject(creader, context) );
-                }
-
-                // check max occurs
-                int size = values.size();
-                if (size > maxOccurs)
-                    throw new XFireFault("The number of elements in " + getSchemaType() + 
-                                         " exceeds the maximum of " + maxOccurs, XFireFault.SENDER);
-                
-            }
-            
-            // check min occurs
-            if (values.size() < minOccurs)
-                throw new XFireFault("The number of elements in " + getSchemaType() + 
-                                     " does not meet the minimum of " + minOccurs, XFireFault.SENDER);
+            Collection values = readCollection(reader, context);
             
             return makeArray(getComponentType().getTypeClass(), values);
         }
@@ -81,8 +53,48 @@ public class ArrayType
             throw new XFireRuntimeException("Illegal argument.", e);
         }
     }
+    
+    protected Collection createCollection()
+    {
+        return new ArrayList();
+    }
+    
+    protected Collection readCollection(MessageReader reader, MessageContext context)
+        throws XFireFault
+    {
+        Type compType = getComponentType();
+        
+        Collection values = createCollection();
+        
+        while ( reader.hasMoreElementReaders() )
+        {
+            MessageReader creader = reader.getNextElementReader();
+            if (creader.isXsiNil())
+            {    
+                values.add(null);
+                creader.readToEnd();
+            }
+            else
+            {
+                values.add( compType.readObject(creader, context) );
+            }
 
-    protected Object makeArray(Class arrayType, List values)
+            // check max occurs
+            int size = values.size();
+            if (size > maxOccurs)
+                throw new XFireFault("The number of elements in " + getSchemaType() + 
+                                     " exceeds the maximum of " + maxOccurs, XFireFault.SENDER);
+            
+        }
+
+        // check min occurs
+        if (values.size() < minOccurs)
+            throw new XFireFault("The number of elements in " + getSchemaType() + 
+                                 " does not meet the minimum of " + minOccurs, XFireFault.SENDER);
+        return values;
+    }
+
+    protected Object makeArray(Class arrayType, Collection values)
     {
         if (Integer.TYPE.equals(arrayType))
         {
@@ -299,8 +311,12 @@ public class ArrayType
                 element.setAttribute(new Attribute("nillable", "true"));
             }
 
-            element.setAttribute(new Attribute("minOccurs", "0"));
-            element.setAttribute(new Attribute("maxOccurs", "unbounded"));
+            element.setAttribute(new Attribute("minOccurs", new Long(getMinOccurs()).toString()));
+            
+            if (maxOccurs == Long.MAX_VALUE)
+                element.setAttribute(new Attribute("maxOccurs", "unbounded"));
+            else
+                element.setAttribute(new Attribute("maxOccurs", new Long(getMaxOccurs()).toString()));
             
         }
         catch (IllegalArgumentException e)
@@ -404,6 +420,7 @@ public class ArrayType
 
     public void setFlat(boolean flat)
     {
+        setWriteOuter(!flat);
         this.flat = flat;
     }
 }

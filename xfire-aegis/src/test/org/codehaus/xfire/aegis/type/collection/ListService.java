@@ -3,8 +3,6 @@ package org.codehaus.xfire.aegis.type.collection;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 public class ListService
 {
     public List getStrings()
@@ -27,13 +25,9 @@ public class ListService
     
     public void receiveStrings(List strings)
     {
-        Assert.assertNotNull(strings);
-        Assert.assertEquals(1, strings.size());
     }
     
     public void receiveDoubles(List doubles)
     {
-        Assert.assertNotNull(doubles);
-        Assert.assertEquals(1, doubles.size());
     }
 }

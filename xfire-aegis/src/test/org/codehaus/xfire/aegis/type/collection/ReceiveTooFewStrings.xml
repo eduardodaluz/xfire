@@ -1,0 +1,10 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <receiveStrings xmlns="urn:min-max-test">
+    <strings xmlns:s="http://collection.type.aegis.xfire.codehaus.org">
+
+    </strings>
+  </receiveStrings>
+ </env:Body>
+</env:Envelope>
