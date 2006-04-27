@@ -20,7 +20,6 @@ import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * @author tomeks
@@ -42,11 +41,9 @@ public class XFireConfigLoaderTest
     {
     	ServletContext servletCtx = new MockServletContext();
     	ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext(new String[] {"org/codehaus/xfire/spring/xfire.xml"});
-    	Object obj =  appCtx.getBean("xfire.serviceFactory");
-    	servletCtx.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, appCtx);
-    	
+
         XFireConfigLoader configLoader = new XFireConfigLoader();
-        XFire xfire = configLoader.loadConfig("META-INF/xfire/sservices.xml", servletCtx);
+        XFire xfire = configLoader.loadConfig("META-INF/xfire/sservices.xml", appCtx);
 
         doAssertions(xfire);
     }

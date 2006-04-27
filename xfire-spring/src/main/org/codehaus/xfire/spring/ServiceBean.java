@@ -19,6 +19,7 @@ import org.codehaus.xfire.spring.config.AbstractSoapBindingBean;
 import org.codehaus.xfire.spring.config.EndpointBean;
 import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
+import org.codehaus.xfire.spring.config.SpringServiceConfiguration;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -78,6 +79,8 @@ public class ServiceBean
 
     private String wsdlURL;
     
+    private List operations;
+    
     /** Some properties to make it easier to work with ObjectServiceFactory */
 
     protected boolean createDefaultBindings = true;
@@ -107,6 +110,13 @@ public class ServiceBean
             serviceFactory = new ObjectServiceFactory(xFire.getTransportManager(),
                                                       new AegisBindingProvider());
         }
+
+        ObjectServiceFactory osf = (ObjectServiceFactory) serviceFactory;
+
+        SpringServiceConfiguration springConfig = new SpringServiceConfiguration();
+        springConfig.setMethods(operations);
+        osf.getServiceConfigurations().add(0, springConfig);
+
 
         /**
          * Use the ServiceInterface if that is set, otherwise use the Class of 
@@ -148,6 +158,9 @@ public class ServiceBean
         xfireService = serviceFactory.create(intf, name, namespace, properties);
         xfireService.setExecutor(executor);
         
+        // dirty hack to remove our ServiceConfiguration
+        osf.getServiceConfigurations().remove(springConfig);
+        
         if (bindings != null && serviceFactory instanceof ObjectServiceFactory)
         {
             initializeBindings();
@@ -158,9 +171,6 @@ public class ServiceBean
             logger.info("Exposing service with name " + xfireService.getName());
         }
 
-        // Register the service
-        xFire.getServiceRegistry().register(xfireService);
-        
         if (invoker != null)
         {
             xfireService.setInvoker(invoker);
@@ -197,6 +207,9 @@ public class ServiceBean
         {
             xfireService.setWSDLWriter(new ResourceWSDL(wsdlURL));
         }
+        
+        // Register the service
+        xFire.getServiceRegistry().register(xfireService);
     }
 
     protected void initializeBindings()
@@ -472,5 +485,20 @@ public class ServiceBean
     public void setWsdlURL(String wsdlURL)
     {
         this.wsdlURL = wsdlURL;
-    }   
+    }
+
+    /**
+     * @org.apache.xbean.FlatCollection childElement="method"
+     * @return
+     */
+    public List getMethods()
+    {
+        return operations;
+    }
+
+    public void setMethods(List operations)
+    {
+        this.operations = operations;
+    }
+    
 }

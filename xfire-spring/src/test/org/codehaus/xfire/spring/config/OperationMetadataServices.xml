@@ -1,0 +1,14 @@
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+  
+  <service id="ConcatService">
+    <name>ConcatService</name>
+    <namespace>urn:concat-service</namespace>
+    <serviceClass>org.codehaus.xfire.spring.config.ConcatService</serviceClass>
+    <method name="concat" operationName="concatThreeStrings" xmlns:c="urn:test">
+      <parameter index="1" clazz="java.lang.String" name="c:two"/>
+      <parameter index="2" clazz="java.lang.String" name="c:three"/>
+    </method>
+    <method name="excluded" exclude="true"/>
+  </service>
+  
+</beans>
