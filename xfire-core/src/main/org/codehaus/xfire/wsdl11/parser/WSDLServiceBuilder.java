@@ -493,7 +493,7 @@ public class WSDLServiceBuilder
             if (hasAttributes((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
                 return false;
             
-            if (!hasOneElement((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
+            if (!isWrappedResponse((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
                 return false;
         }
 
@@ -501,9 +501,11 @@ public class WSDLServiceBuilder
     }
     
     
-    private static boolean hasOneElement(XmlSchemaComplexType type)
+    private static boolean isWrappedResponse(XmlSchemaComplexType type)
     {
-        if (type.getParticle() != null && type.getParticle() instanceof XmlSchemaSequence)
+        if (type.getParticle() == null) return true;
+        
+        if (type.getParticle() instanceof XmlSchemaSequence)
         {
             XmlSchemaSequence seq = (XmlSchemaSequence) type.getParticle();
             XmlSchemaObjectCollection items = seq.getItems();
@@ -512,8 +514,9 @@ public class WSDLServiceBuilder
                 return true;
             else if (items.getCount() > 1) 
                 return false;
-             
+
             XmlSchemaObject o = items.getItem(0);
+            System.out.print(o);
             if (!(o instanceof XmlSchemaElement)) return false;
             
             XmlSchemaElement el = (XmlSchemaElement) o;
