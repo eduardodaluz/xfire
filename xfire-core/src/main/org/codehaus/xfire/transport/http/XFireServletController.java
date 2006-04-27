@@ -265,8 +265,6 @@ public class XFireServletController
             message.setAttachments(atts);
             
             channel.receive(context, message);
-            
-            atts.dispose();
         }
         else
         {

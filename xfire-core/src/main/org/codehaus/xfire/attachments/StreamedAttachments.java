@@ -164,30 +164,7 @@ public class StreamedAttachments implements Attachments
             
             cache.add(cos);
             
-            DataSource source = new DataSource() {
-
-                public String getContentType()
-                {
-                    return ct;
-                }
-
-                public InputStream getInputStream()
-                    throws IOException
-                {
-                    return cos.getInputStream();
-                }
-
-                public String getName()
-                {
-                    return null;
-                }
-
-                public OutputStream getOutputStream()
-                    throws IOException
-                {
-                    throw new UnsupportedOperationException();
-                }                
-            };
+            DataSource source = new AttachmentDataSource(ct, cos);
             
             DataHandler dh = new DataHandler(source);
             String id = headers.getHeader("Content-ID", null);

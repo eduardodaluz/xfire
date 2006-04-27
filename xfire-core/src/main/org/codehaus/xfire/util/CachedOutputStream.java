@@ -114,6 +114,11 @@ public class CachedOutputStream extends OutputStream
         currentStream.write(b);
     }
     
+    public File getTempFile()
+    {
+        return tempFile;
+    }
+    
     public InputStream getInputStream()
     {
         if (inmem)
