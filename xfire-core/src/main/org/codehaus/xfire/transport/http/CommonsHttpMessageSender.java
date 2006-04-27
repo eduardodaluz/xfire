@@ -45,6 +45,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private HttpClient client;
 
+    private HttpState state;
+
     public static final String HTTP_CLIENT_PARAMS = "httpClient.params";
     public static final String USER_AGENT =  
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
@@ -97,7 +99,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         
         // Pull the HttpState from the context if possible. Otherwise create
         // one in the ThreadLocal
-        HttpState state = (HttpState) context.getContextualProperty(HTTP_STATE);
+        state = (HttpState) context.getContextualProperty(HTTP_STATE);
         if (state == null) state = getHttpState();
         
         postMethod = new PostMethod(getUri());
@@ -161,7 +163,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         
         getMethod().setRequestEntity(requestEntity);
         
-        client.executeMethod(null, postMethod, getHttpState() );
+        client.executeMethod(null, postMethod, state);
     }
 
     public boolean hasResponse()
