@@ -45,10 +45,6 @@ public class ChannelInterceptor implements MethodInterceptor
             serviceStat.setLastResponseTime(new Long(res));
             serviceStat.setTotalRequestCount();
         }
-        else if (m.getName().equals("createFaultHandler"))
-        {
-            return createFaultHandler();
-        }
         
         return retVal;
     }

@@ -58,6 +58,10 @@ public class TransportInterceptor implements MethodInterceptor
                 throw new XFireRuntimeException("Couldn't instantiate MBean transport.", e1);
             }
         }
+        else if (m.getName().equals("close"))
+        {
+            channels.remove(c);
+        }
         
         return c;
     }
