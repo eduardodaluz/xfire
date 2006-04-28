@@ -30,7 +30,7 @@ public class WSS4JOutHandlerTest
         ctx.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
         ctx.setProperty(WSHandlerConstants.SIG_PROP_FILE, "META-INF/xfire/outsecurity.properties");
         ctx.setProperty(WSHandlerConstants.USER, "username");
-        ctx.setProperty("password", "userSecretePass");
+        ctx.setProperty("password", "myAliasPassword");
         handler.invoke(ctx);
         
         assertValid(doc, "//wsse:Security");
@@ -54,8 +54,8 @@ public class WSS4JOutHandlerTest
         ctx.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.ENCRYPT);
         ctx.setProperty(WSHandlerConstants.SIG_PROP_FILE, "META-INF/xfire/outsecurity.properties");
         ctx.setProperty(WSHandlerConstants.ENC_PROP_FILE, "META-INF/xfire/outsecurity.properties");
-        ctx.setProperty(WSHandlerConstants.USER, "alias");
-        ctx.setProperty("password", "aliaspass");
+        ctx.setProperty(WSHandlerConstants.USER, "myAlias");
+        ctx.setProperty("password", "myAliasPassword");
         ctx.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PASSWORD_TEXT);
         
         handler.invoke(ctx);
@@ -79,8 +79,8 @@ public class WSS4JOutHandlerTest
         ctx.setCurrentMessage(msg);
         ctx.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.SIGNATURE);
         ctx.setProperty(WSHandlerConstants.SIG_PROP_FILE, "META-INF/xfire/outsecurity.properties");
-        ctx.setProperty(WSHandlerConstants.USER, "alias");
-        ctx.setProperty("password", "aliaspass");
+        ctx.setProperty(WSHandlerConstants.USER, "myAlias");
+        ctx.setProperty("password", "myAliasPassword");
         ctx.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PASSWORD_TEXT);
         
         handler.invoke(ctx);
@@ -105,8 +105,8 @@ public class WSS4JOutHandlerTest
         ctx.setCurrentMessage(msg);
         handler.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.TIMESTAMP);
         handler.setProperty(WSHandlerConstants.SIG_PROP_FILE, "META-INF/xfire/outsecurity.properties");
-        handler.setProperty(WSHandlerConstants.USER, "alias");
-        handler.setProperty("password", "aliaspass");
+        ctx.setProperty(WSHandlerConstants.USER, "myAlias");
+        ctx.setProperty("password", "myAliasPassword");
         handler.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PASSWORD_TEXT);
         
         handler.invoke(ctx);

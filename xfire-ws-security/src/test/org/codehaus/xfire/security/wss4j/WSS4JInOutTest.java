@@ -32,8 +32,7 @@ public class WSS4JInOutTest
 
     public void testSignature()
         throws Exception
-    {System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory");
-        
+    {
         Document doc = readDocument("wsse-request-clean.xml");
         
         WSS4JOutHandler handler = new WSS4JOutHandler();
@@ -46,8 +45,8 @@ public class WSS4JInOutTest
         ctx.setCurrentMessage(msg);
         ctx.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.SIGNATURE);
         ctx.setProperty(WSHandlerConstants.SIG_PROP_FILE, "META-INF/xfire/outsecurity.properties");
-        ctx.setProperty(WSHandlerConstants.USER, "alias");
-        ctx.setProperty("password", "aliaspass");
+        ctx.setProperty(WSHandlerConstants.USER, "myAlias");
+        ctx.setProperty("password", "myAliasPassword");
         ctx.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PASSWORD_TEXT);
         
         handler.invoke(ctx);

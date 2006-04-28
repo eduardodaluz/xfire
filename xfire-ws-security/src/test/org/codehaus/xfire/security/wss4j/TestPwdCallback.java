@@ -18,8 +18,8 @@ public class TestPwdCallback
 
     static
     {
-        passwords.put("alias", "aliaspass");
-        passwords.put("userName", "aliaspass");
+        passwords.put("myalias", "myAliasPassword");
+        passwords.put("myAlias", "myAliasPassword");
     }
 
     public void handle(Callback[] callbacks)

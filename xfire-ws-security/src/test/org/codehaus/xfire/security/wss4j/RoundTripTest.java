@@ -43,8 +43,8 @@ public class RoundTripTest
         wsOut = new WSS4JOutHandler();
         wsOut.setProperty(WSHandlerConstants.SIG_PROP_FILE, "META-INF/xfire/outsecurity.properties");
         wsOut.setProperty(WSHandlerConstants.ENC_PROP_FILE, "META-INF/xfire/outsecurity.properties");
-        wsOut.setProperty(WSHandlerConstants.USER, "alias");
-        wsOut.setProperty("password", "aliaspass");
+        wsOut.setProperty(WSHandlerConstants.USER, "myAlias");
+        wsOut.setProperty("password", "myAliasPassword");
         wsOut.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PASSWORD_TEXT);
         wsOut.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, TestPwdCallback.class.getName());
         service.addOutHandler(wsOut);
