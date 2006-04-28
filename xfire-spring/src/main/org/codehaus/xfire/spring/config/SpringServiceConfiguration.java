@@ -130,6 +130,8 @@ public class SpringServiceConfiguration
         MethodBean op = getMethodBean(method);
         if (op == null) return null;
         
+        if (j == -1) return op.getReturnType();
+        
         if (op.getParameters() != null)
         {
             for (Iterator itr = op.getParameters().iterator(); itr.hasNext();)

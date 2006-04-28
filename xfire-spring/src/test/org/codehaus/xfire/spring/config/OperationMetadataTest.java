@@ -39,6 +39,9 @@ public class OperationMetadataTest
         part = opInfo.getInputMessage().getMessagePart(new QName("urn:test", "two"));
         assertNotNull(part);
         
+        part = opInfo.getOutputMessage().getMessagePart(new QName("urn:test", "sum"));
+        assertNotNull(part);
+        
         opInfo = service.getServiceInfo().getOperation("excluded");
         assertNull(opInfo);
     }

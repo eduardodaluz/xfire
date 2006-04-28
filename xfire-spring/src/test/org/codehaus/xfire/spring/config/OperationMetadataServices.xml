@@ -7,6 +7,7 @@
     <method name="concat" operationName="concatThreeStrings" xmlns:c="urn:test">
       <parameter index="1" clazz="java.lang.String" name="c:two"/>
       <parameter index="2" clazz="java.lang.String" name="c:three"/>
+      <returnType name="c:sum"/>
     </method>
     <method name="excluded" exclude="true"/>
   </service>

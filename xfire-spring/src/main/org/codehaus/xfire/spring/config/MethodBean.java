@@ -15,6 +15,7 @@ public class MethodBean
     private boolean exclude;
     private String mep;
     private String soapAction;
+    private ParameterBean returnType;
     
     public String getSoapAction()
     {
@@ -65,6 +66,19 @@ public class MethodBean
         this.properties = properties;
     }
 
+    /**
+     * @org.apache.xbean.Flat
+     * @return
+     */
+    public ParameterBean getReturnType()
+    {
+        return returnType;
+    }
+    
+    public void setReturnType(ParameterBean returnType)
+    {
+        this.returnType = returnType;
+    }
     /**
      * @org.apache.xbean.FlatCollection childElement="parameter"
      * @return
