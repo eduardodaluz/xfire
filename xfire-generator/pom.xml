@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1-RC1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-generator</artifactId>
   <name>XFire Generation Support</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1-RC1</version>
   <build>
     <plugins>
       <plugin>
@@ -81,11 +81,11 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-core</artifactId>
+      <artifactId>xfire-spring</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-spring</artifactId>
+      <artifactId>xfire-core</artifactId>
     </dependency>
   </dependencies>
 </project>

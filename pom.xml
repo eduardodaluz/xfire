@@ -4,7 +4,7 @@
   <artifactId>xfire-parent</artifactId>
   <packaging>pom</packaging>
   <name>XFire</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1-RC1</version>
   <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
@@ -19,9 +19,9 @@
   </ciManagement>
   <inceptionYear>2004</inceptionYear>
   <scm>
-    <connection>scm:svn:https://svn.codehaus.org/xfire/trunk/</connection>
-    <developerConnection>scm:svn:https://${maven.username}@svn.codehaus.org/xfire/trunk/</developerConnection>
-    <url>https://svn.xfire.codehaus.org/viewrep/xfire/trunk</url>
+    <connection>scm:svn:https://svn.codehaus.org/xfire/tags/xfire-1.1-RC1</connection>
+    <developerConnection>scm:svn:https://${maven.username}@svn.codehaus.org/xfire/tags/xfire-1.1-RC1</developerConnection>
+    <url>https://svn.xfire.codehaus.org/viewrep/xfire/tags/xfire-1.1-RC1</url>
   </scm>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
@@ -152,6 +152,28 @@
       <url>http://snapshots.maven.codehaus.org/maven2/</url>
     </pluginRepository>
   </pluginRepositories>
+  <dependencies>
+    <dependency>
+      <groupId>httpunit</groupId>
+      <artifactId>httpunit</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>jetty</groupId>
+      <artifactId>org.mortbay.jetty</artifactId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
   <reporting>
     <plugins>
       <plugin>
@@ -450,7 +472,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <!-- Use patched jar until release is published --> 
         <groupId>org.codehaus.xfire</groupId>
         <artifactId>xbean-spring</artifactId>
         <version>2.3-patched-20060426</version>
@@ -518,28 +539,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
-      <optional>true</optional>
-    </dependency>
-        <dependency>
-      <groupId>jetty</groupId>
-      <artifactId>org.mortbay.jetty</artifactId>
-      <optional>true</optional>
-    </dependency>
-  </dependencies>
   <distributionManagement>
     <repository>
       <id>xfire</id>
@@ -553,7 +552,7 @@
     </snapshotRepository>
     <site>
       <id>xfire</id>
-      <url>scpexe://xfire.codehaus.org/home/projects/xfire/public_html/maven/</url>
+      <url>scpexe://xfire.codehaus.org/home/projects/xfire/public_html/maven</url>
     </site>
   </distributionManagement>
 </project>
