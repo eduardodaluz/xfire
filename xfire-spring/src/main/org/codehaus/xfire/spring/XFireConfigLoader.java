@@ -1,9 +1,7 @@
 package org.codehaus.xfire.spring;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,12 +55,6 @@ public class XFireConfigLoader
             throw new XFireException("Configuration file required");
         }
         
-        boolean isFile = new File(configPath).exists();
-
-        List classpathFiles = new ArrayList();
-        if (!isFile)
-            classpathFiles.add(configPath);
-        
         GenericApplicationContext ctx = new GenericApplicationContext(parent);
         XBeanXmlBeanDefinitionReader xmlReader = new XBeanXmlBeanDefinitionReader(ctx, ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
 
@@ -76,13 +68,23 @@ public class XFireConfigLoader
             xmlReader.loadBeanDefinitions(new ClassPathResource("org/codehaus/xfire/spring/xfire.xml"));
         }
 
-        if (isFile)
+        String[] configs = null;
+        if (configPath.indexOf(",") != -1)
+            configs = configPath.split(",");
+        else 
+            configs = new String[] { configPath };
+        
+        for (int i = 0; i < configs.length; i++)
         {
-            xmlReader.loadBeanDefinitions(new FileSystemResource(configPath));
-        }
-        else
-        {
-            xmlReader.loadBeanDefinitions(new ClassPathResource(configPath));
+            String config = configs[i].trim();
+            if (new File(configs[i]).exists())
+            {
+                xmlReader.loadBeanDefinitions(new FileSystemResource(config));
+            }
+            else
+            {
+                xmlReader.loadBeanDefinitions(new ClassPathResource(config));
+            }
         }
         
         ctx.refresh();

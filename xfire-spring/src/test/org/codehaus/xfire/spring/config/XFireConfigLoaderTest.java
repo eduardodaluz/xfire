@@ -45,7 +45,17 @@ public class XFireConfigLoaderTest
         
         doAssertions(xfire);
     }
+
+    public void testConfigLoaderWithMultipleFiles()
+        throws Exception
+    {
+        XFireConfigLoader configLoader = new XFireConfigLoader();
+        XFire xfire = configLoader.loadConfig("src/test/META-INF/xfire/sservices.xml, " +
+                "org/codehaus/xfire/spring/config/OperationMetadataServices.xml");
         
+        doAssertions(xfire);
+    }
+       
     public void testConfigLoaderWithParentContext() throws Exception 
     {
     	ServletContext servletCtx = new MockServletContext();
