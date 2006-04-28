@@ -33,6 +33,9 @@ public class ParameterBean
     {
         this.name = name;
     }
+    /**
+     * @org.apache.xbean.Property alias="class"
+     */
     public String getClazz()
     {
         return clazz;
