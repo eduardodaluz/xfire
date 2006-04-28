@@ -4,7 +4,7 @@
   <artifactId>xfire-parent</artifactId>
   <packaging>pom</packaging>
   <name>XFire</name>
-  <version>1.1-RC2-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
