@@ -65,7 +65,7 @@ public class XFireConfigLoader
         else 
         {
             // Include only custom editors, because they are nor inherited from springs parent defs.
-            xmlReader.loadBeanDefinitions(new ClassPathResource("org/codehaus/xfire/spring/xfire.xml"));
+            xmlReader.loadBeanDefinitions(new ClassPathResource("org/codehaus/xfire/spring/customEditors.xml"));
         }
 
         String[] configs = null;
