@@ -117,23 +117,23 @@ public class XFireServletController
 
         response.setHeader("Content-Type", "UTF-8");
 
-        requests.set(request);
-        responses.set(response);
-
-        boolean hasService = reg.hasService(serviceName);
-        if (serviceName.length() == 0 || !hasService)
-        {
-            if (!hasService)
-            {
-                response.setStatus(404);
-            }
-
-            generateServices(request,response);
-            return;
-        }
-
         try
         {
+            requests.set(request);
+            responses.set(response);
+
+            boolean hasService = reg.hasService(serviceName);
+            if (serviceName.length() == 0 || !hasService)
+            {
+                if (!hasService)
+                {
+                    response.setStatus(404);
+                }
+
+                generateServices(request,response);
+                return;
+            }
+            
             if (request.getQueryString() != null &&
                 request.getQueryString().trim().equalsIgnoreCase("wsdl"))
             {
