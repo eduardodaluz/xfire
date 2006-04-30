@@ -52,5 +52,9 @@
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+    </dependency>
   </dependencies>
 </project>
