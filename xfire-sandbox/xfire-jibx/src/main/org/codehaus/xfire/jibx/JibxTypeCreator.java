@@ -4,6 +4,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeCreator;
 import org.codehaus.xfire.aegis.type.TypeMapping;
@@ -15,10 +17,6 @@ import org.codehaus.xfire.aegis.type.TypeMapping;
 public class JibxTypeCreator
     implements TypeCreator
 {
-
-
-    private TypeMapping typeMapping;
-
     /* (non-Javadoc)
      * @see org.codehaus.xfire.aegis.type.TypeCreator#createType(java.lang.reflect.Method, int)
      */
@@ -68,8 +66,18 @@ public class JibxTypeCreator
      */
     public void setTypeMapping(TypeMapping typeMapping)
     {
-        this.typeMapping = typeMapping;
+    }
 
+    public QName getElementName(Method m, int index)
+    {
+        Type t = createType(m, index);
+        
+        if (!t.isAbstract()) 
+        {
+            return t.getSchemaType();
+        }
+        
+        return null;
     }
 
 }

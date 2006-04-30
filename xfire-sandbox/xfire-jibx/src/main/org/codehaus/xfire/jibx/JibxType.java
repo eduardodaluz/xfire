@@ -1,6 +1,7 @@
 package org.codehaus.xfire.jibx;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
@@ -11,6 +12,8 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.util.stax.FragmentStreamReader;
+import org.jdom.Element;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
@@ -27,6 +30,8 @@ import org.jibx.runtime.impl.UnmarshallingContext;
 public class JibxType
     extends Type
 {
+    
+    private IBindingFactory bfact;
 
     public boolean isComplex()
     {
@@ -44,7 +49,7 @@ public class JibxType
 
         try
         {
-            IBindingFactory bfact = BindingDirectory.getFactory(getTypeClass());
+            bfact = BindingDirectory.getFactory(getTypeClass());
             String classes[] = bfact.getMappedClasses();
             String names[] = bfact.getElementNames();
             String ns[] = bfact.getElementNamespaces();
@@ -82,11 +87,14 @@ public class JibxType
     {
         try
         {
-            IBindingFactory bfact = BindingDirectory.getFactory(getTypeClass());
             IUnmarshallingContext mctx = bfact.createUnmarshallingContext();
             ElementReader r = (ElementReader) reader;
-            StAXReaderWrapper wrapper = new StAXReaderWrapper(r.getXMLStreamReader(),
-                    getSchemaType().getLocalPart(), true);
+            FragmentStreamReader fsr = new FragmentStreamReader(r.getXMLStreamReader());
+            fsr.next();
+            StAXReaderWrapper wrapper = new StAXReaderWrapper(
+                    fsr,
+                    getSchemaType().getLocalPart(), 
+                    true);
 
             UnmarshallingContext ctx = (UnmarshallingContext) mctx;
             ctx.setDocument(wrapper);
@@ -95,7 +103,11 @@ public class JibxType
         }
         catch (JiBXException e)
         {
-            throw new XFireRuntimeException(e.getMessage());
+            throw new XFireRuntimeException("Could not read Jibx type.", e);
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XFireRuntimeException("Could not read Jibx type.", e);
         }
 
     }
@@ -112,8 +124,6 @@ public class JibxType
     {
         try
         {
-            IBindingFactory bfact = BindingDirectory.getFactory(getTypeClass());
-
             IMarshallingContext mctx = bfact.createMarshallingContext();
 
             XMLStreamWriter noCloseWriter = new NoCloseXMLStreamWriter(((ElementWriter) writer)
@@ -121,13 +131,17 @@ public class JibxType
             mctx.setXmlWriter(new StAXWriter(bfact.getNamespaces(), noCloseWriter));
 
             mctx.marshalDocument(object);
-
         }
         catch (JiBXException e)
         {
-
-            throw new RuntimeException(e);
+            throw new XFireRuntimeException("Could not write Jibx type.", e);
         }
     }
 
+    public void writeSchema(Element arg0)
+    {
+        
+    }
+
+    
 }

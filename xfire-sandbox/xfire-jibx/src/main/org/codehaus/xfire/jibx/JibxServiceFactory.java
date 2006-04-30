@@ -9,14 +9,14 @@ import org.codehaus.xfire.transport.TransportManager;
  * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  *
  */
-public class JibxObjectFactory extends ObjectServiceFactory {
+public class JibxServiceFactory extends ObjectServiceFactory {
 
-	public JibxObjectFactory() {
+	public JibxServiceFactory() {
 		this(XFireFactory.newInstance().getXFire().getTransportManager());
 	}
 
-	public JibxObjectFactory(TransportManager manager) {
+	public JibxServiceFactory(TransportManager manager) {
 		super(manager,new AegisBindingProvider(new JibxTypeRegistry()));
 	}
-
+    
 }
