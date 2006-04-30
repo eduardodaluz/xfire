@@ -18,6 +18,7 @@ import javax.xml.transform.Source;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.basic.Base64Type;
 import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
 import org.codehaus.xfire.aegis.type.basic.BigIntegerType;
@@ -73,6 +74,14 @@ public class DefaultTypeMappingRegistry
     protected static final QName XSD_URI = new QName(SoapConstants.XSD, "anyURI", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_ANY = new QName(SoapConstants.XSD, "anyType", SoapConstants.XSD_PREFIX);
     
+    protected static final QName XSD_DATE = new QName(SoapConstants.XSD, "date", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_DURATION = new QName(SoapConstants.XSD, "duration", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_G_YEAR_MONTH = new QName(SoapConstants.XSD, "gYearMonth", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_G_MONTH_DAY = new QName(SoapConstants.XSD, "gMonthDay", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_G_YEAR = new QName(SoapConstants.XSD, "gYear", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_G_MONTH = new QName(SoapConstants.XSD, "gMonth", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_G_DAY = new QName(SoapConstants.XSD, "gDay", SoapConstants.XSD_PREFIX);
+
     protected static final String ENCODED_NS = Soap11.getInstance().getSoapEncodingStyle();
     protected static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
     protected static final QName ENCODED_LONG = new QName(ENCODED_NS, "long");
@@ -317,6 +326,17 @@ public class DefaultTypeMappingRegistry
         register(tm, DataSource.class, XSD_BASE64, new DataSourceType());
         register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
 
+        registerIfAvailable(tm, "javax.xml.datatype.Duration", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.DurationType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATE, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_TIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATETIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        
         register(SoapConstants.XSD, tm);
         registerDefault(tm);
 
@@ -376,6 +396,34 @@ public class DefaultTypeMappingRegistry
         register(ENCODED_NS, soapTM);
 
         return tm;
+    }
+
+    protected void registerIfAvailable(TypeMapping tm, String className, QName typeName, String typeClassName)
+    {
+        try
+        {
+            Class cls = ClassLoaderUtils.loadClass(className, getClass());
+            Class typeCls = ClassLoaderUtils.loadClass(typeClassName, getClass());
+            try
+            {
+                Type type = (Type) typeCls.newInstance();
+                
+                register(tm, cls, typeName, type);
+            }
+            catch (InstantiationException e)
+            {
+                throw new XFireRuntimeException("Couldn't instantiate Type ", e);
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new XFireRuntimeException("Couldn't instantiate Type ", e);
+            }
+        }
+        catch (ClassNotFoundException e)
+        {
+            logger.debug("Could not find optional Type " + className +". Skipping.");
+        }
+        
     }
 
     protected void register(TypeMapping tm, Class class1, QName name, Type type)
