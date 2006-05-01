@@ -327,15 +327,14 @@ public class DefaultTypeMappingRegistry
         register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
 
         registerIfAvailable(tm, "javax.xml.datatype.Duration", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.DurationType");
-        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATE, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_TIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATETIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATETIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
         
         register(SoapConstants.XSD, tm);
         registerDefault(tm);
