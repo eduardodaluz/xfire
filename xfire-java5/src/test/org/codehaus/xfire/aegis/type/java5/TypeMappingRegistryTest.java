@@ -9,6 +9,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
+import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.easymock.MockControl;
 
@@ -22,6 +23,9 @@ public class TypeMappingRegistryTest extends TestCase
         
         TypeMapping tm = registry.getDefaultTypeMapping();
 
+        Type type = tm.getType(XMLGregorianCalendar.class);
+        assertEquals("dateTime", type.getSchemaType().getLocalPart());
+        
         MockControl readerControl = MockControl.createControl(MessageReader.class);
         MessageReader reader = (MessageReader) readerControl.getMock();
         
