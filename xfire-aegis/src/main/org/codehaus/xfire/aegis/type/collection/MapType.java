@@ -3,6 +3,7 @@ package org.codehaus.xfire.aegis.type.collection;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -113,7 +114,15 @@ public class MapType
     {
         Map map = null;
         
-        if (getTypeClass().equals(Map.class) || getTypeClass().isInterface())
+        if (getTypeClass().equals(Map.class))
+        {
+            map = new HashMap();
+        }
+        else if (getTypeClass().equals(Hashtable.class))
+        {
+            map = new Hashtable();
+        }
+        else if(getTypeClass().isInterface())
         {
             map = new HashMap();
         }

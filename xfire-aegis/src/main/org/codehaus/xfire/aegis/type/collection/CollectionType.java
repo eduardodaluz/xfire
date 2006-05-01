@@ -57,9 +57,21 @@ public class CollectionType
         {
             values = new Vector();
         }
-        else
+        else if (getTypeClass().isInterface()) 
         {
             values = new ArrayList();
+        }
+        else
+        {
+            try
+            {
+                values = (Collection) getTypeClass().newInstance();
+            }
+            catch (Exception e)
+            {
+                throw new XFireRuntimeException(
+                    "Could not create map implementation: " + getTypeClass().getName(), e);
+            }
         }
         
         return values;
