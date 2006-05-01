@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -51,6 +52,10 @@ public class CollectionType
         else if (getTypeClass().isAssignableFrom(Set.class))
         {
             values = new HashSet();
+        }
+        else if (getTypeClass().isAssignableFrom(Vector.class))
+        {
+            values = new Vector();
         }
         else
         {
