@@ -5,6 +5,7 @@ package org.codehaus.xfire.test;
  *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
+// START SNIPPET: service
 public class EchoImpl
         implements Echo
 {
@@ -13,3 +14,4 @@ public class EchoImpl
         return echo;
     }
 }
+// END SNIPPET: service
