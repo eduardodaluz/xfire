@@ -6,7 +6,7 @@ import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
-import org.codehaus.xfire.service.invoker.ObjectInvoker;
+import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 
@@ -22,8 +22,7 @@ public class ServiceStarter
         // Create an XFire Service
         ObjectServiceFactory serviceFactory = new ObjectServiceFactory();
         Service service = serviceFactory.create(Echo.class);
-        // Set the implementation class
-        service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
+        service.setInvoker(new BeanInvoker(new EchoImpl()));
         
         // Register the service in the ServiceRegistry
         XFire xfire = XFireFactory.newInstance().getXFire();
