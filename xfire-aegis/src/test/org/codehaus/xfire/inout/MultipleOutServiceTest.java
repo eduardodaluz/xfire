@@ -79,7 +79,7 @@ public class MultipleOutServiceTest
         addNamespace("m", "urn:MultipleOutService");
         assertValid("/s:Envelope/s:Body/m:echoResponse/m:out[text()='Yo Yo']", response);
         assertValid("/s:Envelope/s:Body/m:echoResponse/m:in1[text()='hi']", response);
-        assertValid("/s:Envelope/s:Header/m:in2[text()='header']", response);
+        assertValid("/s:Envelope/s:Header/m:out2[text()='header']", response);
     }
 
     public void testClient()

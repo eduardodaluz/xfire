@@ -3,11 +3,12 @@ package org.codehaus.xfire.client;
 import java.lang.reflect.Method;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.Holder;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
-import org.codehaus.xfire.test.Echo;
-import org.codehaus.xfire.test.EchoImpl;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
+import org.jdom.Document;
 
 public class HeaderTest extends AbstractXFireAegisTest
 {
@@ -21,10 +22,19 @@ public class HeaderTest extends AbstractXFireAegisTest
         ObjectServiceFactory factory = new ObjectServiceFactory(getTransportManager()) {
             protected boolean isHeader(Method method, int j)
             {
-                if (j >= 0) return true;
-                
-                return super.isHeader(method, j);
+                return true;
             }
+
+            protected boolean isInParam(Method method, int j)
+            {
+                return j == 0;
+            }
+
+            protected boolean isOutParam(Method method, int j)
+            {
+                return j == -1 || j == 1;
+            }
+            
         };
         
         service = factory.create(Echo.class);
@@ -36,9 +46,15 @@ public class HeaderTest extends AbstractXFireAegisTest
     public void testHeaders() throws Exception
     {
         XFireProxyFactory xpf = new XFireProxyFactory(getXFire());
-        
         Echo echo = (Echo) xpf.create(service, "xfire.local://Echo");
         
-        assertEquals("hi", echo.echo("hi"));
-    }
+        Holder h = new Holder();
+        assertEquals("hi", echo.echo("hi", h));
+        assertEquals("header2", h.getValue());
+        
+        Document wsdl = getWSDLDocument("Echo");
+        addNamespace("wsdlsoap", WSDLBuilder.WSDL11_SOAP_NS);
+        assertValid("//wsdlsoap:header[@message='tns:echoRequestHeaders']", wsdl);
+        assertValid("//wsdlsoap:header[@message='tns:echoResponseHeaders']", wsdl);
+    }   
 }

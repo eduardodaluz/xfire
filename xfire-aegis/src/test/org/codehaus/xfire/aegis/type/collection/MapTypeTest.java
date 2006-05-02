@@ -126,7 +126,7 @@ public class MapTypeTest
     {
         Service service = getServiceFactory().create(MapService.class, null, "urn:MapService", null);
         getServiceRegistry().register(service);
-        printNode(getWSDLDocument("MapService"));
+
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, MapServiceImpl.class);
         
         XFireProxyFactory factory = new XFireProxyFactory(getXFire());
