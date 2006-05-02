@@ -230,15 +230,15 @@ public class SpringServiceConfiguration
         return super.getOperationName(service, method);
     }
 
-    public QName getOutParameterName(Service service, OperationInfo op, Method method, boolean doc)
+    public QName getOutParameterName(Service service, OperationInfo op, Method method, int paramNumber, boolean doc)
     {
-        ParameterBean p = getParameter(method, -1);
+        ParameterBean p = getParameter(method, paramNumber);
         if (p != null && p.getName() != null)
         {
             return p.getName();
         }
         
-        return super.getOutParameterName(service, op, method, doc);
+        return super.getOutParameterName(service, op, method, paramNumber, doc);
     }
 
     public QName getOutputMessageName(OperationInfo op)

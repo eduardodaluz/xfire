@@ -1,4 +1,6 @@
-<beans xmlns="http://xfire.codehaus.org/config/1.0">
+<beans xmlns="http://xfire.codehaus.org/config/1.0"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://xfire.codehaus.org/config/1.0 file:///c:/cygwin/home/dan/xfire/xfire-spring/src/schema/services.xsd">
   
   <service id="ConcatService">
     <name>ConcatService</name>
