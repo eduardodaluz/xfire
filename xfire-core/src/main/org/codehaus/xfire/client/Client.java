@@ -1,6 +1,7 @@
 package org.codehaus.xfire.client;
 
 import java.io.InputStream;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
@@ -441,6 +442,7 @@ public class Client
         try
         {
             HandlerPipeline inPipe = new HandlerPipeline(xfire.getInPhases());
+           // inPipe.addHandlers(recvContext.getXFire().getInHandlers());
             inPipe.addHandlers(getInHandlers());
             inPipe.addHandlers(transport.getInHandlers());
             recvContext.setInPipeline(inPipe);
@@ -581,5 +583,19 @@ public class Client
     public void setXFire(XFire xfire)
     {
         this.xfire = xfire;
+    }
+    
+    /**
+     * Maybe this method should be moved to some helper class.
+     * But i dont' know any suitable.
+     * @param service
+     * @return
+     */
+    public static Client getInstance(Object service){
+        Object proxy = Proxy.getInvocationHandler(service);
+        if( proxy == null || !(proxy instanceof XFireProxy) ){
+            throw new IllegalArgumentException("Argument is nota XFireProxy");
+        }
+        return ((XFireProxy)proxy ).getClient();
     }
 }
