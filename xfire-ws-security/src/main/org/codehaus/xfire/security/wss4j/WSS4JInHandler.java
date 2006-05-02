@@ -1,6 +1,7 @@
 package org.codehaus.xfire.security.wss4j;
 
 import java.security.cert.X509Certificate;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.security.auth.callback.CallbackHandler;
@@ -38,6 +39,8 @@ public class WSS4JInHandler
 
     private static Log tlog = LogFactory.getLog("org.apache.ws.security.TIME");
 
+    
+    
     public WSS4JInHandler()
     {
         super();
@@ -47,6 +50,12 @@ public class WSS4JInHandler
         getAfter().add(DOMInHandler.class.getName());
     }
     
+    
+    public WSS4JInHandler(Properties properties){
+        this();
+        setProperties(properties);
+        
+    }
     public void invoke(MessageContext msgContext)
         throws XFireFault
     {
@@ -253,7 +262,7 @@ public class WSS4JInHandler
         }
         catch (WSSecurityException e)
         {
-            throw new XFireFault(e.getMessage(), e, XFireFault.SENDER);
+
         }
         finally
         {
