@@ -60,6 +60,7 @@ public class AnnotationServiceFactory
         
         AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
         annotationConfig.setWebAnnotations(webAnnotations);
+        annotationConfig.setServiceFactory(this);
         getServiceConfigurations().add(0, annotationConfig);
     }
 
@@ -71,6 +72,7 @@ public class AnnotationServiceFactory
 
         AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
         annotationConfig.setWebAnnotations(webAnnotations);
+        annotationConfig.setServiceFactory(this);
         getServiceConfigurations().add(0, annotationConfig);
     }
     
@@ -91,6 +93,7 @@ public class AnnotationServiceFactory
 
         AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
         annotationConfig.setWebAnnotations(webAnnotations);
+        annotationConfig.setServiceFactory(this);
         getServiceConfigurations().add(0, annotationConfig);
     }
 

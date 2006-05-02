@@ -7,7 +7,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
-import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.DefaultServiceConfiguration;
 import org.codehaus.xfire.service.binding.ServiceConfiguration;
 import org.codehaus.xfire.soap.SoapConstants;
 
@@ -18,13 +18,9 @@ import org.codehaus.xfire.soap.SoapConstants;
  * @author Arjen Poutsma
  */
 public class AnnotationServiceConfiguration
-        extends ServiceConfiguration
+        extends DefaultServiceConfiguration
 {
     private WebAnnotations webAnnotations;
-
-    public void setServiceFactory(ObjectServiceFactory serviceFactory)
-    {
-    }
 
     public void setWebAnnotations(WebAnnotations webAnnotations)
     {
@@ -132,6 +128,20 @@ public class AnnotationServiceConfiguration
 
     public QName getInParameterName(Service endpoint, OperationInfo op, Method method, int paramNumber, boolean doc)
     {
+        QName name;
+        if (paramNumber >= 0)
+            name = getWebParamName(endpoint, op, method, paramNumber, doc);
+        else
+            name = getWebResultName(endpoint, op, method, paramNumber, doc);
+        
+        if (name == null)
+            name = super.getInParameterName(endpoint, op, method, paramNumber, doc);
+        
+        return name;
+    }
+
+    private QName getWebParamName(Service endpoint, OperationInfo op, Method method, int paramNumber, boolean doc)
+    {
         if (webAnnotations.hasWebParamAnnotation(method, paramNumber))
         {
             final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, paramNumber);
@@ -153,11 +163,25 @@ public class AnnotationServiceConfiguration
         }
         else
         {
-            return super.getInParameterName(endpoint, op, method, paramNumber, doc);
+            return null;
         }
     }
-
-    public QName getOutParameterName(Service endpoint, OperationInfo op, Method method, boolean doc)
+    
+    public QName getOutParameterName(Service endpoint, OperationInfo op, Method method, int paramNumber, boolean doc)
+    {
+        QName name;
+        if (paramNumber >= 0)
+            name = getWebParamName(endpoint, op, method, paramNumber, doc);
+        else
+            name = getWebResultName(endpoint, op, method, paramNumber, doc);
+        
+        if (name == null)
+            name = super.getOutParameterName(endpoint, op, method, paramNumber, doc);
+        
+        return name;
+    }
+    
+    private QName getWebResultName(Service endpoint, OperationInfo op, Method method, int param, boolean doc)
     {
         if (webAnnotations.hasWebResultAnnotation(method))
         {
@@ -166,7 +190,7 @@ public class AnnotationServiceConfiguration
             String name = webResultAnnotation.getName();
             if (name == null || name.length() == 0)
             {
-                name = super.getOutParameterName(endpoint, op, method, doc).getLocalPart();
+                name = super.getOutParameterName(endpoint, op, method, param, doc).getLocalPart();
             }
             
             String ns = webResultAnnotation.getTargetNamespace();
@@ -180,7 +204,7 @@ public class AnnotationServiceConfiguration
         }
         else
         {
-            return super.getOutParameterName(endpoint, op, method, doc);
+            return super.getOutParameterName(endpoint, op, method, param, doc);
         }
     }
 
