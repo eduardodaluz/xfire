@@ -314,7 +314,7 @@ public class ServiceBean
 
     /**
      * Sets the service default namespace. Default is a namespace based on the
-     * package of the {@link #getServiceInterface() service interface}.
+     * package of the {@link #getServiceClass() service interface}.
      */
     public void setNamespace(String namespace)
     {
