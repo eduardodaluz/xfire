@@ -1,8 +1,5 @@
 package org.codehaus.xfire.spring.remoting;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.lang.reflect.Proxy;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
@@ -148,21 +145,22 @@ public class XFireClientFactoryBeanTest
         server.setPort(8191);
         server.start();
         
-        Service service = serverFact.create(EchoImpl.class);
+        Service service = serverFact.create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
 
         getServiceRegistry().register(service);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        getWSDL("EchoImpl").write(bos);
-        InputStream iS = new ByteArrayInputStream(bos.toByteArray());
-        
+
         // now create a special factory that will actually use the created WSDL
         factory = new XFireClientFactoryBean();
         factory.setServiceClass(Echo.class);
-        factory.setWsdlDocumentUrl("http://localhost:8191/EchoImpl?wsdl");
+        factory.setWsdlDocumentUrl("http://localhost:8191/Echo?wsdl");
         factory.afterPropertiesSet();
-        assertEquals("Wrong serviceName from WSDL", "EchoImpl", factory.getServiceName());
+        assertEquals("Wrong serviceName from WSDL", "Echo", factory.getServiceName());
         assertEquals("Wrong namespaceUri from WSDL", "http://test.xfire.codehaus.org", factory.getNamespaceUri());
+        
+        Echo echo = (Echo) factory.getObject();
+        assertEquals("hi", echo.echo("hi"));
+        
         server.stop();
     }
  
