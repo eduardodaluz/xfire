@@ -94,6 +94,7 @@ public abstract class ServiceConfiguration
     public  QName getOutParameterName(final Service service,
                               final OperationInfo op,
                               final Method method,
+                              final int paramNumber,
                               final boolean doc)
     {
         return null;

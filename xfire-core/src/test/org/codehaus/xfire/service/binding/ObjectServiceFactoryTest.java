@@ -147,6 +147,8 @@ public class ObjectServiceFactoryTest
 
             protected boolean isHeader(Method method, int j)
             {
+                if (j == -1) return false;
+                
                 return method.getParameterTypes()[j].equals(String.class);
             }
         };

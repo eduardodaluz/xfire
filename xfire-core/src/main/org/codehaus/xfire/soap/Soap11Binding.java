@@ -147,27 +147,42 @@ public class Soap11Binding extends AbstractSoapBinding
     protected void createHeaders(WSDLBuilder builder, OperationInfo op, BindingOperation bop)
     {
         List inputHeaders = getHeaders(op.getInputMessage()).getMessageParts();
-        
-        if (inputHeaders.size() == 0)
-        {
-            return;
-        }
-
+        List outputHeaders = getHeaders(op.getOutputMessage()).getMessageParts();
         BindingInput bindingInput = bop.getBindingInput();
 
-        Message reqHeaders = createHeaderMessages(builder, op.getInputMessage(), inputHeaders);
-        builder.getDefinition().addMessage(reqHeaders);
-
-        for (Iterator headerItr = reqHeaders.getParts().values().iterator(); headerItr.hasNext();)
+        if (inputHeaders.size() > 0)
         {
-            Part headerInfo = (Part) headerItr.next();
+            Message reqHeaders = createHeaderMessages(builder, op.getInputMessage(), inputHeaders);
+            builder.getDefinition().addMessage(reqHeaders);
 
-            SOAPHeader soapHeader = new SOAPHeaderImpl();
-            soapHeader.setMessage(reqHeaders.getQName());
-            soapHeader.setPart(headerInfo.getName());
-            soapHeader.setUse(getUse());
+            for (Iterator headerItr = reqHeaders.getParts().values().iterator(); headerItr.hasNext();)
+            {
+                Part headerInfo = (Part) headerItr.next();
 
-            bindingInput.addExtensibilityElement(soapHeader);
+                SOAPHeader soapHeader = new SOAPHeaderImpl();
+                soapHeader.setMessage(reqHeaders.getQName());
+                soapHeader.setPart(headerInfo.getName());
+                soapHeader.setUse(getUse());
+
+                bindingInput.addExtensibilityElement(soapHeader);
+            }
+        }
+
+        if (outputHeaders.size() > 0)
+        {
+            Message resHeaders = createHeaderMessages(builder, op.getOutputMessage(), outputHeaders);
+            builder.getDefinition().addMessage(resHeaders);
+            for (Iterator headerItr = resHeaders.getParts().values().iterator(); headerItr.hasNext();)
+            {
+                Part headerInfo = (Part) headerItr.next();
+    
+                SOAPHeader soapHeader = new SOAPHeaderImpl();
+                soapHeader.setMessage(resHeaders.getQName());
+                soapHeader.setPart(headerInfo.getName());
+                soapHeader.setUse(getUse());
+    
+                bindingInput.addExtensibilityElement(soapHeader);
+            }
         }
     }
 

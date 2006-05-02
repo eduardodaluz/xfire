@@ -580,17 +580,33 @@ public class ObjectServiceFactory
         {
             if (!paramClasses[j].equals(MessageContext.class) && isHeader(method, j))
             {
-                final QName q = getInParameterName(binding.getService(), op, method, j, isDoc);
-                
                 if (isOutParam(method, j))
                 {
+                    QName q = getOutParameterName(binding.getService(), op, method, j, isDoc);
                     outParts.addMessagePart(q, paramClasses[j]).setIndex(j);
                 }
                 
                 if (isInParam(method, j))
                 {
+                    QName q  = getInParameterName(binding.getService(), op, method, j, isDoc);
                     inParts.addMessagePart(q, paramClasses[j]).setIndex(j);
                 }
+            }
+        }
+        
+        Class returnType = method.getReturnType();
+        if (isHeader(method, -1))
+        {
+            if (isOutParam(method, -1))
+            {
+                QName q = getOutParameterName(binding.getService(), op, method, -1, isDoc);
+                outParts.addMessagePart(q, returnType).setIndex(-1);
+            }
+            
+            if (isInParam(method, -1))
+            {
+                QName q  = getInParameterName(binding.getService(), op, method, -1, isDoc);
+                inParts.addMessagePart(q, returnType).setIndex(-1);
             }
         }
     }
@@ -700,7 +716,7 @@ public class ObjectServiceFactory
             final Class returnType = method.getReturnType();
             if (!returnType.isAssignableFrom(void.class) && !isHeader(method, -1))
             {
-                final QName q = getOutParameterName(endpoint, op, method, isDoc);
+                final QName q = getOutParameterName(endpoint, op, method, -1, isDoc);
                 MessagePartInfo part = outMsg.addMessagePart(q, method.getReturnType());
                 part.setIndex(-1);
                 part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
@@ -920,7 +936,7 @@ public class ObjectServiceFactory
                                        final Method method,
                                        final int paramNumber,
                                        final boolean doc)
-    {
+    {if (paramNumber == -1) throw new RuntimeException();
         for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
         {
             ServiceConfiguration c = (ServiceConfiguration) itr.next();
@@ -933,12 +949,13 @@ public class ObjectServiceFactory
     protected QName getOutParameterName(final Service service, 
                                         final OperationInfo op, 
                                         final Method method, 
+                                        final int paramNumber,
                                         final boolean doc)
     {
         for (Iterator itr = serviceConfigurations.iterator(); itr.hasNext();)
         {
             ServiceConfiguration c = (ServiceConfiguration) itr.next();
-            QName q = c.getOutParameterName(service, op, method, doc);
+            QName q = c.getOutParameterName(service, op, method, paramNumber, doc);
             if (q != null) return q;
         }
         throw new IllegalStateException("ServiceConfiguration must provide a value!");

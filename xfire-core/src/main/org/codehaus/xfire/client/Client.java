@@ -355,7 +355,7 @@ public class Client
             
             context.setOutPipeline(outPipe);
 
-            ServiceInvocationHandler.writeHeaders(context);
+            ServiceInvocationHandler.writeHeaders(context, null);
             
             outPipe.invoke(context);
         }
@@ -450,10 +450,14 @@ public class Client
             inPipe.invoke(context);
             
             MessageInfo msgInfo = exchange.getOperation().getOutputMessage();
-            ServiceInvocationHandler.readHeaders(context, 
-                                                 binding.getHeaders(msgInfo), 
-                                                 (Object[]) context.getOutMessage().getBody());
-            
+            Object result = ServiceInvocationHandler.readHeaders(context, 
+                                                                 binding.getHeaders(msgInfo), 
+                                                                 (Object[]) context.getOutMessage().getBody());
+            if (result != null)
+            {
+                ((List) msg.getBody()).add(result);
+            }
+
             finishReadingMessage(msg, context);
             
             response = ((List) msg.getBody()).toArray();

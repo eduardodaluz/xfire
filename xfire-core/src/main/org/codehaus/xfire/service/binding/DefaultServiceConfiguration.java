@@ -45,12 +45,12 @@ public class DefaultServiceConfiguration extends ServiceConfiguration
 
     public Boolean isOutParam(Method method, int j)
     {
-        return Boolean.FALSE;
+        return new Boolean(j == -1);
     }
 
     public Boolean isInParam(Method method, int j)
     {
-        return Boolean.TRUE;
+        return new Boolean((j >= 0));
     }
     
     public QName getInputMessageName(final OperationInfo op)
@@ -65,7 +65,8 @@ public class DefaultServiceConfiguration extends ServiceConfiguration
     
     public Boolean hasOutMessage(String mep)
     {
-        if (mep.equals(SoapConstants.MEP_IN)) return Boolean.FALSE;
+        if (mep.equals(SoapConstants.MEP_IN)) 
+            return Boolean.FALSE;
         
         return Boolean.TRUE;
     }
@@ -159,34 +160,57 @@ public class DefaultServiceConfiguration extends ServiceConfiguration
         QName suggestion = serviceFactory.getBindingProvider().getSuggestedName(endpoint, op, paramNumber);
         
         if (suggestion != null) return suggestion;
-        
-        String paramName = "";
-        String[] names = ParamReader.getParameterNamesFromDebugInfo(method); 
-        
-        //get the spcific parameter name from the parameter Number
-        if (names != null && names[paramNumber] != null)
-        {
-            paramName = names[paramNumber];
-        }
-        else
-        {
-            paramName = "in" + paramNumber;        
-        }
 
-        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), paramName);
+        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), 
+                         createName(method, paramNumber, op.getInputMessage().size(), doc, "in"));
     }
 
     public QName getOutParameterName(final Service endpoint, 
-                                        final OperationInfo op, 
-                                        final Method method, 
-                                        final boolean doc)
+                                     final OperationInfo op, 
+                                     final Method method,
+                                     final int paramNumber,
+                                     final boolean doc)
     {
-        QName suggestion = serviceFactory.getBindingProvider().getSuggestedName(endpoint, op, -1);
+        QName suggestion = serviceFactory.getBindingProvider().getSuggestedName(endpoint, op, paramNumber);
         
         if (suggestion != null) return suggestion;
         
         String pName = (doc) ? method.getName() : "";
         
-        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), pName + "out");
+        return new QName(endpoint.getServiceInfo().getPortType().getNamespaceURI(), 
+                         createName(method, paramNumber, op.getOutputMessage().size(), doc, "out"));
+    }
+    
+    private String createName(final Method method,
+                              final int paramNumber,
+                              final int currentSize,
+                              boolean addMethodName,
+                              final String flow)
+    {
+        String paramName = "";
+        
+        if (paramNumber != -1)
+        {
+            String[] names = ParamReader.getParameterNamesFromDebugInfo(method); 
+            
+            //get the spcific parameter name from the parameter Number
+            if (names != null && names[paramNumber] != null)
+            {
+                paramName = names[paramNumber];
+                addMethodName = false;
+            }
+            else
+            {
+                paramName = flow + currentSize;        
+            }
+        }
+        else
+        {
+            paramName = flow;        
+        }
+        
+        paramName = (addMethodName) ? method.getName() + paramName : paramName;
+        
+        return paramName;
     }
 }

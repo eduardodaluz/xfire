@@ -161,12 +161,13 @@ public class ServiceInvocationHandler
         }
     }
 
-    public static void readHeaders(final MessageContext context, 
+    public static Object readHeaders(final MessageContext context, 
                                    MessagePartContainer headerMsg, 
                                    final Object[] paramArray)
         throws XFireFault
     {
         final List headerInfos = headerMsg.getMessageParts();
+        Object result = null;
         for (Iterator itr = headerInfos.iterator(); itr.hasNext();)
         {
             MessagePartInfo header = (MessagePartInfo) itr.next();
@@ -180,11 +181,16 @@ public class ServiceInvocationHandler
             Object headerVal = provider.readParameter(header, headerReader, context);
 
             // why the null check? In case there is a Holder class of some sort there.
-            if (paramArray[header.getIndex()] == null)
+            if(header.getIndex() == -1)
+            {
+                result = headerVal;
+            }
+            else if (paramArray[header.getIndex()] == null)
             {
                 paramArray[header.getIndex()] = headerVal;
             }
         }
+        return result;
     }
 
     /**
@@ -204,7 +210,8 @@ public class ServiceInvocationHandler
         int outSize = 0;
         if (outMsg != null)
         {
-            outSize = outHeaderMsg.size() + ((outMsg.size() == 0) ? 0 : outMsg.size() - 1);
+            outSize = outHeaderMsg.size() + outMsg.size();
+            if (outSize != 0) outSize--;
         }
         
         int total = inMsg.size() + headerMsg.size() + outSize;
@@ -264,7 +271,7 @@ public class ServiceInvocationHandler
         if (context.getExchange().hasOutMessage())
         {
             OutMessage outMsg = context.getExchange().getOutMessage();
-            writeHeaders(context);
+            writeHeaders(context, value);
             context.setCurrentMessage(outMsg);
             outMsg.setBody(new Object[] {value});
             outMsg.setSerializer(context.getBinding().getSerializer(operation));
@@ -282,7 +289,7 @@ public class ServiceInvocationHandler
         }
     }
     
-    public static void writeHeaders(MessageContext context) throws XFireFault, XMLStreamException
+    public static void writeHeaders(MessageContext context, Object responseValue) throws XFireFault, XMLStreamException
     {
         MessageInfo msgInfo = AbstractBinding.getOutgoingMessageInfo(context);
         MessagePartContainer headers = context.getBinding().getHeaders(msgInfo);
@@ -294,9 +301,15 @@ public class ServiceInvocationHandler
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();
             
+            Object value;
+            if (part.getIndex() == -1)
+                value = responseValue;
+            else
+                value = body[part.getIndex()];
+            
             AbstractBinding.writeParameter(writer,
                                            context,
-                                           body[part.getIndex()],
+                                           value,
                                            part,
                                            part.getName().getNamespaceURI());
         }
