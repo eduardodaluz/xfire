@@ -14,7 +14,7 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 public class BookClientTS
     extends BookClient{
 
-    protected void configureProperties(Properties properties)
+    protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.TIMESTAMP);
         // How long ( in seconds ) message is valid since send.

@@ -42,7 +42,7 @@
   </service>
   <!-- END SNIPPET: uthp -->
 
-  <!-- START SNIPPET: utpp -->
+  <!-- START SNIPPET: encryption -->
   <!--  ============= Encryption   ============= -->
   <service>
     <name>BookServiceENC</name>
@@ -62,7 +62,7 @@
       </bean>
     </inHandlers>
   </service>
-  <!-- END SNIPPET: time -->
+  <!-- END SNIPPET: encrytpion -->
 
   <!-- START SNIPPET: time -->
   <!--  ============= TimeStamp  ============= -->
@@ -105,5 +105,42 @@
     </inHandlers>
   </service>
   <!-- END SNIPPET: sig -->
+ <!--  ============= Encryption 2 Directions  ============= -->
+  <service>
+    <name>BookServiceENC2Way</name>
+    <namespace>http://xfire.codehaus.org/BookService</namespace>
+    <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
+
+    <inHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMInHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JInHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">Encrypt UsernameToken</prop>
+            <prop key="decryptionPropFile">META-INF/xfire/insecurity_enc.properties</prop>
+            <prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
+          </props>
+        </property>
+      </bean>
+      <handler handlerClass="org.codehaus.xfire.demo.ValidateUserTokenHandler" />
+    </inHandlers>
+    
+     <outHandlers>
+      <handler handlerClass="org.codehaus.xfire.util.dom.DOMOutHandler" />
+      <bean class="org.codehaus.xfire.security.wss4j.WSS4JOutHandler" xmlns="">
+        <property name="properties">
+          <props>
+            <prop key="action">Encrypt</prop>
+            <prop key="encryptionPropFile">META-INF/xfire/server_outsecurity_enc.properties</prop>
+            <prop key="passwordCallbackClass">org.codehaus.xfire.demo.PasswordHandler</prop>
+          </props>
+        </property>
+      </bean>
+    </outHandlers>
+    
+    
+  </service>
+  <!-- END SNIPPET: time -->
+
 
 </beans>

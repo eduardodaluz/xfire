@@ -2,6 +2,7 @@ package org.codehaus.xfire.demo;
 
 import java.util.Vector;
 
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.handler.WSHandlerConstants;
@@ -17,6 +18,11 @@ public class ValidateUserTokenHandler
     extends AbstractHandler
 {
 
+ /*   public static final int NO_SECURITY = 0;
+    public static final int UT = 0x1; // perform UsernameToken
+    public static final int SIGN = 0x2; // Perform Signature
+    public static final int ENCR = 0x4; // Perform Encryption
+ */
     public void invoke(MessageContext context)
         throws Exception
     {
@@ -27,10 +33,16 @@ public class ValidateUserTokenHandler
             for (int j = 0; j < res.getResults().size(); j++)
             {
                 WSSecurityEngineResult secRes = (WSSecurityEngineResult) res.getResults().get(j);
+                int action  = secRes.getAction();
+                
+                if( (action &  WSConstants.UT )>0   ){
                 WSUsernameTokenPrincipal principal = (WSUsernameTokenPrincipal) secRes
                         .getPrincipal();
+                context.setProperty(WSHandlerConstants.ENCRYPTION_USER,principal.getName());
                 System.out.print("User : " + principal.getName() + " password : "
                         + principal.getPassword() + "\n");
+                }
+                
             }
         }
 

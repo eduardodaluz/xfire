@@ -28,7 +28,7 @@ public class BookClientEnc
      * 
      * @see org.codehaus.xfire.client.BookClient#configureProperties(java.util.Properties)
      */
-    protected void configureProperties(Properties properties)
+    protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.ENCRYPT);
         properties.setProperty(WSHandlerConstants.USER, "alias");

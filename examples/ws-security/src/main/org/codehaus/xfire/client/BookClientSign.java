@@ -14,7 +14,7 @@ public class BookClientSign
     extends BookClient
 {
 
-    protected void configureProperties(Properties properties)
+    protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.SIGNATURE);
         // User in keystore

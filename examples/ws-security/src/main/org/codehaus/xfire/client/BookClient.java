@@ -1,10 +1,9 @@
 package org.codehaus.xfire.client;
 
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
-import org.codehaus.xfire.DefaultXFire;
-import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.demo.Book;
 import org.codehaus.xfire.demo.IBook;
 import org.codehaus.xfire.security.wss4j.WSS4JOutHandler;
@@ -23,13 +22,13 @@ public abstract class BookClient
 
     public static final String SERVICE_NAMESPACE = "http://xfire.codehaus.org/BookService";
 
-    public static final String SERVICE_URL = "http://localhost:8081/bookws/services/";
+    public static final String SERVICE_URL = "http://localhost:8080/bookws/services/";
 
     /**
      * Setups required security properties for given test.
      * @param properties
      */
-    abstract protected void configureProperties(Properties properties);
+    abstract protected void configureOutProperties(Properties properties);
     
     /**
      * @return Name of the client.
@@ -43,12 +42,7 @@ public abstract class BookClient
         throws MalformedURLException
     {
         System.out.print("Running client : "+getName()+"\n");
-        DefaultXFire xfire = (DefaultXFire) XFireFactory.newInstance().getXFire();
-
-        xfire.addOutHandler(new DOMOutHandler());
-        Properties properties = new Properties();
-        configureProperties(properties);
-        xfire.addOutHandler(new WSS4JOutHandler(properties));
+        
 
         Service serviceModel = new ObjectServiceFactory().create(IBook.class,
                                                                  "BookService",
@@ -58,6 +52,13 @@ public abstract class BookClient
         IBook service = (IBook) new XFireProxyFactory().create(serviceModel, SERVICE_URL
                 + serviceName);
 
+        Client client = ((XFireProxy) Proxy.getInvocationHandler(service)).getClient();
+        
+        client.addOutHandler(new DOMOutHandler());
+        Properties properties = new Properties();
+        configureOutProperties(properties);
+        client.addOutHandler(new WSS4JOutHandler(properties));
+        
         System.out.print("Looking for isbn : 0123456789 ....");
         Book b = service.findBook("0123456789");
         System.out.print(b.getTitle() + " : " + b.getAuthor() + "\n");

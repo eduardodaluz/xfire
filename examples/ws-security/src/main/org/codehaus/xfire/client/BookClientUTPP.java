@@ -15,7 +15,7 @@ public class BookClientUTPP
     extends BookClient
 {
 
-    protected void configureProperties(Properties config)
+    protected void configureOutProperties(Properties config)
     {
         // Action to perform : user token
         config.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);

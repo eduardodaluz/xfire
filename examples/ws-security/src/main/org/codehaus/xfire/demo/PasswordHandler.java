@@ -20,6 +20,7 @@ public class PasswordHandler implements CallbackHandler {
 
 	public PasswordHandler() {
 		passwords.put("alias", "aliaspass");
+        passwords.put("client-344-839","client344Password");
 
 	}
 

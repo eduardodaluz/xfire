@@ -28,7 +28,7 @@ public class BookClientUTHP
 
     }
 
-    protected void configureProperties(Properties properties)
+    protected void configureOutProperties(Properties properties)
     {
         // Action to perform : user token 
         properties.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
