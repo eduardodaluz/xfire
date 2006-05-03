@@ -29,9 +29,9 @@ public class DefaultFaultHandler extends AbstractHandler
         {
             log.error("Fault occurred!", e);
         }
-        else if (log.isDebugEnabled())
+        else if (log.isInfoEnabled())
         {
-            log.debug("Fault occurred!", e);
+            log.info("Fault occurred!", e);
         }
         
         XFireFault fault = XFireFault.createFault(e);
