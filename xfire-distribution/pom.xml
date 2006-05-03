@@ -76,7 +76,7 @@
             </goals>
             <configuration>
               <descriptor>assembly.xml</descriptor>
-              <finalName>xfire</finalName>
+              <finalName>xfire-${version}</finalName>
               <outputDirectory>target/distro</outputDirectory>
               <workDirectory>target/work</workDirectory>
             </configuration>
@@ -89,7 +89,7 @@
             </goals>
             <configuration>
               <descriptor>source-assembly.xml</descriptor>
-              <finalName>xfire</finalName>
+              <finalName>xfire-${version}</finalName>
               <outputDirectory>target/distro</outputDirectory>
               <workDirectory>target/work</workDirectory>
             </configuration>
