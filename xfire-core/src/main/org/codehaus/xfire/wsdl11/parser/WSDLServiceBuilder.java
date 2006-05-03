@@ -317,7 +317,7 @@ public class WSDLServiceBuilder
             }
             
             schemas.setBaseUri(definition.getDocumentBaseURI());
-            XmlSchema schema = schemas.read(el);
+            XmlSchema schema = schemas.read(el, definition.getDocumentBaseURI());
             
             SchemaInfo schemaInfo = new SchemaInfo();
             schemaInfo.setDefinition(definition);
