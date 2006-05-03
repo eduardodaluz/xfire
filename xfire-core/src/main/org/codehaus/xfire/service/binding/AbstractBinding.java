@@ -179,6 +179,7 @@ public abstract class AbstractBinding
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
         int param = 0;
         boolean clientMode = isClientModeOn(context);
+        
         while (STAXUtils.toNextElement(dr))
         {
             MessagePartInfo p;
@@ -204,8 +205,9 @@ public abstract class AbstractBinding
             }
 
             param++;
-            
             parameters.add( context.getService().getBindingProvider().readParameter(p, dr, context) );
+            
+            if (dr.getEventType() == XMLStreamReader.END_ELEMENT) nextEvent(dr);
         }
 
         if (opInfo == null && !clientMode)
