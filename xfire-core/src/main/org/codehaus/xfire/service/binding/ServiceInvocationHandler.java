@@ -203,7 +203,7 @@ public class ServiceInvocationHandler
                                      MessageInfo outMsg, 
                                      MessagePartContainer headerMsg, 
                                      MessagePartContainer outHeaderMsg, 
-                                     List params)
+                                     List params) throws XFireFault
     {
         // Gross hack to calculate the size of the method parameters, minus special
         // parameters like MessageContext.
@@ -221,6 +221,10 @@ public class ServiceInvocationHandler
         
         Object[] newParams = new Object[total];
         List parts = inMsg.getMessageParts();
+        
+        if (params.size() < parts.size())
+            throw new XFireFault("Not enough message parts were received for the operation.", XFireFault.SENDER);
+        
         for (int i = 0; i < parts.size(); i++)
         {
             MessagePartInfo part = (MessagePartInfo) parts.get(i);
