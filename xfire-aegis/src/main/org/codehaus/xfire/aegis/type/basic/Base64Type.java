@@ -46,9 +46,10 @@ public class Base64Type
         try
         {
             int event = reader.next();
-            if (!reader.isCharacters() && !reader.isWhiteSpace()) return null;
+            if (!reader.isCharacters() && !reader.isWhiteSpace()) return new byte[0];
             
-            int length = 1024;
+            int length = reader.getTextLength();
+            
             char[] myBuffer = new char[length];
             for (int sourceStart = 0;; sourceStart += length)
             {
@@ -89,6 +90,6 @@ public class Base64Type
 
         byte[] data = (byte[]) object;
 
-        writer.writeValue( Base64.encode(data, 0, data.length) );
+        writer.writeValue( Base64.encode(data) );
     }
 }
