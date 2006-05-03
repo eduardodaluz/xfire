@@ -63,11 +63,12 @@ public class XFireConfigurableServlet
         return xfire;
     }
     
-    // we might want to move this one out if we want to cut the dependency on the javax.servlet package
     public XFire loadConfig(String configPath) throws XFireException
     {
         XFireConfigLoader loader = new XFireConfigLoader();
-  
+        loader.setBasedir(getWebappBase());
+        log.debug("Loading configuration files relative to " + loader.getBasedir().getAbsolutePath());
+
         ServletContext servletCtx = getServletContext();
         ApplicationContext parent = (ApplicationContext) servletCtx.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 

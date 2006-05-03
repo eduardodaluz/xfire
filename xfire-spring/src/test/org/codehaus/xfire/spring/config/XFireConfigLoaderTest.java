@@ -50,6 +50,7 @@ public class XFireConfigLoaderTest
         throws Exception
     {
         XFireConfigLoader configLoader = new XFireConfigLoader();
+        configLoader.setBasedir(getTestFile("."));
         XFire xfire = configLoader.loadConfig("src/test/META-INF/xfire/sservices.xml, " +
                 "org/codehaus/xfire/spring/config/OperationMetadataServices.xml");
         

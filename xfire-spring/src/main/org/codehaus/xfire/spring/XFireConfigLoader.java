@@ -21,6 +21,17 @@ import org.springframework.core.io.FileSystemResource;
 public class XFireConfigLoader
 {
     private Log log = LogFactory.getLog(XFireConfigLoader.class);
+    private File basedir;
+    
+    public File getBasedir()
+    {
+        return basedir;
+    }
+
+    public void setBasedir(File basedir)
+    {
+        this.basedir = basedir;
+    }
 
     public ApplicationContext loadContext(String configPath, ApplicationContext parent) throws XFireException
     {
@@ -77,9 +88,10 @@ public class XFireConfigLoader
         for (int i = 0; i < configs.length; i++)
         {
             String config = configs[i].trim();
-            if (new File(configs[i]).exists())
+            File file = (basedir != null) ?new File(basedir, config) : new File(config);
+            if (file.exists())
             {
-                xmlReader.loadBeanDefinitions(new FileSystemResource(config));
+                xmlReader.loadBeanDefinitions(new FileSystemResource(file));
             }
             else
             {
