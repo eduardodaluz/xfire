@@ -1,12 +1,11 @@
 package org.codehaus.xfire.wsdl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.wsdl.WSDLException;
 
 /**
  * Create a WSDL instance from a URI.
@@ -21,16 +20,13 @@ public class ResourceWSDL
     /**
      * @param wsdlUrl
      */
-    public ResourceWSDL(String wsdlUrl) throws WSDLException
+    public ResourceWSDL(String wsdlUrl) throws MalformedURLException
     {
-        try
-        {
-            this.wsdlUrl = new URL( wsdlUrl );
-        }
-        catch (MalformedURLException e)
-        {
-            throw new WSDLException(WSDLException.CONFIGURATION_ERROR, "Invalid URL to WSDL file", e);
-        }
+        File f = new File(wsdlUrl);
+        if (f.exists())
+            this.wsdlUrl = f.toURL();
+        else
+            this.wsdlUrl = new URL(wsdlUrl);
     }
 
     /**

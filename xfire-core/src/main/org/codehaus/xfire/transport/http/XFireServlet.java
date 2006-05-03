@@ -1,7 +1,9 @@
 package org.codehaus.xfire.transport.http;
 
+import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,8 @@ public class XFireServlet
     protected XFire xfire;
 
     protected XFireServletController controller;
+
+    private File webInfPath;
 
     private final static Log logger = LogFactory.getLog(XFireServlet.class);
     
@@ -108,5 +112,17 @@ public class XFireServlet
         throws ServletException, IOException
     {
         controller.doService(req, res);
+    }
+    
+    public File getWebappBase()
+    {
+        if (webInfPath == null)
+        {
+            ServletContext context = getServletConfig().getServletContext();
+
+            webInfPath = new File(context.getRealPath("/WEB-INF"));
+        }
+
+        return webInfPath;
     }
 }

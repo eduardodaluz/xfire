@@ -252,7 +252,16 @@ public abstract class DOMStreamReader
     public int getTextCharacters(int sourceStart, char[] target, int targetStart, int length)
         throws XMLStreamException
     {
-        throw new UnsupportedOperationException();
+        char[] src = getText().toCharArray();
+
+        if (sourceStart+length >= src.length) length = src.length - sourceStart ;
+
+        for (int i = 0; i < length; i++)
+        {
+            target[targetStart + i] = src[i + sourceStart];
+        }
+        
+        return length;
     }
 
 
