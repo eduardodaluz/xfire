@@ -36,7 +36,7 @@ public class ClientFaultConverter extends AbstractHandler
     protected void processFaultDetail(XFireFault fault, MessageContext context)
         throws Exception
     {
-        Element exDetail = (Element) fault.getDetail().getContent().get(0);
+        Element exDetail = (Element) fault.getDetail().getChildren().get(0);
         
         MessagePartInfo faultPart = getFaultPart(context.getExchange().getOperation(),
                                                  exDetail);
