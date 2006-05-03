@@ -24,6 +24,7 @@ import org.codehaus.xfire.aegis.type.basic.BigDecimalType;
 import org.codehaus.xfire.aegis.type.basic.BigIntegerType;
 import org.codehaus.xfire.aegis.type.basic.BooleanType;
 import org.codehaus.xfire.aegis.type.basic.CalendarType;
+import org.codehaus.xfire.aegis.type.basic.CharacterType;
 import org.codehaus.xfire.aegis.type.basic.DateTimeType;
 import org.codehaus.xfire.aegis.type.basic.DoubleType;
 import org.codehaus.xfire.aegis.type.basic.FloatType;
@@ -63,6 +64,7 @@ public class DefaultTypeMappingRegistry
     protected static final QName XSD_LONG = new QName(SoapConstants.XSD, "long", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_DOUBLE = new QName(SoapConstants.XSD, "double", SoapConstants.XSD_PREFIX);
+    protected static final QName XSD_CHAR = new QName(SoapConstants.XSD, "char", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_INT = new QName(SoapConstants.XSD, "int", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_SHORT = new QName(SoapConstants.XSD, "short", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean", SoapConstants.XSD_PREFIX);
@@ -86,6 +88,7 @@ public class DefaultTypeMappingRegistry
     protected static final QName ENCODED_STRING = new QName(ENCODED_NS, "string");
     protected static final QName ENCODED_LONG = new QName(ENCODED_NS, "long");
     protected static final QName ENCODED_FLOAT = new QName(ENCODED_NS, "float");
+    protected static final QName ENCODED_CHAR = new QName(ENCODED_NS, "char");
     protected static final QName ENCODED_DOUBLE = new QName(ENCODED_NS, "double");
     protected static final QName ENCODED_INT = new QName(ENCODED_NS, "int");
     protected static final QName ENCODED_SHORT = new QName(ENCODED_NS, "short");
@@ -302,6 +305,8 @@ public class DefaultTypeMappingRegistry
         register(tm, double.class, XSD_DOUBLE, new DoubleType());
         register(tm, float.class, XSD_FLOAT, new FloatType());
         register(tm, long.class, XSD_LONG, new LongType());
+        register(tm, char.class,XSD_CHAR, new CharacterType());
+        register(tm, Character.class,XSD_CHAR, new CharacterType());
         register(tm, String.class, XSD_STRING, new StringType());
         register(tm, Boolean.class, XSD_BOOLEAN, new BooleanType());
         register(tm, Integer.class, XSD_INT, new IntType());
@@ -325,6 +330,7 @@ public class DefaultTypeMappingRegistry
         register(tm, Object.class, XSD_ANY, new ObjectType());
         register(tm, DataSource.class, XSD_BASE64, new DataSourceType());
         register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
+        
 
         registerIfAvailable(tm, "javax.xml.datatype.Duration", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.DurationType");
         registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATE, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
@@ -348,6 +354,8 @@ public class DefaultTypeMappingRegistry
         register(soapTM, double.class, ENCODED_DOUBLE, new DoubleType());
         register(soapTM, float.class, ENCODED_FLOAT, new FloatType());
         register(soapTM, long.class, ENCODED_LONG, new LongType());
+        register(soapTM, char.class,ENCODED_CHAR,new CharacterType());
+        register(soapTM, Character.class,ENCODED_CHAR,new CharacterType());
         register(soapTM, String.class, ENCODED_STRING, new StringType());
         register(soapTM, Boolean.class, ENCODED_BOOLEAN, new BooleanType());
         register(soapTM, Integer.class, ENCODED_INT, new IntType());
@@ -444,4 +452,5 @@ public class DefaultTypeMappingRegistry
     {
         this.typeConfiguration = typeConfiguration;
     }
+
 }

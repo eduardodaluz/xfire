@@ -43,6 +43,14 @@ public abstract class AbstractMessageWriter
     }
 
     /**
+     * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsCharacter(java.lang.Character)
+     */
+    public void writeValueAsCharacter(Character char1)
+    {
+        writeValue(char1.toString());
+    }
+    
+    /**
      * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsLong(java.lang.Long)
      */
     public void writeValueAsLong(Long l)

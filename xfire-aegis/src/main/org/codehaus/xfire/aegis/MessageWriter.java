@@ -13,6 +13,8 @@ public interface MessageWriter
 
     void writeValueAsInt( Integer i );
 
+    void writeValueAsCharacter(Character char1);
+    
     void writeValueAsDouble(Double double1);
 
     void writeValueAsLong(Long l);

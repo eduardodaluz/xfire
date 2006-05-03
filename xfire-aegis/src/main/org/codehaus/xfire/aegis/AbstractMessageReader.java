@@ -49,10 +49,16 @@ public abstract class AbstractMessageReader
     {
         return getValue() != null;
     }
-    
+
     /**
-     * @see org.codehaus.xfire.aegis.MessageReader#getValueAsInt()
+     * @see org.codehaus.xfire.aegis.MessageReader#getValueAsCharacter()
      */
+    public char getValueAsCharacter()
+    {
+        if (getValue() == null) return 0;
+        return getValue().charAt(0);
+    }
+
     public int getValueAsInt()
     {
         if (getValue() == null) return 0;

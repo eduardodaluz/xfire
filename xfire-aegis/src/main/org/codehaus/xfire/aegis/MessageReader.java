@@ -22,9 +22,11 @@ public interface MessageReader
     public double getValueAsDouble();
 
     public float getValueAsFloat();
+    
+    public boolean getValueAsBoolean();
 
-	public boolean getValueAsBoolean();
-
+    public char getValueAsCharacter();
+    
     public MessageReader getAttributeReader( QName qName );
 
     public boolean hasMoreAttributeReaders();

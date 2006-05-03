@@ -166,7 +166,16 @@ public class ArrayType
             }
             return array;
         }
-        
+        else if (Character.TYPE.equals(arrayType))
+        {
+            Object[] objects = values.toArray();
+            Object array = Array.newInstance(Character.TYPE, objects.length);
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                Array.set(array, i, objects[i]);
+            }
+            return array;
+        }
         return values.toArray( (Object[]) Array.newInstance( getComponentType().getTypeClass(), 
                                                              values.size()) );
     }
@@ -256,6 +265,14 @@ public class ArrayType
                 writeValue(new Boolean(objects[i]), writer, context, type, name, ns);
             }
         }
+        else if (Character.TYPE.equals(arrayType))
+        {
+            char[] objects = (char[]) values;
+            for (int i = 0, n = objects.length; i < n; i++)
+            {
+                writeValue(new Character(objects[i]), writer, context, type, name, ns);
+            }
+        }        
     }
 
     protected void writeValue(Object value, 
