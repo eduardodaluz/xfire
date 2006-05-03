@@ -14,7 +14,22 @@ public class WebServiceAnnotation
     private String serviceName = "";
     private String targetNamespace = "";
     private String portName = "";
+    private String wsdlLocation;
     
+    /**
+     * The location of the WSDL for the service.
+     * @return
+     */
+    public String getWsdlLocation()
+    {
+        return wsdlLocation;
+    }
+
+    public void setWsdlLocation(String wsdlLocation)
+    {
+        this.wsdlLocation = wsdlLocation;
+    }
+
     public String getPortName()
     {
         return portName;

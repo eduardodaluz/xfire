@@ -2,6 +2,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
 
 /**
  * Annotations-bases implementation of the {@link ServiceFactory} interface.
@@ -204,6 +206,7 @@ public class AnnotationServiceFactory
                     throw new AnnotationException("Couldn't find endpoint interface " +
                                                   webServiceAnnotation.getEndpointInterface(), e);
                 }
+                
             }
             else
             {
@@ -232,6 +235,19 @@ public class AnnotationServiceFactory
             
             Service service = super.create(endpointInterface, name, namespace, properties);
 
+            String wsdl = webServiceAnnotation.getWsdlLocation();
+            if (wsdl != null && wsdl.length() > 0)
+            {
+                try
+                {
+                    service.setWSDLWriter(new ResourceWSDL(wsdl));
+                }
+                catch (MalformedURLException e)
+                {
+                    throw new AnnotationException("Couldn't load wsdl from " + wsdl, e);
+                }
+            }
+            
             if (clazz != endpointInterface)
             {
                 service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, clazz);

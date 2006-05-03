@@ -18,6 +18,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.easymock.MockControl;
 
 public class AnnotationServiceFactoryTest
@@ -54,6 +55,7 @@ public class AnnotationServiceFactoryTest
         WebServiceAnnotation annotation = new WebServiceAnnotation();
         annotation.setServiceName("EchoService");
         annotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
+        annotation.setWsdlLocation(getTestFile("src/test/org/codehaus/xfire/annotations/echo.wsdl").getAbsolutePath());
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(annotation);
@@ -86,7 +88,6 @@ public class AnnotationServiceFactoryTest
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
-
         webAnnotationsControl.verify();
         
         assertEquals(new QName(annotation.getTargetNamespace(), "EchoService"), 
@@ -94,6 +95,8 @@ public class AnnotationServiceFactoryTest
         
         assertEquals(new QName(annotation.getTargetNamespace(), "EchoServiceImpl"), 
                      service.getServiceInfo().getPortType());
+
+        assertTrue(service.getWSDLWriter() instanceof ResourceWSDL);
     }
 
     public void testNoWebServiceAnnotation()
