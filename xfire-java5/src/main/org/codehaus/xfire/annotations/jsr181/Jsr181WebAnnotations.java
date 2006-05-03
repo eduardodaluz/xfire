@@ -38,6 +38,7 @@ public class Jsr181WebAnnotations
             annotation.setServiceName(webService.serviceName());
             annotation.setTargetNamespace(webService.targetNamespace());
             annotation.setPortName(webService.portName());
+            annotation.setWsdlLocation(webService.wsdlLocation());
             
             return annotation;
         }
