@@ -143,12 +143,6 @@
       <url>http://dist.codehaus.org/</url>
       <layout>legacy</layout>
     </repository>
-    <repository>
-      <id>apache-snapshots</id>
-      <name>Apache snapshot repository</name>
-      <url>http://cvs.apache.org/maven-snapshot-repository/</url>
-      <layout>legacy</layout>
-    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>

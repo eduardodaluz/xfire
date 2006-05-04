@@ -42,9 +42,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>2.0-ea3</version>
+      <groupId>com.sun.xml</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>2.0EA3</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -53,16 +53,6 @@
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-java5</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.0-ea3</version>
-    </dependency>
-    <dependency>
-      <groupId>xfire</groupId>
-      <artifactId>jaxb-xjc</artifactId>
-      <version>2.0-ea3</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
