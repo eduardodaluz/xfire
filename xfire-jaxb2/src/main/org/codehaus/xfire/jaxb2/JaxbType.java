@@ -90,7 +90,7 @@ public class JaxbType
                 XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
                 xsw.writeCharacters("");
                 xsw.flush();
-                
+                m.setProperty(Marshaller.JAXB_ENCODING, context.getOutMessage().getEncoding());
                 m.marshal(object, os);
             }
             else
