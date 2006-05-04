@@ -516,7 +516,6 @@ public class WSDLServiceBuilder
                 return false;
 
             XmlSchemaObject o = items.getItem(0);
-            System.out.print(o);
             if (!(o instanceof XmlSchemaElement)) return false;
             
             XmlSchemaElement el = (XmlSchemaElement) o;
