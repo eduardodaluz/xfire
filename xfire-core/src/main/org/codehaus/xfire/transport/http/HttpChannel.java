@@ -94,7 +94,8 @@ public class HttpChannel
             else
             {
                 response.setContentType(getSoapMimeType(message));
-
+                
+                message.setProperty(Channel.OUTPUTSTREAM, response.getOutputStream());
                 HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
             }
         }

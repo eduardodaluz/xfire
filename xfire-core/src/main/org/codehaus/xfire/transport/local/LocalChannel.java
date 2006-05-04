@@ -53,6 +53,7 @@ public class LocalChannel
             {
                 final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter( out, message.getEncoding(),context );
 
+                message.setProperty(Channel.OUTPUTSTREAM, out);
                 message.getSerializer().writeMessage( message, writer, context );
                 
                 try
@@ -139,6 +140,7 @@ public class LocalChannel
                     {
                         final XMLStreamWriter writer =
                             STAXUtils.createXMLStreamWriter( outStream, message.getEncoding(),context );
+                        message.setProperty(Channel.OUTPUTSTREAM, outStream);
                         message.getSerializer().writeMessage( message, writer, context );
 
                         writer.close();

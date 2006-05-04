@@ -22,7 +22,8 @@ public interface Channel
     
     String USERNAME = "username";
     String PASSWORD = "password";
-
+    String OUTPUTSTREAM = "channel.outputstream";
+    
     void open() throws Exception;
     
     /**
