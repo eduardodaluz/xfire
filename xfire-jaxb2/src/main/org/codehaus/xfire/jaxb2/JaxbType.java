@@ -1,5 +1,7 @@
 package org.codehaus.xfire.jaxb2;
 
+import java.io.OutputStream;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -9,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -19,6 +23,7 @@ import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.transport.Channel;
 import org.jdom.Element;
 
 public class JaxbType
@@ -79,9 +84,25 @@ public class JaxbType
                 object = new JAXBElement(part.getName(), getTypeClass(), object);
             }
             
-            m.marshal(object, ((ElementWriter) writer).getXMLStreamWriter());
+            OutputStream os = (OutputStream) context.getOutMessage().getProperty(Channel.OUTPUTSTREAM);
+            if (os != null)
+            {
+                XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
+                xsw.writeCharacters("");
+                xsw.flush();
+                
+                m.marshal(object, os);
+            }
+            else
+            {
+                m.marshal(object, ((ElementWriter) writer).getXMLStreamWriter());
+            }
         }
         catch (JAXBException e)
+        {
+            throw new XFireFault("Could not unmarshall type.", e, XFireFault.RECEIVER);
+        }
+        catch (XMLStreamException e)
         {
             throw new XFireFault("Could not unmarshall type.", e, XFireFault.RECEIVER);
         }
