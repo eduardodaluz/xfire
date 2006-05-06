@@ -27,13 +27,14 @@ public class DescriptorTest
     extends AbstractXFireAegisTest
 {
     CustomTypeMapping tm;
+    private DefaultTypeMappingRegistry reg;
 
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
-        DefaultTypeMappingRegistry reg = new DefaultTypeMappingRegistry(true);
+        reg = new DefaultTypeMappingRegistry(true);
         tm = (CustomTypeMapping) reg.getDefaultTypeMapping();
         
         XMLTypeCreator creator = new XMLTypeCreator();
@@ -166,6 +167,9 @@ public class DescriptorTest
     public void testExtensible() throws Exception
     {
         tm.setEncodingStyleURI("urn:xfire:bean-extensible");
+        reg.getConfiguration().setDefaultExtensibleAttributes(true);
+        reg.getConfiguration().setDefaultExtensibleElements(true);
+        
         Type type = tm.getTypeCreator().createType(MyBean.class);
         BeanTypeInfo info = ((BeanType) type).getTypeInfo();
         assertTrue(info.isExtensibleElements());

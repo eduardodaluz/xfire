@@ -2,9 +2,9 @@ package org.codehaus.xfire.aegis.type;
 
 public class Configuration
 {
-    private boolean defaultExtensibleElements = true;
+    private boolean defaultExtensibleElements = false;
 
-    private boolean defaultExtensibleAttributes = true;
+    private boolean defaultExtensibleAttributes = false;
 
     private boolean defaultNillable = true;
 
