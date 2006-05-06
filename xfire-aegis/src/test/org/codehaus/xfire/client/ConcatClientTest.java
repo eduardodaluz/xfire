@@ -25,7 +25,11 @@ public class ConcatClientTest
             {
                 return s1 + s2 + s3;
             }
+
+            public void noconcat(String s1, String s2)
+            {
             
+            }
         }));
 
         getServiceRegistry().register(s);
@@ -44,6 +48,9 @@ public class ConcatClientTest
         res = client.invoke("concat1", new Object[]{"1", "2", "3"});
         
         assertEquals("123", res[0]);
+        
+        res = client.invoke("noconcat", new Object[] {"a", "b"});
+        assertEquals(0, res.length);
     }
 
     public static interface ConcatService
@@ -51,5 +58,7 @@ public class ConcatClientTest
         String concat(String s1, String s2);
         
         String concat(String s1, String s2, String s3);
+        
+        void noconcat(String s1, String s2);
     }
 }
