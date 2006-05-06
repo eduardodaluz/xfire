@@ -10,7 +10,16 @@ public class SchemaInfo
     private Element schemaElement;
     private XmlSchema schema;
     private Definition definition;
+    private boolean imported;
     
+    public boolean isImported()
+    {
+        return imported;
+    }
+    public void setImported(boolean imported)
+    {
+        this.imported = imported;
+    }
     public Definition getDefinition()
     {
         return definition;

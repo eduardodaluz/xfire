@@ -2,6 +2,8 @@ package org.codehaus.xfire.wsdl11.parser;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -81,13 +83,13 @@ public class WSDLServiceBuilder
     private List definitions = new ArrayList();
     private List definitionPaths = new ArrayList();
     private List portTypes = new ArrayList();
-    private List types = new ArrayList();
+    private Map types = new HashMap();
     private List wsdlServices = new ArrayList();
 
     /** A collection of XFire Service classes that were built. */
     private Map xFireServices = new HashMap();
     private List allServices = new ArrayList();
-
+    
     private TransportManager transportManager =
         XFireFactory.newInstance().getXFire().getTransportManager();
     private Service service;
@@ -103,12 +105,13 @@ public class WSDLServiceBuilder
 
     public WSDLServiceBuilder(InputStream is) throws WSDLException
     {
-        this(WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(is)));
+        this("", is);
     }
 
     public WSDLServiceBuilder(String baseURI, InputStream is) throws WSDLException
     {
         this(WSDLFactory.newInstance().newWSDLReader().readWSDL(baseURI, new InputSource(is)));
+        this.definition.setDocumentBaseURI(baseURI);
     }
     
     public BindingProvider getBindingProvider()
@@ -159,10 +162,11 @@ public class WSDLServiceBuilder
         processImports(definition);
         
         // Import all the types..
-        types.add(definition.getTypes());
-        for (Iterator itr = types.iterator(); itr.hasNext();)
+        types.put(definition.getDocumentBaseURI(), definition.getTypes());
+        for (Iterator itr = types.entrySet().iterator(); itr.hasNext();)
         {
-            visit((Types) itr.next());
+            Map.Entry entry = (Map.Entry) itr.next();
+            visit((String)entry.getKey(), (Types)entry.getValue());
         }
         
         portTypes.addAll(definition.getPortTypes().values());
@@ -228,7 +232,6 @@ public class WSDLServiceBuilder
                 Import i = (Import) importItr.next();
                 
                 Definition iDef = i.getDefinition();
-                
                 if (!definitionPaths.contains(i.getLocationURI())) 
                 {
                     log.info("Adding wsdl definition " + i.getLocationURI() +
@@ -236,8 +239,17 @@ public class WSDLServiceBuilder
                     
                     definitionPaths.add(i.getLocationURI());
                     
+                    try
+                    {
+                        String resolvedLocation = new URI(parent.getDocumentBaseURI()).resolve(i.getLocationURI()).toString();
+                        types.put(resolvedLocation, iDef.getTypes());
+                    }
+                    catch (URISyntaxException e)
+                    {
+                        throw new XFireRuntimeException("Couldn't resolve location " + i.getLocationURI(), e);
+                    }
+                    
                     definitions.add(iDef);
-                    types.add(iDef.getTypes());
                     portTypes.addAll(iDef.getPortTypes().values());
                     wsdlServices.addAll(iDef.getServices().values());
                     
@@ -290,7 +302,7 @@ public class WSDLServiceBuilder
         return allServices;
     }
     
-    protected void visit(Types types)
+    protected void visit(String location, Types types)
     {
         if (types == null) return;
         
@@ -317,12 +329,13 @@ public class WSDLServiceBuilder
             }
             
             schemas.setBaseUri(definition.getDocumentBaseURI());
-            XmlSchema schema = schemas.read(el, definition.getDocumentBaseURI());
+            XmlSchema schema = schemas.read(el, location);
             
             SchemaInfo schemaInfo = new SchemaInfo();
             schemaInfo.setDefinition(definition);
             schemaInfo.setSchema(schema);
             schemaInfo.setSchemaElement(el);
+            schemaInfo.setImported(!definition.getDocumentBaseURI().equals(location));
             
             schemaInfos.add(schemaInfo);
         }
