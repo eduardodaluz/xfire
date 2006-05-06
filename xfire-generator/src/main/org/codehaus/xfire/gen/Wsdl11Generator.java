@@ -58,10 +58,14 @@ public class Wsdl11Generator
             }
         }
 
-        int lastSlash = wsdl.lastIndexOf(File.separatorChar);
-        if (baseURI == null && lastSlash != -1 && !wsdl.startsWith("/"))
+        String wsdlUri = wsdl;
+        File wsdlFile = new File(wsdl);
+        if (wsdlFile.exists()) wsdlUri = wsdlFile.toURL().toString();
+        
+        int lastSlash = wsdlUri.lastIndexOf("/");
+        if (baseURI == null && lastSlash != -1 && !wsdlUri.startsWith("/"))
         {
-            baseURI = wsdl.substring(0, lastSlash);
+            baseURI = wsdlUri.substring(0, lastSlash+1);
         }
 
         WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI,  new WSDLInputStreamLoader().getInputStream(wsdl));

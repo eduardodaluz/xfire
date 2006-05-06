@@ -62,7 +62,7 @@ public class JAXBSchemaSupport implements SchemaSupport
             schemaCompiler.setEntityResolver(new RelativeEntityResolver(schema.getDefinition().getDocumentBaseURI()));
             
             System.out.println("adding schema " + schema.getSchema().getTargetNamespace());
-            schemaCompiler.parseSchema("#types?schema"+schemaElementCount++, schema.getSchemaElement());
+            schemaCompiler.parseSchema(context.getBaseURI() + "#types?schema"+schemaElementCount++, schema.getSchemaElement());
         }
         
         model = schemaCompiler.bind();
@@ -188,9 +188,10 @@ public class JAXBSchemaSupport implements SchemaSupport
         {
             File file = new File(baseURI, systemId);
             if (file.exists())
-            {
+            { System.out.println(systemId);
                 return new InputSource(new FileInputStream(file));
             }
+           
             return null;
         }
     }
