@@ -335,7 +335,9 @@ public class WSDLServiceBuilder
             schemaInfo.setDefinition(definition);
             schemaInfo.setSchema(schema);
             schemaInfo.setSchemaElement(el);
-            schemaInfo.setImported(!definition.getDocumentBaseURI().equals(location));
+            
+            if (definition.getDocumentBaseURI() != null && !definition.getDocumentBaseURI().equals(location))
+                schemaInfo.setImported(true);
             
             schemaInfos.add(schemaInfo);
         }
