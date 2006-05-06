@@ -15,7 +15,8 @@ public class ErrorReceiverImpl
     public void error(SAXParseException e)
     {
         fatalErrors = true;
-        log.error("Error generating JAXB classes.", e);
+        log.error("Error generating JAXB classes: " + e.getMessage() + " at " + e.getLineNumber() 
+                  + "," + e.getColumnNumber() + " in " + e.getSystemId());
     }
 
     public void fatalError(SAXParseException e)
@@ -26,12 +27,14 @@ public class ErrorReceiverImpl
 
     public void warning(SAXParseException e)
     {
-        log.warn("Error generating JAXB classes.", e);
+        log.error("Error generating JAXB classes: " + e.getMessage() + " at " + e.getLineNumber() 
+                  + "," + e.getColumnNumber() + " in " + e.getSystemId());
     }
 
     public void info(SAXParseException e)
     {
-        log.info("Error generating JAXB classes.", e);
+        log.error("Error generating JAXB classes: " + e.getMessage() + " at " + e.getLineNumber() 
+                  + "," + e.getColumnNumber() + " in " + e.getSystemId());
     }
 
     public boolean hasFatalErrors()

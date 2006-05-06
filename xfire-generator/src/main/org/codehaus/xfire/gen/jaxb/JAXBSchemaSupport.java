@@ -16,9 +16,6 @@ import org.codehaus.xfire.gen.SchemaSupport;
 import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.wsdl11.parser.SchemaInfo;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -61,8 +58,17 @@ public class JAXBSchemaSupport implements SchemaSupport
         {
             schemaCompiler.setEntityResolver(new RelativeEntityResolver(schema.getDefinition().getDocumentBaseURI()));
             
-            System.out.println("adding schema " + schema.getSchema().getTargetNamespace());
-            schemaCompiler.parseSchema(context.getBaseURI() + "#types?schema"+schemaElementCount++, schema.getSchemaElement());
+            String systemId;
+            if (schema.isImported())
+            {
+                systemId = schema.getSchema().getSourceURI();
+            }
+            else
+            {
+                systemId = context.getBaseURI() + "#types?schema"+schemaElementCount++;
+            }
+            
+            schemaCompiler.parseSchema(systemId, schema.getSchemaElement());
         }
         
         model = schemaCompiler.bind();
@@ -81,24 +87,6 @@ public class JAXBSchemaSupport implements SchemaSupport
         jaxbModel.build(context.getOutputDirectory());
 
         Thread.currentThread().setContextClassLoader(cl);
-    }
-
-    private void removeImports(Element el)
-    {
-        NodeList nodes = el.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++)
-        {
-            Node n = nodes.item(i);
-            if (n instanceof Element)
-            {
-                Element e = (Element) n;
-                
-                if (e.getLocalName().equals("import"))
-                {
-                    e.removeAttribute("schemaLocation");
-                }
-            }
-        }
     }
     
     public JType getType(GenerationContext context, QName concreteType, QName schemaType) 
