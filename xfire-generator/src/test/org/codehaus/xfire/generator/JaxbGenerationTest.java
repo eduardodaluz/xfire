@@ -37,7 +37,7 @@ public class JaxbGenerationTest
         JDefinedClass echo = model._getClass("jsr181.jaxb.wwcars.wwcarsXMLInterfaceSoap");
         assertNotNull(echo);
         
-        assertEquals(getTestFilePath("src/wsdl/"), generator.getBaseURI());
+        assertEquals(getTestFile("src/wsdl/wwcarsXMLInterface.wsdl").toURI().toString(), generator.getBaseURI());
     }
     
     public void testTwoPortsDifferentBindings() throws Exception
