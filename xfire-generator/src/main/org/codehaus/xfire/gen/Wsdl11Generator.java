@@ -60,15 +60,19 @@ public class Wsdl11Generator
 
         String wsdlUri = wsdl;
         File wsdlFile = new File(wsdl);
-        if (wsdlFile.exists()) wsdlUri = wsdlFile.toURL().toString();
-        
-        int lastSlash = wsdlUri.lastIndexOf("/");
-        if (baseURI == null && lastSlash != -1 && !wsdlUri.startsWith("/"))
+        if (wsdlFile.exists()) 
+            wsdlUri = wsdlFile.toURI().toString();
+
+        if (baseURI == null)
         {
-            baseURI = wsdlUri.substring(0, lastSlash+1);
+            baseURI = wsdlUri;
+        }
+        else if (new File(baseURI).exists())
+        {
+            baseURI = new File(baseURI).toURI().toString();
         }
 
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI,  new WSDLInputStreamLoader().getInputStream(wsdl));
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, new WSDLInputStreamLoader().getInputStream(wsdlUri));
         builder.setBindingProvider(support.getBindingProvider());
         builder.build();
         
@@ -78,7 +82,7 @@ public class Wsdl11Generator
         
         GenerationContext context = new GenerationContext(codeModel, builder.getDefinition());
         context.setOutputDirectory(dest);
-        context.setWsdlLocation(wsdl);
+        context.setWsdlLocation(wsdlUri);
         context.setBaseURI(baseURI);
         context.setSchemas(builder.getSchemas());
         
