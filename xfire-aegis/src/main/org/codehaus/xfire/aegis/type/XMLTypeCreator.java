@@ -226,6 +226,15 @@ public class XMLTypeCreator extends AbstractTypeCreator
         Class parent = clazz;
         while(true)
         {
+        	
+            // Read mappings for interfaces as well
+			Class[] interfaces = parent.getInterfaces();
+			for (int i = 0; i < interfaces.length; i++) {
+				Class interfaze = interfaces[i];
+				List interfaceMappings = findMappings(interfaze);
+				mappings.addAll(interfaceMappings);
+			}
+
             Class sup = parent.getSuperclass();
             
             if (sup == null || stopClasses.contains(sup)) 
@@ -234,7 +243,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             Element mapping = findMapping(sup);
             if (mapping != null)
             {
-                mappings.add(findMapping(sup));
+                mappings.add(mapping);
             }
             
             parent = sup;
