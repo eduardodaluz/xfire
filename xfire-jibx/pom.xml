@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jibx</artifactId>
-  <name>XFire jibx Support</name>
+  <name>XFire JiBX Support</name>
   <version>1.1-SNAPSHOT</version>
   <description></description>
   <build>
@@ -33,8 +33,8 @@
                 <taskdef classname="org.jibx.binding.ant.CompileTask" name="jibx"
                   classpathref="maven.test.classpath">
                 </taskdef>
-                <jibx verbose="true" binding="src/jibx/binding.xml">
-                  <classpathset dir="target/test-classes" />
+                <jibx verbose="true" binding="${basedir}/src/jibx/binding.xml">
+                  <classpathset dir="${basedir}/target/test-classes" />
                 </jibx>
               </tasks>
             </configuration>
@@ -70,6 +70,11 @@
       <artifactId>bcel</artifactId>
       <version>5.1</version>
     </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+    </dependency>
+    
   </dependencies>
 
   <repositories>
