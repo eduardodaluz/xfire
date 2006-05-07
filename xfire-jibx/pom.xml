@@ -58,12 +58,17 @@
     <dependency>
       <groupId>jibx</groupId>
       <artifactId>jibx-bind</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1-beta3</version>
     </dependency>
     <dependency>
       <groupId>jibx</groupId>
       <artifactId>jibx-run</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1-beta3</version>
+    </dependency>
+    <dependency>
+      <groupId>jibx</groupId>
+      <artifactId>jibx-extras</artifactId>
+      <version>1.1-beta3</version>
     </dependency>
     <dependency>
       <groupId>bcel</groupId>
@@ -97,17 +102,5 @@
       </snapshots>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jibx.sf.net</id>
-      <name>JiBX repository</name>
-      <url>http://jibx.sf.net/maven2</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
+
 </project>
