@@ -3,6 +3,7 @@ package org.codehaus.xfire.aegis.type.interfaceMapping;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.BeanInvoker;
+import org.jdom.Document;
 
 public class InterfaceInheritanceAegisTest extends AbstractXFireAegisTest {
 
@@ -21,8 +22,11 @@ public class InterfaceInheritanceAegisTest extends AbstractXFireAegisTest {
 
 	public void testGetStrings() throws Exception {
 
-		printNode(getWSDLDocument("InterfaceService"));
-
+		Document doc = getWSDLDocument("InterfaceService"); 
+		//printNode(doc);
+		addNamespace("xsd","http://www.w3.org/2001/XMLSchema");
+		assertValid("//xsd:complexType[@name=\"BeanImpl\"]/xsd:sequence/xsd:element[@name=\"exposedName\"]",doc);
+		assertValid("//xsd:complexType[@name=\"BeanImpl\"]/xsd:sequence/xsd:element[@name=\"exposedParentName\"]",doc);
 	}
 
 }
