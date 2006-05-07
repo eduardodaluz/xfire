@@ -56,15 +56,15 @@ public class OutMessageDataSource implements DataSource
         SoapVersion soap = msg.getSoapVersion();
         if (soap instanceof Soap11)
         {
-            ct = "text/xml";
+            ct = "text/xml; charset=" + msg.getEncoding();
         }
         else if (soap instanceof Soap12)
         {
-             return "application/soap+xml";
+             return "application/soap+xml; charset=" + msg.getEncoding();
         }
         else
         {
-            return "text/xml";
+            return "text/xml; charset=" + msg.getEncoding();
         }
         
         return ct;
