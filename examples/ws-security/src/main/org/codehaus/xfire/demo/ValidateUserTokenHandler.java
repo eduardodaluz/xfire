@@ -1,5 +1,6 @@
 package org.codehaus.xfire.demo;
 
+import java.security.cert.X509Certificate;
 import java.util.Vector;
 
 import org.apache.ws.security.WSConstants;
@@ -9,6 +10,8 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandler;
+
+import sun.security.x509.X500Name;
 
 /**
  * <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -34,7 +37,8 @@ public class ValidateUserTokenHandler
             {
                 WSSecurityEngineResult secRes = (WSSecurityEngineResult) res.getResults().get(j);
                 int action  = secRes.getAction();
-                
+                // USER TOKEN
+                // If usertoken is sent, use it to encrypt response
                 if( (action &  WSConstants.UT )>0   ){
                 WSUsernameTokenPrincipal principal = (WSUsernameTokenPrincipal) secRes
                         .getPrincipal();
@@ -42,7 +46,13 @@ public class ValidateUserTokenHandler
                 System.out.print("User : " + principal.getName() + " password : "
                         + principal.getPassword() + "\n");
                 }
-                
+                // SIGNATURE
+                if( ( action & WSConstants.SIGN ) > 0 ){
+                    X509Certificate cert = secRes.getCertificate();
+                    X500Name principal = (X500Name) secRes.getPrincipal();
+                    // Do something whith cert
+                    System.out.print("Signature for : "  + principal.getCommonName());
+                }
             }
         }
 
