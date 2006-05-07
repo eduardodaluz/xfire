@@ -13,7 +13,7 @@ public class WSRPTest
     public void testWSRP() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();
-        generator.setWsdl("src/wsdl/wsrp/wsrp_service.wsdl");
+        generator.setWsdl(getTestFilePath("src/wsdl/wsrp/wsrp_service.wsdl"));
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("org.codehaus.xfire.generator.wsrp");
         generator.setBinding("jaxb");
