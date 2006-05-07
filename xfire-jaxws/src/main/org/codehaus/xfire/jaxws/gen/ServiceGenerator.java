@@ -1,6 +1,5 @@
 package org.codehaus.xfire.jaxws.gen;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -69,7 +68,7 @@ public class ServiceGenerator
         JDefinedClass servCls = model._class(portName);
         servCls._extends(javax.xml.ws.Service.class);
         
-        String wsdlUrl = new File(context.getWsdlLocation()).toURL().toExternalForm();
+        String wsdlUrl = context.getWsdlLocation();
         JAnnotationUse clientAnn = servCls.annotate(WebServiceClient.class);
         clientAnn.param("targetNamespace", ns);
         clientAnn.param("name", name);

@@ -73,7 +73,7 @@ public class ServiceDelegate
         }
         catch (Exception e)
         {
-            throw new IllegalStateException("Cannot access getPortClassMap method.", e);
+            throw new IllegalStateException("Could not initialize Service.", e);
         }
     }
     
