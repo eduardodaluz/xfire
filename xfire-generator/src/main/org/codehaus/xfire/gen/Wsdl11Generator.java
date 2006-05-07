@@ -3,6 +3,8 @@ package org.codehaus.xfire.gen;
 import java.io.File;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
@@ -22,6 +24,8 @@ import com.sun.codemodel.JCodeModel;
  */
 public class Wsdl11Generator
 {
+    private static final Log log = LogFactory.getLog(Wsdl11Generator.class);
+    
     public static final String JAXB = "jaxb";
     public static final String XMLBEANS = "xmlbeans";
 
@@ -72,6 +76,8 @@ public class Wsdl11Generator
             baseURI = new File(baseURI).toURI().toString();
         }
 
+        log.info("Generating code for WSDL at " + wsdlUri + " with a base URI of " + baseURI);
+        
         WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, new WSDLInputStreamLoader().getInputStream(wsdlUri));
         builder.setBindingProvider(support.getBindingProvider());
         builder.build();
