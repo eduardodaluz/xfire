@@ -1,5 +1,6 @@
 package org.codehaus.xfire.transport.http;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
@@ -72,6 +73,8 @@ public class HttpChannel
     {
         try
         {
+            OutputStream out = null;
+            
             boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
             Attachments atts = message.getAttachments();
             if (mtomEnabled || atts != null)
@@ -86,18 +89,22 @@ public class HttpChannel
                 DataHandler soapHandler = new DataHandler(source);
                 atts.setSoapContentType(getSoapMimeType(message));
                 atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
-                
+
                 response.setContentType(atts.getContentType());
                 
-                atts.write(response.getOutputStream());
+                out = new BufferedOutputStream(response.getOutputStream());
+                atts.write(out);
             }
             else
             {
                 response.setContentType(getSoapMimeType(message));
                 
-                message.setProperty(Channel.OUTPUTSTREAM, response.getOutputStream());
-                HttpChannel.writeWithoutAttachments(context, message, response.getOutputStream());
+                out = new BufferedOutputStream(response.getOutputStream());
+                message.setProperty(Channel.OUTPUTSTREAM, out);
+                HttpChannel.writeWithoutAttachments(context, message, out);
             }
+            
+            out.flush();
         }
         catch (IOException e)
         {

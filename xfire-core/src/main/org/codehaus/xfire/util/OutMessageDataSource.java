@@ -14,6 +14,7 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapVersion;
+import org.codehaus.xfire.transport.Channel;
 
 /**
  * This will create a DataSource from a message for use in Attachments.
@@ -86,6 +87,7 @@ public class OutMessageDataSource implements DataSource
 
            XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, msg.getEncoding(), context);
 
+           msg.setProperty(Channel.OUTPUTSTREAM, out);
            msg.getSerializer().writeMessage(msg, writer, context);
            
            writer.flush();

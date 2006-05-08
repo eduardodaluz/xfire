@@ -183,7 +183,7 @@ public class JavaMailAttachments
               .append(">\"; start-info=\"")
               .append(getSoapContentType())
               .append("\"");
-            
+
             mimeMP = new MimeMultipart(ct.toString());
         }
 

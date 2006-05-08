@@ -1,5 +1,6 @@
 package org.codehaus.xfire.util;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -92,7 +93,7 @@ public class CachedOutputStream extends OutputStream
         else
             tempFile = File.createTempFile("att", "tmp", outputDir);
 
-        currentStream = new FileOutputStream(tempFile);
+        currentStream = new BufferedOutputStream(new FileOutputStream(tempFile));
     }
     
 
