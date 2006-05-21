@@ -27,7 +27,7 @@ public class ClientFaultConverter extends AbstractHandler
     {
         XFireFault fault = (XFireFault) context.getExchange().getFaultMessage().getBody();
         
-        if (fault.getDetail() != null && fault.getDetail().getContentSize() > 0)
+        if (fault.getDetail() != null && fault.getDetail().getChildren().size() > 0)
         {
             processFaultDetail(fault, context);
         }
@@ -41,7 +41,7 @@ public class ClientFaultConverter extends AbstractHandler
         MessagePartInfo faultPart = getFaultPart(context.getExchange().getOperation(),
                                                  exDetail);
 
-        if (faultPart == null)
+        if (faultPart == null || faultPart.getTypeClass() == null)
             return;
 
         BindingProvider provider = context.getService().getBindingProvider();

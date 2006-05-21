@@ -14,14 +14,16 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 public class BookClientTS
     extends BookClient{
 
+	 //  START SNIPPET: timestamp
     protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.TIMESTAMP);
         // How long ( in seconds ) message is valid since send.
         properties.setProperty(WSHandlerConstants.TTL_TIMESTAMP,"15");
-        
+        // if you want to use millisecond precision use this
+        //properties.setProperty(WSHandlerConstants.TIMESTAMP_PRECISION,"true");
     }
-    
+	 //  END SNIPPET: timestamp    
     /**
      * @param args
      * @throws MalformedURLException

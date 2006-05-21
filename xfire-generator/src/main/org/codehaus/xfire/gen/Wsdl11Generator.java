@@ -1,13 +1,17 @@
 package org.codehaus.xfire.gen;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
+import org.xml.sax.InputSource;
 
 import com.sun.codemodel.JCodeModel;
 
@@ -39,6 +43,8 @@ public class Wsdl11Generator
     private String profile;
     private String binding = JAXB;
     private SchemaSupport support;
+
+    private String externalBindings;
     
     @SuppressWarnings("unchecked")
     public void generate() throws Exception
@@ -78,7 +84,9 @@ public class Wsdl11Generator
 
         log.info("Generating code for WSDL at " + wsdlUri + " with a base URI of " + baseURI);
         
-        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, new WSDLInputStreamLoader().getInputStream(wsdlUri));
+        InputSource source = new InputSource(new WSDLInputStreamLoader().getInputStream(wsdlUri));
+        source.setSystemId(wsdlUri);
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, source);
         builder.setBindingProvider(support.getBindingProvider());
         builder.build();
         
@@ -91,6 +99,7 @@ public class Wsdl11Generator
         context.setWsdlLocation(wsdlUri);
         context.setBaseURI(baseURI);
         context.setSchemas(builder.getSchemas());
+        context.setExternalBindings(getExternalBindingFiles());
         
         support.initialize(context);
 
@@ -109,6 +118,36 @@ public class Wsdl11Generator
         codeModel.build(dest);
     }
   
+    private Collection<File> getExternalBindingFiles()
+    {
+        if (externalBindings == null) return null;
+        
+        ArrayList<File> files = new ArrayList<File>();
+        File basedir = new File("");
+        File baseURIFile = new File(baseURI);
+        if (baseURIFile.exists()) {
+            basedir = baseURIFile;
+        }
+        
+        StringTokenizer st = new StringTokenizer(externalBindings, ",");
+        while (st.hasMoreTokens()) {
+            String name = st.nextToken();
+         
+            File binding = new File(name);
+            if (binding.exists())
+                files.add(binding);
+            else
+            {
+                binding = new File(basedir, name);
+                if (!binding.exists())
+                    throw new IllegalStateException("Could not find binding file " + name);
+                
+                files.add(binding);
+            }
+        }
+        return files;
+    }
+
     private SchemaSupport loadSupport(String name) throws Exception
     {
         return (SchemaSupport) ClassLoaderUtils.loadClass(name, getClass()).newInstance();
@@ -188,4 +227,15 @@ public class Wsdl11Generator
     {
         this.profile = profile;
     }
+
+    public void setExternalBindings(String externalBindings)
+    {
+        this.externalBindings = externalBindings;
+    }
+
+    public String getExternalBindings()
+    {
+        return externalBindings;
+    }
+    
 }

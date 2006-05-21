@@ -12,22 +12,23 @@ public class WsGenTask extends MatchingTask
     private String profile = Jsr181Profile.class.getName();
     private String binding;
     private String baseURI;
+    private String externalBindings;
     
     public void execute()
         throws BuildException
     {
-
         super.execute();
         
         // Ugly fix for XFIRE-245: wsgen can't find XMLInputFactory
         ClassLoader originalCL = Thread.currentThread().getContextClassLoader();
     	Thread.currentThread().setContextClassLoader(Wsdl11Generator.class.getClassLoader());
-    	
+
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setDestinationPackage(_package);
         generator.setOutputDirectory(outputDirectory);
         generator.setWsdl(wsdl);
         generator.setBaseURI(baseURI);
+        generator.setExternalBindings(externalBindings);
         
         if (binding != null) generator.setBinding(binding);
         if (profile != null) generator.setProfile(profile);
@@ -102,5 +103,15 @@ public class WsGenTask extends MatchingTask
     public void setWsdl(String wsdl)
     {
         this.wsdl = wsdl;
+    }
+
+    public String getExternalBindings()
+    {
+        return externalBindings;
+    }
+
+    public void setExternalBindings(String externalBindings)
+    {
+        this.externalBindings = externalBindings;
     }
 }

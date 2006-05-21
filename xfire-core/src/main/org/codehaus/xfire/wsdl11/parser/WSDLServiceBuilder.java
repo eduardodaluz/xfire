@@ -93,12 +93,15 @@ public class WSDLServiceBuilder
     private TransportManager transportManager =
         XFireFactory.newInstance().getXFire().getTransportManager();
     private Service service;
+
+    private String systemId;
     
     
     public WSDLServiceBuilder(Definition definition)
     {
         this.definition = definition;
         definitions.add(definition);
+        this.systemId = definition.getDocumentBaseURI(); // this is best we have, so use it.
         
         bindingAnnotators.add(new SoapBindingAnnotator());
     }
@@ -112,6 +115,14 @@ public class WSDLServiceBuilder
     {
         this(WSDLFactory.newInstance().newWSDLReader().readWSDL(baseURI, new InputSource(is)));
         this.definition.setDocumentBaseURI(baseURI);
+        this.systemId = baseURI;
+    }
+    
+    public WSDLServiceBuilder(String baseURI, InputSource source) throws WSDLException
+    {
+        this(WSDLFactory.newInstance().newWSDLReader().readWSDL(baseURI, source));
+        this.definition.setDocumentBaseURI(baseURI);
+        this.systemId = source.getSystemId();
     }
     
     public BindingProvider getBindingProvider()
@@ -162,7 +173,7 @@ public class WSDLServiceBuilder
         processImports(definition);
         
         // Import all the types..
-        types.put(definition.getDocumentBaseURI(), definition.getTypes());
+        types.put(systemId, definition.getTypes());
         for (Iterator itr = types.entrySet().iterator(); itr.hasNext();)
         {
             Map.Entry entry = (Map.Entry) itr.next();
@@ -241,7 +252,13 @@ public class WSDLServiceBuilder
                     
                     try
                     {
-                        String resolvedLocation = new URI(parent.getDocumentBaseURI()).resolve(i.getLocationURI()).toString();
+                        String baseURI = parent.getDocumentBaseURI();
+                        String resolvedLocation;
+                        if (baseURI == null)
+                            resolvedLocation = new URI(i.getLocationURI()).toString();
+                        else
+                            resolvedLocation = new URI(parent.getDocumentBaseURI()).resolve(i.getLocationURI()).toString();
+                        
                         types.put(resolvedLocation, iDef.getTypes());
                     }
                     catch (URISyntaxException e)
@@ -306,6 +323,7 @@ public class WSDLServiceBuilder
     {
         if (types == null) return;
         
+        int schemaCount = 1;
         for (Iterator itr = types.getExtensibilityElements().iterator(); itr.hasNext();)
         {
             ExtensibilityElement ee = (ExtensibilityElement) itr.next();
@@ -327,7 +345,7 @@ public class WSDLServiceBuilder
             	} 
                 catch (Exception e) {e.printStackTrace();}
             }
-            
+
             schemas.setBaseUri(definition.getDocumentBaseURI());
             XmlSchema schema = schemas.read(el, location);
             
@@ -336,10 +354,11 @@ public class WSDLServiceBuilder
             schemaInfo.setSchema(schema);
             schemaInfo.setSchemaElement(el);
             
-            if (definition.getDocumentBaseURI() != null && !definition.getDocumentBaseURI().equals(location))
+            if (systemId != null && !systemId.equals(location))
                 schemaInfo.setImported(true);
             
             schemaInfos.add(schemaInfo);
+            schemaCount++;
         }
     }
     
@@ -572,9 +591,9 @@ public class WSDLServiceBuilder
     
     private void createMessageParts(MessagePartContainer info, Message msg)
     {
-        Map parts = msg.getParts();
+        List parts = msg.getOrderedParts(null);
         
-        for (Iterator itr = parts.values().iterator(); itr.hasNext();)
+        for (Iterator itr = parts.iterator(); itr.hasNext();)
         {
             Part entry = (Part) itr.next();
             
@@ -583,9 +602,11 @@ public class WSDLServiceBuilder
             if (typeName != null)
             {
                 QName partName = new QName(getTargetNamespace(), entry.getName());
-                MessagePartInfo part = info.addMessagePart(typeName, null);
+                
+                MessagePartInfo part = info.addMessagePart(partName, null);
                 part.setSchemaElement(false);
                 part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
+                part.setIndex(info.size()-1);
             }
 
             // We've got a concrete schema type
@@ -593,8 +614,8 @@ public class WSDLServiceBuilder
             if (elementName != null)
             {
                 MessagePartInfo part = info.addMessagePart(elementName, null);
-
                 part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
+                part.setIndex(info.size()-1);
             }
         }
     }

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.FactoryBean;
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  * @see #setServiceInterface
  * @see #setServiceUrl
+ * 
+ * @deprecated Please use XFireClientFactoryBean instead.
  */
 public class XFireProxyFactoryBean
         extends XFireClientInterceptor

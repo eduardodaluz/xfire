@@ -1,0 +1,10 @@
+<jxb:bindings jxb:version="1.0"
+	      xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	      xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <jxb:bindings schemaLocation="../wsdl/echoFault.wsdl#types?schema1" node="/xsd:schema">
+	<jxb:schemaBindings>
+	    <jxb:package name="org.codehaus.xfire.echo.external">
+	    </jxb:package>      
+	</jxb:schemaBindings>
+    </jxb:bindings>
+</jxb:bindings>

@@ -28,6 +28,7 @@ public class BookClientEnc
      * 
      * @see org.codehaus.xfire.client.BookClient#configureProperties(java.util.Properties)
      */
+    //	START SNIPPET: enc
     protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.ENCRYPT);
@@ -37,7 +38,7 @@ public class BookClientEnc
                                "org/codehaus/xfire/client/outsecurity_enc.properties");
 
     }
-
+    //  END SNIPPET: enc
     protected String getName()
     {
 

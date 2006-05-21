@@ -14,6 +14,7 @@
       <arg value="${basedir}/src/wsdl/echo.wsdl"/>
       <arg value="${basedir}/src/wsdl/echoWrapped.wsdl"/>
       <arg value="${basedir}/src/wsdl/globalweather-twoporttypes.wsdl"/>
+    	
     </java>
   	
 
@@ -48,7 +49,7 @@
 
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/oneway.wsdl"
-      package="jsr181.jaxb.oneway" />
+      package="jsr181.jaxb.oneway"/>
 
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/auth.wsdl" package="jsr181.jaxb.auth" />

@@ -1,0 +1,11 @@
+This example shows how to use XFire's WS-Security support. You must
+have Maven 2.x installed to build this example.  To build type:
+
+$ mvn install war:war
+
+The resultant war should work in any web application. 
+
+For more detailed instructions on how this works, please see the 
+User's Guide:
+
+http://xfire.codehaus.org/WS-Security

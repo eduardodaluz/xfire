@@ -20,5 +20,7 @@ public class JaxbServiceFactory
         super(new Jsr181WebAnnotations(),
               transportManager, 
               new AegisBindingProvider(new JaxbTypeRegistry()));
+        
+        setWsdlBuilderFactory(new JaxbWSDLBuilderFactory());
     }
 }

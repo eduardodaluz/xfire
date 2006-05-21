@@ -35,7 +35,7 @@ public class XFireConfigLoader
 
     public ApplicationContext loadContext(String configPath, ApplicationContext parent) throws XFireException
     {
-        ApplicationContext newCtx = getXFireApplicationContext(configPath, null);
+        ApplicationContext newCtx = getXFireApplicationContext(configPath, parent);
 
         return newCtx;
     }

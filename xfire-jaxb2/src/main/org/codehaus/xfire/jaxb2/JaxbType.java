@@ -1,6 +1,7 @@
 package org.codehaus.xfire.jaxb2;
 
 import java.io.OutputStream;
+import java.lang.reflect.AnnotatedElement;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -177,7 +178,20 @@ public class JaxbType
 
     public static String getPackageNs(Class clazz)
     {
-        Package pack = clazz.getPackage();
+        AnnotatedElement pack =  clazz.getPackage();
+        //getPackage isn't guaranteed to return a package
+        if(pack == null) 
+        {
+            try
+            {
+                pack = Class.forName(clazz.getName().substring(0, clazz.getName().lastIndexOf('.')) + ".package-info", false, clazz.getClassLoader());
+            }
+            catch(Exception ex) {
+            }
+        }
+        if(pack == null) {
+            throw new XFireRuntimeException("No package info found for class " + clazz.getName() + ". Cannot lookup default schema namespace");
+        }
         XmlSchema schema = pack.getAnnotation(XmlSchema.class);
         String namespace = null;
         if (schema != null)

@@ -105,6 +105,12 @@ public class XFireProxyFactory
         XFireProxy handler = new XFireProxy(client);
         Class serviceClass = client.getService().getServiceInfo().getServiceClass();
         
+        if (!serviceClass.isInterface()) {
+            throw new IllegalStateException("Service class is not an interface. Please use an " +
+                                            "interface specify or specify one via a @WebService annotation.");
+            
+        }
+        
         return Proxy.newProxyInstance(serviceClass.getClassLoader(), 
                                       new Class[]{serviceClass}, 
                                       handler);

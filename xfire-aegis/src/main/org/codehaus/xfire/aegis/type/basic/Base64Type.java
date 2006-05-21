@@ -10,6 +10,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.mtom.AbstractXOPType;
 import org.codehaus.xfire.aegis.type.mtom.ByteArrayType;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -34,11 +35,6 @@ public class Base64Type
         throws XFireFault
     {
         boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
-        if (mtomEnabled)
-        {
-            return optimizedType.readObject(mreader, context);
-        }
-        
         XMLStreamReader reader = mreader.getXMLStreamReader();
         
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -46,7 +42,26 @@ public class Base64Type
         try
         {
             int event = reader.next();
-            if (!reader.isCharacters() && !reader.isWhiteSpace()) return new byte[0];
+            while(!reader.isCharacters() && !reader.isEndElement() && !reader.isStartElement()) 
+            {
+                event = reader.next();
+            }
+
+            if (reader.isStartElement() &&
+                    reader.getName().equals(AbstractXOPType.XOP_INCLUDE))
+            {
+                if (mtomEnabled)
+                {
+                    return optimizedType.readObject(mreader, context);
+                }
+                else
+                {
+                    throw new XFireFault("Unexpected element: " + reader.getName(), XFireFault.SENDER);
+                }
+            }
+           
+            if (reader.isEndElement())
+                return new byte[0];
             
             int length = reader.getTextLength();
             

@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="1.5" />
+    <orderEntry type="jdk" jdkName="1.5" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="core-jars" level="project" />
     <orderEntry type="module" module-name="core" />
@@ -31,6 +31,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="stax" level="project" />
     <orderEntryProperties />
   </component>
 </module>

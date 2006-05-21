@@ -48,7 +48,7 @@ public class DOMOutHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-        OutMessage message = context.getOutMessage();
+        OutMessage message = (OutMessage) context.getCurrentMessage();
         W3CDOMStreamWriter writer = new W3CDOMStreamWriter(builder);
         message.getSerializer().writeMessage(message, writer, context);
        

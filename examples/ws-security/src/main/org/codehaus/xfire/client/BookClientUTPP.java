@@ -15,18 +15,21 @@ public class BookClientUTPP
     extends BookClient
 {
 
+   //	START SNIPPET: uttp
     protected void configureOutProperties(Properties config)
     {
         // Action to perform : user token
         config.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
         // Password type : plain text
         config.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-        // User in keystore
+        // for hashed password use:
+        //properties.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
+        // User name to send
         config.setProperty(WSHandlerConstants.USER, "alias");
         // Callback used to retrive password for given user.
         config.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordHandler.class.getName());
     }
-
+    //  END SNIPPET: uttp
     /**
      * @param args
      * @throws MalformedURLException

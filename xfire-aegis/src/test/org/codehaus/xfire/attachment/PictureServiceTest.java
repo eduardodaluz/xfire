@@ -28,7 +28,9 @@ public class PictureServiceTest
 {
     private Service service;
     private XFireHttpServer server;
-
+    private Client client;
+    private PictureService picClient;
+    
     public void setUp()
             throws Exception
     {
@@ -45,6 +47,13 @@ public class PictureServiceTest
         
         server = new XFireHttpServer(getXFire());
         server.start();
+        
+
+        XFireProxyFactory xpf = new XFireProxyFactory();
+        picClient = (PictureService) xpf.create(service, "http://localhost:8081/PictureService");
+        
+        client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
+        client.addOutHandler(new DOMOutHandler());
     }
 
     protected void tearDown()
@@ -56,12 +65,7 @@ public class PictureServiceTest
     public void testClientServer()
         throws Exception
     {
-        XFireProxyFactory xpf = new XFireProxyFactory();
-        PictureService picClient = (PictureService) xpf.create(service, "http://localhost:8081/PictureService");
-        
-        Client client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
         client.setProperty(SoapConstants.MTOM_ENABLED, "true");
-        client.addOutHandler(new DOMOutHandler());
         
         DataSource source = picClient.GetPicture();
         
@@ -79,7 +83,16 @@ public class PictureServiceTest
         assertEquals(picBytes.length, response.length);
     }
     
-    public byte[] readAsBytes(InputStream input) throws IOException
+    public void testClientServerNoMTOM()
+        throws Exception
+    {
+        byte[] picBytes = readAsBytes(new FileInputStream(getTestFile("src/test-resources/xfire.jpg")));
+        byte[] response = picClient.EchoPictureBytes(picBytes);
+        
+        assertEquals(picBytes.length, response.length);
+    }
+    
+    public static byte[] readAsBytes(InputStream input) throws IOException
     {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try

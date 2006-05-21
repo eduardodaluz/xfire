@@ -23,9 +23,9 @@ public abstract class AbstractXOPType
     public final static String XOP_NS = "http://www.w3.org/2004/08/xop/include";
     public final static String XML_MIME_NS = "http://www.w3.org/2004/11/xmlmime";
  
-    private final static QName XOP_INCLUDE = new QName(XOP_NS, "Include");
-    private final static QName XOP_HREF = new QName("href");
-    private final static QName XML_MIME_TYPE = new QName(XML_MIME_NS, "mimeType");
+    public final static QName XOP_INCLUDE = new QName(XOP_NS, "Include");
+    public final static QName XOP_HREF = new QName("href");
+    public final static QName XML_MIME_TYPE = new QName(XML_MIME_NS, "mimeType");
     
     public AbstractXOPType()
     {

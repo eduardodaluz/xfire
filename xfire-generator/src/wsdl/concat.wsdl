@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:tns="http://xfire.codehaus.org/test/concat" 
+  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  targetNamespace="http://xfire.codehaus.org/test/concat" name="concat">
+  <wsdl:message name="concatRequest">
+    <wsdl:part type="xsd:string" name="string1"/>
+    <wsdl:part type="xsd:string" name="string2"/>
+  </wsdl:message>
+  <wsdl:message name="concatResponse">
+    <wsdl:part type="xsd:string" name="response"/>
+  </wsdl:message>
+  <wsdl:portType name="concatPortType">
+    <wsdl:operation name="concat">
+      <wsdl:input message="tns:concatRequest" name="concatRequest"/>
+      <wsdl:output message="tns:concatResponse" name="concatResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="concatHttpBinding" type="tns:concatPortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="concat">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="concatRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="concatResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="concat">
+    <wsdl:port binding="tns:concatHttpBinding" name="concatHttpPort">
+      <wsdlsoap:address location="http://localhost:8080/concat"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

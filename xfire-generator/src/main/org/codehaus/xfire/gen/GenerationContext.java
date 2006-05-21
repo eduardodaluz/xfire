@@ -23,6 +23,7 @@ public class GenerationContext
     private File outputDirectory;
     private String wsdlLocation;
     private Collection schemas;
+    private Collection<File> externalBindings;
     
     public GenerationContext(JCodeModel model, Object wsdl)
     {
@@ -113,6 +114,16 @@ public class GenerationContext
     public void setSchemaGenerator(SchemaSupport schemaGenerator)
     {
         this.schemaGenerator = schemaGenerator;
+    }
+
+    public Collection<File> getExternalBindings()
+    {
+        return externalBindings;
+    }
+
+    public void setExternalBindings(Collection<File> externalBindings)
+    {
+        this.externalBindings = externalBindings;
     }
     
 }

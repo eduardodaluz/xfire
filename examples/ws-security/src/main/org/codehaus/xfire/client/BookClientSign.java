@@ -14,6 +14,7 @@ public class BookClientSign
     extends BookClient
 {
 
+//  START SNIPPET: signature
     protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.SIGNATURE);
@@ -26,6 +27,7 @@ public class BookClientSign
         properties.setProperty(WSHandlerConstants.SIG_KEY_ID,"IssuerSerial");
 
     }
+//  END SNIPPET: signature
 
     /**
      * @param args

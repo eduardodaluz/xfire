@@ -1,6 +1,7 @@
 package org.codehaus.xfire.aegis.type.mtom;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,6 +11,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.attachments.Attachment;
+import org.codehaus.xfire.attachments.AttachmentDataSource;
 import org.codehaus.xfire.attachments.ByteDataSource;
 import org.codehaus.xfire.attachments.SimpleAttachment;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -30,10 +32,18 @@ public class ByteArrayType extends AbstractXOPType
         DataHandler handler = att.getDataHandler();
         InputStream is = handler.getInputStream();
         
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(is, out);
-        
-        return out.toByteArray();
+        try
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            copy(is, out);
+            return out.toByteArray();
+        }
+        finally
+        {
+            AttachmentDataSource dataSource = (AttachmentDataSource) handler.getDataSource();
+            File attFile = dataSource.getFile();
+            if (attFile != null) attFile.delete();
+        }
     }
     
     public static void copy(InputStream input, OutputStream output) throws IOException

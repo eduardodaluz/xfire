@@ -62,7 +62,7 @@
       </bean>
     </inHandlers>
   </service>
-  <!-- END SNIPPET: encrytpion -->
+  <!-- END SNIPPET: encryption -->
 
   <!-- START SNIPPET: time -->
   <!--  ============= TimeStamp  ============= -->

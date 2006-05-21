@@ -1,16 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jibx</artifactId>
   <name>XFire JiBX Support</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <description></description>
   <build>
     <testResources>
@@ -27,61 +24,23 @@
         <executions>
           <execution>
             <phase>test-compile</phase>
-            <configuration>
-              <tasks>
-                <echo>Running Jibx Ant task</echo>
-                <taskdef classname="org.jibx.binding.ant.CompileTask" name="jibx"
-                  classpathref="maven.test.classpath">
-                </taskdef>
-                <jibx verbose="true" binding="${basedir}/src/jibx/binding.xml">
-                  <classpathset dir="${basedir}/target/test-classes" />
-                </jibx>
-              </tasks>
-            </configuration>
             <goals>
               <goal>run</goal>
             </goals>
+            <configuration>
+              <tasks>
+                <echo>Running Jibx Ant task</echo>
+                <taskdef classname="org.jibx.binding.ant.CompileTask" classpathref="maven.test.classpath" name="jibx"></taskdef>
+                <jibx verbose="true" binding="${basedir}/src/jibx/binding.xml">
+                  <classpathset dir="${basedir}/target/test-classes"></classpathset>
+                </jibx>
+              </tasks>
+            </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-aegis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jibx</groupId>
-      <artifactId>jibx-bind</artifactId>
-      <version>1.1-beta3</version>
-    </dependency>
-    <dependency>
-      <groupId>jibx</groupId>
-      <artifactId>jibx-run</artifactId>
-      <version>1.1-beta3</version>
-    </dependency>
-    <dependency>
-      <groupId>jibx</groupId>
-      <artifactId>jibx-extras</artifactId>
-      <version>1.1-beta3</version>
-    </dependency>
-    <dependency>
-      <groupId>bcel</groupId>
-      <artifactId>bcel</artifactId>
-      <version>5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>stax</groupId>
-      <artifactId>stax</artifactId>
-    </dependency>
-    
-  </dependencies>
-
   <repositories>
     <repository>
       <id>codehaus</id>
@@ -90,17 +49,48 @@
       <layout>legacy</layout>
     </repository>
     <repository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots />
       <id>jibx.sf.net</id>
       <name>JiBX repository</name>
       <url>http://jibx.sf.net/maven</url>
       <layout>legacy</layout>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
     </repository>
   </repositories>
-
+  <dependencies>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-aegis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jibx</groupId>
+      <artifactId>jibx-run</artifactId>
+      <version>1.1-beta3</version>
+    </dependency>
+    <dependency>
+      <groupId>jibx</groupId>
+      <artifactId>jibx-bind</artifactId>
+      <version>1.1-beta3</version>
+    </dependency>
+    <dependency>
+      <groupId>jibx</groupId>
+      <artifactId>jibx-extras</artifactId>
+      <version>1.1-beta3</version>
+    </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>bcel</groupId>
+      <artifactId>bcel</artifactId>
+      <version>5.1</version>
+    </dependency>
+  </dependencies>
 </project>

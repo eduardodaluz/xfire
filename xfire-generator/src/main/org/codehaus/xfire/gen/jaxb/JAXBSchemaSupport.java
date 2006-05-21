@@ -58,31 +58,30 @@ public class JAXBSchemaSupport implements SchemaSupport
         {
             schemaCompiler.setEntityResolver(new RelativeEntityResolver(schema.getDefinition().getDocumentBaseURI()));
             
-            String systemId;
-            if (schema.isImported())
+            String systemId = schema.getSchema().getSourceURI();
+            if (!schema.isImported())
             {
-                systemId = schema.getSchema().getSourceURI();
-            }
-            else
-            {
-                systemId = context.getBaseURI() + "#types?schema"+schemaElementCount++;
+               systemId += "#types?schema"+schemaElementCount++;
             }
             
             schemaCompiler.parseSchema(systemId, schema.getSchemaElement());
         }
         
+        if (context.getExternalBindings() != null)
+        {
+            for (File externalBinding : context.getExternalBindings())
+            {
+                String systemId = externalBinding.toURI().toString();
+                InputSource source = new InputSource(new FileInputStream(externalBinding));
+                source.setSystemId(systemId);
+                schemaCompiler.parseSchema(source);
+            }
+        }
+        
         model = schemaCompiler.bind();
 
         if (er.hasFatalErrors()) throw new GenerationException("Error generating JAXB model.");
-        
-        //feed external jaxb:bindings file
-        /*Set<InputSource> externalBindings = ((WSDLModelInfo)_modelInfo).getJAXBBindings();
-        if(externalBindings != null){
-            for(InputSource jaxbBinding : externalBindings){
-                schemaCompiler.parseSchema(jaxbBinding);
-            }
-        }*/
-       
+
         jaxbModel = model.generateCode(null, er);
         jaxbModel.build(context.getOutputDirectory());
 

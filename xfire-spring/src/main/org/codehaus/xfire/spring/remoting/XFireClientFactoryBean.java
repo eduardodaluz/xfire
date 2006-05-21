@@ -302,12 +302,17 @@ public class XFireClientFactoryBean
         _password = password;
     }
     
-
+    /**
+     * The properties that will be set on the Client.
+     */
     public Map getProperties()
     {
         return _properties;
     }
 
+    /**
+     * Set the properties for the Client.
+     */
     public void setProperties(Map properties)
     {
         this._properties = properties;
@@ -318,6 +323,11 @@ public class XFireClientFactoryBean
         return _endpointName;
     }
 
+    /**
+     * Set the name of the Endpoint/Port in the WSDL to use with the Client.
+     * 
+     * @param name
+     */
     public void setEndpoint(QName name)
     {
         _endpointName = name;
@@ -328,6 +338,11 @@ public class XFireClientFactoryBean
         return _url;
     }
 
+    /**
+     * Set the URL the Client is to invoke. If this is not supplied, the one from the
+     * WSDL will be used instead.
+     * @return
+     */
     public void setUrl(String _url)
     {
         this._url = _url;
@@ -412,7 +427,7 @@ public class XFireClientFactoryBean
     {
         String serviceUrl = _url;
         if (serviceUrl == null)
-            serviceUrl = getWsdlDocumentUrl().replace("?wsdl", "").replace("?WSDL", "");
+            serviceUrl = getWsdlDocumentUrl().replaceAll("\\?wsdl", "").replaceAll("\\?WSDL", "");
         return serviceUrl;
     }
 
@@ -502,7 +517,7 @@ public class XFireClientFactoryBean
 
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
+        StringBuffer builder = new StringBuffer();
         builder.append("XFire client proxy for: ");
         builder.append(getServiceClass());
         builder.append(" at: ");

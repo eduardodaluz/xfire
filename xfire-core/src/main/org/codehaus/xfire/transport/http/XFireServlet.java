@@ -119,8 +119,10 @@ public class XFireServlet
         if (webInfPath == null)
         {
             ServletContext context = getServletConfig().getServletContext();
-
-            webInfPath = new File(context.getRealPath("/WEB-INF"));
+            String realPath = context.getRealPath("/WEB-INF");
+            if (realPath == null) realPath = "";
+            
+            webInfPath = new File(realPath);
         }
 
         return webInfPath;

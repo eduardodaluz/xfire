@@ -149,6 +149,7 @@ public class Soap11Binding extends AbstractSoapBinding
         List inputHeaders = getHeaders(op.getInputMessage()).getMessageParts();
         List outputHeaders = getHeaders(op.getOutputMessage()).getMessageParts();
         BindingInput bindingInput = bop.getBindingInput();
+        BindingOutput bindingOutput = bop.getBindingOutput();
 
         if (inputHeaders.size() > 0)
         {
@@ -172,6 +173,7 @@ public class Soap11Binding extends AbstractSoapBinding
         {
             Message resHeaders = createHeaderMessages(builder, op.getOutputMessage(), outputHeaders);
             builder.getDefinition().addMessage(resHeaders);
+            
             for (Iterator headerItr = resHeaders.getParts().values().iterator(); headerItr.hasNext();)
             {
                 Part headerInfo = (Part) headerItr.next();
@@ -181,7 +183,7 @@ public class Soap11Binding extends AbstractSoapBinding
                 soapHeader.setPart(headerInfo.getName());
                 soapHeader.setUse(getUse());
     
-                bindingInput.addExtensibilityElement(soapHeader);
+                bindingOutput.addExtensibilityElement(soapHeader);
             }
         }
     }

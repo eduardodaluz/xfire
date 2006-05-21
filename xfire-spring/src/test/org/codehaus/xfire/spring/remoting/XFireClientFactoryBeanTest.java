@@ -1,8 +1,12 @@
 package org.codehaus.xfire.spring.remoting;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.annotations.AnnotationServiceFactory;
+import org.codehaus.xfire.annotations.WebAnnotations;
+import org.codehaus.xfire.annotations.WebServiceAnnotation;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxy;
 import org.codehaus.xfire.server.http.XFireHttpServer;
@@ -13,6 +17,7 @@ import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.Channel;
+import org.easymock.MockControl;
 import org.springframework.aop.framework.AopProxy;
 
 public class XFireClientFactoryBeanTest
@@ -164,4 +169,58 @@ public class XFireClientFactoryBeanTest
         server.stop();
     }
  
+    public void testServerClass() 
+        throws Exception
+    {
+        
+        MockControl control = MockControl.createControl(WebAnnotations.class);
+        WebAnnotations webAnnotations = (WebAnnotations) control.getMock();
+        
+        WebServiceAnnotation serviceAnnotation = new WebServiceAnnotation();
+        webAnnotations.getWebServiceAnnotation(Echo.class);
+        control.setDefaultReturnValue(serviceAnnotation);
+        
+        webAnnotations.hasWebServiceAnnotation(Echo.class);
+        control.setDefaultReturnValue(true);
+        
+        webAnnotations.hasWebServiceAnnotation(EchoImpl.class);
+        control.setDefaultReturnValue(true);
+        webAnnotations.hasHandlerChainAnnotation(EchoImpl.class);
+        control.setReturnValue(false);
+        webAnnotations.hasSOAPBindingAnnotation(EchoImpl.class);
+        control.setReturnValue(false);
+        webAnnotations.hasWebServiceAnnotation(EchoImpl.class);
+        control.setReturnValue(true);
+        
+        serviceAnnotation = new WebServiceAnnotation();
+        serviceAnnotation.setServiceName("EchoService");
+        serviceAnnotation.setEndpointInterface(Echo.class.getName());
+        webAnnotations.getWebServiceAnnotation(EchoImpl.class);
+        control.setReturnValue(serviceAnnotation);
+        webAnnotations.getWebServiceAnnotation(EchoImpl.class);
+        control.setReturnValue(serviceAnnotation);
+        
+        Method echoMethod = EchoImpl.class.getMethod("echo", new Class[]{String.class});
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        control.setDefaultReturnValue(true);
+        
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        control.setDefaultReturnValue(false);
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        control.setDefaultReturnValue(false);
+        webAnnotations.hasWebResultAnnotation(echoMethod);
+        control.setDefaultReturnValue(false);
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        control.setDefaultReturnValue(false);
+
+        control.replay();
+        
+        factory.setServiceFactory(new AnnotationServiceFactory(webAnnotations, 
+                                                               getTransportManager()));
+        factory.setServiceClass(EchoImpl.class);
+        
+        factory.afterPropertiesSet();
+        
+        control.verify();
+    }
 }

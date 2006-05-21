@@ -6,7 +6,7 @@
   <groupId>org.codehaus.xfire</groupId>
   <artifactId>geoip-client-example</artifactId>
   <packaging>war</packaging>
-  <version>1.0</version>
+  <version>1.1</version>
   <name></name>
 
   <dependencies>

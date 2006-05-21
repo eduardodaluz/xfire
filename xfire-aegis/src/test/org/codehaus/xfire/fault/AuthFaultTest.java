@@ -1,8 +1,12 @@
 package org.codehaus.xfire.fault;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
@@ -36,6 +40,25 @@ public class AuthFaultTest
         getServiceRegistry().register(service);
     }
 
+    public void testDyanamicClient() throws Exception
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        getWSDL("AuthService").write(bos);
+        
+        Client client = new Client(new ByteArrayInputStream(bos.toByteArray()), null);
+        client.setXFire(getXFire());
+        client.setUrl("xfire.local://AuthService");
+        client.setTransport(getTransportManager().getTransport(LocalTransport.BINDING_ID));
+        
+        try {
+            Object[] response = client.invoke("authenticate", new Object[] {"yo", "yo"});
+            fail("Should have thrown response. Received: " + response);
+        }
+        catch (XFireFault fault) {
+            assertEquals("message", fault.getReason());
+        }
+    }
+    
     public void testService() throws Exception
     {
         Document response = invokeService(name, "authenticate12.xml");
