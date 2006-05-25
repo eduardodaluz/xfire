@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<s:schema xmlns:i="urn:xfire:inheritance" xmlns:s="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="urn:xfire:inheritance2">
+  <s:import namespace="urn:xfire:inheritance" schemaLocation="inheritance.xsd"/>
+  
+  <s:complexType name="Employee">
+    <s:complexContent mixed="false">
+      <s:extension base="i:BaseUser"> 
+         <s:sequence>
+           <s:element name="division" type="s:string"/>
+         </s:sequence>
+      </s:extension>
+    </s:complexContent>
+  </s:complexType>
+
+</s:schema>

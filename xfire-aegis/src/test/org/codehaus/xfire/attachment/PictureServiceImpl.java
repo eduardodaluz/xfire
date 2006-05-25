@@ -10,7 +10,7 @@ public class PictureServiceImpl implements PictureService
 {
     public DataSource GetPicture()
     {
-        return new FileDataSource("src/test-resources/xfire.jpg");
+        return new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
     }
 
     public DataHandler EchoPicture2(DataHandler handler)

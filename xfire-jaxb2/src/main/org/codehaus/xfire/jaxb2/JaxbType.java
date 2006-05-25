@@ -2,6 +2,9 @@ package org.codehaus.xfire.jaxb2;
 
 import java.io.OutputStream;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -30,6 +33,8 @@ import org.jdom.Element;
 public class JaxbType
     extends Type
 {
+    public static final String SEARCH_PACKAGES = "jaxb.search.pacakges";
+    
     private JAXBContext context;
 
     public JaxbType(Class clazz)
@@ -45,19 +50,19 @@ public class JaxbType
     {
         try
         {
-            JAXBContext jc = getJAXBContext();
+            JAXBContext jc = getJAXBContext(context);
 
             Unmarshaller u = jc.createUnmarshaller();
             u.setAttachmentUnmarshaller(new AttachmentUnmarshaller(context));
-            if (isAbstract()) 
+
+            Object o = u.unmarshal(reader.getXMLStreamReader());
+            
+            if (o instanceof JAXBElement)
             {
-                 JAXBElement element = u.unmarshal(reader.getXMLStreamReader(), getTypeClass());
-                 return element.getValue();
+                o = ((JAXBElement) o).getValue();
             }
-            else
-            {
-                return u.unmarshal(reader.getXMLStreamReader());
-            }
+            
+            return o;
         }
         catch (JAXBException e)
         {
@@ -72,7 +77,7 @@ public class JaxbType
     {
         try
         {
-            JAXBContext jc = getJAXBContext();
+            JAXBContext jc = getJAXBContext(context);
 
             Marshaller m = jc.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
@@ -109,12 +114,40 @@ public class JaxbType
         }
     }
 
-    public JAXBContext getJAXBContext()
+    @SuppressWarnings("unchecked")
+    public JAXBContext getJAXBContext(MessageContext mc)
         throws JAXBException
     {
         if (context == null)
         {
-            context = JAXBContext.newInstance(getTypeClass());
+            String pckg = getTypeClass().getName();
+            int i = pckg.lastIndexOf(".");
+            if (i != -1)
+                pckg = pckg.substring(0, i);
+            
+            Collection<String> extraPackages = 
+                (Collection<String>) mc.getContextualProperty(SEARCH_PACKAGES);
+            
+            if (extraPackages != null)
+            {
+                Set<String> pkgSet = new HashSet<String>();
+                pkgSet.addAll(extraPackages);
+                pkgSet.add(pckg);
+                
+                StringBuilder pckgs = new StringBuilder();
+                boolean first = true;
+                
+                for (String p : pkgSet)
+                {
+                    if (!first) pckgs.append(":");
+                    else first = false;
+                    
+                    pckgs.append(p);
+                }
+                
+                pckg = pckgs.toString();
+            }
+            context = JAXBContext.newInstance(pckg);
         }
         return context;
     }

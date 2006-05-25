@@ -24,6 +24,8 @@ public class W3CDOMStreamReader
     
     private Document document;
     
+    private W3CNamespaceContext context;
+    
     /**
      * @param element
      */
@@ -53,6 +55,11 @@ public class W3CDOMStreamReader
         frame.prefixes = new ArrayList();
         frame.attributes = new ArrayList();
 
+        if (context == null)
+            context = new W3CNamespaceContext();
+        
+        context.setElement(element);
+        
         NamedNodeMap nodes = element.getAttributes();
         
         String nsURI = element.getNamespaceURI();
@@ -264,7 +271,7 @@ public class W3CDOMStreamReader
 
     public NamespaceContext getNamespaceContext()
     {
-        throw new UnsupportedOperationException();
+        return context;
     }
 
     public String getText()

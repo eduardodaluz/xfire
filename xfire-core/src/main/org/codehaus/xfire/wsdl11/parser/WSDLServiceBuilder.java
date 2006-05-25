@@ -460,19 +460,25 @@ public class WSDLServiceBuilder
     private void createMessagePart(MessageInfo info, XmlSchemaElement element)
     {
         int index = info.size();
-        MessagePartInfo part = info.addMessagePart(element.getQName(), XmlSchemaElement.class);
-        part.setIndex(index);
-        
-        SchemaType st = null;
-        if (element.getRefName() != null)
+        boolean globalElement = element.getRefName() != null;
+        QName name;
+        QName schemaType;
+        if (globalElement) 
         {
-            st = getBindingProvider().getSchemaType(element.getRefName(), service);
+            name = element.getRefName();
+            schemaType = name;
         }
-        else if (element.getSchemaTypeName() != null)
+        else
         {
-            st = getBindingProvider().getSchemaType(element.getSchemaTypeName(), service);
+            name = element.getQName();
+            schemaType = element.getSchemaTypeName();
         }
 
+        MessagePartInfo part = info.addMessagePart(name, XmlSchemaElement.class);
+        part.setIndex(index);
+        part.setSchemaElement(globalElement);
+        
+        SchemaType st = getBindingProvider().getSchemaType(schemaType, service);
         part.setSchemaType(st);
     }
 

@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-all</artifactId>
   <name>XFire All Jar</name>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <build>
     <testSourceDirectory>/none/</testSourceDirectory>
     <plugins>
@@ -89,20 +89,20 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-castor</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-annotations</artifactId>
+      <artifactId>xfire-jaxb</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-jaxws</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.xfire</groupId>
-      <artifactId>xfire-jaxb</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -113,10 +113,12 @@
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-spring</artifactId>
     </dependency>
+<!--
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-jibx</artifactId>
       <scope>provided</scope>
     </dependency>
-  </dependencies>
+ --> 
+</dependencies>
 </project>

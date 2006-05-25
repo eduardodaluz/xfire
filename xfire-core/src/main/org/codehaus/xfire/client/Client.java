@@ -401,8 +401,8 @@ public class Client
          * by the time we get to this point.
          */
         if (!getOutChannel().isAsync() || 
-                response != null && 
-                fault != null && 
+                response != null ||
+                fault != null || 
                 !context.getExchange().getOperation().hasOutput())
         {
             return;

@@ -77,8 +77,11 @@ public class AegisBindingProvider
     public Object readParameter(MessagePartInfo p, XMLStreamReader xsr, MessageContext context) 
         throws XFireFault
     {
-        Type type = (Type) p.getSchemaType();
+        Type type = getTypeMapping(context.getService()).getType(xsr.getName());
 
+        if (type == null)
+            type = (Type) p.getSchemaType();
+        
         MessageReader reader = new ElementReader(xsr);
 
         if (reader.isXsiNil()) 
@@ -209,7 +212,7 @@ public class AegisBindingProvider
         
         if (type == null) return null;
         
-        return tm.getType(name).getTypeClass();
+        return type.getTypeClass();
     }
 
     public SchemaType getSchemaType(QName name, Service service)

@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-java5</artifactId>
   <name>XFire Java 5 Module</name>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>

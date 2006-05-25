@@ -50,33 +50,7 @@ public class XFireServletController
         this.xfire = xfire;
         
         // Create a SOAP Http transport with all the servlet addons
-        transport = new SoapHttpTransport() 
-        {
-            public String getServiceURL(Service service)
-            {
-                HttpServletRequest req = XFireServletController.getRequest();
-
-                if (req == null) return super.getServiceURL(service);
-                
-                StringBuffer output = new StringBuffer( 128 );
-
-                output.append( req.getScheme() );
-                output.append( "://" );
-                output.append( req.getServerName() );
-
-                if ( req.getServerPort() != 80 &&
-                     req.getServerPort() != 443 &&
-                     req.getServerPort() != 0 )
-                {
-                    output.append( ':' );
-                    output.append( req.getServerPort() );
-                }
-
-                output.append( req.getRequestURI() );
-
-                return output.toString();
-            }
-        };
+        transport = new XFireServletTransport();
         
         transport.addFaultHandler(new FaultResponseCodeHandler());
         

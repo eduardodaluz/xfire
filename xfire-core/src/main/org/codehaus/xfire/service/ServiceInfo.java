@@ -27,6 +27,7 @@ public class ServiceInfo
     private Class serviceClass;
     private QName portType;
     private boolean wrapped;
+    private Service service;
     
     /**
      * Initializes a new instance of the <code>ServiceInfo</code> class with the given qualified name and service
@@ -160,4 +161,14 @@ public class ServiceInfo
     {
         this.wrapped = wrapped;
     }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+    
+    
 }

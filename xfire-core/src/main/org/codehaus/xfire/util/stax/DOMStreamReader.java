@@ -274,7 +274,34 @@ public abstract class DOMStreamReader
 
     public Location getLocation()
     {
-        return null;
+        return new Location() {
+
+            public int getCharacterOffset()
+            {
+                 return 0;
+            }
+
+            public int getColumnNumber()
+            {
+                return 0;
+            }
+
+            public int getLineNumber()
+            {
+                return 0;
+            }
+
+            public String getPublicId()
+            {
+                return null;
+            }
+
+            public String getSystemId()
+            {
+                return null;
+            }
+            
+        };
     }
 
     public boolean hasName()

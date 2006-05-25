@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-plexus</artifactId>
   <name>XFire Plexus</name>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -19,9 +19,9 @@
       <artifactId>xfire-aegis</artifactId>
     </dependency>
     <dependency>
-      <groupId>plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-servlet</artifactId>
-      <version>1.0-beta-2</version>
+      <version>1.0-beta-3</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -32,9 +32,9 @@
       <artifactId>xfire-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-6</version>
+      <version>1.0-alpha-9</version>
     </dependency>
   </dependencies>
 </project>

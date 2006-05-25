@@ -9,63 +9,50 @@
   <wsdl:types>
     <xsd:schema targetNamespace="http://xfire.codehaus.org/test/echo" elementFormDefault="qualified" 
       attributeFormDefault="qualified">
-      <xsd:element name="echoRequest2">
+      <xsd:element name="UserInfo">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element ref="tns:echoRequest"/>
+            <xsd:element name="Name" type="xsd:string"/>
+            <xsd:element name="Email" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="echoResponse2">
+      <xsd:element name="echoUser">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element ref="tns:echoResponse"/>
+            <xsd:element ref="tns:UserInfo"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="echoRequest" type="xsd:string"/>
-      <xsd:element name="echoResponse" type="xsd:string"/>
+      <xsd:element name="echoUserResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="tns:UserInfo"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="echoRequest">
-    <wsdl:part element="tns:echoRequest" name="parameters"/>
+  <wsdl:message name="echoUser">
+    <wsdl:part element="tns:echoUser" name="parameters"/>
   </wsdl:message>
-  <wsdl:message name="echoResponse">
-    <wsdl:part element="tns:echoResponse" name="parameters"/>
-  </wsdl:message>
-  <wsdl:message name="echoRequest2">
-    <wsdl:part element="tns:echoRequest2" name="parameters"/>
-  </wsdl:message>
-  <wsdl:message name="echoResponse2">
-    <wsdl:part element="tns:echoResponse2" name="parameters"/>
+  <wsdl:message name="echoUserResponse">
+    <wsdl:part element="tns:echoUserResponse" name="parameters"/>
   </wsdl:message>
   <wsdl:portType name="EchoPortType">
-    <wsdl:operation name="echo">
-      <wsdl:input message="tns:echoRequest" name="echoRequest"/>
-      <wsdl:output message="tns:echoResponse" name="echoResponse"/>
-    </wsdl:operation>
-    <wsdl:operation name="echo2">
-      <wsdl:input message="tns:echoRequest2" name="echoRequest2"/>
-      <wsdl:output message="tns:echoResponse2" name="echoResponse2"/>
+    <wsdl:operation name="echoUser">
+      <wsdl:input message="tns:echoUser" name="echoUser"/>
+      <wsdl:output message="tns:echoUserResponse" name="echoUserResponse"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="EchoHttpBinding" type="tns:EchoPortType">
     <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="echo">
+    <wsdl:operation name="echoUser">
       <wsdlsoap:operation soapAction=""/>
-      <wsdl:input name="echoRequest">
+      <wsdl:input name="echoUser">
         <wsdlsoap:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="echoResponse">
-        <wsdlsoap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="echo2">
-      <wsdlsoap:operation soapAction=""/>
-      <wsdl:input name="echoRequest2">
-        <wsdlsoap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="echoResponse2">
+      <wsdl:output name="echoUserResponse">
         <wsdlsoap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>

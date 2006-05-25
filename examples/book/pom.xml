@@ -5,7 +5,7 @@
   <groupId>org.codehaus.xfire.examples</groupId>
   <artifactId>xfire-book</artifactId>
   <name>Book Example</name>
-  <version>1.1</version>
+  <version>@xfire.version@</version>
   <inceptionYear>2004</inceptionYear>
 
   <dependencies>

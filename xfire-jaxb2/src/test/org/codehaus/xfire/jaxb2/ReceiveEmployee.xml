@@ -1,0 +1,11 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Body xmlns:i="urn:xfire:inheritance" xmlns:i2="urn:xfire:inheritance2"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<i:receiveUser>
+      <i:in0 xsi:type="i2:Employee">
+        <i2:division>foo</i2:division>
+        <i2:name>bar</i2:name>
+      </i:in0>
+    </i:receiveUser>
+ </env:Body>
+</env:Envelope>

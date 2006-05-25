@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-spring</artifactId>
   <name>XFire Spring Support</name>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <description>Spring configuration support for XFire.</description>
   <build>
     <testResources>
@@ -23,7 +23,7 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <phase>process-classes</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -33,7 +33,7 @@
                   <classpath>
                     <pathelement path="${basedir}/target/classes"></pathelement>
                     <pathelement path="${basedir}/target/test-classes"></pathelement>
-                    <path refid="maven.dependency.classpath"></path>
+                    <path refid="maven.test.classpath"></path>
                   </classpath>
                 </taskdef>
                 <mapping namespace="http://xfire.codehaus.org/config/1.0" srcdir="src/main" destFile="target/test-generated/services.xsd" metaInfDir="${basedir}/target/test-generated/"></mapping>

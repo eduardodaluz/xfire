@@ -4,7 +4,7 @@
   <artifactId>xfire-parent</artifactId>
   <packaging>pom</packaging>
   <name>XFire</name>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
@@ -19,9 +19,9 @@
   </ciManagement>
   <inceptionYear>2004</inceptionYear>
   <scm>
-    <connection>scm:svn:https://svn.codehaus.org/xfire/tags/xfire-parent-1.1</connection>
-    <developerConnection>scm:svn:https://${maven.username}@svn.codehaus.org/xfire/tags/xfire-parent-1.1</developerConnection>
-    <url>https://svn.xfire.codehaus.org/viewrep/xfire/tags/xfire-parent-1.1</url>
+    <connection>scm:svn:https://svn.codehaus.org/xfire/trunk</connection>
+    <developerConnection>scm:svn:https://${maven.username}@svn.codehaus.org/xfire/trunk</developerConnection>
+    <url>https://svn.xfire.codehaus.org/viewrep/xfire/trunk</url>
   </scm>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
@@ -58,7 +58,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>once</forkMode>
+          <forkMode>none</forkMode>
           <childDelegation>false</childDelegation>
           <excludes>
             <exclude>**/jms/**/*</exclude>
@@ -127,11 +127,10 @@
     <module>xfire-castor</module>
     <module>xfire-core</module>
     <module>xfire-loom</module>
-    <module>xfire-jibx</module>
     <module>xfire-jaxb</module>
     <module>xfire-jms</module>
-    <module>xfire-picocontainer</module>
     <module>xfire-plexus</module>
+    <module>xfire-picocontainer</module>
     <module>xfire-spring</module>
     <module>xfire-ws-security</module>
     <module>xfire-xmlbeans</module>

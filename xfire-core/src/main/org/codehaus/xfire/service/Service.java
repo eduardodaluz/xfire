@@ -62,6 +62,7 @@ public class Service
     public Service(ServiceInfo service)
     {
         this.service = service;
+        service.setService(this);
     }
 
     /**
