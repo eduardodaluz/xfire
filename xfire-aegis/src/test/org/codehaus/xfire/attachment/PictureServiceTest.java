@@ -50,7 +50,7 @@ public class PictureServiceTest
         server.start();
 
         XFireProxyFactory xpf = new XFireProxyFactory();
-        picClient = (PictureService) xpf.create(service, "http://localhost:8083/PictureService");
+        picClient = (PictureService) xpf.create(service, "http://localhost:8082/PictureService");
         
         client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
         client.addOutHandler(new DOMOutHandler());
