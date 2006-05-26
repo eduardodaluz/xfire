@@ -1,6 +1,7 @@
 package org.codehaus.xfire.gen.jsr181;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
+import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GeneratorPlugin;
@@ -292,6 +294,15 @@ public class PortGenerator
 
         geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke(getEndpoint).arg(newQN)));
 
+        JMethod getFooEndpoint1 = servCls.method(JMod.PUBLIC, serviceIntf, "get"
+                + endpoint.getName().getLocalPart());
+        getFooEndpoint1.param(String.class,"url");
+        JBlock geBody1 = getFooEndpoint1.body();
+        JInvocation getEndp = JExpr.invoke(getFooEndpoint);
+        JVar tpe = geBody1.decl(serviceIntf, "var", getEndp );
+        
+        geBody1.directStatement("org.codehaus.xfire.client.Client.getInstance(var).setUrl(url);");
+        geBody1._return(tpe);
     }
 
 }
