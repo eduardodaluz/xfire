@@ -375,7 +375,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         if (max != null) info.setMaxOccurs(Long.parseLong(max));
         
         String flat = parameter.getAttributeValue("flat");
-        if (flat != null) info.setFlat(Boolean.parseBoolean(flat));
+        if (flat != null) info.setFlat(Boolean.valueOf(flat.toLowerCase()).booleanValue());
     }
     
     protected void setComponentType(TypeClassInfo info, Element parameter)
