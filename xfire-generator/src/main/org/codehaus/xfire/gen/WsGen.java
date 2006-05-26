@@ -6,29 +6,12 @@ import org.apache.tools.ant.BuildException;
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a> Helper class
  *         which allows to run wsgen from command line.
  * 
- * These classes are required to run wsgen with jaxb binding:
- *  wstx-asl-2.9.jar
- *  commons-logging-1.0.4.jar 
- *  xfire-jsr181-api-1.0-M1.jar 
- *  jdom-1.0.jar
- *  XmlSchema-1.0.jar 
- *  jaxb-xjc-2.0-ea3.jar 
- *  activation-1.0.2.jar
- *  wsdl4j-1.5.2.jar
- *  stax-api-1.0.jar 
- *  jaxb-api-2.0-ea3.jar 
- *  xfire-all-1.1-SNAPSHOT.jar
- *  sun-jaxws-api-2.0-ea3.jar
- *  xsdlib-20050913.jar
- *  jaxb-impl-2.0-ea3.jar
- *  ant-1.6.5.jar
- * 
  */
 public class WsGen {
 
 	private static void usage() {
 		System.out
-				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] \n");
+				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI]\n");
 	}
 
 	private static void missingParam(String param) {
@@ -44,6 +27,9 @@ public class WsGen {
 		String wsdl = null;
 		String binding = null;
 		String profile = null;
+		String externalBindings = null;
+		String baseURI = null;
+		
 		if (args.length < 3) {
 			usage();
 			return;
@@ -65,6 +51,15 @@ public class WsGen {
 			if ("-b".equals(param)) {
 				binding = value;
 			}
+			if("-e".equals(param)){
+				externalBindings = value;
+			}
+			if("-u".equals(param)){
+				baseURI = value;
+			}
+			if("-r".equals(param)){
+				profile = value;
+			}
 		}
 
 		if (wsdl == null) {
@@ -82,6 +77,11 @@ public class WsGen {
 		System.out.print("package : " + _package + "\n");
 		System.out.print("output  : " + outputDirectory + "\n");
 		System.out.print("binding : " + (binding==null?"":binding) + "\n");
+		System.out.print("externalBindings : " + (externalBindings == null?"" : externalBindings) + "\n" );
+		System.out.print("baseURI : " + (baseURI == null?"" : baseURI)+ "\n");
+		System.out.print("profile : " + (profile == null?"" : profile)+ "\n");
+		
+		
 
 		Wsdl11Generator generator = new Wsdl11Generator();
 		generator.setDestinationPackage(_package);
@@ -92,6 +92,13 @@ public class WsGen {
 			generator.setBinding(binding);
 		if (profile != null)
 			generator.setProfile(profile);
+		
+		if( baseURI!= null )
+			generator.setBaseURI(baseURI);
+			
+		if(externalBindings != null )
+			generator.setExternalBindings(externalBindings);
+			
 
 		try {
 			generator.generate();
