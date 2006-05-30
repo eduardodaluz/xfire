@@ -28,6 +28,7 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.util.stax.DOMStreamWriter;
 import org.jdom.Element;
 
 public class JaxbType
@@ -90,10 +91,10 @@ public class JaxbType
                 object = new JAXBElement(part.getName(), getTypeClass(), object);
             }
             
+            XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
             OutputStream os = (OutputStream) context.getOutMessage().getProperty(Channel.OUTPUTSTREAM);
-            if (os != null)
+            if (os != null && !(xsw instanceof DOMStreamWriter))
             {
-                XMLStreamWriter xsw = ((ElementWriter) writer).getXMLStreamWriter();
                 xsw.writeCharacters("");
                 xsw.flush();
                 m.setProperty(Marshaller.JAXB_ENCODING, context.getOutMessage().getEncoding());

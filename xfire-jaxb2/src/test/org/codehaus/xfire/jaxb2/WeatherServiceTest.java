@@ -13,6 +13,8 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.util.dom.DOMInHandler;
+import org.codehaus.xfire.util.dom.DOMOutHandler;
 import org.jdom.Document;
 
 /**
@@ -50,6 +52,35 @@ public class WeatherServiceTest
     public void testService()
             throws Exception
     {
+        MessagePartInfo info = (MessagePartInfo)
+            endpoint.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
+
+        assertNotNull(info);
+        
+        Type type = (Type) info.getSchemaType();
+        assertTrue(type instanceof JaxbType);
+        
+        assertTrue(type.isComplex());
+        assertFalse(type.isWriteOuter());
+        
+        assertEquals(new QName("http://www.webservicex.net", "GetWeatherByZipCode"), info.getName());
+        
+        Document response = invokeService("WeatherService", "GetWeatherByZip.xml");
+
+        addNamespace("w", "http://www.webservicex.net");
+        assertValid("//s:Body/w:GetWeatherByZipCodeResponse/w:GetWeatherByZipCodeResult", response);
+    }
+
+    /**
+     * We want to test with DOM mode to make sure that we aren't writing to the output stream.
+     * @throws Exception
+     */
+    public void testServiceWithDOMMode()
+            throws Exception
+    {
+        endpoint.addInHandler(new DOMInHandler());
+        endpoint.addOutHandler(new DOMOutHandler());
+        
         MessagePartInfo info = (MessagePartInfo)
             endpoint.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
 
