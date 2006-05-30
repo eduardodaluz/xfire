@@ -68,6 +68,12 @@ public class XFireServerTest
         super.tearDown();
     }
 
+    public void testXFireConstructor() throws Exception {
+        XFireHttpServer server = new XFireHttpServer(XFireFactory.newInstance().getXFire());
+        server.setPort(8392);
+        server.start();
+    }
+    
     public void testInvoke()
             throws Exception
     {
@@ -124,7 +130,7 @@ public class XFireServerTest
 
         Client client = new Client(transport, asyncService, "http://localhost:8391/AsyncService");
         Object[] response = client.invoke("echo", new Object[] { root });
-        
+
         client.close();
         assertNull(response);
     }
