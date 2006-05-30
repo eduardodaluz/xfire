@@ -16,4 +16,9 @@ public class AbstractContext
     {
         properties.put(key, value);
     }
+    
+    public Object removeProperty(String key)
+    {
+        return properties.remove(key);
+    }
 }
