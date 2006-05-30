@@ -6,17 +6,18 @@ import java.util.Stack;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.jdom.Attribute;
+import org.jdom.CDATA;
 import org.jdom.Comment;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.EntityRef;
 import org.jdom.Namespace;
 
 public class JDOMStreamWriter
-    implements XMLStreamWriter
+    extends DOMStreamWriter
 {
     private Stack stack = new Stack();
     private Document document;
@@ -107,16 +108,6 @@ public class JDOMStreamWriter
     {
     }
 
-    public void close()
-        throws XMLStreamException
-    {
-    }
-
-    public void flush()
-        throws XMLStreamException
-    {
-    }
-
     public void writeAttribute(String local, String value)
         throws XMLStreamException
     {
@@ -159,22 +150,17 @@ public class JDOMStreamWriter
     public void writeProcessingInstruction(String arg0)
         throws XMLStreamException
     {
-        // TODO Auto-generated method stub
-        
     }
 
     public void writeProcessingInstruction(String arg0, String arg1)
         throws XMLStreamException
     {
-        // TODO Auto-generated method stub
-        
     }
 
-    public void writeCData(String arg0)
+    public void writeCData(String data)
         throws XMLStreamException
     {
-        // TODO Auto-generated method stub
-        
+        currentNode.addContent(new CDATA(data));
     }
 
     public void writeDTD(String arg0)
@@ -183,11 +169,10 @@ public class JDOMStreamWriter
         
     }
 
-    public void writeEntityRef(String arg0)
+    public void writeEntityRef(String ref)
         throws XMLStreamException
     {
-        // TODO Auto-generated method stub
-        
+        currentNode.addContent(new EntityRef(ref));
     }
 
     public void writeStartDocument()

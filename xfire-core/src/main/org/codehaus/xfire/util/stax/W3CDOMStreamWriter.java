@@ -9,14 +9,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class W3CDOMStreamWriter
-    implements XMLStreamWriter
+    extends DOMStreamWriter
 {
     static final String XML_NS = "http://www.w3.org/2000/xmlns/";
     private Stack stack = new Stack();
