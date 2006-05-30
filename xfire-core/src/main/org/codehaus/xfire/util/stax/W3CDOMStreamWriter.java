@@ -122,16 +122,6 @@ public class W3CDOMStreamWriter
     {
     }
 
-    public void close()
-        throws XMLStreamException
-    {
-    }
-
-    public void flush()
-        throws XMLStreamException
-    {
-    }
-
     public void writeAttribute(String local, String value)
         throws XMLStreamException
     {
