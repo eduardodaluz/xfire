@@ -26,7 +26,6 @@ public class AbstractXFireJMSTest
         container = new BrokerContainerImpl();
         container.addConnector("vm://localhost");
         container.setPersistenceAdapter(new VMPersistenceAdapter());
-        
         container.start();
 
         Context context = new InitialContext();
