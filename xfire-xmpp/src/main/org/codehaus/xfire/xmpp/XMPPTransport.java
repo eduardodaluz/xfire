@@ -38,7 +38,7 @@ public class XMPPTransport
         this.xfire = xfire;
         
         this.id = username + "@" + server;
-        
+
         // Make sure the SoapIQProvider class has been loaded so
         // our IQ provider is registered.
         new SoapIQProvider();
@@ -92,7 +92,7 @@ public class XMPPTransport
 
     protected String getUriPrefix()
     {
-        return id;
+        return "";
     }
 
     public String getPassword()

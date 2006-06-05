@@ -1,11 +1,16 @@
 package org.codehaus.xfire.xmpp;
 
+import java.lang.reflect.Method;
+
+import org.codehaus.xfire.addressing.AddressingInHandler;
+import org.codehaus.xfire.addressing.AddressingOperationInfo;
+import org.codehaus.xfire.addressing.AddressingOutHandler;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.test.Echo;
 import org.codehaus.xfire.test.EchoImpl;
 import org.codehaus.xfire.transport.Channel;
@@ -28,6 +33,8 @@ public class XMPPClientTest
     String password = "password1";
     String server = "bloodyxml.com";
     String id = username + "@" + server;
+    private Service service;
+    private ObjectServiceFactory factory;
     
     public void setUp()
             throws Exception
@@ -39,13 +46,25 @@ public class XMPPClientTest
         
         getXFire().getTransportManager().register(serverTrans);
 
-        ObjectServiceFactory factory = (ObjectServiceFactory) getServiceFactory();
+        factory = new ObjectServiceFactory(getTransportManager()) {
+
+            protected OperationInfo addOperation(Service endpoint, Method method, String style)
+            {
+                OperationInfo op = super.addOperation(endpoint, method, style);
+                
+                new AddressingOperationInfo(op);
+                
+                return op;
+            }
+            
+        };
         factory.addSoap11Transport(XMPPTransport.BINDING_ID);
         
-        Service service = factory.create(Echo.class);
+        service = factory.create(Echo.class);
         service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
+
         getServiceRegistry().register(service);
-        // XMPPConnection.DEBUG_ENABLED = true;       
+   //     XMPPConnection.DEBUG_ENABLED = true;       
     }
     
     protected void tearDown()
@@ -78,6 +97,49 @@ public class XMPPClientTest
         assertNotNull(response);
         assertEquals(1, response.length);
         
+        String resString = (String) response[0];
+        assertEquals("hello", resString);
+    }
+    
+    public void testInvokeWithAddressing()
+        throws Exception
+    {
+        service.addInHandler(new AddressingInHandler());
+        service.addOutHandler(new AddressingOutHandler());
+        service.addFaultHandler(new AddressingOutHandler());
+
+        Channel serverChannel = serverTrans.createChannel("Echo");
+
+        DefaultTransportManager tm = new DefaultTransportManager();
+        tm.initialize();
+        tm.register(clientTrans);
+
+        factory = new ObjectServiceFactory(tm) {
+
+            protected OperationInfo addOperation(Service endpoint, Method method, String style)
+            {
+                OperationInfo op = super.addOperation(endpoint, method, style);
+                
+                new AddressingOperationInfo(op);
+                
+                return op;
+            }
+        };
+        factory.addSoap11Transport(XMPPTransport.BINDING_ID);
+        
+        Service serviceModel = factory.create(Echo.class);
+        
+        Client client = new Client(clientTrans, serviceModel, id + "/Echo");
+        client.addInHandler(new AddressingInHandler());
+        client.addOutHandler(new AddressingOutHandler());
+        client.addFaultHandler(new AddressingInHandler());
+        
+        OperationInfo op = serviceModel.getServiceInfo().getOperation("echo");
+        Object[] response = client.invoke(op, new Object[] { "hello" });
+
+        assertNotNull(response);
+        assertEquals(1, response.length);
+
         String resString = (String) response[0];
         assertEquals("hello", resString);
     }

@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.soap.SoapSerializer;
@@ -23,7 +24,8 @@ public class XMPPChannel
     extends AbstractChannel
 {
     private XMPPConnection conn;
-
+    private String currentId; // hack to allow synchronous single threaded calls via the Client
+    
     public XMPPChannel(String uri, XMPPTransport transport)
     {
         setUri(uri);
@@ -75,6 +77,8 @@ public class XMPPChannel
             throw new XFireRuntimeException("Couldn't write stream.", e);
         }
 
+        currentId = context.getId();
+        
         SoapEnvelopePacket response = new SoapEnvelopePacket(out.toString()); 
         response.setFrom(conn.getUser());
         
@@ -96,6 +100,13 @@ public class XMPPChannel
             response.setError(error);
 
         conn.sendPacket(response);
+    }
+
+    public void receive(MessageContext context, InMessage message)
+    {
+        context.setId(currentId);
+        
+        super.receive(context, message);
     }
 
     public void close()
