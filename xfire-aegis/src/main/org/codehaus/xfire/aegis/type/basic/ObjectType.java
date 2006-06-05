@@ -231,7 +231,7 @@ public class ObjectType extends Type
     {
         if( !serializedWhenUnknown )
         {
-            throw new XFireFault( "Unable to write '" + object + "' [" + object.getClass().getName() + "]",
+            throw new XFireFault( "Unable to write '" + object + "' [" + object.getClass().getName() + "]. Type is unknown.",
                                   XFireFault.RECEIVER );
         }
 

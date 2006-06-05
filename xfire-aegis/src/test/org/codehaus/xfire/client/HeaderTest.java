@@ -53,7 +53,7 @@ public class HeaderTest extends AbstractXFireAegisTest
         assertEquals("header2", h.getValue());
         
         Document wsdl = getWSDLDocument("Echo");
-        printNode(wsdl);
+
         addNamespace("wsdlsoap", WSDLBuilder.WSDL11_SOAP_NS);
         assertValid("//wsdl:input/wsdlsoap:header[@message='tns:echoRequestHeaders'][@part='in0']", wsdl);
         assertValid("//wsdl:output/wsdlsoap:header[@message='tns:echoResponseHeaders'][@part='out']", wsdl);
