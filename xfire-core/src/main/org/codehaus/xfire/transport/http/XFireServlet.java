@@ -2,6 +2,7 @@ package org.codehaus.xfire.transport.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,15 +14,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
+import org.codehaus.xfire.transport.Transport;
 
 /**
  * A servlet which processes incoming XFire requests.
  * It delegates to the XFireController to process the request.
- * 
+ *
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @since Feb 13, 2004
  */
-public class XFireServlet 
+public class XFireServlet
     extends HttpServlet
 {
     protected XFire xfire;
@@ -31,10 +33,10 @@ public class XFireServlet
     private File webInfPath;
 
     private final static Log logger = LogFactory.getLog(XFireServlet.class);
-    
+
     public final static String XFIRE_INSTANCE = "xfire.instance";
-    
-    public void init() 
+
+    public void init()
         throws ServletException
     {
         try
@@ -57,7 +59,7 @@ public class XFireServlet
     public XFire getXFire() throws ServletException
     {
         if (xfire == null) xfire = createXFire();
-        
+
         return xfire;
     }
 
@@ -70,7 +72,7 @@ public class XFireServlet
         return controller;
     }
 
-    public XFire createXFire() 
+    public XFire createXFire()
         throws ServletException
     {
         try
@@ -89,7 +91,7 @@ public class XFireServlet
         }
     }
 
-    public XFireServletController createController() 
+    public XFireServletController createController()
         throws ServletException
     {
         return new XFireServletController(xfire);
@@ -99,7 +101,7 @@ public class XFireServlet
      * Delegates to {@link XFireServletController#doService(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
      */
     protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response) 
+                         HttpServletResponse response)
         throws ServletException, IOException
     {
         controller.doService(request, response);
@@ -126,5 +128,17 @@ public class XFireServlet
         }
 
         return webInfPath;
+    }
+
+    public void destroy()
+    {
+    	logger.debug("Destroying Servlet");
+        //Ensure all transports are closed
+        for (Iterator iterator = xfire.getTransportManager().getTransports().iterator(); iterator.hasNext();)
+        {
+            Transport transport = (Transport) iterator.next();
+            transport.dispose();
+        }
+        super.destroy();
     }
 }

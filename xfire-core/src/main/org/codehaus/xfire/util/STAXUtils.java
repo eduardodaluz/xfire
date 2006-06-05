@@ -266,10 +266,19 @@ public class STAXUtils
     public static void writeDocument( Document d, XMLStreamWriter writer, boolean repairing ) 
         throws XMLStreamException
     {
-        writer.writeStartDocument();
+        writeDocument(d, writer, true, repairing);
+    }
+    
+
+    public static void writeDocument(Document d, XMLStreamWriter writer, boolean writeProlog, boolean repairing) 
+        throws XMLStreamException
+    {
+        if (writeProlog) writer.writeStartDocument();
+        
         Element root = d.getDocumentElement();
         writeElement(root, writer, repairing);
-        writer.writeEndDocument();
+        
+        if (writeProlog) writer.writeEndDocument();
     }
 
     /**
@@ -700,4 +709,5 @@ public class STAXUtils
             throw new XFireRuntimeException("Couldn't parse stream.", e);
         }
     }
+
 }

@@ -9,6 +9,7 @@ import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.soap.SoapSerializer;
 import org.codehaus.xfire.util.STAXUtils;
 import org.w3c.dom.Document;
 
@@ -38,7 +39,9 @@ public class DOMSerializer
     {
         try
         {
-            STAXUtils.writeDocument(doc, writer, false);
+            STAXUtils.writeDocument(doc, writer, Boolean.TRUE.equals(context.getProperty(SoapSerializer.SERIALIZE_PROLOG)), false);
+
+            
             writer.flush();
         }
         catch (Exception e)

@@ -12,12 +12,14 @@ import org.codehaus.xfire.service.OperationInfo;
 public class AddressingOutHandler
     extends AbstractHandler
 {
+    private static RandomGUID guidGenerator = new RandomGUID(false);
+
     private final static Log logger = LogFactory.getLog(AddressingOutHandler.class);
     
     public AddressingOutHandler()
     {
         super();
-        setPhase(Phase.TRANSPORT);
+        setPhase(Phase.POST_INVOKE);
     }
 
     public void invoke(MessageContext context)
@@ -50,7 +52,7 @@ public class AddressingOutHandler
             logger.warn("There was no out message!");
             return;
         }
-        
+
         factory.writeHeaders(msg.getOrCreateHeader(), headers);
     }
 
@@ -58,8 +60,9 @@ public class AddressingOutHandler
     {
         OperationInfo oi=context.getExchange().getOperation();
         AddressingOperationInfo aoi = (AddressingOperationInfo)
-        oi.getProperty(AddressingOperationInfo.ADDRESSING_OPERATION_KEY);
-        if (aoi==null) return;
+            oi.getProperty(AddressingOperationInfo.ADDRESSING_OPERATION_KEY);
+
+        if (aoi == null) return;
         
         AddressingHeadersFactory factory = (AddressingHeadersFactory) oi.getProperty(AddressingInHandler.ADRESSING_FACTORY.toString());
         if (factory==null) factory = new AddressingHeadersFactory200508();
@@ -70,9 +73,11 @@ public class AddressingOutHandler
         headers.setReplyTo(aoi.getReplyTo());
         headers.setFaultTo(aoi.getFaultTo());
         headers.setFrom(aoi.getFrom());
+        headers.setMessageID("urn:uuid:" + guidGenerator.toString());
+        context.setId(headers.getMessageID());
         
         OutMessage msg = (OutMessage) context.getCurrentMessage();
-        
+
         if (msg == null)
         {
             logger.warn("There was no out message!");

@@ -63,7 +63,7 @@ public class DefaultFaultHandler extends AbstractHandler
         context.setCurrentMessage(outMsg);
         
         // Create a fault pipeline
-        HandlerPipeline faultPipe = new HandlerPipeline(context.getXFire().getFaultPhases());
+        HandlerPipeline faultPipe = new HandlerPipeline(context.getXFire().getOutPhases());
         
         faultPipe.addHandlers(context.getXFire().getFaultHandlers());
         

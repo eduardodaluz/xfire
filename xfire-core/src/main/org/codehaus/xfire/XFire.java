@@ -48,8 +48,6 @@ public interface XFire extends HandlerSupport
     
     List getOutPhases();
 
-    List getFaultPhases();
-    
     Object getProperty(String key);
     
     void setProperty(String key, Object value);

@@ -3,14 +3,13 @@ package org.codehaus.xfire.client;
 import java.io.InputStream;
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,22 +20,16 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
-import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Endpoint;
-import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
-import org.codehaus.xfire.soap.Soap11;
-import org.codehaus.xfire.soap.Soap11Binding;
-import org.codehaus.xfire.soap.Soap12;
-import org.codehaus.xfire.soap.Soap12Binding;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.ChannelEndpoint;
 import org.codehaus.xfire.transport.Transport;
@@ -65,17 +58,18 @@ public class Client
      */
     public static final String CLIENT_MODE = "client.mode";
 
-    private Object[] response;
-    private Channel channel;
+    private static List calls = new ArrayList();
+    
+    private Channel outChannel;
     private Transport transport;
     private Service service;
     private Binding binding;
     private String url;
-    private int timeout = 10*1000;
-    private MessageContext context;
-    private Exception fault;
+    private int timeout = 10000; // 10 second timeout for async transports
     private String endpointUri;
-   
+    private CorrelatorHandler correlatorHandler;
+    private Correlator correlator;
+    
     /** The XFire instance. This is only needed when invoking local services. */
     private XFire xfire = XFireFactory.newInstance().getXFire();
     
@@ -83,6 +77,14 @@ public class Client
     {
         addOutHandler(new OutMessageSender());
         addFaultHandler(new ClientFaultConverter());
+        
+        correlator = new MessageIdCorrelator();
+        
+        correlatorHandler = new CorrelatorHandler(calls);
+        correlatorHandler.setCorrelator(correlator);
+        
+        addInHandler(correlatorHandler);
+        addFaultHandler(correlatorHandler);
     }
     
     /**
@@ -323,62 +325,18 @@ public class Client
 
     public Object[] invoke(OperationInfo op, Object[] params) throws Exception
     {
-        try
+        ClientCall call = new ClientCall(this);
+        
+        try 
         {
-            OutMessage msg = new OutMessage(url);
-            msg.setBody(params);
-            msg.setChannel(getOutChannel());
+            calls.add(call);
             
-            // TODO this should probably be in a seperate handler.
-            // We'll have to address this when we add REST support.
-            if (binding instanceof Soap11Binding)
-                msg.setSoapVersion(Soap11.getInstance());
-            else if (binding instanceof Soap12Binding)
-                msg.setSoapVersion(Soap12.getInstance());
-            
-            context = new MessageContext();
-            context.setService(service);
-            context.setXFire(xfire);
-            context.setBinding(binding);
-            context.setProperty(CLIENT_MODE, Boolean.TRUE);
-            context.setClient(this);
-
-            MessageExchange exchange = new MessageExchange(context);
-            exchange.setOperation(op);
-            exchange.setOutMessage(msg);
-            context.setCurrentMessage(msg);
-            
-            HandlerPipeline outPipe = new HandlerPipeline(xfire.getOutPhases());
-            outPipe.addHandlers(xfire.getOutHandlers());
-            outPipe.addHandlers(getOutHandlers());
-            outPipe.addHandlers(transport.getOutHandlers());
-            
-            context.setOutPipeline(outPipe);
-
-            ServiceInvocationHandler.writeHeaders(context, null);
-            
-            outPipe.invoke(context);
+            return call.invoke(op, params);
         }
-        catch (Exception e1)
+        finally 
         {
-            throw XFireFault.createFault(e1);
+            calls.remove(call);
         }
-        
-        waitForResponse();
-
-        if (fault != null)
-        {
-            Exception localFault = fault;
-            fault = null;
-            throw localFault;
-        }
-        
-        Object[] localResponse = response;
-        response = null;
-        
-        //getTransport().close(getOutChannel());
-        
-        return localResponse;
     }
     
     public Object[] invoke(String name, Object[] params) throws Exception
@@ -389,78 +347,38 @@ public class Client
         
         return invoke(op, params);
     }
-
-    /**
-     * Waits for a response from the service.
-     */
-    protected void waitForResponse()
-    {
-        /**
-         * If this is an asynchronous channel, we'll need to sleep() and wait
-         * for a response. Channels such as HTTP will have the response set
-         * by the time we get to this point.
-         */
-        if (!getOutChannel().isAsync() || 
-                response != null ||
-                fault != null || 
-                !context.getExchange().getOperation().hasOutput())
-        {
-            return;
-        }
-        
-        int count = 0;
-        while (response == null && fault == null && count < timeout)
-        {
-            try
-            {
-                Thread.sleep(50);
-                count += 50;
-            }
-            catch (InterruptedException e)
-            {
-                break;
-            }
-        }
-    }
     
-    public void onReceive(MessageContext recvContext, InMessage msg)
+    public void onReceive(MessageContext context, InMessage msg)
     {
         if (log.isDebugEnabled()) log.debug("Received message to " + msg.getUri());
-        
+
         if (context.getExchange() == null)
         {
             new MessageExchange(context);
         }
         
         MessageExchange exchange = context.getExchange();
-        
-        if (!exchange.getOperation().hasOutput()) return;
+        if (exchange == null)
+        {
+            exchange = new MessageExchange(context);
+        }
+
+        if (exchange.getOperation() != null && 
+                SoapConstants.MEP_IN.equals(exchange.getOperation().getMEP()))
+            return;
         
         exchange.setInMessage(msg);
         context.setCurrentMessage(msg);
+        context.setService(service);
         
         try
         {
-            HandlerPipeline inPipe = new HandlerPipeline(xfire.getInPhases());
-           // inPipe.addHandlers(recvContext.getXFire().getInHandlers());
+            HandlerPipeline inPipe = new HandlerPipeline(getXFire().getInPhases());
             inPipe.addHandlers(getInHandlers());
-            inPipe.addHandlers(transport.getInHandlers());
-            recvContext.setInPipeline(inPipe);
+            inPipe.addHandlers(getTransport().getInHandlers());
+            context.setInPipeline(inPipe);
             
             inPipe.invoke(context);
-            
-            MessageInfo msgInfo = exchange.getOperation().getOutputMessage();
-            Object result = ServiceInvocationHandler.readHeaders(context, 
-                                                                 binding.getHeaders(msgInfo), 
-                                                                 (Object[]) context.getOutMessage().getBody());
-            if (result != null)
-            {
-                ((List) msg.getBody()).add(result);
-            }
-
-            finishReadingMessage(msg, context);
-            
-            response = ((List) msg.getBody()).toArray();
         }
         catch (Exception e1)
         {
@@ -469,64 +387,53 @@ public class Client
             AbstractMessage faultMsg = context.getExchange().getFaultMessage();
             faultMsg.setBody(fault);
             
-            HandlerPipeline inPipe = new HandlerPipeline(xfire.getFaultPhases());
+            context.setCurrentMessage(faultMsg);
+            
+            HandlerPipeline inPipe = new HandlerPipeline(getXFire().getInPhases());
             inPipe.addHandlers(getFaultHandlers());
-            inPipe.addHandlers(transport.getFaultHandlers());
-
+            inPipe.addHandlers(getTransport().getFaultHandlers());
+            context.setInPipeline(inPipe);
+            
             try
             {
                 inPipe.invoke(context);
-                
-                this.fault = (Exception) faultMsg.getBody();
             }
             catch (Exception e)
             {
-                this.fault = e;
+                if (e instanceof XFireRuntimeException) 
+                    throw (XFireRuntimeException) e;
+                
+                throw new XFireRuntimeException("Could not receive fault.", e);
             }
-        }
-    }
-
-    public void finishReadingMessage(InMessage message, MessageContext context)
-        throws XFireFault
-    {
-        XMLStreamReader reader = message.getXMLStreamReader();
-
-        try
-        {
-            while (reader.hasNext()) reader.next();
-        }
-        catch (XMLStreamException e)
-        {
-            throw new XFireFault("Couldn't parse message.", e, XFireFault.SENDER);
         }
     }
 
     public Channel getOutChannel()
     {
-        if (channel != null) return channel;
+        if (outChannel != null) return outChannel;
         
         try
         {
             String uri = getEndpointUri();
             if (uri == null)
-                channel = getTransport().createChannel();
+                outChannel = getTransport().createChannel();
             else
-                channel = getTransport().createChannel(uri);
+                outChannel = getTransport().createChannel(uri);
         }
         catch (Exception e)
         {
             throw new XFireRuntimeException("Couldn't open channel.", e);
         }
 
-        channel.setEndpoint(this);
+        outChannel.setEndpoint(this);
         
-        return channel;
+        return outChannel;
     }
     
     public void close() 
     {
-        if (channel != null)
-            channel.close();
+        if (outChannel != null)
+            outChannel.close();
     }
     
     public Transport getTransport()
@@ -539,11 +446,6 @@ public class Client
         this.transport = transport;
     }
 
-    public void receive(Object response)
-    {
-        this.response = ((List) response).toArray();
-    }
-    
     public Service getService()
     {
         return service;
@@ -590,16 +492,24 @@ public class Client
     }
     
     /**
-     * Maybe this method should be moved to some helper class.
-     * But i dont' know any suitable.
+     * Return the underlying Client instance for a client Proxy.
+     * 
+     * @see XFireProxy
+     * @see XFireProxyFactory
      * @param service
      * @return
      */
-    public static Client getInstance(Object service){
+    public static Client getInstance(Object service)
+    {
         Object proxy = Proxy.getInvocationHandler(service);
         if( proxy == null || !(proxy instanceof XFireProxy) ){
-            throw new IllegalArgumentException("Argument is nota XFireProxy");
+            throw new IllegalArgumentException("Argument is not an XFireProxy");
         }
         return ((XFireProxy)proxy ).getClient();
+    }
+
+    Binding getBinding()
+    {
+        return binding;
     }
 }

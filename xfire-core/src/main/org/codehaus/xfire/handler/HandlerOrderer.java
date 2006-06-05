@@ -9,6 +9,12 @@ public class HandlerOrderer
     
     public void insertHandler(Handler handler)
     {
+        if (handlers.size() == 0)
+        {
+            handlers.add(handler);
+            return;
+        }
+        
         int begin = -1;
         int end = handlers.size();
         

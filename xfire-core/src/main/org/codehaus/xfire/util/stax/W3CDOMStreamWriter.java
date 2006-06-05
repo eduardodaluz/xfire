@@ -23,9 +23,7 @@ public class W3CDOMStreamWriter
     private Element currentNode;
     private NamespaceContext context;
     private Map properties = new HashMap();
-    
-    private DocumentBuilder builder;
-    
+
     public W3CDOMStreamWriter() throws ParserConfigurationException
     {
         this(DocumentBuilderFactory.newInstance().newDocumentBuilder());
@@ -33,7 +31,7 @@ public class W3CDOMStreamWriter
     
     public W3CDOMStreamWriter(DocumentBuilder builder)
     {
-        this.builder = builder;
+        document = builder.newDocument();
     }
     
     public W3CDOMStreamWriter(Document document)
@@ -207,7 +205,6 @@ public class W3CDOMStreamWriter
     public void writeStartDocument()
         throws XMLStreamException
     {
-        document = builder.newDocument();
     }
 
     public void writeStartDocument(String version)

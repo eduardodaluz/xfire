@@ -12,6 +12,7 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
+import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.transport.Transport;
@@ -22,7 +23,7 @@ import org.jdom.Element;
 public class AddressingInHandler
     extends AbstractHandler
 {
-    private RandomGUID guidGenerator = new RandomGUID(false);
+    private static RandomGUID guidGenerator = new RandomGUID(false);
 
     public static final Object ADRESSING_HEADERS = "xfire-ws-adressing-headers";
 
@@ -61,69 +62,95 @@ public class AddressingInHandler
             if (header != null && factory.hasHeaders(header))
             {
 
-                try{
-                AddressingHeaders headers = factory.createHeaders(header);
-                msg.setProperty(ADRESSING_HEADERS, headers);
-                msg.setProperty(ADRESSING_FACTORY, factory);
-
-                // Dispatch the service
-                Service service = getService(headers, context);
-                if (service != null)
+                AddressingHeaders headers = null;
+                try
                 {
-                    context.setService(service);
+                    headers = factory.createHeaders(header);
+                    msg.setProperty(ADRESSING_HEADERS, headers);
+                    msg.setProperty(ADRESSING_FACTORY, factory);
 
-                }
-                else
-                {
-                    // wsa:To can be not specified, so use service found by url
-                    service = context.getService();
-                }
+                    context.setId(headers.getRelatesTo());
 
-                // Dispatch the Exchange and operation
-                AddressingOperationInfo op = AddressingOperationInfo.getOperationByInAction(service
-                        .getServiceInfo(), headers.getAction());
-
-                if (op == null)
-                {
-                    throw new XFireFault("Action '" + headers.getAction()
-                            + "' was not found for service " + headers.getTo(), XFireFault.SENDER);
-                }
-
-                MessageExchange exchange = context.getExchange();
-                exchange.setOperation(op.getOperationInfo());
-
-                EndpointReference faultTo = headers.getFaultTo();
-                OutMessage faultMsg = null;
-                if (faultTo != null)
-                {
-                    faultMsg = processEPR(context, faultTo, op, headers, factory);
-                }
-                else
-                {
-                    faultMsg = createDefaultMessage(context, op, headers, factory);
-                }
-                exchange.setFaultMessage(faultMsg);
-
-                EndpointReference replyTo = headers.getReplyTo();
-                OutMessage outMessage = null;
-                if (replyTo != null)
-                {
-                    outMessage = processEPR(context, replyTo, op, headers, factory);
-                }
-                else
-                {
-                    outMessage = createDefaultMessage(context, op, headers, factory);
-                }
-                exchange.setOutMessage(outMessage);
-                }catch(XFireFault fault ){
-        
-                    AbstractMessage faultMsg = context.getExchange().getFaultMessage();
-                    AddressingHeaders headers = (AddressingHeaders) faultMsg.getProperty(ADRESSING_HEADERS);
-                    if (headers == null)
+                    // Dispatch the service
+                    Service service = getService(headers, context);
+                    if (service != null)
                     {
-                        headers = new AddressingHeaders();
-                        headers.setAction(WSAConstants.WSA_200508_FAULT_ACTION);
-                        faultMsg.setProperty(ADRESSING_HEADERS, headers);
+                        context.setService(service);
+
+                    }
+                    else
+                    {
+                        // wsa:To can be not specified, so use service found by
+                        // url
+                        service = context.getService();
+                    }
+
+                    // Dispatch the Exchange and operation
+                    OperationInfo op = context.getExchange().getOperation();
+                    AddressingOperationInfo aop = AddressingOperationInfo.getOperationByInAction(service.getServiceInfo(), headers
+                                .getAction());
+                    
+                    // Check the client side case
+                    if (aop == null)
+                    {
+                        aop = AddressingOperationInfo.getOperationByOutAction(service.getServiceInfo(), 
+                                                                              headers.getAction());
+                        if (aop != null) 
+                        {
+                            context.setId(headers.getRelatesTo());
+                            return;
+                        }
+                    }
+                    
+                    if (aop == null)
+                    {
+                        throw new XFireFault("Action '" + headers.getAction() + "' was not found for service "
+                                + headers.getTo(), XFireFault.SENDER);
+                    }
+
+                    MessageExchange exchange = context.getExchange();
+                    exchange.setOperation(aop.getOperationInfo());
+
+                    EndpointReference faultTo = headers.getFaultTo();
+                    OutMessage faultMsg = null;
+                    if (faultTo != null)
+                    {
+                        faultMsg = processEPR(context, faultTo, aop, headers, factory);
+                    }
+                    else
+                    {
+                        faultMsg = createDefaultMessage(context, aop, headers, factory);
+                    }
+                    exchange.setFaultMessage(faultMsg);
+
+                    EndpointReference replyTo = headers.getReplyTo();
+                    OutMessage outMessage = null;
+                    if (replyTo != null)
+                    {
+                        outMessage = processEPR(context, replyTo, aop, headers, factory);
+                    }
+                    else
+                    {
+                        outMessage = createDefaultMessage(context, aop, headers, factory);
+                    }
+                    exchange.setOutMessage(outMessage);
+                }
+                catch (XFireFault fault)
+                {
+                    /* If this happens we've most likely received some invalid
+                     * WS-Addressing headers, so lets try to make the best of it.
+                     */
+                    AbstractMessage faultMsg = context.getExchange().getFaultMessage();
+                    AddressingHeaders outHeaders = (AddressingHeaders) faultMsg.getProperty(ADRESSING_HEADERS);
+                    if (outHeaders == null)
+                    {
+                        outHeaders = new AddressingHeaders();
+                        
+                        if (headers != null)
+                            outHeaders.setRelatesTo(headers.getMessageID());
+                        
+                        outHeaders.setAction(WSAConstants.WSA_200508_FAULT_ACTION);
+                        faultMsg.setProperty(ADRESSING_HEADERS, outHeaders);
                         faultMsg.setProperty(ADRESSING_FACTORY, factory);
                     }
                     throw fault;
@@ -141,8 +168,8 @@ public class AddressingInHandler
 
         AddressingHeaders headers = new AddressingHeaders();
         headers.setTo(factory.getAnonymousUri());
-
-        // TODO: need way to set out action
+        headers.setRelatesTo(inHeaders.getMessageID());
+        
         headers.setAction(aoi.getOutAction());
         outMessage.setProperty(ADRESSING_HEADERS, headers);
         outMessage.setProperty(ADRESSING_FACTORY, factory);
@@ -182,28 +209,36 @@ public class AddressingInHandler
 
         boolean isFault = epr.getName().equals(WSAConstants.WSA_FAULT_TO);
         Transport t = null;
+        Channel c = null;
+        
         if (addr == null)
         {
             throw new XFireFault("Invalid ReplyTo address.", XFireFault.SENDER);
         }
+        
         if (addr.equals(factory.getAnonymousUri()))
         {
             outMessage = new OutMessage(Channel.BACKCHANNEL_URI);
-            t = context.getInMessage().getChannel().getTransport();
-        }
-        else
-
-        if (isNoneAddress(factory, addr))
-        {
-            t = new DeadLetterTransport();
-            outMessage = new OutMessage(addr);
+            c = context.getInMessage().getChannel();
+            t = c.getTransport();
         }
         else
         {
-            outMessage = new OutMessage(addr);
-            t = context.getXFire().getTransportManager().getTransportForUri(addr);
+            if (isNoneAddress(factory, addr))
+            {
+                t = new DeadLetterTransport();
+                outMessage = new OutMessage(addr);
+                c = t.createChannel();
+            }
+            else
+            {
+                outMessage = new OutMessage(addr);
+                t = context.getXFire().getTransportManager().getTransportForUri(addr);
+                c = t.createChannel();
+            }
         }
-
+        
+        outMessage.setChannel(c);
         outMessage.setSoapVersion(context.getExchange().getInMessage().getSoapVersion());
 
         if (t == null)
@@ -211,10 +246,8 @@ public class AddressingInHandler
             throw new XFireFault("URL was not recognized: " + addr, XFireFault.SENDER);
         }
 
-        outMessage.setChannel(t.createChannel());
-
         AddressingHeaders headers = new AddressingHeaders();
-        // Fault can have only refrenceFaprameters
+        // Fault can have only refrenceParameters
         if (!isFault)
         {
             headers.setTo(addr);
@@ -225,6 +258,7 @@ public class AddressingInHandler
             headers.setAction(WSAConstants.WSA_200508_FAULT_ACTION);
         }
         headers.setMessageID("urn:uuid:" + guidGenerator.toString());
+        headers.setRelatesTo(inHeaders.getMessageID());
 
         Element refParam = epr.getReferenceParametersElement();
         if (refParam != null)
@@ -237,8 +271,7 @@ public class AddressingInHandler
                 if (refs.get(i) instanceof Element)
                 {
                     Element e = (Element) refs.get(i);
-                    e.setAttribute(new Attribute(WSAConstants.WSA_IS_REF_PARAMETER, "true", epr
-                            .getNamespace()));
+                    e.setAttribute(new Attribute(WSAConstants.WSA_IS_REF_PARAMETER, "true", epr.getNamespace()));
                     params.add(e);
                 }
 
@@ -269,6 +302,5 @@ public class AddressingInHandler
 
         return context.getXFire().getServiceRegistry().getService(serviceName);
     }
-
 
 }

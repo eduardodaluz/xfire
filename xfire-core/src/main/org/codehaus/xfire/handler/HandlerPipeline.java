@@ -11,7 +11,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
-import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.fault.XFireFault;
 
 /**
@@ -58,12 +57,20 @@ public class HandlerPipeline
 
     public void addHandler(Handler handler)
     {
+        if (log.isDebugEnabled())
+            log.debug("adding handler " + handler + " to phase " + handler.getPhase());
+        
         HandlerOrderer phaseHandlers = getPhaseHandlers(handler.getPhase());
         
         if (phaseHandlers == null) 
-            throw new XFireRuntimeException("Invalid phase: " + handler.getPhase());
-
-        phaseHandlers.insertHandler(handler);
+        {
+            if (log.isDebugEnabled())
+                log.debug("Phase " + handler.getPhase() + " does not exist. Skipping handler " + handler.getClass().getName());
+        }
+        else
+        {
+            phaseHandlers.insertHandler(handler);
+        }
     }
 
     public HandlerOrderer getPhaseHandlers(String phase)
@@ -87,13 +94,18 @@ public class HandlerPipeline
         {
             Phase phase = (Phase) itr.next();
             
+            if (log.isDebugEnabled())
+                log.debug("Invoking phase " + phase.getName());
+            
             List phaseHandlers = getPhaseHandlers(phase.getName()).getHandlers();
             for (int i = 0; i < phaseHandlers.size(); i++ )
             {
                 Handler h = (Handler) phaseHandlers.get(i);
                 try
                 {
-                    log.debug("Invoking handler " + h.getClass().getName() + " in phase " + phase.getName());
+                    if (log.isDebugEnabled())
+                        log.debug("Invoking handler " + h.getClass().getName() + 
+                                  " in phase " + phase.getName());
                     
                     h.invoke(context);
                 }

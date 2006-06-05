@@ -146,44 +146,50 @@ public class Soap11Binding extends AbstractSoapBinding
     
     protected void createHeaders(WSDLBuilder builder, OperationInfo op, BindingOperation bop)
     {
-        List inputHeaders = getHeaders(op.getInputMessage()).getMessageParts();
-        List outputHeaders = getHeaders(op.getOutputMessage()).getMessageParts();
-        BindingInput bindingInput = bop.getBindingInput();
-        BindingOutput bindingOutput = bop.getBindingOutput();
-
-        if (inputHeaders.size() > 0)
+        if (op.getInputMessage() != null)
         {
-            Message reqHeaders = createHeaderMessages(builder, op.getInputMessage(), inputHeaders);
-            builder.getDefinition().addMessage(reqHeaders);
-
-            for (Iterator headerItr = reqHeaders.getParts().values().iterator(); headerItr.hasNext();)
+            List inputHeaders = getHeaders(op.getInputMessage()).getMessageParts();
+            BindingInput bindingInput = bop.getBindingInput();
+            if (inputHeaders.size() > 0)
             {
-                Part headerInfo = (Part) headerItr.next();
-
-                SOAPHeader soapHeader = new SOAPHeaderImpl();
-                soapHeader.setMessage(reqHeaders.getQName());
-                soapHeader.setPart(headerInfo.getName());
-                soapHeader.setUse(getUse());
-
-                bindingInput.addExtensibilityElement(soapHeader);
+                Message reqHeaders = createHeaderMessages(builder, op.getInputMessage(), inputHeaders);
+                builder.getDefinition().addMessage(reqHeaders);
+    
+                for (Iterator headerItr = reqHeaders.getParts().values().iterator(); headerItr.hasNext();)
+                {
+                    Part headerInfo = (Part) headerItr.next();
+    
+                    SOAPHeader soapHeader = new SOAPHeaderImpl();
+                    soapHeader.setMessage(reqHeaders.getQName());
+                    soapHeader.setPart(headerInfo.getName());
+                    soapHeader.setUse(getUse());
+    
+                    bindingInput.addExtensibilityElement(soapHeader);
+                }
             }
         }
 
-        if (outputHeaders.size() > 0)
+        if (op.getOutputMessage() != null)
         {
-            Message resHeaders = createHeaderMessages(builder, op.getOutputMessage(), outputHeaders);
-            builder.getDefinition().addMessage(resHeaders);
-            
-            for (Iterator headerItr = resHeaders.getParts().values().iterator(); headerItr.hasNext();)
+            List outputHeaders = getHeaders(op.getOutputMessage()).getMessageParts();
+            BindingOutput bindingOutput = bop.getBindingOutput();
+
+            if (outputHeaders.size() > 0)
             {
-                Part headerInfo = (Part) headerItr.next();
-    
-                SOAPHeader soapHeader = new SOAPHeaderImpl();
-                soapHeader.setMessage(resHeaders.getQName());
-                soapHeader.setPart(headerInfo.getName());
-                soapHeader.setUse(getUse());
-    
-                bindingOutput.addExtensibilityElement(soapHeader);
+                Message resHeaders = createHeaderMessages(builder, op.getOutputMessage(), outputHeaders);
+                builder.getDefinition().addMessage(resHeaders);
+                
+                for (Iterator headerItr = resHeaders.getParts().values().iterator(); headerItr.hasNext();)
+                {
+                    Part headerInfo = (Part) headerItr.next();
+        
+                    SOAPHeader soapHeader = new SOAPHeaderImpl();
+                    soapHeader.setMessage(resHeaders.getQName());
+                    soapHeader.setPart(headerInfo.getName());
+                    soapHeader.setUse(getUse());
+        
+                    bindingOutput.addExtensibilityElement(soapHeader);
+                }
             }
         }
     }

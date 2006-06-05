@@ -45,9 +45,8 @@ public class SoapSerializer
         {
             QName env = message.getSoapVersion().getEnvelope();
 
-            Boolean serializeObj = (Boolean) context.getProperty(SERIALIZE_PROLOG);
-            boolean serializeProlog = (serializeObj != null) ? serializeObj.booleanValue() : true;
-            if (serializeProlog)
+            boolean serializeProlog = Boolean.TRUE.equals(context.getProperty(SoapSerializer.SERIALIZE_PROLOG));
+            if (Boolean.TRUE.equals(context.getProperty(SoapSerializer.SERIALIZE_PROLOG)))
                 writer.writeStartDocument(message.getEncoding(), "1.0");
             
             writer.setPrefix(env.getPrefix(), env.getNamespaceURI());

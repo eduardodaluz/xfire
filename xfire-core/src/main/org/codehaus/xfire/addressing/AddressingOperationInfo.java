@@ -46,6 +46,11 @@ public class AddressingOperationInfo
         this(inAction, outAction, null, op);
     }
 
+    public AddressingOperationInfo(OperationInfo op)
+    {
+        this(op.getService().getService().getTargetNamespace() + "#" + op.getName(), op);
+    }
+
     public static AddressingOperationInfo getAddressingOperationInfo(OperationInfo op)
     {
         return (AddressingOperationInfo) op.getProperty(ADDRESSING_OPERATION_KEY);
@@ -85,6 +90,29 @@ public class AddressingOperationInfo
         if (!name.equals("*"))
         {
             return getOperationByInAction(service, "*");
+        }
+        
+        return null;
+    }
+    
+    public static AddressingOperationInfo getOperationByOutAction(ServiceInfo service, String name)
+    {
+        for (Iterator itr = service.getOperations().iterator(); itr.hasNext();)
+        {
+            OperationInfo op = (OperationInfo) itr.next();
+            AddressingOperationInfo aoi = getAddressingOperationInfo(op);
+            
+            if (aoi == null) continue;
+            
+            if (aoi.getOutAction() != null && aoi.getOutAction().equals(name))
+            {
+                return aoi;
+            }
+        }
+        
+        if (!name.equals("*"))
+        {
+            return getOperationByOutAction(service, "*");
         }
         
         return null;

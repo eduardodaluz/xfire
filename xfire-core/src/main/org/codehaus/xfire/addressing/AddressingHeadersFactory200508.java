@@ -68,6 +68,12 @@ public class AddressingHeadersFactory200508
             headers.setMessageID(messageId.getValue());
         }
     
+        Element relatesTo = root.getChild(WSA_RELATES_TO, wsa);
+        if (relatesTo != null)
+        {
+            headers.setRelatesTo(relatesTo.getValue());
+        }
+        
         Element to = root.getChild(WSA_TO, wsa);
         if (to != null)
         {

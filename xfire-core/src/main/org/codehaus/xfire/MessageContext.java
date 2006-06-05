@@ -10,6 +10,7 @@ import org.codehaus.xfire.handler.HandlerPipeline;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.Session;
+import org.codehaus.xfire.util.UID;
 
 /**
  * Holds inforrmation about the message request and response.
@@ -30,11 +31,23 @@ public class MessageContext extends AbstractContext
     private HandlerPipeline outPipeline;
     private Handler faultHandler;
     private XFire xfire;
+    private String id;
     
     public MessageContext()
     {
+        id = UID.generate();
     }
     
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
     public XFire getXFire()
     {
         return xfire;

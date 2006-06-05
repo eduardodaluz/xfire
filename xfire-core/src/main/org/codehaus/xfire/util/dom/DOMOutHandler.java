@@ -10,6 +10,7 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.handler.SoapSerializerHandler;
+import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.stax.W3CDOMStreamWriter;
 import org.w3c.dom.Document;
 
@@ -53,6 +54,7 @@ public class DOMOutHandler
         message.getSerializer().writeMessage(message, writer, context);
        
         Document doc = writer.getDocument();
+        DOMUtils.writeXml(doc, System.out);
         message.setProperty(DOM_MESSAGE, doc);
         message.setSerializer(new DOMSerializer(doc));
     }

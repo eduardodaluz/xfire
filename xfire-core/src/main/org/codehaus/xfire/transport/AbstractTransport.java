@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.handler.AbstractHandlerSupport;
 import org.codehaus.xfire.service.Binding;
@@ -24,7 +26,8 @@ public abstract class AbstractTransport
     implements Transport
 {
     private Map/*<String uri,Channel c>*/ channels = new HashMap();
-
+    private static final Log log = LogFactory.getLog(AbstractTransport.class);
+    
     /**
      * Disposes all the existing channels.
      */
@@ -33,7 +36,9 @@ public abstract class AbstractTransport
         for (Iterator itr = channels.values().iterator(); itr.hasNext();)
         {
             Channel channel = (Channel) itr.next();
-            channel.close();
+            log.debug("Closing channel URI: " + channel.getUri());
+        	channel.close();
+            itr.remove();
         }
     }
 
@@ -60,20 +65,19 @@ public abstract class AbstractTransport
 
     public void close(Channel c)
     {
-        channels.remove(c.getUri());
     }
-    
+
     protected Map getChannelMap()
     {
         return channels;
     }
-  
+
     public String[] getSupportedBindings()
     {
         return new String[0];
     }
 
-    
+
     protected abstract Channel createNewChannel(String uri);
     protected abstract String getUriPrefix();
     protected abstract String[] getKnownUriSchemes();
@@ -85,7 +89,7 @@ public abstract class AbstractTransport
         {
             if (uri.startsWith(schemes[i])) return true;
         }
-        
+
         return false;
     }
 

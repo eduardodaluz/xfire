@@ -30,7 +30,6 @@ public class DefaultXFire
 
     private List inPhases;
     private List outPhases;
-    private List faultPhases;
 
     public DefaultXFire()
     {
@@ -82,14 +81,6 @@ public class DefaultXFire
         outPhases.add(new Phase(Phase.TRANSPORT, 4000));
         outPhases.add(new Phase(Phase.SEND, 5000));
         Collections.sort(outPhases);
-        
-        faultPhases = new ArrayList();
-        faultPhases.add(new Phase(Phase.POST_INVOKE, 1000));
-        faultPhases.add(new Phase(Phase.POLICY, 2000));
-        faultPhases.add(new Phase(Phase.USER, 3000));
-        faultPhases.add(new Phase(Phase.TRANSPORT, 4000));
-        faultPhases.add(new Phase(Phase.SEND, 5000));
-        Collections.sort(faultPhases);
     }
 
     protected Service findService(final String serviceName)
@@ -153,16 +144,4 @@ public class DefaultXFire
     {
         this.outPhases = outPhases;
     }
-
-    public List getFaultPhases()
-    {
-        return faultPhases;
-    }
-
-    public void setFaultPhases(List faultPhases)
-    {
-        this.faultPhases = faultPhases;
-    }
-
-    
 }
