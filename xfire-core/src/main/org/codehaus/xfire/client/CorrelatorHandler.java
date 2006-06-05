@@ -31,24 +31,24 @@ public class CorrelatorHandler extends AbstractHandler
     {
         log.debug("Correlating context with ID " + context.getId());
         
-        ClientCall call = correlator.correlate(context, calls);
+        Invocation invocation = correlator.correlate(context, calls);
         
-        if (call == null)
+        if (invocation == null)
         {
-            log.info("No correlated call was found.");
+            log.info("No correlated invocation was found.");
             return;
         }
         
-        if (context != call.getContext())
+        if (context != invocation.getContext())
         {
-            context.getExchange().setOperation(call.getContext().getExchange().getOperation());
-            context.getExchange().setOutMessage(call.getContext().getExchange().getOutMessage());
+            context.getExchange().setOperation(invocation.getContext().getExchange().getOperation());
+            context.getExchange().setOutMessage(invocation.getContext().getExchange().getOutMessage());
         }
         
-        if (call != null)
+        if (invocation != null)
         {
             log.debug("Found correlated context with ID " + context.getId());
-            context.getInPipeline().addHandler(new ClientReceiveHandler(call));
+            context.getInPipeline().addHandler(new ClientReceiveHandler(invocation));
         }
     }
 

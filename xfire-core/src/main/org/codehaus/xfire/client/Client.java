@@ -58,7 +58,7 @@ public class Client
      */
     public static final String CLIENT_MODE = "client.mode";
 
-    private static List calls = new ArrayList();
+    private static List invocations = new ArrayList();
     
     private Channel outChannel;
     private Transport transport;
@@ -80,7 +80,7 @@ public class Client
         
         correlator = new MessageIdCorrelator();
         
-        correlatorHandler = new CorrelatorHandler(calls);
+        correlatorHandler = new CorrelatorHandler(invocations);
         correlatorHandler.setCorrelator(correlator);
         
         addInHandler(correlatorHandler);
@@ -325,17 +325,17 @@ public class Client
 
     public Object[] invoke(OperationInfo op, Object[] params) throws Exception
     {
-        ClientCall call = new ClientCall(this);
+        Invocation call = new Invocation(this);
         
         try 
         {
-            calls.add(call);
+            invocations.add(call);
             
             return call.invoke(op, params);
         }
         finally 
         {
-            calls.remove(call);
+            invocations.remove(call);
         }
     }
     

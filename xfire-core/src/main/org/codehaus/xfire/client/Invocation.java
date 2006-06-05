@@ -15,7 +15,7 @@ import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.Soap12Binding;
 
-public class ClientCall
+public class Invocation
 {
     static final String CONTEXT_KEY = "client.call";
     
@@ -24,7 +24,7 @@ public class ClientCall
     private Exception fault;
     private Client client;
     
-    public ClientCall(Client client)
+    public Invocation(Client client)
     {
         this.client = client;
     }

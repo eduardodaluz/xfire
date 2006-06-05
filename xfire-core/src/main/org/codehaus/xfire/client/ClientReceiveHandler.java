@@ -11,9 +11,9 @@ import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
 
 class ClientReceiveHandler extends AbstractHandler
 {
-    private ClientCall call;
+    private Invocation call;
     
-    public ClientReceiveHandler(ClientCall call)
+    public ClientReceiveHandler(Invocation call)
     {
         super();
         

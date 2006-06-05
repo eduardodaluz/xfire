@@ -12,13 +12,13 @@ import org.codehaus.xfire.MessageContext;
  */
 public class MessageIdCorrelator implements Correlator
 {
-    public ClientCall correlate(MessageContext context, List calls)
+    public Invocation correlate(MessageContext context, List invocations)
     {
         if (context.getId() == null) return null;
         
-        for (Iterator itr = calls.iterator(); itr.hasNext();)
+        for (Iterator itr = invocations.iterator(); itr.hasNext();)
         {
-            ClientCall call = (ClientCall) itr.next();
+            Invocation call = (Invocation) itr.next();
             
             if (call.getContext().getId() != null &&
                 call.getContext().getId().equals(context.getId()))
