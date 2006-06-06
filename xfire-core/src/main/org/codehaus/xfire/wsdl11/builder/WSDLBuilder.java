@@ -151,27 +151,28 @@ public class WSDLBuilder
         for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
         {
             Binding binding = (Binding) itr.next();
-
             javax.wsdl.Binding wbinding = binding.createBinding(this, portType);
-            
-            Port port = binding.createPort(this, wbinding);
-            if (port != null)
-            {
-                wsdlService.addPort(port);
-            }
-            
-            // Add in user defined endpoints
             Collection endpoints = service.getEndpoints(binding.getName());
-            if (endpoints == null) continue;
             
-            for (Iterator eitr = endpoints.iterator(); eitr.hasNext();)
+            // If no user-defined endpoints, create default port
+            if (endpoints == null || endpoints.size() == 0)
             {
-                Endpoint ep = (Endpoint) eitr.next();
-
-                port = binding.createPort(ep, this, wbinding);
+                Port port = binding.createPort(this, wbinding);
                 if (port != null)
                 {
                     wsdlService.addPort(port);
+                }
+            }
+            else // else create port(s) from user-defined endpoint(s)
+            {
+                for (Iterator eitr = endpoints.iterator(); eitr.hasNext();)
+                {
+                    Endpoint ep = (Endpoint) eitr.next();
+                    Port port = binding.createPort(ep, this, wbinding);
+                    if (port != null)
+                    {
+                        wsdlService.addPort(port);
+                    }
                 }
             }
         }
