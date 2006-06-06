@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
@@ -23,17 +22,16 @@ import org.jdom.Document;
 public class WeatherServiceTest
         extends AbstractXFireTest
 {
-    private Service endpoint;
-    private ObjectServiceFactory builder;
+    private Service service;
+    private ObjectServiceFactory factory;
 
     public void setUp()
             throws Exception
     {
         super.setUp();
 
-        builder = new ObjectServiceFactory(getXFire().getTransportManager(),
-                                           new AegisBindingProvider(new JaxbTypeRegistry()));
-        builder.setStyle(SoapConstants.STYLE_DOCUMENT);
+        factory = new JaxbServiceFactory(getXFire().getTransportManager());
+        factory.setStyle(SoapConstants.STYLE_DOCUMENT);
         
         // Set the schemas
         ArrayList<String> schemas = new ArrayList<String>();
@@ -41,19 +39,19 @@ public class WeatherServiceTest
         Map<String,Object> props = new HashMap<String,Object>();
         props.put(ObjectServiceFactory.SCHEMAS, schemas);
         
-        endpoint = builder.create(WeatherService.class,
+        service = factory.create(WeatherService.class,
                                   "WeatherService",
                                   "urn:WeatherService",
                                   props);
         
-        getServiceRegistry().register(endpoint);
+        getServiceRegistry().register(service);
     }
 
     public void testService()
             throws Exception
     {
         MessagePartInfo info = (MessagePartInfo)
-            endpoint.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
+            service.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
 
         assertNotNull(info);
         
@@ -78,11 +76,11 @@ public class WeatherServiceTest
     public void testServiceWithDOMMode()
             throws Exception
     {
-        endpoint.addInHandler(new DOMInHandler());
-        endpoint.addOutHandler(new DOMOutHandler());
+        service.addInHandler(new DOMInHandler());
+        service.addOutHandler(new DOMOutHandler());
         
         MessagePartInfo info = (MessagePartInfo)
-            endpoint.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
+            service.getServiceInfo().getOperation("GetWeatherByZipCode").getInputMessage().getMessageParts().get(0);
 
         assertNotNull(info);
         
@@ -103,9 +101,10 @@ public class WeatherServiceTest
     public void testWsdl() throws Exception
     {
         Document doc = getWSDLDocument("WeatherService");
-        
+
         addNamespace("xsd", SoapConstants.XSD);
         
-        assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net']", doc);
+        assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net'][1]", doc);
+        assertInvalid("//xsd:schema[@targetNamespace='http://www.webservicex.net'][2]", doc);
     }
 }

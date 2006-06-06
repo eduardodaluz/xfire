@@ -1,5 +1,8 @@
 package org.codehaus.xfire.jaxb2;
 
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+
 import net.webservicex.GetWeatherByZipCode;
 import net.webservicex.GetWeatherByZipCodeResponse;
 import net.webservicex.WeatherForecasts;
@@ -7,8 +10,10 @@ import net.webservicex.WeatherForecasts;
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
+@WebService
 public class WeatherService
 {
+    @WebMethod
     public GetWeatherByZipCodeResponse GetWeatherByZipCode( GetWeatherByZipCode body )
     {
         GetWeatherByZipCodeResponse res = new GetWeatherByZipCodeResponse();

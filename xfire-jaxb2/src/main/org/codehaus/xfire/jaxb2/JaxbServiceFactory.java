@@ -22,5 +22,5 @@ public class JaxbServiceFactory
               new AegisBindingProvider(new JaxbTypeRegistry()));
         
         setWsdlBuilderFactory(new JaxbWSDLBuilderFactory());
-    }
+    }    
 }

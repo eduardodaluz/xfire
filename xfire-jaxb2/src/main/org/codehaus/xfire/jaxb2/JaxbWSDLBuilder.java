@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMResult;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.jdom.Element;
@@ -60,6 +61,17 @@ public class JaxbWSDLBuilder
     protected void writeComplexTypes()
         throws WSDLException
     {
+        // Check to see if the user supplied schemas. If so, don't generate them.
+        if (getService().getProperty(ObjectServiceFactory.SCHEMAS) == null)
+        {
+            generateJaxbSchemas();
+        }
+        
+        super.writeComplexTypes();
+    }
+
+    private void generateJaxbSchemas()
+    {
         try
         {
             JAXBContext context = JAXBContext.newInstance(classes.toArray(new Class[0]));
@@ -67,6 +79,7 @@ public class JaxbWSDLBuilder
             
             for (String ns : namespaces)
             {
+                System.out.println("writing complex types");
                 context.generateSchema(new SchemaOutputResolver() {
                     @Override
                     public Result createOutput(String ns, String file)
@@ -106,8 +119,6 @@ public class JaxbWSDLBuilder
         {
             throw new XFireRuntimeException("Couldn't generate a schema for the JAXB objects!", e);
         }
-        
-        super.writeComplexTypes();
     }
     
 }
