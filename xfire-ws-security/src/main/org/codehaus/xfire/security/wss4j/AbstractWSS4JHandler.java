@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.handler.WSHandler;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
@@ -61,7 +62,10 @@ public abstract class AbstractWSS4JHandler extends WSHandler implements Handler
     
     public QName[] getUnderstoodHeaders()
     {
-        return new QName[]{new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd","Security")};
+        return new QName[] {
+            new QName(WSConstants.WSSE_NS, "Security"),
+            new QName(WSConstants.WSSE11_NS, "Security")
+        };
     }
 
     public Map getProperties()

@@ -39,8 +39,6 @@ public class WSS4JInHandler
 
     private static Log tlog = LogFactory.getLog("org.apache.ws.security.TIME");
 
-    
-    
     public WSS4JInHandler()
     {
         super();
@@ -56,6 +54,7 @@ public class WSS4JInHandler
         setProperties(properties);
         
     }
+
     public void invoke(MessageContext msgContext)
         throws XFireFault
     {
