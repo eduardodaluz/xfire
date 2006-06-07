@@ -15,10 +15,13 @@
 
     <target name="compile" depends="xfire.compile">
         <taskdef name="mapping" classname="org.apache.xbean.spring.generator.MappingGeneratorTask" classpathref="build.classpath" />
-        <mapping destFile="${target.dir}/services.xsd"
+        <mapping destFile="${target.dir}/test-generated/services.xsd"
                  namespace="http://xfire.codehaus.org/config/1.0"
                  srcdir="src/main"
-                 metaInfDir="${target.dir}/classes/"/>
+                 metaInfDir="${target.dir}/test-generated/"/>
+    	<copy todir="${basedir}/target/classes">
+    		<fileset dir="${basedir}/target/test-generated"></fileset>
+    	</copy>
     </target>
 
     <target name="get-deps" depends="xfire.get-deps">
@@ -30,7 +33,7 @@
         <get-dep artifact="annogen" version="0.1.0"/>
         <get-dep artifact="qdox" version="1.5"/>
         <get-dep artifact="servletapi" version="2.3"/>
-        <get-dep artifact="xbean-spring" group="org.apache.xbean" version="2.2" repository="http://dist.codehaus.org/"/>
+    	<get-dep artifact="xbean-spring" group="org.apache.xbean" version="2.3"/>
     </target>
 
     <target name="init" depends="xfire.init">
