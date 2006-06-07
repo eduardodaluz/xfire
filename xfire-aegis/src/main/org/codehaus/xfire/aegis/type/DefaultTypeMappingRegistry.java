@@ -65,7 +65,6 @@ public class DefaultTypeMappingRegistry
     protected static final QName XSD_LONG = new QName(SoapConstants.XSD, "long", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_FLOAT = new QName(SoapConstants.XSD, "float", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_DOUBLE = new QName(SoapConstants.XSD, "double", SoapConstants.XSD_PREFIX);
-    protected static final QName XSD_CHAR = new QName(SoapConstants.XSD, "char", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_INT = new QName(SoapConstants.XSD, "int", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_SHORT = new QName(SoapConstants.XSD, "short", SoapConstants.XSD_PREFIX);
     protected static final QName XSD_BOOLEAN = new QName(SoapConstants.XSD, "boolean", SoapConstants.XSD_PREFIX);
@@ -306,8 +305,8 @@ public class DefaultTypeMappingRegistry
         register(tm, double.class, XSD_DOUBLE, new DoubleType());
         register(tm, float.class, XSD_FLOAT, new FloatType());
         register(tm, long.class, XSD_LONG, new LongType());
-        register(tm, char.class,XSD_CHAR, new CharacterType());
-        register(tm, Character.class,XSD_CHAR, new CharacterType());
+        register(tm, char.class, XSD_STRING, new CharacterType());
+        register(tm, Character.class, XSD_STRING, new CharacterType());
         register(tm, String.class, XSD_STRING, new StringType());
         register(tm, Boolean.class, XSD_BOOLEAN, new BooleanType());
         register(tm, Integer.class, XSD_INT, new IntType());
