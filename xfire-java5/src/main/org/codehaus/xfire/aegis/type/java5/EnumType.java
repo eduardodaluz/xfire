@@ -14,6 +14,7 @@ import org.jdom.Namespace;
 public class EnumType
     extends Type
 {
+    @SuppressWarnings("unchecked")
     @Override
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
