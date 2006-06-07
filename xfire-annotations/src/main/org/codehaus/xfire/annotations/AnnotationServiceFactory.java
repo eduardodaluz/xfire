@@ -1,8 +1,8 @@
 package org.codehaus.xfire.annotations;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -242,7 +242,7 @@ public class AnnotationServiceFactory
                 {
                     service.setWSDLWriter(new ResourceWSDL(wsdl));
                 }
-                catch (MalformedURLException e)
+                catch (IOException e)
                 {
                     throw new AnnotationException("Couldn't load wsdl from " + wsdl, e);
                 }

@@ -40,7 +40,17 @@ public class AnnotationServiceFactoryTest
                                                                 null);
     }
 
-    public void testCreate()
+    public void testCreateWithFileWSDL() throws Exception
+    {
+        testCreate(getTestFile("src/test/org/codehaus/xfire/annotations/echo.wsdl").getAbsolutePath());
+    }
+
+    public void testCreateWithClasspathWSDL() throws Exception
+    {
+        testCreate("org/codehaus/xfire/annotations/echo.wsdl");
+    }
+    
+    public void testCreate(String wsdlLocation)
             throws Exception
     {
         webAnnotations.hasSOAPBindingAnnotation(EchoServiceImpl.class);
@@ -55,7 +65,7 @@ public class AnnotationServiceFactoryTest
         WebServiceAnnotation annotation = new WebServiceAnnotation();
         annotation.setServiceName("EchoService");
         annotation.setTargetNamespace("http://xfire.codehaus.org/EchoService");
-        annotation.setWsdlLocation(getTestFile("src/test/org/codehaus/xfire/annotations/echo.wsdl").getAbsolutePath());
+        annotation.setWsdlLocation(wsdlLocation);
 
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(annotation);
