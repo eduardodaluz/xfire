@@ -1,22 +1,23 @@
 package org.codehaus.xfire.gen;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.AntClassLoader;
-import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireException;
-import org.codehaus.xfire.spring.XFireConfigLoader;
-import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.service.Service;
-
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
-import java.io.*;
-import java.net.URLClassLoader;
-import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceRegistry;
+import org.codehaus.xfire.spring.XFireConfigLoader;
 
 /**
  * A Java 2 WSDL generation Ant task for XFire. Allows to generate the Wsdl without 
@@ -131,37 +132,5 @@ public class WsdlGenTask extends Task
         }
 
         Thread.currentThread().setContextClassLoader(originalCL);
-    }
-
-    private static void displayClasspath(ClassLoader classLoader, String message)
-    {
-        getLogger().info("------ " + message + ":" +  classLoader);
-        if (classLoader == null)
-        {
-            return;
-        }
-        if ( classLoader instanceof URLClassLoader )
-        {
-            URLClassLoader cl = (URLClassLoader) classLoader;
-            URL[] urls = cl.getURLs();
-            for (int i = 0; i < urls.length; i++) {
-                URL urL = urls[i];
-                getLogger().info("URL " + i + ":" +  urL);
-            }
-        }
-        else if ( classLoader instanceof AntClassLoader)
-        {
-            AntClassLoader cl = (AntClassLoader) XFireConfigLoader.class.getClassLoader();
-            String[] urls = cl.getClasspath().split(File.pathSeparator);
-            for (int i = 0; i < urls.length; i++)
-            {
-                String url = urls[i];
-                getLogger().info("URL " + i + ":" +  url);
-            }
-        } else
-        {
-            // not handled
-        }
-        displayClasspath(classLoader.getParent(), "parent->" + message);
     }
 }

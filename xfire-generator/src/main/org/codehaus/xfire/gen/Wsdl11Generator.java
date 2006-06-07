@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.util.Resolver;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.xml.sax.InputSource;
 
@@ -84,7 +85,7 @@ public class Wsdl11Generator
 
         log.info("Generating code for WSDL at " + wsdlUri + " with a base URI of " + baseURI);
         
-        InputSource source = new InputSource(new WSDLInputStreamLoader().getInputStream(wsdlUri));
+        InputSource source = new InputSource(new Resolver(wsdlUri).getInputStream());
         source.setSystemId(wsdlUri);
         WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, source);
         builder.setBindingProvider(support.getBindingProvider());
