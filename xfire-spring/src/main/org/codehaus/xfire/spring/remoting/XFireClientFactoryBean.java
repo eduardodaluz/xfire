@@ -179,7 +179,7 @@ public class XFireClientFactoryBean
      */
     public void setWsdlDocumentUrl(String wsdlUrl)
     {
-        _wsdlDocumentUrl = wsdlUrl;
+        _wsdlDocumentUrl = wsdlUrl.trim();
     }
 
     /**
