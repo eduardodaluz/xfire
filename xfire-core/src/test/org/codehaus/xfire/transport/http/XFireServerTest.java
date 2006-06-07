@@ -93,6 +93,30 @@ public class XFireServerTest
 
         assertEquals(root.getName(), e.getName());
     }
+
+    public void testSoapAction()
+            throws Exception
+    {
+        Element root = new Element("root", "a", "urn:a");
+        root.addContent("hello");
+        
+        Transport transport = getTransportManager().getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
+
+        Client client = new Client(transport, service, "http://localhost:8391/Echo");
+
+        OperationInfo op = service.getServiceInfo().getOperation("echo");
+        Soap11Binding binding = (Soap11Binding) service.getBinding(SoapHttpTransport.SOAP11_HTTP_BINDING);
+        binding.setSoapAction(op, "echoAction");
+        
+        Object[] response = client.invoke(op, new Object[] {root});
+        assertNotNull(response);
+        assertEquals(1, response.length);
+        
+        Element e = (Element) response[0];
+
+        assertEquals(root.getName(), e.getName());
+    }
+    
     
     public void testUndefinedEndpoint()
         throws Exception

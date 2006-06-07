@@ -215,6 +215,7 @@ public class XFireServletController
             throw new ServletException("Couldn't open channel.", e);
         }
         
+        String soapAction = getSoapAction(request);
         String contentType = request.getContentType();
         if (null == contentType)
         {
@@ -234,8 +235,7 @@ public class XFireServletController
                                                 encoding,
                                                 context);
             InMessage message = new InMessage(reader, request.getRequestURI());
-            message.setProperty(SoapConstants.SOAP_ACTION, 
-                                request.getHeader(SoapConstants.SOAP_ACTION));
+            message.setProperty(SoapConstants.SOAP_ACTION, soapAction);
             message.setAttachments(atts);
             
             channel.receive(context, message);
@@ -247,10 +247,19 @@ public class XFireServletController
                                                 request.getCharacterEncoding(),context);
             
             InMessage message = new InMessage(reader, request.getRequestURI());
-            message.setProperty(SoapConstants.SOAP_ACTION, 
-                                request.getHeader(SoapConstants.SOAP_ACTION));
+            message.setProperty(SoapConstants.SOAP_ACTION, soapAction);
             channel.receive(context, message);
         }
+    }
+
+    private String getSoapAction(HttpServletRequest request)
+    {
+        String action = request.getHeader(SoapConstants.SOAP_ACTION);
+        if (action.startsWith("\"") && action.endsWith("\"") && action.length() >= 2)
+        {
+            action = action.substring(1, action.length() - 1);
+        }
+        return action;
     }
 
     private String getEncoding(String enc) throws ServletException
