@@ -58,4 +58,28 @@ public class SoapActionTest
         assertTrue(response.getText().indexOf("twoout") != -1);
 
     }
+    
+
+    public void testQuotedSoapAction()
+            throws Exception
+    {
+        HttpUnitOptions.setLoggingHttpHeaders(true);
+
+        WebRequest req = new PostMethodWebRequest("http://localhost/services/SoapActionService",
+                                                  getResourceAsStream("empty.xml"),
+                                                  "text/xml");
+        req.setHeaderField("SOAPAction", "\"one\"");
+
+        WebResponse response = newClient().getResponse(req);
+        assertTrue(response.getText().indexOf("oneout") != -1);
+       
+        req = new PostMethodWebRequest("http://localhost/services/SoapActionService",
+                                       getResourceAsStream("empty.xml"),
+                                       "text/xml");
+        req.setHeaderField("SOAPAction", "\"two\"");
+        
+        response = newClient().getResponse(req);
+        assertTrue(response.getText().indexOf("twoout") != -1);
+
+    }
 }
