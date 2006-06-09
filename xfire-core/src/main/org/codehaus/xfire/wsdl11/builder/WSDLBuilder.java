@@ -265,9 +265,12 @@ public class WSDLBuilder
         Part part = getDefinition().createPart();
         part.setName(pName.getLocalPart());
 
+        String partPrefix = getNamespacePrefix(pName.getNamespaceURI());
+        addNamespace(partPrefix, pName.getNamespaceURI());
+      
         String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
         addNamespace(prefix, schemaTypeName.getNamespaceURI());
-        
+
         if (!type.isAbstract())
         {
             part.setElementName(schemaTypeName);
@@ -298,12 +301,15 @@ public class WSDLBuilder
 
         Part part = getDefinition().createPart();
         part.setName(pName.getLocalPart());
-
+        
+        String partPrefix = getNamespacePrefix(pName.getNamespaceURI());
+        addNamespace(partPrefix, pName.getNamespaceURI());
+      
+        String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+        addNamespace(prefix, schemaTypeName.getNamespaceURI());
+        
         if (!type.isAbstract())
         {
-            String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
-            addNamespace(prefix, schemaTypeName.getNamespaceURI());
-
             part.setElementName(schemaTypeName);
 
             return part;
@@ -316,10 +322,7 @@ public class WSDLBuilder
 
             Element element = new Element("element", XSD_NS);
             schemaEl.addContent(element);
-
-            String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
-            addNamespace(prefix, schemaTypeName.getNamespaceURI());
-
+            
             if (type.isAbstract())
             {
                 element.setAttribute(new Attribute("name", pName.getLocalPart()));
@@ -390,7 +393,7 @@ public class WSDLBuilder
             MessagePartInfo param = (MessagePartInfo) itr.next();
             
             addNamespaceImport(getService().getTargetNamespace(), 
-                                       param.getSchemaType().getSchemaType().getNamespaceURI());
+                               param.getSchemaType().getSchemaType().getNamespaceURI());
             
             Part part = createPart(param);
             
