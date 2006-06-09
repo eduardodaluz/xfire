@@ -255,10 +255,12 @@ public class XFireServletController
     private String getSoapAction(HttpServletRequest request)
     {
         String action = request.getHeader(SoapConstants.SOAP_ACTION);
-        if (action.startsWith("\"") && action.endsWith("\"") && action.length() >= 2)
+        
+        if (action != null && action.startsWith("\"") && action.endsWith("\"") && action.length() >= 2)
         {
             action = action.substring(1, action.length() - 1);
         }
+        
         return action;
     }
 
