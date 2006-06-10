@@ -4,8 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.xfire.examples</groupId>
   <artifactId>xfire-book</artifactId>
+  <packaging>war</packaging>
   <name>Book Example</name>
-  <version>@xfire.version@</version>
+  <version>1.1-SNAPSHOT</version>
   <inceptionYear>2004</inceptionYear>
 
   <dependencies>
