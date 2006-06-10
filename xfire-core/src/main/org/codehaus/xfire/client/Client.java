@@ -3,10 +3,11 @@ package org.codehaus.xfire.client;
 import java.io.InputStream;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
@@ -58,7 +59,7 @@ public class Client
      */
     public static final String CLIENT_MODE = "client.mode";
 
-    private static List invocations = new ArrayList();
+    private Set invocations = Collections.synchronizedSet(new HashSet());
     
     private Channel outChannel;
     private Transport transport;

@@ -1,10 +1,10 @@
 package org.codehaus.xfire.client;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.codehaus.xfire.MessageContext;
 
 public interface Correlator
 {
-    public Invocation correlate(MessageContext context, List invocations);
+    public Invocation correlate(MessageContext context, Collection invocations);
 }

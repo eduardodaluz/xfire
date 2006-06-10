@@ -1,6 +1,6 @@
 package org.codehaus.xfire.client;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,10 +13,10 @@ public class CorrelatorHandler extends AbstractHandler
 {
     private static final Log log = LogFactory.getLog(Client.class);
 
-    private List calls;
+    private Collection calls;
     private Correlator correlator;
     
-    public CorrelatorHandler(List calls)
+    public CorrelatorHandler(Collection calls)
     {
         super();
         

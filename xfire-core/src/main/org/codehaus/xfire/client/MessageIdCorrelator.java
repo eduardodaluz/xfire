@@ -1,7 +1,7 @@
 package org.codehaus.xfire.client;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.codehaus.xfire.MessageContext;
 
@@ -12,18 +12,21 @@ import org.codehaus.xfire.MessageContext;
  */
 public class MessageIdCorrelator implements Correlator
 {
-    public Invocation correlate(MessageContext context, List invocations)
+    public Invocation correlate(MessageContext context, Collection invocations)
     {
         if (context.getId() == null) return null;
         
-        for (Iterator itr = invocations.iterator(); itr.hasNext();)
+        synchronized (invocations) 
         {
-            Invocation call = (Invocation) itr.next();
-            
-            if (call.getContext().getId() != null &&
-                call.getContext().getId().equals(context.getId()))
+            for (Iterator itr = invocations.iterator(); itr.hasNext();)
             {
-                return call;
+                Invocation call = (Invocation) itr.next();
+                
+                if (call.getContext().getId() != null &&
+                    call.getContext().getId().equals(context.getId()))
+                {
+                    return call;
+                }
             }
         }
         
