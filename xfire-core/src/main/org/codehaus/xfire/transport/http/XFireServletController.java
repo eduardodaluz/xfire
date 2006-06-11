@@ -88,7 +88,7 @@ public class XFireServletController
         if (serviceName == null) serviceName = "";
         
         ServiceRegistry reg = getServiceRegistry();
-
+       
         response.setHeader("Content-Type", "UTF-8");
 
         try
@@ -227,9 +227,15 @@ public class XFireServletController
         }
         else if (contentType.toLowerCase().indexOf("multipart/related") != -1)
         {
-            Attachments atts = new StreamedAttachments(request.getInputStream(), 
-                                                       request.getContentType());
+        	// Nasty Hack to workaraound bug with lowercasing contenttype by some serwers what cause problems with finding message parts.
+        	// There should be better fix for this.
+        	String ct = request.getContentType().replaceAll("--=_part_","--=_Part_");
+        	
+        	
+            Attachments atts = new StreamedAttachments(request.getInputStream(), ct);
+          
             String encoding = getEncoding(request.getCharacterEncoding());
+
             XMLStreamReader reader = 
                 STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
                                                 encoding,
