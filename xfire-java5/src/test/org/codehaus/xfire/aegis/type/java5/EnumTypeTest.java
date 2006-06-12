@@ -130,5 +130,14 @@ public class EnumTypeTest
             this.currency = currency;
         }
         
+        public Currency[] getSomeCurrencies()
+        {
+            return new Currency[] { Currency.EURO, null };
+        }
+        
+        public void setSomeCurrencies(Currency[] currencies)
+        {
+            
+        }
     }
 }
