@@ -3,6 +3,7 @@ package org.codehaus.xfire.gen.jaxb;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JType;
+import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
@@ -50,6 +52,22 @@ public class JAXBSchemaSupport implements SchemaSupport
 
         schemaCompiler = XJC.createSchemaCompiler();
         schemaCompiler.setErrorListener(er);
+        
+        if (context.isExplicitAnnotation()) 
+        {
+	        try
+	        {
+	            Field f = schemaCompiler.getClass().getDeclaredField("opts");
+	            f.setAccessible(true);
+	            Options opts = (Options) f.get(schemaCompiler);
+	            opts.runtime14 = true;
+	        } 
+	        catch( Exception e )
+	        {
+	            System.err.println("Could not set JDK 1.4 compatibility");
+	            // Continue
+	        }
+        }
         
         ArrayList<SchemaInfo> elements = (ArrayList<SchemaInfo>) context.getSchemas();
 

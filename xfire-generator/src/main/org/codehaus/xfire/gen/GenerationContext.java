@@ -24,6 +24,7 @@ public class GenerationContext
     private String wsdlLocation;
     private Collection schemas;
     private Collection<File> externalBindings;
+    private boolean explicitAnnotation;
     
     public GenerationContext(JCodeModel model, Object wsdl)
     {
@@ -125,5 +126,13 @@ public class GenerationContext
     {
         this.externalBindings = externalBindings;
     }
+
+	public boolean isExplicitAnnotation() {
+		return explicitAnnotation;
+	}
+
+	public void setExplicitAnnotation(boolean explicitAnnotation) {
+		this.explicitAnnotation = explicitAnnotation;
+	}
     
 }

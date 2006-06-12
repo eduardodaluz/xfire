@@ -78,7 +78,10 @@ public abstract class AbstractServiceGenerator
             
             JType returnType = getReturnType(context, schema, op);
             
-            JMethod method = jc.method(JMod.PUBLIC, returnType, javify(op.getName()));
+            String name = javify(op.getName());
+            name = name.substring(0, 1).toLowerCase() + name.substring(1);
+            
+            JMethod method = jc.method(JMod.PUBLIC, returnType, name);
             
             int param = 0;
             

@@ -13,6 +13,7 @@ public class WsGenTask extends MatchingTask
     private String binding;
     private String baseURI;
     private String externalBindings;
+    private boolean explicitAnnotation;
     
     public void execute()
         throws BuildException
@@ -29,6 +30,7 @@ public class WsGenTask extends MatchingTask
         generator.setWsdl(wsdl);
         generator.setBaseURI(baseURI);
         generator.setExternalBindings(externalBindings);
+        generator.setExplicitAnnotation(explicitAnnotation);
         
         if (binding != null) generator.setBinding(binding);
         if (profile != null) generator.setProfile(profile);
@@ -114,4 +116,12 @@ public class WsGenTask extends MatchingTask
     {
         this.externalBindings = externalBindings;
     }
+
+	public boolean isExplicitAnnotation() {
+		return explicitAnnotation;
+	}
+
+	public void setExplicitAnnotation(boolean explicitAnnotation) {
+		this.explicitAnnotation = explicitAnnotation;
+	}
 }

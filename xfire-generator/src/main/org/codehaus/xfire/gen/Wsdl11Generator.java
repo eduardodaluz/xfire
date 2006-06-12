@@ -47,6 +47,8 @@ public class Wsdl11Generator
 
     private String externalBindings;
     
+    private boolean explicitAnnotation;
+    
     @SuppressWarnings("unchecked")
     public void generate() throws Exception
     {
@@ -101,6 +103,7 @@ public class Wsdl11Generator
         context.setBaseURI(baseURI);
         context.setSchemas(builder.getSchemas());
         context.setExternalBindings(getExternalBindingFiles());
+        context.setExplicitAnnotation(isExplicitAnnotation());
         
         support.initialize(context);
 
@@ -238,5 +241,13 @@ public class Wsdl11Generator
     {
         return externalBindings;
     }
+
+	public boolean isExplicitAnnotation() {
+		return explicitAnnotation;
+	}
+
+	public void setExplicitAnnotation(boolean explicitAnnotation) {
+		this.explicitAnnotation = explicitAnnotation;
+	}
     
 }
