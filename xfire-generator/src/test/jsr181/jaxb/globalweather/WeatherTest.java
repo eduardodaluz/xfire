@@ -48,6 +48,6 @@ public class WeatherTest
         GlobalWeatherSoap client = service.getGlobalWeatherSoapLocalEndpoint();
         assertNotNull(client);
         
-        assertEquals("foo", client.GetWeather("foo", "bar"));
+        assertEquals("foo", client.getWeather("foo", "bar"));
     }
 }

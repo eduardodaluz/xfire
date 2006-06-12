@@ -13,12 +13,12 @@ public class GlobalWeatherCustomImpl
     implements GlobalWeatherSoap
 {
 
-    public String GetCitiesByCountry(String CountryName)
+    public String getCitiesByCountry(String CountryName)
     {
         return null;
     }
 
-    public String GetWeather(String CityName, String CountryName)
+    public String getWeather(String CityName, String CountryName)
     {
         return "foo";
     }
