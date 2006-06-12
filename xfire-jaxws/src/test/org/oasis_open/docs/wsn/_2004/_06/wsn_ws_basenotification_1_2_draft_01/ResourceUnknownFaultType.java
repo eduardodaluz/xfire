@@ -1,10 +1,10 @@
 
 package org.oasis_open.docs.wsn._2004._06.wsn_ws_basenotification_1_2_draft_01;
 
-import javax.xml.bind.annotation.AccessType;
+import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.oasis_open.docs.wsn._2004._06.wsn_ws_basenotification_1_2_draft_01.ResourceUnknownFaultType;
+
 import org.oasis_open.docs.wsrf._2004._06.wsrf_ws_basefaults_1_2_draft_01.BaseFaultType;
 
 
@@ -24,7 +24,7 @@ import org.oasis_open.docs.wsrf._2004._06.wsrf_ws_basefaults_1_2_draft_01.BaseFa
  * 
  * 
  */
-@XmlAccessorType(AccessType.FIELD)
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceUnknownFaultType")
 public class ResourceUnknownFaultType
     extends BaseFaultType

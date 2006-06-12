@@ -1,12 +1,12 @@
 
 package org.oasis_open.docs.wsn._2004._06.wsn_ws_basenotification_1_2_draft_01;
 
-import javax.xml.bind.annotation.AccessType;
+import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.oasis_open.docs.wsn._2004._06.wsn_ws_basenotification_1_2_draft_01.SubscribeResponse;
+
 import org.xmlsoap.schemas.ws._2003._03.addressing.EndpointReferenceType;
 
 
@@ -31,7 +31,7 @@ import org.xmlsoap.schemas.ws._2003._03.addressing.EndpointReferenceType;
  * 
  * 
  */
-@XmlAccessorType(AccessType.FIELD)
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "subscriptionReference"
 })
