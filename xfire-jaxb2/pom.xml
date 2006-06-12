@@ -40,15 +40,6 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>java.net</id>
-      <name>java.net</name>
-      <url>https://maven-repository.dev.java.net/nonav/repository/</url>
-      <layout>legacy</layout>
-    </repository>
-  </repositories>
-  
   <dependencies>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
@@ -66,16 +57,12 @@
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-xjc</artifactId>
       <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml</groupId>
+          <artifactId>jsr173</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
