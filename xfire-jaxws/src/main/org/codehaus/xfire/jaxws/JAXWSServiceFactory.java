@@ -72,6 +72,9 @@ public class JAXWSServiceFactory
     {
         WebFault webFault = (WebFault) exClass.getAnnotation(WebFault.class);
         
+        if (webFault == null)
+            return super.getFaultName(service, o, exClass, beanClass);
+        
         String ns = webFault.targetNamespace();
         if (ns == null) ns = service.getTargetNamespace();
         
