@@ -91,7 +91,10 @@ public class ReadHeadersHandler
     {
         for (int i = 0; i < reader.getNamespaceCount(); i++)
         {
-            namespaces.put(reader.getNamespacePrefix(i),
+            String prefix = reader.getNamespacePrefix(i);
+            if (prefix == null) prefix = "";
+            
+            namespaces.put(prefix,
                            reader.getNamespaceURI(i));
         }
     }

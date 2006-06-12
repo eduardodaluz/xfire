@@ -215,6 +215,18 @@ public abstract class AbstractXFireTest
         createSession();
     }
 
+    protected void tearDown()
+        throws Exception
+    {
+        factory = null;
+        xfire = null;
+        session = null;
+        namespaces = null;
+        basedirPath = null;
+        
+        super.tearDown();
+    }
+
     protected void createSession()
     {
         session = new MapSession();
