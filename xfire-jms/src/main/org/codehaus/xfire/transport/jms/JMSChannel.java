@@ -53,6 +53,7 @@ public class JMSChannel
     {
         setUri(uri);
         setTransport(transport);
+        getDestinationName(uri);
     }
 
     public void open()
@@ -69,6 +70,7 @@ public class JMSChannel
         String destinationName = getDestinationName(getUri());
         if (isTopic)
         {
+            System.out.println("CREATING TOPIC");
             destination = session.createTopic(destinationName);
         }
         else
@@ -214,6 +216,7 @@ public class JMSChannel
 
     public void onMessage(Message message)
     {
+        JMSTransport transport = (JMSTransport) getTransport();
         try
         {
             String text = ((TextMessage) message).getText();
@@ -223,14 +226,12 @@ public class JMSChannel
             String destName = getDestinationName(getUri());
             if (selector.equals(""))
             {
-                context
-                        .setService(((JMSTransport) getTransport()).getXFire().getServiceRegistry()
+                context.setService(((JMSTransport) getTransport()).getXFire().getServiceRegistry()
                                 .getService(destName));
             }
             else
             {
-                context
-                        .setService(((JMSTransport) getTransport()).getXFire().getServiceRegistry()
+                context.setService(((JMSTransport) getTransport()).getXFire().getServiceRegistry()
                                 .getService(selector));
             }
             context.setProperty(REPLY_TO, message.getJMSReplyTo());

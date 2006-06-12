@@ -1,19 +1,13 @@
 package org.codehaus.xfire.transport.jms;
 
 import javax.jms.QueueConnectionFactory;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
-import org.activemq.broker.BrokerContainer;
-import org.activemq.broker.impl.BrokerContainerImpl;
-import org.activemq.store.vm.VMPersistenceAdapter;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 
 public class AbstractXFireJMSTest
     extends AbstractXFireAegisTest
 {
-    BrokerContainer container;
-
     private QueueConnectionFactory factory;
 
     private JMSTransport transport;
@@ -23,14 +17,7 @@ public class AbstractXFireJMSTest
     {
         super.setUp();
 
-        container = new BrokerContainerImpl();
-        container.addConnector("vm://localhost");
-        container.setPersistenceAdapter(new VMPersistenceAdapter());
-        container.start();
-
-        Context context = new InitialContext();
-
-        factory = (QueueConnectionFactory) context.lookup("QueueConnectionFactory");
+        factory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
 
         transport = (JMSTransport) new JMSTransport(getXFire(), getConnectionFactory());
         
@@ -50,8 +37,6 @@ public class AbstractXFireJMSTest
     protected void tearDown()
         throws Exception
     {
-        container.stop();
-
         super.tearDown();
     }
 }

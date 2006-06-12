@@ -23,12 +23,12 @@
     <bindings>
       <soap11Binding name="e:EchoJMSBinding" transport="urn:xfire:transport:jms">
         <endpoints>
-          <endpoint name="e:EchoJMSEndpoint" url="jms://Echo" />
+          <endpoint name="e:EchoJMSEndpoint" url="jms://GenericTopic?topic=Echo" />
         </endpoints>
       </soap11Binding>
     </bindings>
   </service>
-  
+     
   <bean id="connectionFactory" 
         class="org.apache.activemq.ActiveMQConnectionFactory"
         singleton="true"
@@ -36,6 +36,5 @@
     <constructor-arg value="vm://localhost?broker.persistent=false" type="java.lang.String"/>
   </bean>
   
-
 </beans>
 <!-- END SNIPPET: simple -->
