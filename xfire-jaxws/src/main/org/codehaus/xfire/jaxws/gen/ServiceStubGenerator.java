@@ -32,7 +32,7 @@ public class ServiceStubGenerator
         String name = javify(part.getName().getLocalPart());
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
-        String clsName = getPackage(part.getName(), context) + "." + name + "_Exception";
+        String clsName = getPackage(getCurrentService().getName(), context) + "." + name;
         JDefinedClass exCls;
         try 
         {
@@ -61,8 +61,8 @@ public class ServiceStubGenerator
         
         cons = exCls.constructor(JMod.PUBLIC);
         cons.param(String.class, "message");
-        cons.param(Throwable.class, "t");
         cons.param(paramType, "faultInfo");
+        cons.param(Throwable.class, "t");
         cons.body().invoke("super").arg(JExpr.ref("message")).arg(JExpr.ref("t"));
         cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
         

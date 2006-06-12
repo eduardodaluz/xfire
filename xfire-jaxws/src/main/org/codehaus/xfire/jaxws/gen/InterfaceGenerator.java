@@ -1,5 +1,6 @@
 package org.codehaus.xfire.jaxws.gen;
 
+import javax.jws.WebService;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebFault;
 
@@ -8,6 +9,7 @@ import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.SchemaSupport;
 import org.codehaus.xfire.gen.jsr181.ServiceInterfaceGenerator;
 import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.Service;
 
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JClass;
@@ -24,6 +26,16 @@ public class InterfaceGenerator
     extends ServiceInterfaceGenerator
 {
 
+    protected void annotate(GenerationContext context, Service service, JDefinedClass jc)
+    {
+        JAnnotationUse ann = jc.annotate(WebService.class);
+        
+        ann.param("name", service.getServiceInfo().getPortType().getLocalPart());
+        ann.param("targetNamespace", service.getServiceInfo().getPortType().getNamespaceURI());
+        
+        service.setProperty(SERVICE_INTERFACE, jc);
+    }
+
     @Override
     protected JClass generateExceptionClass(GenerationContext context, MessagePartInfo part, JMethod method) 
         throws GenerationException
@@ -34,7 +46,7 @@ public class InterfaceGenerator
         String name = javify(part.getName().getLocalPart());
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
-        String clsName = getPackage(part.getName(), context) + "." + name + "_Exception";
+        String clsName = getPackage(getCurrentService().getName(), context) + "." + name;
         JDefinedClass exCls;
         try 
         {
@@ -63,8 +75,8 @@ public class InterfaceGenerator
         
         cons = exCls.constructor(JMod.PUBLIC);
         cons.param(String.class, "message");
-        cons.param(Throwable.class, "t");
         cons.param(paramType, "faultInfo");
+        cons.param(Throwable.class, "t");
         cons.body().invoke("super").arg(JExpr.ref("message")).arg(JExpr.ref("t"));
         cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
         
