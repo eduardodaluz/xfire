@@ -52,6 +52,7 @@
         <exclude>org.codehaus.xfire:xfire-annotations</exclude>
         <exclude>org.codehaus.xfire:xfire-castor</exclude>
         <exclude>org.codehaus.xfire:xfire-core</exclude>
+        <exclude>org.codehaus.xfire:xfire-distribution</exclude>
         <exclude>org.codehaus.xfire:xfire-generator</exclude>
         <exclude>org.codehaus.xfire:xfire-java5</exclude>
         <exclude>org.codehaus.xfire:xfire-jaxb</exclude>
