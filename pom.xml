@@ -65,7 +65,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>none</forkMode>
+          <forkMode>once</forkMode>
           <childDelegation>false</childDelegation>
           <excludes>
             <exclude>**/jms/**/*</exclude>
@@ -129,6 +129,17 @@
     <module>xfire-xmpp</module>
   </modules>
   <repositories>
+    <repository>
+      <id>central</id>
+      <name>Mergere Central Repository</name>
+      <url>http://repo.mergere.com/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
     <repository>
       <id>codehaus</id>
       <name>Codehaus maven repository</name>
@@ -508,11 +519,19 @@
       <dependency>
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
-        <version>1.1-beta-8</version>
+        <version>1.1-beta-9</version>
         <exclusions>
           <exclusion>
             <artifactId>dom4j</artifactId>
             <groupId>dom4j</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>xerces</artifactId>
+            <groupId>xmlParserAPIs</groupId>
+          </exclusion>
+          <exclusion>
+            <artifactId>xerces</artifactId>
+            <groupId>xercesImpl</groupId>
           </exclusion>
           <exclusion>
             <artifactId>xom</artifactId>
