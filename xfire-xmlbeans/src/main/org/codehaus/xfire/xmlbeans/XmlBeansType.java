@@ -1,8 +1,6 @@
 package org.codehaus.xfire.xmlbeans;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -145,37 +143,21 @@ public class XmlBeansType
     {
         try
         {
-            XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
-            XmlObject parsed = XmlObject.Factory.parse(reader, options);
-            
-           
+            XmlOptions readOptions = new XmlOptions(options);
+
             /* Add namespace declarations from the XMLStreamReader NamespaceContext.
              * This is important when values reference QNames. For instance, 
              * xsi:type="xsd:string". If the xsd namespace is declared on the SOAP
              * envelope then XMLBeans won't pick up. 
              */
-            XmlCursor cursor = parsed.newCursor();
-            try
+            Map namespaces = (Map) context.getProperty(ReadHeadersHandler.DECLARED_NAMESPACES);
+            if (namespaces != null && namespaces.size() > 0)
             {
-                cursor.toFirstContentToken();
-                Map namespaces = (Map) context.getProperty(ReadHeadersHandler.DECLARED_NAMESPACES);
-                
-                Map decNamespaces = new HashMap();
-                cursor.getAllNamespaces(namespaces);
-                
-                for (Iterator itr = namespaces.entrySet().iterator(); itr.hasNext();)
-                {
-                    Map.Entry entry = (Map.Entry) itr.next();
-                   
-                    if (!decNamespaces.containsKey(entry.getKey()))
-                        cursor.insertNamespace((String) entry.getKey(), (String) entry.getValue());
-                }
-            }
-            finally
-            {
-                cursor.dispose();
+                readOptions.setLoadAdditionalNamespaces(namespaces);
             }
             
+            XMLStreamReader reader = ((ElementReader) mreader).getXMLStreamReader();
+            XmlObject parsed = XmlObject.Factory.parse(reader, readOptions);
             
             return parsed;
         }

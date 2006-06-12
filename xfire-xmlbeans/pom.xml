@@ -37,7 +37,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <verbose>true</verbose>
+          <verbose>false</verbose>
           <schemaDirectory>src/test-schemas</schemaDirectory>
         </configuration>
       </plugin>
