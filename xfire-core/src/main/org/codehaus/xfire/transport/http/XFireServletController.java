@@ -36,6 +36,8 @@ import org.codehaus.xfire.util.STAXUtils;
  */
 public class XFireServletController
 {
+    public static final String HTTP_SERVLET_REQUEST = "XFireServletController.httpServletRequest";
+    public static final String HTTP_SERVLET_RESPONSE = "XFireServletController.httpServletResponse";
     
     private static ThreadLocal requests = new ThreadLocal();
     private static ThreadLocal responses = new ThreadLocal();
@@ -203,6 +205,8 @@ public class XFireServletController
         context.setXFire(getXFire());
         context.setSession(session);
         context.setService(getService(service));
+        context.setProperty(HTTP_SERVLET_REQUEST, request);
+        context.setProperty(HTTP_SERVLET_RESPONSE, response);
         
         Channel channel;
         try

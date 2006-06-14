@@ -15,11 +15,6 @@ public class LocalTransportTest
         
         assertEquals(c1, c2);
         
-        c1 = transport.createChannel();
-        c2 = transport.createChannel(c1.getUri());
-
-        assertEquals(c1, c2);
-
         transport.dispose();
     }
 }

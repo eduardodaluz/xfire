@@ -51,6 +51,7 @@ public class LocalChannel
             final OutputStream out = (OutputStream)context.getProperty( Channel.BACKCHANNEL_URI );
             if( out != null )
             {
+                // Send to an OutputStream the user supplied 
                 final XMLStreamWriter writer = STAXUtils.createXMLStreamWriter( out, message.getEncoding(),context );
 
                 message.setProperty(Channel.OUTPUTSTREAM, out);
@@ -67,13 +68,16 @@ public class LocalChannel
             }
             else
             {
+                // Send a response from the Channel to the client
                 MessageContext oldContext = (MessageContext)context.getProperty( OLD_CONTEXT );
 
-                sendViaNewChannel( context, oldContext, message, (String)context.getProperty( SENDER_URI ) );
+                Channel channel = oldContext.getOutMessage().getChannel();
+                sendViaNewChannel( context, oldContext, message, channel, (String)context.getProperty( SENDER_URI ) );
             }
         }
         else
         {
+            // Send a request from the channel to the service
             MessageContext receivingContext = new MessageContext();
             receivingContext.setXFire( context.getXFire() );
             receivingContext.setService( getService( context.getXFire(), message.getUri() ) );
@@ -81,7 +85,18 @@ public class LocalChannel
             receivingContext.setProperty( SENDER_URI, getUri() );
             receivingContext.setSession( session );
 
-            sendViaNewChannel( context, receivingContext, message, message.getUri() );
+            final Channel channel;
+            final String uri = message.getUri();
+            try
+            {
+                channel = getTransport().createChannel( uri );
+            }
+            catch( Exception e )
+            {
+                throw new XFireException( "Couldn't create channel.", e );
+            }
+            
+            sendViaNewChannel( context, receivingContext, message, channel, uri );
         }
     }
 
@@ -115,6 +130,7 @@ public class LocalChannel
     private void sendViaNewChannel( final MessageContext context,
                                     final MessageContext receivingContext,
                                     final OutMessage message,
+                                    final Channel channel,
                                     final String uri ) throws XFireException
     {
         try
@@ -122,15 +138,6 @@ public class LocalChannel
             final PipedInputStream stream = new PipedInputStream();
             final PipedOutputStream outStream = new PipedOutputStream( stream );
 
-            final Channel channel;
-            try
-            {
-                channel = getTransport().createChannel( uri );
-            }
-            catch( Exception e )
-            {
-                throw new XFireException( "Couldn't create channel.", e );
-            }
 
             Thread writeThread = new Thread( new Runnable()
             {

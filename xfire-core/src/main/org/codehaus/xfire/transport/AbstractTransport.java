@@ -44,7 +44,12 @@ public abstract class AbstractTransport
 
     public Channel createChannel() throws Exception
     {
-        return createChannel(getUriPrefix() + UID.generate());
+        String uri = getUriPrefix() + UID.generate();
+        
+        Channel c = createNewChannel(uri);
+        c.open();
+        
+        return c;
     }
 
     public Channel createChannel(String uri) throws Exception

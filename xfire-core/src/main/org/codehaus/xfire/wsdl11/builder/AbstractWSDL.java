@@ -1,7 +1,5 @@
 package org.codehaus.xfire.wsdl11.builder;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,8 +21,8 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
+import org.codehaus.xfire.util.Resolver;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -370,24 +368,24 @@ public abstract class AbstractWSDL
     public void addSchema(String location)
     {
         // Try loading the file as a file, then on the classpath
-        InputStream fileInputStream = null;
+        InputStream inputStream;
         try
         {
-            fileInputStream = new FileInputStream(location);
-        } 
-        catch (FileNotFoundException e)
+            inputStream = new Resolver(location).getInputStream();
+        }
+        catch (IOException e1)
         {
-            fileInputStream = ClassLoaderUtils.getResourceAsStream(location, getClass());
+            throw new XFireRuntimeException("Could not load schema: " + location, e1);
         }
         
-        if (fileInputStream == null)
+        if (inputStream == null)
             throw new XFireRuntimeException("Couldnt load schema file: " + location);
         
         // Load in the schema
         Document schema = null;
         try
         {
-            schema = builder.build(fileInputStream);
+            schema = builder.build(inputStream);
         } 
         catch (XMLStreamException e)
         {

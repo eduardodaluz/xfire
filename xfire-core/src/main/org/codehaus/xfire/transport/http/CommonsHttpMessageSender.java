@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
@@ -39,8 +40,6 @@ import org.codehaus.xfire.util.STAXUtils;
  */
 public class CommonsHttpMessageSender extends AbstractMessageSender
 {
-    private static final ThreadLocal httpState = new ThreadLocal();
-
     private PostMethod postMethod;
 
     private HttpClient client;
@@ -54,6 +53,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
     public static final String HTTP_STATE = "httpClient.httpstate";
     public static final String HTTP_CLIENT = "httpClient";
+
+    private InputStream msgIs;
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -63,44 +64,44 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public void open()
         throws IOException, XFireException
     {
+        MessageContext context = getMessageContext();
+
         client = (HttpClient) ((HttpChannel) getMessage().getChannel()).getProperty(HTTP_CLIENT);
         if (client == null)
         {
             client = new HttpClient();
+            client.setHttpConnectionManager(new MultiThreadedHttpConnectionManager());
             ((HttpChannel) getMessage().getChannel()).setProperty(HTTP_CLIENT, client);
-        }
-        
-        MessageContext context = getMessageContext();
-        
-        HttpClientParams params = (HttpClientParams) context.getContextualProperty(HTTP_CLIENT_PARAMS);
-        if (params == null)
-        {
-            params = client.getParams();
-            
-            client.getParams().setParameter("http.useragent", USER_AGENT);
-            client.getParams().setBooleanParameter("http.protocol.expect-continue", true);
-            client.getParams().setVersion(HttpVersion.HTTP_1_1);
-        }
-        else
-        {
-            client.setParams(params);
-        }
 
-        // Setup the proxy settings
-        String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
-        if (proxyHost != null)
-        {
-            String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
-            int port = 80;
-            if (portS != null) port = Integer.parseInt(portS);
-            
-            client.getHostConfiguration().setProxy(proxyHost, port);
+            HttpClientParams params = (HttpClientParams) context.getContextualProperty(HTTP_CLIENT_PARAMS);
+            if (params == null)
+            {
+                params = client.getParams();
+                
+                client.getParams().setParameter("http.useragent", USER_AGENT);
+                client.getParams().setBooleanParameter("http.protocol.expect-continue", true);
+                client.getParams().setVersion(HttpVersion.HTTP_1_1);
+            }
+            else
+            {
+                client.setParams(params);
+            }
+
+            // Setup the proxy settings
+            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
+            if (proxyHost != null)
+            {
+                String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
+                int port = 80;
+                if (portS != null) port = Integer.parseInt(portS);
+                
+                client.getHostConfiguration().setProxy(proxyHost, port);
+            }
         }
         
         // Pull the HttpState from the context if possible. Otherwise create
         // one in the ThreadLocal
-        state = (HttpState) context.getContextualProperty(HTTP_STATE);
-        if (state == null) state = getHttpState();
+        state = getHttpState();
         
         postMethod = new PostMethod(getUri());
         
@@ -175,20 +176,15 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     
     public HttpState getHttpState()
     {
-        HttpState state = (HttpState) httpState.get();
-
-        if( null == state )
+        HttpState state = (HttpState) ((HttpChannel) getMessage().getChannel()).getProperty(HTTP_STATE);
+        if (state == null) 
         {
             state = new HttpState();
-            httpState.set( state );
+            
+            ((HttpChannel) getMessage().getChannel()).setProperty(HTTP_STATE, state);
         }
-
+        
         return state;
-    }
-    
-    public void clearHttpState()
-    {
-        httpState.set(null);
     }
 
     private RequestEntity getByteArrayRequestEntity()
@@ -220,7 +216,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         {
             Attachments atts = new StreamedAttachments(in, ct);
 
-            InputStream msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
+            msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
             InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding(),getMessageContext()), getUri());
             msg.setAttachments(atts);
             return msg;
@@ -239,6 +235,16 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public void close()
         throws XFireException
     {
+        if (msgIs != null)
+            try
+            {
+                msgIs.close();
+            }
+            catch (IOException e)
+            {
+                throw new XFireException("Could not close connection.", e);
+            }
+        
         if (postMethod != null)
             postMethod.releaseConnection();
     }

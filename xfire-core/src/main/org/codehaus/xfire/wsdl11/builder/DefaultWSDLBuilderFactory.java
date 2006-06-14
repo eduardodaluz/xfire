@@ -1,7 +1,5 @@
 package org.codehaus.xfire.wsdl11.builder;
 
-import java.util.List;
-
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.transport.TransportManager;
@@ -12,8 +10,6 @@ import org.codehaus.xfire.transport.TransportManager;
 public class DefaultWSDLBuilderFactory
     implements WSDLBuilderFactory
 {
-    private List schemaLocations;
-    
     public DefaultWSDLBuilderFactory()
     {
     }
