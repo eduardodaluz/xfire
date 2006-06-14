@@ -67,7 +67,7 @@ final class XFireServletChannel extends HttpChannel
                 
                 OutMessageDataSource source = new OutMessageDataSource(context, message);
                 DataHandler soapHandler = new DataHandler(source);
-                atts.setSoapContentType(HttpChannel.getSoapMimeType(message));
+                atts.setSoapContentType(HttpChannel.getSoapMimeType(message, false));
                 atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
     
                 response.setContentType(atts.getContentType());
@@ -77,7 +77,7 @@ final class XFireServletChannel extends HttpChannel
             }
             else
             {
-                response.setContentType(HttpChannel.getSoapMimeType(message));
+                response.setContentType(HttpChannel.getSoapMimeType(message, true));
                 
                 out = new BufferedOutputStream(response.getOutputStream());
                 message.setProperty(Channel.OUTPUTSTREAM, out);

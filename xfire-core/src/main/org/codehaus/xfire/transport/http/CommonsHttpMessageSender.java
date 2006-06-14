@@ -132,14 +132,14 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             
             OutMessageDataSource source = new OutMessageDataSource(context, message);
             DataHandler soapHandler = new DataHandler(source);
-            atts.setSoapContentType(HttpChannel.getSoapMimeType(message));
+            atts.setSoapContentType(HttpChannel.getSoapMimeType(message, false));
             atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
             
             postMethod.setRequestHeader("Content-Type", atts.getContentType());
         }
         else
         {
-            postMethod.setRequestHeader("Content-Type", HttpChannel.getSoapMimeType(getMessage()));
+            postMethod.setRequestHeader("Content-Type", HttpChannel.getSoapMimeType(getMessage(), true));
         }
     }
 

@@ -145,7 +145,7 @@ public class JavaMailAttachments
             MimeBodyPart soapPart = new MimeBodyPart();
             soapPart.setDataHandler(soapMessage.getDataHandler());
             soapPart.setContentID("<"+soapMessage.getId()+">");
-            soapPart.addHeader("Content-Transfer-Encoding", "binary");
+            soapPart.addHeader("Content-Transfer-Encoding", "8bit");
             mimeMP.addBodyPart(soapPart);
             
             for (Iterator itr = getParts(); itr.hasNext(); )

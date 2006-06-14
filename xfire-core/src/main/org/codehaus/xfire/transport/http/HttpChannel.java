@@ -62,24 +62,30 @@ public class HttpChannel
         }
     }
 
-    public static String getSoapMimeType(AbstractMessage msg)
+    public static String getSoapMimeType(AbstractMessage msg, boolean includeEncoding)
     {
-        String ct;
+        StringBuffer ct = new StringBuffer();
         SoapVersion soap = msg.getSoapVersion();
         if (soap instanceof Soap11)
         {
-            ct = "text/xml; charset=" + msg.getEncoding();
+            ct.append("text/xml");
         }
         else if (soap instanceof Soap12)
         {
-             return "application/soap+xml; charset=" + msg.getEncoding();
+             ct.append("application/soap+xml");
         }
         else
         {
-            return "text/xml; charset=" + msg.getEncoding();
+            ct.append("text/xml");
         }
         
-        return ct;
+        if (includeEncoding)
+        {
+            ct.append("; charset=")
+              .append(msg.getEncoding());
+        }
+        
+        return ct.toString();
     }
 
     protected void sendViaClient(MessageContext context, OutMessage message)

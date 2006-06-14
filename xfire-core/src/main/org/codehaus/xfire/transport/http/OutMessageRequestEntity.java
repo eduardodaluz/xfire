@@ -60,6 +60,6 @@ public class OutMessageRequestEntity
 
     public String getContentType()
     {
-        return HttpChannel.getSoapMimeType(message);
+        return HttpChannel.getSoapMimeType(message, true);
     }
 }
