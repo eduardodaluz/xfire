@@ -238,7 +238,7 @@ public class XFireServletController
         	
             Attachments atts = new StreamedAttachments(request.getInputStream(), ct);
           
-            String encoding = getEncoding(request.getCharacterEncoding());
+            String encoding = getEncoding(atts.getSoapContentType());
 
             XMLStreamReader reader = 
                 STAXUtils.createXMLStreamReader(atts.getSoapMessage().getDataHandler().getInputStream(), 
@@ -276,6 +276,9 @@ public class XFireServletController
 
     private String getEncoding(String enc) throws ServletException
     {
+        if (enc == null)
+            return "UTF-8";
+        
         int typeI = enc.indexOf("type=");
         if (typeI == -1) return null;
         
