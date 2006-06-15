@@ -53,6 +53,7 @@ public class Resolver
                 if (relative.isAbsolute())
                 {
                     is = relative.toURL().openStream();
+                    url = relative.toURL();
                 }
                 else if (baseUriStr != null)
                 {
@@ -61,7 +62,9 @@ public class Resolver
                     if (base.isAbsolute())
                     {
                         is = base.toURL().openStream();
+                        url = base.toURL();
                     }
+                    
                 }
             } catch (URISyntaxException e) {
             }
