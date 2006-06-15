@@ -3,10 +3,12 @@ package org.codehaus.xfire.gen.jaxb;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import javax.xml.namespace.QName;
 
@@ -87,11 +89,10 @@ public class JAXBSchemaSupport implements SchemaSupport
         
         if (context.getExternalBindings() != null)
         {
-            for (File externalBinding : context.getExternalBindings())
+            for (Entry<String, InputStream> e : context.getExternalBindings().entrySet())
             {
-                String systemId = externalBinding.toURI().toString();
-                InputSource source = new InputSource(new FileInputStream(externalBinding));
-                source.setSystemId(systemId);
+                InputSource source = new InputSource(e.getValue());
+                source.setSystemId(e.getKey());
                 schemaCompiler.parseSchema(source);
             }
         }

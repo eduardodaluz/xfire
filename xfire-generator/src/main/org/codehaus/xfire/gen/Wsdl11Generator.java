@@ -1,13 +1,16 @@
 package org.codehaus.xfire.gen;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.Resolver;
@@ -71,23 +74,28 @@ public class Wsdl11Generator
             }
         }
 
-        String wsdlUri = wsdl;
-        File wsdlFile = new File(wsdl);
-        if (wsdlFile.exists()) 
-            wsdlUri = wsdlFile.toURI().toString();
-
-        if (baseURI == null)
-        {
-            baseURI = wsdlUri;
-        }
-        else if (new File(baseURI).exists())
+        if (baseURI != null && new File(baseURI).exists())
         {
             baseURI = new File(baseURI).toURI().toString();
         }
 
+        Resolver resolver = new Resolver(baseURI, wsdl);
+
+        if (resolver.getInputStream() == null)
+        {
+            throw new XFireException("Could not find wsdl " + wsdl + " with a base URI of " + baseURI 
+                                     + ".");
+        }
+        
+        String wsdlUri = resolver.getURL().toURI().toString();
+        if (baseURI == null)
+        {
+            baseURI = wsdlUri;
+        }
+        
         log.info("Generating code for WSDL at " + wsdlUri + " with a base URI of " + baseURI);
         
-        InputSource source = new InputSource(new Resolver(wsdlUri).getInputStream());
+        InputSource source = new InputSource(resolver.getInputStream());
         source.setSystemId(wsdlUri);
         WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, source);
         builder.setBindingProvider(support.getBindingProvider());
@@ -122,32 +130,23 @@ public class Wsdl11Generator
         codeModel.build(dest);
     }
   
-    private Collection<File> getExternalBindingFiles()
+    private Map<String,InputStream> getExternalBindingFiles() throws IOException
     {
         if (externalBindings == null) return null;
         
-        ArrayList<File> files = new ArrayList<File>();
-        File basedir = new File("");
-        File baseURIFile = new File(baseURI);
-        if (baseURIFile.exists()) {
-            basedir = baseURIFile;
-        }
+        Map<String,InputStream> files = new HashMap<String,InputStream>();
         
         StringTokenizer st = new StringTokenizer(externalBindings, ",");
-        while (st.hasMoreTokens()) {
+        while (st.hasMoreTokens()) 
+        {
             String name = st.nextToken();
          
-            File binding = new File(name);
-            if (binding.exists())
-                files.add(binding);
-            else
-            {
-                binding = new File(basedir, name);
-                if (!binding.exists())
-                    throw new IllegalStateException("Could not find binding file " + name);
-                
-                files.add(binding);
-            }
+            Resolver resolver = new Resolver(baseURI, name);
+
+            if (resolver.getInputStream() == null)
+                throw new IllegalStateException("Could not find binding file " + name);
+            
+            files.put(resolver.getURL().toString(), resolver.getInputStream());
         }
         return files;
     }

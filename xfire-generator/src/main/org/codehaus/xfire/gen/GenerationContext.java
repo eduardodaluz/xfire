@@ -1,6 +1,7 @@
 package org.codehaus.xfire.gen;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class GenerationContext
     private File outputDirectory;
     private String wsdlLocation;
     private Collection schemas;
-    private Collection<File> externalBindings;
+    private Map<String,InputStream> externalBindings;
     private boolean explicitAnnotation;
     
     public GenerationContext(JCodeModel model, Object wsdl)
@@ -117,12 +118,12 @@ public class GenerationContext
         this.schemaGenerator = schemaGenerator;
     }
 
-    public Collection<File> getExternalBindings()
+    public Map<String,InputStream> getExternalBindings()
     {
         return externalBindings;
     }
 
-    public void setExternalBindings(Collection<File> externalBindings)
+    public void setExternalBindings(Map<String,InputStream> externalBindings)
     {
         this.externalBindings = externalBindings;
     }

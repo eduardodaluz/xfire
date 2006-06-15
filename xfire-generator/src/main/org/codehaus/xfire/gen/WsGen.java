@@ -9,7 +9,8 @@ import org.apache.tools.ant.BuildException;
  */
 public class WsGen {
 
-	private static void usage() {
+	
+    private static void usage() {
 		System.out
 				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI]\n");
 	}
@@ -29,7 +30,8 @@ public class WsGen {
 		String profile = null;
 		String externalBindings = null;
 		String baseURI = null;
-		
+        boolean explicit = false;
+
 		if (args.length < 3) {
 			usage();
 			return;
@@ -60,6 +62,9 @@ public class WsGen {
 			if("-r".equals(param)){
 				profile = value;
 			}
+            if ("-x".equals(param)) {
+                explicit = true;
+            }
 		}
 
 		if (wsdl == null) {
@@ -80,14 +85,14 @@ public class WsGen {
 		System.out.print("externalBindings : " + (externalBindings == null?"" : externalBindings) + "\n" );
 		System.out.print("baseURI : " + (baseURI == null?"" : baseURI)+ "\n");
 		System.out.print("profile : " + (profile == null?"" : profile)+ "\n");
-		
-		
+        System.out.print("explictAnnotation : " + explicit+ "\n");
 
 		Wsdl11Generator generator = new Wsdl11Generator();
 		generator.setDestinationPackage(_package);
 		generator.setOutputDirectory(outputDirectory);
 		generator.setWsdl(wsdl);
-
+		generator.setExplicitAnnotation(explicit);
+        
 		if (binding != null)
 			generator.setBinding(binding);
 		if (profile != null)
