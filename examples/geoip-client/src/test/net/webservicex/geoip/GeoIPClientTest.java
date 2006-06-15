@@ -14,7 +14,7 @@ public class GeoIPClientTest extends TestCase
         GeoIPServiceSoap geoIPClient = service.getGeoIPServiceSoap();
         
         System.out.println("The country is: " + 
-                           geoIPClient.GetGeoIP("216.73.126.120").getCountryName());
+                           geoIPClient.getGeoIP("216.73.126.120").getCountryName());
     }
 }
 // END SNIPPET: client

@@ -6,14 +6,14 @@
   <artifactId>xfire-book</artifactId>
   <packaging>war</packaging>
   <name>Book Example</name>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.2-SNAPSHOT</version>
   <inceptionYear>2004</inceptionYear>
 
   <dependencies>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-spring</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
