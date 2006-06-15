@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.codehaus.xfire.XFireRuntimeException;
@@ -30,23 +32,42 @@ public class Resolver
         this("", path);
     }
     
-    public Resolver(String baseUri, String uri) 
+    public Resolver(String baseUriStr, String uriStr) 
         throws IOException
     {
-        if (baseUri != null)
+        if (baseUriStr != null) 
+            file = new File(baseUriStr, uriStr);
+
+        // fall back on a non relative path, if it doesn't exist we'll catch it later
+        if (file == null || !file.exists())
         {
-            file = new File(baseUri, uri);
-            
-            // fall back on a non relative path, if it doesn't exist we'll catch it later
-            if (!file.exists())
-                file = new File(uri);
+            file = new File(uriStr);
         }
-        else
+
+        if (!file.exists())
         {
-            file = new File(uri);
+            file = null;
+            try 
+            {
+                URI relative = new URI(uriStr);
+                if (relative.isAbsolute())
+                {
+                    is = relative.toURL().openStream();
+                }
+                else if (baseUriStr != null)
+                {
+                    URI base = new URI(baseUriStr);
+                    base = base.resolve(relative);
+                    if (base.isAbsolute())
+                    {
+                        is = base.toURL().openStream();
+                    }
+                }
+            } catch (URISyntaxException e) {
+            }
         }
         
-        if (file.exists()) 
+        if (is == null && file != null && file.exists()) 
         {
             url = file.toURL();
             try
@@ -55,18 +76,18 @@ public class Resolver
             }
             catch (FileNotFoundException e)
             {
-                throw new XFireRuntimeException("File mysteriously disappeared! " + uri, e);
+                throw new XFireRuntimeException("File was deleted! " + uriStr, e);
             }
         }
-        else
+        else if (is == null)
         {
-            url = ClassLoaderUtils.getResource(uri, getClass());
+            url = ClassLoaderUtils.getResource(uriStr, getClass());
             
             if (url == null)
             {
                 try 
                 {
-                    url = new URL(uri);
+                    url = new URL(uriStr);
                     is = url.openStream();
                 }
                 catch (MalformedURLException e)
@@ -80,8 +101,8 @@ public class Resolver
         }
         
         if (is == null) 
-            throw new IOException("Could not find resource '" + uri + 
-                                  "' relative to '" + baseUri + "'");
+            throw new IOException("Could not find resource '" + uriStr + 
+                                  "' relative to '" + baseUriStr + "'");
     }
     
     public URL getURL()
