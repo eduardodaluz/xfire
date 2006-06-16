@@ -15,19 +15,20 @@ import org.codehaus.xfire.util.Resolver;
 public class ResourceWSDL
 	implements WSDLWriter
 {
-    private final URL wsdlUrl;
+    private InputStream is;
+    private URL wsdlUrl;
 
     /**
      * @param wsdlUrl
      */
     public ResourceWSDL(String wsdlUrl) throws IOException
     {
-        this.wsdlUrl = new Resolver(wsdlUrl).getURL();
+        this.is = new Resolver(wsdlUrl).getInputStream();
     }
 
     public ResourceWSDL(String baseUri, String wsdlUrl) throws IOException
     {
-        this.wsdlUrl = new Resolver(baseUri, wsdlUrl).getURL();
+        this.is = new Resolver(baseUri, wsdlUrl).getInputStream();
     }
     
     /**
@@ -40,7 +41,10 @@ public class ResourceWSDL
 
     public void write(OutputStream out) throws IOException
     {
-       copy( wsdlUrl.openStream(), out, 8096 );
+        if (wsdlUrl != null)
+            is = wsdlUrl.openStream();
+        
+        copy(is, out, 8096 );
     }
 
     private void copy(final InputStream input,

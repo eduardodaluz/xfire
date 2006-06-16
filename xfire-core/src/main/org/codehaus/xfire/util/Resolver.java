@@ -24,7 +24,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 public class Resolver
 {
     private File file;
-    private URL url;
+    private URI uri;
     private InputStream is;
     
     public Resolver(String path) throws IOException
@@ -52,8 +52,8 @@ public class Resolver
                 URI relative = new URI(uriStr);
                 if (relative.isAbsolute())
                 {
+                    uri = relative;
                     is = relative.toURL().openStream();
-                    url = relative.toURL();
                 }
                 else if (baseUriStr != null)
                 {
@@ -62,7 +62,7 @@ public class Resolver
                     if (base.isAbsolute())
                     {
                         is = base.toURL().openStream();
-                        url = base.toURL();
+                        uri = base;
                     }
                     
                 }
@@ -72,7 +72,7 @@ public class Resolver
         
         if (is == null && file != null && file.exists()) 
         {
-            url = file.toURL();
+            uri = file.toURI();
             try
             {
                 is = new FileInputStream(file);
@@ -84,16 +84,20 @@ public class Resolver
         }
         else if (is == null)
         {
-            url = ClassLoaderUtils.getResource(uriStr, getClass());
+            URL url = ClassLoaderUtils.getResource(uriStr, getClass());
             
             if (url == null)
             {
                 try 
                 {
                     url = new URL(uriStr);
+                    uri = url.toURI();
                     is = url.openStream();
                 }
                 catch (MalformedURLException e)
+                {
+                }
+                catch (URISyntaxException e)
                 {
                 }
             }
@@ -108,9 +112,9 @@ public class Resolver
                                   "' relative to '" + baseUriStr + "'");
     }
     
-    public URL getURL()
+    public URI getURI()
     {
-        return url;
+        return uri;
     }
     
     public InputStream getInputStream()
