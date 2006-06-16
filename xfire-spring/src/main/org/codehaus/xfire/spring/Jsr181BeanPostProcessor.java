@@ -6,6 +6,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceRegistry;
 import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
@@ -42,13 +43,20 @@ public class Jsr181BeanPostProcessor
     public Object postProcessAfterInitialization(Object bean, String beanName)
         throws BeansException
     {
-        Class clazz = bean.getClass();
-        if (annotations.hasWebServiceAnnotation(clazz))
+        try
         {
-            Service service = serviceFactory.create(clazz);
-            service.setInvoker(new BeanInvoker(bean));
-            registry.register(service);
+            Class clazz = SpringUtils.getUserTarget(bean).getClass();
+            if (annotations.hasWebServiceAnnotation(clazz))
+            {
+                Service service = serviceFactory.create(clazz);
+                service.setInvoker(new BeanInvoker(bean));
+                registry.register(service);
+            }
+            return bean;
         }
-        return bean;
+        catch (Exception e)
+        {
+            throw new FatalBeanException("Could not get the target bean.", e);
+        }
     }
 }
