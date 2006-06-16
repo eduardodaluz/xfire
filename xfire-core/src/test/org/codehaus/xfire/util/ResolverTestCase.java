@@ -15,10 +15,9 @@ public class ResolverTestCase extends AbstractXFireTest
     {
         Resolver resolver = new Resolver(getTestFile("src/test").toURL().toString(), 
                                          "org/codehaus/xfire/util/amazon.xml");
-        assertNull(resolver.getFile());
+        assertNotNull(resolver.getFile());
         assertNotNull(resolver.getInputStream());
         assertNotNull(resolver.getURI());
-        System.out.println(resolver.getURI().toString());
     }
 
     public void testClasspath() throws Exception

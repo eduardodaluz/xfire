@@ -35,39 +35,45 @@ public class Resolver
     public Resolver(String baseUriStr, String uriStr) 
         throws IOException
     {
-        if (baseUriStr != null) 
-            file = new File(baseUriStr, uriStr);
-
-        // fall back on a non relative path, if it doesn't exist we'll catch it later
-        if (file == null || !file.exists())
+        try 
         {
-            file = new File(uriStr);
-        }
-
-        if (!file.exists())
-        {
-            file = null;
-            try 
+            URI relative;
+            File uriFile = new File(uriStr);
+            uriFile = new File(uriFile.getAbsolutePath());
+            if (uriFile.exists())
             {
-                URI relative = new URI(uriStr);
-                if (relative.isAbsolute())
-                {
-                    uri = relative;
-                    is = relative.toURL().openStream();
-                }
-                else if (baseUriStr != null)
-                {
-                    URI base = new URI(baseUriStr);
-                    base = base.resolve(relative);
-                    if (base.isAbsolute())
-                    {
-                        is = base.toURL().openStream();
-                        uri = base;
-                    }
-                    
-                }
-            } catch (URISyntaxException e) {
+                relative = uriFile.toURI();
             }
+            else
+                relative = new URI(uriStr);
+
+            if (relative.isAbsolute())
+            {
+                uri = relative;
+                is = relative.toURL().openStream();
+            }
+            else if (baseUriStr != null)
+            {
+                URI base;
+                File baseFile = new File(baseUriStr);
+                if (baseFile.exists())
+                    base = baseFile.toURI();
+                else
+                    base = new URI(baseUriStr);
+                
+                base = base.resolve(relative);
+                if (base.isAbsolute())
+                {
+                    is = base.toURL().openStream();
+                    uri = base;
+                }
+            }
+        } catch (URISyntaxException e) {
+        }
+        
+        if (uri != null && "file".equals(uri.getScheme()))
+        {
+            file = new File(uri);
         }
         
         if (is == null && file != null && file.exists()) 
