@@ -1,0 +1,11 @@
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+
+   <service>
+    <name>MTOMService</name>
+    <namespace>http://xfire.codehaus.org/MTOMService</namespace>
+    <serviceClass>org.codehaus.xfire.mtom.MTOMServiceImpl</serviceClass>
+    <properties>
+      <property key="mtom-enabled">true</property>
+     </properties>
+  </service>
+ </beans>
