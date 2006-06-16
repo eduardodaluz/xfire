@@ -87,7 +87,7 @@ public class Wsdl11Generator
                                      + ".");
         }
         
-        String wsdlUri = resolver.getURL().toURI().toString();
+        String wsdlUri = resolver.getURI().toString();
         if (baseURI == null)
         {
             baseURI = wsdlUri;
@@ -146,7 +146,7 @@ public class Wsdl11Generator
             if (resolver.getInputStream() == null)
                 throw new IllegalStateException("Could not find binding file " + name);
             
-            files.put(resolver.getURL().toString(), resolver.getInputStream());
+            files.put(resolver.getURI().toString(), resolver.getInputStream());
         }
         return files;
     }
