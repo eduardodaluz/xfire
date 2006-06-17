@@ -27,6 +27,7 @@ import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.stax.DOMStreamWriter;
 import org.jdom.Element;
@@ -35,6 +36,7 @@ public class JaxbType
     extends Type
 {
     public static final String SEARCH_PACKAGES = "jaxb.search.pacakges";
+    private static final QName XSI_TYPE = new QName(SoapConstants.XSI_NS, "type");
     
     private JAXBContext context;
 
@@ -56,7 +58,11 @@ public class JaxbType
             Unmarshaller u = jc.createUnmarshaller();
             u.setAttachmentUnmarshaller(new AttachmentUnmarshaller(context));
 
-            Object o = u.unmarshal(reader.getXMLStreamReader());
+            Object o;
+            if (isAbstract() && reader.getAttributeReader(XSI_TYPE).getValue() == null)
+                o = u.unmarshal(reader.getXMLStreamReader(), getTypeClass());
+            else
+                o = u.unmarshal(reader.getXMLStreamReader());
             
             if (o instanceof JAXBElement)
             {
@@ -145,7 +151,6 @@ public class JaxbType
                     
                     pckgs.append(p);
                 }
-                
                 pckg = pckgs.toString();
             }
             context = JAXBContext.newInstance(pckg);
