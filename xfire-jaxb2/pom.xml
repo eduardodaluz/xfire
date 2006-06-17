@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.1.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jaxb2</artifactId>
   <name>XFire Jaxb 2.0 Support</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.1.1</version>
   <build>
     <plugins>
       <plugin>
@@ -23,9 +23,9 @@
                 <taskdef classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath" name="xjc"></taskdef>
                 <mkdir dir="${project.build.directory}/generated-source"></mkdir>
                 <xjc target="${project.build.directory}/generated-source">
-                  <schema includes="inheritance2.xsd" dir="${basedir}/src/test-schemas"/>
-                  <schema includes="picture.xsd" dir="${basedir}/src/test-schemas"/>
-                  <schema includes="WeatherForecast.xsd" dir="${basedir}/src/test-schemas"/>
+                  <schema includes="inheritance2.xsd" dir="${basedir}/src/test-schemas"></schema>
+                  <schema includes="picture.xsd" dir="${basedir}/src/test-schemas"></schema>
+                  <schema includes="WeatherForecast.xsd" dir="${basedir}/src/test-schemas"></schema>
                 </xjc>
               </tasks>
               <testSourceRoot>${project.build.directory}/generated-source</testSourceRoot>
@@ -61,8 +61,8 @@
       <version>2.0.1</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.xml</groupId>
           <artifactId>jsr173</artifactId>
+          <groupId>javax.xml</groupId>
         </exclusion>
       </exclusions>
     </dependency>
