@@ -8,7 +8,6 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 
 import services.auth.AuthServicePortType;
-import services.auth.AuthenticationFault_Exception;
 import xfire.authenticate.fault.AuthenticationFault;
 
 @WebService(serviceName = "AuthService", targetNamespace = "urn:xfire:authenticate", endpointInterface = "services.auth.AuthServicePortType")
@@ -19,12 +18,12 @@ public class AuthServiceImpl
 
 
     public String authenticate(String in0, String in1)
-        throws AuthenticationFault_Exception
+        throws services.auth.AuthenticationFault
     {
         AuthenticationFault fault = new AuthenticationFault();
         fault.setErrorCode(1);
         
-        throw new AuthenticationFault_Exception("fault", fault);
+        throw new services.auth.AuthenticationFault("fault", fault);
     }
 
 }

@@ -6,7 +6,6 @@ import org.codehaus.xfire.jaxws.AbstractJAXWSHttpTest;
 
 import services.auth.AuthServicePortType;
 import services.auth.AuthServiceService;
-import services.auth.AuthenticationFault_Exception;
 
 public class AuthTest
     extends AbstractJAXWSHttpTest
@@ -31,7 +30,7 @@ public class AuthTest
             auth.authenticate("bleh", "bar");
             fail("Must throw fault.");
         }
-        catch (AuthenticationFault_Exception f)
+        catch (services.auth.AuthenticationFault f)
         {
         }
     }
