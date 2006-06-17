@@ -82,7 +82,7 @@
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
-          <tagBase>https://svn.codehaus.org/xfire/tags/</tagBase>
+          <tagBase>https://svn.codehaus.org/xfire/branches/</tagBase>
         </configuration>
       </plugin>
     </plugins>
