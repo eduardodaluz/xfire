@@ -97,7 +97,7 @@ public class Resolver
                 try 
                 {
                     url = new URL(uriStr);
-                    uri = url.toURI();
+                    uri = new URI(url.toString());
                     is = url.openStream();
                 }
                 catch (MalformedURLException e)
