@@ -562,8 +562,11 @@ public class XFireClientFactoryBean
             }
             catch (InvocationTargetException e)
             {
-                String callTarget = getServiceUrl() + " arguments: "
-                        + Arrays.toString(args);
+                StringBuffer callTarget = new StringBuffer(getServiceUrl()).append(" arguments: ");
+                for(int x = 0 ; x < args.length ; x ++ )
+                {
+                    callTarget.append(args[x].getClass().getName()).append(" : ").append(args[x].toString()).append(" |");
+                }
                 Throwable targetException = e.getTargetException();
                 if (targetException instanceof XFireRuntimeException)
                 {
@@ -571,7 +574,7 @@ public class XFireClientFactoryBean
                     // made
                     XFireRuntimeException xfRt = (XFireRuntimeException) targetException;
                     Throwable cause = xfRt.getCause();
-                    throw new XFireRuntimeException("Exception while calling: " + callTarget, cause);
+                    throw new XFireRuntimeException("Exception while calling: " + callTarget.toString(), cause);
                 }
                 throw targetException;
             }
