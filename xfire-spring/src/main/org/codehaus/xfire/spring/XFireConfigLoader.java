@@ -5,10 +5,11 @@ import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xbean.spring.context.impl.XBeanXmlBeanDefinitionReader;
+import org.apache.xbean.spring.context.impl.XBeanHelper;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -67,7 +68,7 @@ public class XFireConfigLoader
         }
         
         GenericApplicationContext ctx = new GenericApplicationContext(parent);
-        XBeanXmlBeanDefinitionReader xmlReader = new XBeanXmlBeanDefinitionReader(ctx, ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
+        XmlBeanDefinitionReader xmlReader = XBeanHelper.createBeanDefinitionReader(ctx, ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
 
         if((parent == null) || !parent.containsBean("xfire"))
         {
