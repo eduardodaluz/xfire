@@ -45,7 +45,7 @@
               <tasks>
                 <taskdef name="xjc"
                   classname="com.sun.tools.xjc.XJCTask"
-                  classpathref="maven.dependency.classpath" />
+                  classpathref="maven.test.classpath" />
                 <mkdir dir="${project.build.directory}/generated-source" />
                 <xjc target="${project.build.directory}/generated-source">
                   <schema dir="${basedir}/src/main/META-INF/xfire/" includes="*.xsd" />
