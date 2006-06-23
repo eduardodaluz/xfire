@@ -14,6 +14,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeCreator;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 
 public class BeanTypeInfo
@@ -39,9 +40,11 @@ public class BeanTypeInfo
     private String defaultNamespace;
 
     private int minOccurs = 0;
-    
+
     private boolean nillable = true;
-    
+
+    private boolean isExtension = false;
+
     /**
      * extensibleElements means adding xs:any to WSDL Complex Type Definition
      */
@@ -197,7 +200,9 @@ public class BeanTypeInfo
 
             try
             {
-                type = getTypeMapping().getTypeCreator().createType(desc);
+                TypeMapping tm = getTypeMapping();
+                TypeCreator tc = tm.getTypeCreator();
+                type = tc.createType(desc);
             }
             catch (XFireRuntimeException e)
             {
@@ -386,13 +391,15 @@ public class BeanTypeInfo
 
     /**
      * Nillable is only allowed if the actual property is Nullable
+     * 
      * @param name
      * @return
      */
     public boolean isNillable(QName name)
     {
         Type type = getType(name);
-        if ( !type.isNillable() ) return false;
+        if (!type.isNillable())
+            return false;
         return nillable;
     }
 
@@ -405,8 +412,8 @@ public class BeanTypeInfo
     {
         this.minOccurs = minOccurs;
     }
-    
-    public void setDefaultNillable (boolean nillable)
+
+    public void setDefaultNillable(boolean nillable)
     {
         this.nillable = nillable;
     }
@@ -444,6 +451,16 @@ public class BeanTypeInfo
     public void setExtensibleAttributes(boolean extensibleAttributes)
     {
         this.extensibleAttributes = extensibleAttributes;
+    }
+
+    public void setExtension(boolean extension)
+    {
+        this.isExtension = extension;
+    }
+
+    public boolean isExtension()
+    {
+        return isExtension;
     }
 
 }

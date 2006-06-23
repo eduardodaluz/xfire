@@ -15,6 +15,8 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
+import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -77,6 +79,9 @@ public class DateTypeTest
         Element element = new Element("dates", ns);
         new Document(element);
         JDOMWriter writer = new JDOMWriter(element);
+        MessageContext mc = new MessageContext();
+        mc.setService(new Service(new ServiceInfo(
+            new QName("larry","curly","moe"),DateTypeTest.class)));
         dtoType.writeObject(dto, writer, new MessageContext());
         writer.close();
         

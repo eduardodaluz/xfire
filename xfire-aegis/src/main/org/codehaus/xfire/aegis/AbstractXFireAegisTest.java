@@ -7,7 +7,7 @@ import org.codehaus.xfire.test.AbstractXFireTest;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse </a>
  * @since Oct 31, 2004
  */
-public class AbstractXFireAegisTest
+public abstract class AbstractXFireAegisTest
     extends AbstractXFireTest
 {
     protected void setUp()
@@ -15,7 +15,7 @@ public class AbstractXFireAegisTest
     {
         super.setUp();
 
-        setServiceFactory(new ObjectServiceFactory(getTransportManager(), 
-                                                   new AegisBindingProvider()));
+        setServiceFactory(new ObjectServiceFactory(getTransportManager(),
+                new AegisBindingProvider()));
     }
 }

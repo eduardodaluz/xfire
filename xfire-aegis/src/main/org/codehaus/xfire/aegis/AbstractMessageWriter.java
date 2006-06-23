@@ -1,22 +1,48 @@
 package org.codehaus.xfire.aegis;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
  * Basic type conversion functionality for writing messages.
- *
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public abstract class AbstractMessageWriter
-        implements MessageWriter
+    implements MessageWriter
 {
     /**
      * Create a LiteralWriter but without writing an element name.
-     *
+     * 
      * @param writer
      */
     public AbstractMessageWriter()
     {
+    }
+
+    public void writeXsiType(QName type)
+    {
+
+        /*
+         * Do not assume that the prefix supplied with the QName should be used
+         * in this case.
+         */
+        String prefix = getPrefixForNamespace(type.getNamespaceURI(), type.getPrefix());
+        String value;
+        if (prefix != null && prefix.length() > 0)
+        {
+            StringBuffer sb = new StringBuffer(prefix.length() + 1 + type.getLocalPart().length());
+            sb.append(prefix);
+            sb.append(':');
+            sb.append(type.getLocalPart());
+            value = sb.toString();
+        }
+        else
+        {
+            value = type.getLocalPart();
+        }
+        getAttributeWriter("type", SoapConstants.XSI_NS).writeValue(value);
     }
 
     public void writeXsiNil()
@@ -25,7 +51,7 @@ public abstract class AbstractMessageWriter
         attWriter.writeValue("true");
         attWriter.close();
     }
-    
+
     /**
      * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsInt(java.lang.Integer)
      */
@@ -49,7 +75,7 @@ public abstract class AbstractMessageWriter
     {
         writeValue(char1.toString());
     }
-    
+
     /**
      * @see org.codehaus.xfire.aegis.MessageWriter#writeValueAsLong(java.lang.Long)
      */
