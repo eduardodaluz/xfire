@@ -1,8 +1,8 @@
 package org.codehaus.xfire.util.stax;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Collections;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,7 +22,12 @@ public class W3CDOMStreamWriter
     private Document document;
     private Element currentNode;
     private NamespaceContext context;
-    private Map properties = new HashMap();
+    private Map properties = Collections.EMPTY_MAP;
+
+
+    public void setProperties(Map properties) {
+        this.properties = properties;
+    }
 
     public W3CDOMStreamWriter() throws ParserConfigurationException
     {
@@ -113,6 +118,7 @@ public class W3CDOMStreamWriter
             currentNode = (Element) stack.pop();
         else
             currentNode = null;
+        ((W3CNamespaceContext)context).setElement(currentNode);
     }
 
     public void writeEndDocument()
