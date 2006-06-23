@@ -10,13 +10,8 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.handler.SoapSerializerHandler;
-import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.util.stax.W3CDOMStreamWriter;
 import org.w3c.dom.Document;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * Creates a org.w3c.dom.Document for the outgoing message and sets the
@@ -32,7 +27,6 @@ public class DOMOutHandler
     extends AbstractHandler
 {
     public static final String DOM_MESSAGE = "dom.message";
-    private static final Log log = LogFactory.getLog(DOMOutHandler.class);
     private DocumentBuilder builder;
     
     public DOMOutHandler()
@@ -59,12 +53,6 @@ public class DOMOutHandler
         message.getSerializer().writeMessage(message, writer, context);
        
         Document doc = writer.getDocument();
-        if (log.isTraceEnabled())
-        {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DOMUtils.writeXml(doc, baos);
-            log.trace(baos.toString());
-        }
         message.setProperty(DOM_MESSAGE, doc);
         message.setSerializer(new DOMSerializer(doc));
     }
