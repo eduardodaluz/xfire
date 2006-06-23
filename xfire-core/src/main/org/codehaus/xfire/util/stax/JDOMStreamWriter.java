@@ -20,15 +20,19 @@ public class JDOMStreamWriter
     extends DOMStreamWriter
 {
     private Stack stack = new Stack();
+
     private Document document;
+
     private Element currentNode;
+
     private NamespaceContext context;
+
     private Map properties = new HashMap();
-    
+
     public JDOMStreamWriter()
     {
     }
-    
+
     public JDOMStreamWriter(Element e)
     {
         newChild(e);
@@ -52,11 +56,11 @@ public class JDOMStreamWriter
             if (document != null)
                 document.setRootElement(element);
         }
-        
+
         JDOMNamespaceContext context = new JDOMNamespaceContext();
         context.setElement(element);
         this.context = context;
-        
+
         currentNode = element;
     }
 
@@ -117,7 +121,8 @@ public class JDOMStreamWriter
     public void writeAttribute(String prefix, String namespace, String local, String value)
         throws XMLStreamException
     {
-        currentNode.setAttribute(new Attribute(local, value, Namespace.getNamespace(prefix, namespace)));
+        currentNode.setAttribute(new Attribute(local, value, Namespace.getNamespace(prefix,
+                                                                                    namespace)));
     }
 
     public void writeAttribute(String namespace, String local, String value)
@@ -130,8 +135,8 @@ public class JDOMStreamWriter
         throws XMLStreamException
     {
         Namespace decNS = currentNode.getNamespace(prefix);
-        
-        if (decNS != null && !decNS.getURI().equals(namespace))
+
+        if (decNS == null || !decNS.getURI().equals(namespace))
             currentNode.addNamespaceDeclaration(Namespace.getNamespace(prefix, namespace));
     }
 
@@ -166,7 +171,7 @@ public class JDOMStreamWriter
     public void writeDTD(String arg0)
         throws XMLStreamException
     {
-        
+
     }
 
     public void writeEntityRef(String ref)
@@ -185,7 +190,7 @@ public class JDOMStreamWriter
         throws XMLStreamException
     {
         writeStartDocument();
-        
+
         // TODO: set encoding/version
     }
 
@@ -193,7 +198,7 @@ public class JDOMStreamWriter
         throws XMLStreamException
     {
         writeStartDocument();
-        
+
         // TODO: set encoding/version
     }
 

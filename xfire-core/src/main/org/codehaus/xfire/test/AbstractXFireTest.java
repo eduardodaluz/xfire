@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.codehaus.xfire.transport.local.LocalTransport;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -51,25 +53,27 @@ import org.jdom.output.XMLOutputter;
 
 /**
  * Contains helpful methods to test SOAP services.
- *
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public abstract class AbstractXFireTest
-        extends TestCase
+    extends TestCase
 {
     private ServiceFactory factory;
 
     private static String basedirPath;
 
     private XMLInputFactory defaultInputFactory = XMLInputFactory.newInstance();
+
     /**
      * Namespaces for the XPath expressions.
      */
     private Map namespaces = new HashMap();
+
     private MapSession session;
 
     private XFire xfire;
-    
+
     protected void printNode(Document node)
         throws Exception
     {
@@ -77,67 +81,91 @@ public abstract class AbstractXFireTest
 
         writer.output(node, System.out);
     }
-    
+
     protected void printNode(Element node)
-            throws Exception
+        throws Exception
     {
         XMLOutputter writer = new XMLOutputter(Format.getPrettyFormat());
 
         writer.output(node, System.out);
     }
 
+    protected String stringNode(Document node)
+        throws Exception
+    {
+        XMLOutputter writer = new XMLOutputter(Format.getPrettyFormat());
+        StringWriter sw = new StringWriter();
+        writer.output(node, sw);
+        return sw.toString();
+    }
+
+    protected String stringNode(Element node)
+        throws Exception
+    {
+        XMLOutputter writer = new XMLOutputter(Format.getPrettyFormat());
+        StringWriter sw = new StringWriter();
+        writer.output(node, sw);
+        return sw.toString();
+    }
+
     /**
      * Invoke a service with the specified document.
-     *
-     * @param service  The name of the service.
-     * @param document The request as an xml document in the classpath.
+     * 
+     * @param service
+     *            The name of the service.
+     * @param document
+     *            The request as an xml document in the classpath.
      */
     protected Document invokeService(String service, String document)
-            throws Exception
+        throws Exception
     {
-		InputStream stream = getResourceAsStream(document);
-		return invokeService( service, STAXUtils.createXMLStreamReader( stream, "UTF-8" ,null) );
-	}
+        InputStream stream = getResourceAsStream(document);
+        return invokeService(service, STAXUtils.createXMLStreamReader(stream, "UTF-8", null));
+    }
 
-	/**
-	 * Invoke a service with the specified document.
-	 *
-	 * @param service  The name of the service.
-	 * @param streamReader Stream representing incoming message
-	 */
-	protected Document invokeService( String service, XMLStreamReader streamReader ) throws Exception
-	{
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		MessageContext context = new MessageContext();
-		context.setSession( session );
-		context.setXFire(getXFire());
-		context.setProperty( Channel.BACKCHANNEL_URI, out );
+    /**
+     * Invoke a service with the specified document.
+     * 
+     * @param service
+     *            The name of the service.
+     * @param streamReader
+     *            Stream representing incoming message
+     */
+    protected Document invokeService(String service, XMLStreamReader streamReader)
+        throws Exception
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MessageContext context = new MessageContext();
+        context.setSession(session);
+        context.setXFire(getXFire());
+        context.setProperty(Channel.BACKCHANNEL_URI, out);
 
-		if (service != null)
-			context.setService(getServiceRegistry().getService(service));
+        if (service != null)
+            context.setService(getServiceRegistry().getService(service));
 
-		InMessage msg = new InMessage(streamReader);
+        InMessage msg = new InMessage(streamReader);
 
-		Transport t = getXFire().getTransportManager().getTransport( LocalTransport.BINDING_ID );
-		Channel c = t.createChannel();
+        Transport t = getXFire().getTransportManager().getTransport(LocalTransport.BINDING_ID);
+        Channel c = t.createChannel();
 
-		c.receive(context, msg);
+        c.receive(context, msg);
 
-		String response = out.toString();
-		if (response == null || response.length() == 0)
-			return null;
+        String response = out.toString();
+        if (response == null || response.length() == 0)
+            return null;
 
-		return readDocument(response);
-	}
+        return readDocument(response);
+    }
 
     public static final String RESPONSE = "response";
-    
-    protected InMessage invokeService( OutMessage msg, String transportID ) throws Exception
+
+    protected InMessage invokeService(OutMessage msg, String transportID)
+        throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         MessageContext context = new MessageContext();
         context.setXFire(getXFire());
-        context.setProperty( Channel.BACKCHANNEL_URI, out );
+        context.setProperty(Channel.BACKCHANNEL_URI, out);
 
         Transport t = getTransportManager().getTransport(transportID);
         Channel c = t.createChannel();
@@ -145,37 +173,42 @@ public abstract class AbstractXFireTest
 
         msg.setSerializer(new CopySerializer());
 
-        c.setEndpoint(new ChannelEndpoint() {
-            public void onReceive(MessageContext context, InMessage msg) {
-                try {
+        c.setEndpoint(new ChannelEndpoint()
+        {
+            public void onReceive(MessageContext context, InMessage msg)
+            {
+                try
+                {
                     // force attachment read...
                     if (msg.getAttachments() != null)
                         msg.getAttachments().getParts();
-                    
+
                     Document doc = new StaxBuilder().build(msg.getXMLStreamReader());
                     context.setExchange(new MessageExchange(context));
                     context.getExchange().setInMessage(msg);
-                    
+
                     msg.setProperty(RESPONSE, doc);
-                } catch (XMLStreamException e) {
+                }
+                catch (XMLStreamException e)
+                {
                     e.printStackTrace();
                 }
             }
         });
-        
+
         c.send(context, msg);
 
-        return context.getInMessage(); 
+        return context.getInMessage();
     }
-    
-	protected Document readDocument(String text)
-			throws XMLStreamException
-	{
-		return readDocument(text, defaultInputFactory);
-	}
+
+    protected Document readDocument(String text)
+        throws XMLStreamException
+    {
+        return readDocument(text, defaultInputFactory);
+    }
 
     protected Document readDocument(String text, XMLInputFactory ifactory)
-            throws XMLStreamException
+        throws XMLStreamException
     {
         try
         {
@@ -189,9 +222,9 @@ public abstract class AbstractXFireTest
             throw e;
         }
     }
-    
+
     protected Document getWSDLDocument(String service)
-            throws Exception
+        throws Exception
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -204,14 +237,18 @@ public abstract class AbstractXFireTest
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp()
-            throws Exception
+        throws Exception
     {
         super.setUp();
 
-        System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory");
-        addNamespace( "s", Soap11.getInstance().getNamespace() );
-        addNamespace( "soap12", Soap12.getInstance().getNamespace() );
-
+        System
+                .setProperty("javax.xml.stream.XMLInputFactory",
+                             "com.ctc.wstx.stax.WstxInputFactory");
+        addNamespace("s", Soap11.getInstance().getNamespace());
+        addNamespace("soap12", Soap12.getInstance().getNamespace());
+        addNamespace("wsdl", WSDLBuilder.WSDL11_NS);
+        addNamespace("xsd", SoapConstants.XSD);
+        addNamespace("xsi", SoapConstants.XSI_NS);
         createSession();
     }
 
@@ -223,7 +260,7 @@ public abstract class AbstractXFireTest
         session = null;
         namespaces = null;
         basedirPath = null;
-        
+
         super.tearDown();
     }
 
@@ -234,50 +271,53 @@ public abstract class AbstractXFireTest
 
     /**
      * Assert that the following XPath query selects one or more nodes.
-     *
+     * 
      * @param xpath
      */
     public List assertValid(String xpath, Object node)
-            throws Exception
+        throws Exception
     {
         return XPathAssert.assertValid(xpath, node, namespaces);
     }
 
     /**
      * Assert that the following XPath query selects no nodes.
-     *
+     * 
      * @param xpath
      */
     public List assertInvalid(String xpath, Object node)
-            throws Exception
+        throws Exception
     {
         return XPathAssert.assertInvalid(xpath, node, namespaces);
     }
 
     /**
-     * Asser that the text of the xpath node retrieved is equal to the value specified.
-     *
+     * Asser that the text of the xpath node retrieved is equal to the value
+     * specified.
+     * 
      * @param xpath
      * @param value
      * @param node
      */
     public void assertXPathEquals(String xpath, String value, Document node)
-            throws Exception
+        throws Exception
     {
         XPathAssert.assertXPathEquals(xpath, value, node, namespaces);
     }
 
     public void assertNoFault(Document node)
-            throws Exception
+        throws Exception
     {
         XPathAssert.assertNoFault(node);
     }
 
     /**
      * Add a namespace that will be used for XPath expressions.
-     *
-     * @param ns  Namespace name.
-     * @param uri The namespace uri.
+     * 
+     * @param ns
+     *            Namespace name.
+     * @param uri
+     *            The namespace uri.
      */
     public void addNamespace(String ns, String uri)
     {
@@ -286,11 +326,12 @@ public abstract class AbstractXFireTest
 
     /**
      * Get the WSDL for a service.
-     *
-     * @param service The name of the service.
+     * 
+     * @param service
+     *            The name of the service.
      */
     protected WSDLWriter getWSDL(String service)
-            throws Exception
+        throws Exception
     {
         ServiceRegistry reg = getServiceRegistry();
         Service hello = reg.getService(service);
@@ -307,10 +348,10 @@ public abstract class AbstractXFireTest
     {
         if (xfire == null)
             xfire = new DefaultXFire();
-        
+
         return xfire;
     }
-    
+
     protected TransportManager getTransportManager()
     {
         return getXFire().getTransportManager();
@@ -325,11 +366,11 @@ public abstract class AbstractXFireTest
     {
         if (factory == null)
         {
-            ObjectServiceFactory ofactory = 
-                new ObjectServiceFactory(getTransportManager(), new MessageBindingProvider());
-            
+            ObjectServiceFactory ofactory = new ObjectServiceFactory(getTransportManager(),
+                    new MessageBindingProvider());
+
             ofactory.setStyle(SoapConstants.STYLE_MESSAGE);
-            
+
             factory = ofactory;
         }
 
@@ -345,7 +386,7 @@ public abstract class AbstractXFireTest
     {
         return new XFireProxyFactory(getXFire());
     }
-    
+
     protected InputStream getResourceAsStream(String resource)
     {
         return getClass().getResourceAsStream(resource);
@@ -378,20 +419,28 @@ public abstract class AbstractXFireTest
         return basedirPath;
     }
 
-    protected static class CopySerializer implements MessageSerializer
+    protected static class CopySerializer
+        implements MessageSerializer
     {
-        public CopySerializer() {
+        public CopySerializer()
+        {
             super();
         }
 
-        public void readMessage(InMessage arg0, MessageContext arg1) throws XFireFault {
+        public void readMessage(InMessage arg0, MessageContext arg1)
+            throws XFireFault
+        {
         }
 
-        public void writeMessage(OutMessage out, XMLStreamWriter writer, MessageContext ctx) 
-            throws XFireFault {
-            try {
+        public void writeMessage(OutMessage out, XMLStreamWriter writer, MessageContext ctx)
+            throws XFireFault
+        {
+            try
+            {
                 STAXUtils.copy((XMLStreamReader) out.getBody(), writer);
-            } catch (XMLStreamException e) {
+            }
+            catch (XMLStreamException e)
+            {
                 throw new XFireFault("Couldn't write to stream.", e, XFireFault.RECEIVER);
             }
         }

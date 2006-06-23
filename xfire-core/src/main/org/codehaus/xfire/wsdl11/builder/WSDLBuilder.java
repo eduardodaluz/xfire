@@ -38,25 +38,36 @@ import org.jdom.Element;
 
 /**
  * WSDL
- *
+ * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class WSDLBuilder
     extends org.codehaus.xfire.wsdl11.builder.AbstractWSDL
     implements WSDLWriter
 {
+    public static final String OVERRIDING_TYPES = "overridingTypes";
+
     private PortType portType;
 
     private Map wsdlOps = new HashMap();
 
     private TransportManager transportManager;
-    
+
     private Map declaredParameters = new HashMap();
 
     public WSDLBuilder(Service service, TransportManager transportManager) throws WSDLException
     {
         super(service);
         this.transportManager = transportManager;
+        List l = (List) service.getProperty(OVERRIDING_TYPES);
+        if (l != null)
+        {
+            for (Iterator it = l.iterator(); it.hasNext();)
+            {
+                SchemaType t = (SchemaType) it.next();
+                addDependency(t);
+            }
+        }
     }
 
     public TransportManager getTransportManager()
@@ -69,7 +80,8 @@ public class WSDLBuilder
         this.transportManager = transportManager;
     }
 
-    public void write(OutputStream out) throws IOException
+    public void write(OutputStream out)
+        throws IOException
     {
         try
         {
@@ -78,7 +90,8 @@ public class WSDLBuilder
             createConcreteInterface(portType);
 
             writeDocument();
-        } catch (WSDLException e)
+        }
+        catch (WSDLException e)
         {
             throw new XFireRuntimeException("error creating wsdl", e);
         }
@@ -92,7 +105,7 @@ public class WSDLBuilder
         Definition def = getDefinition();
 
         QName portName = service.getServiceInfo().getPortType();
-        
+
         if (portName == null)
             portName = new QName(getTargetNamespace(), service.getSimpleName() + "PortType");
 
@@ -126,7 +139,7 @@ public class WSDLBuilder
                 Fault faultMsg = createFault(op, fault);
                 faultMessages.add(faultMsg);
             }
-            
+
             javax.wsdl.Operation wsdlOp = createOperation(op, req, res, faultMessages);
             wsdlOp.setUndefined(false);
             portType.addOperation(wsdlOp);
@@ -151,32 +164,32 @@ public class WSDLBuilder
         for (Iterator itr = service.getBindings().iterator(); itr.hasNext();)
         {
             Binding binding = (Binding) itr.next();
+
             javax.wsdl.Binding wbinding = binding.createBinding(this, portType);
-            Collection endpoints = service.getEndpoints(binding.getName());
-            
-            // If no user-defined endpoints, create default port
-            if (endpoints == null || endpoints.size() == 0)
+
+            Port port = binding.createPort(this, wbinding);
+            if (port != null)
             {
-                Port port = binding.createPort(this, wbinding);
+                wsdlService.addPort(port);
+            }
+
+            // Add in user defined endpoints
+            Collection endpoints = service.getEndpoints(binding.getName());
+            if (endpoints == null)
+                continue;
+
+            for (Iterator eitr = endpoints.iterator(); eitr.hasNext();)
+            {
+                Endpoint ep = (Endpoint) eitr.next();
+
+                port = binding.createPort(ep, this, wbinding);
                 if (port != null)
                 {
                     wsdlService.addPort(port);
                 }
             }
-            else // else create port(s) from user-defined endpoint(s)
-            {
-                for (Iterator eitr = endpoints.iterator(); eitr.hasNext();)
-                {
-                    Endpoint ep = (Endpoint) eitr.next();
-                    Port port = binding.createPort(ep, this, wbinding);
-                    if (port != null)
-                    {
-                        wsdlService.addPort(port);
-                    }
-                }
-            }
         }
-        
+
         def.addService(wsdlService);
     }
 
@@ -216,7 +229,7 @@ public class WSDLBuilder
         faultMsg.setQName(new QName(getTargetNamespace(), faultInfo.getName()));
         faultMsg.setUndefined(false);
         getDefinition().addMessage(faultMsg);
-       
+
         Fault fault = getDefinition().createFault();
         fault.setName(faultInfo.getName());
         fault.setMessage(faultMsg);
@@ -224,14 +237,14 @@ public class WSDLBuilder
         for (Iterator itr = faultInfo.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo info = (MessagePartInfo) itr.next();
-            
+
             String uri = info.getName().getNamespaceURI();
             addNamespace(getNamespacePrefix(uri), uri);
 
             Part part = createPart(info);
             faultMsg.addPart(part);
         }
-        
+
         return fault;
     }
 
@@ -249,8 +262,8 @@ public class WSDLBuilder
     }
 
     /**
-     * Creates a wsdl:message part without creating a global schema
-     * element.
+     * Creates a wsdl:message part without creating a global schema element.
+     * 
      * @param pName
      * @param clazz
      * @param type
@@ -265,9 +278,6 @@ public class WSDLBuilder
         Part part = getDefinition().createPart();
         part.setName(pName.getLocalPart());
 
-        String partPrefix = getNamespacePrefix(pName.getNamespaceURI());
-        addNamespace(partPrefix, pName.getNamespaceURI());
-      
         String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
         addNamespace(prefix, schemaTypeName.getNamespaceURI());
 
@@ -277,13 +287,13 @@ public class WSDLBuilder
         }
         else
         {
-            
+
             part.setTypeName(schemaTypeName);
         }
-        
+
         return part;
     }
-    
+
     /**
      * Creates a wsdl:message part and a global schema element for it if it is
      * abstract.
@@ -301,15 +311,12 @@ public class WSDLBuilder
 
         Part part = getDefinition().createPart();
         part.setName(pName.getLocalPart());
-        
-        String partPrefix = getNamespacePrefix(pName.getNamespaceURI());
-        addNamespace(partPrefix, pName.getNamespaceURI());
-      
-        String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
-        addNamespace(prefix, schemaTypeName.getNamespaceURI());
-        
+
         if (!type.isAbstract())
         {
+            String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+            addNamespace(prefix, schemaTypeName.getNamespaceURI());
+
             part.setElementName(schemaTypeName);
 
             return part;
@@ -322,12 +329,15 @@ public class WSDLBuilder
 
             Element element = new Element("element", XSD_NS);
             schemaEl.addContent(element);
-            
+
+            String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
+            addNamespace(prefix, schemaTypeName.getNamespaceURI());
+
             if (type.isAbstract())
             {
                 element.setAttribute(new Attribute("name", pName.getLocalPart()));
-                element.setAttribute(new Attribute("type",
-                                                   prefix + ":" + schemaTypeName.getLocalPart()));
+                element.setAttribute(new Attribute("type", prefix + ":"
+                        + schemaTypeName.getLocalPart()));
             }
 
             declaredParameters.put(pName, type);
@@ -336,9 +346,10 @@ public class WSDLBuilder
         {
             if (!regdType.equals(type))
             {
-                throw new XFireRuntimeException("Cannot create two schema elements with the same name " +
-                                                "and of different types: " + pName);
-                                                
+                throw new XFireRuntimeException(
+                        "Cannot create two schema elements with the same name "
+                                + "and of different types: " + pName);
+
             }
         }
 
@@ -347,8 +358,10 @@ public class WSDLBuilder
         return part;
     }
 
-
-    public javax.wsdl.Operation createOperation(OperationInfo op, Message req, Message res, List faultMessages)
+    public javax.wsdl.Operation createOperation(OperationInfo op,
+                                                Message req,
+                                                Message res,
+                                                List faultMessages)
     {
         Definition def = getDefinition();
         javax.wsdl.Operation wsdlOp = def.createOperation();
@@ -370,12 +383,12 @@ public class WSDLBuilder
         {
             wsdlOp.addFault((Fault) itr.next());
         }
-        
+
         wsdlOp.setName(op.getName());
 
         return wsdlOp;
     }
-    
+
     public void createInputParts(Message req, OperationInfo op)
     {
         writeParameters(req, op.getInputMessage().getMessageParts());
@@ -391,12 +404,12 @@ public class WSDLBuilder
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
-            
-            addNamespaceImport(getService().getTargetNamespace(), 
-                               param.getSchemaType().getSchemaType().getNamespaceURI());
-            
+
+            addNamespaceImport(getService().getTargetNamespace(), param.getSchemaType()
+                    .getSchemaType().getNamespaceURI());
+
             Part part = createPart(param);
-            
+
             message.addPart(part);
         }
     }
@@ -405,9 +418,7 @@ public class WSDLBuilder
     {
         Part part = getDefinition().createPart();
 
-        QName typeQName = createDocumentType(op.getInputMessage(), 
-                                             part,
-                                             op.getName());
+        QName typeQName = createDocumentType(op.getInputMessage(), part, op.getName());
         part.setName("parameters");
         part.setElementName(typeQName);
 
@@ -420,18 +431,14 @@ public class WSDLBuilder
         Part part = getDefinition().createPart();
 
         // Document style service
-        QName typeQName = createDocumentType(op.getOutputMessage(), 
-                                             part,
-                                             op.getName() + "Response");
+        QName typeQName = createDocumentType(op.getOutputMessage(), part, op.getName() + "Response");
         part.setElementName(typeQName);
         part.setName("parameters");
 
         req.addPart(part);
     }
 
-    protected QName createDocumentType(MessageInfo message, 
-                                       Part part,
-                                       String opName)
+    protected QName createDocumentType(MessageInfo message, Part part, String opName)
     {
         Element element = new Element("element", AbstractWSDL.XSD_NS);
         element.setAttribute(new Attribute("name", opName));
@@ -447,8 +454,8 @@ public class WSDLBuilder
         }
 
         /**
-         * Don't create the schema until after we add the types in
-         * (via WSDLBuilder.addDependency()) writeParametersSchema. 
+         * Don't create the schema until after we add the types in (via
+         * WSDLBuilder.addDependency()) writeParametersSchema.
          */
         Element schemaEl = createSchemaType(getTargetNamespace());
         schemaEl.addContent(element);
@@ -460,8 +467,7 @@ public class WSDLBuilder
      * @param op
      * @param sequence
      */
-    protected void writeParametersSchema(Collection params, 
-                                       Element sequence)
+    protected void writeParametersSchema(Collection params, Element sequence)
     {
         for (Iterator itr = params.iterator(); itr.hasNext();)
         {
@@ -474,7 +480,7 @@ public class WSDLBuilder
             QName schemaType = type.getSchemaType();
 
             addNamespaceImport(getService().getTargetNamespace(), schemaType.getNamespaceURI());
-            
+
             String uri = type.getSchemaType().getNamespaceURI();
             String prefix = getNamespacePrefix(uri);
             addNamespace(prefix, uri);
@@ -485,20 +491,22 @@ public class WSDLBuilder
             if (type.isAbstract())
             {
                 element.setAttribute(new Attribute("name", pName.getLocalPart()));
-                
-                element.setAttribute(new Attribute("type", 
-                                                   prefix + ":" + schemaType.getLocalPart()));
+
+                element
+                        .setAttribute(new Attribute("type", prefix + ":"
+                                + schemaType.getLocalPart()));
             }
             else
             {
-                element.setAttribute(new Attribute("ref",  prefix + ":" + schemaType.getLocalPart()));
+                element
+                        .setAttribute(new Attribute("ref", prefix + ":" + schemaType.getLocalPart()));
             }
 
             if (type.isNillable())
             {
                 element.setAttribute(new Attribute("nillable", "true"));
             }
-            
+
             element.setAttribute(new Attribute("minOccurs", "1"));
             element.setAttribute(new Attribute("maxOccurs", "1"));
         }

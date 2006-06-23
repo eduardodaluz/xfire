@@ -43,7 +43,7 @@ public class StaxSerializer
 
         String boundPrefix = writer.getPrefix(elUri);
         boolean writeElementNS = false;
-        if ( boundPrefix == null || !elPrefix.equals(boundPrefix) )
+        if (boundPrefix == null || !elPrefix.equals(boundPrefix))
         {
             writeElementNS = true;
         }
@@ -58,6 +58,7 @@ public class StaxSerializer
             String prefix = ns.getPrefix();
             String uri = ns.getURI();
 
+            writer.setPrefix(prefix, uri);
             writer.writeNamespace(prefix, uri);
 
             if (elUri.equals(uri) && elPrefix.equals(prefix))
@@ -69,7 +70,7 @@ public class StaxSerializer
         for (Iterator itr = e.getAttributes().iterator(); itr.hasNext();)
         {
             Attribute attr = (Attribute) itr.next();
-            String attPrefix= attr.getNamespacePrefix();
+            String attPrefix = attr.getNamespacePrefix();
             String attUri = attr.getNamespaceURI();
 
             if (attUri == null || attUri.equals(""))
@@ -82,17 +83,19 @@ public class StaxSerializer
 
                 if (!isDeclared(writer, attPrefix, attUri))
                 {
-                    if( elUri.equals( attUri ) && elPrefix.equals( attPrefix ) )
+                    if (elUri.equals(attUri) && elPrefix.equals(attPrefix))
                     {
-                        if( writeElementNS )
+                        if (writeElementNS)
                         {
-                            writer.writeNamespace( attPrefix, attUri );
+                            writer.setPrefix(attPrefix, attUri);
+                            writer.writeNamespace(attPrefix, attUri);
                             writeElementNS = false;
                         }
                     }
                     else
                     {
-                        writer.writeNamespace( attPrefix, attUri );
+                        writer.setPrefix(attPrefix, attUri);
+                        writer.writeNamespace(attPrefix, attUri);
                     }
                 }
             }
@@ -100,7 +103,7 @@ public class StaxSerializer
 
         if (writeElementNS)
         {
-            if ( elPrefix == null || elPrefix.length() ==  0 )
+            if (elPrefix == null || elPrefix.length() == 0)
             {
                 writer.writeDefaultNamespace(elUri);
             }
@@ -132,7 +135,7 @@ public class StaxSerializer
             else if (n instanceof EntityRef)
             {
                 EntityRef ref = (EntityRef) n;
-                //writer.writeEntityRef(ref.)
+                // writer.writeEntityRef(ref.)
             }
         }
 
@@ -148,7 +151,14 @@ public class StaxSerializer
     private boolean isDeclared(XMLStreamWriter writer, String prefix, String uri)
         throws XMLStreamException
     {
-        String decPrefix = writer.getPrefix(uri);
-        return (decPrefix != null && decPrefix.equals(prefix));
+        for (Iterator pxs = writer.getNamespaceContext().getPrefixes(uri); pxs.hasNext();)
+        {
+            String px = (String) pxs.next();
+            if (px.equals(prefix))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
