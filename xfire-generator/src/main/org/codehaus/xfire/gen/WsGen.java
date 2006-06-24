@@ -12,7 +12,7 @@ public class WsGen {
 	
     private static void usage() {
 		System.out
-				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI]\n");
+				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI] [-forceOverwrite true]\n");
 	}
 
 	private static void missingParam(String param) {
@@ -30,6 +30,7 @@ public class WsGen {
 		String profile = null;
 		String externalBindings = null;
 		String baseURI = null;
+        boolean forceOverwrite = false;
         boolean explicit = false;
 
 		if (args.length < 3) {
@@ -65,6 +66,9 @@ public class WsGen {
             if ("-x".equals(param)) {
                 explicit = true;
             }
+            if("-forceOverwrite".equals(param)){
+                forceOverwrite=true;
+            }
 		}
 
 		if (wsdl == null) {
@@ -86,12 +90,14 @@ public class WsGen {
 		System.out.print("baseURI : " + (baseURI == null?"" : baseURI)+ "\n");
 		System.out.print("profile : " + (profile == null?"" : profile)+ "\n");
         System.out.print("explictAnnotation : " + explicit+ "\n");
+        System.out.print("forceOverwrite : " + forceOverwrite+ "\n");
 
 		Wsdl11Generator generator = new Wsdl11Generator();
 		generator.setDestinationPackage(_package);
 		generator.setOutputDirectory(outputDirectory);
 		generator.setWsdl(wsdl);
 		generator.setExplicitAnnotation(explicit);
+        generator.setForceOverwrite(forceOverwrite);
         
 		if (binding != null)
 			generator.setBinding(binding);

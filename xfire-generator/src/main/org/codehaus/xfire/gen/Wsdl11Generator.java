@@ -18,6 +18,8 @@ import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.xml.sax.InputSource;
 
 import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JPackage;
 
 /**
  * A bean type class which generates client and server stubs from a wsdl.
@@ -52,11 +54,41 @@ public class Wsdl11Generator
     
     private boolean explicitAnnotation;
     
+    private boolean forceOverwrite;
+    
+    public boolean isForceOverwrite()
+    {
+        return forceOverwrite;
+    }
+
+    public void setForceOverwrite(boolean forceOverwrite)
+    {
+        this.forceOverwrite = forceOverwrite;
+    }
+
     @SuppressWarnings("unchecked")
     public void generate() throws Exception
     {
         File dest = new File(outputDirectory);
-        if (!dest.exists()) dest.mkdirs();
+        if (!dest.exists()) 
+        {
+            dest.mkdirs(); 
+        }else{
+            String name = getDestinationPackage();
+            if( name == null ) name="";
+            final char sep = System.getProperty("file.separator").charAt(0);
+            // Should be better way to do this.
+            while(name.indexOf('.')>0){
+                name = name.replace('.',sep);    
+            }
+            File clientDir = new File(dest,name); 
+            if( clientDir.exists() && !forceOverwrite ){
+                System.out.print("Destination directory ["+clientDir.getAbsolutePath()+"] already exist! If you are sure you want to overwrite existing files specify -forceOverwrite parameter\n");
+                throw new RuntimeException("Files overwriting not allowed");
+            }else{
+                log.warn("Existing files will be overwritten");
+            }
+        }
 
         if (support == null)
         {
@@ -125,7 +157,6 @@ public class Wsdl11Generator
             
             plugin.generate(context);
         }
-
         // Write the code!
         codeModel.build(dest);
     }

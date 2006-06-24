@@ -14,6 +14,7 @@ public class WsGenTask extends MatchingTask
     private String baseURI;
     private String externalBindings;
     private boolean explicitAnnotation;
+    private boolean forceOverwrite;
     
     public void execute()
         throws BuildException
@@ -31,7 +32,7 @@ public class WsGenTask extends MatchingTask
         generator.setBaseURI(baseURI);
         generator.setExternalBindings(externalBindings);
         generator.setExplicitAnnotation(explicitAnnotation);
-        
+        generator.setForceOverwrite(forceOverwrite);
         if (binding != null) generator.setBinding(binding);
         if (profile != null) generator.setProfile(profile);
         
@@ -124,4 +125,16 @@ public class WsGenTask extends MatchingTask
 	public void setExplicitAnnotation(boolean explicitAnnotation) {
 		this.explicitAnnotation = explicitAnnotation;
 	}
+
+    public boolean isForceOverwrite()
+    {
+        return forceOverwrite;
+    }
+
+    public void setForceOverwrite(boolean forceOverwrite)
+    {
+        this.forceOverwrite = forceOverwrite;
+    }
+    
+    
 }
