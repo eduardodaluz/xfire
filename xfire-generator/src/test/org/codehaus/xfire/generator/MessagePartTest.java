@@ -19,6 +19,7 @@ public class MessagePartTest
         generator.setDestinationPackage("org.codehaus.xfire.generator.messagepart");
         generator.setBinding("jaxb");
         generator.setBaseURI(getTestFilePath("src/wsdl/import-test/"));
+        generator.setForceOverwrite(true);
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();

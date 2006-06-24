@@ -11,7 +11,8 @@ public class WeatherTest
         generator.setWsdl(getTestFilePath("src/wsdl/WeatherForecast.wsdl"));
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("weather");
-
+        generator.setForceOverwrite(true);
+        
         generator.generate();        
     }
 }

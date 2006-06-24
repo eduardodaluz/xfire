@@ -13,7 +13,7 @@ public class JaxbGenerationTest
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/echoFault.wsdl"));
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
-        
+        generator.setForceOverwrite(true);        
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
@@ -30,7 +30,7 @@ public class JaxbGenerationTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.wwcars");
         generator.setBinding("jaxb");
-        
+        generator.setForceOverwrite(true);
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
@@ -47,7 +47,7 @@ public class JaxbGenerationTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.globalweather.twopts");
         generator.setBinding("jaxb");
-        
+        generator.setForceOverwrite(true);
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
@@ -62,6 +62,7 @@ public class JaxbGenerationTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.auth");
         generator.setBinding("jaxb");
+        generator.setForceOverwrite(true);
         
         generator.generate();
         
@@ -77,6 +78,7 @@ public class JaxbGenerationTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.oneway");
         generator.setBinding("jaxb");
+        generator.setForceOverwrite(true);
         
         generator.generate();
         
@@ -92,6 +94,7 @@ public class JaxbGenerationTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.globalweather");
         generator.setBinding("jaxb");
+        generator.setForceOverwrite(true);
         
         generator.generate();
         
@@ -106,6 +109,7 @@ public class JaxbGenerationTest
         generator.setWsdl(getTestFilePath("src/wsdl/echoWrapped.wsdl"));
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.echo.wrapped");
+        generator.setForceOverwrite(true);
         
         generator.generate();
         
@@ -127,6 +131,7 @@ public class JaxbGenerationTest
         Wsdl11Generator generator = new Wsdl11Generator();
         generator.setWsdl(getTestFilePath("src/wsdl/echoWrapped.wsdl"));
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        generator.setForceOverwrite(true);
         
         generator.generate();
         

@@ -13,6 +13,7 @@ public class ExternalBindingTest
         generator.setBaseURI(getTestFilePath(""));
         generator.setDestinationPackage("org.codehaus.xfire.echo.external");
         generator.setExternalBindings("src/bindings/echo_schema_import.xjb");
+        generator.setForceOverwrite(true);
         generator.generate();
 
         assertTrue(getTestFile("target/test-services/org/codehaus/xfire/echo/external/Echo.java").exists());

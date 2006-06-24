@@ -18,6 +18,8 @@ public class WsdlImportTest
         generator.setDestinationPackage("org.codehaus.xfire.generator.imports");
         generator.setBinding("jaxb");
         generator.setBaseURI(getTestFilePath("src/wsdl/import-test/"));
+        generator.setForceOverwrite(true);
+        
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
