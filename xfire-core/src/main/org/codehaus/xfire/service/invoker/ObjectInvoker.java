@@ -15,8 +15,8 @@ import org.codehaus.xfire.service.Service;
  * @author <a href="mailto:ajoo.email@gmail.com">Ben Yu</a>
  * @since Nov 16, 2004
  */
-public final class ObjectInvoker
-    implements Invoker
+public final class ObjectInvoker extends AbstractInvoker
+   
 {
     /**
      * Constant to denote the implementation class for the service.
@@ -43,6 +43,14 @@ public final class ObjectInvoker
         final Service service = context.getService();
         localfactory.setService(service);
         return fwd.invoke(m, params, context);
+    }
+
+    public Object getServiceObject(final MessageContext context) throws XFireFault {
+        
+        final Service service = context.getService();
+        localfactory.setService(service);    
+        return fwd.getServiceObject(context);
+        
     }
 
     /**
