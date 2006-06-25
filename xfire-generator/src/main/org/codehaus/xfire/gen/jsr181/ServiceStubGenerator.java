@@ -1,5 +1,7 @@
 package org.codehaus.xfire.gen.jsr181;
 
+import java.io.File;
+
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
@@ -7,6 +9,8 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -22,6 +26,8 @@ import com.sun.codemodel.JType;
 public class ServiceStubGenerator
     extends AbstractServiceGenerator
 {
+    private final static Log log = LogFactory.getLog(ServiceStubGenerator.class);
+    
     public static final String SERVICE_STUB = "service.stub";
     
     @Override
@@ -33,6 +39,27 @@ public class ServiceStubGenerator
         super.generate(context, service);
     }
 
+    @Override
+    protected boolean overwriteClass(GenerationContext context, Service service, String clsName, File classFile)
+    {
+        if (context.isServerStubOverwritten())
+            return true;
+
+        try
+        {
+            JType type = context.getCodeModel().parseType(clsName);
+            service.setProperty(SERVICE_STUB, type);
+        }
+        catch (ClassNotFoundException e)
+        {
+            return true;
+        }
+        
+        log.info("Found a pre-existing server stub. It will not be overwritten.");
+        
+        return false;
+    }
+    
     @Override
     protected String getClassName(GenerationContext context, Service service)
     {
@@ -52,6 +79,7 @@ public class ServiceStubGenerator
         
         ann.param("serviceName", service.getSimpleName());
         ann.param("targetNamespace", service.getTargetNamespace());
+        ann.param("wsdlLocation", context.getWsdlLocation());
         
         JClass intf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         ann.param("endpointInterface", intf.fullName());

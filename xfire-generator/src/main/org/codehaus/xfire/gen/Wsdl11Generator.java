@@ -18,8 +18,6 @@ import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.xml.sax.InputSource;
 
 import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JPackage;
 
 /**
  * A bean type class which generates client and server stubs from a wsdl.
@@ -70,41 +68,9 @@ public class Wsdl11Generator
     public void generate() throws Exception
     {
         File dest = new File(outputDirectory);
-        if (!dest.exists()) 
-        {
-            dest.mkdirs(); 
-        }else{
-            String name = getDestinationPackage();
-            if( name == null ) name="";
-            final char sep = System.getProperty("file.separator").charAt(0);
-            // Should be better way to do this.
-            while(name.indexOf('.')>0){
-                name = name.replace('.',sep);    
-            }
-            File clientDir = new File(dest,name); 
-            if( clientDir.exists() && !overwrite ){
-                System.out.print("Destination directory ["+clientDir.getAbsolutePath()+"] already exist! If you are sure you want to overwrite existing files specify -overwrite parameter\n");
-                throw new RuntimeException("Files overwriting not allowed");
-            }else{
-                log.warn("Existing files will be overwritten");
-            }
-        }
+        dest.mkdirs(); 
 
-        if (support == null)
-        {
-            if (binding.equals(JAXB))
-            {
-                support = loadSupport("org.codehaus.xfire.gen.jaxb.JAXBSchemaSupport");
-            }
-            else if (binding.equals(XMLBEANS))
-            {
-                support = loadSupport("org.codehaus.xfire.gen.xmlbeans.XmlBeansSchemaSupport");
-            }
-            else
-            {
-                throw new Exception("Illegal binding: " + binding);
-            }
-        }
+        loadSchemaSupport();
 
         if (baseURI != null && new File(baseURI).exists())
         {
@@ -144,6 +110,7 @@ public class Wsdl11Generator
         context.setSchemas(builder.getSchemas());
         context.setExternalBindings(getExternalBindingFiles());
         context.setExplicitAnnotation(isExplicitAnnotation());
+        context.setServerStubOverwritten(isOverwrite());
         
         support.initialize(context);
 
@@ -159,6 +126,26 @@ public class Wsdl11Generator
         }
         // Write the code!
         codeModel.build(dest);
+    }
+
+    private void loadSchemaSupport()
+        throws Exception
+    {
+        if (support == null)
+        {
+            if (binding.equals(JAXB))
+            {
+                support = loadSupport("org.codehaus.xfire.gen.jaxb.JAXBSchemaSupport");
+            }
+            else if (binding.equals(XMLBEANS))
+            {
+                support = loadSupport("org.codehaus.xfire.gen.xmlbeans.XmlBeansSchemaSupport");
+            }
+            else
+            {
+                throw new Exception("Illegal binding: " + binding);
+            }
+        }
     }
   
     private Map<String,InputStream> getExternalBindingFiles() throws IOException

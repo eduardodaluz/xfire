@@ -3,10 +3,7 @@ package jsr181.jaxb.auth;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.annotations.AnnotationServiceFactory;
-import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
-import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
+import org.codehaus.xfire.jaxb2.JaxbServiceFactory;
 import org.codehaus.xfire.service.Service;
 
 public class AuthServiceTest   
@@ -19,9 +16,7 @@ public class AuthServiceTest
         throws Exception
     {
         super.setUp();
-        AnnotationServiceFactory asf = new AnnotationServiceFactory(new Jsr181WebAnnotations(),
-                                                                    getXFire().getTransportManager(),
-                                                                    new AegisBindingProvider(new JaxbTypeRegistry()));
+        JaxbServiceFactory asf = new JaxbServiceFactory(getXFire().getTransportManager());
         service = asf.create(AuthServiceCustomImpl.class);
 
         getServiceRegistry().register(service);

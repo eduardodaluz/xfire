@@ -16,16 +16,28 @@ public class GenerationContext
     extends AbstractContext
 {
     private JCodeModel codeModel;
-    private Map<QName,Collection<Service>> services;
+
+    private Map<QName, Collection<Service>> services;
+
     private Object wsdl;
+
     private String destinationPackage;
+
     private String baseURI;
+
     private SchemaSupport schemaGenerator;
+
     private File outputDirectory;
+
     private String wsdlLocation;
+
     private Collection schemas;
-    private Map<String,InputStream> externalBindings;
+
+    private Map<String, InputStream> externalBindings;
+
     private boolean explicitAnnotation;
+
+    private boolean serverStubOverwritten = false;
     
     public GenerationContext(JCodeModel model, Object wsdl)
     {
@@ -78,12 +90,12 @@ public class GenerationContext
         return codeModel;
     }
 
-    public Map<QName,Collection<Service>> getServices()
+    public Map<QName, Collection<Service>> getServices()
     {
         return services;
     }
 
-    public void setServices(Map<QName,Collection<Service>> services)
+    public void setServices(Map<QName, Collection<Service>> services)
     {
         this.services = services;
     }
@@ -92,7 +104,7 @@ public class GenerationContext
     {
         return wsdl;
     }
-    
+
     public File getBaseDir()
     {
         return new File(".");
@@ -118,22 +130,33 @@ public class GenerationContext
         this.schemaGenerator = schemaGenerator;
     }
 
-    public Map<String,InputStream> getExternalBindings()
+    public Map<String, InputStream> getExternalBindings()
     {
         return externalBindings;
     }
 
-    public void setExternalBindings(Map<String,InputStream> externalBindings)
+    public void setExternalBindings(Map<String, InputStream> externalBindings)
     {
         this.externalBindings = externalBindings;
     }
 
-	public boolean isExplicitAnnotation() {
-		return explicitAnnotation;
-	}
+    public boolean isExplicitAnnotation()
+    {
+        return explicitAnnotation;
+    }
 
-	public void setExplicitAnnotation(boolean explicitAnnotation) {
-		this.explicitAnnotation = explicitAnnotation;
-	}
-    
+    public void setExplicitAnnotation(boolean explicitAnnotation)
+    {
+        this.explicitAnnotation = explicitAnnotation;
+    }
+
+    public boolean isServerStubOverwritten()
+    {
+        return serverStubOverwritten;
+    }
+
+    public void setServerStubOverwritten(boolean serverStubOverwritten)
+    {
+        this.serverStubOverwritten = serverStubOverwritten;
+    }
 }

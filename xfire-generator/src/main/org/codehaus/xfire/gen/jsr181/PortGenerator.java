@@ -1,7 +1,6 @@
 package org.codehaus.xfire.gen.jsr181;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +12,6 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
-import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GeneratorPlugin;
@@ -183,9 +181,8 @@ public class PortGenerator
         JCodeModel model = context.getCodeModel();
         JVar serviceVar = servCls.field(JMod.PRIVATE, Service.class, "service" + number);
         
-        JDefinedClass serviceImpl = (JDefinedClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
-        JDefinedClass serviceIntf = (JDefinedClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
-        
+        JClass serviceImpl = (JClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
+        JClass serviceIntf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         
         /**
          * createService()

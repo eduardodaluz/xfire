@@ -71,22 +71,6 @@ public class JaxbGenerationTest
         assertNotNull(echo);
     }
     
-    public void testOneWay() throws Exception
-    {
-        Wsdl11Generator generator = new Wsdl11Generator();
-        generator.setWsdl(getTestFilePath("src/wsdl/oneway.wsdl"));
-        generator.setOutputDirectory(getTestFilePath("target/test-services"));
-        generator.setDestinationPackage("jsr181.jaxb.oneway");
-        generator.setBinding("jaxb");
-        generator.setOverwrite(true);
-        
-        generator.generate();
-        
-        JCodeModel model = generator.getCodeModel();
-        JDefinedClass echo = model._getClass("jsr181.jaxb.oneway.SendMessagePortType");
-        assertNotNull(echo);
-    }
-    
     public void testGlobalWeather() throws Exception
     {
         Wsdl11Generator generator = new Wsdl11Generator();

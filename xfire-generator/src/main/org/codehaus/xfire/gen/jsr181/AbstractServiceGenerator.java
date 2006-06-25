@@ -1,5 +1,6 @@
 package org.codehaus.xfire.gen.jsr181;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -65,6 +66,13 @@ public abstract class AbstractServiceGenerator
         String clsName = getClassName(context, service);
         log.info("Creating class " + clsName);
 
+        File classFile = new File(context.getOutputDirectory(), clsName.replace('.', File.separatorChar) + ".java");
+        
+        if (classFile.exists() && !overwriteClass(context, service, clsName, classFile))
+        {
+            return;
+        }
+        
         JDefinedClass jc = context.getCodeModel()._class(clsName, getClassType());
         
         SchemaSupport schema = context.getSchemaGenerator();
@@ -90,6 +98,12 @@ public abstract class AbstractServiceGenerator
             generateOperation(context, op, method);
         }
     }
+
+    protected boolean overwriteClass(GenerationContext context, Service service, String clsName, File classFile)
+    {
+        return true;
+    }
+
 
     public Service getCurrentService()
     {
