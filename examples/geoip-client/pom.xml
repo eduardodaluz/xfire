@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.xfire.examples</groupId>
   <artifactId>geoip-client-example</artifactId>
-  <packaging>war</packaging>
+  <!--  packaging>war</packaging -->
   <version>1.2-SNAPSHOT</version>
   <name></name>
 
@@ -38,7 +38,7 @@
                      classpathref="maven.compile.classpath"/>
               		
                 <wsgen outputDirectory="${basedir}/target/generated-source"
-                  wsdl="${basedir}/src/wsdl/geoip.wsdl" package="net.webservicex.geoip.jaxb" />
+                  wsdl="${basedir}/src/wsdl/geoip.wsdl" package="net.webservicex.geoip.jaxb" overwrite="true"/>
                 <!-- END SNIPPET: client -->
               </tasks>
               <sourceRoot>${basedir}/target/generated-source</sourceRoot>
