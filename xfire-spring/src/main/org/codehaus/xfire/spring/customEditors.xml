@@ -3,7 +3,7 @@
 
 <beans>
 
-  <bean id="customEditorConfigurer"
+  <bean id="xfire.customEditorConfigurer"
     class="org.springframework.beans.factory.config.CustomEditorConfigurer">
     <property name="customEditors">
       <map>
