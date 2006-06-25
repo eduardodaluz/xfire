@@ -30,6 +30,7 @@ public class ServiceStubGenerator
         SchemaSupport schema = context.getSchemaGenerator();
         
         String name = javify(part.getName().getLocalPart());
+        name = name.substring(0, 1).toUpperCase() + name.substring(1);
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
         String clsName = getPackage(getCurrentService().getName(), context) + "." + name;
@@ -37,7 +38,6 @@ public class ServiceStubGenerator
         try 
         {
             exCls = model._class(clsName);
-            
         } 
         catch (JClassAlreadyExistsException e) {
             return model.ref(clsName);

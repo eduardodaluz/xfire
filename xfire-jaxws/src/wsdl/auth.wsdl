@@ -36,6 +36,14 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <xsd:element name="authenticationFault2">
+        <xsd:complexType >
+          <xsd:sequence>
+            <xsd:element name="errorCode" type="xsd:int" minOccurs="0" />
+            <xsd:element name="message" type="xsd:string" minOccurs="0" nillable="true" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="authenticateResponse">
@@ -47,11 +55,15 @@
   <wsdl:message name="AuthenticationFault">
     <wsdl:part element="ns1:AuthenticationFault" name="AuthenticationFault" />
   </wsdl:message>
+  <wsdl:message name="authenticationFault2">
+    <wsdl:part element="ns1:authenticationFault2" name="authenticationFault2" />
+  </wsdl:message>
   <wsdl:portType name="AuthServicePortType">
     <wsdl:operation name="authenticate">
       <wsdl:input message="tns:authenticateRequest" name="authenticateRequest" />
       <wsdl:output message="tns:authenticateResponse" name="authenticateResponse" />
       <wsdl:fault message="tns:AuthenticationFault" name="AuthenticationFault" />
+      <wsdl:fault message="tns:authenticationFault2" name="authenticationFault2" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="AuthServiceHttpBinding" type="tns:AuthServicePortType">
@@ -66,6 +78,9 @@
       </wsdl:output>
       <wsdl:fault name="AuthenticationFault">
         <wsdlsoap:fault name="AuthenticationFault" use="literal" />
+      </wsdl:fault>
+      <wsdl:fault name="authenticationFault2">
+        <wsdlsoap:fault name="authenticationFault2" use="literal" />
       </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>

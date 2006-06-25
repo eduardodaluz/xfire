@@ -24,6 +24,7 @@ import org.codehaus.xfire.transport.local.LocalTransport;
 
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JBlock;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
@@ -104,8 +105,8 @@ public class ServiceGenerator
         
         for (Service service : services)
         {
-            JDefinedClass serviceImpl = (JDefinedClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
-            JDefinedClass serviceIntf = (JDefinedClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
+            JClass serviceImpl = (JClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
+            JClass serviceIntf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
             
             QName portType = service.getServiceInfo().getPortType();
             
