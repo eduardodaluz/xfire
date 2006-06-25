@@ -12,7 +12,7 @@ public class ElementRefTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setBaseURI(getTestFilePath(""));
         generator.setDestinationPackage("org.codehaus.xfire.echo.ref");
-        generator.setForceOverwrite(true);
+        generator.setOverwrite(true);
         generator.generate();
     }
     

@@ -32,27 +32,27 @@
   		
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/echo.wsdl" package="jsr181.echo.bare"
-      binding="xmlbeans" forceOverwrite="true"/>
+      binding="xmlbeans" overwrite="true"/>
 
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/echoWrapped.wsdl"
-      package="jsr181.echo.wrapped" binding="xmlbeans" forceOverwrite="true" />
+      package="jsr181.echo.wrapped" binding="xmlbeans" overwrite="true" />
 
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/globalweather-twoporttypes.wsdl"
-      package="jsr181.echo.globalweather" binding="xmlbeans" forceOverwrite="true"/>
+      package="jsr181.echo.globalweather" binding="xmlbeans" overwrite="true"/>
 
     <!-- JAXB -->
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/globalweather.wsdl"
-      package="jsr181.jaxb.globalweather"  forceOverwrite="true" />
+      package="jsr181.jaxb.globalweather"  overwrite="true" />
 
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/oneway.wsdl"
-      package="jsr181.jaxb.oneway" forceOverwrite="true"/>
+      package="jsr181.jaxb.oneway" overwrite="true"/>
 
     <wsgen outputDirectory="${basedir}/target/test-services"
-      wsdl="${basedir}/src/wsdl/auth.wsdl" package="jsr181.jaxb.auth" forceOverwrite="true"/>
+      wsdl="${basedir}/src/wsdl/auth.wsdl" package="jsr181.jaxb.auth" overwrite="true"/>
 
   </target>
 </project>

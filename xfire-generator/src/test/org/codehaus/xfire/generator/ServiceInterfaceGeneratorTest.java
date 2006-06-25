@@ -17,7 +17,7 @@ public class ServiceInterfaceGeneratorTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.echo.bare");
         generator.setBinding(Wsdl11Generator.XMLBEANS);
-        generator.setForceOverwrite(true);
+        generator.setOverwrite(true);
         
         generator.generate();
         
@@ -34,7 +34,7 @@ public class ServiceInterfaceGeneratorTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.echo.wrapped");
         generator.setBinding(Wsdl11Generator.XMLBEANS);
-        generator.setForceOverwrite(true);
+        generator.setOverwrite(true);
         
         generator.generate();
         
@@ -57,7 +57,7 @@ public class ServiceInterfaceGeneratorTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.globalweather.twopts");
         generator.setBinding(Wsdl11Generator.XMLBEANS);
-        generator.setForceOverwrite(true);
+        generator.setOverwrite(true);
         
         generator.generate();
         
@@ -75,7 +75,7 @@ public class ServiceInterfaceGeneratorTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.globalweather.withhttp");
         generator.setBinding(Wsdl11Generator.XMLBEANS);
-        generator.setForceOverwrite(true);
+        generator.setOverwrite(true);
         
         generator.generate();
         

@@ -54,16 +54,16 @@ public class Wsdl11Generator
     
     private boolean explicitAnnotation;
     
-    private boolean forceOverwrite;
+    private boolean overwrite;
     
-    public boolean isForceOverwrite()
+    public boolean isOverwrite()
     {
-        return forceOverwrite;
+        return overwrite;
     }
 
-    public void setForceOverwrite(boolean forceOverwrite)
+    public void setOverwrite(boolean forceOverwrite)
     {
-        this.forceOverwrite = forceOverwrite;
+        this.overwrite = forceOverwrite;
     }
 
     @SuppressWarnings("unchecked")
@@ -82,8 +82,8 @@ public class Wsdl11Generator
                 name = name.replace('.',sep);    
             }
             File clientDir = new File(dest,name); 
-            if( clientDir.exists() && !forceOverwrite ){
-                System.out.print("Destination directory ["+clientDir.getAbsolutePath()+"] already exist! If you are sure you want to overwrite existing files specify -forceOverwrite parameter\n");
+            if( clientDir.exists() && !overwrite ){
+                System.out.print("Destination directory ["+clientDir.getAbsolutePath()+"] already exist! If you are sure you want to overwrite existing files specify -overwrite parameter\n");
                 throw new RuntimeException("Files overwriting not allowed");
             }else{
                 log.warn("Existing files will be overwritten");

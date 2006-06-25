@@ -14,7 +14,7 @@ public class FaultTest
         generator.setWsdl(getTestFilePath("src/wsdl/echoFault.wsdl"));
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("jsr181.jaxb.echofault");
-        generator.setForceOverwrite(true);        
+        generator.setOverwrite(true);        
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();

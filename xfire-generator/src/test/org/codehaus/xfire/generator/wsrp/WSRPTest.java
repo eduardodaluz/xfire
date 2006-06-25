@@ -17,7 +17,7 @@ public class WSRPTest
         generator.setOutputDirectory(getTestFilePath("target/test-services"));
         generator.setDestinationPackage("org.codehaus.xfire.generator.wsrp");
         generator.setBinding("jaxb");
-        generator.setForceOverwrite(true);
+        generator.setOverwrite(true);
         
         generator.generate();
         
