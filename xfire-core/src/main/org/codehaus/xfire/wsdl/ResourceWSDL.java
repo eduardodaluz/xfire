@@ -15,22 +15,25 @@ import org.codehaus.xfire.util.Resolver;
 public class ResourceWSDL
 	implements WSDLWriter
 {
-    private InputStream is;
     private URL wsdlUrl;
+    private String wsdlString;
+    private String baseString;
 
     /**
      * @param wsdlUrl
      */
     public ResourceWSDL(String wsdlUrl) throws IOException
     {
-        this.is = new Resolver(wsdlUrl).getInputStream();
+        wsdlString = wsdlUrl;
+        baseString = "";
     }
 
     public ResourceWSDL(String baseUri, String wsdlUrl) throws IOException
     {
-        this.is = new Resolver(baseUri, wsdlUrl).getInputStream();
+        wsdlString=wsdlUrl;
+        baseString=baseUri;
     }
-    
+
     /**
      * @param wsdlUrl
      */
@@ -41,9 +44,12 @@ public class ResourceWSDL
 
     public void write(OutputStream out) throws IOException
     {
+        InputStream is;
         if (wsdlUrl != null)
             is = wsdlUrl.openStream();
-        
+        else
+            is = new Resolver(baseString, wsdlString).getInputStream();
+
         copy(is, out, 8096 );
     }
 
@@ -56,7 +62,7 @@ public class ResourceWSDL
         {
             final byte[] buffer = new byte[bufferSize];
 
-            int n = 0;
+            int n;
             while (-1 != (n = input.read(buffer)))
             {
                 output.write(buffer, 0, n);
