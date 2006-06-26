@@ -21,7 +21,6 @@ public class JaxbTypeCreator implements TypeCreator
 {
     private TypeCreator nextCreator;
     private JAXBContext jaxbContext;
-    private TypeMapping typeMapping;
 
     public JaxbTypeCreator(TypeCreator nextCreator, JAXBContext jaxbContext)
     {
@@ -36,7 +35,7 @@ public class JaxbTypeCreator implements TypeCreator
 
     public Type createType(Method m, int index)
     {
-        Class clazz = null;
+        Class clazz;
         if (index > -1)
         {
             clazz = m.getParameterTypes()[index];
@@ -62,7 +61,7 @@ public class JaxbTypeCreator implements TypeCreator
 
     private Type createJaxbType(Class clazz)
     {
-        return new JaxbType(clazz, jaxbContext);  //To change body of created methods use File | Settings | File Templates.
+        return new JaxbType(clazz, jaxbContext);
     }
 
     public Type createType(PropertyDescriptor pd)
@@ -102,8 +101,6 @@ public class JaxbTypeCreator implements TypeCreator
 
     public void setTypeMapping(TypeMapping typeMapping)
     {
-        this.typeMapping = typeMapping;
-
         nextCreator.setTypeMapping(typeMapping);
     }
 
