@@ -24,7 +24,9 @@ public class HandlerPipeline
     
     private List phases;
     private Map handlers;
-
+    private boolean paused = false;
+    private Phase currentPhase;
+    
     public HandlerPipeline(List phases)
     {
         super();
@@ -81,19 +83,31 @@ public class HandlerPipeline
     /**
      * Invokes each phase's handler in turn.
      * 
-     * @param context
+     * @param context The context containing current message 
+     *      and this <code>HandlerPipeline</code>.
      * @throws Exception
      */
-    public void invoke(MessageContext context) 
+    public void invoke(MessageContext context)
     	throws Exception
     {
-        Stack invoked = new Stack();
-        context.setProperty(this.toString(), invoked);
+        context.setCurrentPipeline(this);
+        Stack invoked = (Stack) context.getProperty(this.toString());
         
+        if (invoked == null) {
+            invoked = new Stack();
+            context.setProperty(this.toString(), invoked);
+        }
+
         for (Iterator itr = phases.iterator(); itr.hasNext();)
         {
             Phase phase = (Phase) itr.next();
             
+            // If resuming, won't enter phases already completed
+            if (currentPhase != null && phase.compareTo(currentPhase) < 0)
+                continue;
+  
+            currentPhase = phase;
+ 
             if (log.isDebugEnabled())
                 log.debug("Invoking phase " + phase.getName());
             
@@ -101,12 +115,16 @@ public class HandlerPipeline
             for (int i = 0; i < phaseHandlers.size(); i++ )
             {
                 Handler h = (Handler) phaseHandlers.get(i);
+                
+                //If handler instance has been invoked, continue to next handler
+                if (invoked.contains(h))
+                    continue;
+                
                 try
                 {
                     if (log.isDebugEnabled())
                         log.debug("Invoking handler " + h.getClass().getName() + 
-                                  " in phase " + phase.getName());
-                    
+                                  " in phase " + phase.getName());                    
                     h.invoke(context);
                 }
                 finally
@@ -114,6 +132,7 @@ public class HandlerPipeline
                     // Add the invoked handler to the stack so we can come
                     // back to it later if a fault occurs.
                     invoked.push(h);
+                    if (paused) return;
                 }
             }
         }
@@ -168,5 +187,16 @@ public class HandlerPipeline
         }
 
         return false;
+    }
+    
+    public void pause() {
+        paused = true;
+    }
+    
+    public void resume(MessageContext context) throws Exception {
+        if (!paused) return;
+        
+        paused = false;
+        invoke(context);
     }
 }

@@ -69,7 +69,7 @@ public class Phase
         if (p2 < priority) return 1;
         if (p2 > priority) return -1;
         
-        return phase.getName().compareTo(name);
+        return 0;
     }
     
     

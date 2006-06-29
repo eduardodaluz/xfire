@@ -29,6 +29,7 @@ public class MessageContext extends AbstractContext
     private AbstractMessage currentMessage;
     private HandlerPipeline inPipeline;
     private HandlerPipeline outPipeline;
+    private HandlerPipeline currentPipeline;
     private Handler faultHandler;
     private XFire xfire;
     private String id;
@@ -158,6 +159,16 @@ public class MessageContext extends AbstractContext
     public void setOutPipeline(HandlerPipeline outPipeline)
     {
         this.outPipeline = outPipeline;
+    }
+
+    public HandlerPipeline getCurrentPipeline()
+    {
+        return currentPipeline;
+    }
+
+    public void setCurrentPipeline(HandlerPipeline currentPipeline)
+    {
+        this.currentPipeline = currentPipeline;
     }
 
     /**
