@@ -1,3 +1,4 @@
+<!-- START SNIPPET: binding -->
 <jxb:bindings jxb:version="1.0"
 	      xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
 	      xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -8,3 +9,4 @@
 	</jxb:schemaBindings>
     </jxb:bindings>
 </jxb:bindings>
+<!-- END SNIPPET: binding -->
