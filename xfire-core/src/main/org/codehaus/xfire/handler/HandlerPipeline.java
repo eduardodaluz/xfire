@@ -90,10 +90,12 @@ public class HandlerPipeline
     public void invoke(MessageContext context)
     	throws Exception
     {
+        if (paused) return;
         context.setCurrentPipeline(this);
         Stack invoked = (Stack) context.getProperty(this.toString());
         
-        if (invoked == null) {
+        if (invoked == null) 
+        {
             invoked = new Stack();
             context.setProperty(this.toString(), invoked);
         }
