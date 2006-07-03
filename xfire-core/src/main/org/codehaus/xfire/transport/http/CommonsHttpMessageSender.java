@@ -88,10 +88,17 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             }
 
             // Setup the proxy settings
-            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
+            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST); 
+            if(proxyHost == null ){    
+              proxyHost = System.getProperty(HTTP_PROXY_HOST);
+            }
             if (proxyHost != null)
             {
-                String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
+                 
+                 String portS  = (String) context.getContextualProperty(HTTP_PROXY_PORT);
+                 if(portS == null ){
+                     portS = System.getProperty(HTTP_PROXY_PORT);
+                 }
                 int port = 80;
                 if (portS != null) port = Integer.parseInt(portS);
                 
