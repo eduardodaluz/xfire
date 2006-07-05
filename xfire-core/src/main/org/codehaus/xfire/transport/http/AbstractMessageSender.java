@@ -24,6 +24,12 @@ public abstract class AbstractMessageSender
     public abstract void close() throws XFireException;
     public abstract boolean hasResponse();
     
+    /**
+     * Returns 0 if no error returned from server. Error code in otherway.
+     * @return
+     */
+    public abstract int hasError();
+    
     public abstract InMessage getInMessage() throws IOException;
     
     public MessageContext getMessageContext()

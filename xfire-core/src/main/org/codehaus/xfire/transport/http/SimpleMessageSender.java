@@ -116,4 +116,9 @@ public class SimpleMessageSender extends AbstractMessageSender
         out.flush();
         out.close();
     }
+
+    public int hasError()
+    {
+        return 0;
+    }
 }

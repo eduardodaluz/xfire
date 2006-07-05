@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
@@ -112,9 +113,16 @@ public class HttpChannel
             sender.open();
             
             sender.send();
-
+            int code = 0;
+            if( ( code = sender.hasError()) != 0){
+                String msg = "Server returned error code = " + code + " for URI : "+ sender.getUri() + ". Check server logs for details";
+                log.error(msg); 
+                throw new XFireRuntimeException(msg);
+            }
+            
             if (sender.hasResponse())
             {   
+                
                 InMessage inMessage = sender.getInMessage();
                 inMessage.setChannel(this);
                 getEndpoint().onReceive(context, inMessage);
@@ -122,6 +130,7 @@ public class HttpChannel
         }
         catch (IOException e)
         {
+            log.error(e);
             throw new XFireException("Couldn't send message.", e);
         }
         finally
