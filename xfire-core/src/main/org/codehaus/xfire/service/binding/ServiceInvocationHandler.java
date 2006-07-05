@@ -285,7 +285,8 @@ public class ServiceInvocationHandler
                 context.getOutPipeline().invoke(context);
             }
             catch (Exception e)
-            {
+            { 
+                logger.error(e);
                 XFireFault fault = XFireFault.createFault(e);
                 context.getOutPipeline().handleFault(fault, context);
                 throw fault;
