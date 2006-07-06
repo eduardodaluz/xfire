@@ -252,9 +252,17 @@ public class XFireServletController
         }
         else
         {
+            // Remove " and ' char
+            String charEncoding = request.getCharacterEncoding();
+            if( charEncoding != null && charEncoding.length()> 0 ){
+              if( ( charEncoding.charAt(0)=='"' && charEncoding.charAt(charEncoding.length()-1) == '"') 
+                      || ( charEncoding.charAt(0)=='\'' && charEncoding.charAt(charEncoding.length()-1) == '\'')){
+                charEncoding = charEncoding.substring(1,charEncoding.length()-1);
+              }
+            }
             XMLStreamReader reader = 
                 STAXUtils.createXMLStreamReader(request.getInputStream(), 
-                                                request.getCharacterEncoding(),context);
+                                                charEncoding,context);
             
             InMessage message = new InMessage(reader, request.getRequestURI());
             message.setProperty(SoapConstants.SOAP_ACTION, soapAction);
