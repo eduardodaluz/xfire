@@ -1,12 +1,10 @@
 <binding>
-
+  <namespace uri="http://xfire.codehaus.org/jibx" default="elements"/> 
   <mapping name="Account" class="org.codehaus.xfire.jibx.Account" ns="http://xfire.codehaus.org/jibx">
-    <namespace uri="http://xfire.codehaus.org/jibx" default="elements"/> 
-    <value name="accountNo" field="accountNo"/>
+      <value name="accountNo" field="accountNo"/>
   </mapping>
-  
-  <mapping name="AccountInfo" class="org.codehaus.xfire.jibx.AccountInfo" ns="http://xfire.codehaus.org/jibx">
-    <namespace uri="http://xfire.codehaus.org/jibx" default="elements"/> 
+    <mapping name="AccountInfo" class="org.codehaus.xfire.jibx.AccountInfo" ns="http://xfire.codehaus.org/jibx">
+    
     <value name="amount" field="amount"/>
   </mapping>
   
