@@ -12,7 +12,7 @@ public class WsGen {
 	
     private static void usage() {
 		System.out
-				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI] [-overwrite true]\n");
+				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI] [-overwrite true/false] [-x true/false]\n");
 	}
 
 	private static void missingParam(String param) {
@@ -64,10 +64,10 @@ public class WsGen {
 				profile = value;
 			}
             if ("-x".equals(param)) {
-                explicit = true;
+                explicit = Boolean.parseBoolean(value);;
             }
             if("-overwrite".equals(param)){
-                overwrite=true;
+                overwrite=Boolean.parseBoolean(value);
             }
 		}
 
