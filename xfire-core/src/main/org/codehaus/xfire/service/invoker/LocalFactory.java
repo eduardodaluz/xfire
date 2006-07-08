@@ -12,7 +12,7 @@ import org.codehaus.xfire.util.factory.Factory;
  * @author Ben Yu
  * Feb 10, 2006 11:31:27 PM
  */
-final class LocalFactory implements Factory {
+public class LocalFactory implements Factory {
   private final ThreadLocal local = new ThreadLocal();
   private final String service_class_key; 
   public Service getService(){

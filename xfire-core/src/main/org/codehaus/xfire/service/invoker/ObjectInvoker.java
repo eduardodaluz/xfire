@@ -15,7 +15,7 @@ import org.codehaus.xfire.service.Service;
  * @author <a href="mailto:ajoo.email@gmail.com">Ben Yu</a>
  * @since Nov 16, 2004
  */
-public final class ObjectInvoker extends AbstractInvoker
+public  class ObjectInvoker extends AbstractInvoker
    
 {
     /**
