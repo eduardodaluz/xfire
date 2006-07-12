@@ -1,7 +1,6 @@
 package org.codehaus.xfire.jaxws.gen;
 
 import javax.jws.WebService;
-import javax.xml.ws.Holder;
 import javax.xml.ws.WebFault;
 
 import org.codehaus.xfire.gen.GenerationContext;
@@ -81,15 +80,5 @@ public class InterfaceGenerator
         cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
         
         return exCls;
-    }
-
-    protected JType getHolderType(GenerationContext context, MessagePartInfo part)
-        throws GenerationException
-    {
-        JType genericType = super.getHolderType(context, part);
-        
-        JClass holder = context.getCodeModel().ref(Holder.class);
-        holder = holder.narrow((JClass) genericType);
-        return holder;
     }
 }
