@@ -218,9 +218,10 @@ public class CastorType
                 xd = (XMLClassDescriptorImpl) mapping.getResolver(Mapping.XML).getDescriptor(clazz);
                 nsUri = (xd.getNameSpaceURI() == null ? "" : xd.getNameSpaceURI());
                 // Use xml name as schema type name, unless it has been introspected
-                if (Introspector.introspected(xd))
-                    localTypeName = clazz.getSimpleName();
-                else
+                if (Introspector.introspected(xd)) {
+                    localTypeName = clazz.getName();
+                    localTypeName = localTypeName.substring(localTypeName.lastIndexOf('.') + 1);
+                } else
                     localTypeName = xd.getXMLName();
                 nsPrefix = xd.getNameSpacePrefix();
                 if (nsPrefix == null || nsPrefix.length() == 0)
