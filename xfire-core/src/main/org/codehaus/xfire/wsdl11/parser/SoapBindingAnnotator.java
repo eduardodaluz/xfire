@@ -95,13 +95,19 @@ public class SoapBindingAnnotator extends BindingAnnotator
                 Message hmsg = getDefinition().getMessage(msgName);
                 Part part = hmsg.getPart(header.getPart());
                 
+                if (part == null)
+                    throw new IllegalStateException("Could not find message part: " + header.getPart() + 
+                                                    " in message " + msgName);
+                
                 QName name = part.getElementName();
+                QName schemaType = part.getElementName();
                 if (name == null)
                 {
-                    name = part.getTypeName();
+                    name = new QName(getService().getTargetNamespace(), part.getName());
+                    schemaType = part.getTypeName();
                 }
                 
-                SchemaType st = getBindingProvider().getSchemaType(name, getService());
+                SchemaType st = getBindingProvider().getSchemaType(schemaType, getService());
                 
                 MessagePartInfo info = getSoapBinding().getHeaders((MessageInfo) msg).addMessagePart(name, null);
                 info.setSchemaType(st);
