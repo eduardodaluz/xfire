@@ -224,7 +224,15 @@ public abstract class AbstractServiceGenerator
     protected JType getHolderType(GenerationContext context,MessagePartInfo part)
         throws GenerationException
     {
-        return context.getSchemaGenerator().getType(context, part.getName(), part.getSchemaType().getSchemaType());
+        JType genericType = context.getSchemaGenerator().getType(context, part.getName(), part.getSchemaType().getSchemaType());
+        
+        try {
+            JClass holder = context.getCodeModel().ref("javax.xml.ws.Holder");
+            holder = holder.narrow((JClass) genericType);
+            return holder;
+        } catch (Exception e) {
+            throw new GenerationException("Could not find holder type.", e);
+        }
     }
 
     protected void generateFaults(GenerationContext context, OperationInfo op, JMethod method)
@@ -255,7 +263,7 @@ public abstract class AbstractServiceGenerator
         JCodeModel model = context.getCodeModel();
         SchemaSupport schema = context.getSchemaGenerator();
         
-        String name = javify(part.getName().getLocalPart());
+        String name = javify(((FaultInfo) part.getContainer()).getName());
         name = name.substring(0, 1).toUpperCase() + name.substring(1);
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
@@ -264,7 +272,6 @@ public abstract class AbstractServiceGenerator
         try 
         {
             exCls = model._class(clsName);
-            
         } 
         catch (JClassAlreadyExistsException e) {
             return model.ref(clsName);
