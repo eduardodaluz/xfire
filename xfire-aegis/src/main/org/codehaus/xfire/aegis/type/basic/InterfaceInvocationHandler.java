@@ -96,9 +96,9 @@ class InterfaceInvocationHandler
         String attrName = null;
 
         if (methodName.startsWith("get"))
-            attrName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+            attrName = convertMethodName(methodName, 3);
         else if (methodName.startsWith("is"))
-            attrName = Character.toLowerCase(methodName.charAt(2)) + methodName.substring(3);
+            attrName = convertMethodName(methodName, 2);
         else
             throw new IllegalAccessError(methodName + " is not a valid getter method.");
 
@@ -112,13 +112,33 @@ class InterfaceInvocationHandler
         String attrName = null;
 
         if (methodName.startsWith("set"))
-            attrName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+            attrName = convertMethodName(methodName, 3);
         else
             throw new IllegalAccessError(methodName + " is not a valid setter method.");
 
         writeProperty(attrName, args[0]);
 
         return null;
+    }
+
+    private String convertMethodName(String methodName, int firstCharacter)
+    {
+        if (methodName.length() >= firstCharacter + 2)
+        {
+            if (!Character.isUpperCase(methodName.charAt(firstCharacter + 1)))
+            {
+                return Character.toLowerCase(methodName.charAt(firstCharacter))
+                        + methodName.substring(firstCharacter + 1);
+            }
+            else
+            {
+                return methodName.substring(3);
+            }
+        }
+        else
+        {
+            return Character.toLowerCase(methodName.charAt(firstCharacter)) + methodName.substring(firstCharacter + 1);
+        }
     }
 
     protected Integer proxyHashCode(Object proxy)

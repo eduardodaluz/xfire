@@ -44,6 +44,8 @@ public class DynamicProxyTest
         public Integer set();
 
         public String getType();
+        
+        public String getFOO();
     }
 
     public interface IMyInterface2
@@ -74,6 +76,8 @@ public class DynamicProxyTest
         assertFalse(data.equals(null));
         assertFalse(data.equals(new String("bigjunk")));
         assertNotNull(data.toString());
+        
+        assertEquals("foo", data.getFOO());
     }
 
     public void testDynamicProxyNonStandardGetter()
