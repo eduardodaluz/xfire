@@ -224,7 +224,7 @@ public abstract class AbstractServiceGenerator
     protected JType getHolderType(GenerationContext context,MessagePartInfo part)
         throws GenerationException
     {
-        return context.getSchemaGenerator().getType(context, part.getName(), null);
+        return context.getSchemaGenerator().getType(context, part.getName(), part.getSchemaType().getSchemaType());
     }
 
     protected void generateFaults(GenerationContext context, OperationInfo op, JMethod method)
@@ -255,7 +255,8 @@ public abstract class AbstractServiceGenerator
         JCodeModel model = context.getCodeModel();
         SchemaSupport schema = context.getSchemaGenerator();
         
-        String name = javify(((FaultInfo) part.getContainer()).getName());
+        String name = javify(part.getName().getLocalPart());
+        name = name.substring(0, 1).toUpperCase() + name.substring(1);
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
         String clsName = getPackage(part.getName(), context) + "." + name + "_Exception";
