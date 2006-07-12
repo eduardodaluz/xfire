@@ -132,8 +132,8 @@ public class JaxbType
             if (i != -1)
                 pckg = pckg.substring(0, i);
             
-            Collection<String> extraPackages = 
-                (Collection<String>) mc.getContextualProperty(SEARCH_PACKAGES);
+            Collection extraPackages = 
+                (Collection) mc.getContextualProperty(SEARCH_PACKAGES);
             
             if (extraPackages != null)
             {
