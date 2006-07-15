@@ -160,11 +160,9 @@ public class AegisBindingProvider
                 Type type2 = type.getTypeMapping().getType(overrideTypeName);
                 if (type2 == null)
                 {
-                    LOG
-                            .error("xsi:type=\""
-                                    + overrideTypeName
-                                    + "\" was specified, but no corresponding Type was registered; defaulting to "
-                                    + type.getSchemaType());
+                    LOG.info("xsi:type=\"" + overrideTypeName
+                             + "\" was specified, but no corresponding Type was registered; defaulting to "
+                             + type.getSchemaType());
                 }
                 else
                 {
