@@ -19,12 +19,12 @@
               <goal>run</goal>
             </goals>
             <configuration>
+              <testSourceRoot>${project.build.directory}/test-services</testSourceRoot>
               <tasks>
                 <ant inheritRefs="true" antfile="${basedir}/build.xml">
                   <target name="wsgen"></target>
                 </ant>
               </tasks>
-              <testSourceRoot>${project.build.directory}/test-services</testSourceRoot>
             </configuration>
           </execution>
         </executions>
@@ -47,6 +47,25 @@
             <exclude>**/HtmlServiceWriterTest.java</exclude>
           </excludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>add-test-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/test-services</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
