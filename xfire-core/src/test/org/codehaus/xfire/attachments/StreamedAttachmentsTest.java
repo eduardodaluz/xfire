@@ -1,7 +1,7 @@
 package org.codehaus.xfire.attachments;
 
-import java.util.Iterator;
 import java.io.FileInputStream;
+import java.util.Iterator;
 
 import javax.activation.DataHandler;
 

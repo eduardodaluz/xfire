@@ -95,7 +95,7 @@ public class StreamedAttachments implements Attachments
     public Iterator getParts()
     {
         ensureAllPartsRead();
-        
+
         return parts.values().iterator();
     }
 
@@ -139,13 +139,11 @@ public class StreamedAttachments implements Attachments
         
         try 
         {
-            Attachment a = readNextAttachment();
-            
-            while (a != null)
+            for (Attachment a = readNextAttachment(); a != null; a = readNextAttachment())
             {
-                a = readNextAttachment();
+                parts.put(id, a);
                 
-                if (a != null && a.getId().equals(id)) return;
+                if (a != null && id != null && a.getId().equals(id)) return;
             }
         }
         catch (IOException e)
@@ -192,7 +190,6 @@ public class StreamedAttachments implements Attachments
                 att.setHeader(header.getName(), header.getValue());
             }
             
-            parts.put(id, att);
             return att;
         }
         catch (MessagingException e)
