@@ -99,6 +99,7 @@
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-jaxb</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
