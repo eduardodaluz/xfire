@@ -91,8 +91,6 @@ public abstract class AbstractServiceGenerator
             
             JMethod method = jc.method(JMod.PUBLIC, returnType, name);
             
-            int param = 0;
-            
             annotate(context, op, method);
             
             generateOperation(context, op, method);

@@ -24,7 +24,7 @@ public class OperationInfo
     extends AbstractContext
     implements Visitable
 {
-    private String name;
+    private QName name;
     private ServiceInfo service;
     private String mep;
     private boolean async;
@@ -42,6 +42,11 @@ public class OperationInfo
      */
     OperationInfo(String name, Method method, ServiceInfo service)
     {
+        this(new QName(name), method, service);
+    }
+    
+    OperationInfo(QName name, Method method, ServiceInfo service)
+    {
         this.name = name;
         this.service = service;
         this.method = method;
@@ -53,6 +58,11 @@ public class OperationInfo
      * @return the name of the operation.
      */
     public String getName()
+    {
+        return name.getLocalPart();
+    }
+
+    public QName getQName()
     {
         return name;
     }
@@ -70,7 +80,7 @@ public class OperationInfo
         }
 
         service.removeOperation(this.name);
-        this.name = name;
+        this.name = new QName(this.name.getNamespaceURI(), name);
         service.addOperation(this);
     }
 

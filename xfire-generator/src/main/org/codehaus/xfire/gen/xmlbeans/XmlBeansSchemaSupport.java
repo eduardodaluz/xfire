@@ -14,6 +14,7 @@ import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.SchemaSupport;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.xmlbeans.XmlBeansTypeRegistry;
+import org.jdom.Element;
 
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JExpr;
@@ -78,5 +79,15 @@ public class XmlBeansSchemaSupport
         expr.arg(JExpr._new(xbean));
         
         return expr;//JExpr._new()
+    }
+    
+    public String getServiceFactory()
+    {
+        return "#xmlbeansServiceFactory";
+    }
+    
+    public Element getServiceFactoryBean()
+    {
+        return null;
     }
 }

@@ -31,6 +31,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.wsdl.AbstractWSDL;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.jdom.Attribute;
@@ -42,7 +43,7 @@ import org.jdom.Element;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class WSDLBuilder
-    extends org.codehaus.xfire.wsdl11.builder.AbstractWSDL
+    extends org.codehaus.xfire.wsdl.AbstractWSDL
     implements WSDLWriter
 {
     public static final String OVERRIDING_TYPES = "overridingTypes";
@@ -495,16 +496,16 @@ public class WSDLBuilder
                 element
                         .setAttribute(new Attribute("type", prefix + ":"
                                 + schemaType.getLocalPart()));
+                
+                if (type.isNillable())
+                {
+                    element.setAttribute(new Attribute("nillable", "true"));
+                }
             }
             else
             {
                 element
                         .setAttribute(new Attribute("ref", prefix + ":" + schemaType.getLocalPart()));
-            }
-
-            if (type.isNillable())
-            {
-                element.setAttribute(new Attribute("nillable", "true"));
             }
 
             element.setAttribute(new Attribute("minOccurs", "1"));

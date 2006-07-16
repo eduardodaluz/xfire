@@ -3,6 +3,7 @@ package org.codehaus.xfire.gen;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.service.binding.BindingProvider;
+import org.jdom.Element;
 
 import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JType;
@@ -17,4 +18,8 @@ public interface SchemaSupport
     JExpression getBindingProviderExpr(GenerationContext context);
 
     BindingProvider getBindingProvider();
+
+    String getServiceFactory();
+
+    Element getServiceFactoryBean();
 }

@@ -25,11 +25,6 @@
   </scm>
   <build>
     <extensions>
-      <extension>
-		<groupId>org.apache.maven.wagon</groupId>
-		<artifactId>wagon-webdav</artifactId>
-		<version>1.0-beta-1-SNAPSHOT</version>
-      </extension>
 	</extensions>
     <sourceDirectory>src/main</sourceDirectory>
     <testSourceDirectory>src/test</testSourceDirectory>

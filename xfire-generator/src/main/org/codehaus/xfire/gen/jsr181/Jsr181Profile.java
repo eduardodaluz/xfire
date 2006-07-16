@@ -16,12 +16,12 @@ public class Jsr181Profile
     public List<GeneratorPlugin> getPlugins()
     {
         ArrayList<GeneratorPlugin> plugins = new ArrayList<GeneratorPlugin>();
-       /* plugins.add(new MappingServiceGenerator());
-        plugins.add(new MappingServiceStubGenerator());
-        plugins.add(new PortGenerator());*/
+
         plugins.add(new ServiceInterfaceGenerator());
         plugins.add(new ServiceStubGenerator());
         plugins.add(new PortGenerator());
+        plugins.add(new ServiceDescriptorGenerator());
+        
         return plugins;
     }
 }

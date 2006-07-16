@@ -70,6 +70,16 @@ public class ServiceInfo
         {
             throw new IllegalArgumentException("Invalid name [" + name + "]");
         }
+        
+        return addOperation(new QName(name), method);
+    }
+    
+    public OperationInfo addOperation(QName name, Method method)
+    {
+        if (name == null)
+        {
+            throw new IllegalArgumentException("Invalid name [" + name + "]");
+        }
         if (operations.containsKey(name))
         {
             throw new IllegalArgumentException("An operation with name [" + name + "] already exists in this service");
@@ -138,6 +148,11 @@ public class ServiceInfo
      * @param name the operation name.
      */
     public void removeOperation(String name)
+    {
+        operations.remove(name);
+    }
+    
+    public void removeOperation(QName  name)
     {
         operations.remove(name);
     }

@@ -16,9 +16,11 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.SchemaSupport;
+import org.codehaus.xfire.jaxb2.JaxbServiceFactory;
 import org.codehaus.xfire.jaxb2.JaxbTypeRegistry;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.wsdl11.parser.SchemaInfo;
+import org.jdom.Element;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -174,7 +176,6 @@ public class JAXBSchemaSupport implements SchemaSupport
         return expr;
     }
     
-    
     /**
      * Resolves Schemas relative to the WSDL document they're included in.
      * @author Dan Diephouse
@@ -194,11 +195,21 @@ public class JAXBSchemaSupport implements SchemaSupport
         {
             File file = new File(baseURI, systemId);
             if (file.exists())
-            { System.out.println(systemId);
+            {
                 return new InputSource(new FileInputStream(file));
             }
            
             return null;
         }
+    }
+
+    public String getServiceFactory()
+    {
+        return JaxbServiceFactory.class.getName();
+    }
+    
+    public Element getServiceFactoryBean()
+    {
+        return null;
     }
 }

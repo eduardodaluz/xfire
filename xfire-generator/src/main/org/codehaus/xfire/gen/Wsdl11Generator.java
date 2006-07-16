@@ -111,6 +111,7 @@ public class Wsdl11Generator
         context.setExternalBindings(getExternalBindingFiles());
         context.setExplicitAnnotation(isExplicitAnnotation());
         context.setServerStubOverwritten(isOverwrite());
+        context.setDescriptorOverwritten(isOverwrite());
         
         support.initialize(context);
 

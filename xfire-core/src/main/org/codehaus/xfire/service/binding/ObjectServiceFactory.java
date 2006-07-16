@@ -40,7 +40,6 @@ import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.soap.Soap12Binding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapTransport;
-import org.codehaus.xfire.soap.SoapVersion;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.http.SoapHttpTransport;
@@ -171,7 +170,7 @@ public class ObjectServiceFactory
         properties.put(CREATE_DEFAULT_BINDINGS, Boolean.FALSE);
         
         Service service = create(clazz, properties);
-        service.setName(name);
+        if (name != null) service.setName(name);
         
         service.setWSDLWriter(new ResourceWSDL(wsdlUrl));
 
@@ -195,8 +194,6 @@ public class ObjectServiceFactory
             for (Iterator oitr = service.getServiceInfo().getOperations().iterator(); oitr.hasNext();)
             {
                 OperationInfo op = (OperationInfo) oitr.next();
-                
-                MessagePartContainer inHeaders = b.getHeaders(op.getInputMessage());
                 
                 configureHeaders(service, op, b);
             }
@@ -308,8 +305,7 @@ public class ObjectServiceFactory
         String theName = (name != null) ? name : makeServiceNameFromClassName(clazz);
         String theNamespace = (namespace != null) ? namespace : getTargetNamespace(clazz);
         QName qName = new QName(theNamespace, theName);
-        
-        SoapVersion theVersion = null;
+
         String theStyle = null;
         String theUse = null;
         QName portType = null;

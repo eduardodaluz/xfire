@@ -1,5 +1,6 @@
 package org.codehaus.xfire.spring;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +21,6 @@ import org.codehaus.xfire.spring.config.EndpointBean;
 import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
 import org.codehaus.xfire.spring.config.SpringServiceConfiguration;
-import org.codehaus.xfire.wsdl.ResourceWSDL;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -155,7 +155,14 @@ public class ServiceBean
             properties.put(ObjectServiceFactory.SCHEMAS, schemas);
         }
         
-        xfireService = serviceFactory.create(intf, name, namespace, properties);
+        if (wsdlURL != null)
+        {
+            xfireService = serviceFactory.create(intf, null, new URL(wsdlURL), properties);
+        }
+        else
+        {
+            xfireService = serviceFactory.create(intf, name, namespace, properties);
+        }
         xfireService.setExecutor(executor);
         
         // dirty hack to remove our ServiceConfiguration
@@ -202,11 +209,6 @@ public class ServiceBean
             xfireService.setFaultHandlers(getFaultHandlers());
         else if (getFaultHandlers() != null)
             xfireService.getFaultHandlers().addAll(getFaultHandlers());
-        
-        if (wsdlURL != null)
-        {
-            xfireService.setWSDLWriter(new ResourceWSDL(wsdlURL));
-        }
         
         // Register the service
         xFire.getServiceRegistry().register(xfireService);

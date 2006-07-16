@@ -62,6 +62,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/test-services</source>
+                <source>${project.build.directory}/auth-service</source>
               </sources>
             </configuration>
           </execution>

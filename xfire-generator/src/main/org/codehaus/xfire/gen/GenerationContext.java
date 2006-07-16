@@ -39,6 +39,8 @@ public class GenerationContext
 
     private boolean serverStubOverwritten = false;
     
+    private boolean descriptorOverwritten = false;
+    
     public GenerationContext(JCodeModel model, Object wsdl)
     {
         codeModel = model;
@@ -159,4 +161,15 @@ public class GenerationContext
     {
         this.serverStubOverwritten = serverStubOverwritten;
     }
+
+    public boolean isDescriptorOverwritten()
+    {
+        return descriptorOverwritten;
+    }
+
+    public void setDescriptorOverwritten(boolean descriptorOverwritten)
+    {
+        this.descriptorOverwritten = descriptorOverwritten;
+    }
+    
 }

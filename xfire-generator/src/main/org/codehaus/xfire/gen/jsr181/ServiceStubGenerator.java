@@ -79,7 +79,6 @@ public class ServiceStubGenerator
         
         ann.param("serviceName", service.getSimpleName());
         ann.param("targetNamespace", service.getTargetNamespace());
-        ann.param("wsdlLocation", context.getWsdlLocation());
         
         JClass intf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         ann.param("endpointInterface", intf.fullName());
