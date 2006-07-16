@@ -18,7 +18,6 @@ import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.dom.DOMOutHandler;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -53,7 +52,6 @@ public class PictureServiceTest
         picClient = (PictureService) xpf.create(service, "http://localhost:8082/PictureService");
         
         client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
-        client.addOutHandler(new DOMOutHandler());
     }
 
     protected void tearDown()
@@ -68,6 +66,7 @@ public class PictureServiceTest
         client.setProperty(SoapConstants.MTOM_ENABLED, "true");
         
         DataSource source = picClient.GetPicture();
+        assertNotNull(source);
         
         FileDataSource fileSource = new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
         DataSource source2 = picClient.EchoPicture(fileSource);
@@ -90,6 +89,25 @@ public class PictureServiceTest
         byte[] response = picClient.EchoPictureBytes(picBytes);
         
         assertEquals(picBytes.length, response.length);
+    }
+    
+    public void testAttachmentArray()
+        throws Exception
+    {
+        client.setProperty(SoapConstants.MTOM_ENABLED, "true");
+
+        DataHandler handler = createDataHandler();
+        DataHandler handler2 = createDataHandler();
+
+        DataHandler[] handlers = picClient.EchoPictureArray(new DataHandler[] { handler, handler2 });
+        assertEquals(2, handlers.length);
+    }
+
+    private DataHandler createDataHandler() 
+    {
+        FileDataSource fileSource = new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
+        DataHandler handler = new DataHandler(fileSource);
+        return handler;
     }
     
     public static byte[] readAsBytes(InputStream input) throws IOException

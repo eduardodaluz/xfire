@@ -18,6 +18,10 @@ public class PictureServiceImpl implements PictureService
         return new DataHandler(GetPicture());
     }
 
+    public DataHandler[] EchoPictureArray(DataHandler[] handler) {
+        return handler;
+    }
+
     public byte[] EchoPictureBytes(byte[] pic)
     {
         return pic;

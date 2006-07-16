@@ -87,7 +87,7 @@ public class StreamedAttachments implements Attachments
 
     public Attachment getPart(String id)
     {
-        readTo(id);
+        if (!parts.containsKey(id)) readTo(id);
         
         return (Attachment) parts.get(id);
     }
@@ -143,10 +143,9 @@ public class StreamedAttachments implements Attachments
             
             while (a != null)
             {
-                parts.put(a.getId(), a);
                 a = readNextAttachment();
                 
-                if (a != null && id != null && a.getId().equals(id)) return;
+                if (a != null && a.getId().equals(id)) return;
             }
         }
         catch (IOException e)
@@ -192,6 +191,8 @@ public class StreamedAttachments implements Attachments
                 Header header = (Header) e.nextElement();
                 att.setHeader(header.getName(), header.getValue());
             }
+            
+            parts.put(id, att);
             return att;
         }
         catch (MessagingException e)
@@ -337,7 +338,6 @@ public class StreamedAttachments implements Attachments
         PushbackInputStream inStream;
         boolean boundaryFound = false;
         byte[] boundary;
-        private int len;
         
         public MimeBodyPartInputStream(PushbackInputStream inStream,
                                        byte[] boundary) {
