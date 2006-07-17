@@ -117,7 +117,8 @@ public class SimpleMessageSender extends AbstractMessageSender
         out.close();
     }
 
-    public int hasError()
+
+    public int getStatusCode()
     {
         return 0;
     }

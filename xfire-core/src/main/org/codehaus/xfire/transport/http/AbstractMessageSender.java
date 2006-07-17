@@ -28,7 +28,7 @@ public abstract class AbstractMessageSender
      * Returns 0 if no error returned from server. Error code in otherway.
      * @return
      */
-    public abstract int hasError();
+    public abstract int getStatusCode();
     
     public abstract InMessage getInMessage() throws IOException;
     

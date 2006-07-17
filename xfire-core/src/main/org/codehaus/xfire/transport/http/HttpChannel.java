@@ -28,6 +28,9 @@ public class HttpChannel
     extends AbstractChannel
 {
     private static final Log log = LogFactory.getLog(HttpChannel.class);
+    
+    public static final String HTTP_STATUS_CODE = "http.status.code";
+    
     private Map properties = new HashMap();
     
     public HttpChannel(String uri, HttpTransport transport)
@@ -113,12 +116,15 @@ public class HttpChannel
             sender.open();
             
             sender.send();
-            int code = 0;
-            if( ( code = sender.hasError()) != 0){
-                String msg = "Server returned error code = " + code + " for URI : "+ sender.getUri() + ". Check server logs for details";
+            int statusCode = sender.getStatusCode();
+            context.setProperty(HTTP_STATUS_CODE, new Integer(statusCode));
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+            if( statusCode !=500 && ( ( statusCode >= 400 &&  statusCode < 600 ) || statusCode == 301 )){
+                String msg = "Server returned error code = " + statusCode + " for URI : "+ sender.getUri() + ". Check server logs for details";
                 log.error(msg); 
                 throw new XFireRuntimeException(msg);
             }
+            
             
             if (sender.hasResponse())
             {   

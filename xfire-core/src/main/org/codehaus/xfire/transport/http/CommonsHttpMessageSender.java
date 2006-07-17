@@ -174,19 +174,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         client.executeMethod(null, postMethod, state);
     }
 
+    public int getStatusCode(){
+        return  postMethod.getStatusCode();
+    }
     /**
      * @return
      */
-    public int hasError(){
-        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-        int statusCode = postMethod.getStatusCode();
-        // Code 500 is send with every fault so we can't threat it as server exception.
-        // http client somehow converts 404 errr code returned on services list ( http://server/app/services ) to 301
-        if( statusCode !=500 && ( ( statusCode >= 400 &&  statusCode < 600 ) || statusCode == 301 )){
-            return statusCode;
-        }
-        return 0;
-    }
+    
     public boolean hasResponse()
     {
         
