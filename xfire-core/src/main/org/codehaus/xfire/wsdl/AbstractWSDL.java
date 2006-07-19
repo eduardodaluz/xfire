@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.codehaus.xfire.XFireRuntimeException;
@@ -31,9 +29,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
 
@@ -46,12 +41,8 @@ public abstract class AbstractWSDL
     implements WSDLWriter
 {
     private static final StaxBuilder builder = new StaxBuilder();
-    
-    private Definition def;
 
     private Service service;
-
-    private Document wsdlDocument;
 
     private Map dependencies = new HashMap();
     
@@ -59,7 +50,8 @@ public abstract class AbstractWSDL
     
     private Element schemaTypes;
 
-    private Map typeMap;
+    private Map typeMap = new HashMap();
+    
     private boolean schemaLocationRemoved = true;
     
     /*-------------------------------------------------
@@ -80,14 +72,15 @@ public abstract class AbstractWSDL
     public AbstractWSDL(Service service) throws WSDLException
     {
         this.service = service;
-        
-        setDefinition(WSDLFactory.newInstance().newDefinition());
-        getDefinition().setTargetNamespace(getTargetNamespace());
 
         Element root = new Element("types", "wsdl", WSDL11_NS);
         setSchemaTypes(root);
         root.addNamespaceDeclaration(Namespace.getNamespace(SoapConstants.XSD_PREFIX, SoapConstants.XSD));
+    }
 
+
+    protected void initialize()
+    {
         addNamespace("soap11", Soap11.getInstance().getNamespace());
         addNamespace("soapenc11", Soap11.getInstance().getSoapEncodingStyle());
         addNamespace("soap12", Soap12.getInstance().getNamespace());
@@ -96,15 +89,14 @@ public abstract class AbstractWSDL
         addNamespace("wsdl", WSDL11_NS);
         addNamespace("wsdlsoap", WSDL11_SOAP_NS);
         addNamespace("tns", getTargetNamespace());
+        
         // If port type namespace if different from target namespace,
         // we must add its definition
         if (!getTargetNamespace().equals(service.getServiceInfo().getPortType().getNamespaceURI()))
         {
-        	addNamespace("itf", service.getServiceInfo().getPortType().getNamespaceURI());
+            addNamespace("itf", service.getServiceInfo().getPortType().getNamespaceURI());
         }
 
-        typeMap = new HashMap();
-        
         generateImports = Boolean.valueOf((String) service.getProperty(GENERATE_IMPORTS)).booleanValue();
         removeAllImports = Boolean.valueOf((String) service.getProperty(REMOVE_ALL_IMPORTS)).booleanValue();
 
@@ -114,8 +106,8 @@ public abstract class AbstractWSDL
         List schemas = (List) service.getProperty(ObjectServiceFactory.SCHEMAS);
         if (schemas != null) addSchemas(schemas);
     }
-
-    protected void writeDocument()
+    
+    protected void updateImports()
         throws WSDLException
     {
         if (removeAllImports)
@@ -127,13 +119,7 @@ public abstract class AbstractWSDL
             if (generateImports) writeImports();
             
             if (cleanImports) cleanImports();
-        }
-        
-        org.w3c.dom.Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
-
-        wsdlDocument = new DOMBuilder().build(doc);
-
-        writeComplexTypes();
+        }        
     }
 
     /**
@@ -221,17 +207,7 @@ public abstract class AbstractWSDL
             schemaLoc.detach();
     }
     
-    protected void writeComplexTypes()
-        throws WSDLException
-    {
-        Element rootEl = getDocument().getRootElement();
-
-        if (schemaTypes.getContentSize() > 0)
-        {
-            schemaTypes.detach();
-            rootEl.addContent(0, schemaTypes);
-        }
-    }
+    protected abstract void writeComplexTypes();
 
     public void addDependency(SchemaType type)
     {
@@ -286,22 +262,12 @@ public abstract class AbstractWSDL
         
         imports.add(imported);
     }
-    
-    /**
-     * @see org.codehaus.xfire.wsdl.WSDLWriter#write(java.io.OutputStream)
-     */
-    public void write(OutputStream out)
-        throws IOException
-    {
-        XMLOutputter writer = new XMLOutputter();
-        writer.setFormat(Format.getPrettyFormat());
-        writer.output(getDocument(), out);
-    }
+
+    public abstract void write(OutputStream out)
+        throws IOException;
 
     public void addNamespace(String prefix, String uri)
     {
-        def.addNamespace(prefix, uri);
-
         Namespace declaredUri = schemaTypes.getNamespace(prefix);
         if (declaredUri == null)
         {
@@ -317,24 +283,6 @@ public abstract class AbstractWSDL
     public String getNamespacePrefix(String uri)
     {
         return NamespaceHelper.getUniquePrefix(schemaTypes, uri);
-    }
-
-    /**
-     * @see org.codehaus.xfire.wsdl.WSDLWriter#getDocument()
-     */
-    public Document getDocument()
-    {
-        return wsdlDocument;
-    }
-
-    public Definition getDefinition()
-    {
-        return def;
-    }
-
-    public void setDefinition(Definition definition)
-    {
-        this.def = definition;
     }
 
     public Service getService()

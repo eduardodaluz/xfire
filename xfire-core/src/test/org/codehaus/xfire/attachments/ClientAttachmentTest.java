@@ -59,7 +59,7 @@ public class ClientAttachmentTest
     }
 
 
-    public void atestNonChunked() throws Exception
+    public void testNonChunked() throws Exception
     {
         test(false);
     }

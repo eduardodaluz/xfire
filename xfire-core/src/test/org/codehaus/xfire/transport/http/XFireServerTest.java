@@ -48,7 +48,8 @@ public class XFireServerTest
 
         osf.setBindingCreationEnabled(true);
         asyncService = getServiceFactory().create(AsyncService.class);
-        
+        getServiceRegistry().register(asyncService);
+
         server = new XFireHttpServer();
         server.setPort(8391);
         server.start();
@@ -68,10 +69,11 @@ public class XFireServerTest
         super.tearDown();
     }
 
-    public void atestXFireConstructor() throws Exception {
+    public void testXFireConstructor() throws Exception {
         XFireHttpServer server = new XFireHttpServer(XFireFactory.newInstance().getXFire());
         server.setPort(8392);
         server.start();
+        server.stop();
     }
     
     public void testInvoke()
@@ -152,11 +154,11 @@ public class XFireServerTest
         Transport transport = getTransportManager()
                 .getTransport(SoapHttpTransport.SOAP11_HTTP_BINDING);
 
-        Client client = new Client(transport, asyncService, "http://localhost:8391/AsyncService/Echo");
+        Client client = new Client(transport, asyncService, "http://localhost:8391/AsyncService");
         Object[] response = client.invoke("echo", new Object[] { root });
 
         client.close();
-        System.out.println("RESPONSE: " + response);
+        
         assertNull(response);
     }
 

@@ -17,7 +17,10 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.XFireRuntimeException;
@@ -35,7 +38,15 @@ import org.codehaus.xfire.wsdl.AbstractWSDL;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.output.DOMOutputter;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
+
+import com.ibm.wsdl.extensions.schema.SchemaImpl;
 
 /**
  * WSDL
@@ -56,19 +67,19 @@ public class WSDLBuilder
 
     private Map declaredParameters = new HashMap();
 
+    private List extensions;
+
+    private Definition def;
+
+    
     public WSDLBuilder(Service service, TransportManager transportManager) throws WSDLException
     {
         super(service);
+        
+        setDefinition(WSDLFactory.newInstance().newDefinition());
+        getDefinition().setTargetNamespace(getTargetNamespace());
+        
         this.transportManager = transportManager;
-        List l = (List) service.getProperty(OVERRIDING_TYPES);
-        if (l != null)
-        {
-            for (Iterator it = l.iterator(); it.hasNext();)
-            {
-                SchemaType t = (SchemaType) it.next();
-                addDependency(t);
-            }
-        }
     }
 
     public TransportManager getTransportManager()
@@ -81,23 +92,100 @@ public class WSDLBuilder
         this.transportManager = transportManager;
     }
 
+    protected void writeComplexTypes()
+    {
+        List l = (List) getService().getProperty(OVERRIDING_TYPES);
+        if (l != null)
+        {
+            for (Iterator it = l.iterator(); it.hasNext();)
+            {
+                SchemaType t = (SchemaType) it.next();
+                addDependency(t);
+            }
+        }
+        
+        if (getSchemaTypes().getContentSize() > 0)
+        {   
+            Element schemaTypes = getSchemaTypes();
+            List addNs = schemaTypes.getAdditionalNamespaces();
+            for (Iterator itr = addNs.iterator(); itr.hasNext();)
+            {
+                Namespace ns = (Namespace) itr.next();
+
+                if (getDefinition().getNamespace(ns.getPrefix()) == null)
+                    addNamespace(ns.getPrefix(), ns.getURI());
+            }
+            
+            try
+            {
+                Types types = getDefinition().createTypes();
+                getDefinition().setTypes(types);
+                
+                List children = schemaTypes.getChildren();
+                while (children.size() > 0)
+                {
+                    Element child = (Element) children.get(0);
+                    child.detach();
+                    Document inputDoc = new Document(child);
+                    org.w3c.dom.Document doc = new DOMOutputter().output(inputDoc);
+                    org.w3c.dom.Element root = doc.getDocumentElement();
+                    
+                    NamedNodeMap attributes = root.getAttributes();
+                    for (int i = 0; i < attributes.getLength(); i++)
+                    {
+                        Attr a = (Attr) attributes.item(i);
+                        if (a.getNodeName().startsWith("xmlns:") && a.getNodeValue().equals(SoapConstants.XSD))
+                            root.removeAttribute(a.getNodeName());
+                    }
+                    
+                    Schema uee = new SchemaImpl();
+                    uee.setElement((org.w3c.dom.Element) doc.getDocumentElement());
+                    uee.setRequired(Boolean.TRUE);
+                    uee.setElementType(new QName(SoapConstants.XSD, "schema"));
+                    types.addExtensibilityElement(uee);
+                }
+            }
+            catch (JDOMException e)
+            {
+                throw new XFireRuntimeException("Could write schemas to wsdl!", e);
+            }
+        }
+    }
+        
     public void write(OutputStream out)
         throws IOException
     {
         try
         {
+            initialize();
+            
             PortType portType = createAbstractInterface();
 
             createConcreteInterface(portType);
-
-            writeDocument();
+            
+            updateImports();
+            
+            writeComplexTypes();
+            
+            if (extensions != null)
+            {
+                for (Iterator itr = extensions.iterator(); itr.hasNext();)
+                {
+                    WSDLBuilderExtension ex = (WSDLBuilderExtension) itr.next();
+                    
+                    ex.extend(getDefinition(), this);
+                }
+            }
+            
+            javax.wsdl.xml.WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
+            writer.writeWSDL(getDefinition(), out);
         }
         catch (WSDLException e)
         {
-            throw new XFireRuntimeException("error creating wsdl", e);
+            throw new XFireRuntimeException("Error creating wsdl", e);
         }
-        super.write(out);
     }
+
 
     public PortType createAbstractInterface()
         throws WSDLException
@@ -513,10 +601,38 @@ public class WSDLBuilder
         }
     }
 
+    public void addNamespace(String prefix, String uri)
+    {
+        def.addNamespace(prefix, uri);
+
+        super.addNamespace(prefix, uri);
+    }
+
     protected Element createSequence(Element complex)
     {
         Element sequence = new Element("sequence", AbstractWSDL.XSD_NS);
         complex.addContent(sequence);
         return sequence;
     }
+
+    public List getWSDLBuilderExtensions()
+    {
+        return extensions;
+    }
+
+    public void setWSDLBuilderExtensions(List extensions)
+    {
+        this.extensions = extensions;
+    }
+
+    public Definition getDefinition()
+    {
+        return def;
+    }
+
+    public void setDefinition(Definition definition)
+    {
+        this.def = definition;
+    }
+
 }

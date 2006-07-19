@@ -327,6 +327,7 @@ public class WSDLServiceBuilder
         for (Iterator itr = types.getExtensibilityElements().iterator(); itr.hasNext();)
         {
             ExtensibilityElement ee = (ExtensibilityElement) itr.next();
+            
             Element el = null;
             if (ee instanceof UnknownExtensibilityElement)
             {

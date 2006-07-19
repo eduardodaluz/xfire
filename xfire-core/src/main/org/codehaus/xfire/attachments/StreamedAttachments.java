@@ -141,7 +141,7 @@ public class StreamedAttachments implements Attachments
         {
             for (Attachment a = readNextAttachment(); a != null; a = readNextAttachment())
             {
-                parts.put(id, a);
+                parts.put(a.getId(), a);
                 
                 if (a != null && id != null && a.getId().equals(id)) return;
             }
@@ -183,7 +183,7 @@ public class StreamedAttachments implements Attachments
             }
             
             SimpleAttachment att = new SimpleAttachment(id, dh);
-            
+
             for (Enumeration e = headers.getAllHeaders(); e.hasMoreElements();)
             {
                 Header header = (Header) e.nextElement();
