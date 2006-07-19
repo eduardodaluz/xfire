@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.test.AbstractXFireTest;
@@ -17,10 +16,6 @@ public class InheritancePOJOTest
     extends AbstractXFireTest
 {
     private Service endpoint;
-
-    private ObjectServiceFactory builder;
-
-    private XFireHttpServer server;
 
     public void setUp()
         throws Exception
@@ -42,8 +37,6 @@ public class InheritancePOJOTest
                               props);
 
         getServiceRegistry().register(endpoint);
-        server = new XFireHttpServer(getXFire());
-        server.start();
     }
 
     public void testGenerateWsdl()
@@ -85,11 +78,5 @@ public class InheritancePOJOTest
         addNamespace("p", "http://inheritance.aegis.xfire.codehaus.org");
         assertValid("//s:Body/w:getEmployeeResponse/w:out/p:division", response);
         assertValid("//s:Body/w:getEmployeeResponse/w:out[@xsi:type]", response);
-    }
-
-    public void tearDown()
-        throws Exception
-    {
-        server.stop();
     }
 }
