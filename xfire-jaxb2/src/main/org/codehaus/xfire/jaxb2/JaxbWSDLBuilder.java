@@ -59,7 +59,6 @@ public class JaxbWSDLBuilder
     
     @Override
     protected void writeComplexTypes()
-        throws WSDLException
     {
         // Check to see if the user supplied schemas. If so, don't generate them.
         if (getService().getProperty(ObjectServiceFactory.SCHEMAS) == null)
