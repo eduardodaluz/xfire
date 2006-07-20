@@ -1,5 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -48,11 +52,12 @@ import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
-import org.codehaus.xfire.wsdl.ResourceWSDL;
+import org.codehaus.xfire.wsdl11.DefinitionWSDL;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.parser.WSDLServiceConfigurator;
+import org.xml.sax.InputSource;
 
 /**
  * Creates Services from java objects. This class is meant to be easily overridable
@@ -165,9 +170,39 @@ public class ObjectServiceFactory
      */
     public Service create(Class clazz, QName name, URL wsdlUrl, Map properties)
     {
+        try
+        {
+            return create(clazz, 
+                          name, 
+                          WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(wsdlUrl.openStream())), 
+                          properties);
+        }
+        catch (WSDLException e)
+        {
+            throw new XFireRuntimeException("Could not load WSDL.", e);
+        }
+        catch (IOException e)
+        {
+            throw new XFireRuntimeException("Could not load WSDL.", e);
+        }
+    }
+    
+
+    public Service create(Class clazz, QName name, Definition def, Map properties)
+    {
         if (properties == null) properties = new HashMap();
         
         properties.put(CREATE_DEFAULT_BINDINGS, Boolean.FALSE);
+        
+        if (name == null)
+        {
+            Map services = def.getServices();
+            javax.wsdl.Service service = (javax.wsdl.Service) getOnlyElem(services);
+            if (service != null)
+            {
+                 name = service.getQName();
+            }
+        }
         
         Service service;
         if (name != null)
@@ -177,11 +212,11 @@ public class ObjectServiceFactory
         
         if (name != null) service.setName(name);
         
-        service.setWSDLWriter(new ResourceWSDL(wsdlUrl));
+        service.setWSDLWriter(new DefinitionWSDL(def));
 
         try
         {
-            WSDLServiceConfigurator config = new WSDLServiceConfigurator(service, wsdlUrl, transportManager);
+            WSDLServiceConfigurator config = new WSDLServiceConfigurator(service, def, transportManager);
             config.configure();
         }
         catch (Exception e)
@@ -207,6 +242,28 @@ public class ObjectServiceFactory
         service.getBindingProvider().initialize(service);
         
         return service;
+    }
+    
+    /**
+     * Returns the only value in a Map
+     * 
+     * @param map
+     * @return the only value in the map, if it contained exactly 1 key/value
+     *         pair <br>
+     *         <code>null</code>, otherwise <br>
+     */
+    private Object getOnlyElem(Map map)
+    {
+        if (map.size() == 1)
+        {
+            Set keySet = map.keySet();
+            Iterator i = keySet.iterator();
+            return map.get(i.next());
+        }
+        else
+        {
+            return null;
+        }
     }
     
     protected void configureHeaders(Service service, OperationInfo op, Binding b)

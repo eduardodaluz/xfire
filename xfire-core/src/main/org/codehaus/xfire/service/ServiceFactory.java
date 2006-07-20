@@ -3,6 +3,7 @@ package org.codehaus.xfire.service;
 import java.net.URL;
 import java.util.Map;
 
+import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 
 /**
@@ -56,4 +57,14 @@ public interface ServiceFactory
      * @throws Exception
      */
     public Service create(Class clazz, QName service, URL wsdlUrl, Map properties);
+    
+    /**
+     * Create a service from a WSDL file.
+     *
+     * @param clazz   The service class for the wsdl.
+     * @param def     The WSDL definition.
+     * @return
+     * @throws Exception
+     */
+    public Service create(Class clazz, QName service, Definition def, Map properties);
 }

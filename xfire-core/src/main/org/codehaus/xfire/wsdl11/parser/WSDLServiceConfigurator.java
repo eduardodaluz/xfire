@@ -55,15 +55,24 @@ public class WSDLServiceConfigurator
     private Collection ports;
     private boolean initService = false;
     
+    
     public WSDLServiceConfigurator(Service service, URL url, TransportManager transportManager)
         throws WSDLException, IOException
+    {
+        this(service, 
+             WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(url.openStream())), 
+             transportManager);
+    }
+    
+
+    public WSDLServiceConfigurator(Service service, Definition def, TransportManager transportManager)
     {
         this.service = service;
         this.serviceInfo = service.getServiceInfo();
         this.bindingProvider = service.getBindingProvider();
         this.transportManager = transportManager;
         
-        this.definition = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(url.openStream()));
+        this.definition = def;
         
         this.wservice = definition.getService(service.getName());
 
