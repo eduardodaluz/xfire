@@ -169,7 +169,12 @@ public class ObjectServiceFactory
         
         properties.put(CREATE_DEFAULT_BINDINGS, Boolean.FALSE);
         
-        Service service = create(clazz, properties);
+        Service service;
+        if (name != null)
+            service = create(clazz, name.getLocalPart(), name.getNamespaceURI(), properties);
+        else
+            service = create(clazz, properties);
+        
         if (name != null) service.setName(name);
         
         service.setWSDLWriter(new ResourceWSDL(wsdlUrl));

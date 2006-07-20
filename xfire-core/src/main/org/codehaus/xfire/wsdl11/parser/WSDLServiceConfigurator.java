@@ -66,9 +66,10 @@ public class WSDLServiceConfigurator
         this.definition = WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(url.openStream()));
         
         this.wservice = definition.getService(service.getName());
+
         
         if (wservice == null) 
-            throw new XFireRuntimeException("Could find service in wsdl: " + service.getName());
+            throw new XFireRuntimeException("Could not find service in wsdl: " + service.getName());
         
         setWrapped();
         
@@ -118,6 +119,9 @@ public class WSDLServiceConfigurator
         
         PortType portType = definition.getPortType(service.getServiceInfo().getPortType());
     
+        if (portType == null)
+            throw new XFireRuntimeException("Could not find port type " + service.getServiceInfo().getPortType());
+        
         for (Iterator itr = portType.getOperations().iterator(); itr.hasNext();)
         {
             Operation op = (Operation) itr.next();
