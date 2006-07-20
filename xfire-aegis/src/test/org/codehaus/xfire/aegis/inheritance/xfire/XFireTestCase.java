@@ -2,8 +2,6 @@ package org.codehaus.xfire.aegis.inheritance.xfire;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.codehaus.xfire.aegis.inheritance.ws1.BeanB;
 import org.codehaus.xfire.aegis.inheritance.ws1.WS1;
 import org.codehaus.xfire.aegis.inheritance.ws1.impl.WS1Impl;
@@ -13,6 +11,8 @@ import org.codehaus.xfire.aegis.inheritance.ws2.common.pack1.ContentBean1;
 import org.codehaus.xfire.aegis.inheritance.ws2.common.pack2.ContentBean2;
 import org.codehaus.xfire.aegis.inheritance.ws2.impl.WS2Impl;
 import org.codehaus.xfire.server.http.XFireHttpServer;
+import org.codehaus.xfire.test.AbstractXFireTest;
+import org.jdom.Document;
 
 /**
  * <br/>
@@ -20,8 +20,10 @@ import org.codehaus.xfire.server.http.XFireHttpServer;
  * @author xfournet
  */
 public class XFireTestCase
-    extends TestCase
+    extends AbstractXFireTest
 {
+    private XFireHelper m_helper;
+
     private WS1 m_remoteWS1;
 
     private WS1 m_localWS1;
@@ -29,11 +31,6 @@ public class XFireTestCase
     private WS2 m_remoteWS2;
 
     private WS2 m_localWS2;
-
-    public XFireTestCase(String string)
-    {
-        super(string);
-    }
 
     protected void setUp()
         throws Exception
@@ -59,6 +56,7 @@ public class XFireTestCase
         throws Exception
     {
         xFireHttpServer.stop();
+        super.tearDown();
     }
 
     XFireHttpServer xFireHttpServer;
@@ -67,12 +65,12 @@ public class XFireTestCase
         throws Exception
     {
         // Create WS
-        XFireHelper xFireHelper = new XFireHelper();
-        xFireHelper.registerService(xFireHelper.createServiceWS1(), new WS1Impl());
-        xFireHelper.registerService(xFireHelper.createServiceWS2(), new WS2Impl());
+        m_helper = new XFireHelper(getXFire());
+        m_helper.registerService(m_helper.createServiceWS1(), new WS1Impl());
+        m_helper.registerService(m_helper.createServiceWS2(), new WS2Impl());
 
         // Start Jetty server
-        xFireHttpServer = new XFireHttpServer(xFireHelper.getXfire());
+        xFireHttpServer = new XFireHttpServer(m_helper.getXfire());
         xFireHttpServer.setPort(8080);
         xFireHttpServer.start();
     }
@@ -249,5 +247,12 @@ public class XFireTestCase
         assertNotNull(remoteThrowable);
 
         assertEquals(localThrowable, remoteThrowable);
+    }
+
+    public void testWSDLDocument()
+        throws Exception
+    {
+        Document wsdl = getWSDLDocument("ws1");
+        assertValid("//wsdl:types/xsd:schema/xsd:complexType[@name='ArrayOfBeanD']", wsdl);
     }
 }

@@ -9,13 +9,7 @@ import java.util.Map;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.aegis.inheritance.ws1.BeanA;
-import org.codehaus.xfire.aegis.inheritance.ws1.BeanB;
-import org.codehaus.xfire.aegis.inheritance.ws1.BeanC;
-import org.codehaus.xfire.aegis.inheritance.ws1.RootBean;
-import org.codehaus.xfire.aegis.inheritance.ws1.WS1;
-import org.codehaus.xfire.aegis.inheritance.ws1.WS1Exception;
-import org.codehaus.xfire.aegis.inheritance.ws1.WS1ExtendedException;
+import org.codehaus.xfire.aegis.inheritance.ws1.*;
 import org.codehaus.xfire.aegis.inheritance.ws2.WS2;
 import org.codehaus.xfire.aegis.inheritance.ws2.common.ParentBean;
 import org.codehaus.xfire.aegis.inheritance.ws2.common.exception.AlreadyExistsException;
@@ -46,7 +40,19 @@ public class XFireHelper
 
     public XFireHelper()
     {
-        m_xfire = new DefaultXFire();
+        this(null);
+    }
+
+    public XFireHelper(XFire xfire)
+    {
+        if (xfire == null)
+        {
+            m_xfire = new DefaultXFire();
+        }
+        else
+        {
+            m_xfire = xfire;
+        }
         m_serviceRegistry = m_xfire.getServiceRegistry();
         m_serviceFactory = new ObjectServiceFactory(m_xfire.getTransportManager(),
                 new AegisBindingProvider());
@@ -83,6 +89,7 @@ public class XFireHelper
             overrides.add(BeanA.class.getName());
             overrides.add(BeanB.class.getName());
             overrides.add(BeanC.class.getName());
+            overrides.add(BeanD.class.getName());
             overrides.add(RootBean.class.getName());
             overrides.add(WS1Exception.class.getName());
             overrides.add(WS1ExtendedException.class.getName());

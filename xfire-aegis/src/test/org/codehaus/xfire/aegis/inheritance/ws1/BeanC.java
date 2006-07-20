@@ -9,6 +9,7 @@ public class BeanC
     extends BeanB
 {
     private String m_propC;
+    private BeanD[] m_tabC;
 
     public String getPropC()
     {
@@ -18,6 +19,16 @@ public class BeanC
     public void setPropC(String propC)
     {
         m_propC = propC;
+    }
+
+    public BeanD[] getTabC()
+    {
+        return m_tabC;
+    }
+
+    public void setTabC(BeanD[] tabC)
+    {
+        this.m_tabC = tabC;
     }
 
     public String toString()

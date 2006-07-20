@@ -698,7 +698,7 @@ public class BeanType
             QName name = (QName) itr.next();
             if (info.isExtension()
                     && info.getPropertyDescriptorFromMappedName(name).getReadMethod()
-                            .getDeclaringClass() != info.getClass())
+                            .getDeclaringClass() != info.getTypeClass())
                 continue;
             deps.add(info.getType(name));
         }
