@@ -39,7 +39,9 @@ public abstract class AbstractMessageReader
         boolean nil = false;
         if (nilReader != null)
         {
-            nil = Boolean.valueOf(nilReader.getValue()).booleanValue();
+            String value = nilReader.getValue();
+            if (value != null && (value.equals("true") || value.equals("1")))
+                return true;
         }
         
         return nil;
