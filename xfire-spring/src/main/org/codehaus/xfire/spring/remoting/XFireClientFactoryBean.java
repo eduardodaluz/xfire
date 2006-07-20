@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -149,6 +150,7 @@ public class XFireClientFactoryBean
 
     /**
      * @return Returns the service's interface.
+     * @deprecated
      */
     public Class getServiceClass()
     {
@@ -159,11 +161,30 @@ public class XFireClientFactoryBean
      * @param serviceClass
      *            The interface implemented by the service called via the proxy.
      */
-    public void setServiceClass(Class serviceClass)
+    public void setServiceInterface(Class serviceClass)
     {
         _serviceClass = serviceClass;
     }
 
+
+    /**
+     * @return Returns the service's interface.
+     */
+    public Class getServiceInterface()
+    {
+        return _serviceClass;
+    }
+
+    /**
+     * @param serviceClass
+     *            The interface implemented by the service called via the proxy.
+     * @deprecated
+     */
+    public void setServiceClass(Class serviceClass)
+    {
+        _serviceClass = serviceClass;
+    }
+    
     /**
      * @return Returns the URL where the WSDL to this service can be found.
      */
@@ -403,10 +424,27 @@ public class XFireClientFactoryBean
             setWSDLProperties();
         }
 
-        Service serviceModel = getServiceFactory().create(getServiceClass(),
-                                                          serviceName,
-                                                          namespace,
-                                                          _properties);
+        Service serviceModel;
+        if (_wsdlDocumentUrl == null)
+        {
+            serviceModel = getServiceFactory().create(getServiceClass(),
+                                                      serviceName,
+                                                      namespace,
+                                                      _properties);
+        }
+        else
+        {
+            QName name = null;
+            if (serviceName != null && namespace != null)
+            {
+                name = new QName(namespace, serviceName);
+            }
+            
+            serviceModel = getServiceFactory().create(getServiceClass(),
+                                                      name,
+                                                      new URL(_wsdlDocumentUrl),
+                                                      _properties);
+        }
 
         String serviceUrl = getServiceUrl();
         

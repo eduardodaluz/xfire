@@ -32,6 +32,8 @@ public class XFireClientFactoryBeanTest
         
         factory = new XFireClientFactoryBean();
         factory.setServiceClass(Echo.class);
+        factory.setNamespaceUri("urn:Echo");
+        factory.setServiceName("Echo");
         factory.setWsdlDocumentUrl(wsdlUrl);
         factory.setUrl(serviceURL);
     }
@@ -75,8 +77,8 @@ public class XFireClientFactoryBeanTest
         assertEquals("default service factory is wrong type", ObjectServiceFactory.class, factory.getServiceFactory().getClass());
         assertEquals("default type (before afterPropertiesSet) is not interface", Echo.class, factory.getObjectType());
 
-        assertNull("default service name must be null", factory.getServiceName());
-        assertNull("default namespaceUri must be null", factory.getNamespaceUri());
+        assertNotNull("default service name must not be null", factory.getServiceName());
+        assertNotNull("default namespaceUri must not be null", factory.getNamespaceUri());
     }
     
     public void testXFireProxyFactoryBeanLoadOnStartup()
@@ -157,7 +159,7 @@ public class XFireClientFactoryBeanTest
 
         // now create a special factory that will actually use the created WSDL
         factory = new XFireClientFactoryBean();
-        factory.setServiceClass(Echo.class);
+        factory.setServiceInterface(Echo.class);
         factory.setWsdlDocumentUrl("http://localhost:8191/Echo?wsdl");
         factory.afterPropertiesSet();
         assertEquals("Wrong serviceName from WSDL", "Echo", factory.getServiceName());
@@ -172,7 +174,6 @@ public class XFireClientFactoryBeanTest
     public void testServerClass() 
         throws Exception
     {
-        
         MockControl control = MockControl.createControl(WebAnnotations.class);
         WebAnnotations webAnnotations = (WebAnnotations) control.getMock();
         
@@ -193,7 +194,8 @@ public class XFireClientFactoryBeanTest
         control.setReturnValue(true);
         
         serviceAnnotation = new WebServiceAnnotation();
-        serviceAnnotation.setServiceName("EchoService");
+        serviceAnnotation.setServiceName("Echo");
+        serviceAnnotation.setTargetNamespace("urn:Echo");
         serviceAnnotation.setEndpointInterface(Echo.class.getName());
         webAnnotations.getWebServiceAnnotation(EchoImpl.class);
         control.setReturnValue(serviceAnnotation);
