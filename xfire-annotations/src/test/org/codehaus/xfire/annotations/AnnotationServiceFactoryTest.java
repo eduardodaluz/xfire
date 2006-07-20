@@ -103,7 +103,7 @@ public class AnnotationServiceFactoryTest
         assertEquals(new QName(annotation.getTargetNamespace(), "EchoService"), 
                      service.getName());
         
-        assertEquals(new QName(annotation.getTargetNamespace(), "EchoServiceImpl"), 
+        assertEquals(new QName(annotation.getTargetNamespace(), "EchoServicePortType"), 
                      service.getServiceInfo().getPortType());
 
         assertTrue(service.getWSDLWriter() instanceof ResourceWSDL);

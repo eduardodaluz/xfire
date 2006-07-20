@@ -3,6 +3,7 @@ package org.codehaus.xfire.annotations;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,8 @@ public class AnnotationServiceFactory
     
     private WebAnnotations webAnnotations;
 
+    private static final String ALLOW_INTERFACE = "annotations.allow.interface";
+    
     /**
      * Creates an AnnotationServiceFactory which uses the most appropriate
      * annotations implementation - commons-attributes on Java 1.4 and
@@ -174,7 +177,7 @@ public class AnnotationServiceFactory
         {
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
          
-            assertValidImplementationClass(clazz, webAnnotations);
+            assertValidImplementationClass(clazz, webAnnotations, properties);
             
             name = createServiceName(clazz, webServiceAnnotation, name);
          
@@ -199,7 +202,7 @@ public class AnnotationServiceFactory
                             webAnnotations.getWebServiceAnnotation(endpointInterface);
 
                     namespace = createServiceNamespace(endpointInterface, endpointWSAnnotation, namespace);
-                    portType = createPortType(makeServiceNameFromClassName(clazz), endpointWSAnnotation);
+                    portType = createPortType(name, endpointWSAnnotation);
                 }
                 catch (ClassNotFoundException e)
                 {
@@ -211,7 +214,7 @@ public class AnnotationServiceFactory
             else
             {
                 namespace = createServiceNamespace(endpointInterface, webServiceAnnotation, namespace);
-                portType = createPortType(makeServiceNameFromClassName(clazz), webServiceAnnotation);
+                portType = createPortType(name, webServiceAnnotation);
             }
 
             // Allow the user to override informations given in the annotations
@@ -261,9 +264,9 @@ public class AnnotationServiceFactory
         }
     }
 
-    private void assertValidImplementationClass(Class clazz, WebAnnotations webAnnotations2)
+    private void assertValidImplementationClass(Class clazz, WebAnnotations webAnnotations2, Map properties)
     {
-        if (Modifier.isAbstract(clazz.getModifiers()))
+        if (Modifier.isAbstract(clazz.getModifiers()) && Boolean.TRUE.equals(properties.get(ALLOW_INTERFACE)))
         {
             throw new AnnotationException("Service class cannot be abstract: " + clazz.getName());
         }
@@ -346,9 +349,20 @@ public class AnnotationServiceFactory
         }
         else
         {
-            portType = name;
+            portType = name + "PortType";
         }
 
         return portType;
+    }
+
+
+    public Service create(Class clazz, QName name, URL wsdlUrl, Map properties)
+    {
+        if (properties == null)
+            properties = new HashMap();
+        
+        properties.put(ALLOW_INTERFACE, Boolean.TRUE);
+        
+        return super.create(clazz, name, wsdlUrl, properties);
     }
 }
