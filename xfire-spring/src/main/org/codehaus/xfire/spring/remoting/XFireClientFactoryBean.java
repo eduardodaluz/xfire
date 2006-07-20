@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
@@ -25,6 +25,8 @@ import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.spring.SpringUtils;
 import org.codehaus.xfire.transport.Channel;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
@@ -150,7 +152,6 @@ public class XFireClientFactoryBean
 
     /**
      * @return Returns the service's interface.
-     * @deprecated
      */
     public Class getServiceClass()
     {
@@ -166,7 +167,6 @@ public class XFireClientFactoryBean
         _serviceClass = serviceClass;
     }
 
-
     /**
      * @return Returns the service's interface.
      */
@@ -178,7 +178,6 @@ public class XFireClientFactoryBean
     /**
      * @param serviceClass
      *            The interface implemented by the service called via the proxy.
-     * @deprecated
      */
     public void setServiceClass(Class serviceClass)
     {
@@ -379,7 +378,7 @@ public class XFireClientFactoryBean
     {
         Object serviceClient = makeClient();
 
-        Class interf = getServiceClass();
+        Class interf = getServiceInterface();
         if (LOG.isDebugEnabled())
         {
             LOG.debug("Created: " + toString());
@@ -417,20 +416,14 @@ public class XFireClientFactoryBean
         String serviceName = getServiceName();
         String namespace = getNamespaceUri();
 
-        if ((serviceName == null || namespace == null) && _wsdlDocumentUrl != null)
-        {
-            // try to determine properties for name and namespace based on the
-            // WSDL
-            setWSDLProperties();
-        }
-
         Service serviceModel;
         if (_wsdlDocumentUrl == null)
         {
-            serviceModel = getServiceFactory().create(getServiceClass(),
+            serviceModel = getServiceFactory().create(getServiceInterface(),
                                                       serviceName,
                                                       namespace,
                                                       _properties);
+            
         }
         else
         {
@@ -440,13 +433,15 @@ public class XFireClientFactoryBean
                 name = new QName(namespace, serviceName);
             }
             
-            serviceModel = getServiceFactory().create(getServiceClass(),
+            serviceModel = getServiceFactory().create(getServiceInterface(),
                                                       name,
                                                       new URL(_wsdlDocumentUrl),
                                                       _properties);
+            
+            _endpointName = findFirstSoapEndpoint(serviceModel.getEndpoints());
         }
 
-        String serviceUrl = getServiceUrl();
+        String serviceUrl = getUrl();
         
         if (_endpointName != null)
         {
@@ -460,62 +455,16 @@ public class XFireClientFactoryBean
             return new XFireProxyFactory().create(serviceModel, serviceUrl);
     }
 
-    private String getServiceUrl()
+    private QName findFirstSoapEndpoint(Collection endpoints)
     {
-        String serviceUrl = _url;
-        if (serviceUrl == null)
-            serviceUrl = getWsdlDocumentUrl().replaceAll("\\?wsdl", "").replaceAll("\\?WSDL", "");
-        return serviceUrl;
-    }
-
-    /**
-     * Sets additional properties based on the WSDL Document configured. 
-     * Will lookup (and then set) ServiceName and NamespaceUri.
-     */
-    protected void setWSDLProperties()
-    {
-        String wsdlUrl = getWsdlDocumentUrl();
-        try
+        for (Iterator itr = endpoints.iterator(); itr.hasNext();)
         {
-            Definition d = getWSDLDefinition();
-            if (LOG.isDebugEnabled())
-            {
-                // if we are not able to parse the WSDL the exception will also
-                // log the WSDL URL
-                LOG.debug("Determining properties based on WSDL at: " + wsdlUrl);
-            }
-            Map services = d.getServices();
-            javax.wsdl.Service service = (javax.wsdl.Service) getOnlyElem(services);
-            if (service != null)
-            {
-                if (getServiceName() == null)
-                {
-                    setServiceName(service.getQName().getLocalPart());
-                }
-                if (LOG.isDebugEnabled())
-                {
-                    LOG.debug("ServiceName is: " + getServiceName());
-                }
-
-                if (getNamespaceUri() == null)
-                {
-                    setNamespaceUri(service.getQName().getNamespaceURI());
-                }
-                if (LOG.isDebugEnabled())
-                {
-                    LOG.debug("NamespaceUri is: " + getNamespaceUri());
-                }
-            }
-            else
-            {
-                LOG.warn("Unable to determine which service is meant. WSDL does not contain " +
-                        "exactly one service, but: " + services.size());
-            }
+            Endpoint ep = (Endpoint) itr.next();
+            
+            if (ep.getBinding() instanceof AbstractSoapBinding)
+                return ep.getName();
         }
-        catch (Exception e)
-        {
-            throw new XFireRuntimeException("Unable to parse WSDL at: " + wsdlUrl, e);
-        }
+        return null;
     }
 
     /**
@@ -530,35 +479,17 @@ public class XFireClientFactoryBean
         return WSDLFactory.newInstance().newWSDLReader().readWSDL(getWsdlDocumentUrl());
     }
 
-    /**
-     * Returns the only value in a Map
-     * 
-     * @param map
-     * @return the only value in the map, if it contained exactly 1 key/value
-     *         pair <br>
-     *         <code>null</code>, otherwise <br>
-     */
-    private Object getOnlyElem(Map map)
-    {
-        if (map.size() == 1)
-        {
-            Set keySet = map.keySet();
-            Iterator i = keySet.iterator();
-            return map.get(i.next());
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     public String toString()
     {
         StringBuffer builder = new StringBuffer();
         builder.append("XFire client proxy for: ");
-        builder.append(getServiceClass());
-        builder.append(" at: ");
-        builder.append(getServiceUrl());
+        builder.append(getServiceInterface());
+        if (getUrl() != null)
+        {
+            builder.append(" at: ");
+            builder.append(getUrl());
+        }
+        
         return builder.toString();
     }
 
@@ -599,7 +530,9 @@ public class XFireClientFactoryBean
             }
             catch (InvocationTargetException e)
             {
-                StringBuffer callTarget = new StringBuffer(getServiceUrl()).append(" arguments: ");
+                Object target = SpringUtils.getUserTarget(client);
+                Client c = Client.getInstance(target);
+                StringBuffer callTarget = new StringBuffer(c.getUrl()).append(" arguments: ");
                 for(int x = 0 ; x < args.length ; x ++ )
                 {
                     callTarget.append(args[x].getClass().getName()).append(" : ").append(args[x].toString()).append(" |");

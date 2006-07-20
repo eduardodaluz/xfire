@@ -23,7 +23,7 @@ import org.springframework.aop.framework.AopProxy;
 public class XFireClientFactoryBeanTest
     extends AbstractXFireAegisTest
 {
-    private String serviceURL = "http://localhost/Echo";
+    private String serviceURL = "http://localhost:8080/xfire/services/Echo";
     private String wsdlUrl;
     private XFireClientFactoryBean factory;
     
@@ -31,9 +31,9 @@ public class XFireClientFactoryBeanTest
         wsdlUrl = getTestFile("src/test/org/codehaus/xfire/spring/remoting/echo.wsdl").toURL().toString();
         
         factory = new XFireClientFactoryBean();
-        factory.setServiceClass(Echo.class);
-        factory.setNamespaceUri("urn:Echo");
-        factory.setServiceName("Echo");
+        factory.setServiceInterface(Echo.class);
+        //factory.setNamespaceUri("urn:Echo");
+        //factory.setServiceName("Echo");
         factory.setWsdlDocumentUrl(wsdlUrl);
         factory.setUrl(serviceURL);
     }
@@ -51,7 +51,7 @@ public class XFireClientFactoryBeanTest
 
         factory = new XFireClientFactoryBean();
         try {
-            factory.setServiceClass(Echo.class);
+            factory.setServiceInterface(Echo.class);
             factory.afterPropertiesSet();
             fail("expected exception without WSDL");
         } catch (IllegalStateException e) {
@@ -77,8 +77,8 @@ public class XFireClientFactoryBeanTest
         assertEquals("default service factory is wrong type", ObjectServiceFactory.class, factory.getServiceFactory().getClass());
         assertEquals("default type (before afterPropertiesSet) is not interface", Echo.class, factory.getObjectType());
 
-        assertNotNull("default service name must not be null", factory.getServiceName());
-        assertNotNull("default namespaceUri must not be null", factory.getNamespaceUri());
+        assertNull("default service name must be null", factory.getServiceName());
+        assertNull("default namespaceUri must be null", factory.getNamespaceUri());
     }
     
     public void testXFireProxyFactoryBeanLoadOnStartup()
@@ -96,6 +96,8 @@ public class XFireClientFactoryBeanTest
         XFireProxy fireProxy = (XFireProxy)handler;
         checkAuth(fireProxy, null, null);
         Client c = fireProxy.getClient();
+        System.out.println(serviceURL);
+        System.out.println(c.getUrl());
         assertEquals("wrong service URL", serviceURL, c.getUrl());
     }    
     
@@ -162,8 +164,6 @@ public class XFireClientFactoryBeanTest
         factory.setServiceInterface(Echo.class);
         factory.setWsdlDocumentUrl("http://localhost:8191/Echo?wsdl");
         factory.afterPropertiesSet();
-        assertEquals("Wrong serviceName from WSDL", "Echo", factory.getServiceName());
-        assertEquals("Wrong namespaceUri from WSDL", "http://test.xfire.codehaus.org", factory.getNamespaceUri());
         
         Echo echo = (Echo) factory.getObject();
         assertEquals("hi", echo.echo("hi"));
