@@ -299,8 +299,14 @@ public class STAXUtils
         String localName = e.getLocalName();
 
         if (prefix == null) prefix = "";
-        if (localName == null) throw new IllegalStateException("Element's local name cannot be null!");
-        
+        if (localName == null) 
+        {
+            localName = e.getNodeName();
+            
+            if (localName == null)
+                throw new IllegalStateException("Element's local name cannot be null!");
+        }
+            
         String decUri = writer.getNamespaceContext().getNamespaceURI(prefix);
         boolean declareNamespace = (decUri == null || !decUri.equals(ns));
 
