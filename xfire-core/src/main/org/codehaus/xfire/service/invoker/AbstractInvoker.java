@@ -19,6 +19,7 @@ public abstract class AbstractInvoker implements Invoker {
   public Object invoke(final Method method, final Object[] params, final MessageContext context)
           throws XFireFault
   {
+      Method m = null;
       try
       {
           final Object serviceObject = getServiceObject(context);
@@ -48,7 +49,8 @@ public abstract class AbstractInvoker implements Invoker {
               }
           }
 
-          Method m = matchMethod(method, serviceObject);
+          m = matchMethod(method, serviceObject);
+          
           return m.invoke(serviceObject, newParams);
       }
       catch (IllegalArgumentException e)
@@ -65,6 +67,14 @@ public abstract class AbstractInvoker implements Invoker {
           }
           else if (t instanceof Exception)
           {
+              
+              Class[] exceptions = m.getExceptionTypes();
+              for( int i=0;i<exceptions.length;i++){
+                  if(  exceptions[i].equals(t.getClass())){
+                      throw new XFireFault(t, XFireFault.RECEIVER);
+                  }
+              }
+              
               throw new XFireFault(t, XFireFault.SENDER);
           }
           else
