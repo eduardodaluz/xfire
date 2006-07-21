@@ -70,5 +70,12 @@
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
     </dependency> 
+    <dependency>
+      <groupId>net.sourceforge.pjl-comp-filter</groupId>
+      <artifactId>pjl-comp-filter</artifactId>
+      <scope>test</scope>
+      <optional>true</optional>
+      <version>1.6</version>
+    </dependency> 
   </dependencies>
 </project>

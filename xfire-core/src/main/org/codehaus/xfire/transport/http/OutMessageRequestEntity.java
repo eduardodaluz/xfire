@@ -2,6 +2,7 @@ package org.codehaus.xfire.transport.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
@@ -33,6 +34,11 @@ public class OutMessageRequestEntity
     public void writeRequest(OutputStream out)
         throws IOException
     {
+        if (CommonsHttpMessageSender.isGzipRequestEnabled(context))
+        {
+            out = new GZIPOutputStream(out);
+        }
+        
         try
         {
             Attachments atts = message.getAttachments();
@@ -50,6 +56,8 @@ public class OutMessageRequestEntity
             log.error("Couldn't send message.", e);
             throw new IOException(e.getMessage());
         }
+        
+        out.close();
     }
 
     public long getContentLength()

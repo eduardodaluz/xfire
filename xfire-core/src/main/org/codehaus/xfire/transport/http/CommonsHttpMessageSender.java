@@ -3,9 +3,13 @@ package org.codehaus.xfire.transport.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpState;
@@ -45,6 +49,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     private HttpClient client;
 
     private HttpState state;
+    
+    private static final String GZIP_CONTENT_ENCODING = "gzip";
 
     public static final String HTTP_CLIENT_PARAMS = "httpClient.params";
     public static final String USER_AGENT =  
@@ -53,6 +59,15 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
     public static final String HTTP_STATE = "httpClient.httpstate";
     public static final String HTTP_CLIENT = "httpClient";
+    
+    /** Enable GZIP on request and response. */
+    public static final String GZIP_ENABLED = "gzip.enabled";
+    
+    /** Request GZIP encoded responses. */
+    public static final String GZIP_RESPONSE_ENABLED = "gzip.response.enabled";
+    
+    /** GZIP the requests. */
+    public static final String GZIP_REQUEST_ENABLED = "gzip.request.enabled";
 
     private InputStream msgIs;
     
@@ -88,20 +103,24 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             }
 
             // Setup the proxy settings
-            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST); 
-            if(proxyHost == null ){    
-              proxyHost = System.getProperty(HTTP_PROXY_HOST);
+            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
+            if (proxyHost == null)
+            {
+                proxyHost = System.getProperty(HTTP_PROXY_HOST);
             }
+            
             if (proxyHost != null)
             {
                  
-                 String portS  = (String) context.getContextualProperty(HTTP_PROXY_PORT);
-                 if(portS == null ){
-                     portS = System.getProperty(HTTP_PROXY_PORT);
-                 }
+                String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
+                if (portS == null)
+                {
+                    portS = System.getProperty(HTTP_PROXY_PORT);
+                }
                 int port = 80;
-                if (portS != null) port = Integer.parseInt(portS);
-                
+                if (portS != null)
+                    port = Integer.parseInt(portS);
+
                 client.getHostConfiguration().setProxy(proxyHost, port);
             }
         }
@@ -129,6 +148,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         OutMessage message = getMessage();
         boolean mtomEnabled = Boolean.valueOf((String) context.getContextualProperty(SoapConstants.MTOM_ENABLED)).booleanValue();
         Attachments atts = message.getAttachments();
+        
         if (mtomEnabled || atts != null)
         {
             if (atts == null)
@@ -148,8 +168,40 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         {
             postMethod.setRequestHeader("Content-Type", HttpChannel.getSoapMimeType(getMessage(), true));
         }
+        
+        if (isGzipResponseEnabled(context))
+        {
+            postMethod.setRequestHeader("Accept-Encoding", GZIP_CONTENT_ENCODING);
+        }
+        
+        if (isGzipRequestEnabled(context))
+        {
+            postMethod.setRequestHeader("Content-Encoding", GZIP_CONTENT_ENCODING);
+        }
     }
 
+    static boolean isGzipRequestEnabled(MessageContext context)
+    {
+        if (isGzipEnabled(context)) return true;
+        
+        Object gzipReqEnabled = context.getContextualProperty(GZIP_RESPONSE_ENABLED);
+        return (gzipReqEnabled != null && gzipReqEnabled.toString().toLowerCase().equals("true"));
+    }
+    
+    static boolean isGzipEnabled(MessageContext context)
+    {
+        Object gzipEnabled = context.getContextualProperty(GZIP_ENABLED);
+        return (gzipEnabled != null && gzipEnabled.toString().toLowerCase().equals("true"));
+    }
+    
+    static boolean isGzipResponseEnabled(MessageContext context)
+    {
+        if (isGzipEnabled(context)) return true;
+        
+        Object gzipResEnabled = context.getContextualProperty(GZIP_RESPONSE_ENABLED);
+        return (gzipResEnabled != null && gzipResEnabled.toString().toLowerCase().equals("true"));
+    }
+    
     public void send()
         throws HttpException, IOException, XFireException
     {
@@ -208,16 +260,24 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         OutMessage message = getMessage();
         MessageContext context = getMessageContext();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        OutputStream os = bos;
 
+        if (isGzipRequestEnabled(context))
+        {
+            os = new GZIPOutputStream(os);
+        }
+        
         Attachments atts = message.getAttachments();
         if (atts != null)
         {
-            atts.write(bos);
+            atts.write(os);
         }
         else
         {
-            HttpChannel.writeWithoutAttachments(context, message, bos);
+            HttpChannel.writeWithoutAttachments(context, message, os);
         }
+        
+        os.close();
         
         return new ByteArrayRequestEntity(bos.toByteArray());
     }
@@ -227,11 +287,19 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     {
         String ct = postMethod.getResponseHeader("Content-Type").getValue();
         InputStream in = postMethod.getResponseBodyAsStream();
+        Header hce = postMethod.getResponseHeader("Content-Encoding");
+        
+        if (hce != null && hce.getValue().equals(GZIP_CONTENT_ENCODING))
+        {
+            in = new GZIPInputStream(in);
+        }
+        
         if (ct.toLowerCase().indexOf("multipart/related") != -1)
         {
             Attachments atts = new StreamedAttachments(in, ct);
 
             msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
+            
             InMessage msg = new InMessage(STAXUtils.createXMLStreamReader(msgIs, getEncoding(),getMessageContext()), getUri());
             msg.setAttachments(atts);
             return msg;
