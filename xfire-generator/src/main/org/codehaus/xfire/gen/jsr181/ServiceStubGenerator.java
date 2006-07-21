@@ -34,7 +34,7 @@ public class ServiceStubGenerator
     public void generate(GenerationContext context, Service service)
         throws Exception
     {
-        if (service.getEndpoints().size() == 0) return;
+        if (service.getEndpoints().size() == 0 || !context.isServerStubGenerated()) return;
         
         super.generate(context, service);
     }

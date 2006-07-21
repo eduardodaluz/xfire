@@ -28,6 +28,8 @@ public class ServiceDescriptorGenerator
     public void generate(GenerationContext context)
         throws Exception
     {
+        if (!context.isServerStubGenerated()) return;
+        
         File dir = new File(context.getOutputDirectory(), "META-INF/xfire/");
         File descriptor = new File(dir, "services.xml");
         

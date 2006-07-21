@@ -1,7 +1,5 @@
 package jsr181.echo.bare;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;

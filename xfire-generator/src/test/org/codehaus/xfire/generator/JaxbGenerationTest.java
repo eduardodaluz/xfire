@@ -123,4 +123,20 @@ public class JaxbGenerationTest
         JDefinedClass echo = model._getClass("wrapped.echo.EchoPortType");
         assertNotNull(echo);
     }
+    
+    public void testEchoNoServerStubs() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/echoWrapped.wsdl"));
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        generator.setDestinationPackage("org.codehaus.xfire.generator.noserverstubs");
+        generator.setOverwrite(true);
+        generator.setGenerateServerStubs(false);
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("org.codehaus.xfire.generator.noserverstubs.EchoImpl");
+        assertNull(echo);
+    }
 }

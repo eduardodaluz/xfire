@@ -21,6 +21,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.soap.Soap12Binding;
+import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.local.LocalTransport;
@@ -181,7 +182,6 @@ public class PortGenerator
         JCodeModel model = context.getCodeModel();
         JVar serviceVar = servCls.field(JMod.PRIVATE, Service.class, "service" + number);
         
-        JClass serviceImpl = (JClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
         JClass serviceIntf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
         
         /**
@@ -195,6 +195,7 @@ public class PortGenerator
         JType abSoapBindingType = model._ref(AbstractSoapBinding.class);
         JType qnameType = model._ref(QName.class);
         JType soapTransType = model._ref(SoapTransport.class);
+        JType hashMapType = model._ref(HashMap.class);
         
         JVar tmVar = create.body().decl(tmType, "tm", JExpr.direct("org.codehaus.xfire.XFireFactory.newInstance().getXFire().getTransportManager()"));
         JInvocation asfCons = JExpr._new(asfType);
@@ -202,10 +203,23 @@ public class PortGenerator
         asfCons.arg(tmVar);
         asfCons.arg(context.getSchemaGenerator().getBindingProviderExpr(context));
         
+        JVar propsVar = create.body().decl(hashMapType, "props", JExpr._new(hashMapType));
+        create.body().add(propsVar.invoke("put").arg("annotations.allow.interface").arg("true"));
+        
+        if (service.getServiceInfo().isWrapped()) 
+        {
+            create.body().add(propsVar.invoke("put").arg("objectServiceFactory.style").arg(SoapConstants.STYLE_WRAPPED));
+        }
+        else
+        {
+            create.body().add(propsVar.invoke("put").arg("objectServiceFactory.style").arg(SoapConstants.STYLE_DOCUMENT));
+        }
+        
         JVar asfVar = create.body().decl(asfType, "asf", asfCons);
         JInvocation createInvoke = asfVar.invoke("create");
         
-        createInvoke.arg(JExpr.direct(serviceImpl.fullName() + ".class"));
+        createInvoke.arg(JExpr.direct(serviceIntf.fullName() + ".class"));
+        createInvoke.arg(propsVar);
         
         JInvocation bindingCreation = asfVar.invoke("setBindingCreationEnabled");
         bindingCreation.arg(JExpr.lit(true));

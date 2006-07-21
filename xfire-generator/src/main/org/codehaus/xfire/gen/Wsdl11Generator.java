@@ -54,6 +54,8 @@ public class Wsdl11Generator
     
     private boolean overwrite;
     
+    private boolean generateServerStubs = true;
+    
     public boolean isOverwrite()
     {
         return overwrite;
@@ -112,6 +114,7 @@ public class Wsdl11Generator
         context.setExplicitAnnotation(isExplicitAnnotation());
         context.setServerStubOverwritten(isOverwrite());
         context.setDescriptorOverwritten(isOverwrite());
+        context.setServerStubGenerated(isGenerateServerStubs());
         
         support.initialize(context);
 
@@ -260,12 +263,24 @@ public class Wsdl11Generator
         return externalBindings;
     }
 
-	public boolean isExplicitAnnotation() {
-		return explicitAnnotation;
-	}
+	public boolean isExplicitAnnotation()
+    {
+        return explicitAnnotation;
+    }
 
-	public void setExplicitAnnotation(boolean explicitAnnotation) {
-		this.explicitAnnotation = explicitAnnotation;
-	}
+    public void setExplicitAnnotation(boolean explicitAnnotation)
+    {
+        this.explicitAnnotation = explicitAnnotation;
+    }
+
+    public boolean isGenerateServerStubs()
+    {
+        return generateServerStubs;
+    }
+
+    public void setGenerateServerStubs(boolean generateServerStubs)
+    {
+        this.generateServerStubs = generateServerStubs;
+    }
     
 }

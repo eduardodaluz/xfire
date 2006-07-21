@@ -37,6 +37,8 @@ public class GenerationContext
 
     private boolean explicitAnnotation;
 
+    private boolean serverStubGenerated = true;
+    
     private boolean serverStubOverwritten = false;
     
     private boolean descriptorOverwritten = false;
@@ -171,5 +173,14 @@ public class GenerationContext
     {
         this.descriptorOverwritten = descriptorOverwritten;
     }
-    
+
+    public boolean isServerStubGenerated()
+    {
+        return serverStubGenerated;
+    }
+
+    public void setServerStubGenerated(boolean serverStubGenerated)
+    {
+        this.serverStubGenerated = serverStubGenerated;
+    }
 }

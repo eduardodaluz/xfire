@@ -12,7 +12,9 @@ public class WsGen {
 	
     private static void usage() {
 		System.out
-				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] [-r profile] [-e externalBinging] [-u baseURI] [-overwrite true/false] [-x true/false]\n");
+				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] " +
+                        "[-r profile] [-e externalBinging] [-u baseURI] [-overwrite true/false] " +
+                        "[-x true/false] [-ss true/false]\n");
 	}
 
 	private static void missingParam(String param) {
@@ -32,7 +34,8 @@ public class WsGen {
 		String baseURI = null;
         boolean overwrite = false;
         boolean explicit = false;
-
+        boolean serverStubs = true;
+        
 		if (args.length < 3) {
 			usage();
 			return;
@@ -69,6 +72,9 @@ public class WsGen {
             if("-overwrite".equals(param)){
                 overwrite=Boolean.parseBoolean(value);
             }
+            if("-ss".equals(param)){
+                serverStubs = Boolean.parseBoolean(value);
+            }
 		}
 
 		if (wsdl == null) {
@@ -98,6 +104,7 @@ public class WsGen {
 		generator.setWsdl(wsdl);
 		generator.setExplicitAnnotation(explicit);
         generator.setOverwrite(overwrite);
+        generator.setGenerateServerStubs(serverStubs);
         
 		if (binding != null)
 			generator.setBinding(binding);

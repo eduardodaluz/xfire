@@ -15,6 +15,7 @@ public class WsGenTask extends MatchingTask
     private String externalBindings;
     private boolean explicitAnnotation;
     private boolean overwrite;
+    private boolean generateServerStubs = true;
     
     public void execute()
         throws BuildException
@@ -33,6 +34,8 @@ public class WsGenTask extends MatchingTask
         generator.setExternalBindings(externalBindings);
         generator.setExplicitAnnotation(explicitAnnotation);
         generator.setOverwrite(overwrite);
+        generator.setGenerateServerStubs(generateServerStubs);
+        
         if (binding != null) generator.setBinding(binding);
         if (profile != null) generator.setProfile(profile);
         
@@ -134,6 +137,16 @@ public class WsGenTask extends MatchingTask
     public void setOverwrite(boolean forceOverwrite)
     {
         this.overwrite = forceOverwrite;
+    }
+
+    public boolean isGenerateServerStubs()
+    {
+        return generateServerStubs;
+    }
+
+    public void setGenerateServerStubs(boolean generateServerStubs)
+    {
+        this.generateServerStubs = generateServerStubs;
     }
     
     

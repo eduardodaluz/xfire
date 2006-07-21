@@ -5,12 +5,14 @@
 
     <delete dir="${basedir}/target/test-services"/>
     <mkdir dir="${basedir}/target/test-services"/>
-  
+    <delete dir="${basedir}/target/xmlbeans-classes"/>
+    <mkdir dir="${basedir}/target/xmlbeans-classes"/>
+  	  
     <java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler"
           classpathref="maven.test.classpath"
           fork="true">
       <arg value="-d"/>
-      <arg value="${basedir}/target/test-services"/>
+      <arg value="${basedir}/target/xmlbeans-classes"/>
       <arg value="${basedir}/src/wsdl/echo.wsdl"/>
       <arg value="${basedir}/src/wsdl/echoWrapped.wsdl"/>
       <arg value="${basedir}/src/wsdl/globalweather-twoporttypes.wsdl"/>
@@ -19,12 +21,13 @@
   	
 
   	<copy todir="${basedir}/target/test-classes">
-      <fileset dir="${basedir}/target/test-services/"/>
+      <fileset dir="${basedir}/target/xmlbeans-classes/"/>
     </copy>
 
     <path id="wsgen.classpath">
       <path refid="maven.test.classpath" />
       <pathelement location="${basedir}/target/test-services"/>
+      <pathelement location="${basedir}/target/xmlbeans-classes"/>
     </path>
   	
     <taskdef name="wsgen" classname="org.codehaus.xfire.gen.WsGenTask" 
