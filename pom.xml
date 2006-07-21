@@ -563,7 +563,7 @@
     <snapshotRepository>
       <id>xfire-snapshots</id>
       <name>XFire Central Development Repository</name>
-      <url>dav:https://dav.codehaus.org/dist/xfire/m2-snapshots</url>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/xfire/</url>
     </snapshotRepository>
     <site>
       <id>xfire-site</id>
