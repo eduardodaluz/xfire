@@ -114,6 +114,7 @@
     <module>xfire-castor</module>
     <module>xfire-core</module>
     <module>xfire-loom</module>
+    <module>xfire-jibx</module>
     <module>xfire-jaxb</module>
     <module>xfire-jms</module>
     <module>xfire-plexus</module>
@@ -498,6 +499,18 @@
           <exclusion>
             <artifactId>org.springframework</artifactId>
             <groupId>spring</groupId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring-v1</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring-v2</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring-common</artifactId>
           </exclusion>
           <exclusion>
             <artifactId>backport-util-concurrent</artifactId>
