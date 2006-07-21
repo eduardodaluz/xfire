@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2-RC</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-core</artifactId>
   <name>XFire Core</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2-RC</version>
   <dependencies>
     <dependency>
       <groupId>javax.activation</groupId>
@@ -67,15 +67,15 @@
       <artifactId>commons-logging</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-    </dependency> 
-    <dependency>
       <groupId>net.sourceforge.pjl-comp-filter</groupId>
       <artifactId>pjl-comp-filter</artifactId>
+      <version>1.6</version>
       <scope>test</scope>
       <optional>true</optional>
-      <version>1.6</version>
-    </dependency> 
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+    </dependency>
   </dependencies>
 </project>
