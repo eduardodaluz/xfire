@@ -70,7 +70,7 @@ public abstract class AbstractInvoker implements Invoker {
               
               Class[] exceptions = m.getExceptionTypes();
               for( int i=0;i<exceptions.length;i++){
-                  if(  exceptions[i].equals(t.getClass())){
+                  if(  exceptions[i].isAssignableFrom(t.getClass())){
                       throw new XFireFault(t, XFireFault.RECEIVER);
                   }
               }
