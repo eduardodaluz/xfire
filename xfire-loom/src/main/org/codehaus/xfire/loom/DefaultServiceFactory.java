@@ -3,6 +3,7 @@ package org.codehaus.xfire.loom;
 import java.net.URL;
 import java.util.Map;
 
+import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 
 import org.apache.avalon.framework.activity.Initializable;
@@ -83,5 +84,10 @@ public class DefaultServiceFactory
     public Service create(Class clazz, String name, String namespace, Map properties)
     {
         return m_factory.create(clazz, name, namespace, properties);
+    }
+
+    public Service create(Class clazz, QName service, Definition def, Map properties)
+    {
+        return m_factory.create(clazz, service, def, properties);
     }
 }
