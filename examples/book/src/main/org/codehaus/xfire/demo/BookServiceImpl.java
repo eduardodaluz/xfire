@@ -4,6 +4,7 @@ package org.codehaus.xfire.demo;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @author <a href="mailto:nathanyp@hotmail.com">Nathan Peles</a>
  */
+//START SNIPPET: book
 public class BookServiceImpl implements BookService
 {
     private Book onlyBook;
@@ -16,7 +17,7 @@ public class BookServiceImpl implements BookService
         onlyBook.setIsbn("0123456789");
     }
 
-    public Book[] getBooks()
+    public Book[] getBooks() 
     {
         return new Book[] { onlyBook };
     }
@@ -29,3 +30,4 @@ public class BookServiceImpl implements BookService
         return null;
     }
 }
+//END SNIPPET: book
