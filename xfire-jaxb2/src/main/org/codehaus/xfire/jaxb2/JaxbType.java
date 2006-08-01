@@ -1,11 +1,15 @@
 package org.codehaus.xfire.jaxb2;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -17,7 +21,12 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
@@ -27,17 +36,31 @@ import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.util.Resolver;
 import org.codehaus.xfire.util.stax.DOMStreamWriter;
 import org.jdom.Element;
+import org.xml.sax.SAXException;
+
+
 
 public class JaxbType
     extends Type
 {
+	
+	private Log log = LogFactory.getLog(JaxbType.class);
+	
     public static final String SEARCH_PACKAGES = "jaxb.search.pacakges";
+    public static final String ENABLE_VALIDATION = "jaxb.enable.validatation";
+    public static final String VALIDATION_SCHEMA = "jaxb.validation.schema";
+    public static final String GENERATED_VALIDATION_SCHEMA = "jaxb.generated.validation.schema";
+    
+    
     private static final QName XSI_TYPE = new QName(SoapConstants.XSI_NS, "type");
     
+    SchemaFactory schemaFactory = null;
     private JAXBContext context;
 
     public JaxbType(Class clazz)
@@ -47,6 +70,73 @@ public class JaxbType
         initType();
     }
 
+     private void setupValidationSchema(Collection<String> schemaLocations,Unmarshaller u ) throws IOException, SAXException {
+        
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        StreamSource[] schemaSources = new StreamSource[schemaLocations.size()];
+
+        try {
+            int i = 0;
+            for (Iterator itr = schemaLocations.iterator(); itr.hasNext();) {
+                String schemaLocation = (String) itr.next();
+                schemaSources[i] = new StreamSource(new Resolver(schemaLocation).getInputStream());
+                i++;
+            }
+            
+            u.setSchema(factory.newSchema(schemaSources));
+        }
+        /** make sure to close all ressources * */
+        finally {
+            for (int i = 0; i < schemaSources.length; i++) {
+                if (schemaSources[i] != null) {
+                    InputStream inputStream = schemaSources[i].getInputStream();
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                }
+            }
+        }
+        
+
+    }
+
+    /**
+     * @param context
+     * @param u
+     */
+    private void enableValidation(MessageContext context, Unmarshaller u ){
+    	// chack if we have cached schema instance
+    	Schema validationSchema = (Schema) context.getService().getProperty(GENERATED_VALIDATION_SCHEMA);
+    	if( validationSchema!= null ){
+    		u.setSchema(validationSchema);
+    		return;
+    	}
+    	// Do we have schema dedicated to validation
+    	Collection<String> schemas = (Collection<String>) context.getContextualProperty(VALIDATION_SCHEMA);
+    	if( schemas == null ){
+    		// No, we don't, so use schema specifed on  service
+    		schemas =  (Collection<String>) context.getService().getProperty(ObjectServiceFactory.SCHEMAS);
+    	}
+    	try {
+    		if( schemas != null ){
+    			// We have some schema loaded,so set them up on unmarshaler
+    			 setupValidationSchema(schemas,u);	
+    		}else{
+    			// Generate schema here ??
+    		}
+    		// Put generated schema on context
+    		context.getService().setProperty(GENERATED_VALIDATION_SCHEMA,u.getSchema());
+    		
+			
+		} catch (IOException e) {
+			// we have configuration problem, so break to application
+			 throw new XFireRuntimeException("Error creating validating schema.", e);
+		} catch (SAXException e) {
+			  throw new XFireRuntimeException("Error creating validating schema.", e);
+		}
+
+    }
+     
     @SuppressWarnings("unchecked")
     public Object readObject(MessageReader reader, MessageContext context)
         throws XFireFault
@@ -54,10 +144,15 @@ public class JaxbType
         try
         {
             JAXBContext jc = getJAXBContext(context);
-
             Unmarshaller u = jc.createUnmarshaller();
             u.setAttachmentUnmarshaller(new AttachmentUnmarshaller(context));
-
+            // check if validation is enabled
+            boolean validationEnabled = Boolean.valueOf((String) context.getContextualProperty(ENABLE_VALIDATION));
+            if( validationEnabled){
+            	enableValidation(context, u);
+            }
+            
+            
             Object o;
             if (isAbstract() && reader.getAttributeReader(XSI_TYPE).getValue() == null)
                 o = u.unmarshal(reader.getXMLStreamReader(), getTypeClass());
