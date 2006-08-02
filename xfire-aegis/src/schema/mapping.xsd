@@ -53,6 +53,7 @@
     <attribute name="ignore" type="boolean" />
     <attribute name="componentType" type="string" />
     <attribute name="keyType" type="string" />
+    <attribute name="minOccurs" type="int"/>
     <attribute name="style">
       <simpleType>
         <restriction base="string">
