@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
@@ -40,9 +41,12 @@ public class ByteArrayType extends AbstractXOPType
         }
         finally
         {
-            AttachmentDataSource dataSource = (AttachmentDataSource) handler.getDataSource();
-            File attFile = dataSource.getFile();
-            if (attFile != null) attFile.delete();
+            DataSource dataSource = handler.getDataSource();
+            if (dataSource instanceof AttachmentDataSource) 
+            {
+                File attFile = ((AttachmentDataSource) dataSource).getFile();
+                if (attFile != null) attFile.delete();
+            }
         }
     }
     
