@@ -184,7 +184,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     {
         if (isGzipEnabled(context)) return true;
         
-        Object gzipReqEnabled = context.getContextualProperty(GZIP_RESPONSE_ENABLED);
+        Object gzipReqEnabled = context.getContextualProperty(GZIP_REQUEST_ENABLED);
         return (gzipReqEnabled != null && gzipReqEnabled.toString().toLowerCase().equals("true"));
     }
     
