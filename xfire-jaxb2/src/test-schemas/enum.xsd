@@ -1,0 +1,11 @@
+<s:schema elementFormDefault="qualified" targetNamespace="http://xfire.codehaus.org/enum"
+  xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xfire.codehaus.org/enum">
+  <s:simpleType name="Countries">
+    <s:restriction base="s:string">
+      <s:enumeration value="AUSTRIA" />
+      <s:enumeration value="GERMANY" />
+      <s:enumeration value="POLAND" />
+      <s:enumeration value="UNITED STATES" />
+    </s:restriction>
+  </s:simpleType>
+</s:schema>

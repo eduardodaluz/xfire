@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -68,7 +69,8 @@ public class JaxbTypeCreator
     {
         return clazz.isAnnotationPresent(XmlElement.class)
                 || clazz.isAnnotationPresent(XmlType.class)
-                || clazz.isAnnotationPresent(XmlRootElement.class);
+                || clazz.isAnnotationPresent(XmlRootElement.class)
+                || clazz.isAnnotationPresent(XmlEnum.class);
     }
 
     public Type createType(PropertyDescriptor pd)

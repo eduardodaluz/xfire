@@ -23,6 +23,7 @@
                 <taskdef classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath" name="xjc"></taskdef>
                 <mkdir dir="${project.build.directory}/generated-source"></mkdir>
                 <xjc target="${project.build.directory}/generated-source">
+                  <schema includes="enum.xsd" dir="${basedir}/src/test-schemas"></schema>
                   <schema includes="inheritance2.xsd" dir="${basedir}/src/test-schemas"></schema>
                   <schema includes="picture.xsd" dir="${basedir}/src/test-schemas"></schema>
                   <schema includes="WeatherForecast.xsd" dir="${basedir}/src/test-schemas"></schema>

@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
@@ -25,8 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
@@ -49,10 +48,7 @@ import org.xml.sax.SAXException;
 public class JaxbType
     extends Type
 {
-	
-	private Log log = LogFactory.getLog(JaxbType.class);
-	
-    public static final String SEARCH_PACKAGES = "jaxb.search.pacakges";
+	public static final String SEARCH_PACKAGES = "jaxb.search.pacakges";
     public static final String ENABLE_VALIDATION = "jaxb.enable.validatation";
     public static final String VALIDATION_SCHEMA = "jaxb.validation.schema";
     public static final String GENERATED_VALIDATION_SCHEMA = "jaxb.generated.validation.schema";
@@ -291,6 +287,12 @@ public class JaxbType
             setAbstract(true);
             local = type.name();
             nsUri = type.namespace();
+        }
+        else if (clazz.isAnnotationPresent(XmlEnum.class))
+        {
+            setAbstract(true);
+            local = clazz.getSimpleName();
+            nsUri = "##default";
         }
         else
         {
