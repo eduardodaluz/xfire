@@ -104,7 +104,6 @@ public class LocalChannel
     {
         if( null == xfire )
         {
-            logger.warn( "No XFire instance in context, unable to determine service" );
             return null;
         }
 
@@ -120,8 +119,7 @@ public class LocalChannel
 
         if( null == service )
         {
-            //TODO this should be an exception...
-            logger.warn( "Unable to locate '" + name + "' in ServiceRegistry" );
+            logger.info( "Unable to locate '" + name + "' in ServiceRegistry" );
         }
 
         return service;

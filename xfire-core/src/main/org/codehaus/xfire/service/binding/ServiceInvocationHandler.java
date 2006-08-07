@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.AbstractMessage;
-import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.DefaultFaultHandler;
@@ -26,8 +25,8 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.Invoker;
-import org.codehaus.xfire.util.stax.JDOMStreamWriter;
 import org.codehaus.xfire.util.stax.JDOMStreamReader;
+import org.codehaus.xfire.util.stax.JDOMStreamWriter;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -86,13 +85,14 @@ public class ServiceInvocationHandler
                     }
                     catch (Exception e)
                     {
-                        context.setProperty(DefaultFaultHandler.EXCEPTION, e);
-
                         XFireFault fault = XFireFault.createFault(e);
 
                         try
                         {
-                            context.getOutPipeline().handleFault(fault, context);
+                            context.getCurrentPipeline().pause();
+                            context.setProperty(DefaultFaultHandler.EXCEPTION, fault);
+
+                            context.getCurrentPipeline().handleFault(fault, context);
                             
                             context.getFaultHandler().invoke(context);
                         }
@@ -271,27 +271,7 @@ public class ServiceInvocationHandler
         final Object value = invoker.invoke(operation.getMethod(),
                                             params,
                                             context);
-
-        if (context.getExchange().hasOutMessage())
-        {
-            OutMessage outMsg = context.getExchange().getOutMessage();
-            writeHeaders(context, value);
-            context.setCurrentMessage(outMsg);
-            outMsg.setBody(new Object[] {value});
-            outMsg.setSerializer(context.getBinding().getSerializer(operation));
-            
-            try
-            {
-                context.getOutPipeline().invoke(context);
-            }
-            catch (Exception e)
-            { 
-                logger.error(e);
-                XFireFault fault = XFireFault.createFault(e);
-                context.getOutPipeline().handleFault(fault, context);
-                throw fault;
-            }
-        }
+        context.setProperty(PostInvocationHandler.RESPONSE_VALUE, value);
     }
     
     public static void writeHeaders(MessageContext context, Object responseValue) throws XFireFault, XMLStreamException

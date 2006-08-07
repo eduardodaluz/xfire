@@ -23,8 +23,13 @@ public class DefaultFaultHandler extends AbstractHandler
     public void invoke(MessageContext context)
         throws Exception
     {
-        Exception e = (Exception) context.getProperty(EXCEPTION);
+        Throwable e = (Throwable) context.getProperty(EXCEPTION);
 
+        XFireFault fault = XFireFault.createFault(e);
+        
+        // get the root cause so we know what level to log
+        if (fault.getCause() != null) e = fault.getCause();
+        
         if (e instanceof RuntimeException)
         {
             log.error("Fault occurred!", e);
@@ -34,8 +39,8 @@ public class DefaultFaultHandler extends AbstractHandler
             log.info("Fault occurred!", e);
         }
         
-        XFireFault fault = XFireFault.createFault(e);
-        
+        context.setCurrentMessage(context.getExchange().getFaultMessage());
+
         Service service = context.getService();
         if (service == null || service.getFaultSerializer() == null || !context.getExchange().hasFaultMessage())
         {

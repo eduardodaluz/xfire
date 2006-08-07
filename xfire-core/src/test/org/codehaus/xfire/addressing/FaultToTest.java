@@ -40,6 +40,7 @@ public class FaultToTest
         factory.setStyle(SoapConstants.STYLE_MESSAGE);
         
         ((DefaultXFire)getXFire()).addInHandler(new AddressingInHandler());
+        ((DefaultXFire)getXFire()).addOutHandler(new AddressingOutHandler());
         
         service = factory.create(BadEcho.class, "Echo", "urn:Echo", null);
         getServiceRegistry().register(service);
@@ -54,7 +55,6 @@ public class FaultToTest
         channel.setEndpoint(endpoint);
         
         Document response = invokeService((String)null, "/org/codehaus/xfire/addressing/FaultTo.xml");
-        
         assertNull(response);
         Thread.sleep(1000);
         assertEquals(1, endpoint.getCount());

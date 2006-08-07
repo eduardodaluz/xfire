@@ -505,8 +505,7 @@ public class STAXUtils
         Document doc = getDocument(parent);
 
         int event = reader.getEventType();
-        String prefix;
-        
+
         while (reader.hasNext())
         {
             switch (event)
@@ -610,11 +609,15 @@ public class STAXUtils
     {
         if (ctx == null) return xmlOututFactory;
         
-        String outFactory = (String) ctx.getContextualProperty(XFire.STAX_OUTPUT_FACTORY);
-        Object context = null;
-        
-        if (outFactory != null)
+        Object outFactoryObj = ctx.getContextualProperty(XFire.STAX_OUTPUT_FACTORY);
+
+        if (outFactoryObj instanceof XMLOutputFactory)
         {
+            return (XMLOutputFactory) outFactoryObj; 
+        }
+        else if (outFactoryObj instanceof String)
+        {
+            String outFactory = (String) outFactoryObj;
             XMLOutputFactory xof = (XMLOutputFactory) factories.get(outFactory);
             if (xof == null)
             {
@@ -634,11 +637,15 @@ public class STAXUtils
     {
         if (ctx == null) return xmlInputFactory;
         
-        String inFactory = (String) ctx.getContextualProperty(XFire.STAX_INPUT_FACTORY);
-        Object context = null;
+        Object inFactoryObj = ctx.getContextualProperty(XFire.STAX_INPUT_FACTORY);
         
-        if (inFactory != null)
+        if (inFactoryObj instanceof XMLInputFactory)
         {
+            return (XMLInputFactory) inFactoryObj; 
+        }
+        else if (inFactoryObj instanceof String)
+        {
+            String inFactory = (String) inFactoryObj;
             XMLInputFactory xif = (XMLInputFactory) factories.get(inFactory);
             if (xif == null)
             {

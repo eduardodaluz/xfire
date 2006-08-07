@@ -480,8 +480,6 @@ public class ObjectServiceFactory
     
     protected void createBindings(Service service, Collection s11, Collection s12)
     {
-        QName name = service.getName();
-
         for (Iterator itr = s11.iterator(); itr.hasNext();)
         {
             String bindingId = (String) itr.next();
@@ -672,6 +670,7 @@ public class ObjectServiceFactory
     protected void registerHandlers(Service service)
     {
         service.addInHandler(new ServiceInvocationHandler());
+        service.addInHandler(new PostInvocationHandler());
         service.addOutHandler(new OutMessageSender());
         service.addFaultHandler(new FaultSender());
         service.addFaultHandler(new CustomFaultHandler());
