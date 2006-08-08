@@ -81,49 +81,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     {
         MessageContext context = getMessageContext();
 
-        client = (HttpClient) ((HttpChannel) getMessage().getChannel()).getProperty(HTTP_CLIENT);
-        if (client == null)
-        {
-            client = new HttpClient();
-            client.setHttpConnectionManager(new MultiThreadedHttpConnectionManager());
-            ((HttpChannel) getMessage().getChannel()).setProperty(HTTP_CLIENT, client);
-
-            HttpClientParams params = (HttpClientParams) context.getContextualProperty(HTTP_CLIENT_PARAMS);
-            if (params == null)
-            {
-                params = client.getParams();
-                
-                client.getParams().setParameter("http.useragent", USER_AGENT);
-                client.getParams().setBooleanParameter("http.protocol.expect-continue", true);
-                client.getParams().setVersion(HttpVersion.HTTP_1_1);
-            }
-            else
-            {
-                client.setParams(params);
-            }
-
-            // Setup the proxy settings
-            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
-            if (proxyHost == null)
-            {
-                proxyHost = System.getProperty(HTTP_PROXY_HOST);
-            }
-            
-            if (proxyHost != null)
-            {
-                 
-                String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
-                if (portS == null)
-                {
-                    portS = System.getProperty(HTTP_PROXY_PORT);
-                }
-                int port = 80;
-                if (portS != null)
-                    port = Integer.parseInt(portS);
-
-                client.getHostConfiguration().setProxy(proxyHost, port);
-            }
-        }
+        createClient();
         
         // Pull the HttpState from the context if possible. Otherwise create
         // one in the ThreadLocal
@@ -177,6 +135,53 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         if (isGzipRequestEnabled(context))
         {
             postMethod.setRequestHeader("Content-Encoding", GZIP_CONTENT_ENCODING);
+        }
+    }
+
+    private synchronized void createClient()
+    {
+        MessageContext context = getMessageContext();
+        client = (HttpClient) ((HttpChannel) getMessage().getChannel()).getProperty(HTTP_CLIENT);
+        if (client == null)
+        {
+            client = new HttpClient();
+            client.setHttpConnectionManager(new MultiThreadedHttpConnectionManager());
+            ((HttpChannel) getMessage().getChannel()).setProperty(HTTP_CLIENT, client);
+
+            HttpClientParams params = (HttpClientParams) context.getContextualProperty(HTTP_CLIENT_PARAMS);
+            if (params == null)
+            {
+                params = client.getParams();
+                
+                client.getParams().setParameter("http.useragent", USER_AGENT);
+                client.getParams().setBooleanParameter("http.protocol.expect-continue", true);
+                client.getParams().setVersion(HttpVersion.HTTP_1_1);
+            }
+            else
+            {
+                client.setParams(params);
+            }
+
+            // Setup the proxy settings
+            String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
+            if (proxyHost == null)
+            {
+                proxyHost = System.getProperty(HTTP_PROXY_HOST);
+            }
+            
+            if (proxyHost != null)
+            { 
+                String portS = (String) context.getContextualProperty(HTTP_PROXY_PORT);
+                if (portS == null)
+                {
+                    portS = System.getProperty(HTTP_PROXY_PORT);
+                }
+                int port = 80;
+                if (portS != null)
+                    port = Integer.parseInt(portS);
+
+                client.getHostConfiguration().setProxy(proxyHost, port);
+            }
         }
     }
 
