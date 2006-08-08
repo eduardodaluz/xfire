@@ -437,11 +437,18 @@ public class XFireClientFactoryBean
                                                       name,
                                                       new URL(_wsdlDocumentUrl),
                                                       _properties);
-            
-            _endpointName = findFirstSoapEndpoint(serviceModel.getEndpoints());
         }
 
         String serviceUrl = getUrl();
+        if (serviceUrl != null) 
+        {
+            return new XFireProxyFactory().create(serviceModel, serviceUrl);
+        }
+        
+        if (_endpointName == null)
+        {
+            _endpointName = findFirstSoapEndpoint(serviceModel.getEndpoints());
+        }
         
         if (_endpointName != null)
         {
@@ -452,7 +459,7 @@ public class XFireClientFactoryBean
             return new XFireProxyFactory().create(ep);
         }
         else
-            return new XFireProxyFactory().create(serviceModel, serviceUrl);
+            throw new XFireRuntimeException("No service URL was supplied.");
     }
 
     private QName findFirstSoapEndpoint(Collection endpoints)

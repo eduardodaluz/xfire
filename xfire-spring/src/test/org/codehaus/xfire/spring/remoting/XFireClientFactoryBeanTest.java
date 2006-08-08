@@ -101,6 +101,27 @@ public class XFireClientFactoryBeanTest
         assertEquals("wrong service URL", serviceURL, c.getUrl());
     }    
     
+    public void testServerURL()
+        throws Exception
+    {
+        factory.setUrl("http://localhost/test");
+        
+        factory.afterPropertiesSet();
+        
+        Class objectType = factory.getObjectType();
+        assertTrue("object created by factory does not implement interface", Echo.class.isAssignableFrom(objectType));
+    
+        Echo obj = (Echo)factory.getObject(); 
+        Object handler = Proxy.getInvocationHandler(obj);
+        Class handlerClass = handler.getClass();
+        assertTrue("factory created own proxy: " + handlerClass, XFireProxy.class.isAssignableFrom(handlerClass));        
+        XFireProxy fireProxy = (XFireProxy)handler;
+        checkAuth(fireProxy, null, null);
+        Client c = fireProxy.getClient();
+       
+        assertEquals("wrong service URL", "http://localhost/test", c.getUrl());
+    }
+        
     public void testXFireProxyFactoryBeanNoLoadOnStartup()
         throws Exception
     {
