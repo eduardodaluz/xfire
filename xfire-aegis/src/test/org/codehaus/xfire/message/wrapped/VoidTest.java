@@ -42,7 +42,8 @@ public class VoidTest
         OperationInfo op = endpoint.getServiceInfo().getOperation("doNothing");
         op.setAsync(true);
         op.setMEP(SoapConstants.MEP_IN);
-
+        op.setOutputMessage(null);
+        
         Document response =
                 invokeService("VoidService",
                               "/org/codehaus/xfire/message/wrapped/voidRequest.xml");
