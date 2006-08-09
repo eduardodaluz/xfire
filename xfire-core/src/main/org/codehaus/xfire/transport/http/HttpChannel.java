@@ -96,18 +96,23 @@ public class HttpChannel
         throws XFireException
     {
         AbstractMessageSender sender;
-        
+
+        String clazz = (String) context.getContextualProperty(AbstractMessageSender.MESSAGE_SENDER_CLASS_NAME);
+        if (clazz == null) {
+            clazz = "org.codehaus.xfire.transport.http.CommonsHttpMessageSender";
+        }
+
         try
         {
-            Class chms = ClassLoaderUtils.loadClass("org.codehaus.xfire.transport.http.CommonsHttpMessageSender", getClass());
+            Class chms = ClassLoaderUtils.loadClass(clazz, getClass());
             Constructor constructor = chms.getConstructor(new Class[] {OutMessage.class, MessageContext.class});
             sender = (AbstractMessageSender) constructor.newInstance(new Object[] { message, context });
         }
         catch (Exception e)
         {
             if (log.isDebugEnabled())
-                log.debug("Could not load commons http client. Using buggy SimpleMessageSender instead.");
-                
+                log.debug("Could not load message sender class " + clazz + ". Using buggy SimpleMessageSender instead.");
+
             sender = new SimpleMessageSender(message, context);
         }
         

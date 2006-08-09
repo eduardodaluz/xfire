@@ -10,6 +10,9 @@ import org.codehaus.xfire.soap.SoapConstants;
 
 public abstract class AbstractMessageSender
 {
+
+    public static final String MESSAGE_SENDER_CLASS_NAME = "messageSender.className";
+
     private OutMessage message;
     private MessageContext context;
     
