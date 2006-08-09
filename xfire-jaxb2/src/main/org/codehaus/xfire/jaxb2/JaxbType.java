@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -14,6 +16,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.SchemaOutputResolver;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,6 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -100,7 +106,7 @@ public class JaxbType
      * @param context
      * @param u
      */
-    private void enableValidation(MessageContext context, Unmarshaller u ){
+    private void enableValidation(MessageContext context, Unmarshaller u, JAXBContext jc ){
     	// chack if we have cached schema instance
     	Schema validationSchema = (Schema) context.getService().getProperty(GENERATED_VALIDATION_SCHEMA);
     	if( validationSchema!= null ){
@@ -118,8 +124,25 @@ public class JaxbType
     			// We have some schema loaded,so set them up on unmarshaler
     			 setupValidationSchema(schemas,u);	
     		}else{
-    			// Generate schema here ??
-    		}
+    			final List<DOMResult> results = new ArrayList<DOMResult>();
+
+				jc.generateSchema(new SchemaOutputResolver() {
+
+					public Result createOutput(String ns, String file)
+							throws IOException {
+						DOMResult result = new DOMResult();
+						result.setSystemId(file);
+						results.add(result);
+						return result;
+					}
+				});
+
+				DOMSource source = new DOMSource();
+				source.setNode(results.get(0).getNode().getFirstChild());
+				SchemaFactory factory = SchemaFactory
+						.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				u.setSchema(factory.newSchema(source));
+			}
     		// Put generated schema on context
     		context.getService().setProperty(GENERATED_VALIDATION_SCHEMA,u.getSchema());
     		
@@ -142,10 +165,11 @@ public class JaxbType
             JAXBContext jc = getJAXBContext(context);
             Unmarshaller u = jc.createUnmarshaller();
             u.setAttachmentUnmarshaller(new AttachmentUnmarshaller(context));
+            
             // check if validation is enabled
             boolean validationEnabled = Boolean.valueOf((String) context.getContextualProperty(ENABLE_VALIDATION));
             if( validationEnabled){
-            	enableValidation(context, u);
+            	enableValidation(context, u,  jc);
             }
             
             

@@ -5,12 +5,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
+import org.codehaus.xfire.jaxb2.WeatherService;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Document;
+
 
 
 /**
@@ -57,7 +58,21 @@ public class WeatherServiceValidationTest extends AbstractXFireTest {
 				"//s:Body/w:GetWeatherByZipCodeResponse/w:GetWeatherByZipCodeResult",
 				response);
 	}
+ 
+     public void testServiceNoSchema() throws Exception {
 
+		service.setProperty(ObjectServiceFactory.SCHEMAS, null);
+		Document response = invokeService("WeatherService",
+				"GetWeatherByZip.xml");
+		response = invokeService("WeatherService", "GetWeatherByZip.xml");
+
+		addNamespace("w", "http://www.webservicex.net");
+		assertValid(
+				"//s:Body/w:GetWeatherByZipCodeResponse/w:GetWeatherByZipCodeResult",
+				response);
+	}
+	
+	
 	/**
 	 * @throws Exception
 	 */
@@ -67,11 +82,15 @@ public class WeatherServiceValidationTest extends AbstractXFireTest {
 		schemas.add(getTestFile("src/test-schemas/picture.xsd")
 				.getAbsolutePath());
 		service.setProperty(JaxbType.VALIDATION_SCHEMA, schemas);
+	
 		Document response = invokeService("WeatherService",
 				"GetWeatherByZip.xml");
 		
-		addNamespace("w", "http://www.webservicex.net");
-		assertValid("//soap:Body/soap:Fault", response);
+	     addNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+	     addNamespace("xsd","http://www.w3.org/2001/XMLSchema");
+	     addNamespace("xsi","http://www.w3.org/2001/XMLSchema-instance");
+		 assertValid("//soap:Body/soap:Fault", response);
+	
 	}
 
 }
