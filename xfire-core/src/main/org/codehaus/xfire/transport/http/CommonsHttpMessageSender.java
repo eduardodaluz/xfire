@@ -52,6 +52,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     
     private static final String GZIP_CONTENT_ENCODING = "gzip";
 
+    public static final String DISABLE_KEEP_ALIVE = "disable-keep-alive";
     public static final String HTTP_CLIENT_PARAMS = "httpClient.params";
     public static final String USER_AGENT =  
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
@@ -89,6 +90,10 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         
         postMethod = new PostMethod(getUri());
         
+        if (Boolean.valueOf((String) context.getContextualProperty(DISABLE_KEEP_ALIVE)).booleanValue()) {
+            postMethod.setRequestHeader("Connection", "Close");
+        }
+
         // set the username and password if present
         String username = (String) context.getContextualProperty(Channel.USERNAME);
         if (username != null)
