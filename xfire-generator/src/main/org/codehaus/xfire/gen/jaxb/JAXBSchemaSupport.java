@@ -193,12 +193,15 @@ public class JAXBSchemaSupport implements SchemaSupport
         public InputSource resolveEntity(String publicId, String systemId)
             throws SAXException, IOException
         {
-            File file = new File(baseURI, systemId);
-            if (file.exists())
+            // the system id is null if the entity is in the wsdl.
+            if (systemId != null)
             {
-                return new InputSource(new FileInputStream(file));
+                File file = new File(baseURI, systemId);
+                if (file.exists())
+                {
+                    return new InputSource(new FileInputStream(file));
+                }
             }
-           
             return null;
         }
     }
