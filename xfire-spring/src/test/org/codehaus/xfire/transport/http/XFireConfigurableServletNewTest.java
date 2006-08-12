@@ -31,11 +31,10 @@ public class XFireConfigurableServletNewTest
         Service echo1 = reg.getService("Echo1");
         assertNotNull(echo1.getBinding(SoapHttpTransport.SOAP12_HTTP_BINDING));
 
-        assertEquals(2, echo1.getInHandlers().size());
-
-        assertTrue(echo1.getInHandlers().get(1) instanceof AddressingInHandler);
+        assertEquals(3, echo1.getInHandlers().size());
+        assertTrue(echo1.getInHandlers().get(2) instanceof AddressingInHandler);
         assertEquals(2, echo1.getOutHandlers().size());
-        assertTrue(echo1.getOutHandlers().get(1) instanceof AddressingOutHandler);  
+        assertTrue(echo1.getOutHandlers().get(1) instanceof AddressingOutHandler);   
         
         assertEquals(2, getXFire().getInHandlers().size());
     }
