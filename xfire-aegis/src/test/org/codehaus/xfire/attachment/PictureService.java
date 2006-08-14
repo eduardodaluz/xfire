@@ -7,6 +7,8 @@ public interface PictureService
 {
 
     public abstract DataSource GetPicture();
+    
+    public abstract PictureBean GetPictureBean();
 
     public abstract DataSource EchoPicture(DataSource pic);
 

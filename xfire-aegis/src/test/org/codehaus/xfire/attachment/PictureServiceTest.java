@@ -18,6 +18,7 @@ import org.codehaus.xfire.server.http.XFireHttpServer;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.transport.http.HttpTransport;
 
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
@@ -64,9 +65,16 @@ public class PictureServiceTest
         throws Exception
     {
         client.setProperty(SoapConstants.MTOM_ENABLED, "true");
+        client.setProperty(HttpTransport.CHUNKING_ENABLED, "true");
         
         DataSource source = picClient.GetPicture();
         assertNotNull(source);
+        
+        DataSource pbsource = picClient.GetPictureBean().getData();
+        assertNotNull(pbsource);
+        
+        InputStream is = pbsource.getInputStream();
+        assertNotNull(is);
         
         FileDataSource fileSource = new FileDataSource(getTestFile("src/test-resources/xfire.jpg"));
         DataSource source2 = picClient.EchoPicture(fileSource);
