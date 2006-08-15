@@ -88,8 +88,8 @@ public class XFireConfigLoaderTest
         assertNotNull(ep);
         assertEquals("http://localhost/TestService", ep.getUrl());
         
-        assertEquals(2, service.getInHandlers().size());
-        Handler testHandler = (Handler) service.getInHandlers().get(1); 
+        assertEquals(3, service.getInHandlers().size());
+        Handler testHandler = (Handler) service.getInHandlers().get(2); 
         assertTrue(testHandler instanceof TestHandler);
         assertEquals(testHandler.getAfter().size(),1);
         assertEquals(testHandler.getBefore().size(),2);
