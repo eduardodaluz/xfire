@@ -3,11 +3,12 @@
   xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
   xmlns:tns="urn:Echo"
+  xmlns:schema="urn:Echo:schema"
   xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   targetNamespace="urn:Echo" name="Foo">
   <wsdl:types>
-    <xsd:schema targetNamespace="urn:Echo"
+    <xsd:schema targetNamespace="urn:Echo:schema"
       elementFormDefault="qualified" attributeFormDefault="qualified">
       <xsd:element name="echo">
         <xsd:complexType>
@@ -26,10 +27,10 @@
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="echo">
-    <wsdl:part element="tns:echo" name="parameters" />
+    <wsdl:part element="schema:echo" name="parameters" />
   </wsdl:message>
   <wsdl:message name="echoResponse">
-    <wsdl:part element="tns:echoResponse" name="parameters" />
+    <wsdl:part element="schema:echoResponse" name="parameters" />
   </wsdl:message>
   <wsdl:portType name="EchoPortType">
     <wsdl:operation name="echo">

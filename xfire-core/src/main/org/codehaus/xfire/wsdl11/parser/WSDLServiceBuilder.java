@@ -418,17 +418,23 @@ public class WSDLServiceBuilder
 
     protected void visit(Input input)
     {
-        MessageInfo info = opInfo.createMessage(input.getMessage().getQName());
-        winput2msg.put(input, info);
-        
-        opInfo.setInputMessage(info);
-        
         if (isWrapped)
         {
+            Part part = (Part) input.getMessage().getParts().values().iterator().next();
+            MessageInfo info = opInfo.createMessage(new QName(part.getElementName().getNamespaceURI(),
+                                                              input.getMessage().getQName().getLocalPart()));
+            winput2msg.put(input, info);
+            
+            opInfo.setInputMessage(info);
+            
             createMessageParts(info, getWrappedSchema(input.getMessage()));
         }
         else
         {
+            MessageInfo info = opInfo.createMessage(input.getMessage().getQName());
+            winput2msg.put(input, info);
+            
+            opInfo.setInputMessage(info);
             createMessageParts(info,  input.getMessage());
         }
     }

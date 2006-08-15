@@ -40,6 +40,7 @@ public class WrappedWSDLTest
         Iterator itr = operations.iterator();
         OperationInfo opInfo = (OperationInfo) itr.next();
         assertEquals("echo", opInfo.getName());
+        assertEquals("urn:Echo:schema", opInfo.getInputMessage().getName().getNamespaceURI());
         
         // Check the input message
         MessageInfo message = opInfo.getInputMessage();
@@ -47,7 +48,7 @@ public class WrappedWSDLTest
         assertEquals(1, parts.size());
         
         MessagePartInfo part = (MessagePartInfo) parts.iterator().next();
-        assertEquals(new QName("urn:Echo", "text"), part.getName());
+        assertEquals(new QName("urn:Echo:schema", "text"), part.getName());
         
         // and now the output...
         message = opInfo.getOutputMessage();
@@ -57,7 +58,7 @@ public class WrappedWSDLTest
         assertTrue(service.getServiceInfo().isWrapped());
         
         part = (MessagePartInfo) parts.iterator().next();
-        assertEquals(new QName("urn:Echo", "text"), part.getName());
+        assertEquals(new QName("urn:Echo:schema", "text"), part.getName());
 
         Collection endpoints = service.getEndpoints();
         assertEquals(1, endpoints.size());
