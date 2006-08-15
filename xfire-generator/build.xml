@@ -46,6 +46,9 @@
       package="jsr181.echo.globalweather" binding="xmlbeans" overwrite="true"/>
 
     <!-- JAXB -->
+  	<wsgen outputDirectory="${basedir}/target/test-services"
+  	      wsdl="${basedir}/src/wsdl/XFire582.wsdl"
+  	      package="org.codehaus.xfire.x582"  overwrite="true" />
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/globalweather.wsdl"
       package="jsr181.jaxb.globalweather"  overwrite="true" />

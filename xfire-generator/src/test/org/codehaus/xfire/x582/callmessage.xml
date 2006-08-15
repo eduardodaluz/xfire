@@ -1,0 +1,8 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Header/>
+ <env:Body>
+  <m:makeCall xmlns:m="http://test.bt.com/2006/08/Service/Schema">
+    <m:name/>
+  </m:makeCall>
+ </env:Body>
+</env:Envelope>

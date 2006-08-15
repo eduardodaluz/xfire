@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:wsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:tns="http://test.bt.com/2006/08/Service"
+     xmlns:schemaTypes="http://test.bt.com/2006/08/Service/Schema"
+     targetNamespace="http://test.bt.com/2006/08/Service">
+
+   <wsdl:types>
+      <xs:schema elementFormDefault="qualified" 
+            targetNamespace="http://test.bt.com/2006/08/Service/Schema">
+
+        <xs:element name="makeCall">
+          <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="schemaTypes:name"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="makeCallResponse">
+          <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:complexType name="name">
+          <xs:sequence>
+                <xs:element name="firstname" type="xs:string"/>
+                <xs:element name="lastname" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+
+      </xs:schema>
+   </wsdl:types>
+
+   <wsdl:message name="makeCallRequest">
+      <wsdl:part name="input" element="schemaTypes:makeCall"/>
+   </wsdl:message>
+   <wsdl:message name="makeCallResponse">
+      <wsdl:part name="output" element="schemaTypes:makeCallResponse"/>
+   </wsdl:message>
+
+   <wsdl:portType name="XFireNamespaceProblemInterface">
+      <wsdl:operation name="makeCall">
+         <wsdl:input name="makeCallRequest" message="tns:makeCallRequest"/>
+         <wsdl:output name="makeCallResponse" message="tns:makeCallResponse"/>
+      </wsdl:operation>
+   </wsdl:portType>
+
+   <wsdl:binding name="XFireNamespaceProblemSoapBinding" type="tns:XFireNamespaceProblemInterface">
+      <wsoap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="makeCall">
+         <wsoap:operation soapAction="http://test.bt.com/2006/08/Service/Schema#makeCall"/>
+         <wsdl:input name="makeCallRequest">
+            <wsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="makeCallResponse">
+            <wsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+
+   <wsdl:service name="XFireNamespaceProblemService">
+      <wsdl:port name="XFireNamespaceProblemEndpoint" binding="tns:XFireNamespaceProblemSoapBinding">
+         <wsoap:address location="http://localhost/endpoint"/>
+      </wsdl:port>
+   </wsdl:service>
+
+</wsdl:definitions>
