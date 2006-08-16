@@ -2,11 +2,11 @@ package org.codehaus.xfire.spring.remoting;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Definition;
@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.client.Client;
-import org.codehaus.xfire.client.XFireProxy;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
@@ -81,7 +80,13 @@ public class XFireClientFactoryBean
     private Map _properties;
     
     private boolean _lookupServiceOnStartup = true;
+    
+    private List outHandlers = null;
 
+    private List inHandlers = null;
+
+    private List faultHandlers = null;
+    
     public Object getObject()
         throws Exception
     {
@@ -367,6 +372,36 @@ public class XFireClientFactoryBean
         this._url = _url;
     }
 
+    public List getFaultHandlers()
+    {
+        return faultHandlers;
+    }
+
+    public void setFaultHandlers(List faultHandlers)
+    {
+        this.faultHandlers = faultHandlers;
+    }
+
+    public List getInHandlers()
+    {
+        return inHandlers;
+    }
+
+    public void setInHandlers(List inHandlers)
+    {
+        this.inHandlers = inHandlers;
+    }
+
+    public List getOutHandlers()
+    {
+        return outHandlers;
+    }
+
+    public void setOutHandlers(List outHandlers)
+    {
+        this.outHandlers = outHandlers;
+    }
+
     /**
      * Creates actual XFire client proxy that this interceptor will delegate to.
      * 
@@ -384,11 +419,11 @@ public class XFireClientFactoryBean
             LOG.debug("Created: " + toString());
         }
 
+        Client client = Client.getInstance(serviceClient);
+        
         String username = getUsername();
         if (username != null)
         {
-            XFireProxy proxy = (XFireProxy) Proxy.getInvocationHandler(serviceClient);
-            Client client = proxy.getClient();
             client.setProperty(Channel.USERNAME, username);
 
             String password = getPassword();
@@ -400,9 +435,36 @@ public class XFireClientFactoryBean
                         + username);
             }
         }
+        
+        configureClientHandlers(client);
+        
         return serviceClient;
     }
+    
+    /**
+     * Configures the client with the specified inHandlers, outHandlers and
+     * faultHandlers.
+     * 
+     * @param client
+     */
+    private void configureClientHandlers(Client client)
+    {
+        if (this.inHandlers != null)
+        {
+            client.getInHandlers().addAll(inHandlers);
+        }
 
+        if (this.outHandlers != null)
+        {
+            client.getOutHandlers().addAll(outHandlers);
+        }
+
+        if (this.faultHandlers != null)
+        {
+            client.getFaultHandlers().addAll(faultHandlers);
+        }
+    }
+    
     /**
      * Performs actual creation of XFire client proxy.
      * 
