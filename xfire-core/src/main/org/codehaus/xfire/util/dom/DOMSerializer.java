@@ -21,11 +21,8 @@ public class DOMSerializer
 {
     private static final Log LOG = LogFactory.getLog(DOMSerializer.class);
 
-    private Document doc;
-
-    public DOMSerializer(Document doc)
+    public DOMSerializer()
     {
-        this.doc = doc;
     }
 
     public void readMessage(InMessage message, MessageContext context)
@@ -39,9 +36,9 @@ public class DOMSerializer
     {
         try
         {
+            Document doc = (Document) message.getProperty(DOMOutHandler.DOM_MESSAGE);
             STAXUtils.writeDocument(doc, writer, Boolean.TRUE.equals(context.getProperty(SoapSerializer.SERIALIZE_PROLOG)), false);
 
-            
             writer.flush();
         }
         catch (Exception e)

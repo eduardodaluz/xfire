@@ -54,16 +54,19 @@ public class W3CNamespaceContext implements NamespaceContext
     private String getPrefix(Element e, String uri)
     {
         NamedNodeMap attributes = e.getAttributes();
-        for (int i = 0; i < attributes.getLength(); i++)
+        if (attributes != null)
         {
-            Attr a = (Attr) attributes.item(i);
-            
-            String val = a.getValue();
-            if (val != null && val.equals(uri))
+            for (int i = 0; i < attributes.getLength(); i++)
             {
-                String name = a.getNodeName();
-                if (name.equals("xmlns")) return "";
-                else return name.substring(6);
+                Attr a = (Attr) attributes.item(i);
+                
+                String val = a.getValue();
+                if (val != null && val.equals(uri))
+                {
+                    String name = a.getNodeName();
+                    if (name.equals("xmlns")) return "";
+                    else return name.substring(6);
+                }
             }
         }
         

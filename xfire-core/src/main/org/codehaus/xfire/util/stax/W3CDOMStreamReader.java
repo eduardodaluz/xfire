@@ -69,36 +69,39 @@ public class W3CDOMStreamReader
             ePrefix = "";
         }
 
-        for (int i = 0; i < nodes.getLength(); i++)
+        if (nodes != null)
         {
-            Node node = nodes.item(i);
-            String prefix = node.getPrefix();
-            String localName = node.getLocalName();
-            String value = node.getNodeValue();
-            String name = node.getNodeName();
-            String uri = node.getNamespaceURI();
-
-            if (prefix == null) prefix = "";
-
-            if (name != null && name.equals("xmlns"))
+            for (int i = 0; i < nodes.getLength(); i++)
             {
-                frame.uris.add(value);
-                frame.prefixes.add("");
-            }
-            else if (prefix.length() > 0 && prefix.equals("xmlns"))
-            {
-                frame.uris.add(value);
-                frame.prefixes.add(localName);
-            }
-            else if (name.startsWith("xmlns:"))
-            {
-                prefix = name.substring(6);
-                frame.uris.add(value);
-                frame.prefixes.add(prefix);
-            }
-            else
-            {
-                frame.attributes.add(node);
+                Node node = nodes.item(i);
+                String prefix = node.getPrefix();
+                String localName = node.getLocalName();
+                String value = node.getNodeValue();
+                String name = node.getNodeName();
+                String uri = node.getNamespaceURI();
+    
+                if (prefix == null) prefix = "";
+    
+                if (name != null && name.equals("xmlns"))
+                {
+                    frame.uris.add(value);
+                    frame.prefixes.add("");
+                }
+                else if (prefix.length() > 0 && prefix.equals("xmlns"))
+                {
+                    frame.uris.add(value);
+                    frame.prefixes.add(localName);
+                }
+                else if (name.startsWith("xmlns:"))
+                {
+                    prefix = name.substring(6);
+                    frame.uris.add(value);
+                    frame.prefixes.add(prefix);
+                }
+                else
+                {
+                    frame.attributes.add(node);
+                }
             }
         }
     }

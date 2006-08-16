@@ -54,6 +54,6 @@ public class DOMOutHandler
        
         Document doc = writer.getDocument();
         message.setProperty(DOM_MESSAGE, doc);
-        message.setSerializer(new DOMSerializer(doc));
+        message.setSerializer(new DOMSerializer());
     }
 }
