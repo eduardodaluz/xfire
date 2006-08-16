@@ -1,9 +1,13 @@
 package org.codehaus.xfire.server.http;
 
+import java.io.File;
+
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.server.XFireServer;
 import org.codehaus.xfire.transport.http.XFireServlet;
 import org.mortbay.http.HttpContext;
+import org.mortbay.http.SslListener;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.ServletHandler;
 import org.mortbay.util.InetAddrPort;
@@ -26,6 +30,21 @@ public class XFireHttpServer
 
     public XFireHttpServer() {}
     
+    private File keystore;
+    private String keystorePassword;
+    private String keyPassword;
+    
+    public XFireHttpServer(File keystore, String keystorePassword, String keyPassword) {
+        this(XFireFactory.newInstance().getXFire(), keystore, keystorePassword, keyPassword);
+    }
+    
+    public XFireHttpServer(XFire xfire, File keystore, String keystorePassword, String keyPassword) {
+        this.xfire = xfire;
+        this.keystore = keystore;
+        this.keystorePassword = keystorePassword;
+        this.keyPassword = keyPassword;
+    }
+    
     public XFireHttpServer(XFire xfire) 
     {
         this.xfire = xfire;
@@ -39,7 +58,18 @@ public class XFireHttpServer
         }
         
         httpServer = new Server();
-        httpServer.addListener(new InetAddrPort(port));
+        if (keystore != null)
+        {
+            SslListener listener = new SslListener(new InetAddrPort(port));
+            listener.setKeystore(keystore.getAbsolutePath());
+            listener.setKeyPassword(keystorePassword);
+            listener.setPassword(keyPassword);
+            httpServer.addListener(listener);
+        }
+        else
+        {
+            httpServer.addListener(new InetAddrPort(port));
+        }
         
         HttpContext context = httpServer.getContext("/");
         context.setRequestLog(null);

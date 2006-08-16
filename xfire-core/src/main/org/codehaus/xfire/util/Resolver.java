@@ -69,10 +69,12 @@ public class Resolver
                 }
             }
         } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
         
         if (uri != null && "file".equals(uri.getScheme()))
         {
+            System.out.println("trying file " + uri);
             file = new File(uri);
         }
         
