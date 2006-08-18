@@ -10,6 +10,8 @@ import org.codehaus.xfire.aegis.type.TypeCreator;
 public class JibxTypeRegistry extends DefaultTypeMappingRegistry
 {
     protected TypeCreator createTypeCreator(){
-        return new JibxTypeCreator();
+        JibxTypeCreator creator = new JibxTypeCreator();
+        creator.setConfiguration(getConfiguration());
+        return creator;
     }
 }
