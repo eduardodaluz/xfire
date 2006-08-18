@@ -150,6 +150,9 @@ public class STAXUtils
                 case XMLStreamConstants.ATTRIBUTE:
                 case XMLStreamConstants.NAMESPACE:
                     break;
+                case XMLStreamConstants.CDATA:
+                	writer.writeCData(reader.getText());
+                	break;
                 default:
                     break;
             }
