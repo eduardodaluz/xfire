@@ -22,7 +22,8 @@ public class MessageIdCorrelator implements Correlator
             {
                 Invocation call = (Invocation) itr.next();
                 
-                if (call.getContext().getId() != null &&
+                if (call.getContext() != null &&
+                    call.getContext().getId() != null &&
                     call.getContext().getId().equals(context.getId()))
                 {
                     return call;
