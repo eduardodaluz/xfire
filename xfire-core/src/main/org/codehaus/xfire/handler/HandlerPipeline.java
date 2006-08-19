@@ -17,7 +17,6 @@ import org.codehaus.xfire.fault.XFireFault;
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  */
 public class HandlerPipeline
-    extends AbstractHandler
     implements Handler
 {
     private static final Log log = LogFactory.getLog(HandlerPipeline.class);
@@ -27,10 +26,12 @@ public class HandlerPipeline
     private boolean paused = false;
     private Phase currentPhase;
     
+    // Store this as a variable for performance
+    private String INVOKED_INTERCEPTORS = this.toString();
+    
     public HandlerPipeline(List phases)
     {
         super();
-        setPhase(Phase.USER);
         
         handlers = new HashMap();
 
@@ -92,12 +93,12 @@ public class HandlerPipeline
     {
         if (paused) return;
         context.setCurrentPipeline(this);
-        Stack invoked = (Stack) context.getProperty(this.toString());
+        Stack invoked = (Stack) context.getProperty(INVOKED_INTERCEPTORS);
         
         if (invoked == null) 
         {
             invoked = new Stack();
-            context.setProperty(this.toString(), invoked);
+            context.setProperty(INVOKED_INTERCEPTORS, invoked);
         }
 
         for (Iterator itr = phases.iterator(); itr.hasNext();)
@@ -201,4 +202,30 @@ public class HandlerPipeline
         paused = false;
         invoke(context);
     }
+
+    public List getAfter()
+    {
+        return null;
+    }
+
+    public List getBefore()
+    {
+        return null;
+    }
+
+    public String getPhase()
+    {
+        return null;
+    }
+
+    public String[] getRoles()
+    {
+        return null;
+    }
+
+    public QName[] getUnderstoodHeaders()
+    {
+        return null;
+    }
+    
 }

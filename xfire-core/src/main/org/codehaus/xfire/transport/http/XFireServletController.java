@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.StreamedAttachments;
 import org.codehaus.xfire.exchange.InMessage;
@@ -249,6 +250,15 @@ public class XFireServletController
             message.setAttachments(atts);
             
             channel.receive(context, message);
+            
+            try
+            {
+                reader.close();
+            }
+            catch (XMLStreamException e)
+            {
+                throw new XFireRuntimeException("Could not close XMLStreamReader.");
+            }
         }
         else
         {
@@ -267,6 +277,15 @@ public class XFireServletController
             InMessage message = new InMessage(reader, request.getRequestURI());
             message.setProperty(SoapConstants.SOAP_ACTION, soapAction);
             channel.receive(context, message);
+            
+            try
+            {
+                reader.close();
+            }
+            catch (XMLStreamException e)
+            {
+                throw new XFireRuntimeException("Could not close XMLStreamReader.");
+            }
         }
     }
 
