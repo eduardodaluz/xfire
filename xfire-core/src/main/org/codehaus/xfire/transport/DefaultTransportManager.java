@@ -35,7 +35,6 @@ public class DefaultTransportManager
     
     public DefaultTransportManager(Set transports)
     {
-        this.transports = new LinkedHashSet();
         this.transports.addAll(transports);
     }
 
