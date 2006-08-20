@@ -8,6 +8,7 @@ import org.codehaus.xfire.aegis.inheritance.ws1.RootBean;
 import org.codehaus.xfire.aegis.inheritance.ws1.WS1;
 import org.codehaus.xfire.aegis.inheritance.ws1.WS1Exception;
 import org.codehaus.xfire.aegis.inheritance.ws1.WS1ExtendedException;
+import org.codehaus.xfire.aegis.type.basic.SimpleBean;
 
 /**
  * <br/>
@@ -109,7 +110,9 @@ public class WS1Impl
     {
         if (extendedOne)
         {
-            throw new WS1ExtendedException("WS1 extended exception", 20, 30);
+            WS1Exception ex = new WS1ExtendedException("WS1 extended exception", 20, 30);
+            ex.setSimpleBean(new SimpleBean());
+            throw ex;
         }
         else
         {

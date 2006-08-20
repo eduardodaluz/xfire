@@ -9,7 +9,8 @@ public class WS1Exception
     extends Exception
 {
     private int m_errorCode;
-
+    private Object simpleBean;
+    
     public WS1Exception()
     {
     }
@@ -33,6 +34,16 @@ public class WS1Exception
     public void setErrorCode(int errorCode)
     {
         m_errorCode = errorCode;
+    }
+
+    public Object getSimpleBean()
+    {
+        return simpleBean;
+    }
+
+    public void setSimpleBean(Object simpleBean)
+    {
+        this.simpleBean = simpleBean;
     }
 
     public String toString()
