@@ -46,6 +46,7 @@ public class STAXUtils
     
     private final static XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     private final static XMLOutputFactory xmlOututFactory = XMLOutputFactory.newInstance();
+    private static boolean inFactoryConfigured;
     
     private final static Map factories = new HashMap();
 
@@ -653,14 +654,63 @@ public class STAXUtils
             if (xif == null)
             {
                 xif = (XMLInputFactory) createFactory(inFactory, ctx);
+                configureFactory(xif,ctx);
                 factories.put(inFactory, xif);
             }
             return xif;
         }
+        
+        if(!inFactoryConfigured){
+            configureFactory(xmlInputFactory,ctx);
+            inFactoryConfigured=true;
+        }
+        
+        
 
         return xmlInputFactory;
     }
     
+    private static Boolean getBooleanProperty(MessageContext ctx,String name){
+        Object value = ctx.getContextualProperty(name);
+        if( value != null ){
+             return Boolean.valueOf(value.toString());
+            
+        }
+        return null;
+    }
+    /**
+     * @param xif
+     * @param ctx
+     */
+    private static void configureFactory(XMLInputFactory xif, MessageContext ctx)
+    {
+        
+        Boolean value = getBooleanProperty(ctx,XMLInputFactory.IS_VALIDATING);
+        if( value != null ){
+            xif.setProperty(XMLInputFactory.IS_VALIDATING, value);
+        }
+        value = getBooleanProperty(ctx,XMLInputFactory.IS_NAMESPACE_AWARE);
+        if( value != null ){
+            xif.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, value);
+        }
+
+        value = getBooleanProperty(ctx,XMLInputFactory.IS_COALESCING);
+        if( value != null ){
+            xif.setProperty(XMLInputFactory.IS_COALESCING, value);
+        }
+        
+        value = getBooleanProperty(ctx,XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES);
+        if( value != null ){
+            xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, value);
+        }
+        
+        value = getBooleanProperty(ctx,XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES);
+        if( value != null ){
+            xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, value);
+        }
+        
+    }
+
     /**
      * @param factoryClass
      * @return
