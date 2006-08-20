@@ -32,6 +32,12 @@ public class DefaultTransportManager
     public DefaultTransportManager()
     {
     }
+    
+    public DefaultTransportManager(Set transports)
+    {
+        this.transports = new LinkedHashSet();
+        this.transports.addAll(transports);
+    }
 
     /**
      * Initializes transports for each service.  This also registers a LocalTransport and 
