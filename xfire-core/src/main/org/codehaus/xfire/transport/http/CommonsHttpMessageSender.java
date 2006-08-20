@@ -15,6 +15,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
@@ -100,7 +101,29 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         {
             String password = (String) context.getContextualProperty(Channel.PASSWORD);
             client.getParams().setAuthenticationPreemptive(true);
-            state.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+            
+            int domainIndex = username.indexOf('\\');
+            if (domainIndex > 0 && username.length() > domainIndex + 1) {
+
+                state.setCredentials(
+                        AuthScope.ANY, 
+                        new NTCredentials(
+                                username.substring(0, domainIndex), 
+                                password, 
+                                "localhost", // TODO: resolve local host name 
+                                username.substring(domainIndex+1)));
+                        
+            } else {
+                
+                state.setCredentials(
+                        AuthScope.ANY, 
+                        new UsernamePasswordCredentials(
+                                username, 
+                                password));
+                
+            }
+            
+           // state.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
         }
         
         if (getSoapAction() != null)
