@@ -1,8 +1,12 @@
 package org.codehaus.xfire.transport.http;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLStreamException;
@@ -60,8 +64,10 @@ public class HtmlServiceWriter
             
             String base = request.getRequestURL().toString();
             
-            
-            request.getPathInfo();
+            List servicesList = new ArrayList(); 
+            servicesList.addAll(services);
+            Collections.sort(servicesList, new ServiceComperator());
+            services = servicesList;
             for (Iterator iterator = services.iterator(); iterator.hasNext();)
             {
             	Service service = (Service) iterator.next();
@@ -124,6 +130,13 @@ public class HtmlServiceWriter
         writer.writeEndElement(); // title
         writer.writeEndElement(); // head
     }
-
-
+    
+    class ServiceComperator implements Comparator
+    {
+        
+        public int compare(Object service1, Object service2) {
+            
+            return ((Service)service1).getSimpleName().compareToIgnoreCase(((Service)service2).getSimpleName());
+        }   
+    }
 }
