@@ -164,14 +164,6 @@ public class AnnotationServiceFactory
         String use = null;
         
         if (properties == null) properties = new HashMap();
-        
-        if (webAnnotations.hasSOAPBindingAnnotation(clazz))
-        {
-            SOAPBindingAnnotation soapBindingAnnotation = webAnnotations.getSOAPBindingAnnotation(clazz);
-            
-            style = soapBindingAnnotation.getStyleString();
-            use =  soapBindingAnnotation.getUseString();
-        }
 
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
@@ -216,7 +208,17 @@ public class AnnotationServiceFactory
                 namespace = createServiceNamespace(endpointInterface, webServiceAnnotation, namespace);
                 portType = createPortType(name, webServiceAnnotation);
             }
+            
+            if (webAnnotations.hasSOAPBindingAnnotation(endpointInterface))
+            {
+                SOAPBindingAnnotation soapBindingAnnotation = 
+                    webAnnotations.getSOAPBindingAnnotation(endpointInterface);
+                
+                style = soapBindingAnnotation.getStyleString();
+                use =  soapBindingAnnotation.getUseString();
+            }
 
+            
             // Allow the user to override informations given in the annotations
             if (!properties.containsKey(PORT_TYPE))
             {
