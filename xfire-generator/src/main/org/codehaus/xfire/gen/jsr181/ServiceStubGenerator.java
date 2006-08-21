@@ -84,20 +84,7 @@ public class ServiceStubGenerator
         ann.param("endpointInterface", intf.fullName());
         
         jc._implements(intf);
-        
-        ann = jc.annotate(SOAPBinding.class);
-        ann.param("style", Style.DOCUMENT);
-        ann.param("use", Use.LITERAL);
-        
-        if (service.getServiceInfo().isWrapped())
-        {
-            ann.param("parameterStyle", ParameterStyle.WRAPPED);
-        }
-        else
-        {
-           ann.param("parameterStyle", ParameterStyle.BARE);
-        }
-        
+
         service.setProperty(SERVICE_STUB, jc);
     }
     

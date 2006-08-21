@@ -8,6 +8,10 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
+import javax.jws.soap.SOAPBinding.Style;
+import javax.jws.soap.SOAPBinding.Use;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.gen.GenerationContext;
@@ -67,6 +71,19 @@ public class ServiceInterfaceGenerator
         ann.param("targetNamespace", service.getTargetNamespace());
         
         service.setProperty(SERVICE_INTERFACE, jc);
+        
+        ann = jc.annotate(SOAPBinding.class);
+        ann.param("style", Style.DOCUMENT);
+        ann.param("use", Use.LITERAL);
+        
+        if (service.getServiceInfo().isWrapped())
+        {
+            ann.param("parameterStyle", ParameterStyle.WRAPPED);
+        }
+        else
+        {
+           ann.param("parameterStyle", ParameterStyle.BARE);
+        }
     }
 
     protected void annotate(GenerationContext context, OperationInfo op, JMethod method)
