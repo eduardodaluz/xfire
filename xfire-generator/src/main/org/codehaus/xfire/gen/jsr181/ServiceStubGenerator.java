@@ -3,10 +3,6 @@ package org.codehaus.xfire.gen.jsr181;
 import java.io.File;
 
 import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.jws.soap.SOAPBinding.Style;
-import javax.jws.soap.SOAPBinding.Use;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
