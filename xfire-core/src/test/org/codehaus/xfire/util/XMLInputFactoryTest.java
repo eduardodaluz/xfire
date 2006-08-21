@@ -24,7 +24,6 @@ public class XMLInputFactoryTest
     public void testFactoryConfig()
         throws Exception
     {
-
         String xml = "<root><foo><![CDATA[data]]></foo></root>";
 
         MessageContext ctx = new MessageContext();
@@ -37,9 +36,10 @@ public class XMLInputFactoryTest
         STAXUtils.copy(xmlReader, xmlWriter);
         xmlWriter.close();
         xmlReader.close();
+        outStream.close();
+        
         String result = outStream.toString();
         assertTrue(result.indexOf("CDATA") > 0);
-
     }
 
 }
