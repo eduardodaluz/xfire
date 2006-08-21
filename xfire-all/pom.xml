@@ -72,6 +72,11 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-jibx</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-jms</artifactId>
       <scope>provided</scope>
     </dependency>
