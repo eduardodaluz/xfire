@@ -100,11 +100,7 @@ public class CollectionType
                 else
                     ns = type.getSchemaType().getNamespaceURI();
 
-                MessageWriter cwriter = writer
-                        .getElementWriter(type.getSchemaType().getLocalPart(), ns);
-
-                type.writeObject(itr.next(), cwriter, context);
-                cwriter.close();
+                writeValue(itr.next(), writer, context, type, type.getSchemaType().getLocalPart(), ns);
             }
         }
         catch (IllegalArgumentException e)
