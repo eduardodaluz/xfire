@@ -6,5 +6,5 @@ package org.codehaus.xfire.jibx;
  */
 public interface AccountService {
 
-	public AccountInfo getAccountStatus(Account param);
+	public AccountInfo getAccountStatus(String user, Account param);
 }

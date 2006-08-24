@@ -299,55 +299,8 @@ public class DefaultTypeMappingRegistry
     {
         TypeMapping tm = createTypeMapping(false);
 
-        register(tm, boolean.class, XSD_BOOLEAN, new BooleanType());
-        register(tm, int.class, XSD_INT, new IntType());
-        register(tm, short.class, XSD_SHORT, new ShortType());
-        register(tm, double.class, XSD_DOUBLE, new DoubleType());
-        register(tm, float.class, XSD_FLOAT, new FloatType());
-        register(tm, long.class, XSD_LONG, new LongType());
-        register(tm, char.class, XSD_STRING, new CharacterType());
-        register(tm, Character.class, XSD_STRING, new CharacterType());
-        register(tm, String.class, XSD_STRING, new StringType());
-        register(tm, Boolean.class, XSD_BOOLEAN, new BooleanType());
-        register(tm, Integer.class, XSD_INT, new IntType());
-        register(tm, Short.class, XSD_SHORT, new ShortType());
-        register(tm, Double.class, XSD_DOUBLE, new DoubleType());
-        register(tm, Float.class, XSD_FLOAT, new FloatType());
-        register(tm, Long.class, XSD_LONG, new LongType());
-        register(tm, Date.class, XSD_DATETIME, new DateTimeType());
-        register(tm, java.sql.Date.class, XSD_DATETIME, new SqlDateType());
-        register(tm, Time.class, XSD_TIME, new TimeType());
-        register(tm, Timestamp.class, XSD_DATETIME, new TimestampType());
-        register(tm, Calendar.class, XSD_DATETIME, new CalendarType());
-        register(tm, byte[].class, XSD_BASE64, new Base64Type());
-        register(tm, BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
-        register(tm, BigInteger.class, XSD_INTEGER, new BigIntegerType());
-        register(tm, URI.class, XSD_URI, new URIType());
-        register(tm, Document.class, XSD_ANY, new DocumentType());
-        register(tm, Source.class, XSD_ANY, new SourceType());
-        register(tm, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
-        register(tm, Element.class, XSD_ANY, new JDOMElementType());
-        register(tm, org.jdom.Document.class, XSD_ANY, new JDOMDocumentType());
-        register(tm, Object.class, XSD_ANY, new ObjectType());
-        register(tm, DataSource.class, XSD_BASE64, new DataSourceType());
-        register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
-
-        if ( isJDK5andAbove())
-        {
-            registerIfAvailable(tm, "javax.xml.datatype.Duration", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.DurationType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATE, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_TIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATETIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
-        }
+        createDefaultMappings(tm);
         
-        register(SoapConstants.XSD, tm);
-        registerDefault(tm);
-
         // Create a Type Mapping for SOAP 1.1 Encoding
         TypeMapping soapTM = createTypeMapping(tm, false);
 
@@ -405,8 +358,60 @@ public class DefaultTypeMappingRegistry
         register(soapTM, BigInteger.class, XSD_INTEGER, new BigIntegerType());
         
         register(ENCODED_NS, soapTM);
+        
+        register(SoapConstants.XSD, tm);
+        registerDefault(tm);
 
         return tm;
+    }
+    
+    protected void createDefaultMappings(TypeMapping tm)
+    {
+        register(tm, boolean.class, XSD_BOOLEAN, new BooleanType());
+        register(tm, int.class, XSD_INT, new IntType());
+        register(tm, short.class, XSD_SHORT, new ShortType());
+        register(tm, double.class, XSD_DOUBLE, new DoubleType());
+        register(tm, float.class, XSD_FLOAT, new FloatType());
+        register(tm, long.class, XSD_LONG, new LongType());
+        register(tm, char.class, XSD_STRING, new CharacterType());
+        register(tm, Character.class, XSD_STRING, new CharacterType());
+        register(tm, String.class, XSD_STRING, new StringType());
+        register(tm, Boolean.class, XSD_BOOLEAN, new BooleanType());
+        register(tm, Integer.class, XSD_INT, new IntType());
+        register(tm, Short.class, XSD_SHORT, new ShortType());
+        register(tm, Double.class, XSD_DOUBLE, new DoubleType());
+        register(tm, Float.class, XSD_FLOAT, new FloatType());
+        register(tm, Long.class, XSD_LONG, new LongType());
+        register(tm, Date.class, XSD_DATETIME, new DateTimeType());
+        register(tm, java.sql.Date.class, XSD_DATETIME, new SqlDateType());
+        register(tm, Time.class, XSD_TIME, new TimeType());
+        register(tm, Timestamp.class, XSD_DATETIME, new TimestampType());
+        register(tm, Calendar.class, XSD_DATETIME, new CalendarType());
+        register(tm, byte[].class, XSD_BASE64, new Base64Type());
+        register(tm, BigDecimal.class, XSD_DECIMAL, new BigDecimalType());
+        register(tm, BigInteger.class, XSD_INTEGER, new BigIntegerType());
+        register(tm, URI.class, XSD_URI, new URIType());
+        register(tm, Document.class, XSD_ANY, new DocumentType());
+        register(tm, Source.class, XSD_ANY, new SourceType());
+        register(tm, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
+        register(tm, Element.class, XSD_ANY, new JDOMElementType());
+        register(tm, org.jdom.Document.class, XSD_ANY, new JDOMDocumentType());
+        register(tm, Object.class, XSD_ANY, new ObjectType());
+        register(tm, DataSource.class, XSD_BASE64, new DataSourceType());
+        register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
+
+        if ( isJDK5andAbove())
+        {
+            registerIfAvailable(tm, "javax.xml.datatype.Duration", XSD_DURATION, "org.codehaus.xfire.aegis.type.java5.DurationType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATE, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_TIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_MONTH_DAY, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_G_YEAR_MONTH, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+            registerIfAvailable(tm, "javax.xml.datatype.XMLGregorianCalendar", XSD_DATETIME, "org.codehaus.xfire.aegis.type.java5.XMLGregorianCalendarType");
+        }
     }
 
     protected void registerIfAvailable(TypeMapping tm, String className, QName typeName, String typeClassName)

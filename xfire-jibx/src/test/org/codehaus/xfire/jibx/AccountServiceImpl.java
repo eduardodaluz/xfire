@@ -6,8 +6,8 @@ package org.codehaus.xfire.jibx;
  */
 public class AccountServiceImpl implements AccountService {
 
-	public AccountInfo getAccountStatus(Account param) {
-        System.out.println("ACCOUNT: " + param);
+	public AccountInfo getAccountStatus(String user, Account param) {
+        System.out.println("ACCOUNT: " + param + " User: " + user);
 		return new AccountInfo(0);
 	}
 }

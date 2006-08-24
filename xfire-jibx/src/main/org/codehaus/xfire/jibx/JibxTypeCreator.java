@@ -10,20 +10,9 @@ import org.codehaus.xfire.aegis.type.Type;
 public class JibxTypeCreator
     extends DefaultTypeCreator
 {
-    /* (non-Javadoc)
-     * @see org.codehaus.xfire.aegis.type.TypeCreator#createType(java.lang.Class)
-     */
-    public Type createDefaultType(Class clazz)
-    {
-        return new JibxType(clazz);
-
-    }
-
     public Type createDefaultType(TypeClassInfo info)
     {
         JibxType type = new JibxType(info.getTypeClass());
         return type;
-    }
-    
-    
+    }   
 }

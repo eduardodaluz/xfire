@@ -1,6 +1,7 @@
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
  <env:Body>
   <m:getAccountStatus xmlns:m="http://xfire.codehaus.org/jibx">
+   <m:in0>Dan</m:in0>
    <m:Account> 
      <m:accountNo>123</m:accountNo>
    </m:Account>
