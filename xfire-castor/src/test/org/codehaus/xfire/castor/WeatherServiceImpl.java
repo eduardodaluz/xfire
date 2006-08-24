@@ -1,6 +1,10 @@
 package org.codehaus.xfire.castor;
 
-import net.webservicex.*;
+import net.webservicex.GetWeatherByPlaceName;
+import net.webservicex.GetWeatherByPlaceNameResponse;
+import net.webservicex.GetWeatherByZipCode;
+import net.webservicex.GetWeatherByZipCodeResponse;
+import net.webservicex.GetWeatherByZipCodeResult;
 
 public class WeatherServiceImpl
 {

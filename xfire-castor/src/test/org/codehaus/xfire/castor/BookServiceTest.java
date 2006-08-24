@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;

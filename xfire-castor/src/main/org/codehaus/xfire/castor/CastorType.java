@@ -6,8 +6,9 @@ import java.io.PrintWriter;
 import javanet.staxutils.ContentHandlerToXMLStreamWriter;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -25,9 +26,7 @@ import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.util.ClassLoaderUtils;
-import org.dom4j.Node;
-import org.dom4j.dom.DOMDocumentFactory;
-import org.dom4j.io.STAXEventReader;
+import org.codehaus.xfire.util.STAXUtils;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;
 import org.exolab.castor.xml.Introspector;
@@ -36,6 +35,7 @@ import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
 import org.exolab.castor.xml.util.XMLClassDescriptorImpl;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -54,6 +54,8 @@ public class CastorType
 
     private Mapping mapping;
 
+    private DocumentBuilder builder;
+
     /**
      * Constructor that sets the Castor mapping to use for de/marshalling and
      * sets the schema type for the castor type.
@@ -68,7 +70,17 @@ public class CastorType
     {
         this.mapping = mapping;
         setTypeClass(clazz);
-
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try
+        {
+            builder = factory.newDocumentBuilder();
+        }
+        catch (ParserConfigurationException e)
+        {
+           throw new XFireRuntimeException("Couldn't load document builder.", e);
+        }
+        
         initType();
     }
 
@@ -90,22 +102,19 @@ public class CastorType
         Unmarshaller unmarshaller;
         XMLStreamReader sReader = ((ElementReader) reader).getXMLStreamReader();
 
-        Node node = null;
-
+        Node node;
         try
         {
-            // Create a StAX XMLEventReader from the StAX XMLStreamReader.
-            XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(sReader);
-            node = (new STAXEventReader(new DOMDocumentFactory())).readNode(xer);
+            node = STAXUtils.read(builder, sReader, true).getDocumentElement();
         }
-        catch (XMLStreamException e)
+        catch (XMLStreamException e1)
         {
-            log.error("Error creating a dom4j Document from a StAX XMLEventReader.", e);
-            throw new XFireFault(e);
+            throw new XFireFault("Could not parse XML stream.", e1, XFireFault.SENDER);
         }
 
         try
         {
+            
             unmarshaller = new Unmarshaller(getTypeClass());
             if (this.mapping != null)
             {

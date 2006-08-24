@@ -1,6 +1,6 @@
 package org.codehaus.xfire.castor;
 
-import net.webservicex.GetWeatherByPlaceName; 
+import net.webservicex.GetWeatherByPlaceName;
 import net.webservicex.GetWeatherByPlaceNameResponse;
 import net.webservicex.GetWeatherByZipCode;
 import net.webservicex.GetWeatherByZipCodeResponse;
