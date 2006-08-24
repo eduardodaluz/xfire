@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis.type.basic;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 import javax.xml.namespace.QName;
@@ -8,12 +10,14 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
+import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -151,6 +155,46 @@ public class BeanTest
         
         assertValid("//xsd:complexType[@name='bean']/xsd:attribute[@name='howdy']", schema);
         assertValid("//xsd:complexType[@name='bean']/xsd:attribute[@name='bleh']", schema);
+    }
+    
+    public void testAttributeMapDifferentNS()
+        throws Exception
+    {
+        BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");
+        info.mapAttribute("howdy", new QName("urn:Bean2", "howdy"));
+        info.mapAttribute("bleh", new QName("urn:Bean2", "bleh"));
+        info.setTypeMapping(mapping);
+        
+        BeanType type = new BeanType(info);
+        type.setTypeClass(SimpleBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:Bean", "bean"));
+    
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean8.xml"));
+        
+        SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
+        assertEquals("bleh", bean.getBleh());
+        assertEquals("howdy", bean.getHowdy());
+    
+        reader.getXMLStreamReader().close();
+        
+        // Test writing
+    
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ElementWriter writer = new ElementWriter(bos, "root", "urn:Bean");
+        type.writeObject(bean, writer, new MessageContext());
+        writer.close();
+        writer.flush();
+        
+        bos.close();
+        
+        StaxBuilder builder = new StaxBuilder();
+        Document doc = builder.build(new ByteArrayInputStream(bos.toByteArray()));
+        Element element = doc.getRootElement();
+    
+        addNamespace("b2", "urn:Bean2");
+        assertValid("/b:root[@b2:bleh='bleh']", element);
+        assertValid("/b:root[@b2:howdy='howdy']", element);
     }
     
     public void testNullProperties()
