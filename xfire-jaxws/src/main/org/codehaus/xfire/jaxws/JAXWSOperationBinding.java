@@ -46,7 +46,8 @@ public class JAXWSOperationBinding
     {
         this.delegate = delegate;
         
-        if (op.getMethod().isAnnotationPresent(RequestWrapper.class))
+        Method declared = op.getMethod();
+        if (declared.isAnnotationPresent(RequestWrapper.class))
         {
             this.processInput = true;
             RequestWrapper wrapper = op.getMethod().getAnnotation(RequestWrapper.class);
@@ -73,11 +74,11 @@ public class JAXWSOperationBinding
             }
         }
         
-        if (op.getMethod().isAnnotationPresent(ResponseWrapper.class))
+        if (declared.isAnnotationPresent(ResponseWrapper.class))
         {
             this.processOutput = true;
             ResponseWrapper wrapper = op.getMethod().getAnnotation(ResponseWrapper.class);
-            
+
             try
             {
                 outputClass = ClassLoaderUtils.loadClass(wrapper.className(), getClass());

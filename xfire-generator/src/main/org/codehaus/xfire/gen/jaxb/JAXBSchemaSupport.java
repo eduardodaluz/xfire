@@ -57,6 +57,10 @@ public class JAXBSchemaSupport implements SchemaSupport
         schemaCompiler = XJC.createSchemaCompiler();
         schemaCompiler.setErrorListener(er);
         
+        Field ncc = schemaCompiler.getClass().getDeclaredField("NO_CORRECTNESS_CHECK");
+        ncc.setAccessible(true);
+        ncc.set(schemaCompiler, true);
+        
         if (context.isExplicitAnnotation()) 
         {
 	        try
@@ -180,7 +184,7 @@ public class JAXBSchemaSupport implements SchemaSupport
      * Resolves Schemas relative to the WSDL document they're included in.
      * @author Dan Diephouse
      */
-    static class RelativeEntityResolver  implements EntityResolver
+    static class RelativeEntityResolver implements EntityResolver
     {
         private String baseURI;
 
@@ -200,6 +204,10 @@ public class JAXBSchemaSupport implements SchemaSupport
                 if (file.exists())
                 {
                     return new InputSource(new FileInputStream(file));
+                }
+                else
+                {
+                    return new InputSource(systemId);
                 }
             }
             return null;

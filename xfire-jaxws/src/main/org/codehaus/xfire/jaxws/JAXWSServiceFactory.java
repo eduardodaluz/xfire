@@ -17,6 +17,7 @@ import org.codehaus.xfire.jaxws.type.JAXWSTypeRegistry;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.PostInvocationHandler;
 import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.transport.TransportManager;
@@ -39,6 +40,7 @@ public class JAXWSServiceFactory
     protected void registerHandlers(Service service)
     {
         service.addInHandler(new ServiceInvocationHandler());
+        service.addInHandler(new PostInvocationHandler());
         service.addOutHandler(new OutMessageSender());
         service.addFaultHandler(new FaultSender());
         service.addFaultHandler(new WebFaultHandler());
@@ -62,7 +64,8 @@ public class JAXWSServiceFactory
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean isFaultInfoClass(Class exClass) {
+    protected boolean isFaultInfoClass(Class exClass) 
+    {
         return exClass.isAnnotationPresent(WebFault.class);
     }
 

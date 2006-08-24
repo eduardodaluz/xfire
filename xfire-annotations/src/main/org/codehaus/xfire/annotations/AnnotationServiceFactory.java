@@ -218,7 +218,6 @@ public class AnnotationServiceFactory
                 use =  soapBindingAnnotation.getUseString();
             }
 
-            
             // Allow the user to override informations given in the annotations
             if (!properties.containsKey(PORT_TYPE))
             {

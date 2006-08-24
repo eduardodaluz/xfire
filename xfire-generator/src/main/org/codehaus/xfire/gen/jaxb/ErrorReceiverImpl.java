@@ -15,7 +15,7 @@ public class ErrorReceiverImpl
     public void error(SAXParseException e)
     {
         fatalErrors = true;
-        log.error("Error generating JAXB classes: " + e.getMessage() + " at " + e.getLineNumber() 
+        log.error(e.getMessage() + " at " + e.getLineNumber() 
                   + "," + e.getColumnNumber() + " in " + e.getSystemId());
     }
 
@@ -27,13 +27,13 @@ public class ErrorReceiverImpl
 
     public void warning(SAXParseException e)
     {
-        log.error("Error generating JAXB classes: " + e.getMessage() + " at " + e.getLineNumber() 
+        log.warn(e.getMessage() + " at " + e.getLineNumber() 
                   + "," + e.getColumnNumber() + " in " + e.getSystemId());
     }
 
     public void info(SAXParseException e)
     {
-        log.error("Error generating JAXB classes: " + e.getMessage() + " at " + e.getLineNumber() 
+        log.info(e.getMessage() + " at " + e.getLineNumber() 
                   + "," + e.getColumnNumber() + " in " + e.getSystemId());
     }
 

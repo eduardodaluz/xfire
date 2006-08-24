@@ -74,11 +74,6 @@ public class Soap11Binding extends AbstractSoapBinding
         {
             OperationInfo op = (OperationInfo) oitr.next();
 
-            String inName = op.getInputMessage().getName().getLocalPart();
-            String outName = null;
-            if (op.hasOutput())
-                outName = op.getOutputMessage().getName().getLocalPart();
-            
             javax.wsdl.Operation wsdlOp = 
                 (javax.wsdl.Operation) portType.getOperation(op.getName(), null, null);
 

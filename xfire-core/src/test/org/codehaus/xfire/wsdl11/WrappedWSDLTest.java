@@ -41,6 +41,7 @@ public class WrappedWSDLTest
         OperationInfo opInfo = (OperationInfo) itr.next();
         assertEquals("echo", opInfo.getName());
         assertEquals("urn:Echo:schema", opInfo.getInputMessage().getName().getNamespaceURI());
+        assertEquals("urn:Echo:schema", opInfo.getOutputMessage().getName().getNamespaceURI());
         
         // Check the input message
         MessageInfo message = opInfo.getInputMessage();

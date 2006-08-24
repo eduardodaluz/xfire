@@ -640,7 +640,9 @@ public class WSDLServiceBuilder
 
     protected void visit(Output output)
     {
-        MessageInfo info = opInfo.createMessage(output.getMessage().getQName());
+        MessageInfo info = opInfo.createMessage(
+            new QName(opInfo.getInputMessage().getName().getNamespaceURI(),
+                      output.getMessage().getQName().getLocalPart()));
         opInfo.setOutputMessage(info);
         woutput2msg.put(output, info);
         
