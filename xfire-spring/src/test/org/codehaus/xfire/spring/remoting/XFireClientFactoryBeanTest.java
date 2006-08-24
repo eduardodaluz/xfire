@@ -209,7 +209,7 @@ public class XFireClientFactoryBeanTest
         control.setDefaultReturnValue(true);
         webAnnotations.hasHandlerChainAnnotation(EchoImpl.class);
         control.setReturnValue(false);
-        webAnnotations.hasSOAPBindingAnnotation(EchoImpl.class);
+        webAnnotations.hasSOAPBindingAnnotation(Echo.class);
         control.setReturnValue(false);
         webAnnotations.hasWebServiceAnnotation(EchoImpl.class);
         control.setReturnValue(true);
@@ -236,6 +236,7 @@ public class XFireClientFactoryBeanTest
         webAnnotations.hasOnewayAnnotation(echoMethod);
         control.setDefaultReturnValue(false);
 
+        
         control.replay();
         
         factory.setServiceFactory(new AnnotationServiceFactory(webAnnotations, 
