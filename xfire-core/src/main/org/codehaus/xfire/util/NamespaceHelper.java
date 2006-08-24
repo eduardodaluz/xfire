@@ -133,8 +133,11 @@ public class NamespaceHelper
         {
             prefix = getUniquePrefix(writer);
 
-            if (declare)
+            if (declare) 
+            {
+                writer.setPrefix(prefix, namespaceURI);
                 writer.writeNamespace(prefix, namespaceURI);
+            }
         }
         return prefix;
     }
