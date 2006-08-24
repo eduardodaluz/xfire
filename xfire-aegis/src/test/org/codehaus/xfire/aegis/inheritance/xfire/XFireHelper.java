@@ -16,6 +16,7 @@ import org.codehaus.xfire.aegis.inheritance.ws2.common.exception.AlreadyExistsEx
 import org.codehaus.xfire.aegis.inheritance.ws2.common.exception.NotFoundException;
 import org.codehaus.xfire.aegis.inheritance.ws2.common.pack1.ContentBean1;
 import org.codehaus.xfire.aegis.inheritance.ws2.common.pack2.ContentBean2;
+import org.codehaus.xfire.aegis.type.basic.SimpleBean;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -90,6 +91,7 @@ public class XFireHelper
             overrides.add(BeanB.class.getName());
             overrides.add(BeanC.class.getName());
             overrides.add(BeanD.class.getName());
+            overrides.add(SimpleBean.class.getName());
             overrides.add(RootBean.class.getName());
             overrides.add(WS1Exception.class.getName());
             overrides.add(WS1ExtendedException.class.getName());
