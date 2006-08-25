@@ -1,5 +1,8 @@
 package org.codehaus.xfire.demo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
  * @author <a href="mailto:nathanyp@hotmail.com">Nathan Peles</a>
@@ -29,5 +32,11 @@ public class BookServiceImpl implements BookService
         
         return null;
     }
+
+	public Map getBooksMap() {
+		Map result = new HashMap();
+		result.put(onlyBook.getIsbn(), onlyBook);
+		return result;
+	}
 }
 //END SNIPPET: book

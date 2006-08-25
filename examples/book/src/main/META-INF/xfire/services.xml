@@ -5,6 +5,9 @@
     <namespace>http://xfire.codehaus.org/BookService</namespace>
     <serviceClass>org.codehaus.xfire.demo.BookService</serviceClass>
     <implementationClass>org.codehaus.xfire.demo.BookServiceImpl</implementationClass>
+    <inHandlers>
+     <handler handlerClass="org.codehaus.xfire.demo.handlers.CheckVersionHandler" />
+    </inHandlers>
   </service>
 </beans>
 <!-- END SNIPPET: services -->

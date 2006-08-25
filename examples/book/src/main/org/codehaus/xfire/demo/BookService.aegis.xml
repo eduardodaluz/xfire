@@ -1,0 +1,15 @@
+<mappings  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xfire.codehaus.org/schemas/1.0/mapping.xsd">
+    <mapping>
+        <method name="findBook">
+            <parameter index="0" mappedName="isbn"/>
+            <return-type mappedName="book" />
+        </method>
+         <method name="getBooksMap">
+            <return-type mappedName="BookMap" keyType="java.lang.String" componentType="org.codehaus.xfire.demo.Book" />
+        </method>
+        
+   </mapping>
+   
+   
+</mappings>   
