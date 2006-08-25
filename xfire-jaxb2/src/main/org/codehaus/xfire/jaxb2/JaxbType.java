@@ -106,53 +106,69 @@ public class JaxbType
      * @param context
      * @param u
      */
-    private void enableValidation(MessageContext context, Unmarshaller u, JAXBContext jc ){
-    	// chack if we have cached schema instance
-    	Schema validationSchema = (Schema) context.getService().getProperty(GENERATED_VALIDATION_SCHEMA);
-    	if( validationSchema!= null ){
-    		u.setSchema(validationSchema);
-    		return;
-    	}
-    	// Do we have schema dedicated to validation
-    	Collection<String> schemas = (Collection<String>) context.getContextualProperty(VALIDATION_SCHEMA);
-    	if( schemas == null ){
-    		// No, we don't, so use schema specifed on  service
-    		schemas =  (Collection<String>) context.getService().getProperty(ObjectServiceFactory.SCHEMAS);
-    	}
-    	try {
-    		if( schemas != null ){
-    			// We have some schema loaded,so set them up on unmarshaler
-    			 setupValidationSchema(schemas,u);	
-    		}else{
-    			final List<DOMResult> results = new ArrayList<DOMResult>();
+    @SuppressWarnings("unchecked")
+    private void enableValidation(MessageContext context, Unmarshaller u, JAXBContext jc)
+    {
+        // chack if we have cached schema instance
+        Schema validationSchema = (Schema) context.getService()
+                .getProperty(GENERATED_VALIDATION_SCHEMA);
+        if (validationSchema != null)
+        {
+            u.setSchema(validationSchema);
+            return;
+        }
+        // Do we have schema dedicated to validation
+        Collection<String> schemas = (Collection<String>) context
+                .getContextualProperty(VALIDATION_SCHEMA);
+        if (schemas == null)
+        {
+            // No, we don't, so use schema specifed on service
+            schemas = (Collection<String>) context.getService()
+                    .getProperty(ObjectServiceFactory.SCHEMAS);
+        }
+        try
+        {
+            if (schemas != null)
+            {
+                // We have some schema loaded,so set them up on unmarshaler
+                setupValidationSchema(schemas, u);
+            }
+            else
+            {
+                final List<DOMResult> results = new ArrayList<DOMResult>();
 
-				jc.generateSchema(new SchemaOutputResolver() {
+                jc.generateSchema(new SchemaOutputResolver()
+                {
 
-					public Result createOutput(String ns, String file)
-							throws IOException {
-						DOMResult result = new DOMResult();
-						result.setSystemId(file);
-						results.add(result);
-						return result;
-					}
-				});
+                    public Result createOutput(String ns, String file)
+                        throws IOException
+                    {
+                        DOMResult result = new DOMResult();
+                        result.setSystemId(file);
+                        results.add(result);
+                        return result;
+                    }
+                });
 
-				DOMSource source = new DOMSource();
-				source.setNode(results.get(0).getNode().getFirstChild());
-				SchemaFactory factory = SchemaFactory
-						.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				u.setSchema(factory.newSchema(source));
-			}
-    		// Put generated schema on context
-    		context.getService().setProperty(GENERATED_VALIDATION_SCHEMA,u.getSchema());
-    		
-			
-		} catch (IOException e) {
-			// we have configuration problem, so break to application
-			 throw new XFireRuntimeException("Error creating validating schema.", e);
-		} catch (SAXException e) {
-			  throw new XFireRuntimeException("Error creating validating schema.", e);
-		}
+                DOMSource source = new DOMSource();
+                source.setNode(results.get(0).getNode().getFirstChild());
+                SchemaFactory factory = SchemaFactory
+                        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                u.setSchema(factory.newSchema(source));
+            }
+            // Put generated schema on context
+            context.getService().setProperty(GENERATED_VALIDATION_SCHEMA, u.getSchema());
+
+        }
+        catch (IOException e)
+        {
+            // we have configuration problem, so break to application
+            throw new XFireRuntimeException("Error creating validating schema.", e);
+        }
+        catch (SAXException e)
+        {
+            throw new XFireRuntimeException("Error creating validating schema.", e);
+        }
 
     }
      
@@ -340,18 +356,24 @@ public class JaxbType
     {
         AnnotatedElement pack =  clazz.getPackage();
         //getPackage isn't guaranteed to return a package
-        if(pack == null) 
+        if (pack == null) 
         {
             try
             {
-                pack = Class.forName(clazz.getName().substring(0, clazz.getName().lastIndexOf('.')) + ".package-info", false, clazz.getClassLoader());
+                pack = Class.forName(clazz.getName().substring(0, clazz.getName().lastIndexOf('.'))
+                        + ".package-info", false, clazz.getClassLoader());
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
             }
         }
-        if(pack == null) {
-            throw new XFireRuntimeException("No package info found for class " + clazz.getName() + ". Cannot lookup default schema namespace");
+        
+        if (pack == null)
+        {
+            throw new XFireRuntimeException("No package info found for class " + clazz.getName()
+                    + ". Cannot lookup default schema namespace");
         }
+        
         XmlSchema schema = pack.getAnnotation(XmlSchema.class);
         String namespace = null;
         if (schema != null)

@@ -8,4 +8,13 @@
       <s:enumeration value="UNITED STATES" />
     </s:restriction>
   </s:simpleType>
+  
+  <!-- For some reason JAXB doesn't generate package-info if there is just a simpleType/enum -->
+  <s:element name="PlaceHolder">
+    <s:complexType>
+      <s:sequence>
+      </s:sequence>
+    </s:complexType>
+  </s:element>
+  
 </s:schema>
