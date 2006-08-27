@@ -41,7 +41,7 @@ public class DocumentAutoTypeTest
     }
 
     public void testBeanServiceWSDL()
-            throws Exception
+            throws Exception 
     {
         // Test WSDL generation
         Document doc = getWSDLDocument("Bean");
