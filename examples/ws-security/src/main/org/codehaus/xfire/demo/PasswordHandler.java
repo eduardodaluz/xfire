@@ -19,7 +19,7 @@ public class PasswordHandler implements CallbackHandler {
 	private Map passwords = new HashMap();
 
 	public PasswordHandler() {
-		passwords.put("alias", "aliaspass");
+		passwords.put("serveralias", "aliaspass");
         passwords.put("client-344-839","client344Password");
 
 	}

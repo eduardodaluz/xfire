@@ -57,7 +57,7 @@ public class BookClientEnc2Way
         // identify ourself ( this will be send as part of user token )
         properties.setProperty(WSHandlerConstants.USER, "client-344-839");
         // set user used to encrypt message
-        properties.setProperty(WSHandlerConstants.ENCRYPTION_USER, "alias");
+        properties.setProperty(WSHandlerConstants.ENCRYPTION_USER, "serveralias");
         
         // Configuration of public key used to encrypt message goes to
         // properties file.

@@ -25,7 +25,7 @@ public class BookClientUTPP
         // for hashed password use:
         //properties.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
         // User name to send
-        config.setProperty(WSHandlerConstants.USER, "alias");
+        config.setProperty(WSHandlerConstants.USER, "serveralias");
         // Callback used to retrive password for given user.
         config.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordHandler.class.getName());
     }

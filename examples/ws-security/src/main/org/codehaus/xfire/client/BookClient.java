@@ -22,7 +22,7 @@ public abstract class BookClient
 
     public static final String SERVICE_NAMESPACE = "http://xfire.codehaus.org/BookService";
 
-    public static final String SERVICE_URL = "http://localhost:8080/bookws/services/";
+    public static final String SERVICE_URL = "http://localhost:8088/security/services/";
 
     /**
      * Setups required security properties for given test.

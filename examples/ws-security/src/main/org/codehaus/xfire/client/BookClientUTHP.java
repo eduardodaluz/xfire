@@ -35,7 +35,7 @@ public class BookClientUTHP
         // Set password type to hashed
         properties.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
         // Username in keystore
-        properties.setProperty(WSHandlerConstants.USER, "alias");
+        properties.setProperty(WSHandlerConstants.USER, "serveralias");
         // Used do retrive password for given user name
         properties.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordHandler.class.getName());
         

@@ -19,7 +19,7 @@ public class BookClientSign
     {
         properties.setProperty(WSHandlerConstants.ACTION,WSHandlerConstants.SIGNATURE);
         // User in keystore
-        properties.setProperty(WSHandlerConstants.USER, "alias");
+        properties.setProperty(WSHandlerConstants.USER, "client-344-839");
         // This callback is used to specify password for given user for keystore
         properties.setProperty(WSHandlerConstants.PW_CALLBACK_CLASS, org.codehaus.xfire.demo.PasswordHandler.class.getName());
         // Configuration for accessing private key in keystore

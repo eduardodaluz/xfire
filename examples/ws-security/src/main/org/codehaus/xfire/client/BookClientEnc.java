@@ -32,11 +32,10 @@ public class BookClientEnc
     protected void configureOutProperties(Properties properties)
     {
         properties.setProperty(WSHandlerConstants.ACTION, WSHandlerConstants.ENCRYPT);
-        properties.setProperty(WSHandlerConstants.USER, "alias");
+        properties.setProperty(WSHandlerConstants.USER, "serveralias");
         //Configuration of public key used to encrypt message goes to properties file.
         properties.setProperty(WSHandlerConstants.ENC_PROP_FILE,
                                "org/codehaus/xfire/client/outsecurity_enc.properties");
-
     }
     //  END SNIPPET: enc
     protected String getName()
