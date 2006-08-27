@@ -25,7 +25,7 @@
                 <copy todir="${basedir}/target/examples">
                   <fileset dir="${basedir}/../examples"></fileset>
                   <filterset begintoken=">" endtoken="&lt;">
-                    <filter value=">${version}&lt;" token="1.1-SNAPSHOT"></filter>
+                    <filter value=">${version}&lt;" token="1.2-SNAPSHOT"></filter>
                   </filterset>
                 </copy>
                 <echo>Copying sources for source jar</echo>
