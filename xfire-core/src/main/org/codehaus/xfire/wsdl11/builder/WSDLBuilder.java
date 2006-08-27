@@ -122,30 +122,31 @@ public class WSDLBuilder
                 getDefinition().setTypes(types);
                 
                 List children = schemaTypes.getChildren();
-                for (int j = 0; j < children.size(); j++)
+                while (children.size() > 0)
                 {
-                    Element child = (Element) children.get(j);
-                    if (child.getChildren().size() == 0)
-                        continue;
-                    
+                    Element child = (Element) children.get(0);
                     child.detach();
-                    Document inputDoc = new Document(child);
-                    org.w3c.dom.Document doc = new DOMOutputter().output(inputDoc);
-                    org.w3c.dom.Element root = doc.getDocumentElement();
                     
-                    NamedNodeMap attributes = root.getAttributes();
-                    for (int i = 0; i < attributes.getLength(); i++)
+                    if (child.getChildren().size() > 0)
                     {
-                        Attr a = (Attr) attributes.item(i);
-                        if (a.getNodeName().startsWith("xmlns:") && a.getNodeValue().equals(SoapConstants.XSD))
-                            root.removeAttribute(a.getNodeName());
+                        Document inputDoc = new Document(child);
+                        org.w3c.dom.Document doc = new DOMOutputter().output(inputDoc);
+                        org.w3c.dom.Element root = doc.getDocumentElement();
+                        
+                        NamedNodeMap attributes = root.getAttributes();
+                        for (int i = 0; i < attributes.getLength(); i++)
+                        {
+                            Attr a = (Attr) attributes.item(i);
+                            if (a.getNodeName().startsWith("xmlns:") && a.getNodeValue().equals(SoapConstants.XSD))
+                                root.removeAttribute(a.getNodeName());
+                        }
+                        
+                        Schema uee = new SchemaImpl();
+                        uee.setElement((org.w3c.dom.Element) doc.getDocumentElement());
+                        uee.setRequired(Boolean.TRUE);
+                        uee.setElementType(new QName(SoapConstants.XSD, "schema"));
+                        types.addExtensibilityElement(uee);
                     }
-                    
-                    Schema uee = new SchemaImpl();
-                    uee.setElement((org.w3c.dom.Element) doc.getDocumentElement());
-                    uee.setRequired(Boolean.TRUE);
-                    uee.setElementType(new QName(SoapConstants.XSD, "schema"));
-                    types.addExtensibilityElement(uee);
                 }
             }
             catch (JDOMException e)
