@@ -2,7 +2,7 @@ package org.codehaus.xfire.xmlbeans;
 
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.xfire.wsdl.AbstractWSDL;
 import org.jdom.Document;
 
 /**

@@ -4,7 +4,7 @@ import net.webservicex.WeatherData;
 
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.wsdl11.builder.AbstractWSDL;
+import org.codehaus.xfire.wsdl.AbstractWSDL;
 import org.codehaus.xfire.xmlbeans.AbstractXmlBeansTest;
 import org.codehaus.xfire.xmlbeans.XmlBeansServiceFactory;
 import org.codehaus.xfire.xmlbeans.XmlBeansType;
