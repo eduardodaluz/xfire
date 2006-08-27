@@ -122,9 +122,12 @@ public class WSDLBuilder
                 getDefinition().setTypes(types);
                 
                 List children = schemaTypes.getChildren();
-                while (children.size() > 0)
+                for (int j = 0; j < children.size(); j++)
                 {
-                    Element child = (Element) children.get(0);
+                    Element child = (Element) children.get(j);
+                    if (child.getChildren().size() == 0)
+                        continue;
+                    
                     child.detach();
                     Document inputDoc = new Document(child);
                     org.w3c.dom.Document doc = new DOMOutputter().output(inputDoc);
