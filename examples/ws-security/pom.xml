@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.xfire.examples</groupId>
-  <artifactId>xfire-book</artifactId>
-  <name>Book Example</name>
+  <artifactId>xfire-security</artifactId>
+  <name>WS-Security Example</name>
   <version>1.2-SNAPSHOT</version>
   <inceptionYear>2004</inceptionYear>
   <packaging>war</packaging>
