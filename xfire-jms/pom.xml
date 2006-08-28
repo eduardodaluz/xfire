@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jms</artifactId>
   <name>XFire JMS</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <repositories>
     <repository>
       <id>activemq</id>
