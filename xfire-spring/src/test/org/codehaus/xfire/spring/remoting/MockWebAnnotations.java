@@ -1,6 +1,7 @@
 package org.codehaus.xfire.spring.remoting;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
@@ -89,5 +90,10 @@ public class MockWebAnnotations implements WebAnnotations
     {
         return aClass.equals(EchoImpl.class);
     }
+
+	public Map getServiceProperties(Class clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -5,6 +5,7 @@ package org.codehaus.xfire.spring.remoting;
  */
 
 import java.lang.reflect.Method;
+import java.util.Properties;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -77,7 +78,9 @@ public class XFireWebAnnotationsHandlerMappingTest
         control.setDefaultReturnValue(false);
         webAnnotations.hasOnewayAnnotation(echoMethod);
         control.setDefaultReturnValue(false);
-
+        webAnnotations.getServiceProperties(EchoImpl.class);
+        control.setDefaultReturnValue(new Properties());
+        
         control.replay();
 
         String urlPrefix = "/services/";
