@@ -94,7 +94,7 @@ public class XFireServlet
     public XFireServletController createController()
         throws ServletException
     {
-        return new XFireServletController(xfire);
+        return new XFireServletController(xfire, getServletContext());
     }
 
     /**

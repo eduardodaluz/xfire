@@ -4,6 +4,8 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +41,7 @@ public class XFireServletController
 {
     public static final String HTTP_SERVLET_REQUEST = "XFireServletController.httpServletRequest";
     public static final String HTTP_SERVLET_RESPONSE = "XFireServletController.httpServletResponse";
+    public static final String HTTP_SERVLET_CONTEXT = "XFireServletController.httpServletContext";
     
     private static ThreadLocal requests = new ThreadLocal();
     private static ThreadLocal responses = new ThreadLocal();
@@ -47,10 +50,15 @@ public class XFireServletController
     protected XFire xfire;
 
     protected SoapHttpTransport transport;
+    private ServletContext servletContext;
 
     public XFireServletController(XFire xfire)
     {
+    }
+    public XFireServletController(XFire xfire, ServletContext servletContext)
+    {
         this.xfire = xfire;
+        this.servletContext = servletContext;
         
         // Create a SOAP Http transport with all the servlet addons
         transport = new XFireServletTransport();
@@ -208,6 +216,7 @@ public class XFireServletController
         context.setService(getService(service));
         context.setProperty(HTTP_SERVLET_REQUEST, request);
         context.setProperty(HTTP_SERVLET_RESPONSE, response);
+        context.setProperty(HTTP_SERVLET_CONTEXT, servletContext);
         
         Channel channel;
         try

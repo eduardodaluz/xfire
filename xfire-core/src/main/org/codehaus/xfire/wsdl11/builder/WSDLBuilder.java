@@ -137,7 +137,9 @@ public class WSDLBuilder
                         for (int i = 0; i < attributes.getLength(); i++)
                         {
                             Attr a = (Attr) attributes.item(i);
-                            if (a.getNodeName().startsWith("xmlns:") && a.getNodeValue().equals(SoapConstants.XSD))
+                            if ((a.getNodeName().startsWith("xmlns:") || 
+                                    "xmlns".equals(a.getPrefix())) 
+                                    && a.getNodeValue().equals(SoapConstants.XSD))
                                 root.removeAttribute(a.getNodeName());
                         }
                         

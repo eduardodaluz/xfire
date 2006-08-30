@@ -175,7 +175,6 @@ public abstract class AbstractBinding
         List parameters = new ArrayList();
         OperationInfo opInfo = context.getExchange().getOperation();
         
-        Binding binding = context.getBinding();
         DepthXMLStreamReader dr = new DepthXMLStreamReader(context.getInMessage().getXMLStreamReader());
         int param = 0;
         boolean clientMode = isClientModeOn(context);
