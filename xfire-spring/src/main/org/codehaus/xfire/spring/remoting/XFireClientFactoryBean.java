@@ -3,7 +3,6 @@ package org.codehaus.xfire.spring.remoting;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.spring.SpringUtils;
 import org.codehaus.xfire.transport.Channel;
+import org.codehaus.xfire.util.Resolver;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.FactoryBean;
@@ -495,9 +495,11 @@ public class XFireClientFactoryBean
                 name = new QName(namespace, serviceName);
             }
             
+            Resolver resolver = new Resolver(_wsdlDocumentUrl);
+
             serviceModel = getServiceFactory().create(getServiceInterface(),
                                                       name,
-                                                      new URL(_wsdlDocumentUrl),
+                                                      resolver.getURI().toURL(),
                                                       _properties);
         }
 
