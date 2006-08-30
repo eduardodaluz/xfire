@@ -232,6 +232,12 @@ public class AnnotationServiceFactory
 	            properties.put(USE, use);
             }
             
+            
+            Map props = webAnnotations.getServiceProperties(clazz);
+            if(props!= null){
+            	properties.putAll(props);	
+            }
+            
             if (webAnnotations.hasHandlerChainAnnotation(clazz))
             {
                 log.error("@HandlerChain attributes are not supported yet!");

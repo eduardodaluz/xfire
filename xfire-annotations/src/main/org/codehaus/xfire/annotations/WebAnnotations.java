@@ -1,6 +1,7 @@
 package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 
@@ -118,4 +119,6 @@ public interface WebAnnotations
      */
     HandlerChainAnnotation getHandlerChainAnnotation(Class aClass);
 
+    
+    Map getServiceProperties(Class clazz);
 }

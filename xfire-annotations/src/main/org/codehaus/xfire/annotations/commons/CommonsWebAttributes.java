@@ -1,6 +1,7 @@
 package org.codehaus.xfire.annotations.commons;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import org.apache.commons.attributes.Attributes;
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
@@ -85,4 +86,9 @@ public class CommonsWebAttributes
     {
         return (HandlerChainAnnotation) Attributes.getAttribute(aClass, HandlerChain.class);
     }
+
+	public Map getServiceProperties(Class clazz) {
+
+		return null;
+	}
 }
