@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
@@ -268,9 +269,11 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     
     public boolean hasResponse()
     {
+        NameValuePair pair = postMethod.getResponseHeader("Content-Type");
+        if(pair == null) return false;
         
-        String ct = postMethod.getResponseHeader("Content-Type").getValue();
-
+        String ct = pair.getValue();
+        
         return ct != null && ct.length() > 0;
     }
     
