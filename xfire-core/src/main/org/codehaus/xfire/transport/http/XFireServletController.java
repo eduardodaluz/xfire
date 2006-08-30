@@ -4,7 +4,6 @@ package org.codehaus.xfire.transport.http;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +53,9 @@ public class XFireServletController
 
     public XFireServletController(XFire xfire)
     {
+        this(xfire, null);
     }
+    
     public XFireServletController(XFire xfire, ServletContext servletContext)
     {
         this.xfire = xfire;
@@ -216,7 +217,9 @@ public class XFireServletController
         context.setService(getService(service));
         context.setProperty(HTTP_SERVLET_REQUEST, request);
         context.setProperty(HTTP_SERVLET_RESPONSE, response);
-        context.setProperty(HTTP_SERVLET_CONTEXT, servletContext);
+        
+        if (servletContext != null)
+            context.setProperty(HTTP_SERVLET_CONTEXT, servletContext);
         
         Channel channel;
         try
