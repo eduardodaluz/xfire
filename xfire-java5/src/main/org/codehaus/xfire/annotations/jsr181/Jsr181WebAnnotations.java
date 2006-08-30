@@ -2,6 +2,9 @@ package org.codehaus.xfire.annotations.jsr181;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jws.HandlerChain;
 import javax.jws.Oneway;
@@ -11,13 +14,20 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.annotations.EnableMTOM;
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
+import org.codehaus.xfire.annotations.ServiceProperties;
+import org.codehaus.xfire.annotations.ServiceProperty;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
 import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
+import org.codehaus.xfire.soap.SoapConstants;
+
+
 
 public class Jsr181WebAnnotations
         implements WebAnnotations
@@ -228,4 +238,38 @@ public class Jsr181WebAnnotations
         }
         return annotation;
     }
+
+	public Map getServiceProperties(Class clazz) {
+		Map properties = new HashMap();
+		ServiceProperties serviceProperties = (ServiceProperties) clazz.getAnnotation(ServiceProperties.class); 
+		if(serviceProperties  != null){
+			ServiceProperty[] props =serviceProperties.properties(); 
+			for(int i=0;i<props.length;i++){
+				ServiceProperty serviceProperty  = props[i];
+				if(!"".equals(serviceProperty.value()) && serviceProperty.list().length>0 ){
+					throw new XFireRuntimeException("Service property cant have set both value and list values");
+				}
+				if( !"".equals(serviceProperty.value()) ){
+				 properties.put(serviceProperty.key(),serviceProperty.value());
+				}else{
+					properties.put(serviceProperty.key(), Arrays.asList(serviceProperty.list()));		
+				}
+				
+			}
+		}
+		ServiceProperty serviceProperty = (ServiceProperty) clazz.getAnnotation(ServiceProperty.class); 
+		if(serviceProperty   !=null){
+			if( !"".equals(serviceProperty.value()) ){
+				 properties.put(serviceProperty.key(),serviceProperty.value());
+				}else{
+					properties.put(serviceProperty.key(), Arrays.asList(serviceProperty.list()));		
+				}  
+		}
+		if(clazz.getAnnotation(EnableMTOM.class)!= null){
+			properties.put(SoapConstants.MTOM_ENABLED,"true");
+		}
+
+		
+		return properties;
+	}
 }
