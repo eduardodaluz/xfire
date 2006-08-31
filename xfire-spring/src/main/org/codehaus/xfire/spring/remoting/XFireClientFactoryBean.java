@@ -3,6 +3,7 @@ package org.codehaus.xfire.spring.remoting;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -497,9 +498,15 @@ public class XFireClientFactoryBean
             
             Resolver resolver = new Resolver(_wsdlDocumentUrl);
 
+            URI uri = resolver.getURI();
+            if (uri == null)
+            {
+                throw new XFireRuntimeException("Could not resolve uri " + uri);
+            }
+            
             serviceModel = getServiceFactory().create(getServiceInterface(),
                                                       name,
-                                                      resolver.getURI().toURL(),
+                                                      uri.toURL(),
                                                       _properties);
         }
 
