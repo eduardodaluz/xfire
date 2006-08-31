@@ -6,6 +6,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
@@ -94,7 +95,10 @@ public class AnnotationServiceFactoryTest
         Method asyncMethod = EchoServiceImpl.class.getMethod("async", new Class[0]);
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
         webAnnotationsControl.setDefaultReturnValue(false);
-
+        
+        webAnnotations.getServiceProperties(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -193,6 +197,9 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setDefaultReturnValue(false);
+        
+        webAnnotations.getServiceProperties(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(new Properties());
         webAnnotationsControl.replay();
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -231,6 +238,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
         webAnnotationsControl.setDefaultReturnValue(false);
 
+        webAnnotations.getServiceProperties(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
         webAnnotationsControl.replay();
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -280,6 +290,9 @@ public class AnnotationServiceFactoryTest
         webAnnotations.hasWebMethodAnnotation(asyncMethod);
         webAnnotationsControl.setDefaultReturnValue(false);
         
+        webAnnotations.getServiceProperties(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
         webAnnotationsControl.replay();
 
         Service service = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -317,6 +330,8 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.hasWebResultAnnotation(echoMethod);
         webAnnotationsControl.setDefaultReturnValue(false); 
+        
+        
     }
     
     public void testDefaultConstructor() 
