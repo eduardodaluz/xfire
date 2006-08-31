@@ -192,7 +192,37 @@ public class XFireClientFactoryBeanTest
         
         server.stop();
     }
- 
+
+    public void testSetWSDLPropertiesClasspath()
+        throws Exception
+    {
+        // first ensure we have a WSDL to parse
+        super.setUp();
+        
+        wsdlUrl = "org/codehaus/xfire/spring/remoting/echo.wsdl";
+        ServiceFactory serverFact = getServiceFactory();
+     
+        XFireHttpServer server = new XFireHttpServer(getXFire());
+        server.setPort(8191);
+        server.start();
+        
+        Service service = serverFact.create(Echo.class);
+        service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, EchoImpl.class);
+
+        getServiceRegistry().register(service);
+
+        // now create a special factory that will actually use the created WSDL
+        factory = new XFireClientFactoryBean();
+        factory.setServiceInterface(Echo.class);
+        factory.setWsdlDocumentUrl("http://localhost:8191/Echo?wsdl");
+        factory.afterPropertiesSet();
+        
+        Echo echo = (Echo) factory.getObject();
+        assertEquals("hi", echo.echo("hi"));
+        
+        server.stop();
+    }
+    
     public void testServerClass() 
         throws Exception
     {
