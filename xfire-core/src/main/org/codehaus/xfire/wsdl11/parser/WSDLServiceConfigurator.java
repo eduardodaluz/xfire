@@ -100,6 +100,12 @@ public class WSDLServiceConfigurator
     {
         XmlSchemaCollection schemas = new XmlSchemaCollection();
 
+        if (definition.getTypes() == null)
+        {
+            service.getServiceInfo().setWrapped(false);
+            return;
+        }
+        
         for (Iterator itr = definition.getTypes().getExtensibilityElements().iterator(); itr.hasNext();)
         {
             ExtensibilityElement ee = (ExtensibilityElement) itr.next();
