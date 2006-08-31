@@ -53,6 +53,7 @@ public class PictureServiceTest
         picClient = (PictureService) xpf.create(service, "http://localhost:8082/PictureService");
         
         client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
+        client.setProperty(HttpTransport.CHUNKING_ENABLED, "true");
     }
 
     protected void tearDown()
