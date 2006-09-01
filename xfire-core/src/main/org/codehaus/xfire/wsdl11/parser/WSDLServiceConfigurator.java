@@ -221,7 +221,14 @@ public class WSDLServiceConfigurator
             {
                 BindingOperation bindingOperation = 
                     (BindingOperation) bindingOperations.get(i);
-                OperationInfo opInfo = serviceInfo.getOperation(bindingOperation.getName());
+                String opName = bindingOperation.getOperation().getName();
+                OperationInfo opInfo = serviceInfo.getOperation(opName);
+                
+                if (opInfo == null)
+                {
+                    throw new XFireRuntimeException("Could not find operation " + opName + " in the service model.");
+                }
+                
                 ann.visit(bindingOperation, opInfo);
                 
                 ann.visit(bindingOperation.getBindingInput(), 
