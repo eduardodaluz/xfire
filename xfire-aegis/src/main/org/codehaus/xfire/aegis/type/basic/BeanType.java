@@ -347,12 +347,16 @@ public class BeanType
 
         BeanTypeInfo info = getTypeInfo();
 
-        if (context.getService() != null
-                && Boolean.TRUE.equals(context.getService()
-                        .getProperty(AegisBindingProvider.WRITE_XSI_TYPE_KEY))
+        if (context.getService() != null)
+        {
+            Object writeXsiType = context.getService()
+                    .getProperty(AegisBindingProvider.WRITE_XSI_TYPE_KEY);
+            if (Boolean.TRUE.equals(writeXsiType) || "true".equals(writeXsiType)
                 && object.getClass() == getTypeClass())
         {
             writer.writeXsiType(getSchemaType());
+        }
+
         }
 
         /*

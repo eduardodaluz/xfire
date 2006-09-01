@@ -26,7 +26,7 @@ public class InheritancePOJOTest
         ObjectServiceFactory osf = (ObjectServiceFactory) getServiceFactory();
 
         HashMap props = new HashMap();
-        props.put(AegisBindingProvider.WRITE_XSI_TYPE_KEY, Boolean.TRUE);
+        props.put(AegisBindingProvider.WRITE_XSI_TYPE_KEY, "true");
         ArrayList l = new ArrayList();
         l.add(Employee.class.getName());
 
