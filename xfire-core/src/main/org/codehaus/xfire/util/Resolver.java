@@ -35,6 +35,23 @@ public class Resolver
     public Resolver(String baseUriStr, String uriStr) 
         throws IOException
     {
+        if (uriStr.startsWith("classpath:")) 
+        {
+            tryClasspath(uriStr);
+        }
+        else
+        {
+            tryFileSystem(baseUriStr, uriStr);
+        }
+        
+        if (is == null) 
+            throw new IOException("Could not find resource '" + uriStr + 
+                                  "' relative to '" + baseUriStr + "'");
+    }
+
+    private void tryFileSystem(String baseUriStr, String uriStr)
+        throws IOException, MalformedURLException
+    {
         try 
         {
             URI relative;
@@ -90,32 +107,46 @@ public class Resolver
         }
         else if (is == null)
         {
-            URL url = ClassLoaderUtils.getResource(uriStr, getClass());
-            
-            if (url == null)
-            {
-                try 
-                {
-                    url = new URL(uriStr);
-                    uri = new URI(url.toString());
-                    is = url.openStream();
-                }
-                catch (MalformedURLException e)
-                {
-                }
-                catch (URISyntaxException e)
-                {
-                }
-            }
-            else
-            {
-                is = url.openStream();
-            }
+            tryClasspath(uriStr);
         }
+    }
+
+    private void tryClasspath(String uriStr)
+        throws IOException
+    {
+        if (uriStr.startsWith("classpath:")) 
+        {
+            uriStr = uriStr.substring(10);
+        }
+            
+        URL url = ClassLoaderUtils.getResource(uriStr, getClass());
         
-        if (is == null) 
-            throw new IOException("Could not find resource '" + uriStr + 
-                                  "' relative to '" + baseUriStr + "'");
+        if (url == null)
+        {
+            tryRemote(uriStr);
+        }
+        else
+        {
+            is = url.openStream();
+        }
+    }
+
+    private void tryRemote(String uriStr)
+        throws IOException
+    {
+        URL url;
+        try 
+        {
+            url = new URL(uriStr);
+            uri = new URI(url.toString());
+            is = url.openStream();
+        }
+        catch (MalformedURLException e)
+        {
+        }
+        catch (URISyntaxException e)
+        {
+        }
     }
     
     public URI getURI()
