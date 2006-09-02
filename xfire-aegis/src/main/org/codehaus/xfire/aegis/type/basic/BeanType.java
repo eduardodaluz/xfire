@@ -351,11 +351,11 @@ public class BeanType
         {
             Object writeXsiType = context.getService()
                     .getProperty(AegisBindingProvider.WRITE_XSI_TYPE_KEY);
-            if (Boolean.TRUE.equals(writeXsiType) || "true".equals(writeXsiType)
+            if ((Boolean.TRUE.equals(writeXsiType) || "true".equals(writeXsiType))
                 && object.getClass() == getTypeClass())
-        {
-            writer.writeXsiType(getSchemaType());
-        }
+            {
+                writer.writeXsiType(getSchemaType());
+            }
 
         }
 
