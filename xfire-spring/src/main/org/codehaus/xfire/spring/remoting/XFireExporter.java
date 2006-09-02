@@ -1,10 +1,12 @@
 package org.codehaus.xfire.spring.remoting;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.xfire.spring.ServiceBean;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -17,9 +19,10 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class XFireExporter
         extends ServiceBean
-        implements Controller
+        implements Controller, ServletContextAware
 {
     private XFireServletControllerAdapter delegate;
+    private ServletContext context;
     
     public void afterPropertiesSet()
             throws Exception
@@ -27,6 +30,7 @@ public class XFireExporter
         super.afterPropertiesSet();
         
         delegate = new XFireServletControllerAdapter(getXfire(), 
+                                                     context,
                                                      getXFireService().getName());
     }
 
@@ -64,4 +68,10 @@ public class XFireExporter
     {
         setServiceClass(intf);
     }
+
+    public void setServletContext(ServletContext context)
+    {
+        this.context = context;
+    }
+    
 }

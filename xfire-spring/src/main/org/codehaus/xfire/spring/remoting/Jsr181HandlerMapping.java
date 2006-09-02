@@ -148,8 +148,8 @@ public class Jsr181HandlerMapping
             {
                 try
                 {
-                    XFireServletControllerAdapter xFireServletControllerAdapter = (XFireServletControllerAdapter) SpringUtils
-                            .getUserTarget(controller);
+                    XFireServletControllerAdapter xFireServletControllerAdapter = 
+                        (XFireServletControllerAdapter) SpringUtils.getUserTarget(controller);
                     xFireServletControllerAdapter.setServiceName(endpointName);
                     return controller;
                 }

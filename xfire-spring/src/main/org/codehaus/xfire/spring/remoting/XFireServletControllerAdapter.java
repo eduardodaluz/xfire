@@ -1,5 +1,6 @@
 package org.codehaus.xfire.spring.remoting;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -30,18 +31,21 @@ public class XFireServletControllerAdapter
      */
     public XFireServletControllerAdapter(XFire xfire, QName serviceName)
     {
-        super(xfire);
-        this.serviceName = serviceName;
+        this(xfire, null, serviceName);
     }
 
     /**
      * Initializes a new instance of the adapter with the given XFire instance.
      *
      * @param xfire       the XFire instance
+     * @param name 
+     * @param context 
      */
-    public XFireServletControllerAdapter(XFire xfire)
+    public XFireServletControllerAdapter(XFire xfire, ServletContext context, QName name)
     {
-      this(xfire, null);
+        super(xfire, context);
+        
+        this.serviceName = name;
     }
     
     protected String getService(HttpServletRequest request)
