@@ -1,6 +1,6 @@
 <mappings>
 	<mapping>
-		<method name="getUnannotaedStrings">
+		<method name="getUnannotatedStrings">
 			<return-type name="UnannotatedStringCollection" componentType="java.lang.String"/>
 		</method>
 	</mapping>

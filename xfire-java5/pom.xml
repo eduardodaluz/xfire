@@ -17,21 +17,6 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include implementation="java.lang.String">**/Test.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/Test*</exclude>
-            <exclude>**/Abstract*</exclude>
-            <exclude>**/HtmlServiceWriterTest.java</exclude>
-          </excludes>
-          <forkMode>once</forkMode>
-          <childDelegation>false</childDelegation>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <dependencies>

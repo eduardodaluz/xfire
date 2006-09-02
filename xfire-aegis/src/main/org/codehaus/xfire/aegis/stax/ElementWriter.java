@@ -96,7 +96,7 @@ public class ElementWriter
         {
             boolean declare = false;
 
-            String decPrefix = writer.getPrefix(namespace);
+            String decPrefix = writer.getNamespaceContext().getPrefix(namespace);
                 
             // If the user didn't specify a prefix, create one
             if (prefix == null && decPrefix == null)

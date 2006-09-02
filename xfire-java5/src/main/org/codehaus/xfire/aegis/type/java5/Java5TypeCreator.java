@@ -124,35 +124,14 @@ public class Java5TypeCreator
     }
 
     @Override
-    protected Type createMapType(TypeClassInfo info)
-    {
-        Object genericType = info.getGenericType();
-        Class keyClass = Object.class;
-        Class valueClass = Object.class;
-        if (genericType instanceof ParameterizedType)
-        {
-            ParameterizedType type = (ParameterizedType) genericType;
-            if (type.getActualTypeArguments()[0] instanceof Class)
-            {
-                keyClass = (Class) type.getActualTypeArguments()[0];
-            }
-            if (type.getActualTypeArguments()[1] instanceof Class)
-            {
-                valueClass = (Class) type.getActualTypeArguments()[1];
-            }
-        }
-
-        return super.createMapType(info, keyClass, valueClass);
-    }
-
-    @Override
     public Type createCollectionType(TypeClassInfo info)
     {
         Object genericType = info.getGenericType();
-        Class paramClass = getComponentType(genericType);
+        Class paramClass = getComponentType(genericType, 0);
+        
         if (paramClass != null)
         {
-            return super.createCollectionType(info, paramClass);
+            return super.createCollectionType(info, genericType);
         }
         else
         {
@@ -160,7 +139,58 @@ public class Java5TypeCreator
         }
     }
 
-    protected Class getComponentType(Object genericType)
+    protected Type getOrCreateGenericType(TypeClassInfo info)
+    {
+        return getOrCreateParameterizedType(info.getGenericType(), 0);
+    }
+
+    protected Type getOrCreateMapKeyType(TypeClassInfo info)
+    {
+        return getOrCreateParameterizedType(info.getGenericType(), 0);
+    }
+
+    protected Type getOrCreateMapValueType(TypeClassInfo info)
+    {
+        return getOrCreateParameterizedType(info.getGenericType(), 1);
+    }
+
+    protected Type getOrCreateParameterizedType(Object generic, int index)
+    {
+        Class clazz = getComponentType(generic, index);
+        
+        TypeClassInfo info = createBasicClassInfo(clazz);
+        info.setDescription(clazz.toString());
+        info.setGenericType(getGenericComponent(generic, index));
+        
+        Type type = createTypeForClass(info);
+        
+        return type;
+    }
+
+    private Object getGenericComponent(Object genericType, int index)
+    {
+        if (genericType instanceof ParameterizedType)
+        {
+            ParameterizedType type = (ParameterizedType) genericType;
+
+            if (type.getActualTypeArguments()[index] instanceof WildcardType)
+            {
+                WildcardType wildcardType = (WildcardType) type.getActualTypeArguments()[index];
+
+                return wildcardType;
+            }
+            else if (type.getActualTypeArguments()[index] instanceof ParameterizedType)
+            {
+                ParameterizedType ptype = (ParameterizedType) type.getActualTypeArguments()[index];
+                
+                return ptype;
+            }
+        }
+        
+        return null;
+    }
+
+    protected Class getComponentType(Object genericType, int index)
     {
         Class paramClass = null;
 
@@ -168,18 +198,24 @@ public class Java5TypeCreator
         {
             ParameterizedType type = (ParameterizedType) genericType;
 
-            if (type.getActualTypeArguments()[0] instanceof Class)
+            if (type.getActualTypeArguments()[index] instanceof Class)
             {
-                paramClass = (Class) type.getActualTypeArguments()[0];
+                paramClass = (Class) type.getActualTypeArguments()[index];
             }
-            else if (type.getActualTypeArguments()[0] instanceof WildcardType)
-            {
-                WildcardType wildcardType = (WildcardType) type.getActualTypeArguments()[0];
 
-                if (wildcardType.getUpperBounds()[0] instanceof Class)
+            else if (type.getActualTypeArguments()[index] instanceof WildcardType)
+            {
+                WildcardType wildcardType = (WildcardType) type.getActualTypeArguments()[index];
+
+                if (wildcardType.getUpperBounds()[index] instanceof Class)
                 {
-                    paramClass = (Class) wildcardType.getUpperBounds()[0];
+                    paramClass = (Class) wildcardType.getUpperBounds()[index];
                 }
+            }
+            else if (type.getActualTypeArguments()[index] instanceof ParameterizedType)
+            {
+                ParameterizedType ptype = (ParameterizedType) type.getActualTypeArguments()[index];
+                paramClass = (Class) ptype.getRawType();
             }
         }
         return paramClass;

@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.DefaultTypeCreator;
 import org.codehaus.xfire.aegis.type.Type;
@@ -25,6 +26,7 @@ public class XmlParamTypeTest
         tm = new CustomTypeMapping();
         creator = new Java5TypeCreator();
         creator.setNextCreator(new DefaultTypeCreator());
+        creator.setConfiguration(new Configuration());
         tm.setTypeCreator(creator);
     }
 

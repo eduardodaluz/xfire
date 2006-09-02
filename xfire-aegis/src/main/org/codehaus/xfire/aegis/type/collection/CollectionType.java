@@ -19,9 +19,9 @@ import org.codehaus.xfire.fault.XFireFault;
 public class CollectionType
     extends ArrayType
 {
-    private Class componentType;
+    private Type componentType;
     
-    public CollectionType(Class componentType)
+    public CollectionType(Type componentType)
     {
         super();
         
@@ -111,14 +111,6 @@ public class CollectionType
     
     public Type getComponentType()
     {
-        Type type = getTypeMapping().getType(componentType);
-        
-        if (type == null)
-        {
-            type = getTypeMapping().getTypeCreator().createType(componentType);
-            getTypeMapping().register(type);
-        }
-        
-        return type;
+        return componentType;
     }
 }

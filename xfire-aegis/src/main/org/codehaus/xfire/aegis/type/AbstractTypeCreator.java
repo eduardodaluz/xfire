@@ -169,17 +169,12 @@ public abstract class AbstractTypeCreator
         }
     }
 
-    protected QName createArrayQName(TypeClassInfo info)
-    {
-        Class javaType = info.getTypeClass();
-        return createCollectionQName(info, javaType.getComponentType());
-    }
-
     protected Type createArrayType(TypeClassInfo info)
     {
         ArrayType type = new ArrayType();
-        type.setSchemaType(createArrayQName(info));
+        type.setTypeMapping(getTypeMapping());
         type.setTypeClass(info.getTypeClass());
+        type.setSchemaType(createCollectionQName(info, type.getComponentType()));
         
         if (info.getMinOccurs() != -1) type.setMinOccurs(info.getMinOccurs());
         if (info.getMaxOccurs() != -1) type.setMaxOccurs(info.getMaxOccurs());
@@ -204,8 +199,10 @@ public abstract class AbstractTypeCreator
         return Collection.class.isAssignableFrom(javaType);
     }
 
-    protected Type createCollectionType(TypeClassInfo info, Class component)
+    protected Type createCollectionType(TypeClassInfo info, Object generic)
     {
+        Type component = getOrCreateGenericType(info);
+        
         CollectionType type = new CollectionType(component);
         type.setTypeMapping(getTypeMapping());
 
@@ -224,7 +221,22 @@ public abstract class AbstractTypeCreator
         return type;
     }
 
-    protected Type createMapType(TypeClassInfo info, Class keyType, Class valueType)
+    protected Type getOrCreateGenericType(TypeClassInfo info)
+    {
+        return createType((Class) info.getGenericType());
+    }
+
+    protected Type getOrCreateMapKeyType(TypeClassInfo info)
+    {
+        return createType((Class) info.getKeyType());
+    }
+
+    protected Type getOrCreateMapValueType(TypeClassInfo info)
+    {
+        return createType((Class) info.getGenericType());
+    }
+    
+    protected Type createMapType(TypeClassInfo info, Type keyType, Type valueType)
     {
         QName schemaType = createMapQName(info, keyType, valueType);
         MapType type = new MapType(schemaType, keyType, valueType);
@@ -236,37 +248,14 @@ public abstract class AbstractTypeCreator
 
     protected Type createMapType(TypeClassInfo info)
     {
-        return createMapType(info, (Class) info.getKeyType(), (Class) info.getGenericType());
+        Type keyType = getOrCreateMapKeyType(info);
+        Type valueType = getOrCreateMapValueType(info);
+
+        return createMapType(info, keyType, valueType);
     }
 
-    protected QName createMapQName(TypeClassInfo info, Class keyClass, Class valueClass)
+    protected QName createMapQName(TypeClassInfo info, Type keyType, Type valueType)
     {
-        if (keyClass == null)
-        {
-            throw new XFireRuntimeException("Cannot create mapping for map, unspecified key type"
-                    + (info.getDescription() != null ? " for " + info.getDescription() : ""));
-        }
-
-        if (valueClass == null)
-        {
-            throw new XFireRuntimeException("Cannot create mapping for map, unspecified value type"
-                    + (info.getDescription() != null ? " for " + info.getDescription() : ""));
-        }
-
-        Type keyType = tm.getType(keyClass);
-        if (keyType == null)
-        {
-            keyType = createType(keyClass);
-            getTypeMapping().register(keyType);
-        }
-
-        Type valueType = tm.getType(valueClass);
-        if (valueType == null)
-        {
-            valueType = createType(valueClass);
-            getTypeMapping().register(valueType);
-        }
-
         String name = keyType.getSchemaType().getLocalPart() + '2'
                 + valueType.getSchemaType().getLocalPart() + "Map";
 
@@ -295,21 +284,8 @@ public abstract class AbstractTypeCreator
 
     public abstract Type createDefaultType(TypeClassInfo info);
 
-    protected QName createCollectionQName(TypeClassInfo info, Class componentType)
+    protected QName createCollectionQName(TypeClassInfo info, Type type)
     {
-        Class javaType = info.getTypeClass();
-        if (componentType == null)
-        {
-            throw new XFireRuntimeException("Cannot create mapping for " + javaType.getName()
-                    + ", unspecified component type"
-                    + (info.getDescription() != null ? " for " + info.getDescription() : ""));
-        }
-        Type type = tm.getType(componentType);
-        if (type == null)
-        {
-            type = createType(componentType);
-            getTypeMapping().register(type);
-        }
         String ns;
 
         if (type.isComplex())

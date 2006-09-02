@@ -24,18 +24,18 @@ import org.jdom.Element;
 public class MapType
     extends Type
 {
-    private Class keyClass;
-    private Class valueClass;
+    private Type keyType;
+    private Type valueType;
     private QName keyName;
     private QName valueName;
     private QName entryName;
     
-    public MapType(QName schemaType, Class keyClass, Class valueClass)
+    public MapType(QName schemaType, Type keyType, Type valueType)
     {
         super();
         
-        this.keyClass = keyClass;
-        this.valueClass = valueClass;
+        this.keyType = keyType;
+        this.valueType = valueType;
         
         setSchemaType(schemaType);
         setKeyName(new QName(schemaType.getNamespaceURI(), "key"));
@@ -225,28 +225,6 @@ public class MapType
         element.setAttribute(new Attribute("minOccurs", "0"));
         element.setAttribute(new Attribute("maxOccurs", "1"));
     }
-
-    public Type getKeyType()
-    {
-        Type keyType = getOrCreateType(keyClass);
-        
-        if (keyType == null)
-            throw new XFireRuntimeException("Couldn't find type for key class " 
-                                            + keyClass + ".");
-
-        return keyType;
-    }
-
-    private Type getOrCreateType(Class clazz)
-    {
-        Type type = getTypeMapping().getType(clazz);
-        if (type == null)
-        {
-            type = getTypeMapping().getTypeCreator().createType(clazz);
-            getTypeMapping().register(type);
-        }
-        return type;
-    }
     
     public Set getDependencies()
     {
@@ -256,30 +234,19 @@ public class MapType
         return deps;
     }
 
-    public boolean isComplex()
+    public Type getKeyType()
     {
-        return true;
+        return keyType;
     }
 
     public Type getValueType()
     {
-        Type valueType = getOrCreateType(valueClass);
-        
-        if (valueType == null)
-            throw new XFireRuntimeException("Couldn't find type for key class " 
-                                            + valueClass + ".");
-
         return valueType;
     }
 
-    public Class getKeyClass()
+    public boolean isComplex()
     {
-        return keyClass;
-    }
-
-    public void setKeyClass(Class keyClass)
-    {
-        this.keyClass = keyClass;
+        return true;
     }
 
     public QName getKeyName()
@@ -290,16 +257,6 @@ public class MapType
     public void setKeyName(QName keyName)
     {
         this.keyName = keyName;
-    }
-
-    public Class getValueClass()
-    {
-        return valueClass;
-    }
-
-    public void setValueClass(Class valueClass)
-    {
-        this.valueClass = valueClass;
     }
 
     public QName getValueName()

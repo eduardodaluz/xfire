@@ -128,17 +128,19 @@ public class NamespaceHelper
                                          boolean declare)
         throws XMLStreamException
     {
-        String prefix = writer.getPrefix(namespaceURI);
+        String prefix = writer.getNamespaceContext().getPrefix(namespaceURI);
         if (prefix == null)
         {
             prefix = getUniquePrefix(writer);
 
             if (declare) 
             {
-                writer.setPrefix(prefix, namespaceURI);
+                // waiting to get woodstox bug resolved.
+                //writer.setPrefix(prefix, namespaceURI);
                 writer.writeNamespace(prefix, namespaceURI);
             }
         }
+        
         return prefix;
     }
 

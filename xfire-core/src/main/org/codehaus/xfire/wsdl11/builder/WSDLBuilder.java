@@ -500,6 +500,9 @@ public class WSDLBuilder
         {
             MessagePartInfo param = (MessagePartInfo) itr.next();
 
+            String prefix = getNamespacePrefix(param.getName().getNamespaceURI());
+            addNamespace(prefix, param.getName().getNamespaceURI());
+            
             addNamespaceImport(getService().getTargetNamespace(), param.getSchemaType()
                     .getSchemaType().getNamespaceURI());
 

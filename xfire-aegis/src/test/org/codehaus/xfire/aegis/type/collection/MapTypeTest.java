@@ -19,10 +19,13 @@ import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.SimpleBean;
 import org.codehaus.xfire.aegis.type.basic.StringType;
 import org.codehaus.xfire.aegis.type.collection.bean.MapBean;
+import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.soap.SoapConstants;
+import org.codehaus.xfire.util.LoggingHandler;
+import org.codehaus.xfire.util.dom.DOMOutHandler;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -48,14 +51,19 @@ public class MapTypeTest
     public void testBean()
         throws Exception
     {
-        MapType type = new MapType(new QName("urn:test", "map"), String.class, String.class);
+        Type stringType = mapping.getTypeCreator().createType(String.class);
+        
+        MapType type = new MapType(new QName("urn:test", "map"), stringType, stringType);
         type.setTypeClass(Map.class);
         type.setTypeMapping(mapping);
         
         assertNotNull(type.getSchemaType());
         assertEquals("entry", type.getEntryName().getLocalPart());
+        assertEquals("urn:test", type.getEntryName().getNamespaceURI());
         assertEquals("key", type.getKeyName().getLocalPart());
+        assertEquals("urn:test", type.getKeyName().getNamespaceURI());
         assertEquals("value", type.getValueName().getLocalPart());
+        assertEquals("urn:test", type.getValueName().getNamespaceURI());
 
         assertTrue(type.isComplex());
         
@@ -118,8 +126,8 @@ public class MapTypeTest
         assertEquals(new QName(mapping.getEncodingStyleURI(), "string2SimpleBeanMap"), type.getSchemaType());
         
         MapType mapType = (MapType) type;
-        assertEquals(SimpleBean.class, mapType.getValueClass());
-        assertEquals(String.class, mapType.getKeyClass());
+        assertEquals(SimpleBean.class, mapType.getValueType().getTypeClass());
+        assertEquals(String.class, mapType.getKeyType().getTypeClass());
     }
 
     public void testService() throws Exception
@@ -132,6 +140,11 @@ public class MapTypeTest
         XFireProxyFactory factory = new XFireProxyFactory(getXFire());
         MapService client = (MapService) factory.create(service, "xfire.local://MapService");
 
+        // this fails when we do it... Woodstox bug?
+//        Client xclient = Client.getInstance(client);
+//        xclient.addOutHandler(new DOMOutHandler());
+//        xclient.addOutHandler(new LoggingHandler());
+//        
         Map map = new HashMap();
         SimpleBean bean = new SimpleBean();
         bean.setHowdy("howdy");

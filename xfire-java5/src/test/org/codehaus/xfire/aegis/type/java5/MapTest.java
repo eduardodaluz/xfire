@@ -3,6 +3,7 @@ package org.codehaus.xfire.aegis.type.java5;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.CustomTypeMapping;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.aegis.type.collection.MapType;
 import org.codehaus.xfire.aegis.type.java5.dto.MapDTO;
 import org.codehaus.xfire.aegis.type.java5.dto.MapDTOService;
@@ -52,6 +54,28 @@ public class MapTest
         assertNotNull(type);
         assertTrue(type.getTypeClass().isAssignableFrom(Integer.class));
     }
+
+    public void testRecursiveType() throws Exception
+    {
+        Method m = MapService.class.getMethod("getMapOfCollections", new Class[0]);
+        
+        Type type = creator.createType(m, -1);
+        tm.register(type);
+        assertTrue( type instanceof MapType );
+        
+        MapType mapType = (MapType) type;
+        QName keyName = mapType.getKeyName();
+        
+        type = mapType.getKeyType();
+        assertNotNull(type);
+        assertTrue(type instanceof CollectionType);
+        assertEquals(String.class, ((CollectionType) type).getComponentType().getTypeClass());
+        
+        type = mapType.getValueType();
+        assertNotNull(type);
+        assertTrue(type instanceof CollectionType);
+        assertEquals(Double.class, ((CollectionType) type).getComponentType().getTypeClass());
+    }
     
     public void testPDType() throws Exception
     {
@@ -84,7 +108,6 @@ public class MapTest
         Set deps = dto.getDependencies();
         
         Type type = (Type) deps.iterator().next();
-        System.out.println(type.getClass().getName());
         assertTrue( type instanceof MapType );
         
         MapType mapType = (MapType) type;
@@ -126,6 +149,11 @@ public class MapTest
         
         public void setMap(Map<String,Integer> strings) {
         	
+        }
+        
+        public Map<Collection<String>,Collection<Double>> getMapOfCollections()
+        {
+            return null;
         }
     }
 }

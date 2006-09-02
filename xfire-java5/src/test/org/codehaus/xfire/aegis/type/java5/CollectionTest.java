@@ -54,6 +54,33 @@ public class CollectionTest
         assertTrue(type.getTypeClass().isAssignableFrom(String.class));
     }
     
+
+    public void testRecursiveCollections() throws Exception
+    {
+        Method m = CollectionService.class.getMethod("getStringCollections", new Class[0]);
+        
+        Type type = creator.createType(m, -1);
+        tm.register(type);
+        assertTrue( type instanceof CollectionType );
+        
+        CollectionType colType = (CollectionType) type;
+        QName componentName = colType.getSchemaType();
+     
+        assertEquals("ArrayOfArrayOfString", componentName.getLocalPart());
+        
+        type = colType.getComponentType();
+        assertNotNull(type);
+        assertTrue( type instanceof CollectionType );
+        
+        CollectionType colType2 = (CollectionType) type;
+        componentName = colType2.getSchemaType();
+     
+        assertEquals("ArrayOfString", componentName.getLocalPart());
+        
+        type = colType2.getComponentType();
+        assertTrue(type.getTypeClass().isAssignableFrom(String.class));
+    }
+    
     public void testPDType() throws Exception
     {
         PropertyDescriptor pd = 
@@ -63,7 +90,6 @@ public class CollectionTest
         assertTrue( type instanceof CollectionType );
         
         CollectionType colType = (CollectionType) type;
-        QName componentName = colType.getComponentName();
         
         type = colType.getComponentType();
         assertNotNull(type);
@@ -138,8 +164,8 @@ public class CollectionTest
         Service endpoint = getServiceFactory().create(CollectionService.class);
         getServiceRegistry().register(endpoint);
         Document doc = getWSDLDocument("CollectionService");
-        printNode(doc);
-        assertValid("//xsd:element[@name='getUnannotaedStringsResponse']/xsd:complexType/xsd:sequence/xsd:element[@type='tns:ArrayOfString']", doc);
+        //printNode(doc);
+        assertValid("//xsd:element[@name='getUnannotatedStringsResponse']/xsd:complexType/xsd:sequence/xsd:element[@type='tns:ArrayOfString']", doc);
     }
     
     public class CollectionService
@@ -153,7 +179,12 @@ public class CollectionTest
         {
         }
         
-        public Collection getUnannotaedStrings(){
+        public Collection getUnannotatedStrings(){
+            return null;
+        }
+        
+        public Collection<Collection<String>> getStringCollections()
+        {
             return null;
         }
     }
