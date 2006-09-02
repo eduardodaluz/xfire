@@ -20,8 +20,7 @@ import org.codehaus.xfire.transport.TransportManager;
 public interface XFire extends HandlerSupport
 {
     final public static String ROLE = XFire.class.getName();
-
-    
+    final public static String XFIRE_HOME = "xfire.home";
     final public static String STAX_INPUT_FACTORY="xfire.stax.input.factory";
     final public static String STAX_OUTPUT_FACTORY="xfire.stax.output.factory";
     

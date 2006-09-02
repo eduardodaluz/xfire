@@ -45,8 +45,13 @@ public class Resolver
         }
         
         if (is == null) 
-            throw new IOException("Could not find resource '" + uriStr + 
-                                  "' relative to '" + baseUriStr + "'");
+        {
+            String msg = "Could not find resource '" + uriStr;
+            if (baseUriStr != null)
+                msg += "' relative to '" + baseUriStr + "'";
+            
+            throw new IOException(msg);
+        }
     }
 
     private void tryFileSystem(String baseUriStr, String uriStr)
@@ -127,6 +132,15 @@ public class Resolver
         }
         else
         {
+            try
+            {
+                uri = url.toURI();
+            }
+            catch (URISyntaxException e)
+            {
+                // How would this occurr??
+                e.printStackTrace();
+            }
             is = url.openStream();
         }
     }
