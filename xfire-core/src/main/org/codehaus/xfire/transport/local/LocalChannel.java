@@ -161,32 +161,24 @@ public class LocalChannel
                 ;
             } );
 
-            Thread readThread = new Thread( new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        final XMLStreamReader reader = STAXUtils.createXMLStreamReader((InputStream) stream, message.getEncoding(),context );
-                        final InMessage inMessage = new InMessage( reader, uri );
-                        inMessage.setEncoding( message.getEncoding() );
-
-                        channel.receive( receivingContext, inMessage );
-
-                        reader.close();
-                        stream.close();
-                    }
-                    catch( Exception e )
-                    {
-                        throw new XFireRuntimeException( "Couldn't read stream.", e );
-                    }
-                }
-
-                ;
-            } );
-
             writeThread.start();
-            readThread.start();
+            
+            try 
+            {
+                final XMLStreamReader reader = STAXUtils.createXMLStreamReader((InputStream) stream, message.getEncoding(),context );
+                final InMessage inMessage = new InMessage( reader, uri );
+                inMessage.setEncoding( message.getEncoding() );
+
+                channel.receive( receivingContext, inMessage );
+
+                reader.close();
+                stream.close();
+            }
+            catch( Exception e )
+            {
+                throw new XFireRuntimeException( "Couldn't read stream.", e );
+            }
+ 
 
             try
             {

@@ -1,6 +1,7 @@
 package org.codehaus.xfire.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
@@ -48,6 +49,7 @@ public class STAXUtilsTest
         ifactory = new WstxInputFactory();
         ofactory = new WstxOutputFactory();
 
+        doCopy();
         doSkipTest();
         doNameSpaceDoc();
         doAmazonDoc();
@@ -63,6 +65,7 @@ public class STAXUtilsTest
         ifactory = new MXParserFactory();
         ofactory = new XMLOutputFactoryBase();
         
+        doCopy();
         doSkipTest();
         doNameSpaceDoc();
         doAmazonDoc();
@@ -71,6 +74,20 @@ public class STAXUtilsTest
         doDOMWrite();
         doDOMWrite2();
         doDOMRead();
+    }
+    
+    public void doCopy() throws Exception
+    {
+        String in = new String("<hello xmlns=\"\">world</hello>");
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XMLStreamReader reader = ifactory.createXMLStreamReader(new StringReader(in));
+        XMLStreamWriter writer = ofactory.createXMLStreamWriter(out);
+        STAXUtils.copy(reader, writer);
+        writer.close();
+        out.close();
+        System.out.println(out.toString());
+        assertEquals(in, out.toString());
     }
     
     public void doSkipTest() throws Exception
