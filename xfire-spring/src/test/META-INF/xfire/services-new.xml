@@ -19,6 +19,7 @@
       <property key="foo">bar</property>
       <property key="cheese">baz</property>
     </properties>
+    <wsdlURL>classpath:org/codehaus/xfire/spring/remoting/echo.wsdl</wsdlURL>
   </service>
 
   <service>

@@ -5,12 +5,14 @@ import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xbean.spring.context.SpringApplicationContext;
 import org.apache.xbean.spring.context.impl.XBeanHelper;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.XFireFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -67,8 +69,9 @@ public class XFireConfigLoader
             throw new XFireException("Configuration file required");
         }
         
-        GenericApplicationContext ctx = new GenericApplicationContext(parent);
-        XmlBeanDefinitionReader xmlReader = XBeanHelper.createBeanDefinitionReader(ctx, ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
+        GenericApplicationContext ctx = createContext(parent);
+        XmlBeanDefinitionReader xmlReader = XBeanHelper.createBeanDefinitionReader((SpringApplicationContext) ctx, 
+                                                                                   ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
 
         if((parent == null) || !parent.containsBean("xfire"))
         {
@@ -108,6 +111,12 @@ public class XFireConfigLoader
         // TODO: don't like this
         XFireFactory.newInstance().setXFire(xfire);
         
+        return ctx;
+    }
+
+    protected GenericApplicationContext createContext(ApplicationContext parent)
+    {
+        GenericApplicationContext ctx = new org.codehaus.xfire.spring.GenericApplicationContext(parent);
         return ctx;
     }
 }

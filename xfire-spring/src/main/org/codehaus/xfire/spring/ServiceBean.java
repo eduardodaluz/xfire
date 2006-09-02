@@ -1,6 +1,6 @@
 package org.codehaus.xfire.spring;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -21,6 +22,7 @@ import org.codehaus.xfire.spring.config.EndpointBean;
 import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
 import org.codehaus.xfire.spring.config.SpringServiceConfiguration;
+import org.codehaus.xfire.util.Resolver;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -157,7 +159,17 @@ public class ServiceBean
         
         if (wsdlURL != null)
         {
-            xfireService = serviceFactory.create(intf, null, new URL(wsdlURL), properties);
+            String home = (String) getXfire().getProperty(XFire.XFIRE_HOME);
+            
+            Resolver resolver = new Resolver(home, wsdlURL);
+            
+            URI uri = resolver.getURI();
+            if (uri == null)
+            {
+                throw new XFireRuntimeException("Could not resolve WSDL URL " + wsdlURL);
+            }
+            
+            xfireService = serviceFactory.create(intf, null, uri.toURL(), properties);
         }
         else
         {
@@ -502,5 +514,5 @@ public class ServiceBean
     {
         this.operations = operations;
     }
-    
+
 }

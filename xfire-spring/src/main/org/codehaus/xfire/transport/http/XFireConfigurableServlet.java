@@ -7,9 +7,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
-import org.codehaus.xfire.spring.XFireConfigLoader;
+import org.codehaus.xfire.spring.WebConfigLoader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 /**
  * XFire Servlet as Dispatcher including a configuration<br>
@@ -65,20 +66,29 @@ public class XFireConfigurableServlet
     
     public XFire loadConfig(String configPath) throws XFireException
     {
-        XFireConfigLoader loader = new XFireConfigLoader();
+        WebConfigLoader loader = new WebConfigLoader(getServletContext());
         loader.setBasedir(getWebappBase());
         log.debug("Loading configuration files relative to " + loader.getBasedir().getAbsolutePath());
 
         ServletContext servletCtx = getServletContext();
         ApplicationContext parent = (ApplicationContext) servletCtx.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 
+        if (parent == null)
+        {
+            GenericWebApplicationContext webCtx = new GenericWebApplicationContext();
+            webCtx.setServletContext(getServletContext());
+            parent = webCtx;
+        }
+        
         ApplicationContext newCtx = loader.loadContext(configPath, parent);
         if(servletCtx.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) == null)
         {
              servletCtx.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, newCtx);
         }
 
-        return (XFire) newCtx.getBean("xfire");
+        XFire xfire = (XFire) newCtx.getBean("xfire");
+        xfire.setProperty(XFire.XFIRE_HOME, getWebappBase().getAbsolutePath());
+        return xfire;
     }
 
     
