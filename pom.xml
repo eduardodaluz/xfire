@@ -355,7 +355,7 @@
       <dependency>
         <groupId>stax</groupId>
         <artifactId>stax</artifactId>
-        <version>1.1.2-dev</version>
+        <version>1.2.0</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>
@@ -372,7 +372,7 @@
       <dependency>
         <groupId>woodstox</groupId>
         <artifactId>wstx-asl</artifactId>
-        <version>2.9.3</version>
+        <version>3.0rc1</version>
       </dependency>
       <dependency>
         <groupId>jdom</groupId>

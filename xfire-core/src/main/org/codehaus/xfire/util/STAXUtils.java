@@ -205,6 +205,9 @@ public class STAXUtils
         {
             String nsURI = reader.getNamespaceURI(i);
             String nsPrefix = reader.getNamespacePrefix(i);
+            
+            // Why oh why does the RI suck so much?
+            if (nsURI == null) nsURI = "";
             if (nsPrefix == null) nsPrefix = "";
             
             if ( nsPrefix.length() ==  0 )

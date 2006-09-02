@@ -187,7 +187,7 @@ public class BeanTest
         writer.flush();
         
         bos.close();
-        
+        System.out.println(bos.toString());
         StaxBuilder builder = new StaxBuilder();
         Document doc = builder.build(new ByteArrayInputStream(bos.toByteArray()));
         Element element = doc.getRootElement();

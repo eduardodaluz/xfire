@@ -16,7 +16,6 @@ import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.XFireFault;
-import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;

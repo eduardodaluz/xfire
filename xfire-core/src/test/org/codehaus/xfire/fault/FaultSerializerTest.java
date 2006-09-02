@@ -53,6 +53,7 @@ public class FaultSerializerTest
         XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8",null);
         writer.writeStartDocument();
         writer.writeStartElement("soap", "Body", Soap12.getInstance().getNamespace());
+        writer.setPrefix("soap", Soap12.getInstance().getNamespace());
         writer.writeNamespace("soap", Soap12.getInstance().getNamespace());
         soap12.writeMessage(message, writer, new MessageContext());
         writer.writeEndElement();

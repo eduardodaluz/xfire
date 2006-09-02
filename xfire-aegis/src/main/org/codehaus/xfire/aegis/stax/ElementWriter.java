@@ -112,7 +112,7 @@ public class ElementWriter
             {
                 declare = true;
             }
-
+            
             writer.writeStartElement(prefix, name, namespace);
             
             if (declare)

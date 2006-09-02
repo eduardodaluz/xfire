@@ -104,11 +104,13 @@ public class WrappedBinding
 
         if (namespace.length() > 0)
         {
+            writer.setPrefix(prefix, namespace);
             writer.writeStartElement(prefix, name, namespace);
             writer.writeNamespace(prefix, namespace);
         }
         else
         {
+            writer.setDefaultNamespace("");
             writer.writeStartElement(name);
             writer.writeDefaultNamespace("");
         }

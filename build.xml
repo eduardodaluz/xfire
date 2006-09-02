@@ -12,6 +12,7 @@
         <ant inheritall="false" antfile="xfire-xmpp/build.xml"/>
         <ant inheritall="false" antfile="xfire-xmlbeans/build.xml"/>
         <ant inheritall="false" antfile="xfire-spring/build.xml"/>
+        <ant inheritall="false" antfile="xfire-jms/build.xml"/>
         <ant inheritall="false" antfile="xfire-plexus/build.xml"/>
     </target>
 
@@ -42,6 +43,7 @@
             <fileset dir="xfire-xmpp/target/classes"/>
             <fileset dir="xfire-xmlbeans/target/classes"/>
             <fileset dir="xfire-spring/target/classes"/>
+            <fileset dir="xfire-jms/target/classes"/>
             <fileset dir="xfire-plexus/target/classes"/>
         </jar>
     </target>
