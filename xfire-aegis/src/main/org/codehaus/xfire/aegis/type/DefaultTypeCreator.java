@@ -45,7 +45,7 @@ public class DefaultTypeCreator
                     + info.getDescription());
         }
 
-        return createCollectionType(info, (Class) info.getGenericType());
+        return createCollectionTypeFromGeneric(info);
     }
 
     public Type createDefaultType(TypeClassInfo info)

@@ -4,7 +4,6 @@ import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +15,6 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
-import org.codehaus.xfire.aegis.type.AbstractTypeCreator.TypeClassInfo;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.XMLBeanTypeInfo;
 import org.codehaus.xfire.util.ClassLoaderUtils;
@@ -116,8 +114,6 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
     }
 
-
-
     public Type createEnumType(TypeClassInfo info)
     {
         Element mapping = findMapping(info.getTypeClass());
@@ -131,52 +127,11 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
     }
 
-
-    protected Type createMapType(TypeClassInfo info)
-    {
-        if(info.getGenericType() instanceof Class)
-        {
-        	Collection componentMappings = findMappings((Class)info.getGenericType());
-        	if((componentMappings != null) && (componentMappings.size() > 0))
-        	{
-        		return super.createMapType(info);
-        	}
-        }
-        
-        if(info.getKeyType() instanceof Class)
-        {
-        	Collection keyMappings = findMappings((Class)info.getKeyType());
-        	if((keyMappings != null) && (keyMappings.size() > 0))
-        	{
-            	return super.createMapType(info);
-        	}
-        }
-
-        Element mapping = findMapping(info.getTypeClass());
-        if(mapping != null)
-        {
-        	return super.createMapType(info);
-        }
-        
-        return nextCreator.createMapType(info); 
-    }
-
-
     public Type createCollectionType(TypeClassInfo info)
     {
-        if(info.getGenericType() instanceof Class)
+        if (info.getGenericType() != null)
         {
-            Element componentMapping = findMapping((Class)info.getGenericType());
-            if(componentMapping != null)
-            {
-            	return createCollectionType(info, (Class)info.getGenericType());
-            }
-        }
-
-        Element mapping = findMapping(info.getTypeClass());
-        if(mapping != null)
-        {
-            return createCollectionType(info, (Class)info.getGenericType());
+            return createCollectionTypeFromGeneric(info);
         }
 
         return nextCreator.createCollectionType(info); 
@@ -198,7 +153,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
         TypeClassInfo info = new TypeClassInfo();
         info.setTypeClass(pd.getReadMethod().getReturnType());
-        readMetadata(info, propertyEl);
+        readMetadata(info, mapping, propertyEl);
         
         return info;
     }
@@ -340,7 +295,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             info.setTypeClass(m.getParameterTypes()[index]);
             //info.setAnnotations(m.getParameterAnnotations()[index]);
             Element parameter = getMatch(bestMatch, "parameter[@index='" + index + "']");
-            readMetadata(info, parameter);
+            readMetadata(info, mapping, parameter);
         }
         else
         {
@@ -355,18 +310,18 @@ public class XMLTypeCreator extends AbstractTypeCreator
             info.setTypeClass(m.getReturnType());
             //info.setAnnotations(m.getAnnotations());
             Element rtElement = bestMatch.getChild("return-type");
-            readMetadata(info, rtElement);
+            readMetadata(info, mapping, rtElement);
         }
 
         return info;
     }
 
-    protected void readMetadata(TypeClassInfo info, Element parameter)
+    protected void readMetadata(TypeClassInfo info, Element mapping, Element parameter)
     {        
         info.setTypeName(createQName(parameter, parameter.getAttributeValue("typeName")));
         info.setMappedName(createQName(parameter, parameter.getAttributeValue("mappedName")));
-        setComponentType(info, parameter);
-        setKeyType(info, parameter);
+        setComponentType(info, mapping, parameter);
+        setKeyType(info, mapping, parameter);
         setType(info, parameter);
         
         String min = parameter.getAttributeValue("minOccurs");
@@ -381,35 +336,95 @@ public class XMLTypeCreator extends AbstractTypeCreator
     
     protected Type getOrCreateGenericType(TypeClassInfo info)
     {
-        // TODO Auto-generated method stub
-        return super.getOrCreateGenericType(info);
+        Type type = null;
+        if (info.getGenericType() != null)
+            type = createTypeFromGeneric(info.getGenericType());
+        
+        if (type == null)
+            type = super.getOrCreateGenericType(info);
+        
+        return type;
+    }
+
+    private Type createTypeFromGeneric(Object cType)
+    {
+        if (cType instanceof TypeClassInfo)
+            return createTypeForClass((TypeClassInfo) cType);
+        else if (cType instanceof Class)
+            return createType((Class) cType);
+        else
+            return null;
     }
 
     protected Type getOrCreateMapKeyType(TypeClassInfo info)
     {
-        // TODO Auto-generated method stub
-        return super.getOrCreateMapKeyType(info);
+        Type type = null;
+        if (info.getKeyType() != null)
+            type = createTypeFromGeneric(info.getKeyType());
+        
+        if (type == null)
+            type = super.getOrCreateMapKeyType(info);
+        
+        return type;
     }
 
     protected Type getOrCreateMapValueType(TypeClassInfo info)
     {
-        // TODO Auto-generated method stub
-        return super.getOrCreateMapValueType(info);
+        Type type = null;
+        if (info.getGenericType() != null)
+            type = createTypeFromGeneric(info.getGenericType());
+        
+        if (type == null)
+            type = super.getOrCreateMapValueType(info);
+        
+        return type;
     }
 
-    protected void setComponentType(TypeClassInfo info, Element parameter)
+    protected void setComponentType(TypeClassInfo info, Element mapping, Element parameter)
     {
         String componentType = parameter.getAttributeValue("componentType");
         if(componentType != null)
         {
-            try
+            info.setGenericType(loadGeneric(info, mapping, componentType));
+        }
+    }
+
+    private Object loadGeneric(TypeClassInfo info, Element mapping, String componentType)
+    {
+        if (componentType.startsWith("#"))
+        {
+            String name = componentType.substring(1);
+            Element propertyEl = getMatch(mapping, "./component[@name='" + name + "']");
+            if(propertyEl == null) 
             {
-                info.setGenericType(ClassLoaderUtils.loadClass(componentType, getClass()));
+                throw new XFireRuntimeException("Could not find <component> element in mapping named '" + name + "'");
             }
-            catch(ClassNotFoundException e)
-            {
-                throw new XFireRuntimeException("Unable to load component type class " + componentType, e);
-            }
+
+            TypeClassInfo componentInfo = new TypeClassInfo();
+            readMetadata(componentInfo, mapping, propertyEl);
+            String className = propertyEl.getAttributeValue("class");
+            if (className == null)
+                throw new XFireRuntimeException("A 'class' attribute must be specified for <component> " + name);
+            
+            componentInfo.setTypeClass(loadComponentClass(className));
+
+            return componentInfo;
+        }
+        else
+        {
+            return loadComponentClass(componentType);
+        }
+    }
+
+    private Class loadComponentClass(String componentType)
+    {
+        try
+        {
+            return ClassLoaderUtils.loadClass(componentType, getClass());
+        }
+        catch(ClassNotFoundException e)
+        {
+            throw new XFireRuntimeException("Unable to load component type class " + componentType, e);
         }
     }
 
@@ -429,19 +444,12 @@ public class XMLTypeCreator extends AbstractTypeCreator
         }
     }
 
-    protected void setKeyType(TypeClassInfo info, Element parameter)
+    protected void setKeyType(TypeClassInfo info, Element mapping, Element parameter)
     {
         String componentType = parameter.getAttributeValue("keyType");
         if(componentType != null)
         {
-            try
-            {
-                info.setKeyType(ClassLoaderUtils.loadClass(componentType, getClass()));
-            }
-            catch(ClassNotFoundException e)
-            {
-                log.error("Unable to load mapping class " + componentType);
-            }
+            info.setKeyType(loadGeneric(info, mapping, componentType));
         }
     }
     

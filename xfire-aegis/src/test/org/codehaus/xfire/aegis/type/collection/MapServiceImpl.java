@@ -16,4 +16,9 @@ public class MapServiceImpl
     {
         return map;
     }
+
+    public Map echoMapOfCollections(Map map)
+    {
+        return map;
+    }
 }

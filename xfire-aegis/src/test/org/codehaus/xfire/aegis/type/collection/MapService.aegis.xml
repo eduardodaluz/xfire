@@ -4,5 +4,11 @@
       <parameter index="0" keyType="java.lang.String" componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
       <return-type keyType="java.lang.String" componentType="org.codehaus.xfire.aegis.type.basic.SimpleBean"/>
     </method>
+
+    <method name="echoMapOfCollections">
+      <parameter index="0" keyType="#collection1" componentType="#collection1"/>
+      <return-type keyType="#collection1" componentType="#collection1"/>
+    </method>
+    <component name="collection1" class="java.util.List" componentType="java.lang.String"/>
   </mapping>
 </mappings>

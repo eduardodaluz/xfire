@@ -23,6 +23,17 @@ public class ListService
         return doubles;
     }
     
+    public List getListofListofDoubles()
+    {
+        List l = new ArrayList();
+        List doubles = new ArrayList();
+        
+        doubles.add(new Double(1.0));
+        
+        l.add(doubles);
+        return l;
+    }
+    
     public void receiveStrings(List strings)
     {
     }

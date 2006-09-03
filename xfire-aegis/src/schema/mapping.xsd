@@ -44,6 +44,14 @@
     </complexType>
   </element>
 
+  <element name="component">
+    <complexType>
+      <attribute name="class" type="string"/>
+      <attributeGroup ref="tns:mappedType"/>
+      <anyAttribute namespace='##other' processContents='lax'/>
+    </complexType>
+  </element>
+  
   <attributeGroup name="mappedType">
     <attribute name="name" type="string" />
     <attribute name="type" type="string" />

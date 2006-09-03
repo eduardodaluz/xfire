@@ -12,6 +12,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.Holder;
 import org.codehaus.xfire.aegis.type.basic.ArrayType;
 import org.codehaus.xfire.aegis.type.basic.HolderType;
+import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.aegis.type.collection.CollectionType;
 import org.codehaus.xfire.aegis.type.collection.MapType;
 import org.codehaus.xfire.util.NamespaceHelper;
@@ -199,7 +200,7 @@ public abstract class AbstractTypeCreator
         return Collection.class.isAssignableFrom(javaType);
     }
 
-    protected Type createCollectionType(TypeClassInfo info, Object generic)
+    protected Type createCollectionTypeFromGeneric(TypeClassInfo info)
     {
         Type component = getOrCreateGenericType(info);
         
@@ -209,6 +210,7 @@ public abstract class AbstractTypeCreator
         QName name = info.getTypeName();
         if (name == null)
             name = createCollectionQName(info, component);
+        
         type.setSchemaType(name);
 
         type.setTypeClass(info.getTypeClass());
@@ -223,17 +225,25 @@ public abstract class AbstractTypeCreator
 
     protected Type getOrCreateGenericType(TypeClassInfo info)
     {
-        return createType((Class) info.getGenericType());
+        return createObjectType();
     }
 
     protected Type getOrCreateMapKeyType(TypeClassInfo info)
     {
-        return createType((Class) info.getKeyType());
+        return createObjectType();
+    }
+
+    private Type createObjectType()
+    {
+        ObjectType type = new ObjectType();
+        type.setSchemaType(DefaultTypeMappingRegistry.XSD_ANY);
+        type.setTypeClass(Object.class);
+        return type;
     }
 
     protected Type getOrCreateMapValueType(TypeClassInfo info)
     {
-        return createType((Class) info.getGenericType());
+        return createObjectType();
     }
     
     protected Type createMapType(TypeClassInfo info, Type keyType, Type valueType)

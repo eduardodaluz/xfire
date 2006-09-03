@@ -31,8 +31,6 @@ public class AttributeWriter
                 prefix = NamespaceHelper.getUniquePrefix(writer, namespace, true);
             else
                 prefix = "";
-            
-            writer.flush();
         }
         catch (XMLStreamException e)
         {

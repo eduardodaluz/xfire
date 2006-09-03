@@ -17,6 +17,16 @@ public class ListTest
         getServiceRegistry().register(endpoint);
     }
 
+    public void testGetListofListofDoubles()
+            throws Exception
+    {
+        Document response = invokeService("ListService",
+                                          "/org/codehaus/xfire/aegis/type/collection/GetListofListofDoubles.xml");
+
+        addNamespace("l", "http://collection.type.aegis.xfire.codehaus.org");
+        assertValid("//l:out/l:SomeDoubles/l:double[text()='1.0']", response);
+    }
+    
     public void testGetStrings()
             throws Exception
     {

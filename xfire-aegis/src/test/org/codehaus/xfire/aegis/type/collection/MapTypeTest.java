@@ -1,6 +1,8 @@
 package org.codehaus.xfire.aegis.type.collection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,13 +21,10 @@ import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.SimpleBean;
 import org.codehaus.xfire.aegis.type.basic.StringType;
 import org.codehaus.xfire.aegis.type.collection.bean.MapBean;
-import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.util.LoggingHandler;
-import org.codehaus.xfire.util.dom.DOMOutHandler;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -160,5 +159,15 @@ public class MapTypeTest
         mapBean.setMap(map);
         MapBean mapBean2 = client.echoMapBean(mapBean);
         assertEquals(1, mapBean2.getMap().size());
+        
+        map = new HashMap();
+        List keyList = new ArrayList();
+        keyList.add("key");
+        List valueList = new ArrayList();
+        valueList.add("value");
+        map.put(keyList, valueList);
+        
+        Map map2 = client.echoMapOfCollections(map);
+        assertEquals(1, map2.size());
     }
 }
