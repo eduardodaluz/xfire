@@ -157,7 +157,7 @@ public class BeanTest
         assertValid("//xsd:complexType[@name='bean']/xsd:attribute[@name='bleh']", schema);
     }
     
-    public void xtestAttributeMapDifferentNS()
+    public void testAttributeMapDifferentNS()
         throws Exception
     {
         BeanTypeInfo info = new BeanTypeInfo(SimpleBean.class, "urn:Bean");

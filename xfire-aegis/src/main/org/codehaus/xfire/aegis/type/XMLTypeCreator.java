@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.type.AbstractTypeCreator.TypeClassInfo;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.XMLBeanTypeInfo;
 import org.codehaus.xfire.util.ClassLoaderUtils;
@@ -378,6 +379,24 @@ public class XMLTypeCreator extends AbstractTypeCreator
         if (flat != null) info.setFlat(Boolean.valueOf(flat.toLowerCase()).booleanValue());
     }
     
+    protected Type getOrCreateGenericType(TypeClassInfo info)
+    {
+        // TODO Auto-generated method stub
+        return super.getOrCreateGenericType(info);
+    }
+
+    protected Type getOrCreateMapKeyType(TypeClassInfo info)
+    {
+        // TODO Auto-generated method stub
+        return super.getOrCreateMapKeyType(info);
+    }
+
+    protected Type getOrCreateMapValueType(TypeClassInfo info)
+    {
+        // TODO Auto-generated method stub
+        return super.getOrCreateMapValueType(info);
+    }
+
     protected void setComponentType(TypeClassInfo info, Element parameter)
     {
         String componentType = parameter.getAttributeValue("componentType");

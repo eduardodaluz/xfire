@@ -37,7 +37,7 @@ public class WriterTest
         super.tearDown();
     }
 
-    public void xtestLiteral()
+    public void testLiteral()
         throws Exception
     {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

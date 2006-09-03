@@ -135,8 +135,7 @@ public class NamespaceHelper
 
             if (declare) 
             {
-                // waiting to get woodstox bug resolved.
-                //writer.setPrefix(prefix, namespaceURI);
+                writer.setPrefix(prefix, namespaceURI);
                 writer.writeNamespace(prefix, namespaceURI);
             }
         }
