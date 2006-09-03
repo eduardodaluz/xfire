@@ -118,6 +118,9 @@ public class Wsdl11Generator
         
         support.initialize(context);
 
+        // The schema generator may replace our code model.
+        this.codeModel = context.getCodeModel();
+        
         context.setServices(builder.getServices());
         context.setDestinationPackage(getDestinationPackage());
         context.setSchemaGenerator(support);

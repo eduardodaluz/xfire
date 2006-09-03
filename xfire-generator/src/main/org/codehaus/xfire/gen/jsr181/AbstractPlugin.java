@@ -4,7 +4,6 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.util.JavaUtils;
-import org.codehaus.xfire.util.NamespaceHelper;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
@@ -46,7 +45,7 @@ public class AbstractPlugin
         
         if (pckg == null)
         {
-            pckg = NamespaceHelper.makePackageName(name.getNamespaceURI());
+            pckg = NamespaceUtil.getPackageName(name.getNamespaceURI());
         }
         
         return pckg;

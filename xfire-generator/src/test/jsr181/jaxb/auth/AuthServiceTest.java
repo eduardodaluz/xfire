@@ -47,7 +47,7 @@ public class AuthServiceTest
             client.authenticate("foo", "bar");
             fail("Exception should've been thrown.");
         }
-        catch (AuthenticationFault_Exception e)
+        catch (jsr181.jaxb.auth.AuthenticationFault e)
         {
         }
     }

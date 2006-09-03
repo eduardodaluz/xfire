@@ -45,7 +45,7 @@ public class JAXWSTypeCreator extends Java5TypeCreator
 
     protected Type createHolderType(TypeClassInfo info)
     {
-        Class heldCls = getComponentType(info.getGenericType());
+        Class heldCls = getComponentType(info.getGenericType(), 0);
         
         info.setTypeClass(heldCls);
         Type delegate = createTypeForClass(info);

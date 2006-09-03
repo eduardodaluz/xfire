@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.codehaus.xfire.gen.GeneratorPlugin;
 import org.codehaus.xfire.gen.PluginProfile;
+import org.codehaus.xfire.gen.jsr181.ServiceStubGenerator;
 
 public class JAXWSProfile 
     implements PluginProfile
@@ -12,6 +13,7 @@ public class JAXWSProfile
     public List<GeneratorPlugin> getPlugins()
     {
         ArrayList<GeneratorPlugin> plugins = new ArrayList<GeneratorPlugin>();
+        plugins.add(new FaultGenerator());
         plugins.add(new InterfaceGenerator());
         plugins.add(new ServiceStubGenerator());
         plugins.add(new ServiceGenerator());

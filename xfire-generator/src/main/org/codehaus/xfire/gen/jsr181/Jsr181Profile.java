@@ -17,6 +17,7 @@ public class Jsr181Profile
     {
         ArrayList<GeneratorPlugin> plugins = new ArrayList<GeneratorPlugin>();
 
+        plugins.add(new FaultGenerator());
         plugins.add(new ServiceInterfaceGenerator());
         plugins.add(new ServiceStubGenerator());
         plugins.add(new PortGenerator());

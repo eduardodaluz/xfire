@@ -108,8 +108,10 @@ public class JAXBSchemaSupport implements SchemaSupport
         if (er.hasFatalErrors()) throw new GenerationException("Error generating JAXB model.");
 
         jaxbModel = model.generateCode(null, er);
-        jaxbModel.build(context.getOutputDirectory());
+//        jaxbModel.build(context.getOutputDirectory());
 
+        context.setCodeModel(jaxbModel);
+        
         Thread.currentThread().setContextClassLoader(cl);
     }
     

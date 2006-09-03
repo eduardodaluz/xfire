@@ -17,9 +17,9 @@ public class JaxbGenerationTest
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
-        JDefinedClass echo = model._getClass("fault.echo.xfire.OtherEchoFault_Exception");
+        JDefinedClass echo = model._getClass("xfire.echo.fault.OtherEchoFault");
         assertNotNull(echo);
-        echo = model._getClass("fault.echo.xfire.EchoFault_Exception");
+        echo = model._getClass("xfire.echo.fault.EchoFault_Exception");
         assertNotNull(echo);
     }
     
@@ -120,7 +120,7 @@ public class JaxbGenerationTest
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
-        JDefinedClass echo = model._getClass("wrapped.echo.EchoPortType");
+        JDefinedClass echo = model._getClass("echo.wrapped.EchoPortType");
         assertNotNull(echo);
     }
     

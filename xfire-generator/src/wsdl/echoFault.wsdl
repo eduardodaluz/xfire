@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://wrapped.message.xfire.codehaus.org" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:xfire:echo:fault" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:xfire:echo:fault" name="">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+ xmlns="http://schemas.xmlsoap.org/wsdl/" 
+ xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+ xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+ xmlns:tns="urn:xfire:echo:fault"
+ xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+ targetNamespace="urn:xfire:echo:fault" name="EchoFault">
   <wsdl:types>
     <xsd:schema targetNamespace="urn:xfire:echo:fault" elementFormDefault="qualified" attributeFormDefault="qualified">
       <xsd:element name="echo">
@@ -30,6 +37,9 @@
   <wsdl:message name="EchoFault">
     <wsdl:part element="tns:EchoFault" name="EchoFault" />
   </wsdl:message>
+  <wsdl:message name="OtherEchoFault">
+    <wsdl:part element="tns:EchoFault" name="EchoFault" />
+  </wsdl:message>
   <wsdl:message name="echoResponse">
     <wsdl:part element="tns:echoResponse" name="parameters" />
   </wsdl:message>
@@ -38,7 +48,7 @@
       <wsdl:input message="tns:echoRequest" name="echoRequest" />
       <wsdl:output message="tns:echoResponse" name="echoResponse" />
       <wsdl:fault message="tns:EchoFault" name="EchoFault" />
-      <wsdl:fault message="tns:EchoFault" name="OtherEchoFault" />
+      <wsdl:fault message="tns:OtherEchoFault" name="OtherEchoFault" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="EchoWithFaultHttpBinding" type="tns:EchoWithFaultPortType">

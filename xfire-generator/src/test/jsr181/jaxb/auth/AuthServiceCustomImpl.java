@@ -17,12 +17,12 @@ public class AuthServiceCustomImpl
 
 
     public String authenticate(String in0, String in1)
-        throws AuthenticationFault_Exception
+        throws jsr181.jaxb.auth.AuthenticationFault
     {
         AuthenticationFault fault = new AuthenticationFault();
         fault.setErrorCode(1);
         
-        throw new AuthenticationFault_Exception("Fault!", fault);
+        throw new jsr181.jaxb.auth.AuthenticationFault("Fault!", fault);
     }
 
 }

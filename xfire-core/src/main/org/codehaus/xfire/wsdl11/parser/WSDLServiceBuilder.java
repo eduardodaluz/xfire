@@ -410,7 +410,8 @@ public class WSDLServiceBuilder
 
     protected void visit(Fault fault)
     {
-        FaultInfo faultInfo = opInfo.addFault(fault.getName()); 
+        FaultInfo faultInfo = opInfo.addFault(fault.getName());
+        faultInfo.setMessageName(fault.getMessage().getQName());
         wfault2msg.put(fault, faultInfo);
         
         createMessageParts(faultInfo, fault.getMessage());

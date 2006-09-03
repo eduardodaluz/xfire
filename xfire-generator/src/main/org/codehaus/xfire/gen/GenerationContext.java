@@ -94,6 +94,11 @@ public class GenerationContext
         return codeModel;
     }
 
+    public void setCodeModel(JCodeModel codeModel)
+    {
+        this.codeModel = codeModel;
+    }
+
     public Map<QName, Collection<Service>> getServices()
     {
         return services;

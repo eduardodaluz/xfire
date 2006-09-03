@@ -107,9 +107,7 @@ public class ServiceGenerator
         {
             JClass serviceImpl = (JClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
             JClass serviceIntf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
-            
-            QName portType = service.getServiceInfo().getPortType();
-            
+
             JFieldVar intfClass = servCls.field(JMod.STATIC + JMod.PUBLIC,
                                                 Class.class,
                                                 javify(serviceIntf.name()),

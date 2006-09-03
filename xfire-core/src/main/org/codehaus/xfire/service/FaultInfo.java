@@ -2,6 +2,8 @@ package org.codehaus.xfire.service;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 /**
  * Represents the description of a service operation fault.
  * <p/>
@@ -14,6 +16,7 @@ public class FaultInfo
         implements Visitable
 {
     private String name;
+    private QName messageName;
     private Class exceptionClass;
     
     /**
@@ -78,4 +81,15 @@ public class FaultInfo
     {
         this.exceptionClass = exceptionClass;
     }
+
+    public QName getMessageName()
+    {
+        return messageName;
+    }
+
+    public void setMessageName(QName messageName)
+    {
+        this.messageName = messageName;
+    }
+    
 }

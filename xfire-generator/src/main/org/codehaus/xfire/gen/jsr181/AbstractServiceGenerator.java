@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.namespace.QName;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.xfire.fault.FaultInfoException;
 import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.GeneratorPlugin;
@@ -25,11 +23,7 @@ import org.codehaus.xfire.service.ServiceInfo;
 
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JClass;
-import com.sun.codemodel.JClassAlreadyExistsException;
-import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JExpr;
-import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JType;
@@ -240,67 +234,29 @@ public abstract class AbstractServiceGenerator
         {
             FaultInfo faultInfo = (FaultInfo) itr.next();
             
-            List messageParts = faultInfo.getMessageParts();
+            //List messageParts = faultInfo.getMessageParts();
             /*if (messageParts.size() > 1)
             {
                 throw new GenerationException("Operation " + op.getName() + " has a fault " + faultInfo.getName() + 
                                               " with multiple parts. This is not supported at this time.");
             }*/
             
-            MessagePartInfo part = (MessagePartInfo) messageParts.get(0);
+            JClass exCls = getExceptionClass(context, faultInfo);
             
-            JClass exCls = generateExceptionClass(context, part, method);
+            if (exCls == null)
+                throw new GenerationException("Could not find generated " +
+                        "fault class for " + faultInfo.getName() + "!");
             
             method._throws(exCls);
         }
     }
 
-    protected JClass generateExceptionClass(GenerationContext context, MessagePartInfo part, JMethod method)
-        throws GenerationException
+    private JClass getExceptionClass(GenerationContext context, FaultInfo faultInfo)
     {
-        JCodeModel model = context.getCodeModel();
-        SchemaSupport schema = context.getSchemaGenerator();
+        Map<String,JClass> exClasses = (Map<String,JClass>) 
+            context.getProperty(FaultGenerator.EXCEPTION_CLASSES);
         
-        String name = javify(((FaultInfo) part.getContainer()).getName());
-        name = name.substring(0, 1).toUpperCase() + name.substring(1);
-        JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
-
-        String clsName = getPackage(part.getName(), context) + "." + name + "_Exception";
-        JDefinedClass exCls;
-        try 
-        {
-            exCls = model._class(clsName);
-        } 
-        catch (JClassAlreadyExistsException e) {
-            return model.ref(clsName);
-        }
-        
-        exCls._extends(FaultInfoException.class);
-        
-        JFieldVar faultInfoVar = exCls.field(JMod.PRIVATE, paramType, "faultInfo");
-        
-        JMethod getFaultInfo = exCls.method(JMod.PUBLIC, paramType, "getFaultInfo");
-        getFaultInfo.body()._return(JExpr.ref("faultInfo"));
-
-        JMethod cons = exCls.constructor(JMod.PUBLIC);
-        cons.param(String.class, "message");
-        cons.param(paramType, "faultInfo");
-        cons.body().invoke("super").arg(JExpr.ref("message"));
-        cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
-        
-        cons = exCls.constructor(JMod.PUBLIC);
-        cons.param(String.class, "message");
-        cons.param(Throwable.class, "t");
-        cons.param(paramType, "faultInfo");
-        cons.body().invoke("super").arg(JExpr.ref("message")).arg(JExpr.ref("t"));
-        cons.body().assign(JExpr.refthis("faultInfo"), JExpr.ref("faultInfo"));
-                
-        JClass qType = model.ref(QName.class);
-        JMethod getName = exCls.method(JMod.PUBLIC + JMod.STATIC, qType, "getFaultName");
-        getName.body()._return(
-                JExpr._new(qType).arg(part.getName().getNamespaceURI()).arg(part.getName().getLocalPart()));
-
-        return exCls;
+        return exClasses.get(faultInfo.getMessageName());
     }
 
     private String getUniqueName(String varName, List<String> partNames)
