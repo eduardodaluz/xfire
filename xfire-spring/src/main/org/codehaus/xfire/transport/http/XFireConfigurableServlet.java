@@ -5,9 +5,10 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xbean.spring.context.SpringApplicationContext;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
-import org.codehaus.xfire.spring.WebConfigLoader;
+import org.codehaus.xfire.spring.XFireConfigLoader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -66,7 +67,7 @@ public class XFireConfigurableServlet
     
     public XFire loadConfig(String configPath) throws XFireException
     {
-        WebConfigLoader loader = new WebConfigLoader(getServletContext());
+        XFireConfigLoader loader = new XFireConfigLoader();
         loader.setBasedir(getWebappBase());
         log.debug("Loading configuration files relative to " + loader.getBasedir().getAbsolutePath());
 
@@ -75,8 +76,9 @@ public class XFireConfigurableServlet
 
         if (parent == null)
         {
-            GenericWebApplicationContext webCtx = new GenericWebApplicationContext();
+            GenericWebApplicationContext webCtx = new GenericWebApplicationContextX();
             webCtx.setServletContext(getServletContext());
+            webCtx.refresh();
             parent = webCtx;
         }
         
@@ -91,5 +93,15 @@ public class XFireConfigurableServlet
         return xfire;
     }
 
-    
+
+    public class GenericWebApplicationContextX extends GenericWebApplicationContext
+        implements SpringApplicationContext
+    {
+
+        public GenericWebApplicationContextX()
+        {
+            super();
+        }
+        
+    }
 }

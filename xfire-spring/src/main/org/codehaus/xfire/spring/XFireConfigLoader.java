@@ -70,6 +70,7 @@ public class XFireConfigLoader
         }
         
         GenericApplicationContext ctx = createContext(parent);
+
         XmlBeanDefinitionReader xmlReader = XBeanHelper.createBeanDefinitionReader((SpringApplicationContext) ctx, 
                                                                                    ctx.getDefaultListableBeanFactory(), Collections.EMPTY_LIST);
 
@@ -102,7 +103,7 @@ public class XFireConfigLoader
                 xmlReader.loadBeanDefinitions(new ClassPathResource(config));
             }
         }
-        
+
         ctx.refresh();
         
         XFire xfire = (XFire) ctx.getBean("xfire");
