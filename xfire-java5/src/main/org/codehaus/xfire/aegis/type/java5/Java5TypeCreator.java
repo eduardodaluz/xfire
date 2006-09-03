@@ -131,7 +131,7 @@ public class Java5TypeCreator
         
         if (paramClass != null)
         {
-            return super.createCollectionType(info, genericType);
+            return createCollectionTypeFromGeneric(info);
         }
         else
         {
