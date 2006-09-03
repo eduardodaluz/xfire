@@ -68,7 +68,7 @@ public class ServiceInterfaceGenerator
         JAnnotationUse ann = jc.annotate(WebService.class);
         
         ann.param("name", service.getServiceInfo().getPortType().getLocalPart());
-        ann.param("targetNamespace", service.getTargetNamespace());
+        ann.param("targetNamespace", service.getServiceInfo().getPortType().getNamespaceURI());
         
         service.setProperty(SERVICE_INTERFACE, jc);
         
