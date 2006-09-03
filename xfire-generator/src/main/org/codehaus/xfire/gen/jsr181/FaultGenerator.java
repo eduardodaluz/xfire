@@ -84,7 +84,7 @@ public class FaultGenerator
         name = name.substring(0, 1).toUpperCase() + name.substring(1);
         JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
 
-        String clsName = getPackage(fault.getMessageName(), context) + "." + name;
+        String clsName = getPackage(fault.getOperation().getService().getService().getName(), context) + "." + name;
         
         JDefinedClass exCls;
         try 
