@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<import resource="classpath:org/codehaus/xfire/spring/xfire.xml" />
+
+	<bean id="hello.client"
+		class="org.codehaus.xfire.spring.remoting.XFireClientFactoryBean">
+
+		<!-- TODO: Something is very wrong here - consumer can not know provider impl class -->
+		<property name="serviceClass"
+			value="org.something.services.hello.impl.HelloServiceImpl" />
+
+		<property name="url" value="http://localhost/" />
+
+		<property name="serviceFactory">
+			<bean
+				class="org.codehaus.xfire.jaxws.JAXWSServiceFactory">
+				<constructor-arg index="0">
+					<ref bean="xfire.transportManager" />
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+</beans>

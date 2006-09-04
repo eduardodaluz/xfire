@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<import resource="classpath:org/codehaus/xfire/spring/xfire.xml" />
+
+	<bean name="hello.server" class="org.codehaus.xfire.spring.remoting.XFireExporter">
+		<property name="serviceBean">
+			<bean class="org.something.services.hello.impl.HelloServiceImpl" />
+		</property>
+
+		<property name="serviceClass"
+			value="org.something.services.hello.impl.HelloServiceImpl" />
+		<property name="serviceFactory">
+			<ref bean="xfire.jaxwsServiceFactory" />
+		</property>
+	</bean>
+
+	<bean name="xfire.jaxwsServiceFactory"
+		class="org.codehaus.xfire.jaxws.JAXWSServiceFactory">
+		<constructor-arg index="0">
+			<ref bean="xfire.transportManager" />
+		</constructor-arg>
+	</bean>
+</beans>
