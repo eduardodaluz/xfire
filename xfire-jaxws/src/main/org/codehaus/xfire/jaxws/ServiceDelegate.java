@@ -18,6 +18,7 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
 
+import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.client.Client;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.jaxws.handler.SimpleHandlerResolver;
@@ -82,7 +83,9 @@ public class ServiceDelegate
         Service service = intf2service.get(clazz);
         if (service == null)
         {
-            service = serviceFactory.create(clazz, serviceName, wsdlLocation, null);
+            Map<String,Object> properties = new HashMap<String,Object>();
+            properties.put(AnnotationServiceFactory.ALLOW_INTERFACE, Boolean.TRUE);
+            service = serviceFactory.create(clazz, serviceName, wsdlLocation, properties);
             
             intf2service.put(clazz, service);
         }

@@ -38,7 +38,7 @@ public class AnnotationServiceFactory
     
     private WebAnnotations webAnnotations;
 
-    private static final String ALLOW_INTERFACE = "annotations.allow.interface";
+    public static final String ALLOW_INTERFACE = "annotations.allow.interface";
     
     /**
      * Creates an AnnotationServiceFactory which uses the most appropriate
@@ -273,7 +273,7 @@ public class AnnotationServiceFactory
 
     private void assertValidImplementationClass(Class clazz, WebAnnotations webAnnotations2, Map properties)
     {
-        if (Modifier.isAbstract(clazz.getModifiers()) && Boolean.TRUE.equals(properties.get(ALLOW_INTERFACE)))
+        if (Modifier.isAbstract(clazz.getModifiers()) && !Boolean.TRUE.equals(properties.get(ALLOW_INTERFACE)))
         {
             throw new AnnotationException("Service class cannot be abstract: " + clazz.getName());
         }

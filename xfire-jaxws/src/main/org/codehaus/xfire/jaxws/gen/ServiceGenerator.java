@@ -16,7 +16,6 @@ import org.codehaus.xfire.gen.GenerationContext;
 import org.codehaus.xfire.gen.GeneratorPlugin;
 import org.codehaus.xfire.gen.jsr181.AbstractPlugin;
 import org.codehaus.xfire.gen.jsr181.ServiceInterfaceGenerator;
-import org.codehaus.xfire.gen.jsr181.ServiceStubGenerator;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.Soap11Binding;
@@ -105,18 +104,12 @@ public class ServiceGenerator
         
         for (Service service : services)
         {
-            JClass serviceImpl = (JClass) service.getProperty(ServiceStubGenerator.SERVICE_STUB);
             JClass serviceIntf = (JClass) service.getProperty(ServiceInterfaceGenerator.SERVICE_INTERFACE);
 
             JFieldVar intfClass = servCls.field(JMod.STATIC + JMod.PUBLIC,
                                                 Class.class,
                                                 javify(serviceIntf.name()),
                                                 JExpr.dotclass(serviceIntf));
-
-            JFieldVar implClass = servCls.field(JMod.STATIC + JMod.PUBLIC,
-                                                Class.class,
-                                                javify(serviceImpl.name() + "_BINDING"),
-                                                JExpr.dotclass(serviceImpl));
 
             // hack to get local support
             if (!addedLocal)
@@ -146,12 +139,12 @@ public class ServiceGenerator
                 JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "get" + endpoint.getName().getLocalPart());
                 JBlock geBody = getFooEndpoint.body();
     
-                geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke("getPort").arg(newQN).arg(implClass)));
+                geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke("getPort").arg(newQN).arg(intfClass)));
                 
                 JAnnotationUse weAnn = getFooEndpoint.annotate(WebEndpoint.class);
                 weAnn.param("name", endpoint.getName().getLocalPart());
                 
-                staticBlock.add(portsVar.invoke("put").arg(newQN).arg(implClass));
+                staticBlock.add(portsVar.invoke("put").arg(newQN).arg(intfClass));
             }
         }
     }

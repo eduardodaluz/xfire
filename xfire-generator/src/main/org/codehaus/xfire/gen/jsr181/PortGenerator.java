@@ -204,7 +204,7 @@ public class PortGenerator
         asfCons.arg(context.getSchemaGenerator().getBindingProviderExpr(context));
         
         JVar propsVar = create.body().decl(hashMapType, "props", JExpr._new(hashMapType));
-        create.body().add(propsVar.invoke("put").arg("annotations.allow.interface").arg("true"));
+        create.body().add(propsVar.invoke("put").arg("annotations.allow.interface").arg(JExpr.TRUE));
         
         if (service.getServiceInfo().isWrapped()) 
         {
