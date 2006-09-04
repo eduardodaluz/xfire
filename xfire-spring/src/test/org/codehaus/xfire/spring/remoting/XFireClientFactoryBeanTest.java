@@ -54,7 +54,7 @@ public class XFireClientFactoryBeanTest
         try {
             factory.setServiceInterface(Echo.class);
             factory.afterPropertiesSet();
-            fail("expected exception without WSDL");
+            fail("expected exception without WSDL or service url");
         } catch (IllegalStateException e) {
             // what we expect since WSDL is required
         }

@@ -111,10 +111,7 @@ public class XFireClientFactoryBean
         {
             throw new IllegalStateException("serviceInterface is required");
         }
-        if (getWsdlDocumentUrl() == null)
-        {
-            throw new IllegalStateException("wsdlDocumentUrl is required");
-        }
+        
         ProxyInterceptor interceptor;
         if (getLookupServiceOnStartup())
         {
@@ -525,12 +522,12 @@ public class XFireClientFactoryBean
         {
             Endpoint ep = serviceModel.getEndpoint(_endpointName);
             if (ep == null)
-                throw new XFireRuntimeException("Could not find endpoint with name " + _endpointName + " on service.");
+                throw new IllegalStateException("Could not find endpoint with name " + _endpointName + " on service.");
             
             return new XFireProxyFactory().create(ep);
         }
         else
-            throw new XFireRuntimeException("No service URL was supplied.");
+            throw new IllegalStateException("A WSDL URL or service URL must be supplied.");
     }
 
     private QName findFirstSoapEndpoint(Collection endpoints)
