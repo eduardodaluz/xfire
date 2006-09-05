@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.fault.XFireFault;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
@@ -20,7 +21,9 @@ import org.codehaus.xfire.wsdl.SchemaType;
  */
 public interface BindingProvider
 {
-    void initialize(Service newParam);
+    void initialize(Service service);
+
+    void initialize(Service service, Binding binding);
 
     /**
      * Gives a binding the chance to suggest a name for a particular parameter.

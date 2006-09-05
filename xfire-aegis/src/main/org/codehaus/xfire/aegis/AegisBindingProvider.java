@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
@@ -76,13 +77,14 @@ public class AegisBindingProvider
     {
         this.registry = registry;
     }
-
-    protected void initializeMessage(Service service, MessagePartContainer container, int type)
+    
+    public void initialize(Service service)
     {
         List classes = (List) service.getProperty(OVERRIDE_TYPES_KEY);
 
         if (classes != null)
         {
+            System.out.println("INITING TYPES");
             List types = new ArrayList();
             TypeMapping tm = getTypeMapping(service);
             for (Iterator it = classes.iterator(); it.hasNext();)
@@ -92,14 +94,12 @@ public class AegisBindingProvider
                 try
                 {
                     c = ClassLoaderUtils.loadClass(typeName, AegisBindingProvider.class);
-
                 }
                 catch (ClassNotFoundException e)
                 {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    continue;
+                    throw new XFireRuntimeException("Could not find override type class: " + typeName, e);
                 }
+                
                 Type t = tm.getType(c);
                 if (t == null)
                 {
@@ -115,6 +115,13 @@ public class AegisBindingProvider
             }
             service.setProperty(WSDLBuilder.OVERRIDING_TYPES, types);
         }
+        
+        super.initialize(service);
+    }
+
+
+    protected void initializeMessage(Service service, MessagePartContainer container, int type)
+    {
         for (Iterator itr = container.getMessageParts().iterator(); itr.hasNext();)
         {
             MessagePartInfo part = (MessagePartInfo) itr.next();

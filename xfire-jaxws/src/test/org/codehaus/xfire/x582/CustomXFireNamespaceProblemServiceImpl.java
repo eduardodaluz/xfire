@@ -16,4 +16,9 @@ public class CustomXFireNamespaceProblemServiceImpl
         return "foo";
     }
 
+    public String makeCall2()
+    {
+        return "foo";
+    }
+
 }

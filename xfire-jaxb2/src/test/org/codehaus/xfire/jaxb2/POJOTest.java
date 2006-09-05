@@ -1,8 +1,8 @@
 package org.codehaus.xfire.jaxb2;
 
-import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
@@ -24,11 +24,19 @@ public class POJOTest
         super.setUp();
 
         builder = new JaxbServiceFactory();
-        endpoint = builder.create(AccountService.class);
-        
+        endpoint = builder.create(AccountServiceImpl.class);
         getServiceRegistry().register(endpoint);
     }
 
+    public void testClientAndHeaders() throws Exception
+    {
+        AccountService client = (AccountService) 
+            new XFireProxyFactory(getXFire()).create(endpoint, "xfire.local://AccountService");
+        
+        client.auth("123", "text");
+    }
+    
+    
     public void testWsdl() throws Exception
     {
         Document doc = getWSDLDocument("AccountService");
@@ -36,15 +44,6 @@ public class POJOTest
         addNamespace("xsd", SoapConstants.XSD);
         
         assertValid("//xsd:schema[@targetNamespace='urn:account']/xsd:complexType[@name='Acct']", doc);
-    }
-    
-    @WebService
-    public static class AccountService
-    {
-        public Account getAccount()
-        {
-            return new Account();
-        }
     }
     
     @XmlType(name="Acct", namespace="urn:account")

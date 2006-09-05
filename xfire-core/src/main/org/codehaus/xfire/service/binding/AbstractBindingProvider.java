@@ -59,28 +59,25 @@ public abstract class AbstractBindingProvider
                 e.prepend("Error initializing fault for method " + opInfo.getMethod());
                 throw e;
             }
-            
-            try
-            {
-                for (Iterator bItr = endpoint.getBindings().iterator(); bItr.hasNext();)
-                {
-                    Binding binding = (Binding) bItr.next();
-                    initializeMessage(endpoint, binding.getHeaders(opInfo.getInputMessage()), IN_PARAM);
-                    
-                    if (opInfo.hasOutput())
-                    {
-                        initializeMessage(endpoint, binding.getHeaders(opInfo.getOutputMessage()), OUT_PARAM);
-                    }
-                }
-            }
-            catch(XFireRuntimeException e)
-            {
-                e.prepend("Error initializing headers for method " + opInfo.getMethod());
-                throw e;
-            }
         }
     }
 
+
+    public void initialize(Service endpoint, Binding binding)
+    {
+        for (Iterator itr = endpoint.getServiceInfo().getOperations().iterator(); itr.hasNext();)
+        {
+            OperationInfo opInfo = (OperationInfo) itr.next();
+            
+            initializeMessage(endpoint, binding.getHeaders(opInfo.getInputMessage()), IN_PARAM);
+            
+            if (opInfo.hasOutput())
+            {
+                initializeMessage(endpoint, binding.getHeaders(opInfo.getOutputMessage()), OUT_PARAM);
+            }
+        }
+    }
+    
     protected void initializeMessage(Service service, MessagePartContainer container, int type) 
     {
     }

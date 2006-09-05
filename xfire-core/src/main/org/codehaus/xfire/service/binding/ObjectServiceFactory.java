@@ -607,6 +607,8 @@ public class ObjectServiceFactory
         }
     
         service.addBinding(binding);
+        
+        getBindingProvider().initialize(service, binding);
     }
 
     protected void createBindingOperation(Service service, AbstractSoapBinding binding, OperationInfo op)

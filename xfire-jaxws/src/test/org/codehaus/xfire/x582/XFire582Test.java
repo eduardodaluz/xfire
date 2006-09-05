@@ -3,6 +3,7 @@ package org.codehaus.xfire.x582;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.jaxws.JAXWSServiceFactory;
 import org.codehaus.xfire.service.Endpoint;
 import org.codehaus.xfire.service.MessagePartInfo;
@@ -46,6 +47,13 @@ public class XFire582Test extends AbstractXFireAegisTest
         getServiceRegistry().register(service);
     }
 
+    public void testClient() throws Exception
+    {
+        XFireNamespaceProblemInterface client = (XFireNamespaceProblemInterface)
+            new XFireProxyFactory(getXFire()).create(service, "xfire.local://XFireNamespaceProblemService");
+        assertEquals("foo", client.makeCall2());
+    }
+    
     public void testService() throws Exception
     {
         OperationInfo operation = service.getServiceInfo().getOperation("makeCall");
@@ -58,5 +66,10 @@ public class XFire582Test extends AbstractXFireAegisTest
         
         addNamespace("b", "http://test.bt.com/2006/08/Service/Schema");
         assertValid("//b:makeCallResponse/b:status", res);
+        
+        res = invokeService("XFireNamespaceProblemService", "callmessage2.xml");
+        
+        addNamespace("b", "http://test.bt.com/2006/08/Service/Schema");
+        assertValid("//b:makeCall2Response/b:status", res);
     }
 }

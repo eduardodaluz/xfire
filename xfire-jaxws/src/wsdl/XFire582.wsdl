@@ -25,6 +25,17 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        
+        <xs:element name="makeCall2">
+          <xs:complexType/>
+        </xs:element>
+        <xs:element name="makeCall2Response">
+          <xs:complexType>
+            <xs:sequence>
+                <xs:element name="status" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
 
         <xs:complexType name="name">
           <xs:sequence>
@@ -42,11 +53,22 @@
    <wsdl:message name="makeCallResponse">
       <wsdl:part name="output" element="schemaTypes:makeCallResponse"/>
    </wsdl:message>
+   
+   <wsdl:message name="makeCall2Request">
+      <wsdl:part name="input" element="schemaTypes:makeCall2"/>
+   </wsdl:message>
+   <wsdl:message name="makeCall2Response">
+      <wsdl:part name="output" element="schemaTypes:makeCall2Response"/>
+   </wsdl:message>
 
    <wsdl:portType name="XFireNamespaceProblemInterface">
       <wsdl:operation name="makeCall">
          <wsdl:input name="makeCallRequest" message="tns:makeCallRequest"/>
          <wsdl:output name="makeCallResponse" message="tns:makeCallResponse"/>
+      </wsdl:operation>
+      <wsdl:operation name="makeCall2">
+         <wsdl:input name="makeCall2Request" message="tns:makeCall2Request"/>
+         <wsdl:output name="makeCall2Response" message="tns:makeCall2Response"/>
       </wsdl:operation>
    </wsdl:portType>
 
@@ -61,11 +83,20 @@
             <wsoap:body use="literal"/>
          </wsdl:output>
       </wsdl:operation>
+      <wsdl:operation name="makeCall2">
+         <wsoap:operation soapAction="http://test.bt.com/2006/08/Service/Schema#makeCall"/>
+         <wsdl:input name="makeCall2Request">
+            <wsoap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output name="makeCall2Response">
+            <wsoap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
    </wsdl:binding>
 
    <wsdl:service name="XFireNamespaceProblemService">
       <wsdl:port name="XFireNamespaceProblemEndpoint" binding="tns:XFireNamespaceProblemSoapBinding">
-         <wsoap:address location="http://localhost/endpoint"/>
+         <wsoap:address location="http://localhost:8082/XFireNamespaceProblemEndpoint"/>
       </wsdl:port>
    </wsdl:service>
 

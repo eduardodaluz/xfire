@@ -212,6 +212,7 @@ public class BeanTypeInfo
                 throw e;
             }
 
+            // second part is possible workaround for XFIRE-586
             if (registerType(desc))
                 getTypeMapping().register(type);
 
