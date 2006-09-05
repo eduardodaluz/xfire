@@ -52,5 +52,17 @@
       <groupId>xmlbeans</groupId>
       <artifactId>xbean</artifactId>
     </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+      <version>1.2.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>xmlbeans-jsr173-api</artifactId>
+          <groupId>xmlbeans</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 </project>
