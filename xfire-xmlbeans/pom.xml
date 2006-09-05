@@ -51,6 +51,12 @@
     <dependency>
       <groupId>xmlbeans</groupId>
       <artifactId>xbean</artifactId>
+        <exclusions>
+          <exclusion>
+            <artifactId>xmlbeans-jsr173-api</artifactId>
+            <groupId>xmlbeans</groupId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>stax</groupId>
