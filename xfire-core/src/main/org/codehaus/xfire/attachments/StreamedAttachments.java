@@ -263,7 +263,7 @@ public class StreamedAttachments implements Attachments
     {
         if (context != null)
         {
-            Integer t = (Integer) context.getContextualProperty(ATTACHMENT_DIRECTORY);
+            Integer t = (Integer) context.getContextualProperty(ATTACHMENT_MEMORY_THRESHOLD);
             if (t != null) return t.intValue();
         }
         
