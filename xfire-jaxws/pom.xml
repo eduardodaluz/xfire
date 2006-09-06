@@ -22,8 +22,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>pertest</forkMode>
-          <childDelegation>false</childDelegation>
           <excludes>
             <exclude>**/Test*</exclude>
             <exclude>**/Abstract*</exclude>
