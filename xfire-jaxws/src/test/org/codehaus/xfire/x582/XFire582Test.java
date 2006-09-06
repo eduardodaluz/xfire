@@ -62,12 +62,12 @@ public class XFire582Test extends AbstractXFireAegisTest
         assertTrue(part.isSchemaElement());
         assertEquals("http://test.bt.com/2006/08/Service/Schema", part.getName().getNamespaceURI());
         
-        Document res = invokeService("XFireNamespaceProblemService", "callmessage.xml");
+        Document res = invokeService("XFireNamespaceProblemService", "/org/codehaus/xfire/x582/callmessage.xml");
         
         addNamespace("b", "http://test.bt.com/2006/08/Service/Schema");
         assertValid("//b:makeCallResponse/b:status", res);
         
-        res = invokeService("XFireNamespaceProblemService", "callmessage2.xml");
+        res = invokeService("XFireNamespaceProblemService", "/org/codehaus/xfire/x582/callmessage2.xml");
         
         addNamespace("b", "http://test.bt.com/2006/08/Service/Schema");
         assertValid("//b:makeCall2Response/b:status", res);
