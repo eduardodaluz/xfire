@@ -237,6 +237,8 @@ public class ObjectServiceFactory
                 
                 configureHeaders(service, op, b);
             }
+            
+            service.getBindingProvider().initialize(service, b);
         }
         
         service.getBindingProvider().initialize(service);
