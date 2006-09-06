@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-annotations</artifactId>
   <name>XFire Annotations</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <description>Annotation support for XFire</description>
   <build>
     <plugins>
@@ -21,10 +21,10 @@
             </goals>
             <configuration>
               <tasks>
-                <taskdef classname="org.apache.commons.attributes.compiler.AttributeCompiler" classpathref="maven.test.classpath" name="attribute-compiler"></taskdef>
+                <taskdef classname="org.apache.commons.attributes.compiler.AttributeCompiler" classpathref="maven.test.classpath" name="attribute-compiler" />
                 <attribute-compiler destdir="${project.build.directory}/generated-source">
-                  <fileset includes="**/*.java" dir="${basedir}/src/main"></fileset>
-                  <fileset includes="**/*.java" dir="${basedir}/src/test"></fileset>
+                  <fileset includes="**/*.java" dir="${basedir}/src/main" />
+                  <fileset includes="**/*.java" dir="${basedir}/src/test" />
                 </attribute-compiler>
               </tasks>
               <testSourceRoot>${project.build.directory}/generated-source</testSourceRoot>

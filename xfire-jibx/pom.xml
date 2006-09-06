@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jibx</artifactId>
   <name>XFire JiBX Support</name>
-  <version>1.2-SNAPSHOT</version>
-  <description></description>
+  <version>1.3-SNAPSHOT</version>
+  <description />
   <build>
     <testResources>
       <testResource>
@@ -30,9 +30,9 @@
             <configuration>
               <tasks>
                 <echo>Running Jibx Ant task</echo>
-                <taskdef classname="org.jibx.binding.ant.CompileTask" classpathref="maven.test.classpath" name="jibx"></taskdef>
+                <taskdef classname="org.jibx.binding.ant.CompileTask" classpathref="maven.test.classpath" name="jibx" />
                 <jibx verbose="true" binding="${basedir}/src/jibx/binding.xml">
-                  <classpathset dir="${basedir}/target/test-classes"></classpathset>
+                  <classpathset dir="${basedir}/target/test-classes" />
                 </jibx>
               </tasks>
             </configuration>

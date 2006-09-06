@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jaxb2</artifactId>
   <name>XFire Jaxb 2.0 Support</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -20,13 +20,13 @@
             </goals>
             <configuration>
               <tasks>
-                <taskdef classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath" name="xjc"></taskdef>
-                <mkdir dir="${project.build.directory}/generated-source"></mkdir>
+                <taskdef classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath" name="xjc" />
+                <mkdir dir="${project.build.directory}/generated-source" />
                 <xjc target="${project.build.directory}/generated-source">
-                  <schema includes="enum.xsd" dir="${basedir}/src/test-schemas"></schema>
-                  <schema includes="inheritance2.xsd" dir="${basedir}/src/test-schemas"></schema>
-                  <schema includes="picture.xsd" dir="${basedir}/src/test-schemas"></schema>
-                  <schema includes="WeatherForecast.xsd" dir="${basedir}/src/test-schemas"></schema>
+                  <schema includes="enum.xsd" dir="${basedir}/src/test-schemas" />
+                  <schema includes="inheritance2.xsd" dir="${basedir}/src/test-schemas" />
+                  <schema includes="picture.xsd" dir="${basedir}/src/test-schemas" />
+                  <schema includes="WeatherForecast.xsd" dir="${basedir}/src/test-schemas" />
                 </xjc>
               </tasks>
               <testSourceRoot>${project.build.directory}/generated-source</testSourceRoot>

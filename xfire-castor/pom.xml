@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-castor</artifactId>
   <name>XFire Castor Support</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -20,10 +20,10 @@
             </goals>
             <configuration>
               <tasks>
-                <delete dir="${project.build.directory}/generated-test"></delete>
-                <mkdir dir="${project.build.directory}/generated-test"></mkdir>
-                <taskdef classname="org.exolab.castor.tools.ant.taskdefs.CastorSourceGenTask" classpathref="maven.test.classpath" name="castor-srcgen"></taskdef>
-                <castor-srcgen types="j2" warnings="false" file="${basedir}/src/test-schemas/WeatherForecast.xsd" todir="${project.build.directory}/generated-test" package="net.webservicex"></castor-srcgen>
+                <delete dir="${project.build.directory}/generated-test" />
+                <mkdir dir="${project.build.directory}/generated-test" />
+                <taskdef classname="org.exolab.castor.tools.ant.taskdefs.CastorSourceGenTask" classpathref="maven.test.classpath" name="castor-srcgen" />
+                <castor-srcgen types="j2" warnings="false" file="${basedir}/src/test-schemas/WeatherForecast.xsd" todir="${project.build.directory}/generated-test" package="net.webservicex" />
               </tasks>
               <testSourceRoot>${project.build.directory}/generated-test</testSourceRoot>
             </configuration>
