@@ -30,6 +30,7 @@ import org.codehaus.xfire.aegis.type.basic.DoubleType;
 import org.codehaus.xfire.aegis.type.basic.FloatType;
 import org.codehaus.xfire.aegis.type.basic.IntType;
 import org.codehaus.xfire.aegis.type.basic.LongType;
+import org.codehaus.xfire.aegis.type.basic.ObjectType;
 import org.codehaus.xfire.aegis.type.basic.ShortType;
 import org.codehaus.xfire.aegis.type.basic.SqlDateType;
 import org.codehaus.xfire.aegis.type.basic.StringType;
@@ -351,6 +352,7 @@ public class DefaultTypeMappingRegistry
         register(soapTM, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
         register(soapTM, Element.class, XSD_ANY, new JDOMElementType());
         register(soapTM, org.jdom.Document.class, XSD_ANY, new JDOMDocumentType());
+        register(soapTM, Object.class, XSD_ANY, new ObjectType());
         register(soapTM, DataSource.class, XSD_BASE64, new DataSourceType());
         register(soapTM, DataHandler.class, XSD_BASE64, new DataHandlerType());
         register(soapTM, BigInteger.class, XSD_INTEGER, new BigIntegerType());
@@ -394,6 +396,7 @@ public class DefaultTypeMappingRegistry
         register(tm, XMLStreamReader.class, XSD_ANY, new XMLStreamReaderType());
         register(tm, Element.class, XSD_ANY, new JDOMElementType());
         register(tm, org.jdom.Document.class, XSD_ANY, new JDOMDocumentType());
+        register(tm, Object.class, XSD_ANY, new ObjectType());
         register(tm, DataSource.class, XSD_BASE64, new DataSourceType());
         register(tm, DataHandler.class, XSD_BASE64, new DataHandlerType());
 

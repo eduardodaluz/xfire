@@ -49,6 +49,7 @@ import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
+import org.codehaus.xfire.wsdl.SchemaType;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
@@ -207,7 +208,7 @@ public class WSDLServiceBuilder
                                                                              wservice, 
                                                                              portType,
                                                                              ports,
-                                                                             getBindingProvider(),
+                                                                             bindingProvider,
                                                                              transportManager);
                 config.configure();
                 addService(config.getService());
@@ -485,9 +486,8 @@ public class WSDLServiceBuilder
         part.setIndex(index);
         part.setSchemaElement(globalElement);
         
-//        System.out.println("s " + service);
-//        SchemaType st = getBindingProvider().getSchemaType(schemaType, service);
-//        part.setSchemaType(st);
+        SchemaType st = getBindingProvider().getSchemaType(schemaType, service);
+        part.setSchemaType(st);
     }
 
     /**

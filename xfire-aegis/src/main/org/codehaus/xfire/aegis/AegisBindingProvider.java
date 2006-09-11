@@ -84,6 +84,7 @@ public class AegisBindingProvider
 
         if (classes != null)
         {
+            System.out.println("INITING TYPES");
             List types = new ArrayList();
             TypeMapping tm = getTypeMapping(service);
             for (Iterator it = classes.iterator(); it.hasNext();)
@@ -246,10 +247,10 @@ public class AegisBindingProvider
          * tm.getType(param.getTypeClass()); part2type.put(param, type); }
          */
 
-        OperationInfo op = param.getContainer().getOperation();
-
-        if (type == null && op.getMethod() != null)
+        if (type == null)
         {
+            OperationInfo op = param.getContainer().getOperation();
+
             if (paramtype != FAULT_PARAM)
             {
                 /*
@@ -268,14 +269,7 @@ public class AegisBindingProvider
             type.setTypeMapping(tm);
             part2type.put(param, type);
         }
-        else if (op.getMethod() == null)
-        {
-            // this is the dynamic client case
-            type = tm.getTypeCreator().createType(Object.class);
-            type.setSchemaType(param.getName());
-            tm.register(type);
-        }
-        
+
         return type;
     }
 

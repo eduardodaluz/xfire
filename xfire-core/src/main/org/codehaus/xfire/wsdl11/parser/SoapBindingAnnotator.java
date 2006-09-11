@@ -106,7 +106,7 @@ public class SoapBindingAnnotator extends BindingAnnotator
                     name = new QName(getService().getTargetNamespace(), part.getName());
                     schemaType = part.getTypeName();
                 }
-                System.out.println("getting " + schemaType);
+                
                 SchemaType st = getBindingProvider().getSchemaType(schemaType, getService());
                 
                 MessagePartInfo info = getSoapBinding().getHeaders((MessageInfo) msg).addMessagePart(name, null);

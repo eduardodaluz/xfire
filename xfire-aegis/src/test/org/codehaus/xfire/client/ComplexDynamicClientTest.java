@@ -3,17 +3,11 @@ package org.codehaus.xfire.client;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.namespace.QName;
-
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
-import org.codehaus.xfire.aegis.AegisBindingProvider;
-import org.codehaus.xfire.aegis.type.TypeMapping;
-import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.services.BeanService;
-import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.transport.local.LocalTransport;
 import org.w3c.dom.Document;
 
@@ -40,18 +34,8 @@ public class ComplexDynamicClientTest
     {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         getWSDL("BeanService").write(bos);
+        
         Client client = new Client(new ByteArrayInputStream(bos.toByteArray()), null);
-        
-        Service model = client.getService();
-        AegisBindingProvider bp = (AegisBindingProvider) model.getBindingProvider();
-        TypeMapping typeMapping = bp.getTypeMapping(model);
-        
-        BeanType bt = new BeanType();
-        bt.setSchemaType(new QName("http://services.xfire.codehaus.org", "SimpleBean"));
-        bt.setTypeClass(SimpleBean.class);
-        typeMapping.register(bt);
-        
-        //TypeMapping tm = 
         client.setXFire(getXFire());
         client.setUrl("xfire.local://BeanService");
         client.setTransport(getTransportManager().getTransport(LocalTransport.BINDING_ID));
