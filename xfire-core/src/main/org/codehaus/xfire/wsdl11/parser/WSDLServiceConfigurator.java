@@ -189,6 +189,7 @@ public class WSDLServiceConfigurator
     public void configure() throws Exception
     {
         begin(wservice, portType);
+        service.getBindingProvider().initialize(service);
         
         for (Iterator iterator1 = ports.iterator(); iterator1.hasNext();)
         {
@@ -253,6 +254,8 @@ public class WSDLServiceConfigurator
                 }
 
             }
+            
+            //bindingProvider.initialize(service, binding);
         }
     }
 
@@ -277,6 +280,7 @@ public class WSDLServiceConfigurator
         {
             service = new Service(serviceInfo);
             service.setName(wservice.getQName());
+            service.setBindingProvider(bindingProvider);
         }
     }
 
@@ -285,7 +289,6 @@ public class WSDLServiceConfigurator
         if (initService)
         {
             service.setFaultSerializer(new SoapFaultSerializer());
-            service.setBindingProvider(bindingProvider);
         }
     }
     

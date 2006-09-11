@@ -94,6 +94,10 @@ public abstract class AbstractTypeCreator
         {
             result = createEnumType(info);
         }
+        else if (javaType.equals(Object.class))
+        {
+            result = new ObjectType();
+        }
         else
         {
             Type type = getTypeMapping().getType(javaType);

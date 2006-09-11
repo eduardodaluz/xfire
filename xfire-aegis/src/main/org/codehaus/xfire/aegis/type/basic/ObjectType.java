@@ -45,6 +45,7 @@ public class ObjectType extends Type
     public ObjectType()
     {
         this( Collections.EMPTY_SET );
+        setTypeClass(Object.class);
         readToDocument = true;
     }
 
@@ -97,6 +98,15 @@ public class ObjectType extends Type
             type = getTypeMapping().getType( typeQName );
         }
 
+        if (type == null)
+        {
+            type = getTypeMapping().getType(getSchemaType());
+                
+            if (type != null && type == this)
+                type = null;
+        }
+        
+        
 		if (type == null && readToDocument)
 		{
 			type = getTypeMapping().getType(Document.class);
