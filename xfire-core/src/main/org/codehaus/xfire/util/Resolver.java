@@ -134,7 +134,7 @@ public class Resolver
         {
             try
             {
-                uri = url.toURI();
+                uri = new URI(url.toString());
             }
             catch (URISyntaxException e)
             {
