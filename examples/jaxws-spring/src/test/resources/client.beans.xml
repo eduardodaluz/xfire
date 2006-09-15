@@ -7,11 +7,12 @@
 	<bean id="hello.client"
 		class="org.codehaus.xfire.spring.remoting.XFireClientFactoryBean">
 
-		<!-- TODO: Something is very wrong here - consumer can not know provider impl class -->
 		<property name="serviceClass"
-			value="org.something.services.hello.impl.HelloServiceImpl" />
+			value="org.something.services.hello.ws.HelloService" />
+        <property name="wsdlDocumentUrl"
+            value="hello.wsdl" />
 
-		<property name="url" value="http://localhost/" />
+		<property name="url" value="http://localhost:8191/HelloService" />
 
 		<property name="serviceFactory">
 			<bean

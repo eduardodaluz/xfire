@@ -10,6 +10,7 @@ import javax.xml.ws.WebFault;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
+import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.handler.OutMessageSender;
 import org.codehaus.xfire.jaxws.handler.WebFaultHandler;
@@ -84,15 +85,9 @@ public class JAXWSServiceFactory
         return new QName(ns, webFault.name());
     }
 
-    /**
-     * Creates an AbstractSoapBinding using the JAXWSBinding as the serializer.
-     */
-    @Override
-    protected void createSoapBinding(Service service, AbstractSoapBinding binding)
+    protected MessageSerializer getSerializer(AbstractSoapBinding binding)
     {
-        super.createSoapBinding(service, binding);
-        
-        binding.setSerializer(new JAXWSBinding(binding.getSerializer()));
+       return new JAXWSBinding(super.getSerializer(binding));
     }
 
     @Override
@@ -100,7 +95,7 @@ public class JAXWSServiceFactory
     {
         super.createBindingOperation(service, binding, op);
 
-        binding.setSerializer(op, new JAXWSOperationBinding(op, binding.getSerializer()));
+        binding.setSerializer(op, new JAXWSOperationBinding(op, super.getSerializer(binding)));
     }
 
     @Override

@@ -26,5 +26,4 @@ public class EchoImpl
         
         return response;
     }
-    
 }

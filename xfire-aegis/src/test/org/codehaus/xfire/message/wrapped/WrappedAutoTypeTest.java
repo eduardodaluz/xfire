@@ -44,7 +44,7 @@ public class WrappedAutoTypeTest
             throws Exception
     {
         Document doc = getWSDLDocument("BeanService");
-
+printNode(doc);
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);
         addNamespace("xsd", SoapConstants.XSD);

@@ -14,6 +14,7 @@
 		<property name="serviceFactory">
 			<ref bean="xfire.jaxwsServiceFactory" />
 		</property>
+        <property name="wsdlURL" value="hello.wsdl"/>
 	</bean>
 
 	<bean name="xfire.jaxwsServiceFactory"

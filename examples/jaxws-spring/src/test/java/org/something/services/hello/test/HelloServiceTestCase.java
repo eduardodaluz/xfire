@@ -49,6 +49,7 @@ public class HelloServiceTestCase extends TestCase {
 		
 		checkHelloServiceSayHello(remoteHelloService);
 		checkHelloServiceFault(remoteHelloService);
+        
 		httpServer.stop();
 	}
 	

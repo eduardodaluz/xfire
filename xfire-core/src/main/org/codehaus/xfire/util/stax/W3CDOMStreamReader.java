@@ -62,7 +62,6 @@ public class W3CDOMStreamReader
         
         NamedNodeMap nodes = element.getAttributes();
         
-        String nsURI = element.getNamespaceURI();
         String ePrefix = element.getPrefix();
         if (ePrefix == null)
         {
@@ -78,7 +77,6 @@ public class W3CDOMStreamReader
                 String localName = node.getLocalName();
                 String value = node.getNodeValue();
                 String name = node.getNodeName();
-                String uri = node.getNamespaceURI();
     
                 if (prefix == null) prefix = "";
     

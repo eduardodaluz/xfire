@@ -90,8 +90,8 @@ public class JDOMReader
 
     public MessageReader getNextAttributeReader()
     {
-        currentAttribute++;
         Attribute att = (Attribute) element.getAttributes().get(currentAttribute);
+        currentAttribute++;
         
         return new AttributeReader(new QName(att.getNamespaceURI(), att.getName()), att.getValue());
     }

@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.FaultInfoException;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.fault.SoapFaultSerializer;
@@ -70,6 +71,7 @@ public class ObjectServiceFactory
         implements ServiceFactory
 {
     public static final String PORT_TYPE = "objectServiceFactory.portType";
+    public static final String PORT_NAME = "objectServiceFactory.portName";
     public static final String STYLE = "objectServiceFactory.style";
     public static final String USE = "objectServiceFactory.use";
     public static final String CREATE_DEFAULT_BINDINGS =  "objectServiceFactory.createDefaultBindings";
@@ -236,6 +238,11 @@ public class ObjectServiceFactory
                 OperationInfo op = (OperationInfo) oitr.next();
                 
                 configureHeaders(service, op, b);
+            }
+            
+            if (b instanceof AbstractSoapBinding)
+            {
+                b.setSerializer(getSerializer((AbstractSoapBinding) b));
             }
             
             service.getBindingProvider().initialize(service, b);
@@ -598,8 +605,8 @@ public class ObjectServiceFactory
         String use = (String) service.getProperty(USE);
         binding.setStyle(style);
         binding.setUse(use);
-        binding.setSerializer(AbstractSoapBinding.getSerializer(style, use));
-        
+        binding.setSerializer(getSerializer(binding));
+
         // Create SOAP metadata for the binding operation
         for (Iterator itr = serviceInfo.getOperations().iterator(); itr.hasNext();)
         {
@@ -613,6 +620,12 @@ public class ObjectServiceFactory
         getBindingProvider().initialize(service, binding);
     }
 
+    protected MessageSerializer getSerializer(AbstractSoapBinding binding)
+    {
+        return AbstractSoapBinding.getSerializer(binding.getStyle(),
+                                                 binding.getUse());
+    }
+    
     protected void createBindingOperation(Service service, AbstractSoapBinding binding, OperationInfo op)
     {
         binding.setSoapAction(op, getAction(op));
