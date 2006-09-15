@@ -191,7 +191,7 @@ public class DefaultTypeMappingRegistry
         CustomTypeMapping tm = new CustomTypeMapping(parent);
 
         if (autoTypes)
-            tm.setTypeCreator(getTypeCreator());
+            tm.setTypeCreator(createTypeCreator());
 
         return tm;
     }
