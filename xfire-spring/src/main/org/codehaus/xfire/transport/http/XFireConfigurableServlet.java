@@ -10,6 +10,7 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.spring.XFireConfigLoader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
@@ -92,7 +93,20 @@ public class XFireConfigurableServlet
         xfire.setProperty(XFire.XFIRE_HOME, getWebappBase().getAbsolutePath());
         return xfire;
     }
-
+    
+    public void destroy()
+    {
+        log.debug("Destroying XFireConfigurableServlet");
+        ServletContext servletCtx = getServletContext();
+        ApplicationContext appContext = (ApplicationContext)servletCtx.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        if (appContext != null &&
+            appContext instanceof AbstractApplicationContext)
+        {
+            // shutdown the beans
+            ((AbstractApplicationContext)appContext).close();
+        }
+        super.destroy();
+    }
 
     public class GenericWebApplicationContextX extends GenericWebApplicationContext
         implements SpringApplicationContext
