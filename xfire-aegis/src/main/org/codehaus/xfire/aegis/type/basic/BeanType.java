@@ -493,7 +493,8 @@ public class BeanType
          * See Java Virtual Machine specification:
          * http://java.sun.com/docs/books/vmspec/2nd-edition/html/ClassFile.doc.html#75734
          */
-        if ((info.getTypeClass().getModifiers() & Modifier.ABSTRACT) != 0)
+        if (((info.getTypeClass().getModifiers() & Modifier.ABSTRACT) != 0) &&
+                !info.getTypeClass().isInterface())
         {
             complex.setAttribute(new Attribute("abstract", "true"));
         }

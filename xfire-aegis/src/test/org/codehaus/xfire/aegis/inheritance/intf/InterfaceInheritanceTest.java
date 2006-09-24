@@ -6,6 +6,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.codehaus.xfire.util.LoggingHandler;
 import org.codehaus.xfire.util.dom.DOMOutHandler;
+import org.jdom.Document;
 
 /**
  * This test ensures that we're handling inheritance of itnerfaces
@@ -44,5 +45,8 @@ public class InterfaceInheritanceTest
         IParent parent = client.getChildViaParent();
         assertEquals("parent", parent.getParentName());
         assertFalse(parent instanceof IChild);
+        
+        Document wsdl = getWSDLDocument("IInterfaceService");
+        assertInvalid("//xsd:complexType[@name='IChild'][@abstract='true']", wsdl);
     }
 }
