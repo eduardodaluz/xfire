@@ -238,6 +238,7 @@ public abstract class AbstractTypeCreator
         ObjectType type = new ObjectType();
         type.setSchemaType(DefaultTypeMappingRegistry.XSD_ANY);
         type.setTypeClass(Object.class);
+        type.setTypeMapping(getTypeMapping());
         return type;
     }
 
