@@ -1,5 +1,5 @@
 package org.codehaus.xfire.aegis.inheritance.intf;
 
-public interface IParent {
+public interface IParent  {
     String getParentName();
 }

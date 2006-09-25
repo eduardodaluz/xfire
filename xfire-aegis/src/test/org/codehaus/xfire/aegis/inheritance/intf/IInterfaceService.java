@@ -1,7 +1,9 @@
 package org.codehaus.xfire.aegis.inheritance.intf;
 
 public interface IInterfaceService {
-    public IChild getChild();
+    IChild getChild();
     
-    public IParent getChildViaParent();
+    IParent getChildViaParent();
+    
+    IGrandChild getGrandChild();
 }

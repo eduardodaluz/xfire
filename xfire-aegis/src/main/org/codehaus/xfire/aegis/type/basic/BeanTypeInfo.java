@@ -6,9 +6,11 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -333,17 +335,30 @@ public class BeanTypeInfo
 
     public PropertyDescriptor[] getInterfacePropertyDescriptors(Class clazz)
     {
+        List pds = new ArrayList();
+        
+        getInterfacePropertyDescriptors(clazz, pds, new HashSet());
+        
+        return (PropertyDescriptor[]) pds.toArray(new PropertyDescriptor[pds.size()]);
+    }
+    
+    public void getInterfacePropertyDescriptors(Class clazz, List pds, Set classes)
+    {
+        if (classes.contains(clazz)) return;
+        
+        classes.add(clazz);
+        
         try
         {
             Class[] interfaces = clazz.getInterfaces();
-            List list = new ArrayList();
+            
             /**
              * add base interface information
              */
             BeanInfo info = Introspector.getBeanInfo(clazz);
             for (int j = 0; j < info.getPropertyDescriptors().length; j++)
             {
-                list.add(info.getPropertyDescriptors()[j]);
+                pds.add(info.getPropertyDescriptors()[j]);
             }
             /**
              * add extended interface information
@@ -354,14 +369,14 @@ public class BeanTypeInfo
 
                 for (int j = 0; j < superInfo.getPropertyDescriptors().length; j++)
                 {
-                    list.add(superInfo.getPropertyDescriptors()[j]);
+                    pds.add(superInfo.getPropertyDescriptors()[j]);
                 }
+             
+                getInterfacePropertyDescriptors(interfaces[i], pds, classes);
             }
-            return (PropertyDescriptor[]) list.toArray(new PropertyDescriptor[list.size()]);
         }
         catch (IntrospectionException e)
         {
-            return null;
         }
     }
 

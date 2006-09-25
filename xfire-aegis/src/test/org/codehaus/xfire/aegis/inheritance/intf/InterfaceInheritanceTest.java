@@ -45,8 +45,14 @@ public class InterfaceInheritanceTest
         IParent parent = client.getChildViaParent();
         assertEquals("parent", parent.getParentName());
         assertFalse(parent instanceof IChild);
+
+        IGrandChild grandChild = client.getGrandChild();
+        assertEquals("parent", grandChild.getParentName());
         
         Document wsdl = getWSDLDocument("IInterfaceService");
+        assertValid("//xsd:complexType[@name='IGrandChild']", wsdl);
+        assertValid("//xsd:complexType[@name='IChild']", wsdl);
+        assertValid("//xsd:complexType[@name='IParent']", wsdl);
         assertInvalid("//xsd:complexType[@name='IChild'][@abstract='true']", wsdl);
     }
 }
