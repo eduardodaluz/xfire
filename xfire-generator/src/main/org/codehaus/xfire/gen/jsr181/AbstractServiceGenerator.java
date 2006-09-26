@@ -20,6 +20,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.soap.AbstractSoapBinding;
 
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JClass;
@@ -44,11 +45,30 @@ public abstract class AbstractServiceGenerator
         {
             List services = (List) itr.next();
             for (Iterator sitr = services.iterator(); sitr.hasNext();)
+            {
                 generate(context, (Service) sitr.next());
+            }
         }
     }
     
     public void generate(GenerationContext context, Service service)
+        throws Exception
+    {
+        for (Iterator itr = service.getBindings().iterator(); itr.hasNext();) 
+        {
+            Binding b = (Binding) itr.next();
+            if (b instanceof AbstractSoapBinding)
+            {
+                generate(context, service, b);
+            }
+            else
+            {
+                log.info("Unknown binding: " + b.getClass().getName());
+            }
+        }
+    }
+    
+    public void generate(GenerationContext context, Service service, Binding binding)
         throws Exception
     {
         setCurrentService(service);
@@ -71,7 +91,7 @@ public abstract class AbstractServiceGenerator
         
         SchemaSupport schema = context.getSchemaGenerator();
         
-        annotate(context, service, jc);
+        annotate(context, service, jc, binding);
         
         // Process operations
         for (Iterator itr = serviceInfo.getOperations().iterator(); itr.hasNext();)
@@ -330,10 +350,6 @@ public abstract class AbstractServiceGenerator
         }
         
         return returnType;
-    }
-
-    protected void annotate(GenerationContext context, Service service, JDefinedClass jc)
-    {
     }
 
     protected void annotate(GenerationContext context, Service service, JDefinedClass jc, Binding binding)

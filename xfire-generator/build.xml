@@ -59,5 +59,9 @@
       package="jsr181.jaxb.auth" 
       overwrite="true"/>
 
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/echo-rpclit.wsdl" 
+      package="org.codehaus.xfire.generator.rpclit" 
+      overwrite="true"/>
   </target>
 </project>

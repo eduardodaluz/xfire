@@ -8,6 +8,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.gen.GenerationContext;
+import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 
@@ -67,9 +68,9 @@ public class ServiceStubGenerator
     }
 
     @Override
-    protected void annotate(GenerationContext context, Service service, JDefinedClass jc)
+    protected void annotate(GenerationContext context, Service service, JDefinedClass jc, Binding binding)
     {
-        super.annotate(context, service, jc);
+        super.annotate(context, service, jc, binding);
         
         JAnnotationUse ann = jc.annotate(WebService.class);
         

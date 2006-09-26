@@ -21,7 +21,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.Soap11Binding;
 import org.codehaus.xfire.soap.Soap12Binding;
-import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.soap.SoapTransport;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.transport.local.LocalTransport;
@@ -206,15 +205,6 @@ public class PortGenerator
         JVar propsVar = create.body().decl(hashMapType, "props", JExpr._new(hashMapType));
         create.body().add(propsVar.invoke("put").arg("annotations.allow.interface").arg(JExpr.TRUE));
         
-        if (service.getServiceInfo().isWrapped()) 
-        {
-            create.body().add(propsVar.invoke("put").arg("objectServiceFactory.style").arg(SoapConstants.STYLE_WRAPPED));
-        }
-        else
-        {
-            create.body().add(propsVar.invoke("put").arg("objectServiceFactory.style").arg(SoapConstants.STYLE_DOCUMENT));
-        }
-        
         JVar asfVar = create.body().decl(asfType, "asf", asfCons);
         JInvocation createInvoke = asfVar.invoke("create");
         
@@ -222,7 +212,7 @@ public class PortGenerator
         createInvoke.arg(propsVar);
         
         JInvocation bindingCreation = asfVar.invoke("setBindingCreationEnabled");
-        bindingCreation.arg(JExpr.lit(true));
+        bindingCreation.arg(JExpr.lit(false));
         create.body().add(bindingCreation);
         
         JType serviceType = model._ref(Service.class);

@@ -21,6 +21,7 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
+import org.codehaus.xfire.soap.SoapConstants;
 
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JAnnotationUse;
@@ -63,7 +64,7 @@ public class ServiceInterfaceGenerator
         return ClassType.INTERFACE;
     }
 
-    protected void annotate(GenerationContext context, Service service, JDefinedClass jc)
+    protected void annotate(GenerationContext context, Service service, JDefinedClass jc, Binding binding)
     {
         JAnnotationUse ann = jc.annotate(WebService.class);
         
@@ -72,8 +73,17 @@ public class ServiceInterfaceGenerator
         
         service.setProperty(SERVICE_INTERFACE, jc);
         
+        AbstractSoapBinding soapBinding = (AbstractSoapBinding) binding;
         ann = jc.annotate(SOAPBinding.class);
-        ann.param("style", Style.DOCUMENT);
+        if (soapBinding.getStyle().equals(SoapConstants.STYLE_DOCUMENT)) 
+        {
+            ann.param("style", Style.DOCUMENT);
+        }
+        else if (soapBinding.getStyle().equals(SoapConstants.STYLE_RPC)) 
+        {
+            ann.param("style", Style.RPC);
+        }
+        
         ann.param("use", Use.LITERAL);
         
         if (service.getServiceInfo().isWrapped())
