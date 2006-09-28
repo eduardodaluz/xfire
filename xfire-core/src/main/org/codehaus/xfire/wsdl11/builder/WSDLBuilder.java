@@ -94,16 +94,6 @@ public class WSDLBuilder
 
     protected void writeComplexTypes()
     {
-        List l = (List) getService().getProperty(OVERRIDING_TYPES);
-        if (l != null)
-        {
-            for (Iterator it = l.iterator(); it.hasNext();)
-            {
-                SchemaType t = (SchemaType) it.next();
-                addDependency(t);
-            }
-        }
-        
         if (getSchemaTypes().getContentSize() > 0)
         {   
             Element schemaTypes = getSchemaTypes();
@@ -175,6 +165,8 @@ public class WSDLBuilder
             
             updateImports();
             
+            initializeOverrideTypes();
+            
             writeComplexTypes();
             
             if (extensions != null)
@@ -196,6 +188,19 @@ public class WSDLBuilder
         }
     }
 
+
+    private void initializeOverrideTypes()
+    {
+        List l = (List) getService().getProperty(OVERRIDING_TYPES);
+        if (l != null)
+        {
+            for (Iterator it = l.iterator(); it.hasNext();)
+            {
+                SchemaType t = (SchemaType) it.next();
+                addDependency(t);
+            }
+        }
+    }
 
     public PortType createAbstractInterface()
         throws WSDLException
@@ -586,7 +591,7 @@ public class WSDLBuilder
             String uri = type.getSchemaType().getNamespaceURI();
             String prefix = getNamespacePrefix(uri);
             addNamespace(prefix, uri);
-
+            
             Element element = new Element("element", AbstractWSDL.XSD_NS);
             sequence.addContent(element);
 
@@ -594,8 +599,7 @@ public class WSDLBuilder
             {
                 element.setAttribute(new Attribute("name", pName.getLocalPart()));
 
-                element
-                        .setAttribute(new Attribute("type", prefix + ":"
+                element.setAttribute(new Attribute("type", prefix + ":"
                                 + schemaType.getLocalPart()));
                 
                 if (type.isNillable())
@@ -605,8 +609,7 @@ public class WSDLBuilder
             }
             else
             {
-                element
-                        .setAttribute(new Attribute("ref", prefix + ":" + schemaType.getLocalPart()));
+                element.setAttribute(new Attribute("ref", prefix + ":" + schemaType.getLocalPart()));
             }
 
             element.setAttribute(new Attribute("minOccurs", "1"));

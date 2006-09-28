@@ -45,7 +45,7 @@ public class JaxbWSDLBuilder
 
                 if (types.contains(jaxbType)) return;
                 
-                classes.add(jaxbType.getTypeClass());
+                classes.add(jaxbType.getActualTypeClass());
                 namespaces.add(jaxbType.getSchemaType().getNamespaceURI());
                 types.add(jaxbType);
             }
@@ -78,7 +78,6 @@ public class JaxbWSDLBuilder
             
             for (String ns : namespaces)
             {
-                System.out.println("writing complex types");
                 context.generateSchema(new SchemaOutputResolver() {
                     @Override
                     public Result createOutput(String ns, String file)

@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.aegis.type.Type;
@@ -67,10 +68,12 @@ public class JaxbTypeCreator
     @SuppressWarnings("unchecked")
     public static boolean isJaxbType(Class clazz)
     {
+        // TODO inspect package level XmlJavaTypeAdapaters
         return clazz.isAnnotationPresent(XmlElement.class)
                 || clazz.isAnnotationPresent(XmlType.class)
                 || clazz.isAnnotationPresent(XmlRootElement.class)
-                || clazz.isAnnotationPresent(XmlEnum.class);
+                || clazz.isAnnotationPresent(XmlEnum.class)
+                || clazz.isAnnotationPresent(XmlJavaTypeAdapter.class);
     }
 
     public Type createType(PropertyDescriptor pd)
