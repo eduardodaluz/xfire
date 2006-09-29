@@ -129,7 +129,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
 
     public Type createCollectionType(TypeClassInfo info)
     {
-        if (info.getGenericType() != null)
+        if (info.getGenericType() instanceof Class || info.getGenericType() instanceof TypeClassInfo)
         {
             return createCollectionTypeFromGeneric(info);
         }

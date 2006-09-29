@@ -105,7 +105,7 @@ public class XFireClientFactoryBeanTest
     public void testServerURL()
         throws Exception
     {
-        factory.setUrl("http://localhost/test");
+        factory.setUrl("http://localhost/test2");
         
         factory.afterPropertiesSet();
         
@@ -120,7 +120,7 @@ public class XFireClientFactoryBeanTest
         checkAuth(fireProxy, null, null);
         Client c = fireProxy.getClient();
        
-        assertEquals("wrong service URL", "http://localhost/test", c.getUrl());
+        assertEquals("wrong service URL", "http://localhost/test2", c.getUrl());
     }
         
     public void testXFireProxyFactoryBeanNoLoadOnStartup()

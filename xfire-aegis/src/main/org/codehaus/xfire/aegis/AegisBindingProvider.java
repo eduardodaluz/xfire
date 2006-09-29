@@ -84,7 +84,6 @@ public class AegisBindingProvider
 
         if (classes != null)
         {
-            System.out.println("INITING TYPES");
             List types = new ArrayList();
             TypeMapping tm = getTypeMapping(service);
             for (Iterator it = classes.iterator(); it.hasNext();)
