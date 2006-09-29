@@ -54,6 +54,7 @@ import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
 import org.codehaus.xfire.wsdl11.DefinitionWSDL;
+import org.codehaus.xfire.wsdl11.ResolverWSDLLocator;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderAdapter;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilderFactory;
@@ -176,7 +177,7 @@ public class ObjectServiceFactory
         {
             return create(clazz, 
                           name, 
-                          WSDLFactory.newInstance().newWSDLReader().readWSDL(null, new InputSource(wsdlUrl.openStream())), 
+                          WSDLFactory.newInstance().newWSDLReader().readWSDL(new ResolverWSDLLocator(null, new InputSource(wsdlUrl.openStream()))), 
                           properties);
         }
         catch (WSDLException e)

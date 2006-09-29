@@ -124,17 +124,19 @@ public class WSDLBuilder
                         org.w3c.dom.Element root = doc.getDocumentElement();
                         
                         NamedNodeMap attributes = root.getAttributes();
-                        for (int i = 0; i < attributes.getLength(); i++)
+                        for (int i = attributes.getLength() - 1; i >= 0; i--)
                         {
                             Attr a = (Attr) attributes.item(i);
                             String nodeName = a.getNodeName();
                             String name = a.getName();
-                            if (("xmlns".equals(nodeName) ||
+                            String prefix =  a.getPrefix();
+                            if (("xmlns".equals(nodeName) || 
                                     nodeName.startsWith("xmlns:") || 
-                                    "xmlns".equals(a.getPrefix()) ||
-                                    (name != null && name.startsWith("xmlns")))
-                                    && a.getNodeValue().equals(SoapConstants.XSD))
-                                root.removeAttribute(a.getNodeName());
+                                    "xmlns".equals(prefix) || 
+                                    (name != null && name.startsWith("xmlns"))))
+                            {
+                                root.removeAttribute(nodeName);
+                            }
                         }
                         
                         Schema uee = new SchemaImpl();
