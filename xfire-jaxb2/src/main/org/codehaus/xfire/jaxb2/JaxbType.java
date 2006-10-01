@@ -57,8 +57,8 @@ import org.xml.sax.SAXException;
 public class JaxbType
     extends Type
 {
-	public static final String SEARCH_PACKAGES = "jaxb.search.pacakges";
-    public static final String ENABLE_VALIDATION = "jaxb.enable.validatation";
+	public static final String SEARCH_PACKAGES = "jaxb.search.packages";
+    public static final String ENABLE_VALIDATION = "jaxb.enable.validation";
     public static final String VALIDATION_SCHEMA = "jaxb.validation.schema";
     public static final String GENERATED_VALIDATION_SCHEMA = "jaxb.generated.validation.schema";
     private Class actualTypeClass;
@@ -185,6 +185,7 @@ public class JaxbType
         {
             JAXBContext jc = getJAXBContext(context);
             Unmarshaller u = jc.createUnmarshaller();
+            
             u.setAttachmentUnmarshaller(new AttachmentUnmarshaller(context));
             
             // check if validation is enabled
@@ -291,6 +292,7 @@ public class JaxbType
            
             context = JAXBContext.newInstance(pckg);
         }
+        
         return context;
     }
     
