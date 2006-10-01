@@ -13,6 +13,7 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.attachments.Attachments;
 import org.codehaus.xfire.attachments.JavaMailAttachments;
 import org.codehaus.xfire.attachments.SimpleAttachment;
+import org.codehaus.xfire.exchange.AbstractMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
@@ -21,7 +22,7 @@ import org.codehaus.xfire.util.OutMessageDataSource;
 /**
  * @author Dan Diephouse
  */
-final class XFireServletChannel extends HttpChannel
+public class XFireServletChannel extends HttpChannel
 {
     
     public XFireServletChannel(String uri, HttpTransport transport)
@@ -77,7 +78,7 @@ final class XFireServletChannel extends HttpChannel
             }
             else
             {
-                response.setContentType(HttpChannel.getSoapMimeType(message, true));
+                response.setContentType(doGetSoapMimeType(message, true));
                 
                 out = new BufferedOutputStream(response.getOutputStream());
                 message.setProperty(Channel.OUTPUTSTREAM, out);
@@ -90,5 +91,10 @@ final class XFireServletChannel extends HttpChannel
         {
             throw new XFireException("Couldn't send message.", e);
         }
+    }
+
+    protected String doGetSoapMimeType(AbstractMessage msg, boolean includeEncoding)
+    {
+        return HttpChannel.getSoapMimeType(msg, includeEncoding);
     }
 }

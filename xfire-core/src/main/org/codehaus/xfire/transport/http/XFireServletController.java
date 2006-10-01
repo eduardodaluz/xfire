@@ -49,7 +49,7 @@ public class XFireServletController
     protected XFire xfire;
 
     protected SoapHttpTransport transport;
-    private ServletContext servletContext;
+    protected ServletContext servletContext;
 
     public XFireServletController(XFire xfire)
     {
@@ -194,6 +194,39 @@ public class XFireServletController
         }
     }
 
+    protected MessageContext createMessageContext(
+                          HttpServletRequest request,
+                          HttpServletResponse response,
+                          String service)
+    {
+        XFireHttpSession session = new XFireHttpSession(request);
+        MessageContext context = new MessageContext();
+        context.setXFire(getXFire());
+        context.setSession(session);
+        context.setService(getService(service));
+        context.setProperty(HTTP_SERVLET_REQUEST, request);
+        context.setProperty(HTTP_SERVLET_RESPONSE, response);
+        
+        if (servletContext != null)
+            context.setProperty(HTTP_SERVLET_CONTEXT, servletContext);
+
+        return context;
+    }
+
+    protected Channel createChannel(MessageContext context) throws ServletException
+    {
+        HttpServletRequest request = (HttpServletRequest) context.getProperty(HTTP_SERVLET_REQUEST);
+        try
+        {
+            return transport.createChannel(request.getRequestURI());
+        }
+        catch (Exception e)
+        {
+            logger.debug("Couldn't open channel.", e);
+            throw new ServletException("Couldn't open channel.", e);
+        }
+    }
+
     /**
      * @param request
      * @param response
@@ -210,27 +243,8 @@ public class XFireServletController
         response.setStatus(200);
         response.setBufferSize(1024 * 8);
 
-        XFireHttpSession session = new XFireHttpSession(request);
-        MessageContext context = new MessageContext();
-        context.setXFire(getXFire());
-        context.setSession(session);
-        context.setService(getService(service));
-        context.setProperty(HTTP_SERVLET_REQUEST, request);
-        context.setProperty(HTTP_SERVLET_RESPONSE, response);
-        
-        if (servletContext != null)
-            context.setProperty(HTTP_SERVLET_CONTEXT, servletContext);
-        
-        Channel channel;
-        try
-        {
-            channel = transport.createChannel(request.getRequestURI());
-        }
-        catch (Exception e)
-        {
-            logger.debug("Couldn't open channel.", e);
-            throw new ServletException("Couldn't open channel.", e);
-        }
+        MessageContext context = createMessageContext(request, response, service);
+        Channel channel = createChannel(context);
         
         String soapAction = getSoapAction(request);
         String contentType = request.getContentType();
@@ -297,7 +311,7 @@ public class XFireServletController
         }
     }
 
-    private String dequote(String charEncoding)
+    protected String dequote(String charEncoding)
     {
         if(charEncoding != null && charEncoding.length()>  0 ){
           if( ( charEncoding.charAt(0)=='"' && charEncoding.charAt(charEncoding.length()-1) == '"') 
@@ -308,7 +322,7 @@ public class XFireServletController
         return charEncoding;
     }
 
-    private String getSoapAction(HttpServletRequest request)
+    protected String getSoapAction(HttpServletRequest request)
     {
         String action = request.getHeader(SoapConstants.SOAP_ACTION);
         
@@ -320,7 +334,7 @@ public class XFireServletController
         return action;
     }
 
-    private String getEncoding(String enc) throws ServletException
+    protected String getEncoding(String enc) throws ServletException
     {
         if (enc == null)
             return "UTF-8";
