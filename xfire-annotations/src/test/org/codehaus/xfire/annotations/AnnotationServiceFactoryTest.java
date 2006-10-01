@@ -17,6 +17,7 @@ import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.wsdl.ResourceWSDL;
@@ -149,7 +150,8 @@ public class AnnotationServiceFactoryTest
         implAnnotation.setServiceName("Echo");
         implAnnotation.setTargetNamespace("not used");
         implAnnotation.setEndpointInterface(EchoService.class.getName());
-
+        implAnnotation.setPortName("EchoPort");
+        
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
         webAnnotationsControl.setReturnValue(implAnnotation);
         webAnnotations.getWebServiceAnnotation(EchoServiceImpl.class);
@@ -208,6 +210,10 @@ public class AnnotationServiceFactoryTest
         assertEquals(new QName("http://xfire.codehaus.org/EchoService", "EchoPortType"), 
                      service.getPortType());
 
+        QName portName = (QName) endpoint.getProperty(ObjectServiceFactory.PORT_NAME);
+        assertNotNull(portName);
+        assertEquals("EchoPort", portName.getLocalPart());
+        
         webAnnotationsControl.verify();
     }
 

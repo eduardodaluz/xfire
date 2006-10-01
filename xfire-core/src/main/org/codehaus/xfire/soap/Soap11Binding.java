@@ -27,6 +27,7 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.Transport;
 import org.codehaus.xfire.wsdl11.WSDL11Transport;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
@@ -303,7 +304,15 @@ public class Soap11Binding extends AbstractSoapBinding
         
         Port port = builder.getDefinition().createPort();
         port.setBinding( wbinding );
-        port.setName( builder.getService().getSimpleName() + transport.getName() + "Port" );
+        QName portName = (QName) builder.getService().getProperty(ObjectServiceFactory.PORT_NAME);
+        if (portName != null)
+        {
+            port.setName(portName.getLocalPart());   
+        }
+        else
+        {
+            port.setName( builder.getService().getSimpleName() + transport.getName() + "Port" );
+        }
         port.addExtensibilityElement( add );
        
         return port;

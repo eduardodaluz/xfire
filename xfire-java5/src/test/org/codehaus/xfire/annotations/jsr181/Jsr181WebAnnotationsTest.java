@@ -6,11 +6,14 @@ package org.codehaus.xfire.annotations.jsr181;
 import java.lang.reflect.Method;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebParamAnnotation;
 import org.codehaus.xfire.annotations.WebResultAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
+import org.codehaus.xfire.service.Service;
+import org.jdom.Document;
 
 public class Jsr181WebAnnotationsTest
         extends AbstractXFireAegisTest
@@ -147,5 +150,17 @@ public class Jsr181WebAnnotationsTest
     {
         WebParamAnnotation webParam = webAnnotations.getWebParamAnnotation(dummyMethod, 0);
         assertNull(webParam);
+    }
+    
+    public void testWSDLGeneration() throws Exception
+    {
+        AnnotationServiceFactory sf = new AnnotationServiceFactory(getTransportManager());
+        
+        Service service = sf.create(Jsr181EchoService.class);
+        
+        getServiceRegistry().register(service);
+        
+        Document wsdl = getWSDLDocument(service.getSimpleName());
+        assertValid("//wsdl:port[@name='EchoPort']", wsdl);
     }
 }

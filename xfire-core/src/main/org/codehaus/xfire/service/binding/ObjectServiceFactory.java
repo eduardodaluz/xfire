@@ -631,13 +631,13 @@ public class ObjectServiceFactory
     {
         binding.setSoapAction(op, getAction(op));
         createMessageBinding(binding, op);
-
+        /*
         for (Iterator fitr = op.getFaults().iterator(); fitr.hasNext();)
         {
             FaultInfo fault = (FaultInfo) fitr.next();
             
             // we don't support fault headers yet...
-        }
+        }*/
     }
 
     private void createMessageBinding(AbstractSoapBinding binding, OperationInfo op)

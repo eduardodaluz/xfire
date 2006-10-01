@@ -231,7 +231,14 @@ public class AnnotationServiceFactory
             {
 	            properties.put(USE, use);
             }
-            
+            if (!properties.containsKey(PORT_NAME))
+            {
+                String pname = webServiceAnnotation.getPortName();
+                if (pname != null && pname.length() > 0)
+                {
+                    properties.put(PORT_NAME, new QName(namespace, pname));
+                }
+            }
             
             Map props = webAnnotations.getServiceProperties(clazz);
             if(props!= null){
@@ -361,8 +368,7 @@ public class AnnotationServiceFactory
 
         return portType;
     }
-
-
+    
     public Service create(Class clazz, QName name, URL wsdlUrl, Map properties)
     {
         if (properties == null)
