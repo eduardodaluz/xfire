@@ -905,6 +905,7 @@ public class ObjectServiceFactory
             try
             {
                 method = exClass.getMethod("getFaultInfo", new Class[0]);
+                beanClass = method.getReturnType();
             }
             catch (SecurityException e)
             {
@@ -912,9 +913,8 @@ public class ObjectServiceFactory
             }
             catch (NoSuchMethodException e)
             {
-                throw new XFireRuntimeException("Custom faults need a getFaultInfo method.", e);
+                beanClass = exClass;
             }
-            beanClass = method.getReturnType();
         }
         
         QName name = getFaultName(service, op, exClass, beanClass);
