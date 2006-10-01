@@ -30,7 +30,7 @@ public class WebFaultHandler
         }
         catch (NoSuchMethodException e)
         {
-            throw new XFireRuntimeException("Custom faults need a getFaultInfo method.", e);
+            return cause;
         }
         catch (Exception e)
         {

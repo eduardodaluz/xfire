@@ -7,6 +7,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
@@ -31,6 +32,11 @@ import org.codehaus.xfire.transport.TransportManager;
 public class JAXWSServiceFactory
     extends AnnotationServiceFactory
 {
+    public JAXWSServiceFactory()
+    {
+        this(XFireFactory.newInstance().getXFire().getTransportManager());
+    }
+    
     public JAXWSServiceFactory(TransportManager transportManager)
     {
         super(new Jsr181WebAnnotations(), 
