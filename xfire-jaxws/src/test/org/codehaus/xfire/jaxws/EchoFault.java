@@ -1,5 +1,8 @@
 package org.codehaus.xfire.jaxws;
 
+import javax.xml.ws.WebFault;
+
+@WebFault
 public class EchoFault
     extends Exception
 {
