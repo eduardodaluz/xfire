@@ -53,34 +53,40 @@ import org.jdom.Element;
 import org.xml.sax.SAXException;
 
 
-
 public class JaxbType
     extends Type
 {
 	public static final String SEARCH_PACKAGES = "jaxb.search.packages";
-    public static final String ENABLE_VALIDATION = "jaxb.enable.validation";
+    public static final String ENABLE_VALIDATION = "jaxb.validation.enabled";
+    public static final String ENABLE_RESPONSE_VALIDATION = "jaxb.validation.response.enabled";
+    public static final String ENABLE_REQUEST_VALIDATION = "jaxb.validation.request.enabled";
     public static final String VALIDATION_SCHEMA = "jaxb.validation.schema";
     public static final String GENERATED_VALIDATION_SCHEMA = "jaxb.generated.validation.schema";
+    
     private Class actualTypeClass;
-    
-    
     private static final QName XSI_TYPE = new QName(SoapConstants.XSI_NS, "type");
-    
-    SchemaFactory schemaFactory = null;
     private JAXBContext context;
     private Class< ? extends XmlAdapter> adapterClz;
 
     public JaxbType(Class clazz)
     {
+        this(clazz, null);
+    }
+    
+    public JaxbType(Class clazz, JAXBContext jaxbContext)
+    {
         setTypeClass(clazz);
 
         initType();
+        
+        this.context = jaxbContext;
     }
 
-     private void setupValidationSchema(Collection<String> schemaLocations,Unmarshaller u ) throws IOException, SAXException {
+     private Schema setupValidationSchema(Collection<String> schemaLocations) throws IOException, SAXException {
         
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         StreamSource[] schemaSources = new StreamSource[schemaLocations.size()];
+        Schema schema;
 
         try {
             int i = 0;
@@ -90,7 +96,7 @@ public class JaxbType
                 i++;
             }
             
-            u.setSchema(factory.newSchema(schemaSources));
+            schema = factory.newSchema(schemaSources);
         }
         /** make sure to close all ressources * */
         finally {
@@ -104,50 +110,39 @@ public class JaxbType
             }
         }
         
-
+        return schema;
     }
 
-    /**
-     * @param context
-     * @param u
-     */
     @SuppressWarnings("unchecked")
-    private void enableValidation(MessageContext context, Unmarshaller u, JAXBContext jc)
-    {
-        // chack if we have cached schema instance
-        Schema validationSchema = (Schema) context.getService()
+     private Schema getValidationSchema(MessageContext context, JAXBContext jc) {
+         // check if we have a cached schema instance
+         Schema schema = (Schema) context.getService()
                 .getProperty(GENERATED_VALIDATION_SCHEMA);
-        if (validationSchema != null)
-        {
-            u.setSchema(validationSchema);
-            return;
+         
+         if (schema != null) {
+        	 return schema;
         }
+         
         // Do we have schema dedicated to validation
         Collection<String> schemas = (Collection<String>) context
                 .getContextualProperty(VALIDATION_SCHEMA);
-        if (schemas == null)
-        {
+         
+         if (schemas == null) {
             // No, we don't, so use schema specifed on service
             schemas = (Collection<String>) context.getService()
                     .getProperty(ObjectServiceFactory.SCHEMAS);
         }
-        try
-        {
-            if (schemas != null)
-            {
-                // We have some schema loaded,so set them up on unmarshaler
-                setupValidationSchema(schemas, u);
-            }
-            else
-            {
-                final List<DOMResult> results = new ArrayList<DOMResult>();
 
-                jc.generateSchema(new SchemaOutputResolver()
-                {
+         try {
+        	 if (schemas != null) {
+        		 // We have some schema loaded, so set them up on unmarshaler
+        		 schema = setupValidationSchema(schemas);
+        	 } else {
+        		 final List<DOMResult> results = new ArrayList<DOMResult>();
 
+        		 jc.generateSchema(new SchemaOutputResolver() {
                     public Result createOutput(String ns, String file)
-                        throws IOException
-                    {
+        			 	throws IOException {
                         DOMResult result = new DOMResult();
                         result.setSystemId(file);
                         results.add(result);
@@ -159,22 +154,21 @@ public class JaxbType
                 source.setNode(results.get(0).getNode().getFirstChild());
                 SchemaFactory factory = SchemaFactory
                         .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                u.setSchema(factory.newSchema(source));
-            }
-            // Put generated schema on context
-            context.getService().setProperty(GENERATED_VALIDATION_SCHEMA, u.getSchema());
 
-        }
-        catch (IOException e)
-        {
+        		 schema = factory.newSchema(source);
+            }
+                 
+            // Put generated schema on context
+        	 context.getService().setProperty(GENERATED_VALIDATION_SCHEMA, schema);
+
+         } catch (IOException e) {
             // we have configuration problem, so break to application
             throw new XFireRuntimeException("Error creating validating schema.", e);
-        }
-        catch (SAXException e)
-        {
+         } catch (SAXException e) {
             throw new XFireRuntimeException("Error creating validating schema.", e);
         }
 
+         return schema;
     }
      
     @SuppressWarnings("unchecked")
@@ -190,10 +184,10 @@ public class JaxbType
             
             // check if validation is enabled
             boolean validationEnabled = Boolean.valueOf((String) context.getContextualProperty(ENABLE_VALIDATION));
-            if( validationEnabled){
-            	enableValidation(context, u,  jc);
+            boolean requestValidation = Boolean.valueOf((String) context.getContextualProperty(ENABLE_REQUEST_VALIDATION));
+            if (validationEnabled || requestValidation) {
+            	u.setSchema(getValidationSchema(context, jc));
             }
-            
             
             Object o;
             if (isAbstract() && reader.getAttributeReader(XSI_TYPE).getValue() == null)
@@ -227,6 +221,13 @@ public class JaxbType
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             m.setAttachmentMarshaller(new AttachmentMarshaller(context));
 
+            // check if validation is enabled
+            boolean validationEnabled = Boolean.valueOf((String) context.getContextualProperty(ENABLE_VALIDATION));
+            boolean responseValidation = Boolean.valueOf((String) context.getContextualProperty(ENABLE_RESPONSE_VALIDATION));
+            if (validationEnabled || responseValidation) {
+            	m.setSchema(getValidationSchema(context, jc));
+            }
+            
             if (isAbstract())
             {
                 MessagePartInfo part = (MessagePartInfo) 

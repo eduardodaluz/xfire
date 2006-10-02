@@ -4,6 +4,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -20,10 +21,17 @@ public class JaxbTypeCreator
 {
     private TypeCreator nextCreator;
     private TypeMapping typeMapping;
+	private JAXBContext jaxbContext;
     
     public JaxbTypeCreator(TypeCreator nextCreator)
     {
+        this(nextCreator, null);
+    }
+    
+    public JaxbTypeCreator(TypeCreator nextCreator, JAXBContext jaxbContext)
+    {
         this.nextCreator = nextCreator;   
+        this.jaxbContext = jaxbContext;
     }
         
     public QName getElementName(Method m, int index)
@@ -60,9 +68,7 @@ public class JaxbTypeCreator
 
     protected Type createJaxbType(Class clazz)
     {
-        JaxbType type = new JaxbType(clazz);
-        type.getSchemaType();
-        return type;
+        return new JaxbType(clazz, jaxbContext);
     }
 
     @SuppressWarnings("unchecked")
