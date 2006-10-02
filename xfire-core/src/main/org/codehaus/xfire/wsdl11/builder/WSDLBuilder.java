@@ -43,8 +43,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.output.DOMOutputter;
-import org.w3c.dom.Attr;
-import org.w3c.dom.NamedNodeMap;
 
 import com.ibm.wsdl.extensions.schema.SchemaImpl;
 
@@ -59,6 +57,8 @@ public class WSDLBuilder
 {
     public static final String OVERRIDING_TYPES = "overridingTypes";
 
+    private static final QName SCHEMA_QNAME = new QName(SoapConstants.XSD, "schema");
+    
     private PortType portType;
 
     private Map wsdlOps = new HashMap();
@@ -75,10 +75,14 @@ public class WSDLBuilder
     public WSDLBuilder(Service service, TransportManager transportManager) throws WSDLException
     {
         super(service);
-        
+
         setDefinition(WSDLFactory.newInstance().newDefinition());
         getDefinition().setTargetNamespace(getTargetNamespace());
         
+        getDefinition().getExtensionRegistry().registerSerializer(Types.class, 
+                                                                  SCHEMA_QNAME,
+                                                                  new SchemaSerializer());
+                                                    
         this.transportManager = transportManager;
     }
 
@@ -121,28 +125,11 @@ public class WSDLBuilder
                     {
                         Document inputDoc = new Document(child);
                         org.w3c.dom.Document doc = new DOMOutputter().output(inputDoc);
-                        org.w3c.dom.Element root = doc.getDocumentElement();
-                        
-                        NamedNodeMap attributes = root.getAttributes();
-                        for (int i = attributes.getLength() - 1; i >= 0; i--)
-                        {
-                            Attr a = (Attr) attributes.item(i);
-                            String nodeName = a.getNodeName();
-                            String name = a.getName();
-                            String prefix =  a.getPrefix();
-                            if (("xmlns".equals(nodeName) || 
-                                    nodeName.startsWith("xmlns:") || 
-                                    "xmlns".equals(prefix) || 
-                                    (name != null && name.startsWith("xmlns"))))
-                            {
-                                root.removeAttribute(nodeName);
-                            }
-                        }
                         
                         Schema uee = new SchemaImpl();
                         uee.setElement((org.w3c.dom.Element) doc.getDocumentElement());
                         uee.setRequired(Boolean.TRUE);
-                        uee.setElementType(new QName(SoapConstants.XSD, "schema"));
+                        uee.setElementType(SCHEMA_QNAME);
                         types.addExtensibilityElement(uee);
                     }
                 }
