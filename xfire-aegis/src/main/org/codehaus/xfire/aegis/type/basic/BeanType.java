@@ -154,8 +154,16 @@ public class BeanType
                 QName qn = getXsiType(childReader);
 
                 BeanType parent;
-                Type type;
-                if (qn == null)
+                Type type = null;
+                
+                // If an xsi:type has been specified, try to look it up
+                if (qn != null)
+                {
+                    type = getTypeMapping().getType(qn);
+                }
+
+                // If the xsi:type lookup didn't work or there was none, use the normal Type.
+                if (type == null)
                 {
                     parent = getBeanTypeWithProperty(name);
                     if (parent != null)
@@ -168,11 +176,7 @@ public class BeanType
                         type = null;
                     }
                 }
-                else
-                {
-                    type = getTypeMapping().getType(qn);
-                }
-
+                
                 if (type != null)
                 {
                     if (!childReader.isXsiNil())

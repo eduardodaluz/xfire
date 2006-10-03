@@ -82,6 +82,34 @@ public class BeanTest
         assertValid("/b:root/b:howdy[text()='howdy']", element);        
     }
     
+
+    public void testBeanWithXsiType()
+        throws Exception
+    {
+        BeanType type = new BeanType();
+        type.setTypeClass(SimpleBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:Bean", "bean"));
+
+        // Test reading
+        ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean9.xml"));
+        
+        SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
+        assertEquals("bleh", bean.getBleh());
+        assertEquals("howdy", bean.getHowdy());
+        
+        reader.getXMLStreamReader().close();
+        
+        // Test writing
+        Element element = new Element("root", "b", "urn:Bean");
+        Document doc = new Document(element);
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
+
+        assertValid("/b:root/b:bleh[text()='bleh']", element);
+        assertValid("/b:root/b:howdy[text()='howdy']", element);        
+    }
+    
+    
     public void testUnmappedProperty()
         throws Exception
     {
