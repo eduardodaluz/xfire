@@ -89,6 +89,7 @@ public class WSS4JInHandler
             }
             if (action == null)
             {
+                log.error("WSS4JInHandler: No action defined");
                 throw new XFireRuntimeException("WSS4JInHandler: No action defined");
             }
 
@@ -99,8 +100,10 @@ public class WSS4JInHandler
             AbstractMessage sm = msgContext.getCurrentMessage();
             Document doc = (Document) sm.getProperty(DOMInHandler.DOM_MESSAGE);
 
-            if (doc == null)
+            if (doc == null){
+                log.error("DOMInHandler must be enabled for WS-Security!");
                 throw new XFireRuntimeException("DOMInHandler must be enabled for WS-Security!");
+            }
 
             /*
              * Check if it's a response and if its a fault. Don't process
@@ -156,6 +159,7 @@ public class WSS4JInHandler
                 }
                 else
                 {
+                    log.error("WSS4JInHandler: Request does not contain required Security header");
                     throw new XFireFault(
                             "WSS4JInHandler: Request does not contain required Security header",
                             XFireFault.SENDER);
@@ -189,6 +193,7 @@ public class WSS4JInHandler
                 {
                     if (!verifyTrust(returnCert, reqData))
                     {
+                        log.error("WSS4JInHandler: The certificate used for the signature is not trusted");
                         throw new XFireFault(
                                 "WSS4JInHandler: The certificate used for the signature is not trusted",
                                 XFireFault.SENDER);
@@ -217,6 +222,7 @@ public class WSS4JInHandler
                 {
                     if (!verifyTimestamp(timestamp, decodeTimeToLive(reqData)))
                     {
+                        log.error("WSS4JInHandler: The timestamp could not be validated");
                         throw new XFireFault(
                                 "WSS4JInHandler: The timestamp could not be validated",
                                 XFireFault.SENDER);
@@ -229,6 +235,7 @@ public class WSS4JInHandler
              */
             if (!checkReceiverResults(wsResult, actions))
             {
+                log.error("WSS4JInHandler: security processing failed (actions mismatch)");
                 throw new XFireFault(
                         "WSS4JInHandler: security processing failed (actions mismatch)",
                         XFireFault.SENDER);
@@ -261,7 +268,7 @@ public class WSS4JInHandler
         }
         catch (WSSecurityException e)
         {
-
+            log.error(e);
         }
         finally
         {
