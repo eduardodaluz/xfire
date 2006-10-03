@@ -171,6 +171,9 @@ public class LocalChannel
 
                 channel.receive( receivingContext, inMessage );
 
+                // Finish reading the stream so we don't cause problems with the write thread.
+                while (reader.hasNext()) reader.next();
+                
                 reader.close();
                 stream.close();
             }
