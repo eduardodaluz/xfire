@@ -27,29 +27,3 @@
         <check-dep module="xfire-spring"/>
     </target>
 </project>
-﻿<?xml version="1.0" encoding="UTF-8"?>
-
-<project default="jar" name="xfire-jms" basedir=".">
-    <import file="../build-common.xml"/>
-
-    <path id="module.classpath">
-        <fileset dir="..">
-            <include name="xfire-core/target/*.jar"/>
-            <include name="xfire-annotations/target/*.jar"/>
-            <include name="xfire-aegis/target/*.jar"/>
-            <include name="xfire-spring/target/*.jar"/>
-        </fileset>
-    </path>
-
-    <target name="get-deps" depends="xfire.get-deps">
-        <get-dep artifact="activemq-core" group="activemq" version="3.2.1"/>
-        <get-dep artifact="geronimo-spec-jms" group="geronimo-spec" version="1.1-rc4"/>
-    </target>
-
-    <target name="init" depends="xfire.init">
-        <check-dep module="xfire-core"/>
-        <check-dep module="xfire-aegis"/>
-        <check-dep module="xfire-annotations"/>
-        <check-dep module="xfire-spring"/>
-    </target>
-</project>
