@@ -251,11 +251,11 @@ public class JaxbType
         }
         catch (JAXBException e)
         {
-            throw new XFireFault("Could not unmarshall type.", e, XFireFault.RECEIVER);
+            throw new XFireFault("Could not marshall type.", e, XFireFault.RECEIVER);
         }
         catch (XMLStreamException e)
         {
-            throw new XFireFault("Could not unmarshall type.", e, XFireFault.RECEIVER);
+            throw new XFireFault("Could not marshall type.", e, XFireFault.RECEIVER);
         }
     }
 
