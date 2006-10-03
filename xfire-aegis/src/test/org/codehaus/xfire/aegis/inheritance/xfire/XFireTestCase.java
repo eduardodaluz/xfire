@@ -1,7 +1,10 @@
 package org.codehaus.xfire.aegis.inheritance.xfire;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.codehaus.xfire.aegis.inheritance.ws1.BeanA;
 import org.codehaus.xfire.aegis.inheritance.ws1.BeanB;
 import org.codehaus.xfire.aegis.inheritance.ws1.WS1;
 import org.codehaus.xfire.aegis.inheritance.ws1.impl.WS1Impl;
@@ -115,6 +118,21 @@ public class XFireTestCase
         assertEquals(m_localWS1.getResultBean(), m_remoteWS1.getResultBean());
     }
 
+    public void testMapInheritance()
+    {
+        BeanA beanA = new BeanA();
+        BeanB beanB = new BeanB();
+        
+        Map m = new HashMap();
+        m.put(beanA, beanB);
+        
+        Map response = m_remoteWS1.echoMap(m);
+        assertEquals(1, response.size());
+        
+        Object objB = response.get(beanA);
+        assertEquals(objB, beanB);
+    }
+    
     public void testInheritedException()
     {
         Throwable localThrowable;

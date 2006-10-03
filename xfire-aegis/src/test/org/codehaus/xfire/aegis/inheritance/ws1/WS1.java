@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis.inheritance.ws1;
 
+import java.util.Map;
+
 /**
  * <br/>
  * 
@@ -21,6 +23,8 @@ public interface WS1
 
     public ResultBean getResultBean();
 
+    public Map echoMap(Map beans);
+    
     public void throwException(boolean extendedOne)
         throws WS1Exception;
 }

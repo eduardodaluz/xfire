@@ -12,6 +12,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
@@ -159,23 +160,32 @@ public class MapType
             {
                 Map.Entry entry = (Map.Entry) itr.next();
                 
-                MessageWriter entryWriter = writer.getElementWriter(getEntryName());
-
-                MessageWriter keyWriter = entryWriter.getElementWriter(getKeyName());
-                keyType.writeObject(entry.getKey(), keyWriter, context);
-                keyWriter.close();
-                
-                MessageWriter valueWriter = entryWriter.getElementWriter(getValueName());
-                valueType.writeObject(entry.getValue(), valueWriter, context);
-                valueWriter.close();
-                
-                entryWriter.close();
+                writeEntry(writer, context, keyType, valueType, entry);
             }
         }
         catch (IllegalArgumentException e)
         {
             throw new XFireRuntimeException("Illegal argument.", e);
         }
+    }
+
+    private void writeEntry(MessageWriter writer, MessageContext context, Type keyType, Type valueType, Map.Entry entry)
+        throws XFireFault
+    {
+        keyType = AegisBindingProvider.getWriteType(context, entry.getKey(), keyType);
+        valueType = AegisBindingProvider.getWriteType(context, entry.getValue(), valueType);
+        
+        MessageWriter entryWriter = writer.getElementWriter(getEntryName());
+
+        MessageWriter keyWriter = entryWriter.getElementWriter(getKeyName());
+        keyType.writeObject(entry.getKey(), keyWriter, context);
+        keyWriter.close();
+        
+        MessageWriter valueWriter = entryWriter.getElementWriter(getValueName());
+        valueType.writeObject(entry.getValue(), valueWriter, context);
+        valueWriter.close();
+        
+        entryWriter.close();
     }    
 
     public void writeSchema(Element root)

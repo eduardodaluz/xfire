@@ -1,5 +1,7 @@
 package org.codehaus.xfire.aegis.inheritance.ws1.impl;
 
+import java.util.Map;
+
 import org.codehaus.xfire.aegis.inheritance.ws1.BeanA;
 import org.codehaus.xfire.aegis.inheritance.ws1.BeanB;
 import org.codehaus.xfire.aegis.inheritance.ws1.BeanC;
@@ -103,6 +105,11 @@ public class WS1Impl
         resultBean.setResult2(listRootBeans());
 
         return resultBean;
+    }
+
+    public Map echoMap(Map beans)
+    {
+        return beans;
     }
 
     public void throwException(boolean extendedOne)
