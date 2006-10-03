@@ -47,7 +47,11 @@ public abstract class AbstractWSS4JHandler extends WSHandler implements Handler
 
     public Object getProperty(Object msgContext, String key)
     {
-        return ((MessageContext) msgContext).getContextualProperty(key);
+        Object obj =((MessageContext) msgContext).getContextualProperty(key);
+        if( obj == null ){
+            obj = getOption(key);
+        }
+        return obj; 
     }
 
     public void setPassword(Object msgContext, String password)
