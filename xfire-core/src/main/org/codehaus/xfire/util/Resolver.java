@@ -62,10 +62,9 @@ public class Resolver
             URI relative;
             File uriFile = new File(uriStr);
             uriFile = new File(uriFile.getAbsolutePath());
+
             if (uriFile.exists())
-            {
                 relative = uriFile.toURI();
-            }
             else
                 relative = new URI(uriStr);
 
@@ -78,6 +77,12 @@ public class Resolver
             {
                 URI base;
                 File baseFile = new File(baseUriStr);
+                
+                if (!baseFile.exists() && baseUriStr.startsWith("file:/"))
+                {
+                    baseFile = new File(baseUriStr.substring(6));
+                }
+                
                 if (baseFile.exists())
                     base = baseFile.toURI();
                 else
