@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2.2</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jaxb2</artifactId>
   <name>XFire Jaxb 2.0 Support</name>
-  <version>1.2.2</version>
+  <version>1.2-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
