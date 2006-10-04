@@ -55,6 +55,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     private static final String GZIP_CONTENT_ENCODING = "gzip";
 
     public static final String DISABLE_KEEP_ALIVE = "disable-keep-alive";
+    public static final String DISABLE_EXPECT_CONTINUE = "disable.expect-continue";
     public static final String HTTP_CLIENT_PARAMS = "httpClient.params";
     public static final String USER_AGENT =  
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
@@ -116,11 +117,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                         
             } else {
                 
-                state.setCredentials(
-                        AuthScope.ANY, 
-                        new UsernamePasswordCredentials(
-                                username, 
-                                password));
+                state.setCredentials( AuthScope.ANY, new UsernamePasswordCredentials(username,password));
                 
             }
             
@@ -183,7 +180,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 params = client.getParams();
                 
                 client.getParams().setParameter("http.useragent", USER_AGENT);
-                client.getParams().setBooleanParameter("http.protocol.expect-continue", true);
+                boolean disableEC = Boolean.valueOf((String)context.getContextualProperty(DISABLE_EXPECT_CONTINUE)).booleanValue();
+                client.getParams().setBooleanParameter("http.protocol.expect-continue", !disableEC);
                 client.getParams().setVersion(HttpVersion.HTTP_1_1);
             }
             else
