@@ -253,7 +253,7 @@ public abstract class AbstractBinding
             {
                 String prefix = writer.getPrefix(ns);
                 boolean declare = false;
-                if (prefix == null)
+                if (prefix == null || "".equals(prefix) )
                 {
                     prefix = "";
                     declare = true;
