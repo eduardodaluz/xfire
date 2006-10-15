@@ -63,6 +63,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
     public static final String HTTP_STATE = "httpClient.httpstate";
     public static final String HTTP_CLIENT = "httpClient";
+    public static final String HTTP_TIMEOUT = "http.timeout";
     
     /** Enable GZIP on request and response. */
     public static final String GZIP_ENABLED = "gzip.enabled";
@@ -183,6 +184,10 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 boolean disableEC = Boolean.valueOf((String)context.getContextualProperty(DISABLE_EXPECT_CONTINUE)).booleanValue();
                 client.getParams().setBooleanParameter("http.protocol.expect-continue", !disableEC);
                 client.getParams().setVersion(HttpVersion.HTTP_1_1);
+                String timeoutStr = (String) context.getContextualProperty(HTTP_TIMEOUT);
+                if( timeoutStr != null){
+                  client.getParams().setSoTimeout(Integer.parseInt(timeoutStr));
+                }
             }
             else
             {
