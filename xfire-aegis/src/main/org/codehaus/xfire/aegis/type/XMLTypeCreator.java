@@ -88,6 +88,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         String path = '/' + clazz.getName().replace('.', '/') + ".aegis.xml";
         InputStream is = clazz.getResourceAsStream(path);
         if(is == null) return null;
+        log.debug("Found mapping file : "+ path);
         try
         {
             doc = new StaxBuilder().build(is);
