@@ -18,6 +18,7 @@ import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
+import org.codehaus.xfire.aegis.type.TypeCreator;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
@@ -63,6 +64,11 @@ public class AegisBindingProvider
         this(new DefaultTypeMappingRegistry(true));
     }
 
+    public AegisBindingProvider(TypeCreator creator)
+    {
+        this(new DefaultTypeMappingRegistry(creator, true));
+    }
+    
     public AegisBindingProvider(TypeMappingRegistry registry)
     {
         this.registry = registry;

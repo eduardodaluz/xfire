@@ -51,6 +51,9 @@ public class InterfaceInheritanceTest
         
         Document wsdl = getWSDLDocument("IInterfaceService");
         assertValid("//xsd:complexType[@name='IGrandChild']", wsdl);
+        assertValid("//xsd:complexType[@name='IGrandChild']//xsd:element[@name='grandChildName']", wsdl);
+        assertValid("//xsd:complexType[@name='IGrandChild']//xsd:element[@name='childName'][1]", wsdl);
+        assertInvalid("//xsd:complexType[@name='IGrandChild']//xsd:element[@name='childName'][2]", wsdl);
         assertValid("//xsd:complexType[@name='IChild']", wsdl);
         assertValid("//xsd:complexType[@name='IParent']", wsdl);
         assertInvalid("//xsd:complexType[@name='IChild'][@abstract='true']", wsdl);

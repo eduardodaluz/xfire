@@ -358,26 +358,37 @@ public class BeanTypeInfo
             BeanInfo info = Introspector.getBeanInfo(clazz);
             for (int j = 0; j < info.getPropertyDescriptors().length; j++)
             {
-                pds.add(info.getPropertyDescriptors()[j]);
+                PropertyDescriptor pd = info.getPropertyDescriptors()[j];
+                if (!containsPropertyName(pds, pd.getName()))
+                {
+                    pds.add(pd);
+                }
             }
+            
             /**
              * add extended interface information
              */
             for (int i = 0; i < interfaces.length; i++)
             {
-                BeanInfo superInfo = Introspector.getBeanInfo(interfaces[i]);
-
-                for (int j = 0; j < superInfo.getPropertyDescriptors().length; j++)
-                {
-                    pds.add(superInfo.getPropertyDescriptors()[j]);
-                }
-             
                 getInterfacePropertyDescriptors(interfaces[i], pds, classes);
             }
         }
         catch (IntrospectionException e)
         {
         }
+    }
+
+    private boolean containsPropertyName(List pds, String name)
+    {
+        for (Iterator itr = pds.iterator(); itr.hasNext();) 
+        {
+            PropertyDescriptor pd = (PropertyDescriptor) itr.next();
+            if (pd.getName().equals(name))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public PropertyDescriptor getPropertyDescriptorFromMappedName(QName name)
