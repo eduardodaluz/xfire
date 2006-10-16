@@ -112,8 +112,12 @@ public class WSDLBuilder
             
             try
             {
-                Types types = getDefinition().createTypes();
-                getDefinition().setTypes(types);
+                Types types = getDefinition().getTypes();
+                if (types == null)
+                {
+                    types = getDefinition().createTypes();
+                    getDefinition().setTypes(types);
+                }
                 
                 List children = schemaTypes.getChildren();
                 while (children.size() > 0)
