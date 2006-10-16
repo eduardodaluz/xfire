@@ -1,13 +1,15 @@
 package org.codehaus.xfire.annotations;
 
+import java.io.Serializable;
+
 /**
  * Represents an common representation of a web service annotation. Specifies that the given method is exposed as a Web
- * Service operation, making it part of the Web ServiceÕs public contract. A WebMethod annotation is required for each
+ * Service operation, making it part of the Web Serviceï¿½s public contract. A WebMethod annotation is required for each
  * method that is published by the Web Service.
  *
  * @author Arjen Poutsma
  */
-public class WebServiceAnnotation
+public class WebServiceAnnotation implements Serializable
 {
     private String endpointInterface = "";
     private String name = "";
@@ -15,7 +17,7 @@ public class WebServiceAnnotation
     private String targetNamespace = "";
     private String portName = "";
     private String wsdlLocation;
-    
+
     /**
      * The location of the WSDL for the service.
      * @return
@@ -63,7 +65,7 @@ public class WebServiceAnnotation
     }
 
     /**
-     * Returns the complete name of the service endpoint interface defining the serviceÕs abstract Web Service
+     * Returns the complete name of the service endpoint interface defining the serviceï¿½s abstract Web Service
      * contract.
      *
      * @return the name of the service endpoint interface.
@@ -74,7 +76,7 @@ public class WebServiceAnnotation
     }
 
     /**
-     * Sets the complete name of the service endpoint interface defining the serviceÕs abstract Web Service contract.
+     * Sets the complete name of the service endpoint interface defining the serviceï¿½s abstract Web Service contract.
      *
      * @param endpointInterface the new name of the service endpoint interface.
      */
@@ -85,7 +87,7 @@ public class WebServiceAnnotation
 
     /**
      * Returns the service name of the Web Service. Used as the name of the wsdl:service when mapped to WSDL 1.1.  Not
-     * allowed on interfaces. Defaults to the simple name of the Java class + ÒService".
+     * allowed on interfaces. Defaults to the simple name of the Java class + ï¿½Service".
      *
      * @return the service name of the Web Service.
      */
@@ -96,7 +98,7 @@ public class WebServiceAnnotation
 
     /**
      * Sets the service name of the Web Service. Used as the name of the wsdl:service when mapped to WSDL 1.1.  Not
-     * allowed on interfaces. Defaults to the simple name of the Java class + ÒService".
+     * allowed on interfaces. Defaults to the simple name of the Java class + ï¿½Service".
      *
      * @param serviceName the new service name of the Web Service.
      */

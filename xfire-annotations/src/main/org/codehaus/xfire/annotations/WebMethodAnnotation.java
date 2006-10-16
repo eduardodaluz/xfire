@@ -1,15 +1,17 @@
 package org.codehaus.xfire.annotations;
 
+import java.io.Serializable;
+
 import org.codehaus.xfire.service.OperationInfo;
 
 /**
  * Represents an common representation of a web method annotation. Specifies that the given method is exposed as a Web
- * Service operation, making it part of the Web ServiceÕs public contract. A WebMethod annotation is required for each
+ * Service operation, making it part of the Web Serviceï¿½s public contract. A WebMethod annotation is required for each
  * method that is published by the Web Service.
  *
  * @author Arjen Poutsma
  */
-public class WebMethodAnnotation
+public class WebMethodAnnotation implements Serializable
 {
     private String action = "";
     private String operationName = "";

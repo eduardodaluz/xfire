@@ -1,5 +1,7 @@
 package org.codehaus.xfire.annotations.soap;
 
+import java.io.Serializable;
+
 import org.codehaus.xfire.soap.SoapConstants;
 
 /**
@@ -8,7 +10,7 @@ import org.codehaus.xfire.soap.SoapConstants;
  *
  * @author Arjen Poutsma
  */
-public class SOAPBindingAnnotation
+public class SOAPBindingAnnotation implements Serializable
 {
     private int style = STYLE_DOCUMENT;
     private int use = USE_LITERAL;

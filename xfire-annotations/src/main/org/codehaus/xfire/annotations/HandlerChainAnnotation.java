@@ -1,5 +1,7 @@
 package org.codehaus.xfire.annotations;
 
+import java.io.Serializable;
+
 /**
  * Represents a common representation of a handler chain annotation. Associates the Web Service with an externally
  * defined handler chain. This annotation is typically used in scenarios where embedding the handler configuration
@@ -10,7 +12,7 @@ package org.codehaus.xfire.annotations;
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class HandlerChainAnnotation
+public class HandlerChainAnnotation implements Serializable
 {
     private String file;
     private String name;

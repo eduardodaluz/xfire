@@ -1,11 +1,13 @@
 package org.codehaus.xfire.annotations.soap;
 
+import java.io.Serializable;
+
 /**
  * Represents a common implementation of the SOAP message handler. Specifies a single SOAP message handler.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class SOAPMessageHandler
+public class SOAPMessageHandler implements Serializable
 {
     private String className;
     private String name;

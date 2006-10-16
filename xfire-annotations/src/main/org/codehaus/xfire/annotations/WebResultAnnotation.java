@@ -1,5 +1,6 @@
 package org.codehaus.xfire.annotations;
 
+import java.io.Serializable;
 
 /**
  * Represents an common representation of a web result annotation. Customizes the mapping of the return value to a WSDL
@@ -7,13 +8,13 @@ package org.codehaus.xfire.annotations;
  *
  * @author Arjen Poutsma
  */
-public class WebResultAnnotation
+public class WebResultAnnotation implements Serializable
 {
     private String name = "return";
     private String partName = "return";
     private String targetNamespace = "";
     private boolean header;
-    
+
     public String getPartName()
     {
         return partName;

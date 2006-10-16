@@ -1,5 +1,7 @@
 package org.codehaus.xfire.annotations.soap;
 
+import java.io.Serializable;
+
 /**
  * Represents a common implementation of the SOAP message handlers annotation. Specifies a list of {@link
  * SOAPMessageHandler SOAP protocol handlers} that run before and after business methods on the Web Service. These
@@ -9,7 +11,7 @@ package org.codehaus.xfire.annotations.soap;
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class SOAPMessageHandlersAnnotation
+public class SOAPMessageHandlersAnnotation implements Serializable
 {
     private SOAPMessageHandler[] value;
 

@@ -1,5 +1,6 @@
 package org.codehaus.xfire.annotations;
 
+import java.io.Serializable;
 
 /**
  * Represents a common representation of a web parameter annotation. Customizes the mapping of an individual parameter
@@ -7,14 +8,14 @@ package org.codehaus.xfire.annotations;
  *
  * @author Arjen Poutsma
  */
-public class WebParamAnnotation
+public class WebParamAnnotation implements Serializable
 {
     private String name = "";
     private String targetNamespace = "";
     private String partName = "";
     private boolean header = false;
     private int mode = MODE_IN;
-    
+
     /**
      * Constant used to specify that a parameter flows inwards. This is the default mode.
      */

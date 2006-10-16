@@ -1,11 +1,13 @@
 package org.codehaus.xfire.annotations.soap;
 
+import java.io.Serializable;
+
 /**
  * Represents a common implementation of the {@link SOAPMessageHandler} initialization parameter.
  *
  * @author <a href="mailto:poutsma@mac.com">Arjen Poutsma</a>
  */
-public class InitParam
+public class InitParam implements Serializable
 {
     private String name;
     private String value;
