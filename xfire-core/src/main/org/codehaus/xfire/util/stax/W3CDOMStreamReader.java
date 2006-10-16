@@ -277,7 +277,7 @@ public class W3CDOMStreamReader
 
     public String getText()
     {
-        return DOMUtils.getContent(getCurrentElement());
+        return DOMUtils.getRawContent(getCurrentElement());
     }
 
     public char[] getTextCharacters()
