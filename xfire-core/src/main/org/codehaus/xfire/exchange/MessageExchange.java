@@ -81,7 +81,7 @@ public class MessageExchange
     public AbstractMessage getFaultMessage()
         throws UnsupportedOperationException
     {
-        if (faultMessage == null)
+        if (faultMessage == null && hasFaultMessage())
         {
             faultMessage = new OutMessage(Channel.BACKCHANNEL_URI);
             faultMessage.setChannel(getFaultChannel());
@@ -91,6 +91,7 @@ public class MessageExchange
         }
         return faultMessage;
     }
+    
 
     public void setFaultMessage(AbstractMessage faultMessage)
     {
@@ -174,4 +175,21 @@ public class MessageExchange
             return null;
         }
     }
+
+    public void setHasFault(boolean hasFault)
+    {
+        this.hasFault = hasFault;
+    }
+
+    public void setHasInput(boolean hasInput)
+    {
+        this.hasInput = hasInput;
+    }
+
+    public void setHasOutput(boolean hasOutput)
+    {
+        this.hasOutput = hasOutput;
+    }
+    
+    
 }
