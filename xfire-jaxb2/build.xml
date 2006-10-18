@@ -8,9 +8,9 @@
     <import file="../build-common.xml"/>
 
     <target name="get-deps" depends="xfire.get-deps">
-        <get-dep artifact="jaxb-api" version="2.0-ea3" group="xfire" repository="http://dist.codehaus.org/"/>
-        <get-dep artifact="jaxb-impl" version="2.0-ea3" group="xfire" repository="http://dist.codehaus.org/"/>
-        <get-dep artifact="jaxb-xjc" version="2.0-ea3" group="xfire" repository="http://dist.codehaus.org/"/>
+        <get-dep artifact="jaxb-xjc" version="2.0.1" group="com.sun.xml.bind"/>
+        <get-dep artifact="jaxb-impl" version="2.0.1" group="com.sun.xml.bind"/>
+        <get-dep artifact="jaxb-api" version="2.0" group="javax.xml"/>
     </target>
     
     <path id="module.classpath">
