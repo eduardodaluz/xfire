@@ -89,6 +89,7 @@
         <include name="**/*.properties" />
         <include name="**/*.xml" />
         <include name="**/*.vm"/>
+          <include name="**/*.Provider"/>
       </fileset>
     </copy>
   </target>
@@ -188,15 +189,15 @@
     <mkdir dir="${master.libdir}" />
     <mkdir dir="${libdir}" />
     <get-dep artifact="geronimo-spec-activation" group="geronimo-spec" version="1.0.2-rc4" dir="${master.libdir}"/>
-  	<get-dep artifact="wstx-asl" group="woodstox" version="2.9" dir="${master.libdir}"/>
-  	<get-dep artifact="stax" version="1.1.2-dev" dir="${master.libdir}"/>
-    <get-dep artifact="stax-api" group="stax" version="1.0" dir="${master.libdir}"/>
+  	<get-dep artifact="wstx-asl" group="woodstox" version="3.0.1" dir="${master.libdir}"/>
+    <get-dep artifact="stax" version="1.2.0" dir="${master.libdir}"/>
+    <get-dep artifact="stax-api" group="stax" version="1.0.1" dir="${master.libdir}"/>
     <get-dep artifact="jdom" version="1.0" dir="${master.libdir}"/>
     <get-dep artifact="wsdl4j" version="1.5.2" dir="${master.libdir}"/>
     <get-dep artifact="commons-logging" version="1.0.4" dir="${master.libdir}"/>
     <get-dep artifact="servletapi" version="2.3" dir="${master.libdir}"/>
     <get-dep artifact="httpunit" version="1.6.1" dir="${master.libdir}"/>
-    <get-dep artifact="jaxen" version="1.1-beta-8" dir="${master.libdir}"/>
+    <get-dep artifact="jaxen" version="1.1-beta-9" dir="${master.libdir}"/>
     <get-dep artifact="easymock" version="1.1" dir="${master.libdir}"/>
     <get-dep artifact="xmlunit" version="1.0" dir="${master.libdir}"/>
   </target>
