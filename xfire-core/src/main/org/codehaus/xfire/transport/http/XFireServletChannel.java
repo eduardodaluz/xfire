@@ -75,6 +75,8 @@ public class XFireServletChannel extends HttpChannel
                 
                 out = new BufferedOutputStream(response.getOutputStream());
                 atts.write(out);
+                
+                source.dispose();
             }
             else
             {
@@ -85,7 +87,7 @@ public class XFireServletChannel extends HttpChannel
                 HttpChannel.writeWithoutAttachments(context, message, out);
             }
             
-            out.flush();
+            out.close();
         }
         catch (IOException e)
         {

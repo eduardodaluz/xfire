@@ -75,6 +75,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public static final String GZIP_REQUEST_ENABLED = "gzip.request.enabled";
 
     private InputStream msgIs;
+
+    private OutMessageDataSource source;
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -142,7 +144,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 message.setAttachments(atts);
             }
             
-            OutMessageDataSource source = new OutMessageDataSource(context, message);
+            source = new OutMessageDataSource(context, message);
             DataHandler soapHandler = new DataHandler(source);
             atts.setSoapContentType(HttpChannel.getSoapMimeType(message, false));
             atts.setSoapMessage(new SimpleAttachment(source.getName(), soapHandler));
@@ -185,8 +187,9 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 client.getParams().setBooleanParameter("http.protocol.expect-continue", !disableEC);
                 client.getParams().setVersion(HttpVersion.HTTP_1_1);
                 String timeoutStr = (String) context.getContextualProperty(HTTP_TIMEOUT);
-                if( timeoutStr != null){
-                  client.getParams().setSoTimeout(Integer.parseInt(timeoutStr));
+                if (timeoutStr != null)
+                {
+                    client.getParams().setSoTimeout(Integer.parseInt(timeoutStr));
                 }
             }
             else
@@ -358,6 +361,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         throws XFireException
     {
         if (msgIs != null)
+        {
             try
             {
                 msgIs.close();
@@ -366,6 +370,12 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             {
                 throw new XFireException("Could not close connection.", e);
             }
+        }
+        
+        if (source != null)
+        {
+            source.dispose();
+        }
         
         if (postMethod != null)
             postMethod.releaseConnection();

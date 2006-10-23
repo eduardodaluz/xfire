@@ -26,6 +26,7 @@ public class OutMessageDataSource implements DataSource
     private OutMessage msg;
     private MessageContext context;
     private InputStream is;
+    private CachedOutputStream out;
     
     public OutMessageDataSource(MessageContext context2, OutMessage message) 
         throws XFireException
@@ -83,7 +84,7 @@ public class OutMessageDataSource implements DataSource
         try
         {
            // TODO: its really not necessary to cache this...
-           CachedOutputStream out = new CachedOutputStream(1024*1000, null);
+           out = new CachedOutputStream(1024*1000, null);
 
            XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, msg.getEncoding(), context);
 
@@ -91,6 +92,8 @@ public class OutMessageDataSource implements DataSource
            msg.getSerializer().writeMessage(msg, writer, context);
            
            writer.flush();
+           writer.close();
+           out.close();
            
            return out.getInputStream();
         }
@@ -115,5 +118,9 @@ public class OutMessageDataSource implements DataSource
         // TODO Auto-generated method stub
         return null;
     }
-
+    
+    public void dispose() 
+    {
+        out.dispose();
+    }
 }
