@@ -247,4 +247,9 @@ public class JDOMStreamWriter
     {
         return properties.get(prop);
     }
+    
+    public Document getDocument()
+    {
+        return document; 
+    }
 }
