@@ -12,8 +12,6 @@ import org.codehaus.xfire.service.OperationInfo;
 public class AddressingOutHandler
     extends AbstractHandler
 {
-    private static RandomGUID guidGenerator = new RandomGUID(false);
-
     private final static Log logger = LogFactory.getLog(AddressingOutHandler.class);
     
     public AddressingOutHandler()
@@ -73,7 +71,7 @@ public class AddressingOutHandler
         headers.setReplyTo(aoi.getReplyTo());
         headers.setFaultTo(aoi.getFaultTo());
         headers.setFrom(aoi.getFrom());
-        headers.setMessageID("urn:uuid:" + guidGenerator.toString());
+        headers.setMessageID("urn:uuid:" + new RandomGUID(false).toString());
         context.setId(headers.getMessageID());
         
         OutMessage msg = (OutMessage) context.getCurrentMessage();
