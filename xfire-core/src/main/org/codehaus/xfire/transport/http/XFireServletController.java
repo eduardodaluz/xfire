@@ -263,7 +263,7 @@ public class XFireServletController
         	String ct = request.getContentType().replaceAll("--=_part_","--=_Part_");
         	
         	
-            Attachments atts = new StreamedAttachments(request.getInputStream(), ct);
+            Attachments atts = new StreamedAttachments(context,request.getInputStream(), ct);
           
             String encoding = getEncoding(atts.getSoapContentType());
 

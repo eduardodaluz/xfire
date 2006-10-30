@@ -165,7 +165,7 @@ public class StreamedAttachments implements Attachments
             InternetHeaders headers = new InternetHeaders(stream);
             
             MimeBodyPartInputStream partStream = new MimeBodyPartInputStream(stream, boundary.getBytes());
-            final CachedOutputStream cos = new CachedOutputStream(threshold, tempDirectory);
+            final CachedOutputStream cos = new CachedOutputStream(getThreshold(), getTempDirectory());
             
             copy(partStream, cos);
 
@@ -241,7 +241,16 @@ public class StreamedAttachments implements Attachments
         File td = null;
         
         if (context != null)
-            td = (File) context.getContextualProperty(ATTACHMENT_DIRECTORY);
+        {
+            Object value = context.getContextualProperty(ATTACHMENT_DIRECTORY);
+            if( value instanceof File )
+            {
+                td = (File)value;    
+            }else{
+                td = new File((String)value);
+            }
+             
+        }
         
         if (td == null)
             td = tempDirectory;
@@ -263,8 +272,18 @@ public class StreamedAttachments implements Attachments
     {
         if (context != null)
         {
-            Integer t = (Integer) context.getContextualProperty(ATTACHMENT_MEMORY_THRESHOLD);
-            if (t != null) return t.intValue();
+            Object tObj = context.getContextualProperty(ATTACHMENT_MEMORY_THRESHOLD);
+             
+            if (tObj != null){
+                if( tObj instanceof Integer ){
+                    Integer t = (Integer)tObj;
+                    return t.intValue();
+                }
+                return Integer.valueOf(tObj.toString()).intValue();
+                
+                
+                
+            }
         }
         
         return threshold;
