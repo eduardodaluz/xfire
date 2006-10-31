@@ -22,28 +22,44 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.util.CachedOutputStream;
 
-public class StreamedAttachments implements Attachments
+public class StreamedAttachments
+    implements Attachments
 {
     public static final String ATTACHMENT_DIRECTORY = "attachment-directory";
+
     public static final String ATTACHMENT_MEMORY_THRESHOLD = "attachment-memory-threshold";
-    
+
+    private static final String NO_TEMP_ERR = "Unable to write tempoary files.  "
+            + "No temporary directory configured, and security settings prohibit "
+            + "access to the \"java.io.tmpdir\" property.";
+
     private boolean soapMessageRead = false;
+
     private PushbackInputStream stream;
+
     private String boundary;
-    private int threshold = 1024*100;
+
+    private int threshold = 1024 * 100;
+
     private File tempDirectory;
+
     private Map parts = new HashMap();
+
     private Attachment soapMessage;
+
     private String contentType;
+
     private List cache = new ArrayList();
+
     private MessageContext context;
-    
+
     public StreamedAttachments(InputStream is, String contentType) throws IOException
     {
         this(null, is, contentType);
     }
-    
-    public StreamedAttachments(MessageContext context, InputStream is, String contentType) throws IOException
+
+    public StreamedAttachments(MessageContext context, InputStream is, String contentType)
+            throws IOException
     {
         int i = contentType.indexOf("boundary=\"");
         int end;
@@ -51,27 +67,28 @@ public class StreamedAttachments implements Attachments
         if (i == -1)
         {
             i = contentType.indexOf("boundary=");
-            end = contentType.indexOf(";", i+9);
-            if (end == -1) end = contentType.length();
+            end = contentType.indexOf(";", i + 9);
+            if (end == -1)
+                end = contentType.length();
             len = 9;
         }
         else
         {
-            end = contentType.indexOf("\"", i+10);
+            end = contentType.indexOf("\"", i + 10);
             len = 10;
         }
-        
+
         if (i == -1 || end == -1)
             throw new IOException("Invalid content type: missing boundary! " + contentType);
-        
+
         this.boundary = "--" + contentType.substring(i + len, end);
 
         this.stream = new PushbackInputStream(is, boundary.length());
         this.contentType = contentType;
-        
+
         if (!readTillFirstBoundary(stream, boundary.getBytes()))
             throw new IOException("Couldn't find MIME boundary: " + boundary);
-        
+
         this.context = context;
     }
 
@@ -87,8 +104,9 @@ public class StreamedAttachments implements Attachments
 
     public Attachment getPart(String id)
     {
-        if (!parts.containsKey(id)) readTo(id);
-        
+        if (!parts.containsKey(id))
+            readTo(id);
+
         return (Attachment) parts.get(id);
     }
 
@@ -102,21 +120,22 @@ public class StreamedAttachments implements Attachments
     public String getSoapContentType()
     {
         ensureSoapAttachmentIsRead();
-        
+
         return soapMessage.getHeader("Content-Type");
     }
 
     public Attachment getSoapMessage()
     {
         ensureSoapAttachmentIsRead();
-        
+
         return soapMessage;
     }
 
     private void ensureSoapAttachmentIsRead()
     {
-        if (soapMessageRead) return;
-        
+        if (soapMessageRead)
+            return;
+
         try
         {
             soapMessage = readNextAttachment();
@@ -136,14 +155,15 @@ public class StreamedAttachments implements Attachments
     private void readTo(String id)
     {
         ensureSoapAttachmentIsRead();
-        
-        try 
+
+        try
         {
             for (Attachment a = readNextAttachment(); a != null; a = readNextAttachment())
             {
                 parts.put(a.getId(), a);
-                
-                if (a != null && id != null && a.getId().equals(id)) return;
+
+                if (a != null && id != null && a.getId().equals(id))
+                    return;
             }
         }
         catch (IOException e)
@@ -152,36 +172,38 @@ public class StreamedAttachments implements Attachments
         }
     }
 
-    
     private Attachment readNextAttachment()
         throws IOException
     {
         int v = stream.read();
-        if (v == -1) return null;
+        if (v == -1)
+            return null;
         stream.unread(v);
-        
+
         try
         {
             InternetHeaders headers = new InternetHeaders(stream);
-            
-            MimeBodyPartInputStream partStream = new MimeBodyPartInputStream(stream, boundary.getBytes());
-            final CachedOutputStream cos = new CachedOutputStream(getThreshold(), getTempDirectory());
-            
+
+            MimeBodyPartInputStream partStream = new MimeBodyPartInputStream(stream, boundary
+                    .getBytes());
+            final CachedOutputStream cos = new CachedOutputStream(getThreshold(),
+                    getTempDirectory());
+
             copy(partStream, cos);
 
             final String ct = headers.getHeader("Content-Type", null);
-            
+
             cache.add(cos);
-            
+
             DataSource source = new AttachmentDataSource(ct, cos);
-            
+
             DataHandler dh = new DataHandler(source);
             String id = headers.getHeader("Content-ID", null);
             if (id != null && id.startsWith("<"))
             {
                 id = id.substring(1, id.length() - 1);
             }
-            
+
             SimpleAttachment att = new SimpleAttachment(id, dh);
 
             for (Enumeration e = headers.getAllHeaders(); e.hasMoreElements();)
@@ -189,7 +211,7 @@ public class StreamedAttachments implements Attachments
                 Header header = (Header) e.nextElement();
                 att.setHeader(header.getName(), header.getValue());
             }
-            
+
             return att;
         }
         catch (MessagingException e)
@@ -211,7 +233,7 @@ public class StreamedAttachments implements Attachments
     public int size()
     {
         ensureAllPartsRead();
-        
+
         return parts.size();
     }
 
@@ -223,38 +245,56 @@ public class StreamedAttachments implements Attachments
 
     public void dispose()
     {
-        for (Iterator itr = cache.iterator(); itr.hasNext(); )
+        for (Iterator itr = cache.iterator(); itr.hasNext();)
         {
             CachedOutputStream cos = (CachedOutputStream) itr.next();
-            
+
             cos.dispose();
         }
     }
 
     /**
-     * The directory where attachments will be written to if they exceed
-     * the Threshold.
+     * The directory where attachments will be written to if they exceed the
+     * Threshold.
+     * 
      * @return
      */
     public File getTempDirectory()
     {
         File td = null;
-        
+
         if (context != null)
         {
             Object value = context.getContextualProperty(ATTACHMENT_DIRECTORY);
-            if( value instanceof File )
+            if (value instanceof File)
             {
-                td = (File)value;    
-            }else{
-                td = new File((String)value);
+                td = (File) value;
             }
-             
+            else if (value != null)
+            {
+                td = new File((String) value);
+            }
+
         }
-        
+
         if (td == null)
+        {
             td = tempDirectory;
-        
+        }
+        if (td == null)
+        {
+            String defaultTempDir;
+            try
+            {
+                defaultTempDir = System.getProperty("java.io.tmpdir");
+            }
+            catch (SecurityException se)
+            {
+                throw new IllegalStateException(NO_TEMP_ERR);
+            }
+            td = new File(defaultTempDir);
+        }
+
         return td;
     }
 
@@ -264,8 +304,9 @@ public class StreamedAttachments implements Attachments
     }
 
     /**
-     * Get the threshold in bytes. The threshold is the size an attachment
-     * needs to reach before it is written to a temporary directory.
+     * Get the threshold in bytes. The threshold is the size an attachment needs
+     * to reach before it is written to a temporary directory.
+     * 
      * @return
      */
     public int getThreshold()
@@ -273,19 +314,19 @@ public class StreamedAttachments implements Attachments
         if (context != null)
         {
             Object tObj = context.getContextualProperty(ATTACHMENT_MEMORY_THRESHOLD);
-             
-            if (tObj != null){
-                if( tObj instanceof Integer ){
-                    Integer t = (Integer)tObj;
+
+            if (tObj != null)
+            {
+                if (tObj instanceof Integer)
+                {
+                    Integer t = (Integer) tObj;
                     return t.intValue();
                 }
                 return Integer.valueOf(tObj.toString()).intValue();
-                
-                
-                
+
             }
         }
-        
+
         return threshold;
     }
 
@@ -294,7 +335,8 @@ public class StreamedAttachments implements Attachments
         this.threshold = threshold;
     }
 
-    protected static void copy(InputStream input, OutputStream output) throws IOException
+    protected static void copy(InputStream input, OutputStream output)
+        throws IOException
     {
         try
         {
@@ -312,35 +354,42 @@ public class StreamedAttachments implements Attachments
             output.close();
         }
     }
-    
+
     /**
-     * Move the read pointer to the begining of the first part
-     * read till the end of first boundary
-     *
+     * Move the read pointer to the begining of the first part read till the end
+     * of first boundary
+     * 
      * @param pushbackInStream
      * @param boundary
      * @throws MessagingException
      */
-    private boolean readTillFirstBoundary(PushbackInputStream pushbackInStream, byte[] boundary) 
-        throws IOException {
+    private boolean readTillFirstBoundary(PushbackInputStream pushbackInStream, byte[] boundary)
+        throws IOException
+    {
 
-        // work around a bug in PushBackInputStream where the buffer isn't initialized
+        // work around a bug in PushBackInputStream where the buffer isn't
+        // initialized
         // and available always returns 0.
         int value = pushbackInStream.read();
         pushbackInStream.unread(value);
-        
-        while (value != -1) {
+
+        while (value != -1)
+        {
             value = pushbackInStream.read();
-            if ((byte) value == boundary[0]) {
+            if ((byte) value == boundary[0])
+            {
                 int boundaryIndex = 0;
                 while (value != -1 && (boundaryIndex < boundary.length)
-                        && ((byte) value == boundary[boundaryIndex])) {
+                        && ((byte) value == boundary[boundaryIndex]))
+                {
                     value = pushbackInStream.read();
                     if (value == -1)
-                        throw new IOException("Unexpected End of Stream while searching for first Mime Boundary");
+                        throw new IOException(
+                                "Unexpected End of Stream while searching for first Mime Boundary");
                     boundaryIndex++;
                 }
-                if (boundaryIndex == boundary.length) { // boundary found
+                if (boundaryIndex == boundary.length)
+                { // boundary found
                     pushbackInStream.read();
                     return true;
                 }
@@ -349,14 +398,18 @@ public class StreamedAttachments implements Attachments
 
         return false;
     }
-    
-    private class MimeBodyPartInputStream extends InputStream {
+
+    private class MimeBodyPartInputStream
+        extends InputStream
+    {
         PushbackInputStream inStream;
+
         boolean boundaryFound = false;
+
         byte[] boundary;
-        
-        public MimeBodyPartInputStream(PushbackInputStream inStream,
-                                       byte[] boundary) {
+
+        public MimeBodyPartInputStream(PushbackInputStream inStream, byte[] boundary)
+        {
             super();
             this.inStream = inStream;
             this.boundary = boundary;
