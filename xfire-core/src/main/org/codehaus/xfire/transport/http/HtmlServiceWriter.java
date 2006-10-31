@@ -62,7 +62,12 @@ public class HtmlServiceWriter
             writer.writeEndElement(); // p
             writer.writeStartElement("ul");
             
-            String base = request.getRequestURL().toString();
+            String base;
+            if (request != null) {
+                base = request.getRequestURL().toString();
+            } else {
+                base = "/";
+            }
             
             List servicesList = new ArrayList(); 
             servicesList.addAll(services);

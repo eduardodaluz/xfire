@@ -38,12 +38,15 @@ public class HtmlServiceWriterTest
         htmlServiceWriter.write(os, services);
         os.close();
 
-        String expected = "<?xml version='1.0' encoding='utf-8'?>" + "" +
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" " +
-                "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" +
-                "<html><head><title>XFire Services</title></head><body>" +
-                "<p>No such service</p><p>Services:</p><ul><li>service</li></ul></body></html>";
-        assertXMLEqual(expected, os.toString());
+        String expected = "<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE html "
+            + " PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" "
+            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html>"
+            + "<head><title>XFire Services</title></head><body><p />"
+            + "<p>Services:</p><ul><li>service <a href=\"/service?wsdl\">[wsdl]"
+            + "</a></li></ul></body></html>";
+        
+        String output = new String(os.toByteArray(),"UTF-8");
+        assertXMLEqual(expected, output);
     }
 
     public void testDescribeService()
@@ -54,12 +57,14 @@ public class HtmlServiceWriterTest
         htmlServiceWriter.write(os, service);
         os.close();
 
-        String expected = "<?xml version='1.0' encoding='utf-8'?>" + "" +
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" " +
-                "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" +
-                "<html><head><title>service Web Service</title></head><body>" +
-                "<h1>service Web Service</h1></body></html>";
-        assertXMLEqual(expected, os.toString());
+        String expected = "<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE html "
+            + "PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" "
+            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html>"
+            + "<head><title>service Web Service</title></head><body>"
+            + "<h1>service Web Service</h1></body></html>";                
+        
+        String output = new String(os.toByteArray(),"UTF-8");
+        assertXMLEqual(expected, output);
 
     }
 }
