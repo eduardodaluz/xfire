@@ -7,6 +7,8 @@ import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Handler;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 /**
  * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
@@ -17,14 +19,16 @@ public class HandlerFactory
     implements FactoryBean, InitializingBean
 {
 
+    private static final Log log = LogFactory.getLog(HandlerFactory.class);
+
     private Class handlerClass;
 
     private Handler handler;
 
     private Collection before;
-    
+
     private Collection after;
-    
+
     public Collection getBefore()
     {
         return before;
@@ -67,6 +71,7 @@ public class HandlerFactory
         }
         catch (Exception e)
         {
+            log.error("Can't create instance of :" + handlerClass);
             throw new RuntimeException("Can't create instance of :" + handlerClass);
         }
     }
@@ -114,7 +119,9 @@ public class HandlerFactory
         if (before != null)
         {
             if(!(handler instanceof AbstractHandler )){
-                throw new RuntimeException("Handler "+ handler.getClass().getName()+" is not instance of AbstractHandler!");
+                String msg ="Handler "+ handler.getClass().getName()+" is not instance of AbstractHandler!";
+                log.error(msg);
+                throw new RuntimeException(msg);
             }
             AbstractHandler aHandler = (AbstractHandler) handler;
             for( Iterator iter = before.iterator(); iter.hasNext();){
@@ -124,7 +131,9 @@ public class HandlerFactory
         if (after!= null)
         {
             if(!(handler instanceof AbstractHandler )){
-                throw new RuntimeException("Handler "+ handler.getClass().getName()+" is not instance of AbstractHandler!");
+                String msg = "Handler "+ handler.getClass().getName()+" is not instance of AbstractHandler!";
+                log.error(msg);
+                throw new RuntimeException(msg);
             }
             AbstractHandler aHandler = (AbstractHandler) handler;
             for( Iterator iter = after.iterator(); iter.hasNext();){
