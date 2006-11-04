@@ -5,6 +5,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Contains type mappings for java/qname pairs.
  * 
@@ -14,6 +17,8 @@ import javax.xml.namespace.QName;
 public class CustomTypeMapping
     implements TypeMapping
 {
+    private static final Log LOG = LogFactory.getLog(CustomTypeMapping.class);
+    
 	private Map class2Type;
 
     private Map xml2Type;
@@ -70,17 +75,22 @@ public class CustomTypeMapping
 
     public void register(Type type)
     {
-        if (type.getTypeClass() == null)
-            throw new NullPointerException("Type class cannot be null.");
-        
-        if (type.getSchemaType() == null)
-            throw new NullPointerException("Schema type cannot be null.");
-        
         type.setTypeMapping(this);
-        
-        class2Type.put( type.getTypeClass(), type );
-        xml2Type.put( type.getSchemaType(), type );
-        class2xml.put( type.getTypeClass(), type.getSchemaType() );
+        /*
+         * -- prb@codehaus.org; changing this to only register the type for
+         * actions that it supports, and it could be none.
+         */
+        if (type.getTypeClass() != null) {
+            class2xml.put( type.getTypeClass(), type.getSchemaType() ); 
+            class2Type.put( type.getTypeClass(), type );
+        }
+        if (type.getSchemaType() != null) {
+            xml2Type.put( type.getSchemaType(), type );
+        }
+        if (type.getTypeClass() == null && type.getSchemaType() == null) {
+            LOG.warn("The type " + type.getClass().getName()
+                     + " supports neither serialization (non-null TypeClass) nor deserialization (non-null SchemaType).");
+        }
     }
 
 	public void removeType(Type type)

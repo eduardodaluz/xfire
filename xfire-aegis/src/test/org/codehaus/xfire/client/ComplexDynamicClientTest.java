@@ -3,7 +3,12 @@ package org.codehaus.xfire.client;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.xml.namespace.QName;
+
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
@@ -36,6 +41,17 @@ public class ComplexDynamicClientTest
         getWSDL("BeanService").write(bos);
         
         Client client = new Client(new ByteArrayInputStream(bos.toByteArray()), null);
+        
+        // -- From change 1929
+        Service model = client.getService();
+        AegisBindingProvider bp = (AegisBindingProvider) model.getBindingProvider();
+        TypeMapping typeMapping = bp.getTypeMapping(model);
+        
+        BeanType bt = new BeanType();
+        bt.setSchemaType(new QName("http://services.xfire.codehaus.org","SimpleBean"));
+        typeMapping.register(bt);
+        // -- End insertion
+        
         client.setXFire(getXFire());
         client.setUrl("xfire.local://BeanService");
         client.setTransport(getTransportManager().getTransport(LocalTransport.BINDING_ID));
