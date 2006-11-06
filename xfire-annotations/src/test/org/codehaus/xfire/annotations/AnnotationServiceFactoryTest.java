@@ -6,6 +6,7 @@ package org.codehaus.xfire.annotations;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import javax.xml.namespace.QName;
@@ -99,6 +100,16 @@ public class AnnotationServiceFactoryTest
         
         webAnnotations.getServiceProperties(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
+        webAnnotations.getInHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getOutHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getFaultHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+
         
         webAnnotationsControl.replay();
 
@@ -202,6 +213,16 @@ public class AnnotationServiceFactoryTest
         
         webAnnotations.getServiceProperties(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
+        webAnnotations.getInHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getOutHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getFaultHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+
         webAnnotationsControl.replay();
 
         Service endpoint = annotationServiceFactory.create(EchoServiceImpl.class);
@@ -246,6 +267,15 @@ public class AnnotationServiceFactoryTest
 
         webAnnotations.getServiceProperties(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
+        webAnnotations.getInHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getOutHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getFaultHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
         
         webAnnotationsControl.replay();
 
@@ -298,6 +328,16 @@ public class AnnotationServiceFactoryTest
         
         webAnnotations.getServiceProperties(EchoServiceImpl.class);
         webAnnotationsControl.setDefaultReturnValue(new Properties());
+        
+        webAnnotations.getInHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getOutHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+        
+        webAnnotations.getFaultHandlers(EchoServiceImpl.class);
+        webAnnotationsControl.setDefaultReturnValue(Collections.EMPTY_LIST);
+
         
         webAnnotationsControl.replay();
 

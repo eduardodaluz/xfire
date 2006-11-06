@@ -5,6 +5,7 @@ package org.codehaus.xfire.spring.remoting;
  */
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
@@ -80,6 +81,12 @@ public class XFireWebAnnotationsHandlerMappingTest
         control.setDefaultReturnValue(false);
         webAnnotations.getServiceProperties(EchoImpl.class);
         control.setDefaultReturnValue(new Properties());
+        webAnnotations.getInHandlers(EchoImpl.class);
+        control.setDefaultReturnValue(Collections.EMPTY_LIST);
+        webAnnotations.getOutHandlers(EchoImpl.class);
+        control.setDefaultReturnValue(Collections.EMPTY_LIST);
+        webAnnotations.getFaultHandlers(EchoImpl.class);
+        control.setDefaultReturnValue(Collections.EMPTY_LIST);
         
         control.replay();
 

@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -270,6 +273,13 @@ public class AnnotationServiceFactory
                 service.setProperty(ObjectInvoker.SERVICE_IMPL_CLASS, clazz);
             }
 
+            Collection inHandlers = webAnnotations.getInHandlers(clazz);
+            Collection outHandlers = webAnnotations.getOutHandlers(clazz);
+            Collection faultHandlers = webAnnotations.getFaultHandlers(clazz);
+            service.getInHandlers().addAll(processHandlers(inHandlers));
+            service.getOutHandlers().addAll(processHandlers(outHandlers));
+            service.getFaultHandlers().addAll(processHandlers(faultHandlers));
+            
             return service;
         }
         else
@@ -277,7 +287,33 @@ public class AnnotationServiceFactory
             throw new AnnotationException("Class " + clazz.getName() + " does not have a WebService annotation");
         }
     }
-
+    private Collection processHandlers(Collection handlers){
+        Collection handlersObjects  = new ArrayList();
+        for(Iterator iter = handlers.iterator();iter.hasNext();){
+            String handlerClass = (String) iter.next();
+            Class clazz;
+            try
+            {
+                clazz = ClassLoaderUtils.loadClass(handlerClass, this.getClass());
+                handlersObjects.add(clazz.newInstance());
+            }
+            catch (ClassNotFoundException e)
+            {
+             throw new RuntimeException("Can't load class : "+ handlerClass,e);
+            }
+            catch (InstantiationException e)
+            {
+                throw new RuntimeException("Can't create object of class :"+ handlerClass,e);
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException("Can't create object of class :"+ handlerClass,e);
+            }
+            
+        }
+        return handlersObjects;
+    }
+    
     private void assertValidImplementationClass(Class clazz, WebAnnotations webAnnotations2, Map properties)
     {
         if (Modifier.isAbstract(clazz.getModifiers()) && !Boolean.TRUE.equals(properties.get(ALLOW_INTERFACE)))

@@ -1,6 +1,8 @@
 package org.codehaus.xfire.annotations.commons;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.attributes.Attributes;
@@ -91,4 +93,22 @@ public class CommonsWebAttributes
 
 		return null;
 	}
+
+    public Collection getFaultHandlers(Class clazz)
+    {
+        // TODO Auto-generated method stub
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection getInHandlers(Class clazz)
+    {
+        // TODO Auto-generated method stub
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection getOutHandlers(Class clazz)
+    {
+        // TODO Auto-generated method stub
+        return Collections.EMPTY_LIST;
+    }
 }

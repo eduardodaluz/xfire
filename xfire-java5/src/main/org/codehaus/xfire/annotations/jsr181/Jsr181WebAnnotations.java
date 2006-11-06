@@ -3,6 +3,8 @@ package org.codehaus.xfire.annotations.jsr181;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,10 @@ import javax.jws.soap.SOAPBinding;
 
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.annotations.EnableMTOM;
+import org.codehaus.xfire.annotations.FaultHandlers;
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
+import org.codehaus.xfire.annotations.InHandlers;
+import org.codehaus.xfire.annotations.OutHandlers;
 import org.codehaus.xfire.annotations.ServiceProperties;
 import org.codehaus.xfire.annotations.ServiceProperty;
 import org.codehaus.xfire.annotations.WebAnnotations;
@@ -272,4 +277,34 @@ public class Jsr181WebAnnotations
 		
 		return properties;
 	}
+
+    public Collection getFaultHandlers(Class clazz)
+    {
+        FaultHandlers faultHandlers = (FaultHandlers) clazz.getAnnotation(FaultHandlers.class); 
+        if( faultHandlers != null ){
+            
+            return Arrays.asList(faultHandlers.handlers());
+        }
+        return Collections.EMPTY_LIST;        
+    }
+
+    public Collection getInHandlers(Class clazz)
+    {
+        InHandlers inHandlers = (InHandlers) clazz.getAnnotation(InHandlers.class); 
+        if( inHandlers != null ){
+            
+            return Arrays.asList(inHandlers.handlers());
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection getOutHandlers(Class clazz)
+    {
+        OutHandlers outHandlers = (OutHandlers) clazz.getAnnotation(OutHandlers.class); 
+        if( outHandlers != null ){
+            
+            return Arrays.asList(outHandlers.handlers());
+        }
+        return Collections.EMPTY_LIST;
+    }
 }

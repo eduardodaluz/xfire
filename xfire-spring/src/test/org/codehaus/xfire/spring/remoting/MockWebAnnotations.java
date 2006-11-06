@@ -1,6 +1,8 @@
 package org.codehaus.xfire.spring.remoting;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.codehaus.xfire.annotations.HandlerChainAnnotation;
@@ -95,5 +97,23 @@ public class MockWebAnnotations implements WebAnnotations
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public Collection getFaultHandlers(Class arg0)
+    {
+        // TODO Auto-generated method stub
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection getInHandlers(Class arg0)
+    {
+        // TODO Auto-generated method stub
+        return Collections.EMPTY_LIST;
+    }
+
+    public Collection getOutHandlers(Class arg0)
+    {
+
+        return Collections.EMPTY_LIST;
+    }
 
 }
