@@ -532,16 +532,28 @@ public class WSDLServiceBuilder
         // This should probably look at the restricted and substitute types too.
         if (reqSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
         {
-            if (hasAttributes((XmlSchemaComplexType) reqSchemaEl.getSchemaType()))
+            XmlSchemaComplexType ct = (XmlSchemaComplexType) reqSchemaEl.getSchemaType();
+            if (hasAttributes(ct))
                 return false;
+            
+            if (ct.getContentModel() != null)
+                return false;
+        } 
+        else if (reqSchemaEl.getSchemaType() != null) 
+        {
+            return false;
         }
         
         if (resSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
         {
-            if (hasAttributes((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
+            XmlSchemaComplexType ct = (XmlSchemaComplexType) resSchemaEl.getSchemaType();
+            if (hasAttributes(ct))
+                return false;
+
+            if (ct.getContentModel() != null)
                 return false;
             
-            if (!isWrappedResponse((XmlSchemaComplexType) resSchemaEl.getSchemaType()))
+            if (!isWrappedResponse(ct))
                 return false;
         }
 

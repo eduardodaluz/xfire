@@ -1,6 +1,8 @@
 package org.codehaus.xfire.spring.config;
 
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
@@ -98,7 +100,9 @@ public class XFireConfigLoaderTest
         
         assertEquals("value", service.getProperty("myKey"));
         assertEquals("value1", service.getProperty("myKey1"));
-
+        List types = (List) service.getProperty("overrideTypesList");
+        assertNotNull(types);
+        
         service = xfire.getServiceRegistry().getService("EchoWithJustImpl");
         assertEquals(EchoImpl.class, service.getServiceInfo().getServiceClass());
         

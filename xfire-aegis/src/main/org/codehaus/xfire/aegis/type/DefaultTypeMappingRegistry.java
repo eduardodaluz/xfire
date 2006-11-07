@@ -6,9 +6,11 @@ import java.net.URI;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -98,7 +100,7 @@ public class DefaultTypeMappingRegistry
     protected static final QName ENCODED_DECIMAL = new QName(ENCODED_NS, "decimal");
     protected static final QName ENCODED_INTEGER = new QName(ENCODED_NS, "integer");
 
-    private Hashtable registry;
+    private Map registry;
     
     private TypeMapping defaultTM;
 
@@ -118,7 +120,7 @@ public class DefaultTypeMappingRegistry
 
     public DefaultTypeMappingRegistry(TypeCreator typeCreator, boolean createDefault)
     {
-        registry = new Hashtable();
+        registry = Collections.synchronizedMap(new HashMap());
 
         this.typeCreator = typeCreator;
         this.typeConfiguration = new Configuration();

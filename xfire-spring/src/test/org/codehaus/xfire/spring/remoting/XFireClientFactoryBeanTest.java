@@ -286,4 +286,53 @@ public class XFireClientFactoryBeanTest
         
         control.verify();
     }
+    
+
+    public void testInterface() 
+        throws Exception
+    {
+        MockControl control = MockControl.createControl(WebAnnotations.class);
+        WebAnnotations webAnnotations = (WebAnnotations) control.getMock();
+        
+        WebServiceAnnotation serviceAnnotation = new WebServiceAnnotation();
+        webAnnotations.getWebServiceAnnotation(Echo.class);
+        control.setDefaultReturnValue(serviceAnnotation);
+        
+        webAnnotations.hasWebServiceAnnotation(Echo.class);
+        control.setDefaultReturnValue(true);
+        
+        webAnnotations.hasSOAPBindingAnnotation(Echo.class);
+        control.setReturnValue(false);
+        
+        serviceAnnotation = new WebServiceAnnotation();
+        serviceAnnotation.setServiceName("Echo");
+        serviceAnnotation.setTargetNamespace("urn:Echo");
+        webAnnotations.getWebServiceAnnotation(Echo.class);
+        control.setDefaultReturnValue(serviceAnnotation);
+        
+        Method echoMethod = EchoImpl.class.getMethod("echo", new Class[]{String.class});
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        control.setDefaultReturnValue(true);
+        
+        webAnnotations.hasWebMethodAnnotation(echoMethod);
+        control.setDefaultReturnValue(false);
+        webAnnotations.hasWebParamAnnotation(echoMethod, 0);
+        control.setDefaultReturnValue(false);
+        webAnnotations.hasWebResultAnnotation(echoMethod);
+        control.setDefaultReturnValue(false);
+        webAnnotations.hasOnewayAnnotation(echoMethod);
+        control.setDefaultReturnValue(false);
+        webAnnotations.getServiceProperties(Echo.class);
+        control.setDefaultReturnValue(new Properties());
+        
+        control.replay();
+        
+        factory.setServiceFactory(new AnnotationServiceFactory(webAnnotations, 
+                                                               getTransportManager()));
+        factory.setServiceClass(Echo.class);
+        
+        factory.afterPropertiesSet();
+        
+        control.verify();
+    }
 }

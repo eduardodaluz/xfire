@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.MessageWriter;
 import org.codehaus.xfire.aegis.type.Type;
@@ -94,9 +95,19 @@ public class ObjectType extends Type
 		if (typeName != null)
         {
             typeQName = extractQName(reader, typeName);
-            type = getTypeMapping().getType( typeQName );
+        } 
+        else 
+        {
+            typeQName = reader.getName();
         }
 
+        TypeMapping tm = (TypeMapping) context.getService().getProperty(AegisBindingProvider.TYPE_MAPPING_KEY);
+        if (tm == null) 
+        {
+            tm = getTypeMapping();
+        }
+        type = tm.getType( typeQName );
+        
 		if (type == null && readToDocument)
 		{
 			type = getTypeMapping().getType(Document.class);

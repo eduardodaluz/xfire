@@ -316,11 +316,6 @@ public class AnnotationServiceFactory
     
     private void assertValidImplementationClass(Class clazz, WebAnnotations webAnnotations2, Map properties)
     {
-        if (Modifier.isAbstract(clazz.getModifiers()) && !Boolean.TRUE.equals(properties.get(ALLOW_INTERFACE)))
-        {
-            throw new AnnotationException("Service class cannot be abstract: " + clazz.getName());
-        }
-        
         if (Modifier.isFinal(clazz.getModifiers()))
         {
             throw new AnnotationException("Service class cannot be final: " + clazz.getName());

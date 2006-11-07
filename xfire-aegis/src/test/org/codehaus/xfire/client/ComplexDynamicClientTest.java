@@ -13,8 +13,8 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.services.BeanService;
+import org.codehaus.xfire.services.SimpleBean;
 import org.codehaus.xfire.transport.local.LocalTransport;
-import org.w3c.dom.Document;
 
 public class ComplexDynamicClientTest
     extends AbstractXFireAegisTest
@@ -48,7 +48,8 @@ public class ComplexDynamicClientTest
         TypeMapping typeMapping = bp.getTypeMapping(model);
         
         BeanType bt = new BeanType();
-        bt.setSchemaType(new QName("http://services.xfire.codehaus.org","SimpleBean"));
+        bt.setSchemaType(new QName("http://services.xfire.codehaus.org","out"));
+        bt.setTypeClass(SimpleBean.class);
         typeMapping.register(bt);
         // -- End insertion
         
@@ -60,6 +61,7 @@ public class ComplexDynamicClientTest
         assertNotNull("response from client invoke is null", response);
         assertEquals("unexpected array size in invoke response", 1, response.length);
         
-        Document res = (Document) response[0];
+        SimpleBean res = (SimpleBean) response[0];
+        assertEquals("bleh", res.getBleh());
     }
 }

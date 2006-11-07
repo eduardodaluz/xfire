@@ -139,11 +139,12 @@ public class Resolver
         {
             try
             {
+                
                 uri = new URI(url.toString());
             }
             catch (URISyntaxException e)
             {
-                // How would this occurr??
+                // this occurs when you have spaces instead of '%20'...
                 e.printStackTrace();
             }
             is = url.openStream();

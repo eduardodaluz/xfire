@@ -181,7 +181,6 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             if (params == null)
             {
                 params = client.getParams();
-                
                 client.getParams().setParameter("http.useragent", USER_AGENT);
                 boolean disableEC = Boolean.valueOf((String)context.getContextualProperty(DISABLE_EXPECT_CONTINUE)).booleanValue();
                 client.getParams().setBooleanParameter("http.protocol.expect-continue", !disableEC);

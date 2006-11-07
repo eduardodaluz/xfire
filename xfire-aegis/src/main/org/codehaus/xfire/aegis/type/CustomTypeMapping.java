@@ -1,5 +1,6 @@
 package org.codehaus.xfire.aegis.type;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,9 +41,9 @@ public class CustomTypeMapping
     
     public CustomTypeMapping()
     {
-        class2Type = new HashMap();
-        class2xml = new HashMap();
-        xml2Type = new HashMap();
+        class2Type = Collections.synchronizedMap(new HashMap());
+        class2xml = Collections.synchronizedMap(new HashMap());
+        xml2Type = Collections.synchronizedMap(new HashMap());
     }
 
 	public boolean isRegistered(Class javaType)

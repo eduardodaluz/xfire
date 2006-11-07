@@ -75,24 +75,21 @@ public class JaxbWSDLBuilder
         {
             JAXBContext context = JAXBContext.newInstance(classes.toArray(new Class[0]));
             final List<DOMResult> results = new ArrayList<DOMResult>();
-            
-            for (String ns : namespaces)
-            {
-                context.generateSchema(new SchemaOutputResolver() {
-                    @Override
-                    public Result createOutput(String ns, String file)
-                        throws IOException
-                    {
-                        DOMResult result = new DOMResult();
-                        result.setSystemId(file);
-                        
-                        results.add(result);
-                        
-                        return result;
-                    }
-                });
-            }
-            
+       
+            context.generateSchema(new SchemaOutputResolver() {
+                @Override
+                public Result createOutput(String ns, String file)
+                    throws IOException
+                {
+                    DOMResult result = new DOMResult();
+                    result.setSystemId(file);
+                    
+                    results.add(result);
+                    
+                    return result;
+                }
+            });
+        
             Types types = getDefinition().getTypes();
             if (types == null)
             {
