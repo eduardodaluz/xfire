@@ -23,6 +23,7 @@ import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.attachments.Attachments;
@@ -73,6 +74,14 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     
     /** GZIP the requests. */
     public static final String GZIP_REQUEST_ENABLED = "gzip.request.enabled";
+
+    private static final int DEFAULT_MAX_CONN_PER_HOST = 6;
+
+    public  static final String MAX_CONN_PER_HOST = "max.connections.per.host";
+
+    public  static final String MAX_TOTAL_CONNECTIONS = "max.total.connections";
+
+    private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = MultiThreadedHttpConnectionManager.DEFAULT_MAX_TOTAL_CONNECTIONS;
 
     private InputStream msgIs;
 
@@ -166,7 +175,17 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
             postMethod.setRequestHeader("Content-Encoding", GZIP_CONTENT_ENCODING);
         }
     }
-
+    
+    private int getIntValue(String key, int defaultValue ){
+        int result = defaultValue;
+        MessageContext context = getMessageContext();
+        String str = (String)context.getContextualProperty(key);
+        if( str != null ){
+            result = Integer.parseInt(str);
+        }
+    return result;
+    }
+    
     private synchronized void createClient()
     {
         MessageContext context = getMessageContext();
@@ -174,7 +193,14 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         if (client == null)
         {
             client = new HttpClient();
-            client.setHttpConnectionManager(new MultiThreadedHttpConnectionManager());
+            MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
+            HttpConnectionManagerParams conParams = new HttpConnectionManagerParams (); 
+            manager.setParams(conParams);
+            int maxConnPerHost = getIntValue(MAX_CONN_PER_HOST, DEFAULT_MAX_CONN_PER_HOST);
+            conParams.setDefaultMaxConnectionsPerHost(maxConnPerHost );
+            int maxTotalConn  = getIntValue(MAX_TOTAL_CONNECTIONS, DEFAULT_MAX_TOTAL_CONNECTIONS);
+            conParams.setMaxTotalConnections(maxTotalConn);
+            client.setHttpConnectionManager(manager);
             ((HttpChannel) getMessage().getChannel()).setProperty(HTTP_CLIENT, client);
 
             HttpClientParams params = (HttpClientParams) context.getContextualProperty(HTTP_CLIENT_PARAMS);
