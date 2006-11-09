@@ -48,7 +48,7 @@ public class ComplexDynamicClientTest
         TypeMapping typeMapping = bp.getTypeMapping(model);
         
         BeanType bt = new BeanType();
-        bt.setSchemaType(new QName("http://services.xfire.codehaus.org","out"));
+        bt.setSchemaType(new QName("http://services.xfire.codehaus.org","SimpleBean"));
         bt.setTypeClass(SimpleBean.class);
         typeMapping.register(bt);
         // -- End insertion

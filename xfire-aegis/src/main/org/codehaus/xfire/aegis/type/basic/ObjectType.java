@@ -106,9 +106,15 @@ public class ObjectType extends Type
         {
             tm = getTypeMapping();
         }
+        
         type = tm.getType( typeQName );
         
-		if (type == null && readToDocument)
+        if (type == null) 
+        {
+            type = tm.getType(getSchemaType());
+        }
+
+        if (type == null && readToDocument)
 		{
 			type = getTypeMapping().getType(Document.class);
 		}
@@ -173,7 +179,7 @@ public class ObjectType extends Type
         }
         else
         {
-            Type type = determineType( object.getClass() );
+            Type type = determineType( context, object.getClass() );
 
             if( null == type )
             {
@@ -197,10 +203,14 @@ public class ObjectType extends Type
         }
     }
 
-    private Type determineType( Class clazz )
+    private Type determineType( MessageContext context, Class clazz )
     {
-        TypeMapping mapping = getTypeMapping();
-        Type type = mapping.getType( clazz );
+        TypeMapping tm = (TypeMapping) context.getService().getProperty(AegisBindingProvider.TYPE_MAPPING_KEY);
+        if (tm == null) 
+        {
+            tm = getTypeMapping();
+        }
+        Type type = tm.getType( clazz );
 
         if (null != type) 
         {
@@ -213,7 +223,7 @@ public class ObjectType extends Type
         {
             Class anInterface = interfaces[i];
 
-            type = mapping.getType( anInterface );
+            type = tm.getType( anInterface );
 
             if( null != type ) {
                 return type;
@@ -226,7 +236,7 @@ public class ObjectType extends Type
             return null;
         }
 
-        return determineType( superclass );
+        return determineType( context, superclass );
     }
 
     private void addXsiType( MessageWriter writer, String prefixedType )
