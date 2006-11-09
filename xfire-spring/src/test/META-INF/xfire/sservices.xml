@@ -45,8 +45,11 @@
   	<properties>
   		<property key="myKey" >value</property>
   		<property key="myKey1" >value1</property>
-        <property key="overrideTypesList">#types
-        </property>
+        <property key="overrideTypesList" >
+             <list xmlns="">
+              <value>org.codehaus.xfire.test.Echo</value>
+            </list>
+      </property>
   	</properties>
   	
   	<inHandlers>
@@ -62,13 +65,7 @@
   	</inHandlers>
   </service>
 
-  <bean class="java.util.ArrayList" id="types" xmlns="">
-    <constructor-arg>
-      <list xmlns="">
-            <value>org.codehaus.xfire.test.Echo</value>
-          </list>
-    </constructor-arg>
-  </bean>
+  
   
   <service>
     <name>EchoWithJustImpl</name>

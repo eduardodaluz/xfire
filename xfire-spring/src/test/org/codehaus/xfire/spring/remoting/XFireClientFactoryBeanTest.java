@@ -324,7 +324,14 @@ public class XFireClientFactoryBeanTest
         control.setDefaultReturnValue(false);
         webAnnotations.getServiceProperties(Echo.class);
         control.setDefaultReturnValue(new Properties());
-        
+        webAnnotations.hasHandlerChainAnnotation(Echo.class);
+        control.setDefaultReturnValue(false);
+        webAnnotations.getInHandlers(Echo.class);
+        control.setDefaultReturnValue(Collections.EMPTY_LIST);
+        webAnnotations.getOutHandlers(Echo.class);
+        control.setDefaultReturnValue(Collections.EMPTY_LIST);
+        webAnnotations.getFaultHandlers(Echo.class);
+        control.setDefaultReturnValue(Collections.EMPTY_LIST);
         control.replay();
         
         factory.setServiceFactory(new AnnotationServiceFactory(webAnnotations, 
