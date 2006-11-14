@@ -442,8 +442,10 @@ public class STAXUtils
 
         Element e = doc.createElementNS(reader.getNamespaceURI(), reader.getLocalName());
         
-        if (reader.getPrefix() != null)
+        if (reader.getPrefix() != null && reader.getPrefix() != "")
+        {
             e.setPrefix(reader.getPrefix());
+        }
         
         parent.appendChild(e);
 
