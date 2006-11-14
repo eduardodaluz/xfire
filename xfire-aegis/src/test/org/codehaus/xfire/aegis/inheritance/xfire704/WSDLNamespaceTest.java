@@ -1,6 +1,5 @@
 package org.codehaus.xfire.aegis.inheritance.xfire704;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,7 @@ import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.inheritance.xfire704.response.TestBaseResponse;
 import org.codehaus.xfire.aegis.inheritance.xfire704.response.TestSubResponse;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.wsdl.WSDLWriter;
+import org.jdom.Document;
 
 public class WSDLNamespaceTest extends AbstractXFireAegisTest
 {
@@ -27,19 +26,8 @@ public class WSDLNamespaceTest extends AbstractXFireAegisTest
         props.put("overrideTypesList", types);
         Service service = getServiceFactory().create(TestService.class, props);
         getServiceRegistry().register(service);
-        
-        WSDLWriter wsdl = getWSDL(service.getSimpleName());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        wsdl.write(out);
-        out.close();
-        
-        String wstr = out.toString();
-        int start = wstr.indexOf("xmlns:ns1");
-        int count = 0;
-        while (start != -1) {
-            count++;
-            start = wstr.indexOf("xmlns:ns1", start+1);
-        }
-        assertEquals(1, count);
+
+        Document wsdl = getWSDLDocument(service.getSimpleName());
+        assertValid("//xsd:element[@name='testValue'][@type='tns:TestValue']", wsdl);
     }
 }
