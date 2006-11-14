@@ -4,6 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -180,10 +185,11 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         int result = defaultValue;
         MessageContext context = getMessageContext();
         String str = (String)context.getContextualProperty(key);
-        if( str != null ){
+        if( str != null )
+        {
             result = Integer.parseInt(str);
         }
-    return result;
+        return result;
     }
     
     private synchronized void createClient()
@@ -222,6 +228,11 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 client.setParams(params);
             }
 
+            if (isNonProxyHost(getMessage().getUri(), context)) 
+            {
+                return;
+            }
+            
             // Setup the proxy settings
             String proxyHost = (String) context.getContextualProperty(HTTP_PROXY_HOST);
             if (proxyHost == null)
@@ -245,6 +256,32 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         }
     }
 
+    private boolean isNonProxyHost( String strURI, MessageContext context ) 
+    {
+        // convert String based URI into a URI class based URI ...
+        URI uri = null;
+        try
+        {
+            uri = new URI(strURI);
+        }
+        catch (URISyntaxException use)
+        { // this should actually not happen, but just
+            // in case. return false; }
+            // ... get a system platform ProxySelector, and ...
+            ProxySelector ps = ProxySelector.getDefault();
+            // ... let this selector return a list of proxies.
+            List proxies = ps.select(uri);
+            // If that lists sole element is of type Proxy.NO_PROXY
+            // then we need a direct connection, otherwise we need to connect
+            // through a proxy.
+            if (proxies.size() == 1 && proxies.get(0).equals(Proxy.NO_PROXY))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     static boolean isGzipRequestEnabled(MessageContext context)
     {
         if (isGzipEnabled(context)) return true;
