@@ -8,6 +8,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireException;
@@ -65,6 +69,22 @@ public class Wsdl11Generator
     {
         this.overwrite = forceOverwrite;
     }
+    
+    private static void configureSSL()
+    {
+        
+        HostnameVerifier hv = new HostnameVerifier()
+        {
+
+            public boolean verify(String arg0, SSLSession arg1)
+            {
+                return true;
+            }
+        };
+
+        HttpsURLConnection.setDefaultHostnameVerifier(hv);
+
+    }
 
     @SuppressWarnings("unchecked")
     public void generate() throws Exception
@@ -72,6 +92,10 @@ public class Wsdl11Generator
         File dest = new File(outputDirectory);
         dest.mkdirs(); 
 
+        if( wsdl.toLowerCase().startsWith("https")){
+            configureSSL();
+         }
+        
         loadSchemaSupport();
 
         if (baseURI != null && new File(baseURI).exists())

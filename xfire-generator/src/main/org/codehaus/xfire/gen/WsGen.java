@@ -3,8 +3,8 @@ package org.codehaus.xfire.gen;
 import org.apache.tools.ant.BuildException;
 
 /**
- * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a> Helper class
- *         which allows to run wsgen from command line.
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a> 
+ * Helper class  which allows to run wsgen from command line.
  * 
  */
 public class WsGen {
@@ -14,7 +14,7 @@ public class WsGen {
 		System.out
 				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] " +
                         "[-r profile] [-e externalBinging] [-u baseURI] [-overwrite true/false] " +
-                        "[-x true/false] [-ss true/false]\n");
+                        "[-x true/false] [-ss true/false] \n");
 	}
 
 	private static void missingParam(String param) {
@@ -36,6 +36,12 @@ public class WsGen {
         boolean explicit = false;
         boolean serverStubs = true;
         
+        
+       if(args.length>0 && "-h".equals(args[0])){
+           printHelpMessage();
+           return;
+       }
+        
 		if (args.length < 3) {
 			usage();
 			return;
@@ -45,6 +51,7 @@ public class WsGen {
 			String value = args[i + 1];
 			param = param.toLowerCase().trim();
 			value = value.trim();
+         
 			if ("-wsdl".equals(param)) {
 				wsdl = value;
 			}
@@ -67,7 +74,7 @@ public class WsGen {
 				profile = value;
 			}
             if ("-x".equals(param)) {
-                explicit = Boolean.parseBoolean(value);;
+                explicit = Boolean.parseBoolean(value);
             }
             if("-overwrite".equals(param)){
                 overwrite=Boolean.parseBoolean(value);
@@ -75,6 +82,7 @@ public class WsGen {
             if("-ss".equals(param)){
                 serverStubs = Boolean.parseBoolean(value);
             }
+            
 		}
 
 		if (wsdl == null) {
@@ -84,9 +92,10 @@ public class WsGen {
 		}
 		if (outputDirectory == null) {
 			outputDirectory = ".";
-			System.out
-					.print("Output directory not specified. Using current.\n");
+			System.out.print("Output directory not specified. Using current.\n");
 		}
+              
+        
 		System.out.print("Running WsGen...\n");
 		System.out.print("wsdl    : " + wsdl + "\n");
 		System.out.print("package : " + _package + "\n");
@@ -97,6 +106,7 @@ public class WsGen {
 		System.out.print("profile : " + (profile == null?"" : profile)+ "\n");
         System.out.print("explictAnnotation : " + explicit+ "\n");
         System.out.print("overwrite : " + overwrite+ "\n");
+        
 
 		Wsdl11Generator generator = new Wsdl11Generator();
 		generator.setDestinationPackage(_package);
@@ -127,5 +137,38 @@ public class WsGen {
 		}
 
 	}
+
+
+    private static void printHelpMessage()
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("wsgen options:");
+        buffer.append("\n");
+        buffer.append("-wsdl : location of wsdl file, can be URL or file path ");
+        buffer.append("\n");
+        buffer.append("-o : output directory");
+        buffer.append("\n");
+        buffer.append("-p : package to use for generated files");
+        buffer.append("\n");
+        buffer.append("-b : binding to use - jaxb or xmlbeans");
+        buffer.append("\n");
+        buffer.append("-r : profile");
+        buffer.append("\n");
+        buffer.append("-e : external binding");
+        buffer.append("\n");
+        buffer.append("-u : base uri");
+        buffer.append("\n");
+        buffer.append("-overwrite : determine if existing classes should be overwriten ( true/false )");
+        buffer.append("\n");
+        buffer.append("-x : explicit");
+        buffer.append("\n");
+        buffer.append("-ss : generate server stubs");
+        buffer.append("\n");
+        buffer.append("-h : print this help message");
+        buffer.append("\n");
+        
+        System.out.print(buffer.toString());
+        
+    }
 
 }
