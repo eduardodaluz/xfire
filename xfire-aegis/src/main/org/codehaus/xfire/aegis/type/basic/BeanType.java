@@ -518,7 +518,7 @@ public class BeanType
                     SoapConstants.XSD);
             complex.addContent(extension);
             QName baseType = sooperType.getSchemaType();
-            extension.setAttribute(new Attribute("base", getNameWithPrefix2(extension, baseType
+            extension.setAttribute(new Attribute("base", getNameWithPrefix2(root, baseType
                     .getNamespaceURI(), baseType.getLocalPart())));
 
             dummy = extension;
