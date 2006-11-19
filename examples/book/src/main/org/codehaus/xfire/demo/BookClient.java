@@ -8,6 +8,7 @@ import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.demo.handlers.OutHeaderHandler;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.transport.http.CommonsHttpMessageSender;
 
 /**
  * @author <a href="mailto:nathanyp@hotmail.com">Nathan Peles</a>
@@ -27,6 +28,8 @@ public class BookClient
             BookService service = (BookService) serviceFactory.create(serviceModel, serviceURL);
             Client client = Client.getInstance(service);
             client.addOutHandler(new OutHeaderHandler());
+            // disable timeout
+            client.setProperty(CommonsHttpMessageSender.HTTP_TIMEOUT, "0");
             Book[] books = service.getBooks();
             Map booksMap = service.getBooksMap();
             System.out.print("Received map with "+booksMap.size()+" book(s) \n");

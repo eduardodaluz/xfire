@@ -1,0 +1,15 @@
+<service>
+  <documentation>
+    Service which allows to search for books
+  </documentation>
+  <method name="findBook" argNr="1" >
+     <documentation>
+        Finds book by isbn
+     </documentation>
+     <parameter index="0">
+        <documentation>
+           ISBN number
+        </documentation>
+        </parameter>
+  </method>
+</service>
