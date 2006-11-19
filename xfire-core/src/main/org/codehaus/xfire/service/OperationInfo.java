@@ -33,6 +33,7 @@ public class OperationInfo
     // maps string names to FaultInfo objects
     private Map faults = new HashMap();
     private Method method;
+    private String documenation;
 
     /**
      * Initializes a new instance of the <code>OperationInfo</code> class with the given name and service.
@@ -275,4 +276,15 @@ public class OperationInfo
     {
         return inputMessage != null;
     }
+
+    public String getDocumenation()
+    {
+        return documenation;
+    }
+
+    public void setDocumenation(String documenation)
+    {
+        this.documenation = documenation;
+    }
+    
 }

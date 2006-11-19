@@ -28,6 +28,8 @@ public class ServiceInfo
     private QName portType;
     private boolean wrapped;
     private Service service;
+    private String documentation;
+    
     
     /**
      * Initializes a new instance of the <code>ServiceInfo</code> class with the given qualified name and service
@@ -183,6 +185,16 @@ public class ServiceInfo
 
     public void setService(Service service) {
         this.service = service;
+    }
+
+    public String getDocumentation()
+    {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation)
+    {
+        this.documentation = documentation;
     }
     
     

@@ -38,6 +38,8 @@ import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.ServiceInfo;
+import org.codehaus.xfire.service.binding.documentation.DocumentationProvider;
+import org.codehaus.xfire.service.binding.documentation.XMLDocumentationBuilder;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.service.invoker.ScopePolicyEditor;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
@@ -90,6 +92,7 @@ public class ObjectServiceFactory
     private WSDLBuilderFactory wsdlBuilderFactory = new DefaultWSDLBuilderFactory();
     private boolean customFaultsEnabled = true;
     private boolean bindingCreationEnabled = true;
+    private DocumentationProvider documentationProvider = new DocumentationProvider();
     
     private Set soap11Transports = new HashSet();
     private Set soap12Transports = new HashSet();
@@ -385,6 +388,7 @@ public class ObjectServiceFactory
         Collection s12Bindings = null;
         String theScope="";
         
+        
         if (properties != null)
         {
             theStyle = (String) properties.get(STYLE);
@@ -401,7 +405,11 @@ public class ObjectServiceFactory
         if (theScope == null) theScope = "";
         
         ServiceInfo serviceInfo = new ServiceInfo(portType, clazz);
-
+        createDocumentationProvider(serviceInfo);
+        
+        
+        serviceInfo.setDocumentation(getDocumentationProvider().getServiceDoc());
+        
         if (theStyle.equals(SoapConstants.STYLE_WRAPPED))
             serviceInfo.setWrapped(true);
         
@@ -452,6 +460,20 @@ public class ObjectServiceFactory
         registerHandlers(endpoint);
 
         return endpoint;
+    }
+
+    /**
+     * @param serviceInfo
+     */
+    protected void createDocumentationProvider(ServiceInfo serviceInfo)
+    {
+        XMLDocumentationBuilder docBuilder = new XMLDocumentationBuilder();
+        DocumentationProvider docProvider = docBuilder.build(serviceInfo);
+        if( docProvider != null ){
+            setDocumentationProvider( docProvider);    
+        }
+        
+        
     }
 
     protected String getTargetNamespace(Class clazz)
@@ -776,6 +798,7 @@ public class ObjectServiceFactory
                 final QName q = getInParameterName(endpoint, op, method, j, isDoc);
                 MessagePartInfo part = inMsg.addMessagePart(q, paramClasses[j]);
                 part.setIndex(j);
+                part.setDocumentation(getDocumentationProvider().getParamters(op, j));
                 part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
             }
         }
@@ -815,7 +838,7 @@ public class ObjectServiceFactory
             initializeFaults(endpoint, op);
         
         op.setAsync(isAsync(method));
-        
+        op.setDocumenation(documentationProvider.getOperationDoc(op));
         return op;
     }
 
@@ -1124,5 +1147,18 @@ public class ObjectServiceFactory
     public void setServiceConfigurations(List serviceConfigurations)
     {
         this.serviceConfigurations = serviceConfigurations;
-    }    
+    }
+
+    protected DocumentationProvider getDocumentationProvider()
+    {
+        return documentationProvider;
+    }
+
+    protected void setDocumentationProvider(DocumentationProvider documentationProvider)
+    {
+        this.documentationProvider = documentationProvider;
+    }
+    
+    
+    
 }

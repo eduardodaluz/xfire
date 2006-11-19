@@ -95,8 +95,7 @@ public class DOMUtils
 
         for (Node node = first; node != null; node = node.getNextSibling())
         {
-            //System.out.println("getNode: " + name + " " +
-            // node.getNodeName());
+           
             if (node.getNodeType() != Node.ELEMENT_NODE)
                 continue;
             if (name != null && name.equals(node.getNodeName()))
@@ -201,8 +200,6 @@ public class DOMUtils
             return null;
         for (Node node = first; node != null; node = node.getNextSibling())
         {
-            //System.out.println("getNode: " + name + " " +
-            // node.getNodeName());
             if (name.equals(node.getNodeName()))
             {
                 return getContent(node);
@@ -283,14 +280,10 @@ public class DOMUtils
         dbf.setIgnoringComments(false);
         dbf.setIgnoringElementContentWhitespace(true);
         dbf.setNamespaceAware(true);
-        //dbf.setCoalescing(true);
-        //dbf.setExpandEntityReferences(true);
 
         DocumentBuilder db = null;
         db = dbf.newDocumentBuilder();
         db.setEntityResolver(new NullResolver());
-
-        // db.setErrorHandler( new MyErrorHandler());
 
         Document doc = db.parse(is);
         return doc;

@@ -22,6 +22,7 @@ public class MessagePartInfo
     private SchemaType schemaType;
     private int index;
     private boolean schemaElement = true;
+    private String documentation;
     
     MessagePartInfo(QName name, Class typeClass, MessagePartContainer container)
     {
@@ -109,4 +110,15 @@ public class MessagePartInfo
         visitor.startMessagePart(this);
         visitor.endMessagePart(this);
     }
+
+    public String getDocumentation()
+    {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation)
+    {
+        this.documentation = documentation;
+    }
+    
 }

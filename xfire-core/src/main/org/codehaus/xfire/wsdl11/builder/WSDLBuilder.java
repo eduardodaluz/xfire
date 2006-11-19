@@ -34,6 +34,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.TransportManager;
+import org.codehaus.xfire.util.DOMUtils;
 import org.codehaus.xfire.wsdl.AbstractWSDL;
 import org.codehaus.xfire.wsdl.SchemaType;
 import org.codehaus.xfire.wsdl.WSDLWriter;
@@ -70,6 +71,9 @@ public class WSDLBuilder
     private List extensions;
 
     private Definition def;
+    
+    org.w3c.dom.Document w3cDocument =  DOMUtils.createDocument();
+    
 
     
     public WSDLBuilder(Service service, TransportManager transportManager) throws WSDLException
@@ -209,17 +213,27 @@ public class WSDLBuilder
         portType = def.createPortType();
         portType.setQName(portName);
         portType.setUndefined(false);
+        
+        String doc = service.getServiceInfo().getDocumentation();
+        if( doc != null ){
+            portType.setDocumentationElement(createElement(doc));    
+        }
+        
+        
         def.addPortType(portType);
 
         // Create Abstract operations
         for (Iterator itr = service.getServiceInfo().getOperations().iterator(); itr.hasNext();)
         {
             OperationInfo op = (OperationInfo) itr.next();
+            
 
             // Create input message
             Message req = createInputMessage(op);
             def.addMessage(req);
-
+           
+           
+            
             // Create output message if we have an out MEP
             Message res = null;
             if (op.getMEP().equals(SoapConstants.MEP_ROBUST_IN_OUT))
@@ -240,11 +254,26 @@ public class WSDLBuilder
             javax.wsdl.Operation wsdlOp = createOperation(op, req, res, faultMessages);
             wsdlOp.setUndefined(false);
             portType.addOperation(wsdlOp);
-
+            
+            String opDoc  = op.getDocumenation();
+            if( opDoc != null ){
+                wsdlOp.setDocumentationElement(createElement(opDoc));    
+            }
+            
             wsdlOps.put(op.getName(), wsdlOp);
         }
 
         return portType;
+    }
+    
+    
+    private org.w3c.dom.Element createElement(String value){
+
+        org.w3c.dom.Element elem =  w3cDocument.createElementNS(WSDL11_NS, "documentation");
+        String prefix = getNamespacePrefix(WSDL11_NS);
+        elem.setPrefix(prefix);
+        elem.setTextContent(value);
+        return elem;
     }
 
     public void createConcreteInterface(PortType portType)
@@ -408,7 +437,7 @@ public class WSDLBuilder
 
         Part part = getDefinition().createPart();
         part.setName(pName.getLocalPart());
-
+        
         if (!type.isAbstract())
         {
             String prefix = getNamespacePrefix(schemaTypeName.getNamespaceURI());
@@ -466,6 +495,8 @@ public class WSDLBuilder
         Input input = def.createInput();
         input.setMessage(req);
         input.setName(req.getQName().getLocalPart());
+        
+       
         wsdlOp.setInput(input);
 
         if (res != null)
@@ -509,7 +540,10 @@ public class WSDLBuilder
                     .getSchemaType().getNamespaceURI());
 
             Part part = createPart(param);
-
+            if( param.getDocumentation() != null ){
+                part.setDocumentationElement(createElement(param.getDocumentation()));    
+            }
+            
             message.addPart(part);
         }
     }
@@ -521,7 +555,22 @@ public class WSDLBuilder
         QName typeQName = createDocumentType(op.getInputMessage(), part, op.getName());
         part.setName("parameters");
         part.setElementName(typeQName);
-
+        List parts = op.getInputMessage().getMessageParts();
+        StringBuffer buffer = new StringBuffer();
+        for(int i=0;i<parts.size();i++){
+            MessagePartInfo messagePart  = (MessagePartInfo) parts.get(i);
+            if( messagePart.getDocumentation()!=null ){
+                
+                buffer.append("[");
+                buffer.append(messagePart.getDocumentation());
+                buffer.append("]");
+            }
+            
+        }
+        if( buffer.length()>0){
+            part.setDocumentationElement(createElement(buffer.toString()));     
+        }
+       
         req.addPart(part);
     }
 
