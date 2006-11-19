@@ -2,7 +2,7 @@
   <documentation>
     Service which allows to search for books
   </documentation>
-  <method name="findBook" argNr="1" >
+  <method name="findBook" parametersNumber="1" >
      <documentation>
         Finds book by isbn
      </documentation>

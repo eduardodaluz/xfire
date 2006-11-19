@@ -37,7 +37,7 @@ public class XMLDocumentationBuilder
     private static final String INDEX_ATTR = "index";
     
     
-    private static final String ARGUMENTS_NUMBER_ATTR = "argNr";
+    private static final String ARGUMENTS_NUMBER_ATTR = "parametersNumber";
 
     private static final String CONFIG_SUFIX = ".doc.xml";
 
