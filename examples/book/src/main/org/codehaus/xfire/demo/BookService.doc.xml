@@ -11,5 +11,25 @@
            ISBN number
         </documentation>
         </parameter>
+        
+      <return>
+        <documentation>
+         Book with given isbn number
+        </documentation>
+      </return>
   </method>
+  
+    <method name="getBooks" parametersNumber="0" >
+     <documentation>
+        Get all books
+     </documentation>
+        
+      <return>
+        <documentation>
+         All books.
+        </documentation>
+      </return>
+  </method>
+  
+
 </service>
