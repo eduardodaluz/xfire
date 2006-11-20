@@ -555,22 +555,8 @@ public class WSDLBuilder
         QName typeQName = createDocumentType(op.getInputMessage(), part, op.getName());
         part.setName("parameters");
         part.setElementName(typeQName);
-        List parts = op.getInputMessage().getMessageParts();
-        StringBuffer buffer = new StringBuffer();
-        for(int i=0;i<parts.size();i++){
-            MessagePartInfo messagePart  = (MessagePartInfo) parts.get(i);
-            if( messagePart.getDocumentation()!=null ){
-                
-                buffer.append("[");
-                buffer.append(messagePart.getDocumentation());
-                buffer.append("]");
-            }
-            
-        }
-        if( buffer.length()>0){
-            part.setDocumentationElement(createElement(buffer.toString()));     
-        }
        
+              
         req.addPart(part);
     }
 
@@ -583,7 +569,6 @@ public class WSDLBuilder
         QName typeQName = createDocumentType(op.getOutputMessage(), part, op.getName() + "Response");
         part.setElementName(typeQName);
         part.setName("parameters");
-
         req.addPart(part);
     }
 
@@ -656,6 +641,13 @@ public class WSDLBuilder
 
             element.setAttribute(new Attribute("minOccurs", "1"));
             element.setAttribute(new Attribute("maxOccurs", "1"));
+            if( param.getDocumentation()!=null){
+                Element ann  = new Element("annotation",AbstractWSDL.XSD_NS);
+                Element doc = new Element("documentation",AbstractWSDL.XSD_NS);
+                doc.setText(param.getDocumentation());
+                ann.addContent(doc);
+                element.addContent(ann);
+            }
         }
     }
 
