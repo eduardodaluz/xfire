@@ -48,6 +48,7 @@ import org.codehaus.xfire.util.STAXUtils;
  * on the MessageContext for your invocation.
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
  * @since Oct 26, 2004
  */
 public class CommonsHttpMessageSender extends AbstractMessageSender

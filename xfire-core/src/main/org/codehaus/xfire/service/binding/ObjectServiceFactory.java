@@ -817,6 +817,8 @@ public class ObjectServiceFactory
                 final QName q = getOutParameterName(endpoint, op, method, -1, isDoc);
                 MessagePartInfo part = outMsg.addMessagePart(q, method.getReturnType());
                 part.setIndex(-1);
+                part.setDocumentation(getDocumentationProvider().getResultDocumentation(op));
+                
                 part.setSchemaElement(isDoc || endpoint.getServiceInfo().isWrapped());
             }
             

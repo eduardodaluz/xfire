@@ -56,6 +56,11 @@ public class DocumentationProvider
         
         return (String) (info == null ? null : info.getParamsDocumentation().get(index));
     }
+    
+    public String getResultDocumentation(OperationInfo operation){
+        MethodInfo info = findMethodInfo(operation);
+        return (String) (info == null ? null : info.getReturnDocumentation());
+    }
 
     public String getServiceDoc()
     {
@@ -72,11 +77,12 @@ public class DocumentationProvider
         this.serviceDocumentation = serviceDocumentation;
     }
 
-    void addOperation(String methodName, String documentation, List parameters)
+    void addOperation(String methodName, String documentation, List parameters, String resultDoc)
     {
         List operations = (List) operationsDocumentation.get(methodName);
         MethodInfo info = new MethodInfo(methodName, parameters);
         info.setDocumentation(documentation);
+        info.setReturnDocumentation(resultDoc);
         if (operations == null)
         {
             operations = new ArrayList();
@@ -96,6 +102,8 @@ public class DocumentationProvider
         private List paramsDocumentation;
 
         private String documentation;
+        
+        private String returnDocumentation;
 
         public MethodInfo(String operationDoc, List paramsDoc)
         {
@@ -116,6 +124,16 @@ public class DocumentationProvider
         public String getDocumentation()
         {
             return documentation;
+        }
+
+        public String getReturnDocumentation()
+        {
+            return returnDocumentation;
+        }
+
+        public void setReturnDocumentation(String returnDocumentation)
+        {
+            this.returnDocumentation = returnDocumentation;
         }
 
     }

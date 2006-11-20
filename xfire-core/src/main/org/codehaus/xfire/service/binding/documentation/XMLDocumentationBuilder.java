@@ -32,6 +32,8 @@ public class XMLDocumentationBuilder
     
     private static final String PARAMTER_TAG = "parameter";
     
+    private static final String RETURN_TAG = "return";
+    
     private static final String NAME_ATTR = "name";
     
     private static final String INDEX_ATTR = "index";
@@ -90,7 +92,16 @@ public class XMLDocumentationBuilder
                 String paramDoc = readDocumentations(param);
                 params.set(index, paramDoc);
             }
-            docProvider.addOperation(name, opDocumentation, params);
+            String returnDoc = null; 
+            Element returnElem = element.getChild(RETURN_TAG);
+            if( returnElem != null ){
+                returnDoc = readDocumentations(returnElem);    
+            }
+            
+            docProvider.addOperation(name, opDocumentation, params, returnDoc);
+            
+            
+            
         }
 
         return docProvider;
