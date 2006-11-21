@@ -2,7 +2,9 @@ package org.codehaus.xfire.service.binding.documentation;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -34,14 +36,19 @@ public class XMLDocumentationBuilder
     
     private static final String RETURN_TAG = "return";
     
+    private static final String EXCEPTION_TAG = "exception";
+    
     private static final String NAME_ATTR = "name";
     
     private static final String INDEX_ATTR = "index";
     
+    private static final String CLASS_ATTR = "class";
     
     private static final String ARGUMENTS_NUMBER_ATTR = "parametersNumber";
 
     private static final String CONFIG_SUFIX = ".doc.xml";
+
+    
 
     /**
      * @param service
@@ -98,7 +105,17 @@ public class XMLDocumentationBuilder
                 returnDoc = readDocumentations(returnElem);    
             }
             
-            docProvider.addOperation(name, opDocumentation, params, returnDoc);
+            List exceptions = element.getChildren(EXCEPTION_TAG);
+            Map excMap = new HashMap();
+            for( int e=0;e<exceptions.size();e++){
+                Element param = (Element) exceptions.get(e);
+                String exClass = param.getAttribute(CLASS_ATTR).getValue();
+                String paramDoc = readDocumentations(param);
+                excMap.put(exClass, paramDoc);
+                
+            }
+            
+            docProvider.addOperation(name, opDocumentation, params, returnDoc,excMap);
             
             
             

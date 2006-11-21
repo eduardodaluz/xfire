@@ -248,6 +248,10 @@ public class WSDLBuilder
             {
                 FaultInfo fault = (FaultInfo) faultItr.next();
                 Fault faultMsg = createFault(op, fault);
+                if( fault.getDocumentation()!= null ){
+                    faultMsg.setDocumentationElement(createElement(fault.getDocumentation()));    
+                }
+                
                 faultMessages.add(faultMsg);
             }
 

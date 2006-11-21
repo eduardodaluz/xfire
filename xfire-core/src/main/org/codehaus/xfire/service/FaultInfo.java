@@ -18,7 +18,19 @@ public class FaultInfo
     private String name;
     private QName messageName;
     private Class exceptionClass;
+    private String documentation;
     
+    
+    public String getDocumentation()
+    {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation)
+    {
+        this.documentation = documentation;
+    }
+
     /**
      * Initializes a new instance of the <code>FaultInfo</code> class with the given name and operation
      *
