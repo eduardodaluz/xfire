@@ -947,6 +947,7 @@ public class ObjectServiceFactory
         FaultInfo info = op.addFault(name.getLocalPart());
         info.setExceptionClass(exClass);
         info.addMessagePart(name, beanClass);
+        info.setDocumentation(getDocumentationProvider().getExceptionDocumentation(op, exClass.getName()));
         
         return info;
     }
