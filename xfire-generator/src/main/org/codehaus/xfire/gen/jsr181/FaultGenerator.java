@@ -67,6 +67,7 @@ public class FaultGenerator
                     if (!exClasses.containsKey(fault.getMessageName()))
                     {
                         JClass excls = generateExceptionClass(context, fault, part);
+                        
                         exClasses.put(fault.getMessageName(), excls);
                     }
                 }
@@ -90,6 +91,10 @@ public class FaultGenerator
         try 
         {
             exCls = model._class(clsName);
+            
+            if( fault.getDocumentation()!= null ){
+                exCls.javadoc().add(fault.getDocumentation());    
+            }
         } 
         catch (JClassAlreadyExistsException e) 
         {
@@ -105,6 +110,7 @@ public class FaultGenerator
                 return exCls;
             }
         }
+        
         
         return generateExceptionClass(part, model, paramType, exCls);
     }

@@ -416,6 +416,10 @@ public class WSDLServiceBuilder
     {
         FaultInfo faultInfo = opInfo.addFault(fault.getName());
         faultInfo.setMessageName(fault.getMessage().getQName());
+        if(fault.getDocumentationElement()!= null ){
+            faultInfo.setDocumentation(fault.getDocumentationElement().getTextContent());    
+        }
+        
         wfault2msg.put(fault, faultInfo);
         
         createMessageParts(faultInfo, fault.getMessage());
