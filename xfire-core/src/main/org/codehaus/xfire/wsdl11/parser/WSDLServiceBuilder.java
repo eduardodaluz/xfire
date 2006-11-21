@@ -290,7 +290,7 @@ public class WSDLServiceBuilder
             {
                 Port port = (Port) pitr.next();
                 
-                if (port.getBinding().getPortType().equals(pt))
+                if (port.getBinding().getPortType().equals(pt)) 
                 {
                     ports.add(port);
                 }
@@ -368,7 +368,11 @@ public class WSDLServiceBuilder
         ServiceInfo serviceInfo = new ServiceInfo(null, Object.class);
         portType2serviceInfo.put(portType, serviceInfo);
         serviceInfo.setPortType(portType.getQName());
-
+        Element documentation = portType.getDocumentationElement();
+        if( documentation != null ){
+            String docText = documentation.getTextContent();
+            serviceInfo.setDocumentation(docText);
+        }
         isWrapped = true;
         Iterator itr = portType.getOperations().iterator();
         while (isWrapped && itr.hasNext())
@@ -443,6 +447,11 @@ public class WSDLServiceBuilder
     protected void visit(Operation operation)
     {
         opInfo = getServiceInfo(portType).addOperation(operation.getName(), null);
+        Element docElem = operation.getDocumentationElement();
+        if(docElem != null ){
+           String docText = docElem.getTextContent();
+           opInfo.setDocumenation(docText);
+        }
         wop2op.put(operation, opInfo);
     }
 

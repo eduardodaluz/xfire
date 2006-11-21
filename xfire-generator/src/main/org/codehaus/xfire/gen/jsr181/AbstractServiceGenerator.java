@@ -90,6 +90,10 @@ public abstract class AbstractServiceGenerator
         JDefinedClass jc = context.getCodeModel()._class(clsName, getClassType());
         
         SchemaSupport schema = context.getSchemaGenerator();
+        String documentation = service.getServiceInfo().getDocumentation();
+        if( documentation != null ){
+            jc.javadoc().add(documentation);    
+        }
         
         annotate(context, service, jc, binding);
         
@@ -105,6 +109,10 @@ public abstract class AbstractServiceGenerator
             
             JMethod method = jc.method(JMod.PUBLIC, returnType, name);
             
+            String opDocumentation = op.getDocumenation();
+            if( opDocumentation != null ){
+                method.javadoc().add(opDocumentation);
+            }
             annotate(context, op, method);
             
             generateOperation(context, op, method);
