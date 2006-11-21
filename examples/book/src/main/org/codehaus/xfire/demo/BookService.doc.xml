@@ -17,6 +17,13 @@
          Book with given isbn number
         </documentation>
       </return>
+      
+      <exception class="org.codehaus.xfire.demo.BookException">
+        <documentation>
+         Thrown when no book is found for given isbn number.
+        </documentation>
+      </exception>
+      
   </method>
   
     <method name="getBooks" parametersNumber="0" >

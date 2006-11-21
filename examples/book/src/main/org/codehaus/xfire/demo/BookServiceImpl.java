@@ -25,7 +25,7 @@ public class BookServiceImpl implements BookService
         return new Book[] { onlyBook };
     }
     
-    public Book findBook(String isbn)
+    public Book findBook(String isbn) throws BookException
     {
         if (isbn.equals(onlyBook.getIsbn()))
             return onlyBook;
