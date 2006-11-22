@@ -92,9 +92,6 @@ public class FaultGenerator
         {
             exCls = model._class(clsName);
             
-            if( fault.getDocumentation()!= null ){
-                exCls.javadoc().add(fault.getDocumentation());    
-            }
         } 
         catch (JClassAlreadyExistsException e) 
         {

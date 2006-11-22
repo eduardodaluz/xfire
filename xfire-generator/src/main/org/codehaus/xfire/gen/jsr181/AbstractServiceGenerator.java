@@ -24,6 +24,7 @@ import org.codehaus.xfire.soap.AbstractSoapBinding;
 
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JClass;
+import com.sun.codemodel.JCommentPart;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
@@ -274,6 +275,12 @@ public abstract class AbstractServiceGenerator
             if (exCls == null)
                 throw new GenerationException("Could not find generated " +
                         "fault class for " + faultInfo.getName() + "!");
+            
+            if( faultInfo.getDocumentation()!= null){
+             JCommentPart commentPart = method.javadoc().addThrows(exCls);
+             commentPart.add(faultInfo.getDocumentation());
+             
+            }
             
             method._throws(exCls);
         }
