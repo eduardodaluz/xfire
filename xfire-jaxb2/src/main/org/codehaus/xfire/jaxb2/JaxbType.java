@@ -204,7 +204,11 @@ public class JaxbType
         }
         catch (JAXBException e)
         {
-            throw new XFireFault("Could not unmarshall type.", e, XFireFault.RECEIVER);
+            Throwable ex = e;
+            if( e.getLinkedException()!= null ){
+                ex = e.getLinkedException();
+            }
+            throw new XFireFault("Could not unmarshall type.", ex, XFireFault.RECEIVER);
         }
 
     }
