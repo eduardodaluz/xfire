@@ -569,7 +569,11 @@ public class WSDLServiceBuilder
             if (!isWrappedResponse(ct))
                 return false;
         }
-
+        else if (resSchemaEl.getSchemaType() != null) 
+        {
+            return false;
+        }
+        
         return true;
     }
     
@@ -613,7 +617,10 @@ public class WSDLServiceBuilder
         
         XmlSchemaElement schemaEl = schemas.getElementByQName(part.getElementName());
         
-        return (XmlSchemaComplexType) schemaEl.getSchemaType();
+        if (schemaEl.getSchemaType() instanceof XmlSchemaComplexType)
+            return (XmlSchemaComplexType) schemaEl.getSchemaType();
+        
+        return null;
     }
     
     protected static boolean hasAttributes(XmlSchemaComplexType complexType)
