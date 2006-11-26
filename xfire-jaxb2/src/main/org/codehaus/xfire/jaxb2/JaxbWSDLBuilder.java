@@ -102,6 +102,13 @@ public class JaxbWSDLBuilder
             for (DOMResult result : results)
             {
                 Element schema = domBuilder.build(((Document)result.getNode()).getDocumentElement());
+                
+                // JAXB doesn't accept a Result with a null SystemId, which
+                // means it generats import statements for us. However, they're
+                // worthless imports as they contain the schemaLocation. So
+                // lets remove it.
+                removeImports(schema);
+                
                 schema.detach();
                 getSchemaTypes().addContent(schema);
             }

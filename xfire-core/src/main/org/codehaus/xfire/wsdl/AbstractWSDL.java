@@ -173,13 +173,19 @@ public abstract class AbstractWSDL
         for (Iterator itr = schemaTypes.getChildren().iterator(); itr.hasNext();)
         {
             Element schema = (Element) itr.next();
-            List children = schema.getChildren("import", Namespace.getNamespace(SoapConstants.XSD));
-            
-            for (Iterator sitr = children.iterator(); sitr.hasNext();)
-            {
-                sitr.next();
-                sitr.remove();
-            }
+            removeImports(schema);
+        }
+    }
+
+
+    protected void removeImports(Element schema)
+    {
+        List children = schema.getChildren("import", Namespace.getNamespace(SoapConstants.XSD));
+        
+        for (Iterator sitr = children.iterator(); sitr.hasNext();)
+        {
+            sitr.next();
+            sitr.remove();
         }
     }
     

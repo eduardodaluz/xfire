@@ -7,6 +7,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
+import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.jdom.Document;
 
 /**
@@ -25,6 +26,7 @@ public class POJOTest
 
         builder = new JaxbServiceFactory();
         endpoint = builder.create(AccountServiceImpl.class);
+        endpoint.setProperty(WSDLBuilder.REMOVE_ALL_IMPORTS, "true");
         getServiceRegistry().register(endpoint);
     }
 
@@ -44,10 +46,41 @@ public class POJOTest
         addNamespace("xsd", SoapConstants.XSD);
         
         assertValid("//xsd:schema[@targetNamespace='urn:account']/xsd:complexType[@name='Acct']", doc);
+        assertInvalid("//xsd:import", doc);
     }
     
     @XmlType(name="Acct", namespace="urn:account")
     public static class Account
+    {
+        private String id;
+        private Customer customer;
+        
+        public String getId()
+        {
+            return id;
+        }
+
+        public void setId(String id)
+        {
+            this.id = id;
+        }
+
+        public Customer getCustomer()
+        {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer)
+        {
+            this.customer = customer;
+        }
+        
+        
+    }
+    
+
+    @XmlType(name="Customer", namespace="urn:customer")
+    public static class Customer
     {
         private String id;
 
