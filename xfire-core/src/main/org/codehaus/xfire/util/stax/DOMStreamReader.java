@@ -26,7 +26,7 @@ public abstract class DOMStreamReader
 
     private ElementFrame frame;
 
-    private int currentEvent = XMLStreamConstants.START_DOCUMENT;
+    protected int currentEvent = XMLStreamConstants.START_DOCUMENT;
 
     /**
      *     
@@ -113,11 +113,6 @@ public abstract class DOMStreamReader
         {
             frame.currentAttribute++;
             currentEvent = ATTRIBUTE;
-        }
-        else if (frame.currentNamespace < getNamespaceCount() - 1)
-        {
-            frame.currentNamespace++;
-            currentEvent = NAMESPACE;
         }
         else if (frame.currentChild < getChildCount() - 1)
         {

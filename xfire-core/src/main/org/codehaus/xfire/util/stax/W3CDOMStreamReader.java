@@ -145,6 +145,10 @@ public class W3CDOMStreamReader
     public String getElementText()
         throws XMLStreamException
     {
+        getCurrentFrame().ended = true;
+        currentEvent = END_ELEMENT;
+        endElement();
+        
         return DOMUtils.getContent(content);
     }
 

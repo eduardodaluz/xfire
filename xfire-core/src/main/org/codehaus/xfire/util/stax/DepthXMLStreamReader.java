@@ -19,7 +19,7 @@ public class DepthXMLStreamReader
     XMLStreamReader reader;
 
     private int depth = 0;
-
+    
     public DepthXMLStreamReader(XMLStreamReader reader)
     {
         this.reader = reader;
@@ -82,6 +82,7 @@ public class DepthXMLStreamReader
 
     public String getElementText() throws XMLStreamException
     {
+        depth--;
         return reader.getElementText();
     }
 

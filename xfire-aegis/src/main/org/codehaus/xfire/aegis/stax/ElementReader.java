@@ -29,7 +29,7 @@ public class ElementReader
 
     private DepthXMLStreamReader root;
 
-    private StringBuffer value;
+    private String value;
 
     private String localName;
 
@@ -40,9 +40,7 @@ public class ElementReader
     private boolean hasCheckedChildren = false;
 
     private boolean hasChildren = false;
-
-    private boolean hasFoundText = false;
-
+    
     private String namespace;
 
     private int depth;
@@ -117,30 +115,20 @@ public class ElementReader
      */
     public String getValue()
     {
-        while (!hasFoundText && checkHasMoreChildReaders())
+        if (value == null) 
         {
-            if (hasChildren)
-                readToEnd(this);
+            try
+            {
+                value = root.getElementText();
+
+                while (checkHasMoreChildReaders()) {}
+            }
+            catch (XMLStreamException e)
+            {
+                throw new XFireRuntimeException("Could not read XML stream.", e);
+            }
         }
-
-        if (value == null)
-            return "";
-
-        return value.toString().trim();
-    }
-
-    private void readToEnd(MessageReader childReader)
-    {
-        if (value == null)
-            value = new StringBuffer();
-
-        while (childReader.hasMoreElementReaders())
-        {
-            MessageReader reader = childReader.getNextElementReader();
-            String s = reader.getValue();
-            if (s != null)
-                value.append(s);
-        }
+        return value.trim();
     }
 
     public String getValue(String ns, String attr)
@@ -177,22 +165,17 @@ public class ElementReader
                     }
                     break;
                 case XMLStreamReader.END_ELEMENT:
-                    if (root.getDepth() <= depth)
+                    if (root.getDepth() <= depth + 1)
                     {
                         hasCheckedChildren = true;
                         hasChildren = false;
 
                         if (root.hasNext())
+                        {
                             root.next();
+                        }
                         return false;
                     }
-                    break;
-                case XMLStreamReader.CHARACTERS:
-                    if (value == null)
-                        value = new StringBuffer();
-
-                    value.append(root.getText());
-                    hasFoundText = true;
                     break;
                 case XMLStreamReader.END_DOCUMENT:
                     // We should never get here...

@@ -183,7 +183,42 @@ public class JDOMStreamReader
     public String getElementText()
         throws XMLStreamException
     {
-        return ((Text) content).getText();
+        if (getEventType() != START_ELEMENT)
+        {
+            throw new XMLStreamException("parser must be on START_ELEMENT to read next text",
+                    getLocation());
+        }
+        int eventType = next();
+        StringBuilder content = new StringBuilder();
+        while (eventType != END_ELEMENT)
+        {
+            if (eventType == CHARACTERS || eventType == CDATA || eventType == SPACE
+                    || eventType == ENTITY_REFERENCE)
+            {
+                content.append(getText());
+            }
+            else if (eventType == PROCESSING_INSTRUCTION || eventType == COMMENT)
+            {
+                // skipping
+            }
+            else if (eventType == END_DOCUMENT)
+            {
+                throw new XMLStreamException(
+                        "unexpected end of document when reading element text content");
+            }
+            else if (eventType == START_ELEMENT)
+            {
+                throw new XMLStreamException("element text content may not contain START_ELEMENT",
+                        getLocation());
+            }
+            else
+            {
+                throw new XMLStreamException("Unexpected event type " + eventType, getLocation());
+            }
+            eventType = next();
+        }
+        return content.toString();
+    
     }
 
     public String getNamespaceURI(String prefix)

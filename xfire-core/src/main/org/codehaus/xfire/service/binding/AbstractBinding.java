@@ -1,7 +1,6 @@
 package org.codehaus.xfire.service.binding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -292,8 +291,6 @@ public abstract class AbstractBinding
     protected Object getClientParam(Object[] values, MessagePartInfo outParam, MessageContext context) 
         throws XFireFault
     {
-        System.out.println("Values " + Arrays.toString(values));
-        System.out.println("part" + outParam.getName());
         if (outParam.getIndex() >= values.length) 
         {
             throw new XFireFault("Not enough input parameters were supplied!", XFireFault.SENDER);

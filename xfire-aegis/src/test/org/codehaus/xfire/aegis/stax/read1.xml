@@ -1,6 +1,9 @@
 <test xmlns="urn:test" one="one" two="two">
+  <foo>bar</foo>
+  <nil xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
   <child>
-    <grandchild></grandchild>
-    <grandchild></grandchild>
+    <grandchild>asdf</grandchild>
+    <grandchild>asdf</grandchild>
   </child>
+  <foo>test</foo>
 </test>

@@ -45,6 +45,7 @@ public class RPCLitDynamicClientTest
         assertEquals("unexpected array size in invoke response", 1, response.length);
         
         Integer res = (Integer) response[0];
+        assertNotNull(res);
     }
     
     public static class TestService 

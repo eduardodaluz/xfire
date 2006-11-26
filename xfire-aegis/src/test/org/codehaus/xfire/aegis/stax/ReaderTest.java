@@ -2,13 +2,11 @@ package org.codehaus.xfire.aegis.stax;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.aegis.MessageReader;
 import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.test.AbstractXFireTest;
-import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.jdom.Document;
 
@@ -27,20 +25,15 @@ public class ReaderTest
         
         lr = getStreamReader("/org/codehaus/xfire/aegis/stax/read1.xml");
         testReading2(lr);
+        
+        lr = getStreamReader("/org/codehaus/xfire/aegis/stax/read2.xml");
+        testReading2(lr);
     }
 
     private ElementReader getStreamReader(String resource)
         throws FactoryConfigurationError, XMLStreamException
     {
-        /*XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader reader = factory.createXMLStreamReader( 
-                getResourceAsStream(resource));*/
-        XMLStreamReader reader = STAXUtils.createXMLStreamReader(getResourceAsStream(resource),null,null);
-        
-        while ( reader.getEventType() != XMLStreamReader.START_ELEMENT )
-            reader.next();
-        
-        return new ElementReader(reader);
+        return new ElementReader(getResourceAsStream(resource));
     }
     
     public void testYOMReader()
@@ -94,8 +87,31 @@ public class ReaderTest
         assertTrue(reader.hasMoreElementReaders());
         assertTrue(reader.hasMoreElementReaders());
         
+        MessageReader foo = reader.getNextElementReader();
+        assertEquals("bar", foo.getValue());
+        
+        MessageReader nil = reader.getNextElementReader();
+        assertTrue(nil.isXsiNil());
+        
+        nil.readToEnd();
+        
+        assertTrue(reader.hasMoreElementReaders());
         MessageReader child = reader.getNextElementReader();
         assertEquals("child", child.getLocalName());
         assertTrue(child.hasMoreElementReaders());
+        
+        MessageReader gc1 = child.getNextElementReader();
+        assertEquals("asdf", gc1.getValue());
+        
+        MessageReader gc2 = child.getNextElementReader();
+        assertEquals("asdf", gc2.getValue());
+        
+        assertFalse(child.hasMoreElementReaders());
+        assertTrue(reader.hasMoreElementReaders());
+        
+        foo = reader.getNextElementReader();
+        assertEquals("test", foo.getValue());
+        
+        assertFalse(reader.hasMoreElementReaders());
     }
 }
