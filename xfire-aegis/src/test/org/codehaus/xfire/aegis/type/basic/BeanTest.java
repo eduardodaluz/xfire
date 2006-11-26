@@ -1,5 +1,6 @@
 package org.codehaus.xfire.aegis.type.basic;
 
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -337,6 +338,30 @@ public class BeanTest
         assertValid("/b:root", element);
     }
 
+    public void testExtendedBean()
+        throws Exception
+    {
+        BeanTypeInfo info = new BeanTypeInfo(ExtendedBean.class, "urn:Bean");
+        info.setTypeMapping(mapping);
+        
+        BeanType type = new BeanType(info);
+        type.setTypeClass(ExtendedBean.class);
+        type.setTypeMapping(mapping);
+        type.setSchemaType(new QName("urn:Bean", "bean"));
+    
+        PropertyDescriptor[] pds = info.getPropertyDescriptors();
+        assertEquals(2, pds.length);
+        
+        ExtendedBean bean = new ExtendedBean();
+        bean.setHowdy("howdy");
+        
+        Element element = new Element("root", "b", "urn:Bean");
+        new Document(element);
+        type.writeObject(bean, new JDOMWriter(element), new MessageContext());
+
+        assertValid("/b:root/b:howdy[text()='howdy']", element);       
+    }
+    
     public void testByteBean()
         throws Exception
     {
@@ -472,6 +497,21 @@ public class BeanTest
     {
         public void setString(String string)
         {
+        }
+    }
+    
+    public static class ExtendedBean extends SimpleBean 
+    {
+        private String howdy;
+
+        public String getHowdy()
+        {
+            return howdy;
+        }
+
+        public void setHowdy(String howdy)
+        {
+            this.howdy = howdy;
         }
     }
 }
