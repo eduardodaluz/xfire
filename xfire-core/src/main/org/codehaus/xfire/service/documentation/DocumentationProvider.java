@@ -1,4 +1,4 @@
-package org.codehaus.xfire.service.binding.documentation;
+package org.codehaus.xfire.service.documentation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
