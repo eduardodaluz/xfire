@@ -52,18 +52,18 @@
   <wsdl:message name="authenticateRequest">
     <wsdl:part element="tns:authenticate" name="parameters" />
   </wsdl:message>
-  <wsdl:message name="AuthenticationFault">
+  <wsdl:message name="authenticationException">
     <wsdl:part element="ns1:AuthenticationFault" name="AuthenticationFault" />
   </wsdl:message>
-  <wsdl:message name="authenticationFault2">
+  <wsdl:message name="authenticationException2">
     <wsdl:part element="ns1:authenticationFault2" name="authenticationFault2" />
   </wsdl:message>
   <wsdl:portType name="AuthServicePortType">
     <wsdl:operation name="authenticate">
       <wsdl:input message="tns:authenticateRequest" name="authenticateRequest" />
       <wsdl:output message="tns:authenticateResponse" name="authenticateResponse" />
-      <wsdl:fault message="tns:AuthenticationFault" name="AuthenticationFault" />
-      <wsdl:fault message="tns:authenticationFault2" name="authenticationFault2" />
+      <wsdl:fault message="tns:authenticationException" name="AuthenticationFault" />
+      <wsdl:fault message="tns:authenticationException2" name="authenticationFault2" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="AuthServiceHttpBinding" type="tns:AuthServicePortType">

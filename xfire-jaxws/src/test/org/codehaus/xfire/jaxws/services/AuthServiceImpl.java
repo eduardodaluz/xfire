@@ -18,12 +18,12 @@ public class AuthServiceImpl
 
 
     public String authenticate(String in0, String in1)
-        throws services.auth.AuthenticationFault
+        throws services.auth.AuthenticationException
     {
         AuthenticationFault fault = new AuthenticationFault();
         fault.setErrorCode(1);
         
-        throw new services.auth.AuthenticationFault("fault", fault);
+        throw new services.auth.AuthenticationException("fault", fault);
     }
 
 }

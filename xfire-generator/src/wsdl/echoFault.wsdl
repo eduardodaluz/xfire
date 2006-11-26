@@ -34,11 +34,11 @@
   <wsdl:message name="echoRequest">
     <wsdl:part element="tns:echo" name="parameters" />
   </wsdl:message>
-  <wsdl:message name="EchoFault">
+  <wsdl:message name="echoException">
     <wsdl:part element="tns:EchoFault" name="EchoFault" />
   </wsdl:message>
-  <wsdl:message name="OtherEchoFault">
-    <wsdl:part element="tns:EchoFault" name="EchoFault" />
+  <wsdl:message name="otherEchoException">
+    <wsdl:part element="tns:EchoFault" name="OtherEchoFault" />
   </wsdl:message>
   <wsdl:message name="echoResponse">
     <wsdl:part element="tns:echoResponse" name="parameters" />
@@ -47,8 +47,8 @@
     <wsdl:operation name="echo">
       <wsdl:input message="tns:echoRequest" name="echoRequest" />
       <wsdl:output message="tns:echoResponse" name="echoResponse" />
-      <wsdl:fault message="tns:EchoFault" name="EchoFault" />
-      <wsdl:fault message="tns:OtherEchoFault" name="OtherEchoFault" />
+      <wsdl:fault message="tns:echoException" name="EchoFault" />
+      <wsdl:fault message="tns:otherEchoException" name="OtherEchoFault" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="EchoWithFaultHttpBinding" type="tns:EchoWithFaultPortType">

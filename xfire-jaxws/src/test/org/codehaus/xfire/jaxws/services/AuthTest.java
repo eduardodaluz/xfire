@@ -30,7 +30,7 @@ public class AuthTest
             auth.authenticate("bleh", "bar");
             fail("Must throw fault.");
         }
-        catch (services.auth.AuthenticationFault f)
+        catch (services.auth.AuthenticationException f)
         {
         }
     }
