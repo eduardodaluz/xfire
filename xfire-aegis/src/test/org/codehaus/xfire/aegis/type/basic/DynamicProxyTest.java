@@ -46,6 +46,8 @@ public class DynamicProxyTest
         public String getType();
         
         public String getFOO();
+        
+        public int getNonSpecifiedInt();
     }
 
     public interface IMyInterface2
@@ -78,6 +80,8 @@ public class DynamicProxyTest
         assertNotNull(data.toString());
         
         assertEquals("foo", data.getFOO());
+        
+        assertEquals(0, data.getNonSpecifiedInt());
     }
 
     public void testDynamicProxyNonStandardGetter()

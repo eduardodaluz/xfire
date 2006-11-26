@@ -102,7 +102,23 @@ class InterfaceInvocationHandler
         else
             throw new IllegalAccessError(methodName + " is not a valid getter method.");
 
-        return readProperty(attrName);
+        Object prop = readProperty(attrName);
+        if (prop == null && method.getReturnType().isPrimitive()) {
+            if (method.getReturnType() == int.class) {
+                return new Integer(0);
+            } else if (method.getReturnType() == long.class) {
+                return new Long(0);
+            } else if (method.getReturnType() == double.class) {
+                return new Double(0);
+            } else if (method.getReturnType() == short.class) {
+                return new Short((short)0);
+            } else if (method.getReturnType() == byte.class) {
+                return new Byte((byte)0);
+            } else if (method.getReturnType() == char.class) {
+                return new Character((char)0);
+            }
+        }
+        return prop;
     }
 
     protected Object doSetter(Method method, Object[] args)
