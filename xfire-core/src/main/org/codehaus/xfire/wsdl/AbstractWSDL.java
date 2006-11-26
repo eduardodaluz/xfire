@@ -50,7 +50,7 @@ public abstract class AbstractWSDL
     
     private Element schemaTypes;
 
-    private Map typeMap = new HashMap();
+    protected Map typeMap = new HashMap();
     
     private boolean schemaLocationRemoved = true;
     

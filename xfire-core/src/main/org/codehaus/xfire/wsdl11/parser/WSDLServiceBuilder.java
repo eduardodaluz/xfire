@@ -662,6 +662,9 @@ public class WSDLServiceBuilder
                 MessagePartInfo part = info.addMessagePart(elementName, null);
                 part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
                 part.setIndex(info.size()-1);
+                if( entry.getDocumentationElement()!= null ){
+                    part.setDocumentation(entry.getDocumentationElement().getTextContent());
+                }
             }
         }
     }

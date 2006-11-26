@@ -51,6 +51,8 @@ import com.ibm.wsdl.extensions.schema.SchemaImpl;
  * WSDL
  * 
  * @author <a href="mailto:dan@envoisolutions.com">Dan Diephouse</a>
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ * 
  */
 public class WSDLBuilder
     extends org.codehaus.xfire.wsdl.AbstractWSDL
@@ -339,6 +341,26 @@ public class WSDLBuilder
         return res;
     }
 
+    private void createDocumentation(List messageParts){
+        for(Iterator itr = messageParts.iterator();itr.hasNext();){
+            MessagePartInfo param = (MessagePartInfo) itr.next();
+           
+           if( param.getDocumentation() != null){
+           
+               Element e = (Element) typeMap.get(param.getName().getNamespaceURI());
+               List children  =  e.getChildren("element",Namespace.getNamespace(SoapConstants.XSD));
+               for( Iterator elemItr = children.iterator(); elemItr.hasNext();){
+                   Element elem = (Element) elemItr .next();
+                   if(elem.getAttribute("name").getValue().equals(param.getName().getLocalPart())){
+                       elem.addContent(createDocElement(param.getDocumentation()));
+                       break;
+                   }
+               }
+               
+           }
+        }
+
+    }
     private Message createInputMessage(OperationInfo op)
     {
         Message req = getDefinition().createMessage();
@@ -386,8 +408,8 @@ public class WSDLBuilder
             return createRpcLitPart(part.getName(), part.getTypeClass(), part.getSchemaType());
         }
         else
-        {
-            return createDocLitPart(part.getName(), part.getTypeClass(), part.getSchemaType());
+        {   
+          return createDocLitPart(part.getName(), part.getTypeClass(), part.getSchemaType());
         }
     }
 
@@ -524,11 +546,13 @@ public class WSDLBuilder
     public void createInputParts(Message req, OperationInfo op)
     {
         writeParameters(req, op.getInputMessage().getMessageParts());
+        createDocumentation(op.getInputMessage().getMessageParts());
     }
 
     public void createOutputParts(Message req, OperationInfo op)
     {
         writeParameters(req, op.getOutputMessage().getMessageParts());
+        createDocumentation(op.getOutputMessage().getMessageParts());
     }
 
     private void writeParameters(Message message, Collection params)
@@ -544,9 +568,6 @@ public class WSDLBuilder
                     .getSchemaType().getNamespaceURI());
 
             Part part = createPart(param);
-            if( param.getDocumentation() != null ){
-                part.setDocumentationElement(createElement(param.getDocumentation()));    
-            }
             
             message.addPart(part);
         }
@@ -646,15 +667,19 @@ public class WSDLBuilder
             element.setAttribute(new Attribute("minOccurs", "1"));
             element.setAttribute(new Attribute("maxOccurs", "1"));
             if( param.getDocumentation()!=null){
-                Element ann  = new Element("annotation",AbstractWSDL.XSD_NS);
-                Element doc = new Element("documentation",AbstractWSDL.XSD_NS);
-                doc.setText(param.getDocumentation());
-                ann.addContent(doc);
-                element.addContent(ann);
+                element.addContent(createDocElement(param.getDocumentation()));
             }
         }
     }
 
+     private Element createDocElement(String value ){
+         
+         Element ann  = new Element("annotation",AbstractWSDL.XSD_NS);
+         Element doc = new Element("documentation",AbstractWSDL.XSD_NS);
+         doc.setText(value);
+         return ann.addContent(doc);
+     }
+     
     public void addNamespace(String prefix, String uri)
     {
         def.addNamespace(prefix, uri);
