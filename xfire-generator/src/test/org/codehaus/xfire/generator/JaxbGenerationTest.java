@@ -17,9 +17,9 @@ public class JaxbGenerationTest
         generator.generate();
         
         JCodeModel model = generator.getCodeModel();
-        JDefinedClass echo = model._getClass("xfire.echo.fault.OtherEchoFault");
+        JDefinedClass echo = model._getClass("xfire.echo.fault.OtherEchoException");
         assertNotNull(echo);
-        echo = model._getClass("xfire.echo.fault.EchoFault_Exception");
+        echo = model._getClass("xfire.echo.fault.EchoException");
         assertNotNull(echo);
     }
     
