@@ -179,11 +179,17 @@ public class Soap12FaultSerializer
         throws XMLStreamException
     {
         String ns = qname.getNamespaceURI();
-        String prefix = "";
-        if (ns.length() > 0)
+        String prefix = qname.getPrefix();
+        if (ns.length() > 0 && prefix.length() == 0)
         {
             prefix = NamespaceHelper.getUniquePrefix(writer, ns, true) + ":";
+        } 
+        else if (prefix.length() > 0)
+        {
+            writer.writeNamespace(prefix, ns);
+            prefix = prefix + ":";
         }
+        
         
         writer.writeCharacters(prefix + qname.getLocalPart());
     }

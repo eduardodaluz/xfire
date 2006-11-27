@@ -124,10 +124,15 @@ public class Soap11FaultSerializer
             else
             {
                 String ns = faultCode.getNamespaceURI();
-                String prefix = "";
-                if (ns.length() > 0)
+                String prefix = faultCode.getPrefix();
+                if (ns.length() > 0 && prefix.length() == 0)
                 {
                     prefix = NamespaceHelper.getUniquePrefix(writer, ns, true) + ":";
+                } 
+                else if (prefix.length() > 0)
+                {
+                    writer.writeNamespace(prefix, ns);
+                    prefix = prefix + ":";
                 }
                 
                 codeString = prefix + faultCode.getLocalPart();

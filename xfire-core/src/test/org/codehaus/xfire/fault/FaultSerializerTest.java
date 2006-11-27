@@ -63,7 +63,7 @@ public class FaultSerializerTest
         Document doc = readDocument(out.toString());
         //printNode(doc);
         addNamespace("s", Soap12.getInstance().getNamespace());
-        assertValid("//s:SubCode/s:Value[text()='ns1:NotAvailable']", doc);
+        assertValid("//s:SubCode/s:Value[text()='m:NotAvailable']", doc);
         addNamespace("t", "urn:test2");
         assertValid("//s:Detail/t:bah2[text()='bleh']", doc);
         assertValid("//s:Role[text()='http://someuri']", doc);
@@ -95,7 +95,6 @@ public class FaultSerializerTest
         assertNotNull(fault.getDetail().getChild("bah2", Namespace.getNamespace("urn:test2")));
     }
 
-
     public void testFaults11()
             throws Exception
     {
@@ -103,8 +102,7 @@ public class FaultSerializerTest
 
         XFireFault fault = new XFireFault(new Exception());
         fault.setRole("http://someuri");
-
-        Element details = fault.getDetail();
+        
         Element e = new Element("bah", "t", "urn:test");
         e.addContent("bleh");
         fault.getDetail().addContent(e);
@@ -151,6 +149,67 @@ public class FaultSerializerTest
         assertNotNull(fault.getDetail().getChild("bah2", Namespace.getNamespace("urn:test2")));
     }
 
+
+    public void testCustomPrefix()
+            throws Exception
+    {
+        Soap11FaultSerializer soap11 = new Soap11FaultSerializer();
+
+        XFireFault fault = new XFireFault(new Exception());
+        fault.setFaultCode(new QName("http:///test-uri", "test", "t"));
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
+        OutMessage message = new OutMessage("urn:bleh");
+        message.setBody(fault);
+        
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8",null);
+        writer.writeStartDocument();
+        writer.writeStartElement("soap", "Body", Soap11.getInstance().getNamespace());
+        writer.writeNamespace("soap", Soap11.getInstance().getNamespace());
+        soap11.writeMessage(message, writer, new MessageContext());
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.close();
+
+        Document doc = readDocument(out.toString());
+
+        addNamespace("s", Soap12.getInstance().getNamespace());
+        addNamespace("t", "urn:test2");
+        assertValid("//faultcode[text()='t:test']", doc);
+    }
+
+    public void testCustomPrefixSoap12()
+            throws Exception
+    {
+        Soap12FaultSerializer soap11 = new Soap12FaultSerializer();
+
+        XFireFault fault = new XFireFault(new Exception());
+        fault.setFaultCode(new QName("http:///test-uri", "test", "t"));
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
+        OutMessage message = new OutMessage("urn:bleh");
+        message.setBody(fault);
+        
+        XMLStreamWriter writer = STAXUtils.createXMLStreamWriter(out, "UTF-8",null);
+        writer.writeStartDocument();
+        writer.writeStartElement("soap", "Body", Soap12.getInstance().getNamespace());
+        writer.writeNamespace("soap", Soap12.getInstance().getNamespace());
+        soap11.writeMessage(message, writer, new MessageContext());
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.close();
+
+        Document doc = readDocument(out.toString());
+
+        addNamespace("s", Soap12.getInstance().getNamespace());
+        addNamespace("t", "urn:test2");
+        assertValid("//s:Code/s:Value[text()='t:test']", doc);
+    }
+
+
+    
     private XMLStreamReader readerForString(String string) throws XMLStreamException
     {
         XMLInputFactory factory = STAXUtils.getXMLInputFactory(null);
