@@ -50,6 +50,7 @@ import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.wsdl.SchemaType;
+import org.codehaus.xfire.wsdl11.ResolverWSDLLocator;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
@@ -113,7 +114,7 @@ public class WSDLServiceBuilder
 
     public WSDLServiceBuilder(String baseURI, InputStream is) throws WSDLException
     {
-        this(WSDLFactory.newInstance().newWSDLReader().readWSDL(baseURI, new InputSource(is)));
+        this(WSDLFactory.newInstance().newWSDLReader().readWSDL(new ResolverWSDLLocator(baseURI, new InputSource(is))));
         this.definition.setDocumentBaseURI(baseURI);
         this.systemId = baseURI;
     }
@@ -452,7 +453,8 @@ public class WSDLServiceBuilder
     {
         opInfo = getServiceInfo(portType).addOperation(operation.getName(), null);
         Element docElem = operation.getDocumentationElement();
-        if(docElem != null ){
+        if (docElem != null)
+        {
            String docText = docElem.getTextContent();
            opInfo.setDocumenation(docText);
         }
@@ -461,6 +463,11 @@ public class WSDLServiceBuilder
 
     private void createMessageParts(MessageInfo info, XmlSchemaComplexType type)
     {
+        if (type == null) 
+        {
+            return;
+        }
+      
         if (type.getParticle() instanceof XmlSchemaSequence)
         {
             XmlSchemaSequence seq = (XmlSchemaSequence) type.getParticle();

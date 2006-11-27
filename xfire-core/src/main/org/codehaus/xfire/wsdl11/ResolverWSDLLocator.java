@@ -22,7 +22,7 @@ public class ResolverWSDLLocator
 
     private static final Log LOG = LogFactory.getLog(ResolverWSDLLocator.class.getName());
 
-    private String baseURI = "";
+    private String baseURI;
 
     private String lastimport = "";
 
@@ -30,13 +30,8 @@ public class ResolverWSDLLocator
 
     public ResolverWSDLLocator(String baseURI, InputSource inputsource)
     {
-
         this.inputsource = inputsource;
-
-        if (baseURI != null)
-        {
-            this.baseURI = baseURI;
-        }
+        this.baseURI = baseURI;
     }
 
     /*

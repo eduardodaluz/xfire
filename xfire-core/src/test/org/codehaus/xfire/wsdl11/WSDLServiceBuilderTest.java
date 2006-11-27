@@ -109,6 +109,8 @@ public class WSDLServiceBuilderTest
         
         Service service = (Service) services.iterator().next();
         
+        assertFalse(service.getServiceInfo().isWrapped());
+        
         QName name = service.getName();
         assertNotNull(name);
         assertEquals(new QName("urn:Echo", "Echo"), name);
@@ -116,8 +118,7 @@ public class WSDLServiceBuilderTest
         Collection operations = service.getServiceInfo().getOperations();
         assertEquals(1, operations.size());
         
-        OperationInfo opInfo = (OperationInfo) operations.iterator().next();
-        assertEquals("echo", opInfo.getName());
+        OperationInfo opInfo = service.getServiceInfo().getOperation("echo");
         
         // Check the input message
         MessageInfo message = opInfo.getInputMessage();
@@ -127,6 +128,35 @@ public class WSDLServiceBuilderTest
         assertEquals(1, parts.size());
     }
     
+    public void testEmptyWrappedResponse()
+        throws Exception
+    {
+        WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("emptyWrappedResponse.wsdl"));
+        builder.setBindingProvider(new MessageBindingProvider());
+        builder.build();
+        
+        Collection services = builder.getAllServices();        
+        assertEquals(1, services.size());
+        
+        Service service = (Service) services.iterator().next();
+        
+        assertTrue(service.getServiceInfo().isWrapped());
+        
+        QName name = service.getName();
+        assertNotNull(name);
+        assertEquals(new QName("urn:Echo", "Echo"), name);
+        
+        Collection operations = service.getServiceInfo().getOperations();
+        assertEquals(1, operations.size());
+        
+        OperationInfo opInfo = service.getServiceInfo().getOperation("doInvokeNoResponseElements");
+
+        MessageInfo message = opInfo.getOutputMessage();
+        assertNotNull(message);
+        
+        Collection parts = message.getMessageParts();
+        assertEquals(0, parts.size());
+    }
     public void testSimpleVisitor()
         throws Exception
     {
