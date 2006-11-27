@@ -12,7 +12,7 @@ import org.w3c.dom.Document;
 public class DynamicClientExampleTest
     extends TestCase
 {
-    public void testCurrencyConverter() throws MalformedURLException, Exception
+    public void SKIPtestCurrencyConverter() throws MalformedURLException, Exception
     {
         Client client = new Client(new URL("http://www.webservicex.net/CurrencyConvertor.asmx?WSDL"));
         
