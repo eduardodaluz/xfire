@@ -12,7 +12,7 @@
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
       <artifactId>xfire-aegis</artifactId>
-      <version>1.2.1</version>
+      <version>1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>jivesoftware</groupId>
