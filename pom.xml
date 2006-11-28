@@ -73,6 +73,7 @@
             <exclude>**/Abstract*</exclude>
             <exclude>**/HtmlServiceWriterTest.java</exclude>
             <exclude>**/XFireServerSSLTest.java</exclude>
+            <exclude>**/DynamicClientExampleTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
