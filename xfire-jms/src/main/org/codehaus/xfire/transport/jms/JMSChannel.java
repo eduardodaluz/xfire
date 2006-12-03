@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.addressing.RandomGUID;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
@@ -48,13 +49,15 @@ public class JMSChannel
 
     private String destName = "";
     
-    String MyID = java.util.UUID.randomUUID().toString();
-
+    String MyID = new RandomGUID ().toString();
+    //String MyID = java.util.UUID.randomUUID().toString();
+      
     public JMSChannel(String uri, JMSTransport transport)
     {
+   
         setUri(uri);
         setTransport(transport);
-
+    
         initialize();
     }
 
