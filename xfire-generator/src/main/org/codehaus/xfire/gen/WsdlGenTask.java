@@ -6,51 +6,29 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import org.codehaus.xfire.XFire;
-import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.service.Service;
-import org.codehaus.xfire.service.ServiceRegistry;
-import org.codehaus.xfire.spring.XFireConfigLoader;
 
 /**
- * A Java 2 WSDL generation Ant task for XFire. Allows to generate the Wsdl without 
- * firing up the web server.
+ * A Java 2 WSDL generation Ant task for XFire. Allows to generate the Wsdl
+ * without firing up the web server.
  * 
  * @author <a href="jerome@coffeebreaks.org">Jerome Lacoste</a>
  */
-public class WsdlGenTask extends Task
+public class WsdlGenTask
+    extends BaseServicesGenTask
 {
-    private static final Log LOGGER = LogFactory.getLog( WsdlGenTask.class );
+    private static final Log LOGGER = LogFactory.getLog(WsdlGenTask.class);
 
-    private String configUrl;
 
     private String outputDirectory;
 
     private File generatedFile;
 
-    private ClassLoader overridingContextClassLoader = XFireConfigLoader.class.getClassLoader();
-
-    /**
-     * The mojo will set the classloader.
-     * You may want to override the class loader with one that knows about your services
-     * @param overridingContextClassLoader
-     */
-    public void setOverridingContextClassLoader(ClassLoader overridingContextClassLoader)
-    {
-        this.overridingContextClassLoader = overridingContextClassLoader;
-    }
-
-    public void setConfigUrl(String configUrl)
-    {
-        this.configUrl = configUrl;
-    }
+    private File outputDir;
 
     public void setOutputDirectory(String outputDirectory)
     {
@@ -64,6 +42,7 @@ public class WsdlGenTask extends Task
 
     /**
      * Path of the generatedFile
+     * 
      * @return the File when succesfully generated
      */
     public File getGeneratedFile()
@@ -71,66 +50,53 @@ public class WsdlGenTask extends Task
         return generatedFile;
     }
 
-    public void execute() throws BuildException
+    public void execute()
+        throws BuildException
     {
-        // Ugly fix for XFIRE-245 & similar: wsgen can't find XMLInputFactory
-        ClassLoader originalCL = Thread.currentThread().getContextClassLoader();
-        // displayClasspath(originalCL, "originalCL");
 
-        Thread.currentThread().setContextClassLoader(overridingContextClassLoader);
-        // displayClasspath(overridingContextClassLoader, "classLoader");
+        outputDir = new File(outputDirectory);
 
-        XFireConfigLoader configLoader = new XFireConfigLoader();
-
-        XFire xfire;
-
-        try {
-            xfire = configLoader.loadConfig( configUrl );
-        } catch (XFireException e) {
-            throw new BuildException( "Failure to load the configUrl", e);
+        if (!outputDir.exists() && !outputDir.mkdirs())
+        {
+            getLogger().warn("the output directory " + outputDirectory
+                    + " doesn't exist and couldn't be created. The task with probably fail.");
         }
 
-        final ServiceRegistry serviceRegistry = xfire.getServiceRegistry();
+        iterateServices();
+    }
 
-        Collection services = serviceRegistry.getServices();
 
-        File outputDir = new File( outputDirectory );
+    @Override
+    protected void processService(Service service)
+    {
 
-        if ( ! outputDir.exists() && ! outputDir.mkdirs() )
+        String serviceName = service.getName().getLocalPart();
+
+        File outputFile = new File(outputDir, serviceName + ".wsdl");
+
+        FileOutputStream out;
+        try
         {
-           getLogger().warn( "the output directory " + outputDirectory
-                    + " doesn't exist and couldn't be created. The task with probably fail." );
+            out = new FileOutputStream(outputFile);
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new BuildException("Unable to generate WSDL: output file " + outputFile
+                    + " not found", e);
         }
 
         OutputStream stream;
+        stream = new BufferedOutputStream(out);
 
-        for (Iterator iterator = services.iterator(); iterator.hasNext();)
+        try
         {
-
-            Service service = (Service) iterator.next();
-
-            String serviceName = service.getName().getLocalPart();
-
-            File outputFile = new File(outputDir, serviceName + ".wsdl");
-
-            FileOutputStream out;
-            try {
-                out = new FileOutputStream(outputFile);
-            } catch (FileNotFoundException e) {
-                throw new BuildException("Unable to generate WSDL: output file " + outputFile + " not found", e);
-            }
-
-            stream = new BufferedOutputStream( out);
-
-            try
-            {
-                service.getWSDLWriter().write( stream );
-            } catch (IOException e) {
-                throw new BuildException("Unable to generate WSDL.", e);
-            }
-            generatedFile = outputFile;
+            service.getWSDLWriter().write(stream);
         }
-
-        Thread.currentThread().setContextClassLoader(originalCL);
+        catch (IOException e)
+        {
+            throw new BuildException("Unable to generate WSDL.", e);
+        }
+        generatedFile = outputFile;
     }
+
 }

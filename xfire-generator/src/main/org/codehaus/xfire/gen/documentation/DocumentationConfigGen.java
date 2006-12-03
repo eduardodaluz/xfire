@@ -48,6 +48,12 @@ public class DocumentationConfigGen {
 			return;
 		}
 
+        System.out.print("Files to document:");
+        for( int i=0;i<srcFiles.length;i++){
+            System.out.print(srcFiles[i]+"\n");
+        }
+        System.out.print("\n Output directory : "+ getOutputFolder() +"\n");
+        
 		try {
 			for (int i = 0; i < srcFiles.length; i++) {
 				createDocumentationConfiguration(srcFiles[i]);
