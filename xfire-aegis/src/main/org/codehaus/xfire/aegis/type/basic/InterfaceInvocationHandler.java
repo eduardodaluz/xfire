@@ -106,6 +106,8 @@ class InterfaceInvocationHandler
         if (prop == null && method.getReturnType().isPrimitive()) {
             if (method.getReturnType() == int.class) {
                 return new Integer(0);
+            } else if (method.getReturnType() == boolean.class) {
+                return new Boolean(false);
             } else if (method.getReturnType() == long.class) {
                 return new Long(0);
             } else if (method.getReturnType() == double.class) {
