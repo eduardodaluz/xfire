@@ -83,7 +83,7 @@ public class AddressingHeadersFactory200508
         Element action = root.getChild(WSA_ACTION, wsa);
         if (action != null)
         {
-            headers.setAction(action.getValue());
+            headers.setAction(action.getValue().trim());
         }
     
         return headers;

@@ -61,7 +61,11 @@ public class AddressingHeadersFactory200408
         }
         
         headers.setTo(getChildValue(root, WSA_TO, wsa));
-        headers.setAction(getChildValue(root, WSA_ACTION, wsa));
+        String actionStr = getChildValue(root, WSA_ACTION, wsa);
+        if(actionStr != null ){
+            actionStr = actionStr.trim();
+        }
+        headers.setAction(actionStr);
         
         return headers;
     }
