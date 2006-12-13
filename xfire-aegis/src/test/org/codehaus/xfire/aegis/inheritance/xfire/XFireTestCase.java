@@ -40,7 +40,7 @@ public class XFireTestCase
     {
         super.setUp();
 
-        String url = "http://localhost:8080";
+        String url = "http://localhost:9035";
 
         assertNotNull("Property 'xfiretestcase.url' is not set !", url);
 
@@ -74,7 +74,7 @@ public class XFireTestCase
 
         // Start Jetty server
         xFireHttpServer = new XFireHttpServer(m_helper.getXfire());
-        xFireHttpServer.setPort(8080);
+        xFireHttpServer.setPort(9035);
         xFireHttpServer.start();
     }
 
