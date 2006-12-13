@@ -41,7 +41,7 @@
       </plugin>
     </plugins>
   </build>
-  <!-- repositories>
+  <repositories>
     <repository>
       <releases>
         <updatePolicy>never</updatePolicy>
@@ -52,7 +52,7 @@
       <url>http://jibx.sf.net/maven</url>
       <layout>legacy</layout>
     </repository>
-  </repositories -->
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
