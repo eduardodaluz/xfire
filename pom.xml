@@ -359,7 +359,7 @@
         <version>1.5.2</version>
       </dependency>
       <dependency>
-        <groupId>woodstox</groupId>
+	<groupId>org.codehaus.woodstox</groupId>
         <artifactId>wstx-asl</artifactId>
         <version>3.0.1</version>
       </dependency>
