@@ -189,7 +189,7 @@ public class JDOMStreamReader
                     getLocation());
         }
         int eventType = next();
-        StringBuilder content = new StringBuilder();
+        StringBuffer content  = new StringBuffer();
         while (eventType != END_ELEMENT)
         {
             if (eventType == CHARACTERS || eventType == CDATA || eventType == SPACE
@@ -359,4 +359,5 @@ public class JDOMStreamReader
     {
         throw new UnsupportedOperationException();
     }
+    
 }
