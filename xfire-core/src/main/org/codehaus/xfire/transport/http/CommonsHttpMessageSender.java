@@ -4,11 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -41,6 +37,8 @@ import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.transport.Channel;
 import org.codehaus.xfire.util.OutMessageDataSource;
 import org.codehaus.xfire.util.STAXUtils;
+
+
 
 /**
  * Sends a http message via commons http client. To customize the
@@ -259,29 +257,22 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private boolean isNonProxyHost( String strURI, MessageContext context ) 
     {
-        // convert String based URI into a URI class based URI ...
-        URI uri = null;
-        try
-        {
-            uri = new URI(strURI);
+    	Class clazz;
+		try {
+			clazz = Class.forName("org.codehaus.xfire.transport.http.ProxyUtils");
+			Object proxyUtils = clazz.newInstance();
+	    	//Method 
+	    	Method method = clazz.getDeclaredMethod("isNonProxyHost", new Class[]{String.class});
+	    	Boolean result = (Boolean) method.invoke(proxyUtils,new Object[]{strURI});
+	    	return result.booleanValue();
+		} catch (Exception  e) {
+			// Don't care what happend, we can't check for proxy
+			e.printStackTrace();
+			return false;
+		}
+    	
+        
         }
-        catch (URISyntaxException use)
-        { // this should actually not happen, but just
-            // in case. return false; }
-            // ... get a system platform ProxySelector, and ...
-            ProxySelector ps = ProxySelector.getDefault();
-            // ... let this selector return a list of proxies.
-            List proxies = ps.select(uri);
-            // If that lists sole element is of type Proxy.NO_PROXY
-            // then we need a direct connection, otherwise we need to connect
-            // through a proxy.
-            if (proxies.size() == 1 && proxies.get(0).equals(Proxy.NO_PROXY))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
     
     static boolean isGzipRequestEnabled(MessageContext context)
     {
