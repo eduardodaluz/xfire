@@ -10,6 +10,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -66,6 +67,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; XFire Client +http://xfire.codehaus.org)";
     public static final String HTTP_PROXY_HOST = "http.proxyHost";
     public static final String HTTP_PROXY_PORT = "http.proxyPort";
+    public static final String HTTP_PROXY_USER = "http.proxy.user";
+    public static final String HTTP_PROXY_PASS = "http.proxy.password";
     public static final String HTTP_STATE = "httpClient.httpstate";
     public static final String HTTP_CLIENT = "httpClient";
     public static final String HTTP_TIMEOUT = "http.timeout";
@@ -117,27 +120,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         String username = (String) context.getContextualProperty(Channel.USERNAME);
         if (username != null)
         {
-            String password = (String) context.getContextualProperty(Channel.PASSWORD);
+            
             client.getParams().setAuthenticationPreemptive(true);
             
-            int domainIndex = username.indexOf('\\');
-            if (domainIndex > 0 && username.length() > domainIndex + 1) {
-
-                state.setCredentials(
-                        AuthScope.ANY, 
-                        new NTCredentials(
-                                username.substring(0, domainIndex), 
-                                password, 
-                                "localhost", // TODO: resolve local host name 
-                                username.substring(domainIndex+1)));
-                        
-            } else {
-                
-                state.setCredentials( AuthScope.ANY, new UsernamePasswordCredentials(username,password));
-                
-            }
+            String password = (String) context.getContextualProperty(Channel.PASSWORD);
             
-           // state.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+            state.setCredentials(AuthScope.ANY,  getCredentials(username, password));
+                        
         }
         
         if (getSoapAction() != null)
@@ -251,6 +240,11 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                     port = Integer.parseInt(portS);
 
                 client.getHostConfiguration().setProxy(proxyHost, port);
+                
+                String proxyUser = (String) context.getContextualProperty(HTTP_PROXY_USER);
+                String proxyPass = (String) context.getContextualProperty(HTTP_PROXY_PASS);
+                if( proxyUser != null && proxyPass != null )
+                 client.getState().setProxyCredentials(AuthScope.ANY,getCredentials(proxyUser, proxyPass));
             }
         }
     }
@@ -258,6 +252,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     private boolean isNonProxyHost( String strURI, MessageContext context ) 
     {
     	Class clazz;
+    	// TODO : make this clazz static
 		try {
 			clazz = Class.forName("org.codehaus.xfire.transport.http.ProxyUtils");
 			Object proxyUtils = clazz.newInstance();
@@ -434,4 +429,27 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         if (postMethod != null)
             postMethod.releaseConnection();
     }
+    
+	private Credentials getCredentials(String username, String password){
+		 
+	         client.getParams().setAuthenticationPreemptive(true);
+	         
+	         int domainIndex = username.indexOf('\\');
+	         if (domainIndex > 0 && username.length() > domainIndex + 1) {
+	
+	                     return new NTCredentials(
+	                             username.substring(0, domainIndex), 
+	                             password, 
+	                             "localhost", // TODO: resolve local host name 
+	                             username.substring(domainIndex+1));
+	                     
+	         } 
+	             
+	             return  new UsernamePasswordCredentials(username,password);
+	             
+	         
+	         
+	     
+	}
+    
 }
