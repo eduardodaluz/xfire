@@ -95,6 +95,14 @@
     <serviceFactory>org.codehaus.xfire.spring.config.CustomServiceFactory</serviceFactory>
   </service>
   
+  <service id="EchoWithServiceFactoryAndWhitespace">
+    <name>EchoWithServiceFactory</name>
+    <serviceBean>#EchoBean</serviceBean>
+    <serviceFactory>
+      org.codehaus.xfire.spring.config.CustomServiceFactory
+    </serviceFactory>
+  </service>
+  
   <service id="EchoWithBeanServiceFactory">
     <name>EchoWithBeanServiceFactory</name>
     <serviceBean>#EchoBean</serviceBean>

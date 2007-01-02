@@ -124,6 +124,9 @@ public class XFireConfigLoaderTest
         serviceBean = (ServiceBean) getBean("EchoWithBeanServiceFactory");
         assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
         
+        serviceBean = (ServiceBean) getBean("EchoWithServiceFactoryAndWhitespace");
+        assertTrue(serviceBean.getServiceFactory() instanceof CustomServiceFactory);
+        
         serviceBean = (ServiceBean) getBean("EchoWithInvoker");
         assertTrue(serviceBean.getInvoker() instanceof ObjectInvoker);
     }

@@ -28,6 +28,8 @@ public class ServiceFactoryEditor
     public void setAsText(String text)
         throws IllegalArgumentException
     {
+    	text = text.trim();
+    	
         ServiceFactoryBean factoryBean = new ServiceFactoryBean(text);
         factoryBean.setTransportManager(transportManager);
         ServiceFactory factory;
