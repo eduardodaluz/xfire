@@ -18,7 +18,7 @@ public class BookClient
 {
     public static void main(String args[])
     {
-        String serviceURL = "http://localhost:8080/book/services/BookService";
+        String serviceURL = "http://localhost:8088/book/services/BookService";
         Service serviceModel = new ObjectServiceFactory().create(BookService.class,null,"http://xfire.codehaus.org/BookService",null);
         
         XFireProxyFactory serviceFactory = new XFireProxyFactory();
@@ -30,6 +30,7 @@ public class BookClient
             client.addOutHandler(new OutHeaderHandler());
             // disable timeout
             client.setProperty(CommonsHttpMessageSender.HTTP_TIMEOUT, "0");
+            
             Book[] books = service.getBooks();
             Map booksMap = service.getBooksMap();
             System.out.print("Received map with "+booksMap.size()+" book(s) \n");
@@ -39,10 +40,14 @@ public class BookClient
             {
                 System.out.println(books[i].getTitle());
             }
+            // Throw Exception
+            service.findBook("");
         }
         catch (MalformedURLException e)
         {
             e.printStackTrace();
-        }
+        } catch (BookException e) {
+			System.out.print(e.getFaultInfo().getDetailMessage());
+		}
     }
 }

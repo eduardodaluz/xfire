@@ -30,7 +30,7 @@ public class BookServiceImpl implements BookService
         if (isbn.equals(onlyBook.getIsbn()))
             return onlyBook;
         
-        return null;
+        throw new BookException("Book not exists",new BookExceptionDetail("NOT_EXIST","Can't find book"));
     }
 
 	public Map getBooksMap() {
