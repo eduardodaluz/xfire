@@ -105,6 +105,8 @@ public class WSDLServiceBuilder
         this.systemId = definition.getDocumentBaseURI(); // this is best we have, so use it.
         
         bindingAnnotators.add(new SoapBindingAnnotator());
+        
+        schemas.setSchemaResolver(new XmlSchemaURIResolver());
     }
 
     public WSDLServiceBuilder(InputStream is) throws WSDLException
@@ -348,8 +350,9 @@ public class WSDLServiceBuilder
                 catch (Exception e) {e.printStackTrace();}
             }
 
+            String schemaSystemId = location + "#types?schema"+ schemaCount++;
             schemas.setBaseUri(definition.getDocumentBaseURI());
-            XmlSchema schema = schemas.read(el, location);
+            XmlSchema schema = schemas.read(el, schemaSystemId);
             
             SchemaInfo schemaInfo = new SchemaInfo();
             schemaInfo.setDefinition(definition);
@@ -546,7 +549,10 @@ public class WSDLServiceBuilder
         XmlSchemaElement resSchemaEl = schemas.getElementByQName(outElementName);
 
         if (reqSchemaEl == null) 
-            throw new XFireRuntimeException("Couldn't find schema for part: " + inElementName);
+            throw new XFireRuntimeException("Couldn't find schema part: " + inElementName);
+
+        if (resSchemaEl == null) 
+            throw new XFireRuntimeException("Couldn't find schema part: " + outElementName);
 
         // Now lets see if we have any attributes...
         // This should probably look at the restricted and substitute types too.

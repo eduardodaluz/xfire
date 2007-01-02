@@ -8,9 +8,6 @@
   <artifactId>xfire-jaxb</artifactId>
   <name>XFire Jaxb Support</name>
   <version>1.2-SNAPSHOT</version>
-  <build>
-    <testSourceDirectory>/none/</testSourceDirectory>
-  </build>
   <repositories>
     <repository>
       <id>java.net</id>
@@ -40,6 +37,27 @@
       <version>1.0.5</version>
     </dependency>
     <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>1.0.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>msv</groupId>
+      <artifactId>xsdlib</artifactId>
+      <version>20050913</version>
+    </dependency>
+    <dependency>
+      <groupId>msv</groupId>
+      <artifactId>isorelax</artifactId>
+      <version>20050913</version>
+    </dependency>
+    <dependency>
+      <groupId>msv</groupId>
+      <artifactId>msv</artifactId>
+      <version>20050913</version>
+    </dependency>
+    <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
       <version>1.0</version>
@@ -59,4 +77,32 @@
       <version>snapshot-20040917</version>
     </dependency>
   </dependencies>
+   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <testSourceRoot>${project.build.directory}/xjc</testSourceRoot>
+              <tasks>
+                <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath"/>
+			
+		        <mkdir dir="${project.build.directory}/xjc"/>
+		        <xjc target="${project.build.directory}/xjc" extension="true">
+		            <schema dir="${basedir}/src/test-schemas">
+		                <include name="*.xsd"/>
+		            </schema>
+		        </xjc>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

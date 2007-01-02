@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -265,8 +266,6 @@ public class STAXUtils
                                       reader.getAttributeLocalName(i),
                                       reader.getAttributeValue(i));
             }
-            
-            
         }
     }
 
@@ -314,7 +313,11 @@ public class STAXUtils
                 throw new IllegalStateException("Element's local name cannot be null!");
         }
             
-        String decUri = writer.getNamespaceContext().getNamespaceURI(prefix);
+        String decUri = null;
+        NamespaceContext ctxt = writer.getNamespaceContext();
+        if (ctxt != null) {
+        	decUri = ctxt.getNamespaceURI(prefix);
+        }
         boolean declareNamespace = (decUri == null || !decUri.equals(ns));
 
         if (ns == null || ns.length() == 0)

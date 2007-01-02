@@ -79,16 +79,11 @@ public class JAXBSchemaSupport implements SchemaSupport
         
         ArrayList<SchemaInfo> elements = (ArrayList<SchemaInfo>) context.getSchemas();
 
-        int schemaElementCount = 1;
         for(SchemaInfo schema : elements)
         {
             schemaCompiler.setEntityResolver(new RelativeEntityResolver(schema.getDefinition().getDocumentBaseURI()));
             
             String systemId = schema.getSchema().getSourceURI();
-            if (!schema.isImported())
-            {
-               systemId += "#types?schema"+schemaElementCount++;
-            }
             
             schemaCompiler.parseSchema(systemId, schema.getSchemaElement());
         }

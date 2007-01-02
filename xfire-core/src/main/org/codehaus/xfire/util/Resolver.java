@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.codehaus.xfire.XFireRuntimeException;
 
@@ -139,13 +140,12 @@ public class Resolver
         {
             try
             {
-                
-                uri = new URI(url.toString());
+            	String decodedURL = url.toString();
+                uri = new URI(URLEncoder.encode(decodedURL, "UTF-8"));
             }
             catch (URISyntaxException e)
             {
                 // this occurs when you have spaces instead of '%20'...
-                e.printStackTrace();
             }
             is = url.openStream();
         }
