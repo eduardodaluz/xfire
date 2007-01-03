@@ -10,7 +10,7 @@ public class ErrorReceiverImpl
     implements ErrorListener
 {
     private static final Log log = LogFactory.getLog(ErrorReceiverImpl.class);
-    private boolean fatalErrors;
+    protected boolean fatalErrors;
     
     public void error(SAXParseException e)
     {

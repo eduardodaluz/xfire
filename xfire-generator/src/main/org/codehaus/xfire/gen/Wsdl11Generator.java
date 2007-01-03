@@ -15,6 +15,7 @@ import javax.net.ssl.SSLSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireException;
+import org.codehaus.xfire.gen.jaxb.JAXBSchemaSupport;
 import org.codehaus.xfire.gen.jsr181.Jsr181Profile;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.Resolver;
@@ -22,6 +23,7 @@ import org.codehaus.xfire.wsdl11.parser.WSDLServiceBuilder;
 import org.xml.sax.InputSource;
 
 import com.sun.codemodel.JCodeModel;
+import com.sun.tools.xjc.api.ErrorListener;
 
 /**
  * A bean type class which generates client and server stubs from a wsdl.
@@ -59,6 +61,8 @@ public class Wsdl11Generator
     private boolean overwrite;
     
     private boolean generateServerStubs = true;
+    
+    private ErrorListener jaxbErrorListener;
     
     public boolean isOverwrite()
     {
@@ -140,6 +144,10 @@ public class Wsdl11Generator
         context.setDescriptorOverwritten(isOverwrite());
         context.setServerStubGenerated(isGenerateServerStubs());
         
+        if (binding.equals(JAXB) && jaxbErrorListener != null) 
+        {
+            ((JAXBSchemaSupport)support).setErrorListener(jaxbErrorListener);
+        }
         support.initialize(context);
 
         // The schema generator may replace our code model.
@@ -308,6 +316,11 @@ public class Wsdl11Generator
     public void setGenerateServerStubs(boolean generateServerStubs)
     {
         this.generateServerStubs = generateServerStubs;
+    }
+    
+    public void setJAXBErrorListener(ErrorListener jaxbErrorListener)
+    {
+        this.jaxbErrorListener = jaxbErrorListener;
     }
     
 }

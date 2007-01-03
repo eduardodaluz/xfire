@@ -31,6 +31,7 @@ import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JType;
 import com.sun.tools.xjc.Options;
+import com.sun.tools.xjc.api.ErrorListener;
 import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
@@ -45,6 +46,7 @@ public class JAXBSchemaSupport implements SchemaSupport
 
     private S2JJAXBModel model;
     private JCodeModel jaxbModel;
+    private ErrorListener errorListener;
     
     public void initialize(GenerationContext context) throws Exception
     {
@@ -52,7 +54,7 @@ public class JAXBSchemaSupport implements SchemaSupport
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0], cl));
 
-        ErrorReceiverImpl er = new ErrorReceiverImpl();
+        ErrorReceiverImpl er = new DelegatingErrorReceiverImpl(errorListener);
 
         schemaCompiler = XJC.createSchemaCompiler();
         schemaCompiler.setErrorListener(er);
@@ -219,5 +221,10 @@ public class JAXBSchemaSupport implements SchemaSupport
     public Element getServiceFactoryBean()
     {
         return null;
+    }
+    
+    public void setErrorListener(ErrorListener errorListener) 
+    {
+        this.errorListener = errorListener;
     }
 }
