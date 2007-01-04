@@ -23,7 +23,7 @@ import org.jdom.Element;
 public class AddressingInHandler
     extends AbstractHandler
 {
-    private static RandomGUID guidGenerator = new RandomGUID(false);
+    //private static RandomGUID guidGenerator = new RandomGUID(false);
 
     public static final Object ADRESSING_HEADERS = "xfire-ws-adressing-headers";
 
@@ -257,7 +257,8 @@ public class AddressingInHandler
         {
             headers.setAction(WSAConstants.WSA_200508_FAULT_ACTION);
         }
-        headers.setMessageID("urn:uuid:" + guidGenerator.toString());
+        //headers.setMessageID("urn:uuid:" + guidGenerator.toString());
+        headers.setMessageID("urn:uuid:" +new RandomGUID(false).toString());
         headers.setRelatesTo(inHeaders.getMessageID());
 
         Element refParam = epr.getReferenceParametersElement();
