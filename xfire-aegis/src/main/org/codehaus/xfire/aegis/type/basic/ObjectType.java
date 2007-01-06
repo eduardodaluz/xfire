@@ -183,23 +183,28 @@ public class ObjectType extends Type
 
             if( null == type )
             {
-                handleNullType( object, writer );
+            	TypeMapping tm = (TypeMapping) context.getService().getProperty(AegisBindingProvider.TYPE_MAPPING_KEY);
+                if (tm == null) 
+                {
+                    tm = getTypeMapping();
+                }
+                
+            	type = tm.getTypeCreator().createType(object.getClass());
+                tm.register(type);
+            }
+            
+            String prefix = writer.getPrefixForNamespace( type.getSchemaType().getNamespaceURI() );
+
+            if( null == prefix || prefix.length() == 0 )
+            {
+                addXsiType( writer, type.getSchemaType().getLocalPart() );
             }
             else
             {
-                String prefix = writer.getPrefixForNamespace( type.getSchemaType().getNamespaceURI() );
-
-                if( null == prefix || prefix.length() == 0 )
-                {
-                    addXsiType( writer, type.getSchemaType().getLocalPart() );
-                }
-                else
-                {
-                    addXsiType( writer, prefix + ":" + type.getSchemaType().getLocalPart() );
-                }
-
-                type.writeObject( object, writer, context );
+                addXsiType( writer, prefix + ":" + type.getSchemaType().getLocalPart() );
             }
+
+            type.writeObject( object, writer, context );
         }
     }
 

@@ -89,12 +89,15 @@ public class Soap11FaultSerializer
         try
         {
             Map namespaces = fault.getNamespaces();
-            for (Iterator itr = namespaces.keySet().iterator(); itr.hasNext();)
+            if (namespaces != null) 
             {
-                String prefix = (String) itr.next();
-                writer.writeAttribute("xmlns:" + prefix, (String) namespaces.get(prefix));
+	            for (Iterator itr = namespaces.keySet().iterator(); itr.hasNext();)
+	            {
+	                String prefix = (String) itr.next();
+	                writer.writeAttribute("xmlns:" + prefix, (String) namespaces.get(prefix));
+	            }
             }
-
+            
             writer.writeStartElement("soap:Fault");
 
             writer.writeStartElement("faultcode");

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://a.b.c/2006/07/Authentication" xmlns:sdk="http://a.b.c/2006/07/Authentication" targetNamespace="http://a.b.c/2006/07/Authentication">
+<wsdl:types>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://a.b.c/2006/07/Authentication">
+<xs:element name="login">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="userName" type="xs:string"/>
+<xs:element name="password" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="loginResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="samlAssertion" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="loginRequest">
+<wsdl:part name="parameters" element="sdk:login"/>
+</wsdl:message>
+<wsdl:message name="loginResponse">
+<wsdl:part name="parameters" element="sdk:loginResponse"/>
+</wsdl:message>
+<wsdl:portType name="AuthenticationInterface">
+<wsdl:operation name="login">
+<wsdl:input name="loginRequest" message="tns:loginRequest"/>
+<wsdl:output name="loginResponse" message="tns:loginResponse"/>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="AuthenticationSoapBinding" type="tns:AuthenticationInterface">
+<wsoap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<wsdl:operation name="login">
+<wsoap:operation soapAction="http://a.b.c/2006/07/Authentication#login"/>
+<wsdl:input name="loginRequest">
+<wsoap:body use="literal"/>
+</wsdl:input>
+<wsdl:output name="loginResponse">
+<wsoap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="AuthenticationService">
+<wsdl:port name="AuthenticationEndpoint" binding="tns:AuthenticationSoapBinding">
+<wsoap:address location="http://localhost/endpoint/Authentication/2006/07"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

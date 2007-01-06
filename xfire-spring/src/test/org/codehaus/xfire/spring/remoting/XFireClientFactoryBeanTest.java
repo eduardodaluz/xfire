@@ -31,7 +31,7 @@ public class XFireClientFactoryBeanTest
     
     protected void setUp() throws Exception {
         wsdlUrl = getTestFile("src/test/org/codehaus/xfire/spring/remoting/echo.wsdl").toURL().toString();
-        
+        System.out.println("URL : " + wsdlUrl);
         factory = new XFireClientFactoryBean();
         factory.setServiceInterface(Echo.class);
         //factory.setNamespaceUri("urn:Echo");

@@ -63,5 +63,9 @@
       wsdl="${basedir}/src/wsdl/echo-rpclit.wsdl" 
       package="org.codehaus.xfire.generator.rpclit" 
       overwrite="true"/>
+
+    <wsgen outputDirectory="${basedir}/target/test-services"
+      wsdl="${basedir}/src/wsdl/anytype.wsdl"
+      overwrite="true"/>
   </target>
 </project>

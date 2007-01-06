@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.codehaus.xfire.XFireRuntimeException;
@@ -27,6 +28,7 @@ public class Resolver
     private File file;
     private URI uri;
     private InputStream is;
+    private URL url;
     
     public Resolver(String path) throws IOException
     {
@@ -36,6 +38,7 @@ public class Resolver
     public Resolver(String baseUriStr, String uriStr) 
         throws IOException
     {
+    	System.out.println("Resovling. Base: " + baseUriStr + ", URI: " + uriStr);
         if (uriStr.startsWith("classpath:")) 
         {
             tryClasspath(uriStr);
@@ -58,6 +61,11 @@ public class Resolver
     private void tryFileSystem(String baseUriStr, String uriStr)
         throws IOException, MalformedURLException
     {
+    	if (uriStr.startsWith("file:")) 
+    	{
+    		uriStr = new URL(URLDecoder.decode(uriStr, "utf-8")).getFile();
+    	}
+    	
         try 
         {
             URI relative;
@@ -72,7 +80,8 @@ public class Resolver
             if (relative.isAbsolute())
             {
                 uri = relative;
-                is = relative.toURL().openStream();
+                url = relative.toURL();
+                is = url.openStream();
             }
             else if (baseUriStr != null)
             {
@@ -92,7 +101,8 @@ public class Resolver
                 base = base.resolve(relative);
                 if (base.isAbsolute())
                 {
-                    is = base.toURL().openStream();
+                	url = base.toURL();
+                    is = url.openStream();
                     uri = base;
                 }
             }
@@ -107,6 +117,7 @@ public class Resolver
         if (is == null && file != null && file.exists()) 
         {
             uri = file.toURI();
+            url = file.toURL();
             try
             {
                 is = new FileInputStream(file);
@@ -148,6 +159,7 @@ public class Resolver
                 // this occurs when you have spaces instead of '%20'...
             }
             is = url.openStream();
+            this.url = url;
         }
     }
 
@@ -158,6 +170,7 @@ public class Resolver
         try 
         {
             url = new URL(uriStr);
+            this.url = url;
             uri = new URI(url.toString());
             is = url.openStream();
         }
@@ -174,6 +187,10 @@ public class Resolver
         return uri;
     }
     
+    public URL getURL() 
+    {
+    	return url;
+    }
     public InputStream getInputStream()
     {
         return is;

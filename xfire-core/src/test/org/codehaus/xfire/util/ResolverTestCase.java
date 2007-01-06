@@ -10,7 +10,13 @@ public class ResolverTestCase extends AbstractXFireTest
         assertNotNull(resolver.getFile());
         assertNotNull(resolver.getInputStream());
     }
-    
+
+    public void testFileURL() throws Exception
+    {
+        Resolver resolver = new Resolver(getTestFile("pom.xml").toURL().toString());
+        assertNotNull(resolver.getFile());
+        assertNotNull(resolver.getInputStream());
+    }
     public void testFileBaseAsURI() throws Exception
     {
         Resolver resolver = new Resolver(getTestFile("src/test").toURL().toString(), 

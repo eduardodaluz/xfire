@@ -1,6 +1,6 @@
 package org.codehaus.xfire.spring;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -163,13 +163,13 @@ public class ServiceBean
             
             Resolver resolver = new Resolver(home, wsdlURL);
             
-            URI uri = resolver.getURI();
-            if (uri == null)
+            URL url = resolver.getURL();
+            if (url == null)
             {
                 throw new XFireRuntimeException("Could not resolve WSDL URL " + wsdlURL);
             }
             
-            xfireService = serviceFactory.create(intf, null, uri.toURL(), properties);
+            xfireService = serviceFactory.create(intf, null, url, properties);
         }
         else
         {
