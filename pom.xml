@@ -85,6 +85,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <tagBase>https://svn.codehaus.org/xfire/branches/</tagBase>
+          <arguments>-Dmaven.test.skip</arguments>
         </configuration>
       </plugin>
     </plugins>
