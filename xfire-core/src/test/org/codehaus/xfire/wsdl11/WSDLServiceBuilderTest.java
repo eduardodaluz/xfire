@@ -186,4 +186,34 @@ public class WSDLServiceBuilderTest
         Collection parts = message.getMessageParts();
         assertEquals(1, parts.size());
     }
+    
+    public void testXsdChoice()
+	    throws Exception
+	{
+	    WSDLServiceBuilder builder = new WSDLServiceBuilder(getResourceAsStream("echo-xsd-choice.wsdl"));
+	    builder.setBindingProvider(new MessageBindingProvider());
+	    builder.build();
+	    
+	    Collection services = builder.getAllServices();        
+	    assertEquals(1, services.size());
+	    
+	    Service service = (Service) services.iterator().next();
+	    
+	    QName name = service.getName();
+	    assertNotNull(name);
+	    assertEquals(new QName("urn:echo:wrapped", "Echo"), name);
+	    
+	    Collection operations = service.getServiceInfo().getOperations();
+	    assertEquals(1, operations.size());
+	    
+	    OperationInfo opInfo = (OperationInfo) operations.iterator().next();
+	    assertEquals("echo", opInfo.getName());
+	    
+	    // Check the input message
+	    MessageInfo message = opInfo.getInputMessage();
+	    assertNotNull(message);
+	    
+	    Collection parts = message.getMessageParts();
+	    assertEquals(1, parts.size());
+	}
 }

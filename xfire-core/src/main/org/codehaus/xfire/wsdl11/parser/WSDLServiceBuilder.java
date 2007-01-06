@@ -31,6 +31,8 @@ import javax.xml.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAll;
+import org.apache.ws.commons.schema.XmlSchemaChoice;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -564,6 +566,12 @@ public class WSDLServiceBuilder
             
             if (ct.getContentModel() != null)
                 return false;
+            
+            // only do a wrapped operation with sequences and all
+            if (ct.getParticle() != null 
+            		&& !(ct.getParticle() instanceof XmlSchemaSequence) 
+            				&& !(ct.getParticle() instanceof XmlSchemaAll))
+            	return false;
         } 
         else if (reqSchemaEl.getSchemaType() != null) 
         {
