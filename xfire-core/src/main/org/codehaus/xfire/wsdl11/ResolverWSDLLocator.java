@@ -92,4 +92,5 @@ public class ResolverWSDLLocator
         return lastimport;
     }
 
+    public void close() { }
 }
