@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2.4</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-xmlbeans</artifactId>
   <name>XFire XMLBeans Support</name>
-  <version>1.2.4</version>
+  <version>1.2-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -20,13 +20,16 @@
             </goals>
             <configuration>
               <tasks>
-                <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpathref="maven.test.classpath" />
-                <mkdir dir="${basedir}/target/xmlbeans-test-classes" />
-                <xmlbean classgendir="${basedir}/target/xmlbeans-test-classes" classpathref="maven.test.classpath" failonerror="true">
-				  <fileset dir="${basedir}/src/test-schemas" includes="**/*.xsd" />
+                <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" 
+                  classpathref="maven.test.classpath"/>
+                <mkdir dir="${basedir}/target/xmlbeans-test-classes"/>
+                <xmlbean classgendir="${basedir}/target/xmlbeans-test-classes" 
+                       classpathref="maven.test.classpath"
+				      failonerror="true">
+				  <fileset dir="${basedir}/src/test-schemas" includes="**/*.xsd"/>
 				</xmlbean>
 				<copy todir="${basedir}/target/test-classes">
-				  <fileset dir="${basedir}/target/xmlbeans-test-classes" />
+				  <fileset dir="${basedir}/target/xmlbeans-test-classes"/>
 				</copy>
               </tasks>
               <testSourceRoot>${project.build.directory}/generated-test</testSourceRoot>

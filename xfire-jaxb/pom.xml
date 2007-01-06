@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2.4</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-jaxb</artifactId>
   <name>XFire Jaxb Support</name>
-  <version>1.2.4</version>
+  <version>1.2-SNAPSHOT</version>
   <repositories>
     <repository>
       <id>java.net</id>
@@ -90,12 +90,12 @@
             <configuration>
               <testSourceRoot>${project.build.directory}/xjc</testSourceRoot>
               <tasks>
-                <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath" />
+                <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="maven.test.classpath"/>
 			
-		        <mkdir dir="${project.build.directory}/xjc" />
+		        <mkdir dir="${project.build.directory}/xjc"/>
 		        <xjc target="${project.build.directory}/xjc" extension="true">
 		            <schema dir="${basedir}/src/test-schemas">
-		                <include name="*.xsd" />
+		                <include name="*.xsd"/>
 		            </schema>
 		        </xjc>
               </tasks>
