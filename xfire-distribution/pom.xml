@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-distribution</artifactId>
   <name>XFire Distribution</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2.4</version>
   <build>
     <testSourceDirectory>/none/</testSourceDirectory>
     <plugins>
@@ -23,42 +23,42 @@
               <tasks>
                 <echo>Prepping examples</echo>
                 <copy todir="${basedir}/target/examples">
-                  <fileset dir="${basedir}/../examples"></fileset>
-                  <filterset begintoken=">" endtoken="&lt;">
-                    <filter value=">${version}&lt;" token="1.2-SNAPSHOT"></filter>
+                  <fileset dir="${basedir}/../examples" />
+                  <filterset begintoken="&gt;" endtoken="&lt;">
+                    <filter value="&gt;${version}&lt;" token="1.2-SNAPSHOT" />
                   </filterset>
                 </copy>
                 <echo>Copying sources for source jar</echo>
-                <mkdir dir="${basedir}/target/sources"></mkdir>
+                <mkdir dir="${basedir}/target/sources" />
                 <copy todir="${basedir}/target/sources">
-                  <fileset dir="${basedir}/../xfire-aegis/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-annotations/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-castor/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-core/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-generator/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-jaxb/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-jaxb2/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-jaxws/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-jms/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-loom/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-picocontainer/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-plexus/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-spring/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-ws-security/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-xmlbeans/src/main"></fileset>
-                  <fileset dir="${basedir}/../xfire-xmpp/src/main"></fileset>
+                  <fileset dir="${basedir}/../xfire-aegis/src/main" />
+                  <fileset dir="${basedir}/../xfire-annotations/src/main" />
+                  <fileset dir="${basedir}/../xfire-castor/src/main" />
+                  <fileset dir="${basedir}/../xfire-core/src/main" />
+                  <fileset dir="${basedir}/../xfire-generator/src/main" />
+                  <fileset dir="${basedir}/../xfire-jaxb/src/main" />
+                  <fileset dir="${basedir}/../xfire-jaxb2/src/main" />
+                  <fileset dir="${basedir}/../xfire-jaxws/src/main" />
+                  <fileset dir="${basedir}/../xfire-jms/src/main" />
+                  <fileset dir="${basedir}/../xfire-loom/src/main" />
+                  <fileset dir="${basedir}/../xfire-picocontainer/src/main" />
+                  <fileset dir="${basedir}/../xfire-plexus/src/main" />
+                  <fileset dir="${basedir}/../xfire-spring/src/main" />
+                  <fileset dir="${basedir}/../xfire-ws-security/src/main" />
+                  <fileset dir="${basedir}/../xfire-xmlbeans/src/main" />
+                  <fileset dir="${basedir}/../xfire-xmpp/src/main" />
                 </copy>
                 <echo>Downloading Manual</echo>
-                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${project.build.directory}/${pom.artifactId}-manual.zip"></get>
-                <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip" dest="${project.build.directory}/manual"></unzip>
+                <get src="http://docs.codehaus.org/spaces/doexportspace.action?key=XFIRE&amp;type=TYPE_HTML&amp;os_username=xexporter&amp;os_password=xfire" dest="${project.build.directory}/${pom.artifactId}-manual.zip" />
+                <unzip src="${project.build.directory}/${pom.artifactId}-manual.zip" dest="${project.build.directory}/manual" />
                 <javadoc defaultexcludes="yes" useexternalfile="yes" destdir="${project.build.directory}/api" use="true" packagenames="org.codehaus.xfire.*" windowtitle="Codehaus XFire ${project.version} API" author="true" version="true">
                   <fileset defaultexcludes="yes" dir="./target/sources/">
-                    <include name="**/*.java"></include>
+                    <include name="**/*.java" />
                   </fileset>
-                  <doctitle>&lt;h1>Codehaus XFire&lt;/h1></doctitle>
-                  <bottom>&lt;i>Copyright &amp;#169; 2004-2006 Envoi Solutions LLC. All Rights Reserved.&lt;/i></bottom>
-                  <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp"></link>
-                  <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"></link>
+                  <doctitle>&lt;h1&gt;Codehaus XFire&lt;/h1&gt;</doctitle>
+                  <bottom>&lt;i&gt;Copyright &amp;#169; 2004-2006 Envoi Solutions LLC. All Rights Reserved.&lt;/i&gt;</bottom>
+                  <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp" />
+                  <link href="http://developer.java.sun.com/developer/products/xml/docs/api/" />
                 </javadoc>
               </tasks>
             </configuration>
