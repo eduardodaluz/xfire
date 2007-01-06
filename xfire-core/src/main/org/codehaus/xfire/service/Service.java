@@ -54,7 +54,7 @@ public class Service
     private Map idToBinding = new HashMap();
 
     /**
-     * Initializes a new, default instance of the <code>ServiceEndpoint</code> for a specified 
+     * Initializes a new, default instance of the <code>Service</code> for a specified 
      * <code>ServiceInfo</code>.
      *
      * @param service the service.
@@ -65,6 +65,14 @@ public class Service
         service.setService(this);
     }
 
+    /**
+     * For testing purposes only.
+     *
+     */
+    public Service()
+    {
+    }
+    
     /**
      * Accepts the given visitor. Iterates over all the contained service.
      *

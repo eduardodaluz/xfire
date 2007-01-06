@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -50,20 +49,6 @@ public class BeanType
     {
         this._info = info;
         this.setTypeClass(info.getTypeClass());
-    }
-
-    private QName getXsiType(MessageReader reader)
-    {
-        XMLStreamReader xsr = reader.getXMLStreamReader();
-        String value = xsr.getAttributeValue(SoapConstants.XSI_NS, "type");
-        if (value == null)
-        {
-            return null;
-        }
-        else
-        {
-            return NamespaceHelper.createQName(xsr.getNamespaceContext(), value);
-        }
     }
 
     /*
@@ -151,31 +136,21 @@ public class BeanType
             {
                 MessageReader childReader = reader.getNextElementReader();
                 QName name = childReader.getName();
-                QName qn = getXsiType(childReader);
 
-                BeanType parent;
-                Type type = null;
+                BeanType parent = getBeanTypeWithProperty(name);
+                Type defaultType = null;
+                if (parent != null)
+                {
+                    info = parent.getTypeInfo();
+                    defaultType = info.getType(name);
+                }
+                else
+                {
+                	defaultType = null;
+                }
                 
-                // If an xsi:type has been specified, try to look it up
-                if (qn != null)
-                {
-                    type = getTypeMapping().getType(qn);
-                }
-
-                // If the xsi:type lookup didn't work or there was none, use the normal Type.
-                if (type == null)
-                {
-                    parent = getBeanTypeWithProperty(name);
-                    if (parent != null)
-                    {
-                        info = parent.getTypeInfo();
-                        type = info.getType(name);
-                    }
-                    else
-                    {
-                        type = null;
-                    }
-                }
+                Type type = AegisBindingProvider.getReadType(childReader.getXMLStreamReader(),
+                		context, defaultType, getTypeMapping());
                 
                 if (type != null)
                 {

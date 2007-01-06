@@ -53,6 +53,8 @@ public class AegisBindingProvider
 
     public static final String WRITE_XSI_TYPE_KEY = "writeXsiType";
 
+    public static final String READ_XSI_TYPE_KEY = "readXsiType";
+
     public static final String OVERRIDE_TYPES_KEY = "overrideTypesList";
 
     private TypeMappingRegistry registry;
@@ -162,6 +164,20 @@ public class AegisBindingProvider
 
     public static Type getReadType(XMLStreamReader xsr, MessageContext context, Type type)
     {
+    	return getReadType(xsr, context, type, type.getTypeMapping());
+    }
+    
+    public static Type getReadType(XMLStreamReader xsr, MessageContext context, Type type, TypeMapping tm)
+    {
+    	if (context.getService() != null)
+    	{
+	    	Object readXsi = context.getService().getProperty(AegisBindingProvider.READ_XSI_TYPE_KEY);
+	    	if ((Boolean.FALSE.equals(readXsi) || "false".equals(readXsi))) 
+	    	{
+	    		return type;
+	    	}
+    	}
+    	
         String overrideType = xsr.getAttributeValue(SoapConstants.XSI_NS, "type");
         if (overrideType != null)
         {

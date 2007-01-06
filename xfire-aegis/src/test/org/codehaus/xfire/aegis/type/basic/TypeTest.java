@@ -58,7 +58,7 @@ public class TypeTest
         while (reader.getEventType() != XMLStreamReader.START_ELEMENT)
             reader.next();
 
-        SimpleBean readBean = (SimpleBean) bt.readObject(new ElementReader(reader), null);
+        SimpleBean readBean = (SimpleBean) bt.readObject(new ElementReader(reader), new MessageContext());
         assertNotNull(readBean);
         assertEquals("bleh", readBean.getBleh());
         assertEquals("howdy", readBean.getHowdy());

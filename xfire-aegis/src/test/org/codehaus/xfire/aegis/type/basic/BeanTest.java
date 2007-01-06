@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.jdom.JDOMReader;
 import org.codehaus.xfire.aegis.jdom.JDOMWriter;
 import org.codehaus.xfire.aegis.stax.ElementReader;
@@ -16,6 +17,7 @@ import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
+import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.soap.SoapConstants;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.util.jdom.StaxBuilder;
@@ -95,7 +97,12 @@ public class BeanTest
         // Test reading
         ElementReader reader = new ElementReader(getResourceAsStream("/org/codehaus/xfire/aegis/type/basic/bean9.xml"));
         
-        SimpleBean bean = (SimpleBean) type.readObject(reader, new MessageContext());
+        MessageContext ctx = new MessageContext();
+        Service s = new Service();
+        s.setProperty(AegisBindingProvider.READ_XSI_TYPE_KEY, "false");
+        ctx.setService(s);
+        
+        SimpleBean bean = (SimpleBean) type.readObject(reader, ctx);
         assertEquals("bleh", bean.getBleh());
         assertEquals("howdy", bean.getHowdy());
         

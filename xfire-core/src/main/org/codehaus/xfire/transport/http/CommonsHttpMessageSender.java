@@ -26,6 +26,8 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireException;
 import org.codehaus.xfire.attachments.Attachments;
@@ -90,9 +92,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = MultiThreadedHttpConnectionManager.DEFAULT_MAX_TOTAL_CONNECTIONS;
 
+    private static final Log log = LogFactory.getLog(CommonsHttpMessageSender.class);
+    
     private InputStream msgIs;
 
     private OutMessageDataSource source;
+
+	private Boolean useProxyUtils;
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -251,6 +257,15 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private boolean isNonProxyHost( String strURI, MessageContext context ) 
     {
+    	if (Boolean.FALSE.equals(useProxyUtils)) {
+    		return false;
+    	}
+    	
+    	if (!isJDK5andAbove()) {
+    		useProxyUtils = Boolean.FALSE;
+    		return false;
+    	}
+    	
     	Class clazz;
     	// TODO : make this clazz static
 		try {
@@ -262,12 +277,17 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 	    	return result.booleanValue();
 		} catch (Exception  e) {
 			// Don't care what happend, we can't check for proxy
-			e.printStackTrace();
+			log.debug("Could not load ProxyUtils.");
 			return false;
 		}
-    	
-        
-        }
+    }
+    
+
+    boolean isJDK5andAbove()
+    {
+        String v = System.getProperty("java.class.version", "44.0");
+        return ("49.0".compareTo(v) <= 0);
+    }
     
     static boolean isGzipRequestEnabled(MessageContext context)
     {
