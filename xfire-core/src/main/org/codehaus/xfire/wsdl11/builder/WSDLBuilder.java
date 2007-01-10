@@ -278,7 +278,8 @@ public class WSDLBuilder
         org.w3c.dom.Element elem =  w3cDocument.createElementNS(WSDL11_NS, "documentation");
         String prefix = getNamespacePrefix(WSDL11_NS);
         elem.setPrefix(prefix);
-        elem.setTextContent(value);
+        //elem.setTextContent(value);
+        elem.setNodeValue(value);
         return elem;
     }
 

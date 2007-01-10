@@ -376,7 +376,7 @@ public class WSDLServiceBuilder
         serviceInfo.setPortType(portType.getQName());
         Element documentation = portType.getDocumentationElement();
         if( documentation != null ){
-            String docText = documentation.getTextContent();
+            String docText = documentation.getNodeValue() ;//TextContent();
             serviceInfo.setDocumentation(docText);
         }
         isWrapped = true;
@@ -423,7 +423,7 @@ public class WSDLServiceBuilder
         FaultInfo faultInfo = opInfo.addFault(fault.getName());
         faultInfo.setMessageName(fault.getMessage().getQName());
         if(fault.getDocumentationElement()!= null ){
-            faultInfo.setDocumentation(fault.getDocumentationElement().getTextContent());    
+            faultInfo.setDocumentation(fault.getDocumentationElement().getNodeValue());//TextContent());    
         }
         
         wfault2msg.put(fault, faultInfo);
@@ -460,7 +460,7 @@ public class WSDLServiceBuilder
         Element docElem = operation.getDocumentationElement();
         if (docElem != null)
         {
-           String docText = docElem.getTextContent();
+           String docText = docElem.getNodeValue();//	TextContent();
            opInfo.setDocumenation(docText);
         }
         wop2op.put(operation, opInfo);
@@ -684,7 +684,7 @@ public class WSDLServiceBuilder
                 part.setSchemaType(getBindingProvider().getSchemaType(typeName, service));
                 part.setIndex(info.size()-1);
                 if( entry.getDocumentationElement()!= null ){
-                    part.setDocumentation(entry.getDocumentationElement().getTextContent());
+                    part.setDocumentation(entry.getDocumentationElement().getNodeValue());//TextContent());
                 }
             }
         }
