@@ -170,7 +170,9 @@ public class PortGenerator
             Collection endpoints = service.getEndpoints();
             for (Iterator eitr = endpoints.iterator(); eitr.hasNext(); )
             {
-                generate(context, servCls, service, serviceVar, (Endpoint) eitr.next());
+            	Endpoint enp = (Endpoint) eitr.next();
+            	
+                generate(context, servCls, service, serviceVar, enp);
             }
         }
     }
@@ -284,20 +286,20 @@ public class PortGenerator
         addEndpointInv.arg(endpoint.getUrl());
 
         JType endpointType = model.ref(Endpoint.class);
-        JVar epVar = consBody.decl(endpointType, endpoint.getName().getLocalPart() + "EP", addEndpointInv);
+        JVar epVar = consBody.decl(endpointType, javify(endpoint.getName().getLocalPart()) + "EP", addEndpointInv);
 
         JInvocation addEndpoint = endpointsVar.invoke("put").arg(newQN).arg(epVar);
         consBody.add(addEndpoint);
         
         // Add a getFooEndpointMethod
         JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "get"
-                + endpoint.getName().getLocalPart());
+                + javify(endpoint.getName().getLocalPart()));
         JBlock geBody = getFooEndpoint.body();
 
         geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke(getEndpoint).arg(newQN)));
 
         JMethod getFooEndpoint1 = servCls.method(JMod.PUBLIC, serviceIntf, "get"
-                + endpoint.getName().getLocalPart());
+                + javify(endpoint.getName().getLocalPart()));
         getFooEndpoint1.param(String.class,"url");
         JBlock geBody1 = getFooEndpoint1.body();
         JInvocation getEndp = JExpr.invoke(getFooEndpoint);

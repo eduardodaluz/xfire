@@ -1,5 +1,8 @@
 package org.codehaus.xfire.gen.jsr181;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.gen.GenerationContext;
@@ -10,12 +13,16 @@ import com.sun.codemodel.JDefinedClass;
 
 public class AbstractPlugin
 {
+	private static final Pattern PATTERN=  Pattern.compile("\\.|-");
     
     protected String javify(String name)
     {
         if (JavaUtils.isJavaKeyword(name))
             return JavaUtils.makeNonJavaKeyword(name);
         
+        if (name.indexOf('.') > -1 || name.indexOf('-') > -1) {
+			name = PATTERN.matcher(name).replaceAll("_");
+		}
         return name;
     }
 
@@ -50,4 +57,5 @@ public class AbstractPlugin
         
         return pckg;
     }
-}
+    
+ }
