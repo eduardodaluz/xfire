@@ -106,6 +106,7 @@ public class WsGen {
 		System.out.print("profile : " + (profile == null?"" : profile)+ "\n");
         System.out.print("explictAnnotation : " + explicit+ "\n");
         System.out.print("overwrite : " + overwrite+ "\n");
+        System.out.print("serverStub : " + serverStubs  + "\n");
         
 
 		Wsdl11Generator generator = new Wsdl11Generator();
