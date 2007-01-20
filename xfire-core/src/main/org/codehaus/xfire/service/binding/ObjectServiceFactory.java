@@ -92,7 +92,8 @@ public class ObjectServiceFactory
     private WSDLBuilderFactory wsdlBuilderFactory = new DefaultWSDLBuilderFactory();
     private boolean customFaultsEnabled = true;
     private boolean bindingCreationEnabled = true;
-    private DocumentationProvider documentationProvider = new DocumentationProvider();
+    private static final DocumentationProvider EMPTY_DOC_PROVIDER = new DocumentationProvider();
+    private DocumentationProvider documentationProvider = EMPTY_DOC_PROVIDER;
     
     private Set soap11Transports = new HashSet();
     private Set soap12Transports = new HashSet();
@@ -468,6 +469,7 @@ public class ObjectServiceFactory
     protected void createDocumentationProvider(ServiceInfo serviceInfo)
     {
         XMLDocumentationBuilder docBuilder = new XMLDocumentationBuilder();
+        setDocumentationProvider(EMPTY_DOC_PROVIDER);
         DocumentationProvider docProvider = docBuilder.build(serviceInfo);
         if( docProvider != null ){
             setDocumentationProvider( docProvider);    
