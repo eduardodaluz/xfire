@@ -26,9 +26,11 @@ public class XFireFactory
 
     private XFire xfire;
 
-    public void setXFire(XFire xfire){
+    public void setXFire(XFire xfire)
+    {
         this.xfire = xfire;
     }
+    
     protected XFireFactory()
     {
         xfire = new DefaultXFire();
@@ -63,6 +65,11 @@ public class XFireFactory
         return standalone;
     }
 
+    public static void setInstance(XFireFactory xf) 
+    {
+    	standalone = xf;
+    }
+    
     private static XFireFactory loadFactory(Class clazz)
     {
         try

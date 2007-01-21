@@ -55,6 +55,8 @@ import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.MethodComparator;
 import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.ServiceUtils;
+import org.codehaus.xfire.wsdl.ResourceWSDL;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.codehaus.xfire.wsdl11.DefinitionWSDL;
 import org.codehaus.xfire.wsdl11.ResolverWSDLLocator;
 import org.codehaus.xfire.wsdl11.builder.DefaultWSDLBuilderFactory;
@@ -182,7 +184,8 @@ public class ObjectServiceFactory
             return create(clazz, 
                           name, 
                           WSDLFactory.newInstance().newWSDLReader().readWSDL(new ResolverWSDLLocator(null, new InputSource(wsdlUrl.openStream()))), 
-                          properties);
+                          properties,
+                          new ResourceWSDL(wsdlUrl));
         }
         catch (WSDLException e)
         {
@@ -196,6 +199,11 @@ public class ObjectServiceFactory
     
 
     public Service create(Class clazz, QName name, Definition def, Map properties)
+    {
+    	return create(clazz, name, def, properties, new DefinitionWSDL(def));
+    }
+    
+    public Service create(Class clazz, QName name, Definition def, Map properties, WSDLWriter writer)
     {
         if (properties == null) properties = new HashMap();
         
@@ -219,7 +227,7 @@ public class ObjectServiceFactory
         
         if (name != null) service.setName(name);
         
-        service.setWSDLWriter(new DefinitionWSDL(def));
+        service.setWSDLWriter(writer);
 
         try
         {

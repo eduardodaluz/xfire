@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.codehaus.xfire.DefaultXFire;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFire;
+import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.client.XFireProxyFactory;
 import org.codehaus.xfire.exchange.InMessage;
 import org.codehaus.xfire.exchange.MessageExchange;
@@ -261,6 +262,7 @@ public abstract class AbstractXFireTest
         namespaces = null;
         basedirPath = null;
 
+        XFireFactory.setInstance(null);
         super.tearDown();
     }
 

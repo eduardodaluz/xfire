@@ -60,8 +60,11 @@ public class Base64Type
                 }
             }
            
-            if (reader.isEndElement())
+            if (reader.isEndElement()) 
+            {
+            	reader.next();
                 return new byte[0];
+            }
             
             int length = reader.getTextLength();
             

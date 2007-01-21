@@ -6,4 +6,9 @@ public class DataService
     {
         return new DataBean();
     }
+    
+    public DataBean echoData(DataBean bean)
+    {
+        return bean;
+    }
 }

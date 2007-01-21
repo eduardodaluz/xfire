@@ -101,7 +101,7 @@ public class WeatherServiceTest
     public void testWsdl() throws Exception
     {
         Document doc = getWSDLDocument("WeatherService");
-
+printNode(doc);
         addNamespace("xsd", SoapConstants.XSD);
         
         assertValid("//xsd:schema[@targetNamespace='http://www.webservicex.net'][1]", doc);

@@ -27,14 +27,21 @@ public class ByteDataTest
                 invokeService("DataService",
                               "/org/codehaus/xfire/message/wrapped/GetData.xml");
 
-        printNode(response);
+        addNamespace("s", "http://services.xfire.codehaus.org");
+        assertValid("//s:out/s:data", response);
+        
+        response =
+            invokeService("DataService",
+                          "/org/codehaus/xfire/message/wrapped/EchoData.xml");
+
+        assertValid("//s:out/s:data", response);
+
     }
 
     public void testBeanServiceWSDL()
             throws Exception
     {
         Document doc = getWSDLDocument("DataService");
-
         addNamespace("wsdl", WSDLWriter.WSDL11_NS);
         addNamespace("wsdlsoap", WSDLWriter.WSDL11_SOAP_NS);
         addNamespace("xsd", SoapConstants.XSD);

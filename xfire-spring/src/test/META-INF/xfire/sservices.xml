@@ -19,7 +19,15 @@
   		<property key="disable.wsdl" >true</property>
   	</properties>
   </service>
-  
+
+  <!--  service>
+    <name>EchoWithWSDL</name>
+    <serviceClass>org.codehaus.xfire.test.Echo</serviceClass>
+    <implementationClass>
+      org.codehaus.xfire.test.EchoImpl
+    </implementationClass>
+    <wsdlURL>classpath:org/codehaus/xfire/spring/remoting/echo.wsdl</wsdlURL>
+  </service  -->
   
   
   <service xmlns:t="urn:my:namespace">
