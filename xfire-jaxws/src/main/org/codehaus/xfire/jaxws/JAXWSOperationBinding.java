@@ -27,6 +27,7 @@ import org.codehaus.xfire.fault.XFireFault;
 import org.codehaus.xfire.jaxb2.JaxbType;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.binding.AbstractBinding;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 
 public class JAXWSOperationBinding
@@ -116,37 +117,70 @@ public class JAXWSOperationBinding
     public void readMessage(InMessage message, MessageContext context)
         throws XFireFault
     {
-        if (processInput)
+        if (AbstractBinding.isClientModeOn(context))
         {
-            Service service = context.getService();
-            AegisBindingProvider provider = (AegisBindingProvider) service.getBindingProvider();
-            
-            Type type = provider.getType(service, inputClass);
-
-            Object in = type.readObject(new ElementReader(message.getXMLStreamReader()), context);
-            
-            List<Object> parameters = new ArrayList<Object>();
-            
-            for (Iterator itr = inputPDs.iterator(); itr.hasNext();)
+            if (processOutput)
             {
-                PropertyDescriptor pd = (PropertyDescriptor) itr.next();
+                Service service = context.getService();
+                AegisBindingProvider provider = (AegisBindingProvider) service.getBindingProvider();
                 
-                try
+                Type type = provider.getType(service, outputClass);
+                
+                Object in = type.readObject(new ElementReader(message.getXMLStreamReader()), context);
+                
+                List<Object> parameters = new ArrayList<Object>();
+                
+                for (Iterator itr = outputPDs.iterator(); itr.hasNext();)
                 {
-                    Object val = getReadMethod(inputClass, pd).invoke(in, new Object[] {});
-                    parameters.add(val);
+                    PropertyDescriptor pd = (PropertyDescriptor) itr.next();
+                    
+                    try
+                    {
+                        Object val = getReadMethod(outputClass, pd).invoke(in, new Object[] {});
+                        parameters.add(val);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new XFireRuntimeException("Couldn't read property " + pd.getName(), e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    throw new XFireRuntimeException("Couldn't read property " + pd.getName(), e);
-                }
+                message.setBody(parameters);
+            } else {
+                delegate.readMessage(message, context);
             }
-            
-            message.setBody(parameters);
-        }
-        else
-        {
-            delegate.readMessage(message, context);
+        } else {
+            if (processInput)
+            {
+                Service service = context.getService();
+                AegisBindingProvider provider = (AegisBindingProvider) service.getBindingProvider();
+                
+                Type type = provider.getType(service, inputClass);
+    
+                Object in = type.readObject(new ElementReader(message.getXMLStreamReader()), context);
+                
+                List<Object> parameters = new ArrayList<Object>();
+                
+                for (Iterator itr = inputPDs.iterator(); itr.hasNext();)
+                {
+                    PropertyDescriptor pd = (PropertyDescriptor) itr.next();
+                    
+                    try
+                    {
+                        Object val = getReadMethod(inputClass, pd).invoke(in, new Object[] {});
+                        parameters.add(val);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new XFireRuntimeException("Couldn't read property " + pd.getName(), e);
+                    }
+                }
+                
+                message.setBody(parameters);
+            }
+            else
+            {
+                delegate.readMessage(message, context);
+            }
         }
     }
 

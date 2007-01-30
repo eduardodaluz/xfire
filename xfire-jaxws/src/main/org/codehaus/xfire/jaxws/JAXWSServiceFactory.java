@@ -1,7 +1,9 @@
 package org.codehaus.xfire.jaxws;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import javax.jws.WebMethod;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
@@ -19,6 +21,7 @@ import org.codehaus.xfire.jaxws.type.JAXWSTypeRegistry;
 import org.codehaus.xfire.service.FaultInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.service.ServiceInfo;
 import org.codehaus.xfire.service.binding.PostInvocationHandler;
 import org.codehaus.xfire.service.binding.ServiceInvocationHandler;
 import org.codehaus.xfire.soap.AbstractSoapBinding;
@@ -44,6 +47,26 @@ public class JAXWSServiceFactory
               new AegisBindingProvider(new JAXWSTypeRegistry()));
     }
     
+    public String getOperationName(ServiceInfo service, Method method)
+    {
+        Annotation[] annotations = method.getAnnotations();
+        for (int i = 0; i < annotations.length; i++)
+        {
+            if (annotations[i] instanceof WebMethod)
+            {
+                if (((WebMethod) annotations[i]).operationName() != null)
+                {
+                    String name = ((WebMethod) annotations[i]).operationName(); 
+                    if (name != null && name.length() > 0)
+                    {
+                        return name;
+                    }
+                }
+            }
+        }
+        return super.getOperationName(service, method);
+    }        
+
     protected void registerHandlers(Service service)
     {
         service.addInHandler(new ServiceInvocationHandler());
