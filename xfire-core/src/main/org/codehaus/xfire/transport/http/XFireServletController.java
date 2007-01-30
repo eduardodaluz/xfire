@@ -120,8 +120,7 @@ public class XFireServletController
                 return;
             }
             
-            if (request.getQueryString() != null &&
-                request.getQueryString().trim().equalsIgnoreCase("wsdl"))
+            if (isWSDLRequest(request))
             {
                 generateWSDL(response, serviceName);
             }
@@ -150,9 +149,13 @@ public class XFireServletController
         }
     }
 
-    
+  protected boolean isWSDLRequest(HttpServletRequest request)
+  {
+    return request.getQueryString() != null &&
+        request.getQueryString().trim().equalsIgnoreCase("wsdl");
+  }
 
-	protected void generateService(HttpServletResponse response, String serviceName)
+  protected void generateService(HttpServletResponse response, String serviceName)
             throws ServletException, IOException
     {
         response.setContentType("text/html");
