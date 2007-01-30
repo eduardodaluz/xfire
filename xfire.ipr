@@ -245,17 +245,6 @@
         <inspection_tool class="JSUnresolvedVariable" level="WARNING" enabled="true" />
         <inspection_tool class="JSUnresolvedFunction" level="WARNING" enabled="true" />
         <inspection_tool class="JSUndeclaredVariable" level="WARNING" enabled="true" />
-        <inspection_tool class="AnalyzingVariableNaming" level="WARNING" enabled="true">
-          <option name="CHECK_STATIC_FINAL_FIELDS" value="false" />
-          <option name="CHECK_STATIC_FIELDS" value="true" />
-          <option name="CHECK_FIELDS" value="true" />
-          <option name="CHECK_PARAMETERS" value="true" />
-        </inspection_tool>
-        <inspection_tool class="AnalyzingLoggingWithoutLogLevelCheck" level="WARNING" enabled="true">
-          <option name="CHECK_DEBUG" value="true" />
-          <option name="CHECK_INFO" value="false" />
-          <option name="IGNORE_SIMPLE_STATEMENTS" value="true" />
-        </inspection_tool>
         <inspection_tool class="UnnecessaryModuleDependencyInspection" level="WARNING" enabled="true" />
       </profile>
     </profiles>
@@ -432,6 +421,7 @@
       <module fileurl="file://$PROJECT_DIR$/xfire-spring/spring.iml" filepath="$PROJECT_DIR$/xfire-spring/spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/xfire-jaxb/xfire-jaxb.iml" filepath="$PROJECT_DIR$/xfire-jaxb/xfire-jaxb.iml" />
       <module fileurl="file://$PROJECT_DIR$/xfire-jaxb2/xfire-jaxb2.iml" filepath="$PROJECT_DIR$/xfire-jaxb2/xfire-jaxb2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xfire-jaxws/xfire-jaxws.iml" filepath="$PROJECT_DIR$/xfire-jaxws/xfire-jaxws.iml" />
       <module fileurl="file://$PROJECT_DIR$/xfire-xmlbeans/xmlbeans.iml" filepath="$PROJECT_DIR$/xfire-xmlbeans/xmlbeans.iml" />
       <module fileurl="file://$PROJECT_DIR$/xfire-xmpp/xmpp.iml" filepath="$PROJECT_DIR$/xfire-xmpp/xmpp.iml" />
     </modules>
@@ -483,8 +473,8 @@
     </library>
     <library name="stax">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/target/lib/stax-api-1.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/target/lib/wstx-asl-2.9.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/stax-api-1.0.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/target/lib/wstx-asl-3.0.1.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
