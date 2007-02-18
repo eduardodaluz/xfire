@@ -323,7 +323,7 @@ public class ServiceBean
      */
     public void setName(String name)
     {
-        this.name = name;
+        this.name = name.trim();
     }
 
     /**
@@ -332,7 +332,7 @@ public class ServiceBean
      */
     public void setNamespace(String namespace)
     {
-        this.namespace = namespace;
+        this.namespace = namespace.trim();
     }
 
     public List getFaultHandlers()
