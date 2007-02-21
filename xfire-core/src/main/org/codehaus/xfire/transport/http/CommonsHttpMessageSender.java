@@ -407,7 +407,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         
         if (ct.toLowerCase().indexOf("multipart/related") != -1)
         {
-            Attachments atts = new StreamedAttachments(in, ct);
+            Attachments atts = new StreamedAttachments(getMessageContext(),in, ct);
 
             msgIs = atts.getSoapMessage().getDataHandler().getInputStream();
             
@@ -458,10 +458,10 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 	         if (domainIndex > 0 && username.length() > domainIndex + 1) {
 	
 	                     return new NTCredentials(
-	                             username.substring(0, domainIndex), 
+	                    		 username.substring(domainIndex+1), 
 	                             password, 
 	                             "localhost", // TODO: resolve local host name 
-	                             username.substring(domainIndex+1));
+	                             username.substring(0, domainIndex));
 	                     
 	         } 
 	             
@@ -471,6 +471,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 	         
 	     
 	}
+	
 
 	public boolean isUseProxyUtils() {
 		return useProxyUtils;
