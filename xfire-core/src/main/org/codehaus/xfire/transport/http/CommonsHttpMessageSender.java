@@ -98,7 +98,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private OutMessageDataSource source;
 
-	private Boolean useProxyUtils;
+	private boolean useProxyUtils=true;
     
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
@@ -257,12 +257,12 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
     private boolean isNonProxyHost( String strURI, MessageContext context ) 
     {
-    	if (Boolean.FALSE.equals(useProxyUtils)) {
+    	if (!useProxyUtils) {
     		return false;
     	}
     	
     	if (!isJDK5andAbove()) {
-    		useProxyUtils = Boolean.FALSE;
+    		useProxyUtils = false;
     		return false;
     	}
     	
@@ -470,6 +470,14 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 	         
 	         
 	     
+	}
+
+	public boolean isUseProxyUtils() {
+		return useProxyUtils;
+	}
+
+	public void setUseProxyUtils(boolean useProxyUtils) {
+		this.useProxyUtils = useProxyUtils;
 	}
     
 }
