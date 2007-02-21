@@ -1,6 +1,7 @@
 package org.codehaus.xfire.spring.remoting;
 
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -41,6 +42,10 @@ public class Jsr181HandlerMapping
     private String urlPrefix = "/services/";
     private String servletControllerAdapterName;
 
+    private List inHandlers;
+    private List outHandlers;
+    private List faultHandlers;
+    
     protected void initApplicationContext()
             throws BeansException
     {
@@ -110,6 +115,17 @@ public class Jsr181HandlerMapping
                 {
                     logger.info("Exposing  service " + endpoint.getName() + 
                                 " to " + urlPrefix + endpoint.getSimpleName());
+                }
+                if( getInHandlers()!= null ){
+                	endpoint.getInHandlers().addAll(getInHandlers());	
+                }
+                
+                if( getOutHandlers()!= null ){
+                	endpoint.getOutHandlers().addAll(getOutHandlers());	
+                }
+                
+                if( getFaultHandlers()!= null ){
+                	endpoint.getFaultHandlers().addAll(getFaultHandlers());	
                 }
                 
                 xFire.getServiceRegistry().register(endpoint);
@@ -198,4 +214,30 @@ public class Jsr181HandlerMapping
     {
         this.servletControllerAdapterName = servletControllerAdapterName;
     }
+
+	public List getInHandlers() {
+		return inHandlers;
+	}
+
+	public void setInHandlers(List inHandlers) {
+		this.inHandlers = inHandlers;
+	}
+
+	public List getOutHandlers() {
+		return outHandlers;
+	}
+
+	public void setOutHandlers(List outHandlers) {
+		this.outHandlers = outHandlers;
+	}
+
+	public List getFaultHandlers() {
+		return faultHandlers;
+	}
+
+	public void setFaultHandlers(List faultHandlers) {
+		this.faultHandlers = faultHandlers;
+	}
+    
+    
 }
