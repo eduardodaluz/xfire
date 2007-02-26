@@ -2,6 +2,8 @@ package org.codehaus.xfire.transport.http;
 
 import java.net.MalformedURLException;
 
+import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.client.Client;
@@ -86,6 +88,10 @@ public class XFireServerTest
 
         Client client = new Client(transport, service, "http://localhost:8391/Echo");
 
+//        HttpClientParams params = new HttpClientParams();
+//        params.setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+//        client.setProperty(CommonsHttpMessageSender.HTTP_CLIENT_PARAMS, params);
+//     
         OperationInfo op = service.getServiceInfo().getOperation("echo");
         Object[] response = client.invoke(op, new Object[] {root});
         assertNotNull(response);

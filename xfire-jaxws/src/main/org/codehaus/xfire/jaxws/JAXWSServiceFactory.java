@@ -16,6 +16,7 @@ import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.handler.OutMessageSender;
+import org.codehaus.xfire.jaxb2.JaxbWSDLBuilderFactory;
 import org.codehaus.xfire.jaxws.handler.WebFaultHandler;
 import org.codehaus.xfire.jaxws.type.JAXWSTypeRegistry;
 import org.codehaus.xfire.service.FaultInfo;
@@ -45,6 +46,7 @@ public class JAXWSServiceFactory
         super(new Jsr181WebAnnotations(), 
               transportManager, 
               new AegisBindingProvider(new JAXWSTypeRegistry()));
+        setWsdlBuilderFactory(new JaxbWSDLBuilderFactory());
     }
     
     public String getOperationName(ServiceInfo service, Method method)

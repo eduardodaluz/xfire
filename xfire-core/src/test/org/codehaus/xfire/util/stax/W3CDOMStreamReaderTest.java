@@ -101,4 +101,13 @@ public class W3CDOMStreamReaderTest
         W3CDOMStreamReader reader = new W3CDOMStreamReader(e);
         testElementChild(reader);
     }
+    
+    public void testEmptyElement() throws Exception
+    {
+        Document doc = getDocument();
+        Element e = doc.createElementNS("urn:test","root");
+        W3CDOMStreamReader reader = new W3CDOMStreamReader(e);
+        assertNotNull(reader.getElementText());
+        assertEquals("", reader.getElementText());
+    }
 }

@@ -148,8 +148,9 @@ public class W3CDOMStreamReader
         getCurrentFrame().ended = true;
         currentEvent = END_ELEMENT;
         endElement();
-        
-        return DOMUtils.getContent(content);
+        String result = DOMUtils.getContent(content);
+        // we should not return null according to the StAx API javadoc
+        return result != null ? result : "";
     }
 
     public String getNamespaceURI(String prefix)

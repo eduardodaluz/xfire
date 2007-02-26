@@ -127,7 +127,12 @@ public class ElementReader
             {
                 throw new XFireRuntimeException("Could not read XML stream.", e);
             }
+            
+            if (value == null) {
+            	value = "";
+            }
         }
+        
         return value.trim();
     }
 

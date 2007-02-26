@@ -4,6 +4,7 @@
   <SubmitStringArray xmlns="urn:Array">
     <in0>
       <string>bleh</string>
+      <string></string>
     </in0>
   </SubmitStringArray>
  </env:Body>

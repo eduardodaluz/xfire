@@ -460,14 +460,6 @@ public class BeanType
 
         Type sooperType = getSuperType();
 
-        if (info.isExtension() && sooperType != null)
-        {
-            Element complexContent = new Element("complexContent", SoapConstants.XSD_PREFIX,
-                    SoapConstants.XSD);
-            complex.addContent(complexContent);
-            complex = complexContent;
-        }
-
         /*
          * See Java Virtual Machine specification:
          * http://java.sun.com/docs/books/vmspec/2nd-edition/html/ClassFile.doc.html#75734
@@ -476,6 +468,14 @@ public class BeanType
                 !info.getTypeClass().isInterface())
         {
             complex.setAttribute(new Attribute("abstract", "true"));
+        }
+
+        if (info.isExtension() && sooperType != null)
+        {
+            Element complexContent = new Element("complexContent", SoapConstants.XSD_PREFIX,
+                    SoapConstants.XSD);
+            complex.addContent(complexContent);
+            complex = complexContent;
         }
 
         /*

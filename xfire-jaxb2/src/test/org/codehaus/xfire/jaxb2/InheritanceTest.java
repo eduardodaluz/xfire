@@ -55,6 +55,12 @@ public class InheritanceTest
         assertValid("//s:Body/i:getEmployeeResponse/i:out/i2:division", response);
         
         response = invokeService("InheritanceService", "ReceiveEmployee.xml");
+        response = invokeService("InheritanceService", "ReceiveEmployee.xml");
+        response = invokeService("InheritanceService", "ReceiveEmployee.xml");
+        response = invokeService("InheritanceService", "ReceiveEmployee.xml");
+        response = invokeService("InheritanceService", "ReceiveEmployee.xml");
+        response = invokeService("InheritanceService", "ReceiveEmployee.xml");
+        response = invokeService("InheritanceService", "ReceiveEmployee.xml");
 
         addNamespace("w", "urn:xfire:inheritance");
         assertValid("//s:Body/w:receiveUserResponse", response);
