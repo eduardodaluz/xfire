@@ -121,7 +121,7 @@
     <module>xfire-castor</module>
     <module>xfire-core</module>
     <module>xfire-loom</module>
-    <!-- module>xfire-jibx</module -->
+    <module>xfire-jibx</module>
     <module>xfire-jaxb</module>
     <module>xfire-jms</module>
     <module>xfire-plexus</module>
@@ -255,11 +255,11 @@
         <artifactId>xfire-java5</artifactId>
         <version>${version}</version>
       </dependency>
-      <!-- dependency>
+      <dependency>
         <groupId>org.codehaus.xfire</groupId>
         <artifactId>xfire-jibx</artifactId>
         <version>${version}</version>
-      </dependency -->
+      </dependency>
       <dependency>
         <groupId>org.codehaus.xfire</groupId>
         <artifactId>xfire-jaxb</artifactId>
