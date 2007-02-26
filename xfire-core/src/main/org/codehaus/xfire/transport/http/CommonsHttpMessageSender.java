@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -93,6 +96,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = MultiThreadedHttpConnectionManager.DEFAULT_MAX_TOTAL_CONNECTIONS;
 
     private static final Log log = LogFactory.getLog(CommonsHttpMessageSender.class);
+
+	public static final String HTTP_HEADERS = "http.custom.headers.map";
     
     private InputStream msgIs;
 
@@ -173,6 +178,15 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         {
             postMethod.setRequestHeader("Content-Encoding", GZIP_CONTENT_ENCODING);
         }
+        
+        Map headersMap = (Map) context.getContextualProperty(HTTP_HEADERS);
+        if (headersMap != null) {
+			for (Iterator iter = headersMap.entrySet().iterator(); iter.hasNext();) {
+				Map.Entry entry = (Entry) iter.next();
+				postMethod.addRequestHeader(entry.getKey().toString(), entry.getValue().toString());
+			}
+		}
+        
     }
     
     private int getIntValue(String key, int defaultValue ){
