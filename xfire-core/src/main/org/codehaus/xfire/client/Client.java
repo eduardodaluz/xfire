@@ -374,9 +374,14 @@ public class Client
         
         try
         {
-            HandlerPipeline inPipe = new HandlerPipeline(getXFire().getInPhases());
-            inPipe.addHandlers(getInHandlers());
-            inPipe.addHandlers(getTransport().getInHandlers());
+        	//the Client object in the context is not necessary "this" (client.onReceive())
+        	// we need to invoke the handlers from the client in the context not "this"
+        	// was creating issues when used in multi-threaded
+        	Client contextClient = context.getClient();
+        	
+            HandlerPipeline inPipe = new HandlerPipeline(contextClient.getXFire().getInPhases());
+            inPipe.addHandlers(contextClient.getInHandlers());
+            inPipe.addHandlers(contextClient.getTransport().getInHandlers());
             context.setInPipeline(inPipe);
             
             inPipe.invoke(context);
