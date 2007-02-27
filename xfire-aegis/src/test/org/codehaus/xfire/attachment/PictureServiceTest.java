@@ -46,11 +46,11 @@ public class PictureServiceTest
         getServiceRegistry().register(service);
         
         server = new XFireHttpServer(getXFire());
-        server.setPort(8082);
+        server.setPort(8191);
         server.start();
 
         XFireProxyFactory xpf = new XFireProxyFactory();
-        picClient = (PictureService) xpf.create(service, "http://localhost:8082/PictureService");
+        picClient = (PictureService) xpf.create(service, "http://localhost:8191/PictureService");
         
         client = ((XFireProxy) Proxy.getInvocationHandler(picClient)).getClient();
         client.setProperty(HttpTransport.CHUNKING_ENABLED, "true");
