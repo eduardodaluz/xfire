@@ -99,6 +99,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 
 	public static final String HTTP_HEADERS = "http.custom.headers.map";
     
+	
+	public static final String DISABLE_PROXY_UTILS = "http.disable.proxy.utils";
+
+	public static final String PROXY_UTILS_CLASS = "proxy.utils.class";
+	
+	private static final String DEFAULT_PROXY_UTILS_CLASS = "org.codehaus.xfire.transport.http.ProxyUtils";
+	
     private InputStream msgIs;
 
     private OutMessageDataSource source;
@@ -108,6 +115,10 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     public CommonsHttpMessageSender(OutMessage message, MessageContext context)
     {
         super(message, context);
+        Object disableProxyUtils = context.getContextualProperty(DISABLE_PROXY_UTILS);
+        if( disableProxyUtils != null ){
+          	useProxyUtils = !Boolean.valueOf(disableProxyUtils.toString()).booleanValue();
+         }
     }
     
     public void open()
@@ -281,9 +292,13 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
     	}
     	
     	Class clazz;
+    	String className = (String) context.getContextualProperty(PROXY_UTILS_CLASS);
+    	if( className == null ){
+    		className = DEFAULT_PROXY_UTILS_CLASS;
+    	}
     	// TODO : make this clazz static
 		try {
-			clazz = Class.forName("org.codehaus.xfire.transport.http.ProxyUtils");
+			clazz = Class.forName(className);
 			Object proxyUtils = clazz.newInstance();
 	    	//Method 
 	    	Method method = clazz.getDeclaredMethod("isNonProxyHost", new Class[]{String.class});
@@ -291,7 +306,7 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 	    	return result.booleanValue();
 		} catch (Exception  e) {
 			// Don't care what happend, we can't check for proxy
-			log.debug("Could not load ProxyUtils.");
+			log.debug("Could not load ProxyUtils class: "+ className);
 			return false;
 		}
     }
@@ -485,14 +500,5 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
 	         
 	     
 	}
-	
-
-	public boolean isUseProxyUtils() {
-		return useProxyUtils;
-	}
-
-	public void setUseProxyUtils(boolean useProxyUtils) {
-		this.useProxyUtils = useProxyUtils;
-	}
-    
+	    
 }
