@@ -35,6 +35,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
@@ -56,6 +58,8 @@ import org.xml.sax.SAXException;
 public class JaxbType
     extends Type
 {
+	
+	private static final Log LOG = LogFactory.getLog(JaxbType.class);
 	public static final String SEARCH_PACKAGES = "jaxb.search.packages";
     public static final String ENABLE_VALIDATION = "jaxb.validation.enabled";
     public static final String ENABLE_RESPONSE_VALIDATION = "jaxb.validation.response.enabled";
@@ -207,8 +211,9 @@ public class JaxbType
             Throwable ex = e;
             if( e.getLinkedException()!= null ){
                 ex = e.getLinkedException();
-            }
-            throw new XFireFault("Could not unmarshall type.", ex, XFireFault.RECEIVER);
+            } 
+            LOG.error(ex);
+            throw new XFireFault("Could not unmarshall type : "+ ex.getMessage(), ex, XFireFault.RECEIVER);
         }
 
     }
