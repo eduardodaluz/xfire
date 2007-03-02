@@ -34,6 +34,7 @@ public class DOMOutHandler
         super();
         setPhase(Phase.POST_INVOKE);
         after(SoapSerializerHandler.class.getName());
+        before(FaultSoapSerializerHandler.class.getName());
         
         try
         {
