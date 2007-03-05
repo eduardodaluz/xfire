@@ -2,8 +2,10 @@ package org.codehaus.xfire.service.binding;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -185,8 +187,11 @@ public class ServiceInvocationHandler
             {
                 result = headerVal;
             }
-            else if (paramArray[header.getIndex()] == null)
+            else 
+            //	if (paramArray[header.getIndex()] == null)
+            if( headerVal != null )
             {
+            	
                 paramArray[header.getIndex()] = headerVal;
             }
         }
@@ -210,11 +215,20 @@ public class ServiceInvocationHandler
         int outSize = 0;
         if (outMsg != null)
         {
-            outSize = outHeaderMsg.size() + outMsg.size();
-            if (outSize != 0) outSize--;
+            outSize = outMsg.size();
+        
         }
         
-        int total = inMsg.size() + headerMsg.size() + outSize;
+        int headersNumber = calcuateHeaderSize(headerMsg,outHeaderMsg);
+        //int total = inMsg.size() + headerMsg.size() + outSize;
+        int total = inMsg.size() + headersNumber + outSize;
+        if (outMsg != null){
+            if ( ( outSize + outHeaderMsg.size()) != 0){
+            	total--;
+            }
+        }
+
+        
 
         // there are no holder classes to fill in
         if (total == params.size()) return params.toArray();
@@ -241,7 +255,37 @@ public class ServiceInvocationHandler
         return newParams;
     }
 
-    private void fillInHolders(MessagePartContainer msg, Object[] newParams)
+    /**
+     * @param headerMsg
+     * @param outHeaderMsg
+     * @return
+     */
+    private int calcuateHeaderSize(MessagePartContainer headerMsg,
+			MessagePartContainer outHeaderMsg) {
+		Set headers = new HashSet();
+		if (headerMsg != null) {
+			for (Iterator iter = headerMsg.getMessageParts().iterator(); iter
+					.hasNext();) {
+				MessagePartInfo info = (MessagePartInfo) iter.next();
+				headers.add(info.getName());
+			}
+		}
+
+		if (outHeaderMsg != null) {
+			for (Iterator iter = outHeaderMsg.getMessageParts().iterator(); iter
+					.hasNext();) {
+				MessagePartInfo info = (MessagePartInfo) iter.next();
+				headers.add(info.getName());
+			}
+		}
+		return headers.size();
+	}
+
+	/**
+	 * @param msg
+	 * @param newParams
+	 */
+	private void fillInHolders(MessagePartContainer msg, Object[] newParams)
     {
         for (Iterator itr = msg.getMessageParts().iterator(); itr.hasNext();)
         {
@@ -262,6 +306,13 @@ public class ServiceInvocationHandler
         }
     }
     
+    /**
+     * @param context
+     * @param params
+     * @param operation
+     * @param invoker
+     * @throws Exception
+     */
     protected void sendMessage(final MessageContext context,
                                final Object[] params,
                                final OperationInfo operation,
