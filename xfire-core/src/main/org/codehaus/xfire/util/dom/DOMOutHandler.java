@@ -10,6 +10,7 @@ import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.handler.AbstractHandler;
 import org.codehaus.xfire.handler.Phase;
 import org.codehaus.xfire.soap.handler.SoapSerializerHandler;
+import org.codehaus.xfire.soap.handler.FaultSoapSerializerHandler;
 import org.codehaus.xfire.util.stax.W3CDOMStreamWriter;
 import org.w3c.dom.Document;
 
