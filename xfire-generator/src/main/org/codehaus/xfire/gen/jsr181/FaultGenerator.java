@@ -62,6 +62,10 @@ public class FaultGenerator
                     
                     List messageParts = fault.getMessageParts();
                     
+                    if (messageParts.size() == 0)
+                    {
+                        throw new IllegalStateException("Fault does not contain a message part: " + service.getName() + " / " + op.getName() + " / " + fault.getName());
+                    }
                     MessagePartInfo part = (MessagePartInfo) messageParts.get(0);
                     
                     if (!exClasses.containsKey(fault.getMessageName()))
