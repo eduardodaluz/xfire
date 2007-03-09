@@ -1,6 +1,5 @@
 package org.codehaus.xfire.gen.jsr181;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;

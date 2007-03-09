@@ -3,9 +3,12 @@ package org.codehaus.xfire.gen.jsr181;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -140,6 +143,69 @@ public abstract class AbstractServiceGenerator
     {
         return false;
     }
+    public static  class ParamInfo{
+    	private JType paramType;
+    	private String varName;
+    	private boolean in;
+    	private boolean out;
+    	private boolean header;
+    	private QName name;
+    	
+    	public ParamInfo(JType paramType, String name){
+    	 this.paramType = paramType;
+    	 this.varName = name;
+    	}
+
+    	public ParamInfo(JType paramType, String name, boolean header){
+       	 this(paramType,name);
+       	 this.header = header;
+       	}
+    	
+		public void setParamType(JType paramType) {
+			this.paramType = paramType;
+		}
+
+		public QName getName() {
+			return name;
+		}
+
+		public void setName(QName name) {
+			this.name = name;
+		}
+
+		public boolean isHeader() {
+			return header;
+		}
+
+		public void setHeader(boolean header) {
+			this.header = header;
+		}
+
+		public boolean isIn() {
+			return in;
+		}
+
+		public void setIn(boolean in) {
+			this.in = in;
+		}
+
+		public boolean isOut() {
+			return out;
+		}
+
+		public void setOut(boolean out) {
+			this.out = out;
+		}
+
+		public JType getParamType() {
+			return paramType;
+		}
+
+		public String getVarName() {
+			return varName;
+		}
+    	
+    }
 
     private void generateOperation(GenerationContext context, OperationInfo op, JMethod method) 
         throws GenerationException
@@ -148,7 +214,7 @@ public abstract class AbstractServiceGenerator
         SchemaSupport schema = context.getSchemaGenerator();
         
         List<String> partNames = new ArrayList<String>();
-        
+        Map<String, ParamInfo> params = new HashMap<String, ParamInfo>();
         // input parts
         MessageInfo inputMsg = op.getInputMessage();
         for (Iterator pitr = inputMsg.getMessageParts().iterator(); pitr.hasNext();)
@@ -159,9 +225,11 @@ public abstract class AbstractServiceGenerator
             partNames.add(varName);
 
             JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
-            JVar jvar = method.param(0, paramType, varName);
-            
-            annotate(part, jvar);
+            ParamInfo param = new ParamInfo(paramType,varName);
+            param.setIn(true);
+            param.setName(part.getName());
+            params.put(varName, param );
+
         }
    
         // input parts for each binding
@@ -179,9 +247,12 @@ public abstract class AbstractServiceGenerator
                 partNames.add(varName);
 
                 JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
-                JVar jvar = method.param(0, paramType, varName);
+
+                ParamInfo param = new ParamInfo(paramType,varName, true);
+                param.setIn(true);
+                param.setName(part.getName());
+                params.put(varName, param);
                 
-                annotate(part, jvar, binding);
             }
         }
 
@@ -206,9 +277,15 @@ public abstract class AbstractServiceGenerator
                 partNames.add(varName);
 
                 JType paramType = getHolderType(context, part);
-                JVar jvar = method.param(0, paramType, varName);
                 
-                annotateOutParam(part, jvar);
+                ParamInfo param = params.get(varName);
+                if( param == null ){
+                	param = new ParamInfo(paramType,varName);	
+                }
+                param.setOut(true);
+                param.setName(part.getName());
+                params.put(varName, param);
+                
             } 
 
             // Annotate out message bindings
@@ -219,17 +296,37 @@ public abstract class AbstractServiceGenerator
                 for (Iterator bitr = headers.iterator(); bitr.hasNext();)
                 {
                     MessagePartInfo part = (MessagePartInfo) bitr.next(); 
-                    
-                    String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
-                    partNames.add(varName);
-
+                  
+                    String localName = part.getName().getLocalPart();
+                    String varName = localName;
+                    if (!partNames.contains(localName)){
+                    	// The same name used for input/output paramter
+                    	varName = getUniqueName(javify(localName), partNames);
+                        partNames.add(varName);	
+                    }
                     JType paramType = getHolderType(context, part);
-                    JVar jvar = method.param(0, paramType, varName);
+                    
+                    
+  
+                    ParamInfo param = params.get(varName);
+                    if( param == null ){
+                    	param = new ParamInfo(paramType,varName,true);	
+                    }
+                    param.setOut(true);
+                    param.setName(part.getName());
+                    param.setParamType(paramType);
+                    params.put(varName, param);
 
-                    annotateOutParam(part, jvar, binding);
                 }
             }
-        }
+            
+            for (ParamInfo param : params.values()) {
+            	
+            	JVar jvar = method.param(0, param.getParamType(), param.getVarName());
+            	annotateParam(param, jvar);
+				
+			}   
+           }
         else if (!op.hasOutput())
         {
             annotateOneWay(method);
@@ -242,6 +339,9 @@ public abstract class AbstractServiceGenerator
     {
     }
 
+    protected void annotateParam(ParamInfo param, JVar jvar ){
+    	
+    }
     protected JType getHolderType(GenerationContext context,MessagePartInfo part)
         throws GenerationException
     {
@@ -328,6 +428,10 @@ public abstract class AbstractServiceGenerator
     {
     }
 
+    protected void annotateInOutParam(MessagePartInfo part, JVar jvar, Binding binding)
+    {
+    }
+    
     protected void annotateReturnType(JMethod method, MessagePartInfo returnPart)
     {
     }

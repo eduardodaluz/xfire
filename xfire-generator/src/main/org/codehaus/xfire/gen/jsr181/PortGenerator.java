@@ -68,8 +68,8 @@ public class PortGenerator
         JCodeModel model = context.getCodeModel();
         
         // Create the Client class
-        String portName = getPackage(name, context) + "." + name.getLocalPart() + "Client";
-        portName = javify(portName);
+        String portName = getPackage(name, context) + "." + javify(name.getLocalPart()) + "Client";
+       // portName = portName;
         
         JDefinedClass servCls = model._class(portName);
 
