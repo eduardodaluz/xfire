@@ -15,7 +15,6 @@ import javax.jws.soap.SOAPBinding.Use;
 import javax.xml.namespace.QName;
 
 import org.codehaus.xfire.gen.GenerationContext;
-//import org.codehaus.xfire.gen.jsr181.AbstractServiceGenerator.ParamInfo;
 import org.codehaus.xfire.service.Binding;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
@@ -129,8 +128,6 @@ public class ServiceInterfaceGenerator
         wpann.param("mode", WebParam.Mode.OUT);
         wpann.param("header", true);
     }
-    
-    
 
     protected void annotateReturnType(JMethod method, MessagePartInfo returnPart)
     {
@@ -146,22 +143,6 @@ public class ServiceInterfaceGenerator
         method.annotate(Oneway.class);
     }
 
-    protected void annotateParam(ParamInfo param ,JVar jvar){
-        wpann = jvar.annotate(WebParam.class);
-        wpann.param("name", param.getName().getLocalPart());
-        wpann.param("targetNamespace", param.getName().getNamespaceURI());
-        if(param.isHeader()){
-        	wpann.param("header", true);
-        }
-        if(param.isIn() && param.isOut()){
-        	wpann.param("mode", WebParam.Mode.INOUT);	
-        }else
-         if( param.isOut()){
-        	wpann.param("mode", WebParam.Mode.OUT);	
-        }
-        
-    }
-    
     protected void annotate(MessagePartInfo part, JVar jvar)
     {
         wpann = jvar.annotate(WebParam.class);
