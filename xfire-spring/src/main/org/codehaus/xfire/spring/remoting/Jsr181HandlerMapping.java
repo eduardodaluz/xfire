@@ -41,7 +41,8 @@ public class Jsr181HandlerMapping
     private TypeMappingRegistry typeMappingRegistry;
     private String urlPrefix = "/services/";
     private String servletControllerAdapterName;
-
+    private AnnotationServiceFactory serviceFactory;
+    
     private List inHandlers;
     private List outHandlers;
     private List faultHandlers;
@@ -49,16 +50,9 @@ public class Jsr181HandlerMapping
     protected void initApplicationContext()
             throws BeansException
     {
-        AegisBindingProvider provider;
-        if (typeMappingRegistry == null)
-            provider = new AegisBindingProvider();
-        else
-            provider = new AegisBindingProvider(typeMappingRegistry);
-        
-        AnnotationServiceFactory serviceFactory =
-                new AnnotationServiceFactory(webAnnotations,
-                                             xFire.getTransportManager(),
-                                             provider);
+        if (serviceFactory == null) {
+        	serviceFactory = createServiceFactory();
+        }
 
         ApplicationContext context = getApplicationContext();
  
@@ -71,6 +65,28 @@ public class Jsr181HandlerMapping
             context = context.getParent();
         }
     }
+
+	public AnnotationServiceFactory getServiceFactory() {
+		return serviceFactory;
+	}
+
+	public void setServiceFactory(AnnotationServiceFactory serviceFactory) {
+		this.serviceFactory = serviceFactory;
+	}
+
+	private AnnotationServiceFactory createServiceFactory() {
+		AegisBindingProvider provider;
+        if (typeMappingRegistry == null)
+            provider = new AegisBindingProvider();
+        else
+            provider = new AegisBindingProvider(typeMappingRegistry);
+        
+        AnnotationServiceFactory serviceFactory =
+                new AnnotationServiceFactory(webAnnotations,
+                                             xFire.getTransportManager(),
+                                             provider);
+		return serviceFactory;
+	}
 
     private void processBeans(ApplicationContext beanFactory, AnnotationServiceFactory serviceFactory)
     {
@@ -111,27 +127,7 @@ public class Jsr181HandlerMapping
                     webAnnotations.hasWebServiceAnnotation(clazz))
             {
                 Service endpoint = serviceFactory.create(clazz);
-                if (logger.isInfoEnabled())
-                {
-                    logger.info("Exposing  service " + endpoint.getName() + 
-                                " to " + urlPrefix + endpoint.getSimpleName());
-                }
-                if( getInHandlers()!= null ){
-                	endpoint.getInHandlers().addAll(getInHandlers());	
-                }
-                
-                if( getOutHandlers()!= null ){
-                	endpoint.getOutHandlers().addAll(getOutHandlers());	
-                }
-                
-                if( getFaultHandlers()!= null ){
-                	endpoint.getFaultHandlers().addAll(getFaultHandlers());	
-                }
-                
-                xFire.getServiceRegistry().register(endpoint);
-                endpoint.setInvoker(new BeanInvoker(bean));
-                Object controller = createController(endpoint.getName());
-                registerHandler(urlPrefix + endpoint.getSimpleName(), controller);
+                customizeService(bean, endpoint);
             }
             else
             {
@@ -142,8 +138,36 @@ public class Jsr181HandlerMapping
             }
         }
     }
+
+	protected void customizeService(Object bean, Service endpoint) {
+		if (logger.isInfoEnabled())
+		{
+		    logger.info("Exposing  service " + endpoint.getName() + 
+		                " to " + urlPrefix + endpoint.getSimpleName());
+		}
+		if( getInHandlers()!= null ){
+			endpoint.getInHandlers().addAll(getInHandlers());	
+		}
+		
+		if( getOutHandlers()!= null ){
+			endpoint.getOutHandlers().addAll(getOutHandlers());	
+		}
+		
+		if( getFaultHandlers()!= null ){
+			endpoint.getFaultHandlers().addAll(getFaultHandlers());	
+		}
+		
+		xFire.getServiceRegistry().register(endpoint);
+		endpoint.setInvoker(new BeanInvoker(bean));
+		Object controller = createController(endpoint.getName());
+		registerHandler(urlPrefix + endpoint.getSimpleName(), controller);
+	}
     
-    /**
+    public XFire getXFire() {
+		return xFire;
+	}
+
+	/**
      * Creates the XFireServletControllerAdapter either indirectly using the 
      * XFireServletControllerAdapter prototype bean declared in the Spring app context,
      * or directly through the the constructor of XFireServletControllerAdapter. 

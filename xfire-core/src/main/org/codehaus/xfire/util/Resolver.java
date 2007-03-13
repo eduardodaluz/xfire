@@ -38,7 +38,6 @@ public class Resolver
     public Resolver(String baseUriStr, String uriStr) 
         throws IOException
     {
-    	System.out.println("Resovling. Base: " + baseUriStr + ", URI: " + uriStr);
         if (uriStr.startsWith("classpath:")) 
         {
             tryClasspath(uriStr);

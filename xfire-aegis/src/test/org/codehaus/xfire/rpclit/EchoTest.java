@@ -5,7 +5,6 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.services.Echo;
 import org.codehaus.xfire.soap.SoapConstants;
-import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
 import org.jdom.Document;
 
 public class EchoTest
@@ -32,17 +31,14 @@ public class EchoTest
         addNamespace("e", "urn:xfire:echo");
         
         assertValid("//out[text()='Yo Yo']", response);
+        
+        response = invokeService("Echo", "echo-nil.xml");
+        assertValid("//out[@xsi:nil='true']", response);
     }
     
     public void testWSDL() throws Exception
     {
-        Document wsdl = getWSDLDocument(service.getSimpleName());
-
-        String ns = service.getTargetNamespace();
-        addNamespace("xsd", SoapConstants.XSD);
-        addNamespace("w", WSDLBuilder.WSDL11_NS);
-        addNamespace("ws", WSDLBuilder.WSDL11_SOAP_NS);
-        
+        getWSDLDocument(service.getSimpleName());
 
     }
 }

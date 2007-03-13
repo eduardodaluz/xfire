@@ -31,6 +31,7 @@ import com.sun.codemodel.JCommentPart;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JPrimitiveType;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
@@ -143,7 +144,7 @@ public abstract class AbstractServiceGenerator
     {
         return false;
     }
-    public static  class ParamInfo{
+    public static class ParamInfo{
     	private JType paramType;
     	private String varName;
     	private boolean in;
@@ -305,9 +306,7 @@ public abstract class AbstractServiceGenerator
                         partNames.add(varName);	
                     }
                     JType paramType = getHolderType(context, part);
-                    
-                    
-  
+
                     ParamInfo param = params.get(varName);
                     if( param == null ){
                     	param = new ParamInfo(paramType,varName,true);	
@@ -319,19 +318,16 @@ public abstract class AbstractServiceGenerator
 
                 }
             }
-            
-            for (ParamInfo param : params.values()) {
-            	
-            	JVar jvar = method.param(0, param.getParamType(), param.getVarName());
-            	annotateParam(param, jvar);
-				
-			}   
-           }
+        }
         else if (!op.hasOutput())
         {
             annotateOneWay(method);
         }
         
+        for (ParamInfo param : params.values()) {
+        	JVar jvar = method.param(0, param.getParamType(), param.getVarName());
+        	annotateParam(param, jvar);
+		}
         generateFaults(context, op, method);
     }
 
@@ -346,9 +342,14 @@ public abstract class AbstractServiceGenerator
         throws GenerationException
     {
         JType genericType = context.getSchemaGenerator().getType(context, part.getName(), part.getSchemaType().getSchemaType());
-        
+        	
         try {
             JClass holder = context.getCodeModel().ref("javax.xml.ws.Holder");
+            
+            if (genericType instanceof JPrimitiveType) {
+            	JPrimitiveType def = (JPrimitiveType) genericType;
+            	genericType = def.boxify();
+            }
             holder = holder.narrow((JClass) genericType);
             return holder;
         } catch (Exception e) {

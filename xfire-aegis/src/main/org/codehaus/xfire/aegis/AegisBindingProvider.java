@@ -212,7 +212,7 @@ public class AegisBindingProvider
         type = getWriteType(context, value, type);
         MessageWriter mw = new ElementWriter(writer);
 
-        if (type.isNillable() && value == null)
+        if (type.isNillable() && type.isWriteOuter() && value == null)
         {
             mw.writeXsiNil();
             return;

@@ -41,6 +41,10 @@
       wsdl="${basedir}/src/wsdl/echoWrapped.wsdl"
       package="jsr181.echo.wrapped" binding="xmlbeans" overwrite="true" />
 
+  	 <wsgen outputDirectory="${basedir}/target/test-services"
+  	      wsdl="${basedir}/src/wsdl/echo-dualout.wsdl"
+  	      package="org.codehaus.xfire.generator.dualout" overwrite="true" />
+    	
     <wsgen outputDirectory="${basedir}/target/test-services"
       wsdl="${basedir}/src/wsdl/globalweather-twoporttypes.wsdl"
       package="jsr181.echo.globalweather" binding="xmlbeans" overwrite="true"/>

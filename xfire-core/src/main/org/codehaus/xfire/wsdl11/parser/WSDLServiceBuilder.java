@@ -32,12 +32,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
@@ -529,31 +530,36 @@ public class WSDLServiceBuilder
     {
         Input input = op.getInput();
         Output output = op.getOutput();
-        if (output == null || output.getMessage().getParts() == null) return false;
+        boolean hasOutput = output != null && output.getMessage().getParts() != null;
         
         if (input.getMessage().getParts().size() != 1 || 
-            output.getMessage().getParts().size() != 1) 
+            (hasOutput && output.getMessage().getParts().size() != 1)) 
             return false;
         
         Part inPart = (Part) input.getMessage().getParts().values().iterator().next();
-        Part outPart = (Part) output.getMessage().getParts().values().iterator().next();
+        Part outPart = null;
+        if (hasOutput)
+        	outPart = (Part) output.getMessage().getParts().values().iterator().next();
         
         QName inElementName = inPart.getElementName();
-        QName outElementName = outPart.getElementName();
-        if (inElementName == null || outElementName == null) 
+        QName outElementName = null;
+        if (hasOutput) outElementName = outPart.getElementName();
+        
+        if (inElementName == null || (hasOutput && outElementName == null)) 
             return false;
         
         if (!inElementName.getLocalPart().equals(op.getName()) || 
-                !outElementName.getLocalPart().equals(op.getName() + "Response")) 
+                (hasOutput && !outElementName.getLocalPart().equals(op.getName() + "Response"))) 
             return false;
         
         XmlSchemaElement reqSchemaEl = schemas.getElementByQName(inElementName);
-        XmlSchemaElement resSchemaEl = schemas.getElementByQName(outElementName);
+        XmlSchemaElement resSchemaEl = null;
+        if (hasOutput) resSchemaEl = schemas.getElementByQName(outElementName);
 
         if (reqSchemaEl == null) 
             throw new XFireRuntimeException("Couldn't find schema part: " + inElementName);
 
-        if (resSchemaEl == null) 
+        if (hasOutput && resSchemaEl == null) 
             throw new XFireRuntimeException("Couldn't find schema part: " + outElementName);
 
         // Now lets see if we have any attributes...
@@ -561,10 +567,7 @@ public class WSDLServiceBuilder
         if (reqSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
         {
             XmlSchemaComplexType ct = (XmlSchemaComplexType) reqSchemaEl.getSchemaType();
-            if (hasAttributes(ct))
-                return false;
-            
-            if (ct.getContentModel() != null)
+            if (hasAttributes(ct) || ct.getContentModel() != null)
                 return false;
             
             // only do a wrapped operation with sequences and all
@@ -572,13 +575,15 @@ public class WSDLServiceBuilder
             		&& !(ct.getParticle() instanceof XmlSchemaSequence) 
             				&& !(ct.getParticle() instanceof XmlSchemaAll))
             	return false;
+            
+            if (containsAnonymousTypes(ct)) return false;
         } 
         else if (reqSchemaEl.getSchemaType() != null) 
         {
             return false;
         }
         
-        if (resSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
+        if (hasOutput && resSchemaEl.getSchemaType() instanceof XmlSchemaComplexType)
         {
             XmlSchemaComplexType ct = (XmlSchemaComplexType) resSchemaEl.getSchemaType();
             if (hasAttributes(ct))
@@ -587,51 +592,44 @@ public class WSDLServiceBuilder
             if (ct.getContentModel() != null)
                 return false;
             
-            if (!isWrappedResponse(ct))
+            if (ct.getParticle() != null 
+            		&& !(ct.getParticle() instanceof XmlSchemaSequence) 
+            				&& !(ct.getParticle() instanceof XmlSchemaAll))
                 return false;
+            
+            if (containsAnonymousTypes(ct)) return false;
+
         }
-        else if (resSchemaEl.getSchemaType() != null) 
+        else if (hasOutput && resSchemaEl.getSchemaType() != null) 
         {
             return false;
         }
         
         return true;
     }
+
+	private static boolean containsAnonymousTypes(XmlSchemaComplexType ct) {
+		XmlSchemaGroupBase particle = (XmlSchemaGroupBase)ct.getParticle();
+		if (particle == null) {
+			return false;
+		}
+		
+		XmlSchemaObjectCollection items = particle.getItems();
+		for (int i = 0; i < items.getCount(); i++) {
+			XmlSchemaObject item = items.getItem(i);
+			if (item instanceof XmlSchemaElement) {
+				XmlSchemaElement el = (XmlSchemaElement) item;
+				
+				if (el.getSchemaTypeName() == null) return true;
+			} else if (item instanceof XmlSchemaElement) {
+				XmlSchemaComplexType el = (XmlSchemaComplexType) item;
+				
+				if (el.getParticle() != null) return true;
+			}
+		}
+		return false;
+	}
     
-    
-    private static boolean isWrappedResponse(XmlSchemaComplexType type)
-    {
-        if (type.getParticle() == null) return true;
-        
-        if (type.getParticle() instanceof XmlSchemaSequence)
-        {
-            XmlSchemaSequence seq = (XmlSchemaSequence) type.getParticle();
-            XmlSchemaObjectCollection items = seq.getItems();
-
-            if (items.getCount() == 0) 
-                return true;
-            else if (items.getCount() > 1) 
-                return false;
-
-            XmlSchemaObject o = items.getItem(0);
-            if (!(o instanceof XmlSchemaElement)) return false;
-            
-            XmlSchemaElement el = (XmlSchemaElement) o;
-            
-            if (el.getMaxOccurs() > 1) return false;
-
-            // If this is an anonymous complex type, mark it as unwrapped.
-            // We're doing this because things like JAXB don't have support
-            // for finding classes from anonymous type names.
-            if (el.getSchemaTypeName() == null && el.getRefName() == null)
-                return false;
-            
-            return true;
-        }
-        
-        return false;
-    }
-
     private XmlSchemaComplexType getWrappedSchema(Message message)
     {
         Part part = (Part) message.getParts().values().iterator().next();
