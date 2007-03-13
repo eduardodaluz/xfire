@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.5</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-distribution</artifactId>
   <name>XFire Distribution</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2.5</version>
   <build>
     <testSourceDirectory>/none/</testSourceDirectory>
     <plugins>
@@ -25,7 +25,7 @@
                 <copy todir="${basedir}/target/examples">
                   <fileset dir="${basedir}/../examples"></fileset>
                   <filterset begintoken=">" endtoken="&lt;">
-                    <filter value=">${version}&lt;" token="1.2-SNAPSHOT"></filter>
+                    <filter value=">${version}&lt;" token="1.2.5"></filter>
                   </filterset>
                 </copy>
                 <echo>Copying sources for source jar</echo>
