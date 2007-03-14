@@ -285,7 +285,12 @@ public class ArrayType
         throws XFireFault
     {
         type = AegisBindingProvider.getWriteType(context, value, type);
-        MessageWriter cwriter = writer.getElementWriter(name, ns);
+        MessageWriter cwriter;
+        if (type.isWriteOuter()) {
+        	cwriter = writer.getElementWriter(name, ns);
+        } else {
+        	cwriter = writer;
+        }
         
         if (value==null && type.isNillable())
             cwriter.writeXsiNil();

@@ -30,11 +30,25 @@ public class JaxbTypeCreator
     
     public JaxbTypeCreator(TypeCreator nextCreator, JAXBContext jaxbContext)
     {
-        this.nextCreator = nextCreator;   
+        this.nextCreator = nextCreator;
+        nextCreator.setParent(this);
+        
         this.jaxbContext = jaxbContext;
     }
-        
-    public QName getElementName(Method m, int index)
+    
+    public TypeCreator getParent() {
+		return null;
+	}
+
+	public void setParent(TypeCreator creator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setParent(JaxbTypeCreator creator) {
+	}
+
+	public QName getElementName(Method m, int index)
     {
         return nextCreator.getElementName(m, index);
     }

@@ -25,4 +25,7 @@ public interface TypeCreator
     Type createType(Class clazz);
     
     void setTypeMapping(TypeMapping typeMapping);
+
+    TypeCreator getParent();
+	void setParent(TypeCreator creator);
 }

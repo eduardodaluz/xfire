@@ -48,6 +48,10 @@ public class JaxbWSDLBuilder
                 classes.add(jaxbType.getActualTypeClass());
                 namespaces.add(jaxbType.getSchemaType().getNamespaceURI());
                 types.add(jaxbType);
+            } 
+            else 
+            {
+            	super.addDependency(type);
             }
         }
         else

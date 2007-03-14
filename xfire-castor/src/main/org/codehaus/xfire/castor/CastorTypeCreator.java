@@ -189,4 +189,13 @@ public class CastorTypeCreator
 
         return type;
     }
+
+	public TypeCreator getParent() {
+		return null;
+	}
+
+	public void setParent(TypeCreator creator) {
+		
+	}
+    
 }

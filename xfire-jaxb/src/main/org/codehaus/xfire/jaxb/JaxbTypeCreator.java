@@ -28,7 +28,14 @@ public class JaxbTypeCreator implements TypeCreator
         this.jaxbContext = jaxbContext;
     }
 
-    public QName getElementName(Method m, int index)
+    public TypeCreator getParent() {
+		return null;
+	}
+
+	public void setParent(TypeCreator creator) {
+	}
+
+	public QName getElementName(Method m, int index)
     {
         return nextCreator.getElementName(m, index);
     }

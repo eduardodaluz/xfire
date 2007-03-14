@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
+import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
@@ -157,10 +158,16 @@ public class Java5TypeCreator
     protected Type getOrCreateParameterizedType(Object generic, int index)
     {
         Class clazz = getComponentType(generic, index);
+
+        if (!Collection.class.isAssignableFrom(clazz)) {
+        	return getTopCreator().createType(clazz);
+        }
+        
+        Object component = getGenericComponent(generic, index);
         
         TypeClassInfo info = createBasicClassInfo(clazz);
         info.setDescription(clazz.toString());
-        info.setGenericType(getGenericComponent(generic, index));
+        info.setGenericType(component);
         
         Type type = createTypeForClass(info);
         

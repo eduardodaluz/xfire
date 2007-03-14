@@ -104,7 +104,7 @@ public class ElementWriter
                 declare = true;
                 prefix = NamespaceHelper.getUniquePrefix(writer);
             }
-            else if (prefix == null || "".equals(decPrefix))
+            else if (prefix == null)
             {
                 prefix = decPrefix;
             }

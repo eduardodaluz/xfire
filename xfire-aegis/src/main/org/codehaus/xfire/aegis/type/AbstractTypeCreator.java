@@ -29,13 +29,34 @@ public abstract class AbstractTypeCreator
     protected AbstractTypeCreator nextCreator;
 
     private Configuration typeConfiguration;
+
+	private TypeCreator parent;
     
     public TypeMapping getTypeMapping()
     {
         return tm;
     }
+    
+    public TypeCreator getTopCreator() {
+    	TypeCreator top = this;
+    	TypeCreator next = top;
+    	while (next != null) {
+    		top = next;
+    		next = top.getParent();
+    	}
+    	return top;
+	}
 
-    public void setTypeMapping(TypeMapping typeMapping)
+    
+    public TypeCreator getParent() {
+		return parent;
+	}
+
+	public void setParent(TypeCreator parent) {
+		this.parent = parent;
+	}
+
+	public void setTypeMapping(TypeMapping typeMapping)
     {
         this.tm = typeMapping;
 
@@ -46,6 +67,7 @@ public abstract class AbstractTypeCreator
     public void setNextCreator(AbstractTypeCreator creator)
     {
         this.nextCreator = creator;
+        nextCreator.parent = this;
     }
 
     protected TypeClassInfo createClassInfo(Field f)
@@ -55,7 +77,7 @@ public abstract class AbstractTypeCreator
         return info;
     }
 
-    protected TypeClassInfo createBasicClassInfo(Class typeClass)
+    public TypeClassInfo createBasicClassInfo(Class typeClass)
     {
         TypeClassInfo info = new TypeClassInfo();
         info.setDescription("class '" + typeClass.getName() + '\'');
@@ -64,7 +86,7 @@ public abstract class AbstractTypeCreator
         return info;
     }
 
-    protected Type createTypeForClass(TypeClassInfo info)
+    public Type createTypeForClass(TypeClassInfo info)
     {
         Class javaType = info.getTypeClass();
         Type result = null;

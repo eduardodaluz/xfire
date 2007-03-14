@@ -25,7 +25,7 @@ public class JAXWSTypeCreator extends Java5TypeCreator
     }
 
     @Override
-    protected Type createTypeForClass(TypeClassInfo info)
+    public Type createTypeForClass(TypeClassInfo info)
     {
         Class clazz = info.getTypeClass();
         if (JaxbTypeCreator.isJaxbType(clazz))
