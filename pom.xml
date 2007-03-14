@@ -51,6 +51,7 @@
           <include>**/*.xml</include>
           <include>**/*.properties</include>
           <include>**/*.wsdl</include>
+          <include>**/*.index</include>
         </includes>
       </testResource>
     </testResources>
