@@ -90,7 +90,7 @@ public class CollectionType
             Type type = getComponentType();
 
             if (type == null)
-                throw new XFireRuntimeException("Couldn't find type for " + type.getTypeClass() + ".");
+                throw new XFireRuntimeException("Couldn't find type.");
 
             for (Iterator itr = list.iterator(); itr.hasNext();)
             {

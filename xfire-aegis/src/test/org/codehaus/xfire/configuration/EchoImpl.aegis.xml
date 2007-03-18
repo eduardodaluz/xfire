@@ -1,0 +1,8 @@
+<mappings>
+	<mapping>
+		<method name="getEchoMsg" mappedName="GetEchoMsg" action="getEchoAction">
+            <parameter index="0" mappedName="parameter_1" header="true"/>	
+             <parameter index="1" mappedName="parameter_2" />	
+		</method>
+	</mapping>
+</mappings>

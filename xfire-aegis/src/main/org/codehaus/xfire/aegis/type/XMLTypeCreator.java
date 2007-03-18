@@ -1,25 +1,21 @@
 package org.codehaus.xfire.aegis.type;
 
 import java.beans.PropertyDescriptor;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireRuntimeException;
+import org.codehaus.xfire.aegis.XMLClassMetaInfoManager;
 import org.codehaus.xfire.aegis.type.basic.BeanType;
 import org.codehaus.xfire.aegis.type.basic.XMLBeanTypeInfo;
 import org.codehaus.xfire.util.ClassLoaderUtils;
 import org.codehaus.xfire.util.NamespaceHelper;
-import org.codehaus.xfire.util.jdom.StaxBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -59,14 +55,15 @@ import org.jdom.xpath.XPath;
  * @author Hani Suleiman
  *         Date: Jun 14, 2005
  *         Time: 7:47:56 PM
- * @author <a href="mailto:mikagoeckel@codehaus.org">Mika Göckel</a>
- * @author Øyvind Matheson Wergeland 
+ * @author <a href="mailto:mikagoeckel@codehaus.org">Mika Gï¿½ckel</a>
+ * @author ï¿½yvind Matheson Wergeland
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a> 
  */
 public class XMLTypeCreator extends AbstractTypeCreator
 {
     private static final Log log = LogFactory.getLog(XMLTypeCreator.class);
-    //cache of classes to documents
-    private Map documents = new HashMap();
+    
+    XMLClassMetaInfoManager manager = new XMLClassMetaInfoManager (); 
 
     private static List stopClasses = new ArrayList();
     static 
@@ -80,31 +77,9 @@ public class XMLTypeCreator extends AbstractTypeCreator
     protected Document getDocument(Class clazz)
     {
         if(clazz == null) return null;
-        Document doc = (Document) documents.get(clazz.getName());
-        if(doc != null)
-        {
-            return doc;
-        }
-        String path = '/' + clazz.getName().replace('.', '/') + ".aegis.xml";
-        InputStream is = clazz.getResourceAsStream(path);
-        if(is == null) {
-            log.debug("Mapping file : "+ path+" not found.");
-            return null;
-        }
-        log.debug("Found mapping file : "+ path);
-        try
-        {
-            doc = new StaxBuilder().build(is);
-            documents.put(clazz.getName(), doc);
-            return doc;
-        }
-        catch(XMLStreamException e)
-        {
-            log.error("Error loading file " + path, e);
-        }
-        return null;
+        return manager.getDocument(clazz);
+      
     }
- 
     protected boolean isEnum(Class javaType)
     {
         Element mapping = findMapping(javaType);
@@ -149,7 +124,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             return nextCreator.createClassInfo(pd);
         }
         
-        Element propertyEl = getMatch(mapping, "./property[@name='" + pd.getName() + "']");
+        Element propertyEl = manager.getProperty(mapping,pd.getName() );
         if(propertyEl == null) 
         {
             return nextCreator.createClassInfo(pd);
@@ -164,16 +139,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
     
     protected Element findMapping(Class clazz)
     {
-        Document doc = getDocument(clazz);
-        if(doc == null) return null;
-        
-        Element mapping = getMatch(doc, "/mappings/mapping[@uri='" + getTypeMapping().getEncodingStyleURI() + "']");
-        if (mapping == null)
-        {
-            mapping = getMatch(doc, "/mappings/mapping[not(@uri)]");
-        }
-        
-        return mapping;
+    	return manager.findMapping(clazz,getTypeMapping().getEncodingStyleURI());
+     
     }
 
     protected List findMappings(Class clazz)
@@ -298,7 +265,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
             }
             info.setTypeClass(m.getParameterTypes()[index]);
             //info.setAnnotations(m.getParameterAnnotations()[index]);
-            Element parameter = getMatch(bestMatch, "parameter[@index='" + index + "']");
+            Element parameter = manager.getParamter(bestMatch, index);
             readMetadata(info, mapping, parameter);
         }
         else
@@ -398,7 +365,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         if (componentType.startsWith("#"))
         {
             String name = componentType.substring(1);
-            Element propertyEl = getMatch(mapping, "./component[@name='" + name + "']");
+            Element propertyEl = manager.getComponent(mapping, name);
             if(propertyEl == null) 
             {
                 throw new XFireRuntimeException("Could not find <component> element in mapping named '" + name + "'");
@@ -480,7 +447,8 @@ public class XMLTypeCreator extends AbstractTypeCreator
             {
                 Element element = (Element)iterator.next();
                 //first we check if the parameter index is specified
-                Element match = getMatch(element, "parameter[@index='" + i + "']");
+                //Element match = getMatch(element, "parameter[@index='" + i + "']");
+                Element match = manager.getParamter(element, i);
                 if(match != null)
                 {
                     //we check if the type is specified and matches
@@ -514,18 +482,7 @@ public class XMLTypeCreator extends AbstractTypeCreator
         return bestCandidate;
     }
 
-    private Element getMatch(Object doc, String xpath)
-    {
-        try
-        {
-            XPath path = XPath.newInstance(xpath);
-            return (Element)path.selectSingleNode(doc);
-        }
-        catch(JDOMException e)
-        {
-            throw new XFireRuntimeException("Error evaluating xpath " + xpath, e);
-        }
-    }
+    
 
     private List getMatches(Object doc, String xpath)
     {
