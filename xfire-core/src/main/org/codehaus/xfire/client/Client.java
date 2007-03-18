@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -333,6 +334,24 @@ public class Client
             invocations.add(call);
             
             return call.invoke(op, params);
+        }
+        finally 
+        {
+            invocations.remove(call);
+        }
+    }
+    
+    public Object[] invoke(String name, XMLStreamReader reader) throws Exception
+    {
+        Invocation call = new Invocation(this);
+        OperationInfo op = service.getServiceInfo().getOperation(name);
+        if (op == null)
+            throw new XFireRuntimeException("Could not find operation with name " + name);
+        try 
+        {
+            invocations.add(call);
+            
+            return call.invoke(op, reader);
         }
         finally 
         {

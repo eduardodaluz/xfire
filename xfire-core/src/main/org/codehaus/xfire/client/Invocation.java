@@ -2,6 +2,8 @@ package org.codehaus.xfire.client;
 
 import java.util.List;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
@@ -34,12 +36,14 @@ public class Invocation
         return context;
     }
 
-    Object[] invoke(OperationInfo op, Object[] params) throws Exception
+    
+    
+    Object[] invoke(OperationInfo op, OutMessage msg) throws Exception
     {
-        try
+    	try
         {
-            OutMessage msg = new OutMessage(client.getUrl());
-            msg.setBody(params);
+            
+            
             msg.setChannel(client.getOutChannel());
             
             // TODO this should probably be in a seperate handler.
@@ -92,6 +96,22 @@ public class Invocation
         response = null;
 
         return localResponse;
+
+    	
+    }
+    
+    Object[] invoke(OperationInfo op, XMLStreamReader reader) throws Exception{
+    	OutMessage msg = new OutMessage(client.getUrl());
+    	msg.setSerializer(new RawDataSerializer(reader));
+    	return invoke(op,msg);
+    }
+    
+    
+    Object[] invoke(OperationInfo op, Object[] params) throws Exception
+    {
+    	OutMessage msg = new OutMessage(client.getUrl());
+    	msg.setBody(params);
+    	return invoke(op,msg);
     }
     
     /**

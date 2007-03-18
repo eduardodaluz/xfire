@@ -80,7 +80,7 @@ public class ServiceInfo
     {
         if (name == null)
         {
-            throw new IllegalArgumentException("Invalid name [" + name + "]");
+            throw new IllegalArgumentException("Invalid name [ null ]");
         }
         if (operations.containsKey(name))
         {

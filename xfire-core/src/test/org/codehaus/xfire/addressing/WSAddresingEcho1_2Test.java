@@ -80,7 +80,7 @@ public class WSAddresingEcho1_2Test
         // B sends a reply to A.
         // /soap12:Envelope/soap12:Header/wsa:Action{match}http://example.org/action/echoOut
 
-        Document doc = invokeService(SERVICE_NAME,
+        invokeService(SERVICE_NAME,
                                      "/org/codehaus/xfire/addressing/testcases/echo/soap12/message1.xml");
 
         assertEquals(data.getInHeaders().getAction(), "http://example.org/action/echoIn");

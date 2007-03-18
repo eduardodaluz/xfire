@@ -96,6 +96,7 @@ public class ObjectServiceFactory
     private boolean bindingCreationEnabled = true;
     private static final DocumentationProvider EMPTY_DOC_PROVIDER = new DocumentationProvider();
     private DocumentationProvider documentationProvider = EMPTY_DOC_PROVIDER;
+    private Map customTypesMapping = new HashMap();
     
     private Set soap11Transports = new HashSet();
     private Set soap12Transports = new HashSet();
@@ -111,7 +112,15 @@ public class ObjectServiceFactory
         this(XFireFactory.newInstance().getXFire().getTransportManager());
     }
 
-    /**
+    public Map getCustomTypesMapping() {
+		return customTypesMapping;
+	}
+
+	public void setCustomTypesMapping(Map customTypesMapping) {
+		this.customTypesMapping = customTypesMapping;
+	}
+
+	/**
      * Initializes a new instance of the <code>ObjectServiceFactory</code> with the given transport manager and type
      * mapping registry.
      *

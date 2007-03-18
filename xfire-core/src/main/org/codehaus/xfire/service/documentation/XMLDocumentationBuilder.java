@@ -26,7 +26,7 @@ import org.jdom.Element;
  */
 public class XMLDocumentationBuilder { 
 
-	protected static Log log = LogFactory.getLog(XMLDocumentationBuilder.class.getName());
+	protected static final Log log = LogFactory.getLog(XMLDocumentationBuilder.class.getName());
 
 	public static final String DOCUMENTATION_TAG = "documentation";
 

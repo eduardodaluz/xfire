@@ -52,7 +52,7 @@ public abstract class MessagePartContainer
     {
         if (name == null)
         {
-            throw new IllegalArgumentException("Invalid name [" + name + "]");
+            throw new IllegalArgumentException("Invalid name [ null ]");
         }
         /*
         if (messageParts.containsKey(name))

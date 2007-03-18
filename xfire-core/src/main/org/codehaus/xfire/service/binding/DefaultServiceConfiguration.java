@@ -40,17 +40,19 @@ public class DefaultServiceConfiguration extends ServiceConfiguration
 
         final int modifiers = method.getModifiers();
 
-        return new Boolean(Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers));
+        return Boolean.valueOf(Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers));
     }
 
     public Boolean isOutParam(Method method, int j)
     {
-        return new Boolean(j == -1);
+        //return new Boolean(j == -1);
+        return Boolean.valueOf(j == -1);
     }
 
     public Boolean isInParam(Method method, int j)
     {
-        return new Boolean((j >= 0));
+       // return new Boolean((j >= 0));
+    	 return Boolean.valueOf(j >= 0);
     }
     
     public QName getInputMessageName(final OperationInfo op)
@@ -79,8 +81,8 @@ public class DefaultServiceConfiguration extends ServiceConfiguration
             try
             {
                 method = exClass.getMethod("getFaultName", new Class[0]);
-                QName name = (QName) method.invoke(null, new Object[0]);
-                return name;
+                return (QName) method.invoke(null, new Object[0]);
+                
             }
             catch (NoSuchMethodException e)
             {
