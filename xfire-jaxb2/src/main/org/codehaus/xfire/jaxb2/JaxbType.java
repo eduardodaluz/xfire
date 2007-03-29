@@ -154,12 +154,15 @@ public class JaxbType
                     }
                 });
 
-                DOMSource source = new DOMSource();
-                source.setNode(results.get(0).getNode().getFirstChild());
+                DOMSource[] sources = new DOMSource[results.size()];
+                for (int i = 0; i < sources.length; i++) {
+                    sources[i] = new DOMSource();
+                    sources[i].setNode(results.get(i).getNode().getFirstChild());
+                }
                 SchemaFactory factory = SchemaFactory
                         .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-        		 schema = factory.newSchema(source);
+                schema = factory.newSchema(sources);
             }
                  
             // Put generated schema on context
