@@ -19,6 +19,7 @@ import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
 import org.codehaus.xfire.transport.TransportManager;
 import org.codehaus.xfire.wsdl11.builder.WSDLBuilder;
+import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.input.DOMBuilder;
 import org.w3c.dom.Document;
@@ -113,8 +114,12 @@ public class JaxbWSDLBuilder
                 // lets remove it.
                 removeImports(schema);
                 
-                schema.detach();
-                getSchemaTypes().addContent(schema);
+                String namespace = schema.getAttributeValue("targetNamespace");
+                Element previousSchema = createSchemaType(namespace);
+                while (schema.getContentSize() > 0) {
+                    Content child = schema.removeContent(0);
+                    previousSchema.addContent(child);
+                }
             }
         }
         catch (JAXBException e)
