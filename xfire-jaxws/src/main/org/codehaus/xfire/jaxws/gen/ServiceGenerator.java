@@ -136,7 +136,7 @@ public class ServiceGenerator
                 bindingQN.arg(endpoint.getBinding().getName().getLocalPart());
 
                 // Add a getFooEndpointMethod
-                JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, "get" + endpoint.getName().getLocalPart());
+                JMethod getFooEndpoint = servCls.method(JMod.PUBLIC, serviceIntf, javify("get" + endpoint.getName().getLocalPart()));
                 JBlock geBody = getFooEndpoint.body();
     
                 geBody._return(JExpr.cast(serviceIntf, JExpr.direct("this").invoke("getPort").arg(newQN).arg(intfClass)));
