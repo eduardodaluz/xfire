@@ -12,16 +12,16 @@ import com.sun.codemodel.JDefinedClass;
 
 public class AbstractPlugin
 {
-	private static final Pattern PATTERN=  Pattern.compile("\\.|-");
-    
+    private static final Pattern PATTERN=  Pattern.compile("\\.|-");
+
     protected String javify(String name)
     {
         if (JavaUtils.isJavaKeyword(name))
             return JavaUtils.makeNonJavaKeyword(name);
         
         if (name.indexOf('.') > -1 || name.indexOf('-') > -1) {
-			name = PATTERN.matcher(name).replaceAll("_");
-		}
+            name = PATTERN.matcher(name).replaceAll("_");
+        }
         return name;
     }
 
