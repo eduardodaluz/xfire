@@ -115,6 +115,9 @@ public class JaxbWSDLBuilder
                 removeImports(schema);
                 
                 String namespace = schema.getAttributeValue("targetNamespace");
+                if (namespace == null) {
+                    namespace = "";
+                }
                 Element previousSchema = createSchemaType(namespace);
                 while (schema.getContentSize() > 0) {
                     Content child = schema.removeContent(0);
