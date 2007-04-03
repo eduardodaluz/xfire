@@ -37,7 +37,7 @@ public class BeanTypeInfo
 
     private TypeMapping typeMapping;
 
-    private boolean initialized;
+    private volatile boolean initialized;
 
     private String defaultNamespace;
 
@@ -80,7 +80,7 @@ public class BeanTypeInfo
         this.defaultNamespace = defaultNamespace;
 
         initializeProperties();
-        setInitialized(!initialize);
+        initialized = !initialize;
     }
 
     public String getDefaultNamespace()
@@ -92,12 +92,22 @@ public class BeanTypeInfo
     {
         try
         {
-            for (int i = 0; i < descriptors.length; i++)
+            if (!initialized)
             {
-                // Don't map the property unless there is a read property
-                if (isMapped(descriptors[i]))
+                synchronized (this)
                 {
-                    mapProperty(descriptors[i]);
+                    if (!initialized)
+                    {
+                        for (int i = 0; i < descriptors.length; i++)
+                        {
+                            // Don't map the property unless there is a read property
+                            if (isMapped(descriptors[i]))
+                            {
+                                mapProperty(descriptors[i]);
+                            }
+                        }
+                        initialized = true;
+                    }
                 }
             }
         }
@@ -107,8 +117,6 @@ public class BeanTypeInfo
                 throw (XFireRuntimeException) e;
             throw new XFireRuntimeException("Couldn't create TypeInfo.", e);
         }
-
-        setInitialized(true);
     }
 
     public boolean isMapped(PropertyDescriptor pd)
@@ -117,16 +125,6 @@ public class BeanTypeInfo
             return false;
 
         return true;
-    }
-
-    public boolean isInitialized()
-    {
-        return initialized;
-    }
-
-    private void setInitialized(boolean initialized)
-    {
-        this.initialized = initialized;
     }
 
     protected void mapProperty(PropertyDescriptor pd)
