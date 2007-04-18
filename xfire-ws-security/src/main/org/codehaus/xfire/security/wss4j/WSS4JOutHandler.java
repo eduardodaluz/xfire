@@ -22,7 +22,7 @@ import org.w3c.dom.Document;
 public class WSS4JOutHandler
     extends AbstractWSS4JHandler
 {
-    protected static Log log = LogFactory.getLog(WSS4JOutHandler.class.getName());
+    protected static final Log log = LogFactory.getLog(WSS4JOutHandler.class.getName());
 
     private static Log tlog = LogFactory.getLog("org.apache.ws.security.TIME");
 
@@ -110,6 +110,7 @@ public class WSS4JOutHandler
                  */
                 if (reqData.getUsername() == null || reqData.getUsername().equals(""))
                 {
+                	log.error("WSDoAllSender: Empty username for specified action");
                     throw new XFireFault("WSDoAllSender: Empty username for specified action", XFireFault.RECEIVER);
                 }
             }
@@ -136,7 +137,10 @@ public class WSS4JOutHandler
              */
             OutMessage message = (OutMessage) mc.getCurrentMessage();
             Document doc = (Document) message.getProperty(DOMOutHandler.DOM_MESSAGE);
-            
+            if( doc == null ){
+            	log.error("There is no DOM message in current message. Add DOMOutHandler to your handlers chain");
+            	throw new XFireFault("There is no DOM message in current message. Add DOMOutHandler to your handlers chain",XFireFault.RECEIVER);
+            }
             /**
              * There is nothing to send...Usually happens when the provider
              * needs to send a HTTP 202 message (with no content)

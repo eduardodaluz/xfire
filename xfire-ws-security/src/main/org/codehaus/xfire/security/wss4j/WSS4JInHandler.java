@@ -35,7 +35,7 @@ public class WSS4JInHandler
     extends AbstractWSS4JHandler
     implements Handler
 {
-    protected static Log log = LogFactory.getLog(WSS4JInHandler.class.getName());
+    protected static final Log log = LogFactory.getLog(WSS4JInHandler.class.getName());
 
     private static Log tlog = LogFactory.getLog("org.apache.ws.security.TIME");
 
