@@ -118,17 +118,23 @@ public class DefaultTypeMappingRegistry
         this(null, createDefault);
     }
 
-    public DefaultTypeMappingRegistry(TypeCreator typeCreator, boolean createDefault)
+    
+    public DefaultTypeMappingRegistry(TypeCreator typeCreator, boolean createDefault , Configuration config)
     {
         registry = Collections.synchronizedMap(new HashMap());
 
         this.typeCreator = typeCreator;
-        this.typeConfiguration = new Configuration();
+        this.typeConfiguration = (config == null ? new Configuration():config);
         
         if (createDefault)
         {
             createDefaultMappings();
         }
+    }
+    
+    public DefaultTypeMappingRegistry(TypeCreator typeCreator, boolean createDefault)
+    {
+     this(typeCreator,createDefault, new Configuration());
     }
 
     public TypeMapping register(String encodingStyleURI, TypeMapping mapping)

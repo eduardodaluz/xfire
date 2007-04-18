@@ -16,6 +16,7 @@ import org.codehaus.xfire.MessageContext;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.stax.ElementReader;
 import org.codehaus.xfire.aegis.stax.ElementWriter;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeCreator;
@@ -71,12 +72,18 @@ public class AegisBindingProvider
         this(new DefaultTypeMappingRegistry(creator, true));
     }
     
+    public AegisBindingProvider(TypeCreator creator, Configuration config)
+    {
+        this(new DefaultTypeMappingRegistry(creator, true,config));
+        
+    }
     public AegisBindingProvider(TypeMappingRegistry registry)
     {
         this.registry = registry;
     }
 
-    public TypeMappingRegistry getTypeMappingRegistry()
+
+	public TypeMappingRegistry getTypeMappingRegistry()
     {
         return registry;
     }
@@ -147,7 +154,7 @@ public class AegisBindingProvider
 
         if (type == null)
             type = (Type) p.getSchemaType();
-
+        
         type = getReadType(xsr, context, type);
 
         MessageReader reader = new ElementReader(xsr);

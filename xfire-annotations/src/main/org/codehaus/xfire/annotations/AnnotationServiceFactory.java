@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
+import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
@@ -70,8 +71,22 @@ public class AnnotationServiceFactory
         annotationConfig.setWebAnnotations(webAnnotations);
         annotationConfig.setServiceFactory(this);
         getServiceConfigurations().add(0, annotationConfig);
+        
     }
 
+    
+    public AnnotationServiceFactory(final TransportManager transportManager,Configuration config)
+    {
+        super(transportManager, new AegisBindingProvider(null,config));
+        this.webAnnotations = getAnnotations();
+        
+        AnnotationServiceConfiguration annotationConfig = new AnnotationServiceConfiguration();
+        annotationConfig.setWebAnnotations(webAnnotations);
+        annotationConfig.setServiceFactory(this);
+        getServiceConfigurations().add(0, annotationConfig);
+        
+    }
+    
     public AnnotationServiceFactory(WebAnnotations webAnnotations,
                                     final TransportManager transportManager)
     {
