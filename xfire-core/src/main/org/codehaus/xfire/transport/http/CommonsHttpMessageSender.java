@@ -274,8 +274,8 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
                 
                 String proxyUser = (String) context.getContextualProperty(HTTP_PROXY_USER);
                 String proxyPass = (String) context.getContextualProperty(HTTP_PROXY_PASS);
-                if( proxyUser != null && proxyPass != null )
-                 client.getState().setProxyCredentials(AuthScope.ANY,getCredentials(proxyUser, proxyPass));
+                if( proxyUser != null && proxyPass != null ) 
+                	getHttpState().setProxyCredentials(AuthScope.ANY,getCredentials(proxyUser, proxyPass));
             }
         }
     }
