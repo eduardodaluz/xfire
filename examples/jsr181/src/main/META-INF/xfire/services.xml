@@ -1,8 +1,27 @@
 <!-- START SNIPPET: services -->
 <beans xmlns="http://xfire.codehaus.org/config/1.0">
-  <service>
-    <serviceClass>org.codehaus.xfire.demo.CustomerService</serviceClass>
-    <serviceFactory>jsr181</serviceFactory>
-  </service>
+	<service>
+		<serviceClass>org.codehaus.xfire.demo.CustomerService</serviceClass>
+		<!--  serviceFactory>jsr181</serviceFactory -->
+		<serviceFactory>#jsr181ServiceFactory</serviceFactory>
+		
+	</service>
+	
+	<bean id="config"
+	class="org.codehaus.xfire.aegis.type.Configuration">
+	<property name="defaultExtensibleElements" value="false" />
+	<property name="defaultExtensibleAttributes" value="false" />
+	<property name="defaultNillable" value="false" />
+	<property name="defaultMinOccurs" value="1" />
+</bean>
+
+<bean name="jsr181ServiceFactory" class="org.codehaus.xfire.annotations.AnnotationServiceFactory">
+    <constructor-arg ref="xfire.transportManager" index="0"/>
+    <constructor-arg ref="config" index="1" type="org.codehaus.xfire.aegis.type.Configuration" />
+  </bean>
+	
 </beans>
+
+
+
 <!-- END SNIPPET: services -->
