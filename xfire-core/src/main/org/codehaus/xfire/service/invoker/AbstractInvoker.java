@@ -16,13 +16,18 @@ import org.codehaus.xfire.util.ServiceUtils;
  * Feb 10, 2006 10:57:23 PM
  */
 public abstract class AbstractInvoker implements Invoker {
+	
+  private static ThreadLocal tfContext = new ThreadLocal();
+	
   public Object invoke(final Method method, final Object[] params, final MessageContext context)
           throws XFireFault
   {
+	  
       Method m = null;
       try
       {
           final Object serviceObject = getServiceObject(context);
+          tfContext.set(context);
 
           Object[] newParams = params;
           for (int i = 0; i < method.getParameterTypes().length; i++)
@@ -85,6 +90,8 @@ public abstract class AbstractInvoker implements Invoker {
       catch (IllegalAccessException e)
       {
           throw new XFireFault("Couldn't access service object to invoke '" + ServiceUtils.getMethodName(method) + "': " + e.getMessage(), e, XFireFault.RECEIVER);
+      }finally{
+    	  tfContext.set(null);
       }
   }
 
@@ -153,5 +160,12 @@ public abstract class AbstractInvoker implements Invoker {
           }
       }
       return method;
+  }
+  
+  /**
+ * @return
+ */
+public static MessageContext getContext(){
+	  return (MessageContext) tfContext.get();
   }
 }
