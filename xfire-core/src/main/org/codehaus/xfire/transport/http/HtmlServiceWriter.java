@@ -62,12 +62,17 @@ public class HtmlServiceWriter
             writer.writeEndElement(); // p
             writer.writeStartElement("ul");
             
-            String base;
-            if (request != null) {
-                base = request.getRequestURL().toString();
-            } else {
-                base = "/";
-            }
+            int port =request.getServerPort();
+            StringBuffer sb = new StringBuffer();
+            sb.append(request.getScheme()).append("://").append(request.getServerName());
+            if ( port != 80 && port != 443 && port != 0) { 
+            	sb.append(':').append(port); 
+             }
+            sb.append(("".equals(request.getContextPath())?"/":request.getContextPath()));
+            sb.append(request.getServletPath());
+            sb.append("/");
+            String base = sb.toString();
+            
             
             List servicesList = new ArrayList(); 
             servicesList.addAll(services);
@@ -76,11 +81,11 @@ public class HtmlServiceWriter
             for (Iterator iterator = services.iterator(); iterator.hasNext();)
             {
             	Service service = (Service) iterator.next();
-                
-            	String url = base+(base.charAt(base.length()-1)!='/'?"/":"")+service.getSimpleName().toString()+"?wsdl";
-                
+            	
+                String url = base+service.getSimpleName()+"?wsdl";
+            	
                 writer.writeStartElement("li");
-                writer.writeCharacters(service.getSimpleName().toString());
+                writer.writeCharacters(service.getSimpleName());
                 Object obj =service.getProperty(Service.DISABLE_WSDL_GENERATION);
                 
                 if(obj ==null || "false".equals(obj.toString().toLowerCase())){
