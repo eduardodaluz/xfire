@@ -244,7 +244,7 @@ public class ServiceInvocationHandler
         }
         
         // Case for filling in holders - in server mode
-        if (!AbstractBinding.isClientModeOn(context))
+        if (!AbstractBinding.isClientModeOn(context) && outMsg != null)
         {
             fillInHolders(outMsg, newParams);
             fillInHolders(outHeaderMsg, newParams);
