@@ -188,10 +188,8 @@ public class ServiceInvocationHandler
                 result = headerVal;
             }
             else 
-            //	if (paramArray[header.getIndex()] == null)
-            if( headerVal != null )
+            if (paramArray[header.getIndex()] == null)
             {
-            	
                 paramArray[header.getIndex()] = headerVal;
             }
         }
