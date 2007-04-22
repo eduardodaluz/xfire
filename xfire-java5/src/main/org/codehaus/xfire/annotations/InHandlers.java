@@ -5,8 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author <a href="mailto:tsztelak@gmail.com">Tomasz Sztelak</a>
+ *
+ */
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.RUNTIME) 
 public @interface InHandlers
 {
   String[] handlers();

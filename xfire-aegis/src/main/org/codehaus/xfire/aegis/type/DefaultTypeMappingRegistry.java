@@ -257,7 +257,8 @@ public class DefaultTypeMappingRegistry
 
     protected AbstractTypeCreator createRootTypeCreator()
     {
-        AbstractTypeCreator creator = new XMLTypeCreator();
+        AbstractTypeCreator creator = TypeCreatorFactory.getTypeCreator();
+        
         creator.setConfiguration(getConfiguration());
         return creator;
     }
