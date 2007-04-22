@@ -10,6 +10,7 @@ import junit.framework.AssertionFailedError;
 
 import org.codehaus.xfire.soap.Soap11;
 import org.codehaus.xfire.soap.Soap12;
+import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -109,7 +110,17 @@ public class XPathAssert
     public static void assertXPathEquals(String xpath, String value, Document node, Map namespaces)
         throws Exception
     {
-        String value2 = ((Content) createXPath( xpath, namespaces ).selectSingleNode( node )).getValue().trim();
+        //String value2 = ((Content) createXPath( xpath, namespaces ).selectSingleNode( node )).getValue().trim();
+        
+        String value2 = null;
+		Object valueNode = createXPath(xpath, namespaces)
+				.selectSingleNode(node);
+		if (valueNode instanceof Content) {
+			value2 = ((Content) valueNode).getValue().trim();
+		} else if (valueNode instanceof Attribute) {
+			value2 = ((Attribute) valueNode).getValue().trim();
+		}
+        
         
         Assert.assertEquals( value, value2 );
     }
