@@ -15,7 +15,7 @@ public class XMLTypeCreator extends
 	
 	protected boolean isHolder(Class javaType)
     {
-        return (javaType.equals(javax.xml.ws.Holder.class) || super.isHolder(javaType));
+        return ( "javax.xml.ws.Holder".equals(javaType.getName()) || super.isHolder(javaType));
     }
 
     protected Type createHolderType(TypeClassInfo info)
