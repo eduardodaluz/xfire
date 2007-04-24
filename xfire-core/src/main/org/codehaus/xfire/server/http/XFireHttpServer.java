@@ -6,16 +6,18 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.XFireFactory;
 import org.codehaus.xfire.server.XFireServer;
 import org.codehaus.xfire.transport.http.XFireServlet;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.SslListener;
+import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.util.InetAddrPort;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.handler.RequestLogHandler;
+import org.mortbay.jetty.security.SslSocketConnector;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHolder;
 
 /**
  * HTTP Server for XFire services.
  * 
- * @version $Id$
+ * 
  */
 public class XFireHttpServer
     implements XFireServer
@@ -58,30 +60,38 @@ public class XFireHttpServer
         }
         
         httpServer = new Server();
+        
         if (keystore != null)
         {
-            SslListener listener = new SslListener(new InetAddrPort(port));
-            listener.setKeystore(keystore.getAbsolutePath());
-            listener.setKeyPassword(keystorePassword);
-            listener.setPassword(keyPassword);
-            httpServer.addListener(listener);
+        	SslSocketConnector sslConector  = new SslSocketConnector();
+        	sslConector.setPort(port);
+        	sslConector.setKeystore(keystore.getAbsolutePath());
+        	sslConector.setPassword(keystorePassword);
+        	sslConector.setKeyPassword(keyPassword);
+        	httpServer.addConnector(sslConector);
+          
         }
         else
-        {
-            httpServer.addListener(new InetAddrPort(port));
+        {   
+        	 Connector connector=new SocketConnector();
+             connector.setPort(port);
+             httpServer.addConnector(connector);
+        	
         }
+        RequestLogHandler loger = new RequestLogHandler();
+        loger.setRequestLog(null);
         
-        HttpContext context = httpServer.getContext("/");
-        context.setRequestLog(null);
+        Context context = new Context(httpServer,"/",Context.SESSIONS);
+        context.setEventListeners(null);
+        context.addHandler(loger);
         
-        ServletHandler handler = new ServletHandler();
-        handler.addServlet("XFireServlet", "/*", XFireServlet.class.getName());
-        
-        if (xfire != null)
-            handler.getServletContext().setAttribute(XFireServlet.XFIRE_INSTANCE, xfire);
+        ServletHolder servlet = new ServletHolder(new XFireServlet());
+        context.addServlet(servlet, "/*");
+                
+        if (xfire != null){
+        	context.setAttribute(XFireServlet.XFIRE_INSTANCE, xfire);
+         }
             
-        context.addHandler(handler);
-        
         httpServer.start();
     }
 

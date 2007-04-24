@@ -17,13 +17,16 @@ import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.codehaus.xfire.transport.Channel;
 import org.jdom.Element;
-import org.mortbay.http.HashUserRealm;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.SecurityConstraint;
-import org.mortbay.http.handler.SecurityHandler;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.security.Constraint;
+import org.mortbay.jetty.security.ConstraintMapping;
+import org.mortbay.jetty.security.HashUserRealm;
+import org.mortbay.jetty.security.SecurityHandler;
+import org.mortbay.jetty.security.UserRealm;
+import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.util.InetAddrPort;
+import org.mortbay.jetty.servlet.ServletHolder;
+
 
 public class HttpAuthTest
     extends AbstractXFireTest
@@ -35,18 +38,18 @@ public class HttpAuthTest
     {
         super.setUp();
         
-        httpServer = new Server();
-        httpServer.addListener(new InetAddrPort(8191));
+        httpServer = new Server(8191);
         
-        HttpContext context = httpServer.getContext("/");
-        context.setRequestLog(null);
         
-        context.addHandler(new SecurityHandler());
+        Context context = new Context(httpServer,"/",Context.SESSIONS);
         
-        ServletHandler handler = new ServletHandler();
-        handler.addServlet("XFireServlet", "/*", XFireServlet.class.getName());
         
-        context.addHandler(handler);
+        
+        ServletHolder servlet = new ServletHolder(new XFireServlet());
+        
+        context.addServlet(servlet, "/*");
+        SecurityHandler sh = new SecurityHandler();
+        context.addHandler(sh);
         
         HashUserRealm userRealm = new HashUserRealm();
         userRealm.put("user", "pass");
@@ -54,10 +57,19 @@ public class HttpAuthTest
 
         assertNotNull(userRealm.authenticate("user", "pass", null));
         
-        context.setRealm(userRealm);
-        SecurityConstraint constraint = new SecurityConstraint("*", "role");
-        constraint.addMethod("POST");
-        context.addSecurityConstraint("/Echo", constraint);
+        sh.setUserRealm(userRealm);
+        
+        Constraint constraint = new Constraint();
+        constraint.setName(Constraint.__BASIC_AUTH);;
+        constraint.setRoles(new String[]{"role"});
+        constraint.setAuthenticate(true);
+        
+        
+        ConstraintMapping cm = new ConstraintMapping();
+        cm.setConstraint(constraint);
+        cm.setPathSpec("/*");
+        
+        context.setAttribute(XFireServlet.XFIRE_INSTANCE, getXFire());
         
         httpServer.start();
         

@@ -11,19 +11,16 @@ import org.codehaus.xfire.service.binding.MessageBindingProvider;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
 import org.codehaus.xfire.test.AbstractXFireTest;
 import org.jdom.Element;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.HttpServer;
-import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.FilterHolder;
-import org.mortbay.jetty.servlet.WebApplicationHandler;
-import org.mortbay.util.InetAddrPort;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
 
 public class GZIPTest
     extends AbstractXFireTest
 {
     private Service service;
-    private HttpServer server;
+    private Server server;
 
     public void setUp() throws Exception
     {
@@ -37,25 +34,23 @@ public class GZIPTest
         getServiceRegistry().register(service);
 
         // Create the server
-        server = new Server();
-        server.addListener(new InetAddrPort(8391));
+        server = new Server(8391);
+        ServletHandler handler = new ServletHandler ();
         
-        HttpContext context = server.getContext("/");
-        context.setRequestLog(null);
+        Context context = new Context(server,"/",Context.SESSIONS);
         
-        WebApplicationHandler handler = new WebApplicationHandler();
-        handler.addServlet("XFireServlet", "/*", XFireServlet.class.getName());
-
-        FilterHolder filter = handler.defineFilter("gzip", "com.planetj.servlet.filter.compression.CompressingFilter");
-        handler.addFilterServletMapping("XFireServlet", "gzip", 0);
-
+        ServletHolder servlet = new ServletHolder(new XFireServlet());
+        handler.addServlet(servlet);
+        
+        context.addServlet(servlet, "/*");
+        
+        context.addFilter("com.planetj.servlet.filter.compression.CompressingFilter", "/*", 0);
+        
+        
         String home = System.getProperty("jetty.home",".");
         context.setResourceBase(home);
-        context.addHandler(new ResourceHandler());
         
-        context.addHandler(handler);
-        
-        handler.getServletContext().setAttribute(XFireServlet.XFIRE_INSTANCE, getXFire());
+        context.setAttribute(XFireServlet.XFIRE_INSTANCE, getXFire());
         
         // Start the http server
         server.start ();
