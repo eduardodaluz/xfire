@@ -211,7 +211,12 @@ public class CommonsHttpMessageSender extends AbstractMessageSender
         return result;
     }
     
-    private synchronized void createClient()
+    protected HttpClient getClient(){
+    	
+    	return client;
+    }
+    
+    protected synchronized void createClient()
     {
         MessageContext context = getMessageContext();
         client = (HttpClient) ((HttpChannel) getMessage().getChannel()).getProperty(HTTP_CLIENT);
