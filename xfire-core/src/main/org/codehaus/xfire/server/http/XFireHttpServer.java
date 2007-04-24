@@ -120,4 +120,7 @@ public class XFireHttpServer
         port = value;
     }
 
+    public Server getServer(){
+    	return httpServer;
+    }
 }
