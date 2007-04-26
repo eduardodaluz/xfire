@@ -1,0 +1,11 @@
+<mappings  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xfire.codehaus.org/schemas/1.0/mapping.xsd">
+    <mapping>
+         <method name="echoMethod" mappadName="myEchoMethod">
+            <parameter index="0" mappedName="value"/>
+        </method>
+        
+   </mapping>
+   
+   
+</mappings>   

@@ -1,0 +1,9 @@
+<beans xmlns="http://xfire.codehaus.org/config/1.0">
+
+	<service>
+		<name>SimpleService</name>
+		<serviceClass>${groupId}.SimpleServiceImpl</serviceClass>
+		<namespace>http://xfire.codehaus.org/SimpleService</namespace>
+	</service>
+
+</beans>

@@ -1,0 +1,11 @@
+<archetype>
+  <id>xfire-aegis-simple</id>
+  <sources>
+    <source>src/main/java/SimpleServiceImpl.java</source>
+    <source>src/main/java/SimpleServiceImpl.aegis.xml</source>
+  </sources>
+  <resources>
+   <resource>src/main/webapp/WEB-INF/web.xml</resource>
+   <resource>src/main/resources/META-INF/xfire/services.xml</resource>
+  </resources>
+</archetype>
