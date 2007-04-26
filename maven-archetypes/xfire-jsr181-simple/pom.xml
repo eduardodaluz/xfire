@@ -1,0 +1,22 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>maven-archetypes</artifactId>
+    <groupId>org.codehaus.xfire</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.codehaus.xfire</groupId>
+  <artifactId>xfire-jsr181-simple</artifactId>
+  <name>Archetype - xfire-jsr181-simple</name>
+  <version>1.0-SNAPSHOT</version>
+  <url>http://xfire.codehaus.org</url>
+  <packaging>maven-plugin</packaging>
+  
+  <developers>
+	  <developer>
+		  <name>Tomasz Sztelak</name>
+		  <email>tsztelak@gmail.com</email>
+	  </developer>
+  </developers>
+  
+</project>
