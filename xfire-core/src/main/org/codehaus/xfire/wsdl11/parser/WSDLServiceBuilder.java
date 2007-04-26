@@ -71,6 +71,7 @@ public class WSDLServiceBuilder
     private OperationInfo opInfo;
     private XmlSchemaCollection schemas = new XmlSchemaCollection();;
     private boolean isWrapped = false;
+    private boolean forceBare = false;
     private BindingProvider bindingProvider;
     
     protected final Definition definition;
@@ -380,13 +381,16 @@ public class WSDLServiceBuilder
             String docText = documentation.getNodeValue() ;//TextContent();
             serviceInfo.setDocumentation(docText);
         }
-        isWrapped = true;
-        Iterator itr = portType.getOperations().iterator();
-        while (isWrapped && itr.hasNext())
-        {
-           Operation o = (Operation) itr.next();
-           isWrapped = isWrapped(o, schemas);
-        }
+        if (forceBare) {
+			isWrapped = false;
+		} else {
+			isWrapped = true;
+			Iterator itr = portType.getOperations().iterator();
+			while (isWrapped && itr.hasNext()) {
+				Operation o = (Operation) itr.next();
+				isWrapped = isWrapped(o, schemas);
+			}
+		} 
         
         serviceInfo.setWrapped(isWrapped);
         
@@ -723,5 +727,13 @@ public class WSDLServiceBuilder
     public XmlSchemaCollection getSchemaCollection()
     {
         return schemas;
+    }
+
+    public boolean isForceBare() {
+        return forceBare;
+    }
+
+    public void setForceBare(boolean forceBare) {
+        this.forceBare = forceBare;
     }
 }
