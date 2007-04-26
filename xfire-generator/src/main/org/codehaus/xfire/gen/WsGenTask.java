@@ -22,6 +22,7 @@ public class WsGenTask extends MatchingTask
     private boolean explicitAnnotation;
     private boolean overwrite;
     private boolean generateServerStubs = true;
+    private boolean forceBare = false;
     
     public void execute()
         throws BuildException
@@ -56,6 +57,7 @@ public class WsGenTask extends MatchingTask
         generator.setExplicitAnnotation(explicitAnnotation);
         generator.setOverwrite(overwrite);
         generator.setGenerateServerStubs(generateServerStubs);
+        generator.setForceBare(forceBare);
         
         
         if (binding != null) generator.setBinding(binding);
@@ -191,6 +193,15 @@ public class WsGenTask extends MatchingTask
         this.keystorePass = keystorePass;
     }
     
+    public boolean isForceBare()
+    {
+        return forceBare;
+    }
+
+    public void setForceBare(boolean forceBare)
+    {
+        this.forceBare = forceBare;
+    }
     
     
 }

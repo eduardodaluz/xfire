@@ -62,6 +62,8 @@ public class Wsdl11Generator
     
     private boolean generateServerStubs = true;
     
+    private boolean forceBare = false;
+    
     private ErrorListener jaxbErrorListener;
     
     public boolean isOverwrite()
@@ -127,6 +129,7 @@ public class Wsdl11Generator
         source.setSystemId(wsdlUri);
         WSDLServiceBuilder builder = new WSDLServiceBuilder(baseURI, source);
         builder.setBindingProvider(support.getBindingProvider());
+        builder.setForceBare(forceBare);
         builder.build();
         
         if (profile == null) profile = Jsr181Profile.class.getName();
@@ -321,6 +324,14 @@ public class Wsdl11Generator
     public void setJAXBErrorListener(ErrorListener jaxbErrorListener)
     {
         this.jaxbErrorListener = jaxbErrorListener;
+    }
+    
+    public boolean isForceBare() {
+        return forceBare;
+    }
+
+    public void setForceBare(boolean forceBare) {
+        this.forceBare = forceBare;
     }
     
 }

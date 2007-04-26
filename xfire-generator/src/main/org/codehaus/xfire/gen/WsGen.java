@@ -14,7 +14,7 @@ public class WsGen {
 		System.out
 				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] " +
                         "[-r profile] [-e externalBinging] [-u baseURI] [-overwrite true/false] " +
-                        "[-x true/false] [-ss true/false] \n");
+                        "[-x true/false] [-ss true/false] [-w true/false] \n");
 	}
 
 	private static void missingParam(String param) {
@@ -35,7 +35,7 @@ public class WsGen {
         boolean overwrite = false;
         boolean explicit = false;
         boolean serverStubs = true;
-        
+        boolean forceBare = false;
         
        if(args.length>0 && "-h".equals(args[0])){
            printHelpMessage();
@@ -82,6 +82,9 @@ public class WsGen {
             if("-ss".equals(param)){
                 serverStubs = Boolean.parseBoolean(value);
             }
+            if("-w".equals(param)){
+                forceBare = Boolean.parseBoolean(value);
+            }
             
 		}
 
@@ -107,6 +110,7 @@ public class WsGen {
         System.out.print("explictAnnotation : " + explicit+ "\n");
         System.out.print("overwrite : " + overwrite+ "\n");
         System.out.print("serverStub : " + serverStubs  + "\n");
+        System.out.print("forceBare : " + forceBare+ "\n");
         
 
 		Wsdl11Generator generator = new Wsdl11Generator();
@@ -116,6 +120,7 @@ public class WsGen {
 		generator.setExplicitAnnotation(explicit);
         generator.setOverwrite(overwrite);
         generator.setGenerateServerStubs(serverStubs);
+        generator.setForceBare(forceBare);
         
 		if (binding != null)
 			generator.setBinding(binding);
@@ -164,6 +169,8 @@ public class WsGen {
         buffer.append("-x : explicit");
         buffer.append("\n");
         buffer.append("-ss : generate server stubs");
+        buffer.append("\n");
+        buffer.append("-w : force bare instead of wrapped invocation style");
         buffer.append("\n");
         buffer.append("-h : print this help message");
         buffer.append("\n");
