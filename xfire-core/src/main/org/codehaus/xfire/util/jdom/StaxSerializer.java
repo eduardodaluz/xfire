@@ -41,7 +41,12 @@ public class StaxSerializer
         String elPrefix = e.getNamespacePrefix();
         String elUri = e.getNamespaceURI();
 
-        String boundPrefix = writer.getPrefix(elUri);
+        // XFIRE-972
+        String boundPrefix = elPrefix;
+        if(elUri != null && !"".equals(elUri)){
+            boundPrefix = writer.getPrefix(elUri);
+        }
+        
         boolean writeElementNS = false;
         if (boundPrefix == null || !elPrefix.equals(boundPrefix))
         {
