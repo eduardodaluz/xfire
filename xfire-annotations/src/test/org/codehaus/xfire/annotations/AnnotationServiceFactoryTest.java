@@ -41,6 +41,7 @@ public class AnnotationServiceFactoryTest
         annotationServiceFactory = new AnnotationServiceFactory(webAnnotations,
                                                                 getXFire().getTransportManager(),
                                                                 null);
+        annotationServiceFactory.setValidator(new AnnotationsEmptyValidator());
     }
 
     public void testCreateWithFileWSDL() throws Exception

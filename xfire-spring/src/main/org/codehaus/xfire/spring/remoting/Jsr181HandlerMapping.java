@@ -9,6 +9,7 @@ import org.codehaus.xfire.XFire;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.TypeMappingRegistry;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
+import org.codehaus.xfire.annotations.AnnotationsValidator;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.invoker.BeanInvoker;
@@ -42,6 +43,7 @@ public class Jsr181HandlerMapping
     private String urlPrefix = "/services/";
     private String servletControllerAdapterName;
     private AnnotationServiceFactory serviceFactory;
+    private AnnotationsValidator validator;
     
     private List inHandlers;
     private List outHandlers;
@@ -85,6 +87,9 @@ public class Jsr181HandlerMapping
                 new AnnotationServiceFactory(webAnnotations,
                                              xFire.getTransportManager(),
                                              provider);
+        if( validator != null ){
+        	serviceFactory.setValidator(validator);
+        }
 		return serviceFactory;
 	}
 
@@ -261,6 +266,10 @@ public class Jsr181HandlerMapping
 
 	public void setFaultHandlers(List faultHandlers) {
 		this.faultHandlers = faultHandlers;
+	}
+
+	public void setValidator(AnnotationsValidator validator) {
+		this.validator = validator;
 	}
     
     

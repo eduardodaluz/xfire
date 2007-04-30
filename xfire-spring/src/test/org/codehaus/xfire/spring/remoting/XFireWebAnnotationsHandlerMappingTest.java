@@ -10,6 +10,8 @@ import java.util.Properties;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
+import org.codehaus.xfire.annotations.AnnotationServiceFactory;
+import org.codehaus.xfire.annotations.AnnotationsEmptyValidator;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebMethodAnnotation;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
@@ -38,6 +40,7 @@ public class XFireWebAnnotationsHandlerMappingTest
         handlerMapping.setWebAnnotations(webAnnotations);
         handlerMapping.setXfire(getXFire());
         handlerMapping.setTypeMappingRegistry(new DefaultTypeMappingRegistry(true));
+       
     }
 
     public void testHandler()
@@ -92,8 +95,10 @@ public class XFireWebAnnotationsHandlerMappingTest
 
         String urlPrefix = "/services/";
         handlerMapping.setUrlPrefix(urlPrefix);
+        
+        handlerMapping.setValidator(new AnnotationsEmptyValidator());
         handlerMapping.setApplicationContext(appContext);
-
+        
         MockHttpServletRequest request = new MockHttpServletRequest("GET", urlPrefix + "EchoService");
         Object handler = handlerMapping.getHandler(request);
         assertNotNull("No valid handler is returned", handler);
@@ -111,9 +116,10 @@ public class XFireWebAnnotationsHandlerMappingTest
         control.setReturnValue(false);
 
         control.replay();
-
+        
+        handlerMapping.setValidator(new AnnotationsEmptyValidator());
         handlerMapping.setApplicationContext(appContext);
-
+        
 
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/services/EchoService");
         Object handler = handlerMapping.getHandler(request);

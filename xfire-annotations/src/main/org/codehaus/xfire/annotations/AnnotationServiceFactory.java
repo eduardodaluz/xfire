@@ -42,6 +42,7 @@ public class AnnotationServiceFactory
     
     private WebAnnotations webAnnotations;
 
+    private AnnotationsValidator validator = new AnnotationsValidatorImpl();
     public static final String ALLOW_INTERFACE = "annotations.allow.interface";
     
     /**
@@ -185,8 +186,13 @@ public class AnnotationServiceFactory
 
         if (webAnnotations.hasWebServiceAnnotation(clazz))
         {
+        	
+        	validator.validate(webAnnotations, clazz);
+        	
             WebServiceAnnotation webServiceAnnotation = webAnnotations.getWebServiceAnnotation(clazz);
          
+            
+            
             assertValidImplementationClass(clazz, webAnnotations, properties);
             
             name = createServiceName(clazz, webServiceAnnotation, name);
@@ -294,6 +300,9 @@ public class AnnotationServiceFactory
             service.getInHandlers().addAll(processHandlers(inHandlers));
             service.getOutHandlers().addAll(processHandlers(outHandlers));
             service.getFaultHandlers().addAll(processHandlers(faultHandlers));
+            
+            
+            
             
             return service;
         }
@@ -424,4 +433,14 @@ public class AnnotationServiceFactory
         
         return super.create(clazz, name, wsdlUrl, properties);
     }
+
+
+	public AnnotationsValidator getValidator() {
+		return validator;
+	}
+
+
+	public void setValidator(AnnotationsValidator validator) {
+		this.validator = validator;
+	}
 }
