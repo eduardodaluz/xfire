@@ -14,6 +14,7 @@ import org.codehaus.xfire.service.MessageInfo;
 import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.OperationInfo;
 import org.codehaus.xfire.service.Service;
+import org.codehaus.xfire.util.NamespaceHelper;
 import org.codehaus.xfire.util.STAXUtils;
 import org.codehaus.xfire.util.stax.DepthXMLStreamReader;
 
@@ -101,7 +102,8 @@ public class WrappedBinding
         throws XMLStreamException
     {
         String prefix = "";
-
+       	prefix = NamespaceHelper.getUniquePrefix(writer);
+       	
         if (namespace.length() > 0)
         {
             writer.setPrefix(prefix, namespace);
