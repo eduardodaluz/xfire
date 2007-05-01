@@ -11,7 +11,9 @@ import org.codehaus.xfire.aegis.type.DefaultTypeMappingRegistry;
 import org.codehaus.xfire.aegis.type.Type;
 import org.codehaus.xfire.aegis.type.TypeMapping;
 import org.codehaus.xfire.gen.GenerationContext;
+import org.codehaus.xfire.gen.GenerationException;
 import org.codehaus.xfire.gen.SchemaSupport;
+import org.codehaus.xfire.service.MessagePartInfo;
 import org.codehaus.xfire.service.binding.BindingProvider;
 import org.codehaus.xfire.xmlbeans.XmlBeansTypeRegistry;
 import org.jdom.Element;
@@ -40,10 +42,22 @@ public class XmlBeansSchemaSupport
 
     public void initialize(GenerationContext context)
     {
+     	
+    }
+    
+	public JType getType(GenerationContext context, MessagePartInfo part)
+			throws GenerationException {
+
+		QName concreteType = part.getName();
+		QName schemaType = part.getSchemaType().getSchemaType();
+		
+		return getType(context, concreteType, schemaType);
     }
 
-    public JClass getType(GenerationContext context, QName concreteType, QName schemaType)
+    public JType getType(GenerationContext context, QName concreteType, QName schemaType) 
+        throws GenerationException
     {
+   
         SchemaType xst = loader.findDocumentType(concreteType);
         
         if (xst == null)

@@ -23,6 +23,7 @@ public class MessagePartInfo
     private int index;
     private boolean schemaElement = true;
     private String documentation;
+    private QName wrappedType;
     
     MessagePartInfo(QName name, Class typeClass, MessagePartContainer container)
     {
@@ -120,5 +121,13 @@ public class MessagePartInfo
     {
         this.documentation = documentation;
     }
+
+	public QName getWrappedType() {
+		return wrappedType;
+	}
+
+	public void setWrappedType(QName wrappedType) {
+		this.wrappedType = wrappedType;
+	}
     
 }

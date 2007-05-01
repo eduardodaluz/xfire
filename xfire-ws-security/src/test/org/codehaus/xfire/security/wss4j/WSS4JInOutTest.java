@@ -50,7 +50,7 @@ public class WSS4JInOutTest
         ctx.setProperty(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PASSWORD_TEXT);
         
         handler.invoke(ctx);
-        
+        printNode(doc);
         assertValid(doc, "//wsse:Security");
         assertValid(doc, "//wsse:Security/ds:Signature");
        

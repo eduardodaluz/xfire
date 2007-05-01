@@ -237,7 +237,7 @@ public abstract class AbstractServiceGenerator
             String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
             partNames.add(varName);
 
-            JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
+            JType paramType = schema.getType(context, part);
             ParamInfo param = new ParamInfo(paramType,varName);
             param.setIn(true);
             param.setName(part.getName());
@@ -260,7 +260,7 @@ public abstract class AbstractServiceGenerator
                 String varName = getUniqueName(javify(part.getName().getLocalPart()), partNames);
                 partNames.add(varName);
 
-                JType paramType = schema.getType(context, part.getName(), part.getSchemaType().getSchemaType());
+                JType paramType = schema.getType(context, part);
 
                 ParamInfo param = new ParamInfo(paramType,varName, true);
                 param.setIn(true);
@@ -376,7 +376,7 @@ public abstract class AbstractServiceGenerator
     protected JType getHolderType(GenerationContext context,MessagePartInfo part)
         throws GenerationException
     {
-        JType genericType = context.getSchemaGenerator().getType(context, part.getName(), part.getSchemaType().getSchemaType());
+        JType genericType = context.getSchemaGenerator().getType(context, part);
         
         try {
             JClass holder = context.getCodeModel().ref("javax.xml.ws.Holder");
@@ -494,8 +494,7 @@ public abstract class AbstractServiceGenerator
             MessagePartInfo returnPart = 
                 (MessagePartInfo) op.getOutputMessage().getMessageParts().iterator().next();
 
-            returnType = schema.getType(context, 
-                    returnPart.getName(), returnPart.getSchemaType().getSchemaType());
+            returnType = schema.getType(context, returnPart);
         }
         else
         {

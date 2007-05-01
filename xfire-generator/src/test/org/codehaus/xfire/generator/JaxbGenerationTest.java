@@ -4,6 +4,7 @@ import org.codehaus.xfire.gen.Wsdl11Generator;
 
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JMethod;
 
 public class JaxbGenerationTest
     extends GenerationTestSupport
@@ -138,5 +139,59 @@ public class JaxbGenerationTest
         JCodeModel model = generator.getCodeModel();
         JDefinedClass echo = model._getClass("org.codehaus.xfire.generator.noserverstubs.EchoImpl");
         assertNull(echo);
+    }
+    
+    public void testEchoUnbounded() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/echo-wrapped-unbounded.wsdl"));
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        generator.setOverwrite(true);
+        generator.setGenerateServerStubs(false);
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("echo.wrapped.unbounded.EchoPortType");
+        assertNotNull(echo);
+        
+        JMethod jm = echo.methods().iterator().next();
+        assertEquals("java.util.List<java.lang.String>", jm.type().fullName());
+    }
+    
+    public void testEchoUnboundedWithKeyword() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/echo-wrapped-keyword.wsdl"));
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        generator.setOverwrite(true);
+        generator.setGenerateServerStubs(false);
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("echo.wrapped.keyword.EchoPortType");
+        assertNotNull(echo);
+        
+        JMethod jm = echo.methods().iterator().next();
+        assertEquals("java.util.List<java.lang.String>", jm.type().fullName());
+    }
+    
+    public void testWrappedMTOMEcho() throws Exception
+    {
+        Wsdl11Generator generator = new Wsdl11Generator();
+        generator.setWsdl(getTestFilePath("src/wsdl/echo-wrapped-mtom.wsdl"));
+        generator.setOutputDirectory(getTestFilePath("target/test-services"));
+        generator.setOverwrite(true);
+        generator.setGenerateServerStubs(false);
+        
+        generator.generate();
+        
+        JCodeModel model = generator.getCodeModel();
+        JDefinedClass echo = model._getClass("echo.wrapped.mtom.EchoPortType");
+        assertNotNull(echo);
+        
+        JMethod jm = echo.methods().iterator().next();
+        assertEquals("javax.activation.DataHandler", jm.type().fullName());
     }
 }
