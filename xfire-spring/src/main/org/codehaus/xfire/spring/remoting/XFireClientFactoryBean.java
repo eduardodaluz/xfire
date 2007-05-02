@@ -503,7 +503,7 @@ public class XFireClientFactoryBean
             
             serviceModel = getServiceFactory().create(getServiceInterface(),
                                                       name,
-                                                      uri.toURL(),
+                                                      resolver.getURL(),
                                                       _properties);
         }
 
