@@ -29,7 +29,7 @@ public class JaxbServiceFactory
 	public JaxbServiceFactory(TransportManager transportManager, JAXBContext jaxbContext) {
         super(new Jsr181WebAnnotations(),
               transportManager, 
-                new AegisBindingProvider(new JaxbTypeRegistry(jaxbContext)));
+                new JaxbBindingProvider(new JaxbTypeRegistry(jaxbContext)));
         
         setWsdlBuilderFactory(new JaxbWSDLBuilderFactory());
     }    
