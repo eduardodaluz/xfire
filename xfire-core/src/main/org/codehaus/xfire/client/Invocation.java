@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamReader;
 
 import org.codehaus.xfire.MessageContext;
+import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.exchange.MessageExchange;
 import org.codehaus.xfire.exchange.OutMessage;
 import org.codehaus.xfire.fault.XFireFault;
@@ -145,6 +146,9 @@ public class Invocation
                 break;
             }
         }
+        
+        if(response == null && fault == null)
+            throw new XFireRuntimeException("Invocation timeout when waiting for resonse.");
     }
 
     public void receive(Object response)
