@@ -3,7 +3,6 @@ package org.codehaus.xfire.jaxb2;
 import javax.xml.bind.JAXBContext;
 
 import org.codehaus.xfire.XFireFactory;
-import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
 import org.codehaus.xfire.transport.TransportManager;
