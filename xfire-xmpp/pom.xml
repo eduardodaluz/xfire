@@ -2,12 +2,12 @@
   <parent>
     <artifactId>xfire-parent</artifactId>
     <groupId>org.codehaus.xfire</groupId>
-    <version>1.2.6</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xfire-xmpp</artifactId>
   <name>XFire XMPP</name>
-  <version>1.2.6</version>
+  <version>1.2-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
