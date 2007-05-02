@@ -10,12 +10,12 @@ import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
 import org.codehaus.xfire.XFireFactory;
-import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
 import org.codehaus.xfire.annotations.jsr181.Jsr181WebAnnotations;
 import org.codehaus.xfire.exchange.MessageSerializer;
 import org.codehaus.xfire.fault.FaultSender;
 import org.codehaus.xfire.handler.OutMessageSender;
+import org.codehaus.xfire.jaxb2.JaxbBindingProvider;
 import org.codehaus.xfire.jaxb2.JaxbWSDLBuilderFactory;
 import org.codehaus.xfire.jaxws.handler.WebFaultHandler;
 import org.codehaus.xfire.jaxws.type.JAXWSTypeRegistry;
@@ -45,7 +45,7 @@ public class JAXWSServiceFactory
     {
         super(new Jsr181WebAnnotations(), 
               transportManager, 
-              new AegisBindingProvider(new JAXWSTypeRegistry()));
+              new JaxbBindingProvider(new JAXWSTypeRegistry()));
         setWsdlBuilderFactory(new JaxbWSDLBuilderFactory());
     }
     
