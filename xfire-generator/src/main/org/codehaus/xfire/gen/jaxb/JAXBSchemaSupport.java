@@ -135,9 +135,13 @@ public class JAXBSchemaSupport implements SchemaSupport {
 			MessagePartInfo part) throws GenerationException { 
 
 		QName wrappedType = null;
+		QName origConc = null;
+		QName origSchema = null;
 		if (part != null) {
 			wrappedType = part.getWrappedType();
 			if (wrappedType != null) {
+				origConc = concreteType;
+				origSchema = schemaType;
 				concreteType = wrappedType;
 				schemaType = null;
 			}
@@ -185,6 +189,9 @@ public class JAXBSchemaSupport implements SchemaSupport {
 
 		if (wrappedType != null) {
 			typeClass = getWrapperType(typeClass, part.getName().getLocalPart());
+			if (typeClass == null) {
+				typeClass = getType(context, origConc, origSchema, null);
+			}
 		}
 		
 		
@@ -203,7 +210,8 @@ public class JAXBSchemaSupport implements SchemaSupport {
 		}
 		
 		if (var == null) {
-			throw new GenerationException("Could not find JAXB part for name: " + local);
+			// fall back to original detection algorithm
+			return null;
 		}
 		return var.type();
 	}
@@ -222,8 +230,14 @@ public class JAXBSchemaSupport implements SchemaSupport {
 		}
 		
 		if (local.length() >= 2) {
-			if (!Character.isUpperCase(local.charAt(1))) {
-				local.setCharAt(0, Character.toLowerCase(local.charAt(0)));
+			local.setCharAt(0, Character.toLowerCase(local.charAt(0)));
+			for (int i = 1; i < local.length(); i++) {
+				if (Character.isUpperCase(local.charAt(i))
+						&& Character.isUpperCase(local.charAt(i+1))) {
+					local.setCharAt(i, Character.toLowerCase(local.charAt(i)));
+				} else {
+					break;
+				}
 			}
 		} else {
 			local.setCharAt(0, Character.toLowerCase(local.charAt(0)));
