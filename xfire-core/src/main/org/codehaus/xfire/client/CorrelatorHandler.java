@@ -39,10 +39,13 @@ public class CorrelatorHandler extends AbstractHandler
             return;
         }
         
+        
         if (context != invocation.getContext())
         {
             context.getExchange().setOperation(invocation.getContext().getExchange().getOperation());
             context.getExchange().setOutMessage(invocation.getContext().getExchange().getOutMessage());
+       
+            context.setProperty(Client.CLIENT_MODE, invocation.getContext().getProperty(Client.CLIENT_MODE));
         }
         
         if (invocation != null)
