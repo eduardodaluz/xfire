@@ -4,7 +4,7 @@
   <artifactId>xfire-parent</artifactId>
   <packaging>pom</packaging>
   <name>XFire</name>
-  <version>1.2.6</version>
+  <version>1.2-SNAPSHOT</version>
   <description>A Java SOAP framework.</description>
   <ciManagement>
     <system>Continuum</system>
@@ -19,9 +19,9 @@
   </ciManagement>
   <inceptionYear>2004</inceptionYear>
   <scm>
-    <connection>scm:svn:https://svn.codehaus.org/xfire/tags/xfire-1.2.6</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/xfire/tags/xfire-1.2.6</developerConnection>
-    <url>https://svn.codehaus.org/xfire/tags/xfire-1.2.6</url>
+    <connection>scm:svn:https://svn.codehaus.org/xfire/branches/1.2-SNAPSHOT</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/xfire/branches/1.2-SNAPSHOT</developerConnection>
+    <url>https://svn.codehaus.org/xfire/branches/1.2-SNAPSHOT</url>
   </scm>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
