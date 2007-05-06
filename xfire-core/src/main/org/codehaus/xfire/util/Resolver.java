@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -56,6 +57,30 @@ public class Resolver
             throw new IOException(msg);
         }
     }
+    private InputStream openURLStream(URL url) throws IOException {
+		InputStream is;
+		try {
+			HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+
+			String username = System.getProperty("username");
+			String password = System.getProperty("password");
+
+			if (username != null && password != null) {
+				sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+				String encoded = encoder.encode((username + ":" + password)
+						.getBytes());
+				huc.setRequestProperty("Authorization", "Basic "
+						+ encoded);
+			}
+
+			is = huc.getInputStream();
+		} catch (ClassCastException ex) {
+			is = url.openStream();
+		}
+		return is;
+
+	}
+    
 
     private void tryFileSystem(String baseUriStr, String uriStr)
         throws IOException, MalformedURLException
@@ -80,7 +105,8 @@ public class Resolver
             {
                 uri = relative;
                 url = relative.toURL();
-                is = url.openStream();
+                is  = openURLStream(url);
+                //is = url.openStream();
             }
             else if (baseUriStr != null)
             {
