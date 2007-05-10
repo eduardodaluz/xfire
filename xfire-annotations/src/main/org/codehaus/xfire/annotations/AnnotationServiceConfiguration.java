@@ -81,7 +81,7 @@ public class AnnotationServiceConfiguration
                 final WebParamAnnotation webParamAnnotation = 
                     webAnnotations.getWebParamAnnotation(method, paramNumber);
                 
-                return new Boolean(webParamAnnotation.isHeader());
+                return  Boolean.valueOf(webParamAnnotation.isHeader());
             }
         }
         else
@@ -91,7 +91,7 @@ public class AnnotationServiceConfiguration
                 final WebResultAnnotation ann = 
                     webAnnotations.getWebResultAnnotation(method);
                 
-                return new Boolean(ann.isHeader());
+                return Boolean.valueOf(ann.isHeader());
             }
         }
         
@@ -104,7 +104,7 @@ public class AnnotationServiceConfiguration
         {
             final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
 
-            return new Boolean(webParamAnnotation.getMode() == WebParamAnnotation.MODE_IN ||
+            return  Boolean.valueOf(webParamAnnotation.getMode() == WebParamAnnotation.MODE_IN ||
                 webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT);
         }
         
@@ -117,7 +117,7 @@ public class AnnotationServiceConfiguration
         {
             final WebParamAnnotation webParamAnnotation = webAnnotations.getWebParamAnnotation(method, j);
 
-            return new Boolean(webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT ||
+            return  Boolean.valueOf(webParamAnnotation.getMode() == WebParamAnnotation.MODE_OUT ||
                 webParamAnnotation.getMode() == WebParamAnnotation.MODE_INOUT);
         }
         else

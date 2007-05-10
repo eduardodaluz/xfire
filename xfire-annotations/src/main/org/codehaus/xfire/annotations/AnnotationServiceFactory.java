@@ -19,6 +19,8 @@ import org.codehaus.xfire.XFireRuntimeException;
 import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.aegis.type.Configuration;
 import org.codehaus.xfire.annotations.soap.SOAPBindingAnnotation;
+import org.codehaus.xfire.service.DefaultObjectResolver;
+import org.codehaus.xfire.service.ObjectResolver;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.BindingProvider;
@@ -43,6 +45,9 @@ public class AnnotationServiceFactory
     private WebAnnotations webAnnotations;
 
     private AnnotationsValidator validator = new AnnotationsValidatorImpl();
+    
+    private ObjectResolver objectResolver = new DefaultObjectResolver();
+    
     public static final String ALLOW_INTERFACE = "annotations.allow.interface";
     
     /**
@@ -311,10 +316,24 @@ public class AnnotationServiceFactory
             throw new AnnotationException("Class " + clazz.getName() + " does not have a WebService annotation");
         }
     }
-    private Collection processHandlers(Collection handlers){
+    
+    public ObjectResolver getObjectResolver() {
+		return objectResolver;
+	}
+
+
+	public void setObjectResolver(ObjectResolver objectResolver) {
+		this.objectResolver = objectResolver;
+	}
+
+
+	private Collection processHandlers(Collection handlers){
         Collection handlersObjects  = new ArrayList();
+        ObjectResolver resolver = getObjectResolver();
         for(Iterator iter = handlers.iterator();iter.hasNext();){
-            String handlerClass = (String) iter.next();
+        	String handlerClass = (String) iter.next();
+        	handlersObjects.add(resolver.resolve(handlerClass));
+            /*
             Class clazz;
             try
             {
@@ -332,7 +351,7 @@ public class AnnotationServiceFactory
             catch (IllegalAccessException e)
             {
                 throw new RuntimeException("Can't create object of class :"+ handlerClass,e);
-            }
+            }*/
             
         }
         return handlersObjects;

@@ -14,6 +14,7 @@ import org.codehaus.xfire.aegis.AegisBindingProvider;
 import org.codehaus.xfire.service.Service;
 import org.codehaus.xfire.service.ServiceFactory;
 import org.codehaus.xfire.service.binding.ObjectServiceFactory;
+import org.codehaus.xfire.service.binding.ServiceConfiguration;
 import org.codehaus.xfire.service.invoker.BeanInvoker;
 import org.codehaus.xfire.service.invoker.Invoker;
 import org.codehaus.xfire.service.invoker.ObjectInvoker;
@@ -83,6 +84,7 @@ public class ServiceBean
     
     private List operations;
     
+    private ServiceConfiguration serviceConfiguration;
     /** Some properties to make it easier to work with ObjectServiceFactory */
 
     protected boolean createDefaultBindings = true;
@@ -118,6 +120,9 @@ public class ServiceBean
         SpringServiceConfiguration springConfig = new SpringServiceConfiguration();
         springConfig.setMethods(operations);
         osf.getServiceConfigurations().add(0, springConfig);
+        if(getServiceConfiguration()!=null){
+        	osf.getServiceConfigurations().add(0, getServiceConfiguration());
+        }
 
 
         /**
@@ -514,5 +519,13 @@ public class ServiceBean
     {
         this.operations = operations;
     }
+
+	public ServiceConfiguration getServiceConfiguration() {
+		return serviceConfiguration;
+	}
+
+	public void setServiceConfiguration(ServiceConfiguration serviceConfiguration) {
+		this.serviceConfiguration = serviceConfiguration;
+	}
 
 }

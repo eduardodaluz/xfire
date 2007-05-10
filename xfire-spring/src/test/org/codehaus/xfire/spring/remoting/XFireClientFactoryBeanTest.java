@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.codehaus.xfire.aegis.AbstractXFireAegisTest;
 import org.codehaus.xfire.annotations.AnnotationServiceFactory;
+import org.codehaus.xfire.annotations.AnnotationsEmptyValidator;
 import org.codehaus.xfire.annotations.WebAnnotations;
 import org.codehaus.xfire.annotations.WebServiceAnnotation;
 import org.codehaus.xfire.client.Client;
@@ -278,8 +279,9 @@ public class XFireClientFactoryBeanTest
         
         control.replay();
         
-        factory.setServiceFactory(new AnnotationServiceFactory(webAnnotations, 
-                                                               getTransportManager()));
+        AnnotationServiceFactory annFactory = new AnnotationServiceFactory(webAnnotations, getTransportManager());
+        annFactory.setValidator(new AnnotationsEmptyValidator());
+        factory.setServiceFactory(annFactory);
         factory.setServiceClass(EchoImpl.class);
         
         factory.afterPropertiesSet();
