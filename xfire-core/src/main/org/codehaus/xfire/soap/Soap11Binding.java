@@ -103,7 +103,7 @@ public class Soap11Binding extends AbstractSoapBinding
         soapOp.setSoapActionURI(getSoapAction(op));
         
         BindingInput bindIn = def.createBindingInput();
-        bindIn.setName( op.getInputMessage().getName().getLocalPart() );
+        bindIn.setName( wsdlOp.getInput().getName() );
         bindIn.addExtensibilityElement( body );
         wbindOp.setBindingInput( bindIn );
         
