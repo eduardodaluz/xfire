@@ -79,6 +79,11 @@ public class XMLDocumentationBuilder {
 			Element element = (Element) opIterator.next();
 
 			String name = element.getAttribute(NAME_ATTR).getValue();
+			if( element.getAttribute(ARGUMENTS_NUMBER_ATTR) == null ){
+				final String msg = "Method ["+ name +"]configuration require 'parametersNumber' attribute ";
+				log.error(msg);
+				throw new XFireRuntimeException(msg);
+			}
 			String argNrStr = element.getAttribute(ARGUMENTS_NUMBER_ATTR).getValue();
 			String opDocumentation = readDocumentations(element);
 			// Create empty parameters list
