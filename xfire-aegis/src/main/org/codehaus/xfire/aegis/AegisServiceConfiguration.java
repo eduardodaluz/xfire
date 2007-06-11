@@ -195,13 +195,13 @@ public class AegisServiceConfiguration extends DefaultServiceConfiguration {
 
 		public ParamInfo getParam(int j) {
 
-			return (ParamInfo) params.get(Integer.valueOf(j));
+			return (ParamInfo) params.get(new Integer(j));
 
 		}
 
 		public void addParam(ParamInfo param) {
 
-			params.put(Integer.valueOf(param.getIndex()), param);
+			params.put(new Integer(param.getIndex()), param);
 
 		}
 
