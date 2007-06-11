@@ -74,8 +74,10 @@ public class AegisServiceConfiguration extends DefaultServiceConfiguration {
 	 */
 	public Boolean isHeader(Method method, int j) {
 
-		MethodInfo methodInfo = getMethodInfo(method.getDeclaringClass(),
-				method);
+		MethodInfo methodInfo = getMethodInfo(method.getDeclaringClass(),method);
+		if(methodInfo==null){
+			return super.isHeader(method, j);
+		}
 		ParamInfo param = methodInfo.getParam(j);
 		if (param == null) {
 			return super.isHeader(method, j);
