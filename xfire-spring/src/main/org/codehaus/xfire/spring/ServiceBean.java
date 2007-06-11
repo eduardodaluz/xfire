@@ -24,6 +24,7 @@ import org.codehaus.xfire.spring.config.Soap11BindingBean;
 import org.codehaus.xfire.spring.config.Soap12BindingBean;
 import org.codehaus.xfire.spring.config.SpringServiceConfiguration;
 import org.codehaus.xfire.util.Resolver;
+import org.codehaus.xfire.wsdl.WSDLWriter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -98,6 +99,8 @@ public class ServiceBean
     private Invoker invoker;
     
     private Object executor;
+    
+    private WSDLWriter wsdlWriter;
 
     public void afterPropertiesSet()
         throws Exception
@@ -207,6 +210,10 @@ public class ServiceBean
             {
                 xfireService.setInvoker(new BeanInvoker(serviceBean));
             }
+        }
+        
+        if(getWsdlWriter()!=null){
+        	xfireService.setWSDLWriter(getWsdlWriter());	
         }
         
         // set up in handlers
@@ -526,6 +533,14 @@ public class ServiceBean
 
 	public void setServiceConfiguration(ServiceConfiguration serviceConfiguration) {
 		this.serviceConfiguration = serviceConfiguration;
+	}
+
+	public WSDLWriter getWsdlWriter() {
+		return wsdlWriter;
+	}
+
+	public void setWsdlWriter(WSDLWriter wsdlWriter) {
+		this.wsdlWriter = wsdlWriter;
 	}
 
 }
