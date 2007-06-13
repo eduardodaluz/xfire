@@ -70,7 +70,10 @@ public class HtmlServiceWriter
              }
             sb.append(("".equals(request.getContextPath())?"/":request.getContextPath()));
             sb.append(request.getServletPath());
-            sb.append("/");
+            if(request.getServletPath()!= null && request.getServletPath().length()>0){
+            	sb.append("/");	
+            }
+            
             String base = sb.toString();
             
             
