@@ -13,7 +13,7 @@ public class WsGen {
     private static void usage() {
 		System.out
 				.print("Usage: wsgen -wsdl wsdl.file -o outputDirectory [-p package] [-b binding] " +
-                        "[-r profile] [-e externalBinging] [-u baseURI] [-overwrite true/false] " +
+                        "[-r profile] [-e externalBinding] [-u baseURI] [-overwrite true/false] " +
                         "[-x true/false] [-ss true/false] [-w true/false] \n");
 	}
 
